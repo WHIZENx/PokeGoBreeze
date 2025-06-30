@@ -1,6 +1,6 @@
 import { RadioGroup, Rating, Slider, styled } from '@mui/material';
 import Moment from 'moment';
-import { IPokemonData, PokemonData, PokemonModel } from '../core/models/pokemon.model';
+import { IPokemonData } from '../core/models/pokemon.model';
 import {
   IStatsAtk,
   IStatsDef,
@@ -15,13 +15,7 @@ import {
 } from '../core/models/stats.model';
 import { IPokemonDetail, IPokemonDetailInfo, Stats } from '../core/models/API/info.model';
 import { Params, versionList } from './constants';
-import {
-  IPokemonFormModify,
-  PokemonFormModifyModel,
-  PokemonSprit,
-  IPokemonFormDetail,
-} from '../core/models/API/form.model';
-import { PokemonSearching } from '../core/models/pokemon-searching.model';
+import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit } from '../core/models/API/form.model';
 import APIService from '../services/api.service';
 import { TableStyles } from 'react-data-table-component';
 import {
@@ -517,9 +511,6 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
   return mSet;
 };
 
-export const checkPokemonGO = (id: number, name: string | undefined, details: IPokemonData[]) =>
-  details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
-
 export const convertFormGif = (name: string | undefined) => {
   if (isEqual(name, 'nidoran')) {
     name = 'nidoran_m';
@@ -576,30 +567,6 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank, stats: IStatsPok
 
 export const calRank = (pokemonStats: DynamicObj<OptionsRank>, type: string, rank: number) =>
   ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
-
-export const mappingPokemonName = (pokemonData: IPokemonData[]) =>
-  pokemonData
-    .filter(
-      (pokemon) =>
-        pokemon.num > 0 &&
-        (pokemon.form === formNormal() || (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form)))
-    )
-    .map((pokemon) => new PokemonSearching(pokemon))
-    .sort((a, b) => a.id - b.id);
-
-export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
-  const result = pokemonData
-    .filter((pokemon) => pokemon.num === id)
-    .find(
-      (pokemon) =>
-        isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
-        (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
-    );
-  if (!result) {
-    return;
-  }
-  return new PokemonModel(result.num, result.name);
-};
 
 const mergeTableStyles = (custom: Partial<TableStyles>, defaults: TableStyles): TableStyles => {
   if (!custom) {
@@ -747,11 +714,6 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
     !isEqual(chargeMoves[0], 'STRUGGLE')
   );
 };
-
-export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) =>
-  pokemon.some(
-    (p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), getValueOrDefault(String, p.fullName, p.name))
-  );
 
 const convertNameEffort = (name: string) => {
   switch (name) {
@@ -926,41 +888,6 @@ export const generateFormName = (form: string | null | undefined, pokemonType: P
   return form;
 };
 
-export const generatePokemonGoForms = (
-  pokemonData: IPokemonData[],
-  dataFormList: IPokemonFormDetail[][],
-  formListResult: IPokemonFormModify[][],
-  id: number,
-  name: string,
-  index = 0
-) => {
-  const formList = dataFormList.flatMap((form) => form).map((p) => convertPokemonAPIDataName(p.formName, formNormal()));
-  pokemonData
-    .filter((pokemon) => pokemon.num === id)
-    .forEach((pokemon) => {
-      const isIncludeFormGO = formList.some((form) => isInclude(pokemon.form, form));
-      if (!isIncludeFormGO) {
-        index--;
-        const pokemonGOModify = new PokemonFormModifyModel(
-          id,
-          name,
-          pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase(),
-          pokemon.form?.replaceAll('_', '-')?.toLowerCase(),
-          pokemon.fullName?.replaceAll('_', '-')?.toLowerCase(),
-          versionList[0].replace(' ', '-'),
-          pokemon.types,
-          new PokemonSprit(),
-          index,
-          PokemonType.Normal,
-          false
-        );
-        formListResult.push([pokemonGOModify]);
-      }
-    });
-
-  return index;
-};
-
 export const generatePokemonGoShadowForms = (
   dataPokeList: IPokemonDetailInfo[],
   formListResult: IPokemonFormModify[][],
@@ -1023,58 +950,6 @@ export const getFormFromForms = (
     }
   }
   return filterForm;
-};
-
-export const retrieveMoves = (
-  pokemon: IPokemonData[],
-  id: number | undefined,
-  form: string | undefined,
-  pokemonType = PokemonType.None
-) => {
-  if (isNotEmpty(pokemon)) {
-    if (pokemonType === PokemonType.GMax) {
-      return pokemon.find((item) => item.num === id && isEqual(item.form, formGmax()));
-    }
-    const resultFilter = pokemon.filter((item) => item.num === id);
-    const pokemonForm = getValueOrDefault(
-      String,
-      form?.replaceAll('-', '_').toUpperCase().replace(`_${formStandard()}`, '').replace(formGmax(), formNormal()),
-      formNormal()
-    );
-    const result = resultFilter.find((item) => isEqual(item.fullName, pokemonForm) || isEqual(item.form, pokemonForm));
-    return PokemonData.copy(result ?? resultFilter[0]);
-  }
-};
-
-export const getPokemonDetails = (
-  pokemonData: IPokemonData[],
-  id: number | undefined,
-  form: string | undefined,
-  pokemonType = PokemonType.None,
-  isDefault = false
-) => {
-  if (form) {
-    const name = getPokemonFormWithNoneSpecialForm(
-      form
-        .replace(/10$/, 'TEN_PERCENT')
-        .replace(/50$/, 'FIFTY_PERCENT')
-        .replace(/UNOWN-/i, '')
-        .replaceAll(' ', '-'),
-      pokemonType
-    );
-    let pokemonForm = pokemonData.find(
-      (item) => item.num === id && isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive)
-    );
-
-    if (isDefault && !pokemonForm) {
-      pokemonForm = pokemonData.find(
-        (item) =>
-          item.num === id && (item.form === formNormal() || (item.baseForme && isEqual(item.baseForme, item.form)))
-      );
-    }
-    return PokemonData.copyWithCreate(pokemonForm);
-  }
-  return new PokemonData();
 };
 
 export const replaceTempMoveName = (name: string | number) => {

@@ -15,6 +15,7 @@ import { isNotEmpty } from '../utils/extension';
 import APIService from '../services/api.service';
 import { useDataStore } from '../composables/useDataStore';
 import { Timestamp } from '../store/models/timestamp.model';
+import { useMemo } from 'react';
 
 /**
  * Custom hook to access and update the timestamp state from Redux store
@@ -120,11 +121,11 @@ export const useTimestamp = () => {
       });
   };
 
-  const timestampPVP = timestamp?.pvp;
-  const timestampGameMaster = timestamp?.gamemaster;
-  const timestampIcon = timestamp?.icon;
-  const timestampAssets = timestamp?.assets;
-  const timestampSounds = timestamp?.sounds;
+  const timestampPVP = useMemo(() => timestamp?.pvp, [timestamp?.pvp]);
+  const timestampGameMaster = useMemo(() => timestamp?.gamemaster, [timestamp?.gamemaster]);
+  const timestampIcon = useMemo(() => timestamp?.icon, [timestamp?.icon]);
+  const timestampAssets = useMemo(() => timestamp?.assets, [timestamp?.assets]);
+  const timestampSounds = useMemo(() => timestamp?.sounds, [timestamp?.sounds]);
 
   return {
     timestamp,

@@ -8,10 +8,7 @@ import {
   convertPokemonImageName,
   convertSexName,
   formIconAssets,
-  generatePokemonGoForms,
   getItemSpritePath,
-  getPokemonById,
-  getPokemonDetails,
   getPokemonType,
   getValidPokemonImgPath,
   splitAndCapitalize,
@@ -40,6 +37,7 @@ import { ItemName } from '../../pages/News/enums/item-type.enum';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import useDataStore from '../../composables/useDataStore';
 import useSearch from '../../composables/useSearch';
+import usePokemon from '../../composables/usePokemon';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -51,6 +49,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
   const { pokemonsData } = useDataStore();
   const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
+  const { generatePokemonGoForms, getPokemonDetails, getPokemonById } = usePokemon();
 
   const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
@@ -111,7 +110,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         )
         .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
-      generatePokemonGoForms(pokemonsData, dataFormList, formListResult, specie.id, specie.name);
+      generatePokemonGoForms(dataFormList, formListResult, specie.id, specie.name);
 
       setPokeData(dataPokeList);
       setFormList(formListResult);
@@ -205,13 +204,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         currentForm.form.formName,
         currentForm.defaultName
       );
-      const details = getPokemonDetails(
-        pokemonsData,
-        id,
-        formName,
-        currentForm.form.pokemonType,
-        currentForm.form.isDefault
-      );
+      const details = getPokemonDetails(id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
       details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
       if (
         searchingToolObjectData?.pokemon?.id !== props.id ||
@@ -232,12 +225,12 @@ const FormSelect = (props: IFormSelectComponent) => {
   useEffect(() => {
     const id = toNumber(props.id);
     if (isNotEmpty(pokemonsData) && id > 0) {
-      const currentPokemon = getPokemonById(pokemonsData, id);
+      const currentPokemon = getPokemonById(id);
       if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(pokemonsData, currentPokemon.id - 1),
-          current: getPokemonById(pokemonsData, currentPokemon.id),
-          next: getPokemonById(pokemonsData, currentPokemon.id + 1),
+          prev: getPokemonById(currentPokemon.id - 1),
+          current: getPokemonById(currentPokemon.id),
+          next: getPokemonById(currentPokemon.id + 1),
         });
       }
     }

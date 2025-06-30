@@ -4,7 +4,6 @@ import {
   splitAndCapitalize,
   capitalize,
   convertPokemonImageName,
-  getPokemonDetails,
   generateParamForm,
   getValidPokemonImgPath,
   getDmgMultiplyBonus,
@@ -66,6 +65,7 @@ import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useStats from '../../../composables/useStats';
 import useRouter from '../../../composables/useRouter';
+import usePokemon from '../../../composables/usePokemon';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -195,6 +195,7 @@ const defaultPerPages = 25;
 const StatsRanking = () => {
   const { routerAction } = useRouter();
   const { iconData } = useIcon();
+  const { getPokemonDetails } = usePokemon();
   useTitle({
     title: 'PokéGO Breeze - Stats Ranking',
     description:
@@ -283,10 +284,10 @@ const StatsRanking = () => {
     );
   };
 
-  const mappingData = (pokemon: IPokemonData[]) => {
+  const mappingData = () => {
     const result: IPokemonStatsRanking[] = [];
-    pokemon.forEach((data) => {
-      const details = getPokemonDetails(pokemon, data.num, data.fullName, data.pokemonType, true);
+    pokemonsData.forEach((data) => {
+      const details = getPokemonDetails(data.num, data.fullName, data.pokemonType, true);
       if (isSpecialFormType(data.pokemonType)) {
         details.pokemonType = PokemonType.Normal;
       }
@@ -451,8 +452,7 @@ const StatsRanking = () => {
       statsData?.stamina?.ranking &&
       statsData?.statProd?.ranking
     ) {
-      const pokemon = pokemonsData.filter((pokemon) => pokemon.num > 0);
-      const mapping = mappingData(pokemon);
+      const mapping = mappingData();
       const pokemonList = sortRanking(mapping, sortId);
       setPokemonList(pokemonList);
       setPokemonFilter(pokemonList);
@@ -464,8 +464,7 @@ const StatsRanking = () => {
     if (!select && isNotEmpty(pokemonList)) {
       const result = pokemonFilter[0];
 
-      const pokemon = pokemonsData.filter((pokemon) => pokemon.num > 0);
-      const details = getPokemonDetails(pokemon, result.num, result.fullName, result.pokemonType, true);
+      const details = getPokemonDetails(result.num, result.fullName, result.pokemonType, true);
       const pokemonDetails = PokemonDetail.setData(details);
       setPokemon(pokemonDetails);
 
@@ -489,8 +488,7 @@ const StatsRanking = () => {
       if (index > -1) {
         const result = pokemonFilter[index];
 
-        const pokemon = pokemonsData.filter((pokemon) => pokemon.num > 0);
-        const details = getPokemonDetails(pokemon, id, result.fullName, result.pokemonType, true);
+        const details = getPokemonDetails(id, result.fullName, result.pokemonType, true);
         details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
@@ -543,8 +541,7 @@ const StatsRanking = () => {
           ((!formType && !isSpecialFormType(row.pokemonType)) || row.pokemonType === pokemonType)
       );
       if (result) {
-        const pokemon = pokemonsData.filter((pokemon) => pokemon.num > 0);
-        const details = getPokemonDetails(pokemon, paramId, result.fullName, result.pokemonType, true);
+        const details = getPokemonDetails(paramId, result.fullName, result.pokemonType, true);
         details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);

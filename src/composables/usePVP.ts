@@ -1,5 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { StoreState } from '../store/models/state.model';
+import { useDispatch } from 'react-redux';
 import { isEqual } from 'lodash';
 import { PokemonPVPMove } from '../core/models/pvp.model';
 import { pvpConvertPath } from '../core/pvp';
@@ -19,8 +18,7 @@ import useTimestamp from './useTimestamp';
  */
 export const usePVP = () => {
   const dispatch = useDispatch();
-  const pvpData = useSelector((state: StoreState) => state.store.data.pvp);
-  const { getAuthorizationHeaders } = useDataStore();
+  const { getAuthorizationHeaders, pvpData } = useDataStore();
   const { timestampPVP } = useTimestamp();
 
   const loadPVP = () => {

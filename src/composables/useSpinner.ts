@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { SpinnerState } from '../store/models/state.model';
 import { ShowSpinner, HideSpinner, ShowSpinnerMsg, SetBar, SetPercent } from '../store/actions/spinner.action';
 import { ErrorModel } from '../store/reducers/spinner.reducer';
+import { useMemo } from 'react';
 
 /**
  * Custom hook to access and update the spinner state from Redux store
@@ -51,12 +52,12 @@ export const useSpinner = () => {
     dispatch(SetPercent.create(percent));
   };
 
-  const spinnerBar = spinnerData.bar;
-  const spinnerPercent = spinnerData.bar.percent;
-  const spinnerBarIsShow = spinnerData.bar.isShow;
-  const spinnerIsError = spinnerData.error?.isError;
-  const spinnerMessage = spinnerData.error?.message;
-  const spinnerIsLoading = spinnerData.isLoading;
+  const spinnerBar = useMemo(() => spinnerData.bar, [spinnerData.bar]);
+  const spinnerPercent = useMemo(() => spinnerData.bar.percent, [spinnerData.bar.percent]);
+  const spinnerBarIsShow = useMemo(() => spinnerData.bar.isShow, [spinnerData.bar.isShow]);
+  const spinnerIsError = useMemo(() => spinnerData.error?.isError, [spinnerData.error?.isError]);
+  const spinnerMessage = useMemo(() => spinnerData.error?.message, [spinnerData.error?.message]);
+  const spinnerIsLoading = useMemo(() => spinnerData.isLoading, [spinnerData.isLoading]);
 
   return {
     spinnerData,

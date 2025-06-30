@@ -1,14 +1,16 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
-import { addSelectMovesByType, retrieveMoves, splitAndCapitalize } from '../../utils/utils';
+import { addSelectMovesByType, splitAndCapitalize } from '../../utils/utils';
 import { TypeMove } from '../../enums/type.enum';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
 import useDataStore from '../../composables/useDataStore';
+import usePokemon from '../../composables/usePokemon';
 
 const Move = (props: IMoveComponent) => {
   const { combatsData, pokemonsData } = useDataStore();
+  const { retrieveMoves } = usePokemon();
 
   const [countFM, setCountFM] = useState(0);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
@@ -24,7 +26,7 @@ const Move = (props: IMoveComponent) => {
 
   const findMove = useCallback(
     (value: IMoveComponent) => {
-      const result = retrieveMoves(pokemonsData, value.id, value.form, value.pokemonType);
+      const result = retrieveMoves(value.id, value.form, value.pokemonType);
       if (result) {
         let simpleMove: ISelectMoveModel[] = [];
         if (!props.type || props.type === TypeMove.Fast) {

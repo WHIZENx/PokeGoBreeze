@@ -4,7 +4,6 @@ import {
   LevelRating,
   splitAndCapitalize,
   capitalize,
-  checkPokemonGO,
   getKeyWithData,
   getMoveType,
   generateParamForm,
@@ -79,6 +78,7 @@ import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useOptionStore from '../../../composables/useOptions';
 import useRouter from '../../../composables/useRouter';
+import usePokemon from '../../../composables/usePokemon';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -284,6 +284,7 @@ const DpsTdo = () => {
   const { pokemonsData, combatsData } = useDataStore();
   const { optionsDpsSheet, setDpsSheetOptions } = useOptionStore();
   const { routerAction } = useRouter();
+  const { checkPokemonGO } = usePokemon();
 
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
   const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
@@ -506,8 +507,7 @@ const DpsTdo = () => {
       if (releasedGO) {
         const isReleasedGO = checkPokemonGO(
           item.pokemon.num,
-          getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
-          pokemonsData
+          getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId)
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, isReleasedGO);
       }

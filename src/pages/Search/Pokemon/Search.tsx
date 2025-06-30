@@ -6,7 +6,6 @@ import APIService from '../../../services/api.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, mappingPokemonName } from '../../../utils/utils';
 import { Action } from 'history';
 import { SearchingState } from '../../../store/models/state.model';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
@@ -19,6 +18,7 @@ import { debounce } from 'lodash';
 import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import useRouter from '../../../composables/useRouter';
+import usePokemon from '../../../composables/usePokemon';
 
 const Search = () => {
   useTitle({
@@ -28,6 +28,7 @@ const Search = () => {
     keywords: ['Pokémon search', 'find Pokémon', 'Pokémon filter', 'Pokémon GO search', 'Pokémon database'],
   });
   const { routerAction } = useRouter();
+  const { getPokemonById, mappingPokemonName } = usePokemon();
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
   const { pokemonsData } = useDataStore();
 
@@ -54,7 +55,7 @@ const Search = () => {
 
   useEffect(() => {
     if (isNotEmpty(pokemonsData)) {
-      const result = mappingPokemonName(pokemonsData);
+      const result = mappingPokemonName();
       setPokemonList(result);
     }
   }, [pokemonsData]);
@@ -94,7 +95,7 @@ const Search = () => {
   };
 
   const modifyId = (modify: number) => {
-    const currentPokemon = getPokemonById(pokemonsData, selectId + modify);
+    const currentPokemon = getPokemonById(selectId + modify);
     if (currentPokemon) {
       setSelectId(selectId + modify);
       setSearchOption({ id: toNumber(currentPokemon.id) });
@@ -102,10 +103,10 @@ const Search = () => {
   };
 
   const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>, search: string) => {
-    const currentPokemon = getPokemonById(pokemonsData, selectId);
+    const currentPokemon = getPokemonById(selectId);
     if (currentPokemon) {
-      const prev = getPokemonById(pokemonsData, currentPokemon.id - 1);
-      const next = getPokemonById(pokemonsData, currentPokemon.id + 1);
+      const prev = getPokemonById(currentPokemon.id - 1);
+      const next = getPokemonById(currentPokemon.id + 1);
       if (isNotEmpty(pokemonListFilter) && event.keyCode === keyEnter()) {
         const input = document.getElementById('input-search-pokemon');
         input?.blur();

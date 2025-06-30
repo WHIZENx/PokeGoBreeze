@@ -27,15 +27,11 @@ import APIService from '../../services/api.service';
 import { SearchingState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {
-  checkPokemonIncludeShadowForm,
   convertPokemonImageName,
   convertSexName,
-  generatePokemonGoForms,
   generatePokemonGoShadowForms,
   getDmgMultiplyBonus,
   getKeyWithData,
-  getPokemonById,
-  getPokemonDetails,
   getPokemonFormWithNoneSpecialForm,
   getPokemonType,
   getValidPokemonImgPath,
@@ -77,6 +73,7 @@ import useDataStore from '../../composables/useDataStore';
 import useIcon from '../../composables/useIcon';
 import useSpinner from '../../composables/useSpinner';
 import useRouter from '../../composables/useRouter';
+import usePokemon from '../../composables/usePokemon';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -98,6 +95,7 @@ const Pokemon = (props: IPokemonPage) => {
   const dispatch = useDispatch();
   const { iconData } = useIcon();
   const { pokemonsData } = useDataStore();
+  const { getPokemonById, checkPokemonIncludeShadowForm, generatePokemonGoForms, getPokemonDetails } = usePokemon();
 
   const currentSearchingForm = useSelector((state: SearchingState) => state.searching.mainSearching?.form);
   const pokemonDetails = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
@@ -178,7 +176,7 @@ const Pokemon = (props: IPokemonPage) => {
               return PokemonFormDetail.setDetails(form);
             })
           );
-          pokeInfo.isIncludeShadow = checkPokemonIncludeShadowForm(pokemonsData, pokeInfo.name);
+          pokeInfo.isIncludeShadow = checkPokemonIncludeShadowForm(pokeInfo.name);
           const pokeDetail = PokemonDetailInfo.setDetails(pokeInfo);
           soundCries.push(new FormSoundCry(pokeDetail));
           dataPokeList.push(pokeDetail);
@@ -226,7 +224,7 @@ const Pokemon = (props: IPokemonPage) => {
         )
         .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
-      const indexPokemonGO = generatePokemonGoForms(pokemonsData, dataFormList, formListResult, specie.id, specie.name);
+      const indexPokemonGO = generatePokemonGoForms(dataFormList, formListResult, specie.id, specie.name);
 
       if (isShadow) {
         generatePokemonGoShadowForms(dataPokeList, formListResult, specie.id, specie.name, indexPokemonGO);
@@ -431,10 +429,10 @@ const Pokemon = (props: IPokemonPage) => {
     if (id > 0 && isNotEmpty(pokemonsData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinnerIsLoading) {
-          const currentPokemon = getPokemonById(pokemonsData, id);
+          const currentPokemon = getPokemonById(id);
           if (currentPokemon) {
-            const prev = getPokemonById(pokemonsData, currentPokemon.id - 1);
-            const next = getPokemonById(pokemonsData, currentPokemon.id + 1);
+            const prev = getPokemonById(currentPokemon.id - 1);
+            const next = getPokemonById(currentPokemon.id + 1);
             if (prev && event.keyCode === keyLeft()) {
               event.preventDefault();
               params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
@@ -457,7 +455,7 @@ const Pokemon = (props: IPokemonPage) => {
       return false;
     }
     const formName = getValueOrDefault(String, form.form?.name, form.form?.formName, form.defaultName);
-    const details = getPokemonDetails(pokemonsData, id, formName, form.form?.pokemonType, form.form?.isDefault);
+    const details = getPokemonDetails(id, formName, form.form?.pokemonType, form.form?.isDefault);
     details.pokemonType = form.form?.pokemonType || PokemonType.Normal;
     if (isSpecialFormType(details.pokemonType)) {
       const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, TypeAction.Atk);
@@ -581,12 +579,12 @@ const Pokemon = (props: IPokemonPage) => {
   useEffect(() => {
     const id = getPokemonIdByParam();
     if (id > 0 && isNotEmpty(pokemonsData)) {
-      const currentPokemon = getPokemonById(pokemonsData, id);
+      const currentPokemon = getPokemonById(id);
       if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(pokemonsData, currentPokemon.id - 1),
-          current: getPokemonById(pokemonsData, currentPokemon.id),
-          next: getPokemonById(pokemonsData, currentPokemon.id + 1),
+          prev: getPokemonById(currentPokemon.id - 1),
+          current: getPokemonById(currentPokemon.id),
+          next: getPokemonById(currentPokemon.id + 1),
         });
       }
     }

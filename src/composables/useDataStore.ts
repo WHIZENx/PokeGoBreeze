@@ -55,6 +55,7 @@ import { Files } from '../store/models/store.model';
 import { calculateBaseCPM, calculateCPM } from '../core/cpm';
 import { maxIv, minIv } from '../utils/helpers/options-context.helpers';
 import { BASE_CPM } from '../utils/constants';
+import { useMemo } from 'react';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -300,17 +301,17 @@ export const useDataStore = () => {
     });
   };
 
-  const pokemonsData = dataStore.pokemons;
-  const stickersData = dataStore.stickers;
-  const combatsData = dataStore.combats;
-  const evolutionChainsData = dataStore.evolutionChains;
-  const informationData = dataStore.information;
-  const assetsData = dataStore.assets;
-  const leaguesData = dataStore.leagues;
-  const cpmData = dataStore.cpm;
-  const trainersData = dataStore.trainers;
-  const pvpData = dataStore.pvp;
-  const optionsData = dataStore.options;
+  const pokemonsData = useMemo(() => dataStore.pokemons.filter((pokemon) => pokemon.num > 0), [dataStore.pokemons]);
+  const stickersData = useMemo(() => dataStore.stickers, [dataStore.stickers]);
+  const combatsData = useMemo(() => dataStore.combats, [dataStore.combats]);
+  const evolutionChainsData = useMemo(() => dataStore.evolutionChains, [dataStore.evolutionChains]);
+  const informationData = useMemo(() => dataStore.information, [dataStore.information]);
+  const assetsData = useMemo(() => dataStore.assets, [dataStore.assets]);
+  const leaguesData = useMemo(() => dataStore.leagues, [dataStore.leagues]);
+  const cpmData = useMemo(() => dataStore.cpm, [dataStore.cpm]);
+  const trainersData = useMemo(() => dataStore.trainers, [dataStore.trainers]);
+  const pvpData = useMemo(() => dataStore.pvp, [dataStore.pvp]);
+  const optionsData = useMemo(() => dataStore.options, [dataStore.options]);
 
   const getAuthorizationHeaders = {
     headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },

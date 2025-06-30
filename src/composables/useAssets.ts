@@ -1,5 +1,4 @@
-import { useSelector } from 'react-redux';
-import { StoreState } from '../store/models/state.model';
+import useDataStore from './useDataStore';
 import { FormType } from '../utils/enums/compute.enum';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { formNormal, formGmax, formMega } from '../utils/helpers/options-context.helpers';
@@ -12,7 +11,7 @@ import { isEqual, isInclude, isNotEmpty } from '../utils/extension';
  * @returns The assets state and update methods
  */
 export const useAssets = () => {
-  const assetsData = useSelector((state: StoreState) => state.store.data.assets);
+  const { assetsData } = useDataStore();
 
   const findAssetForm = (id: number | undefined, formName = formNormal(), formType = FormType.Default) => {
     if (isEqual(formName, formGmax(), EqualMode.IgnoreCaseSensitive)) {

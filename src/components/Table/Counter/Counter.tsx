@@ -2,7 +2,6 @@ import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/api.service';
 import {
-  checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
   getKeyWithData,
@@ -43,6 +42,7 @@ import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useAssets from '../../../composables/useAssets';
 import useOptionStore from '../../../composables/useOptions';
+import usePokemon from '../../../composables/usePokemon';
 
 const customStyles: TableStyles = {
   head: {
@@ -119,6 +119,7 @@ const Counter = (props: ICounterComponent) => {
   const { combatsData, pokemonsData } = useDataStore();
   const { findAssetForm } = useAssets();
   const { optionsCounter, setCounterOptions } = useOptionStore();
+  const { checkPokemonGO } = usePokemon();
 
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
   const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
@@ -334,7 +335,7 @@ const Counter = (props: ICounterComponent) => {
               return true;
             }
             if (!pokemon.releasedGO) {
-              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), pokemonsData);
+              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName));
             }
             return pokemon.releasedGO;
           })

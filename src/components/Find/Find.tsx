@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../services/api.service';
 import FormSelect from './FormSelect';
 
-import { getPokemonById, mappingPokemonName } from '../../utils/utils';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import { IFindComponent } from '../models/component.model';
@@ -13,6 +12,7 @@ import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
 import { useDataStore } from '../../composables/useDataStore';
 import useSearch from '../../composables/useSearch';
+import usePokemon from '../../composables/usePokemon';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -22,6 +22,7 @@ const Find = (props: IFindComponent) => {
 
   const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
   const { pokemonsData } = useDataStore();
+  const { mappingPokemonName, getPokemonById } = usePokemon();
 
   const [id, setId] = useState(
     searchingToolData
@@ -40,7 +41,7 @@ const Find = (props: IFindComponent) => {
 
   useEffect(() => {
     if (isNotEmpty(pokemonsData)) {
-      const result = mappingPokemonName(pokemonsData);
+      const result = mappingPokemonName();
       setPokemonList(result);
     }
   }, [pokemonsData]);
@@ -70,7 +71,7 @@ const Find = (props: IFindComponent) => {
   };
 
   const getInfoPoke = (value: IPokemonSearching) => {
-    const currentPokemon = getPokemonById(pokemonsData, value.id);
+    const currentPokemon = getPokemonById(value.id);
     setId(value.id);
     if (props.setId) {
       props.setId(value.id);
@@ -94,9 +95,9 @@ const Find = (props: IFindComponent) => {
   };
 
   const modifyId = (modify: number) => {
-    const currentPokemon = getPokemonById(pokemonsData, id);
+    const currentPokemon = getPokemonById(id);
     if (currentPokemon) {
-      const current = getPokemonById(pokemonsData, currentPokemon.id + modify);
+      const current = getPokemonById(currentPokemon.id + modify);
       if (current) {
         setId(current.id);
         if (props.setId) {

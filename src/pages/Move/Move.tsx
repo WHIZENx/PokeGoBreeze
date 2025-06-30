@@ -4,7 +4,6 @@ import { useParams, useSearchParams } from 'react-router-dom';
 
 import {
   capitalize,
-  checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
   getItemSpritePath,
@@ -57,6 +56,7 @@ import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
 import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/options-context.helpers';
 import useDataStore from '../../composables/useDataStore';
+import usePokemon from '../../composables/usePokemon';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -145,6 +145,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
 
 const Move = (props: IMovePage) => {
   const { iconData } = useIcon();
+  const { checkPokemonGO } = usePokemon();
   const { combatsData, pokemonsData } = useDataStore();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -313,11 +314,7 @@ const Move = (props: IMovePage) => {
           return true;
         }
         if (!pokemon.releasedGO) {
-          return checkPokemonGO(
-            pokemon.num,
-            convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')),
-            pokemonsData
-          );
+          return checkPokemonGO(pokemon.num, convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')));
         }
         return pokemon.releasedGO;
       })

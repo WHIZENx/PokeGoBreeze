@@ -5,7 +5,7 @@ import { ConditionType, LeagueConditionType, QuestType } from '../enums/option.e
 import { Cost, IBonusEffect } from './combat.model';
 import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonDataModel } from './pokemon.model';
-import { IStatsPokemonGO, StatsPokemonGO } from './stats.model';
+import { IStatsPokemonGO } from './stats.model';
 import { ITypeEffectiveModel, TypeEffectiveModel } from './type-effective.model';
 import { IWeatherBoost, WeatherBoost } from './weather-boost.model';
 
@@ -494,10 +494,10 @@ interface ICombatOption {
   maxEnergy: number;
 }
 
-class CombatOption implements ICombatOption {
+export class CombatOption implements ICombatOption {
   stab = 0;
-  shadowBonus = new StatsPokemonGO();
-  purifiedBonus = new StatsPokemonGO();
+  shadowBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
+  purifiedBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
   maxEnergy = 0;
 }
 
@@ -510,11 +510,11 @@ interface IBattleOption {
   dodgeDamageReductionPercent: number;
 }
 
-class BattleOption implements IBattleOption {
+export class BattleOption implements IBattleOption {
   enemyAttackInterval = 0;
   stab = 0;
-  shadowBonus = new StatsPokemonGO();
-  purifiedBonus = new StatsPokemonGO();
+  shadowBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
+  purifiedBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
   maxEnergy = 0;
   dodgeDamageReductionPercent = 0;
 }

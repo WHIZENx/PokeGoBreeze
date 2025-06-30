@@ -5,14 +5,16 @@ import './Select.scss';
 import CardMove from '../Card/CardMove';
 import { TypeMove } from '../../enums/type.enum';
 import { ISelectMoveModel, ISelectMovePokemonModel } from './models/select-move.model';
-import { addSelectMovesByType, retrieveMoves } from '../../utils/utils';
+import { addSelectMovesByType } from '../../utils/utils';
 import { ISelectMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
 import { InputType, SelectPosition } from './enums/input-type.enum';
 import { useDataStore } from '../../composables/useDataStore';
+import usePokemon from '../../composables/usePokemon';
 
 const SelectMove = (props: ISelectMoveComponent) => {
   const { pokemonsData } = useDataStore();
+  const { retrieveMoves } = usePokemon();
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [showMove, setShowMove] = useState(false);
 
@@ -28,7 +30,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   const findMove = useCallback(
     (selectPokemon: ISelectMovePokemonModel | undefined, type: TypeMove, selected = false) => {
-      const result = retrieveMoves(pokemonsData, selectPokemon?.id, selectPokemon?.form, selectPokemon?.pokemonType);
+      const result = retrieveMoves(selectPokemon?.id, selectPokemon?.form, selectPokemon?.pokemonType);
       if (result) {
         const simpleMove = addSelectMovesByType(result, type);
         if (props.setMovePokemon && (!selected || !props.move) && !props.move) {

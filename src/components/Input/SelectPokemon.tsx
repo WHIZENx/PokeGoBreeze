@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useRef, useState } from 'react';
 
 import './Select.scss';
-import { addSelectMovesByType, retrieveMoves, splitAndCapitalize } from '../../utils/utils';
+import { addSelectMovesByType, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/api.service';
 import { TypeMove } from '../../enums/type.enum';
 import { IPokemonData } from '../../core/models/pokemon.model';
@@ -13,9 +13,11 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, isUn
 import { IncludeMode } from '../../utils/enums/string.enum';
 import { SelectPosition } from './enums/input-type.enum';
 import { useDataStore } from '../../composables/useDataStore';
+import usePokemon from '../../composables/usePokemon';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { pokemonsData } = useDataStore();
+  const { retrieveMoves } = usePokemon();
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -79,7 +81,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   };
 
   const findMove = (value: IPokemonData, type: TypeMove) => {
-    const result = retrieveMoves(pokemonsData, value.num, value.form, value.pokemonType);
+    const result = retrieveMoves(value.num, value.form, value.pokemonType);
     if (result) {
       const simpleMove = addSelectMovesByType(result, type);
       return simpleMove[0];

@@ -5,7 +5,6 @@ import Find from '../../../components/Find/Find';
 
 import {
   addSelectMovesByType,
-  checkPokemonGO,
   generateParamForm,
   getAllMoves,
   getKeyWithData,
@@ -13,7 +12,6 @@ import {
   getValidPokemonImgPath,
   isInvalidIV,
   isSpecialMegaFormType,
-  retrieveMoves,
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { levelList, RAID_BOSS_TIER } from '../../../utils/constants';
@@ -101,6 +99,7 @@ import useIcon from '../../../composables/useIcon';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import { useSelector } from 'react-redux';
+import usePokemon from '../../../composables/usePokemon';
 
 const RaidBattle = () => {
   useTitle({
@@ -120,6 +119,7 @@ const RaidBattle = () => {
   const { pokemonsData, combatsData } = useDataStore();
   const { findAssetForm } = useAssets();
   const { showSpinner, hideSpinner } = useSpinner();
+  const { retrieveMoves, checkPokemonGO } = usePokemon();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
   const [statBossATK, setStatBossATK] = useState(0);
@@ -326,7 +326,7 @@ const RaidBattle = () => {
   };
 
   const findMove = (id: number, form: string, pokemonType = PokemonType.None) => {
-    const result = retrieveMoves(pokemonsData, id, form, pokemonType);
+    const result = retrieveMoves(id, form, pokemonType);
     if (result) {
       const simpleFMove = addSelectMovesByType(result, TypeMove.Fast);
       setFMove(simpleFMove.at(0));
@@ -1427,8 +1427,7 @@ const RaidBattle = () => {
                 if (obj.pokemon) {
                   const isReleasedGO = checkPokemonGO(
                     obj.pokemon.num,
-                    getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId),
-                    pokemonsData
+                    getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId)
                   );
                   return getValueOrDefault(Boolean, obj.pokemon.releasedGO, isReleasedGO);
                 }
