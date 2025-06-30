@@ -48,11 +48,13 @@ import { APIUrl } from '../services/constants';
 import { getDbPokemonEncounter } from '../services/db.service';
 import { APITreeRoot, APITree } from '../services/models/api.model';
 import { SpinnerActions, StoreActions, StatsActions, TimestampActions } from '../store/actions';
-import { loadCPM } from '../store/effects/store.effects';
-import { isInclude, isNotEmpty } from '../utils/extension';
+import { DynamicObj, isInclude, isNotEmpty } from '../utils/extension';
 import APIService from '../services/api.service';
 import { Timestamp } from '../store/models/timestamp.model';
 import { Files } from '../store/models/store.model';
+import { calculateBaseCPM, calculateCPM } from '../core/cpm';
+import { maxIv, minIv } from '../utils/helpers/options-context.helpers';
+import { BASE_CPM } from '../utils/constants';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -160,6 +162,11 @@ export const useDataStore = () => {
     dispatch(SetPVPMoves.create(pvpMoves));
   };
 
+  const loadBaseCPM = () => dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, minIv(), maxIv())));
+
+  const loadCPM = (cpmList: DynamicObj<number>) =>
+    dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, minIv(), Object.keys(cpmList).length)));
+
   const loadPokeGOLogo = (url: string, iconTimestamp: number) =>
     APIService.getFetchUrl<Files>(url, getAuthorizationHeaders)
       .then((file) => {
@@ -168,9 +175,7 @@ export const useDataStore = () => {
           if (isNotEmpty(files)) {
             const res = files.find((item) => isInclude(item.filename, 'Images/App Icons/'));
             if (res) {
-              dispatch(
-                StoreActions.SetLogoPokeGO.create(res.filename.replace('Images/App Icons/', '').replace('.png', ''))
-              );
+              dispatch(StoreActions.SetLogoPokeGO.create(res.filename));
               dispatch(TimestampActions.SetTimestampIcon.create(iconTimestamp));
             }
           }
@@ -213,7 +218,7 @@ export const useDataStore = () => {
 
         const options = optionSettings(gm.data, typeEffective, weatherBoost);
         dispatch(StoreActions.SetOptions.create(options));
-        loadCPM(dispatch, options.playerSetting.cpMultipliers);
+        loadCPM(options.playerSetting.cpMultipliers);
         dispatch(StoreActions.SetTrainer.create(optionTrainer(gm.data)));
         dispatch(StoreActions.SetSticker.create(optionSticker(gm.data, pokemon)));
         const combat = optionCombat(gm.data, typeEffective);
@@ -313,6 +318,8 @@ export const useDataStore = () => {
 
   return {
     dataStore,
+    loadBaseCPM,
+    loadCPM,
     loadPokeGOLogo,
     loadGameMaster,
     loadAssets,

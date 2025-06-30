@@ -17,7 +17,7 @@ import useDataStore from './useDataStore';
  *
  * @returns The stats state and update methods
  */
-export const useStats = () => {
+export const usePVP = () => {
   const dispatch = useDispatch();
   const pvpData = useSelector((state: StoreState) => state.store.data.pvp);
   const { getAuthorizationHeaders } = useDataStore();
@@ -84,4 +84,4 @@ export const useStats = () => {
   };
 };
 
-export default useStats;
+export default usePVP;

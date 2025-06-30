@@ -22,7 +22,7 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
     case StoreActions.StoreActionTypes.setLogoPokeGO:
       return {
         ...state,
-        icon: action.payload,
+        icon: action.payload.replace('Images/App Icons/', '').replace('.png', ''),
       };
     case StoreActions.StoreActionTypes.setOptions:
       return {

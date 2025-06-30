@@ -16,7 +16,7 @@ export const useIcon = () => {
    * Update icon state in the store
    * @param icon - The new icon state
    */
-  const setIcon = (icon: string) => {
+  const setIcon = (icon = '') => {
     dispatch(SetLogoPokeGO.create(icon.replace('Images/App Icons/', '').replace('.png', '')));
   };
 
