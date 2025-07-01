@@ -12,7 +12,7 @@ const RouterSync = () => {
       location,
       action: navType,
     });
-  }, [location, navType, locationChange]);
+  }, [location, navType]);
 
   return null;
 };

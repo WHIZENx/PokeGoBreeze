@@ -3,7 +3,6 @@ import { OptionsSheetState } from '../store/models/state.model';
 import { OptionDPSModel } from '../store/models/options.model';
 import { OptionFiltersCounter } from '../components/Table/Counter/models/counter.model';
 import { SetDpsSheetOptions, SetCounterOptions } from '../store/actions/options.action';
-import { useMemo } from 'react';
 
 /**
  * Custom hook to access and update the options state from Redux store
@@ -31,8 +30,8 @@ export const useOptionStore = () => {
     dispatch(SetCounterOptions.create(counterOptions));
   };
 
-  const optionsDpsSheet = useMemo(() => optionsData?.dpsSheet, [optionsData?.dpsSheet]);
-  const optionsCounter = useMemo(() => optionsData?.counter || new OptionFiltersCounter(), [optionsData?.counter]);
+  const optionsDpsSheet = optionsData?.dpsSheet;
+  const optionsCounter = optionsData?.counter || new OptionFiltersCounter();
 
   return {
     optionsData,

@@ -110,7 +110,7 @@ const Pokedex = (props: IStyleSheetData) => {
 
   const dispatch = useDispatch();
   const { iconData } = useIcon();
-  const { pokemonsData } = useDataStore();
+  const { pokemonsData, getFilteredPokemons } = useDataStore();
   const { queryAssetForm } = useAssets();
 
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
@@ -151,8 +151,9 @@ const Pokedex = (props: IStyleSheetData) => {
 
   useEffect(() => {
     if (isNotEmpty(pokemonsData)) {
+      const filteredPokemons = getFilteredPokemons();
       setDataList(
-        pokemonsData
+        filteredPokemons
           .map((item) => {
             const assetForm = queryAssetForm(item.num, item.form);
             return new PokemonHomeModel(item, assetForm);
@@ -160,7 +161,7 @@ const Pokedex = (props: IStyleSheetData) => {
           .sort((a, b) => a.id - b.id)
       );
     }
-  }, [pokemonsData]);
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);

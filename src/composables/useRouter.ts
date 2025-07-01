@@ -9,7 +9,6 @@ import {
   GoForwardAction,
 } from '../store/actions/router.action';
 import { RouterChange, RouterModify } from '../core/models/router.model';
-import { useMemo } from 'react';
 
 /**
  * Custom hook to access and update the router state from Redux store
@@ -67,8 +66,8 @@ export const useRouter = () => {
     dispatch(GoForwardAction.create());
   };
 
-  const routerAction = useMemo(() => routerData.action, [routerData.action]);
-  const routerLocation = useMemo(() => routerData.location, [routerData.location]);
+  const routerAction = routerData.action;
+  const routerLocation = routerData.location;
 
   return {
     routerData,

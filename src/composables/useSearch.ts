@@ -19,7 +19,6 @@ import { IToolSearching } from '../core/models/searching.model';
 import { ISearchingModel } from '../store/models/searching.model';
 import { IPokemonFormModify } from '../core/models/API/form.model';
 import { IPokemonDetail } from '../core/models/API/info.model';
-import { useMemo } from 'react';
 
 /**
  * Custom hook to access and update searching data in the Redux store
@@ -87,16 +86,13 @@ export const useSearch = () => {
     dispatch(ResetToolObjectPokemon.create());
   };
 
-  const searchingMainData = useMemo(() => searchData?.mainSearching, [searchData?.mainSearching]);
-  const searchingMainForm = useMemo(() => searchData?.mainSearching?.form, [searchData?.mainSearching?.form]);
-  const searchingMainDetails = useMemo(() => searchData?.mainSearching?.pokemon, [searchData?.mainSearching?.pokemon]);
+  const searchingMainData = searchData?.mainSearching;
+  const searchingMainForm = searchData?.mainSearching?.form;
+  const searchingMainDetails = searchData?.mainSearching?.pokemon;
 
-  const searchingToolData = useMemo(() => searchData?.toolSearching, [searchData?.toolSearching]);
-  const searchingToolCurrentData = useMemo(
-    () => searchData?.toolSearching?.current,
-    [searchData?.toolSearching?.current]
-  );
-  const searchingToolObjectData = useMemo(() => searchData?.toolSearching?.object, [searchData?.toolSearching?.object]);
+  const searchingToolData = searchData?.toolSearching;
+  const searchingToolCurrentData = searchData?.toolSearching?.current;
+  const searchingToolObjectData = searchData?.toolSearching?.object;
 
   return {
     searchData,
