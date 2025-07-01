@@ -75,10 +75,10 @@ const FormSelect = (props: IFormSelectComponent) => {
       const cancelToken = axiosSource.current.token;
       await Promise.all(
         specie.varieties.map(async (value) => {
-          const pokeInfo = (await APIService.getFetchUrl<PokemonInfo>(value.path, { cancelToken })).data;
+          const { data: pokeInfo } = await APIService.getFetchUrl<PokemonInfo>(value.path, { cancelToken });
           const pokeForm = await Promise.all(
             pokeInfo.forms.map(async (item) => {
-              const form = (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data;
+              const { data: form } = await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken });
               return PokemonFormDetail.setDetails(form);
             })
           );

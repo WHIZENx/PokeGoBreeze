@@ -161,8 +161,9 @@ const TeamPVP = (props: IStyleSheetData) => {
       showSpinner();
       try {
         const cp = toNumber(params.cp);
-        const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp)))
-          .data;
+        const { data: file } = await APIService.getFetchUrl<TeamsPVP>(
+          APIService.getTeamFile('analysis', params.serie, cp)
+        );
         if (!file) {
           setIsFound(false);
           return;

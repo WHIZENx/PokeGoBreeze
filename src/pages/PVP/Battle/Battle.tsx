@@ -267,11 +267,9 @@ const Battle = () => {
       showSpinner();
       try {
         clearData();
-        const file = (
-          await APIService.getFetchUrl<RankingsPVP[]>(
-            APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
-          )
-        ).data;
+        const { data: file } = await APIService.getFetchUrl<RankingsPVP[]>(
+          APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
+        );
         if (!isNotEmpty(file)) {
           setIsFound(false);
           return;

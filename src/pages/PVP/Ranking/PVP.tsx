@@ -276,7 +276,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     return () => {
       hideSpinner();
     };
-  }, [fetchPokemonRanking, rankingData, pvpData.rankings, pvpData.trains, routerAction]);
+  }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains, routerAction]);
 
   const renderItem = (data: IPokemonBattleRanking, key: number) => (
     <Accordion.Item eventKey={key.toString()}>

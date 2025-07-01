@@ -42,6 +42,7 @@ import { getTypes, transitionTime } from '../../utils/helpers/options-context.he
 import useDataStore from '../../composables/useDataStore';
 import useIcon from '../../composables/useIcon';
 import useAssets from '../../composables/useAssets';
+import usePokemon from '../../composables/usePokemon';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -110,7 +111,8 @@ const Pokedex = (props: IStyleSheetData) => {
 
   const dispatch = useDispatch();
   const { iconData } = useIcon();
-  const { pokemonsData, getFilteredPokemons } = useDataStore();
+  const { pokemonsData } = useDataStore();
+  const { getFilteredPokemons } = usePokemon();
   const { queryAssetForm } = useAssets();
 
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
@@ -161,7 +163,7 @@ const Pokedex = (props: IStyleSheetData) => {
           .sort((a, b) => a.id - b.id)
       );
     }
-  }, []);
+  }, [pokemonsData]);
 
   useEffect(() => {
     setIsLoading(true);

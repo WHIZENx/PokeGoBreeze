@@ -104,8 +104,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
         const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase().replace('clodsiresb', 'clodsire');
         const overall = getValueOrDefault(String, getKeyWithData(ScoreType, ScoreType.Overall));
         const type = getValueOrDefault(String, searchParams.get(Params.LeagueType), overall);
-        const data = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, type)))
-          .data;
+        const { data } = await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, type));
 
         if (!data) {
           setTitleProps(setPokemonPVPTitle(true));
@@ -225,7 +224,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
     return () => {
       hideSpinner();
     };
-  }, [fetchPokemonInfo, rankingPoke, pvpData.rankings, pvpData.trains, routerAction]);
+  }, [fetchPokemonInfo, pvpData.rankings, pvpData.trains, routerAction]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);

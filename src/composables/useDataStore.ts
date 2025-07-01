@@ -312,15 +312,6 @@ export const useDataStore = () => {
   const pvpData = dataStore.pvp;
   const optionsData = dataStore.options;
 
-  /**
-   * Returns a filtered version of the pokemons data based on the provided filter function
-   * @param filterFn - A function to filter the pokemons array
-   * @returns The filtered array of IPokemonData
-   */
-  const getFilteredPokemons = (filterFn?: (item: IPokemonData) => boolean) => {
-    return dataStore.pokemons.filter((item) => item.num > 0 && (filterFn?.(item) || true));
-  };
-
   const getAuthorizationHeaders = {
     headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
   };
@@ -356,7 +347,6 @@ export const useDataStore = () => {
     setPVP,
     setPVPMoves,
     getAuthorizationHeaders,
-    getFilteredPokemons,
   };
 };
 

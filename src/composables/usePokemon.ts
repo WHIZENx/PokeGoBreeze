@@ -2,7 +2,7 @@ import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../utils/exte
 import { formGmax, formNormal, formStandard } from '../utils/helpers/options-context.helpers';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import { EqualMode } from '../utils/enums/string.enum';
-import { PokemonData, PokemonModel } from '../core/models/pokemon.model';
+import { IPokemonData, PokemonData, PokemonModel } from '../core/models/pokemon.model';
 import { convertPokemonAPIDataName, getPokemonFormWithNoneSpecialForm } from '../utils/utils';
 import {
   IPokemonFormDetail,
@@ -15,7 +15,16 @@ import { versionList } from '../utils/constants';
 import useDataStore from './useDataStore';
 
 export const usePokemon = () => {
-  const { getFilteredPokemons } = useDataStore();
+  const { pokemonsData } = useDataStore();
+
+  /**
+   * Returns a filtered version of the pokemons data based on the provided filter function
+   * @param filterFn - A function to filter the pokemons array
+   * @returns The filtered array of IPokemonData
+   */
+  const getFilteredPokemons = (filterFn?: (item: IPokemonData) => boolean) => {
+    return pokemonsData.filter((item) => item.num > 0 && (filterFn?.(item) || true));
+  };
 
   const checkPokemonGO = (id: number, name: string | undefined) =>
     getFilteredPokemons().find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
@@ -134,6 +143,7 @@ export const usePokemon = () => {
   };
 
   return {
+    getFilteredPokemons,
     checkPokemonGO,
     mappingPokemonName,
     getPokemonById,
