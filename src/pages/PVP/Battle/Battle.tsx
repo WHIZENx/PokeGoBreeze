@@ -68,7 +68,6 @@ import {
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
-  isEqual,
   isInclude,
   isNotEmpty,
   toFloat,
@@ -100,10 +99,10 @@ import {
   minLevel,
   stepLevel,
 } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../composables/useDataStore';
 import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
+import usePokemon from '../../../composables/usePokemon';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -123,7 +122,7 @@ class BattleState implements IBattleState {
 }
 
 const Battle = () => {
-  const { pokemonsData } = useDataStore();
+  const { findPokemonBySlug } = usePokemon();
   const { loadPVPMoves } = usePVP();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
@@ -294,7 +293,7 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
+            const pokemon = findPokemonBySlug(name);
             if (!pokemon) {
               return new BattlePokemonData();
             }
@@ -335,16 +334,14 @@ const Battle = () => {
         }
       }
     },
-    [pokemonsData]
+    [findPokemonBySlug]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (isNotEmpty(pokemonsData)) {
-      fetchPokemon(league);
-    }
+    fetchPokemon(league);
     return () => {
       hideSpinner();
     };

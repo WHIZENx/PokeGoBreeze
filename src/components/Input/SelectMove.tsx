@@ -9,11 +9,9 @@ import { addSelectMovesByType } from '../../utils/utils';
 import { ISelectMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
 import { InputType, SelectPosition } from './enums/input-type.enum';
-import { useDataStore } from '../../composables/useDataStore';
 import usePokemon from '../../composables/usePokemon';
 
 const SelectMove = (props: ISelectMoveComponent) => {
-  const { pokemonsData } = useDataStore();
   const { retrieveMoves } = usePokemon();
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [showMove, setShowMove] = useState(false);
@@ -43,14 +41,12 @@ const SelectMove = (props: ISelectMoveComponent) => {
   );
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData)) {
-      if (toNumber(props.pokemon?.id) > 0) {
-        findMove(props.pokemon, props.moveType, props.isSelected);
-      } else if (resultMove.length > 0) {
-        setResultMove([]);
-      }
+    if (toNumber(props.pokemon?.id) > 0) {
+      findMove(props.pokemon, props.moveType, props.isSelected);
+    } else if (resultMove.length > 0) {
+      setResultMove([]);
     }
-  }, [props.pokemon, props.isSelected, resultMove.length, pokemonsData, findMove]);
+  }, [props.pokemon, props.isSelected, resultMove.length, findMove]);
 
   const smallCardInput = () => (
     <CardMoveSmall

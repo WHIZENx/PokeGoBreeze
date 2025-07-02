@@ -20,11 +20,11 @@ import {
   IStatsPokemonGO,
 } from '../core/models/stats.model';
 import dataCPM from '../data/cp_multiplier.json';
-import { MoveType, PokemonType, TypeAction } from '../enums/type.enum';
+import { PokemonType, TypeAction } from '../enums/type.enum';
 import { IOptionOtherDPS, Specific } from '../store/models/options.model';
 import { findStabType } from './compute';
 import { RAID_BOSS_TIER, typeCostPowerUp } from './constants';
-import { splitAndCapitalize, getDmgMultiplyBonus, getMoveType, camelCase, splitAndCamelCase } from './utils';
+import { getDmgMultiplyBonus, camelCase, splitAndCamelCase } from './utils';
 import {
   BattleLeagueCalculate,
   PredictCPCalculate,
@@ -45,7 +45,6 @@ import {
   CalculateDPS,
   StatsBaseCalculate,
 } from './models/calculate.model';
-import { IPokemonTopMove, PokemonTopMove } from './models/pokemon-top-move.model';
 import {
   DynamicObj,
   isEqual,
@@ -83,7 +82,6 @@ import {
   defaultPokemonDefObj,
   defaultTrainerFriend,
   defaultEnemyAtkDelay,
-  defaultPokemonLevel,
   cpDiffRatio,
   minCp,
   stepLevel,
@@ -1067,44 +1065,6 @@ export const calculateBattleDPS = (attacker: IBattleCalculate, defender: IBattle
 };
 
 export const TimeToKill = (hp: number, dpsDef: number) => hp / dpsDef;
-
-export const queryTopMove = (pokemonList: IPokemonData[] | undefined, move: ICombat | undefined) => {
-  const dataPri: IPokemonTopMove[] = [];
-  if (move) {
-    pokemonList?.forEach((pokemon) => {
-      if (pokemon) {
-        let name = move.name;
-        if (move.isMultipleWithType) {
-          name = move.name.replace(`_${move.type}`, '');
-        }
-        const moveType = getMoveType(pokemon, name);
-        if (!isEqual(moveType, MoveType.Unavailable)) {
-          const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
-          const statsAtkBattle = calculateStatsBattle(stats.atk, maxIv(), defaultPokemonLevel());
-          const statsDefBattle = calculateStatsBattle(stats.def, maxIv(), defaultPokemonLevel());
-          const statsStaBattle = calculateStatsBattle(stats.sta, maxIv(), defaultPokemonLevel());
-          const dps = calculateAvgDPS(move, move, statsAtkBattle, statsDefBattle, statsStaBattle, pokemon.types);
-          const tdo = calculateTDO(statsDefBattle, statsStaBattle, dps);
-
-          dataPri.push(
-            new PokemonTopMove({
-              num: pokemon.num,
-              form: pokemon.form,
-              name: splitAndCapitalize(pokemon.name, '-', ' '),
-              baseSpecies: pokemon.baseSpecies,
-              sprite: pokemon.sprite,
-              releasedGO: pokemon.releasedGO,
-              moveType,
-              dps,
-              tdo,
-            })
-          );
-        }
-      }
-    });
-  }
-  return dataPri;
-};
 
 export const queryStatesEvoChain = (
   pokemonData: IPokemonData[],

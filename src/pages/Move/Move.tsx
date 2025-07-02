@@ -11,7 +11,7 @@ import {
   splitAndCapitalize,
 } from '../../utils/utils';
 import { Params } from '../../utils/constants';
-import { getBarCharge, queryTopMove } from '../../utils/calculate';
+import { getBarCharge } from '../../utils/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
@@ -56,9 +56,9 @@ import { IMenuItem } from '../../components/models/component.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
 import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/options-context.helpers';
-import useDataStore from '../../composables/useDataStore';
 import usePokemon from '../../composables/usePokemon';
 import useCombats from '../../composables/useCombats';
+import useCalculate from '../../composables/useCalculate';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -148,8 +148,8 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
 const Move = (props: IMovePage) => {
   const { iconData } = useIcon();
   const { checkPokemonGO } = usePokemon();
-  const { pokemonsData } = useDataStore();
   const { findMoveByName, findMoveById, getCombatsById } = useCombats();
+  const { queryTopMove } = useCalculate();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -301,12 +301,12 @@ const Move = (props: IMovePage) => {
   }, [params.id, props.id, queryMoveData, move, findMoveByName]);
 
   useEffect(() => {
-    if (move && isNotEmpty(pokemonsData)) {
-      const result = queryTopMove(pokemonsData, move);
+    if (move) {
+      const result = queryTopMove(move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, pokemonsData]);
+  }, [move, queryTopMove]);
 
   useEffect(() => {
     setTopListFilter(

@@ -65,10 +65,12 @@ import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
-  const { pokemonsData, pvpData } = useDataStore();
+  const { pvpData } = useDataStore();
+  const { findPokemonBySlug } = usePokemon();
   const { findMoveByName, isCombatsNoneArchetype } = useCombats();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
@@ -184,7 +186,7 @@ const RankingPVP = (props: IStyleSheetData) => {
         }
         const filePVP = file.map((data) => {
           const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-          const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
+          const pokemon = findPokemonBySlug(name);
           const id = pokemon?.num;
           const form = findAssetForm(pokemon?.num, pokemon?.form);
 
@@ -253,14 +255,14 @@ const RankingPVP = (props: IStyleSheetData) => {
     statsData?.stamina?.ranking,
     statsData?.statProd?.ranking,
     findMoveByName,
-    pokemonsData,
+    findPokemonBySlug,
   ]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonRanking();
     };
-    if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains) && isNotEmpty(pokemonsData)) {
+    if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
       if (isCombatsNoneArchetype()) {
         loadPVPMoves();
       } else if (routerAction) {

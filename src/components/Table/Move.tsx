@@ -1,16 +1,14 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
 import { addSelectMovesByType, splitAndCapitalize } from '../../utils/utils';
 import { TypeMove } from '../../enums/type.enum';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
-import useDataStore from '../../composables/useDataStore';
 import usePokemon from '../../composables/usePokemon';
 import useCombats from '../../composables/useCombats';
 
 const Move = (props: IMoveComponent) => {
-  const { pokemonsData } = useDataStore();
   const { findMoveByName } = useCombats();
   const { retrieveMoves } = usePokemon();
 
@@ -19,42 +17,39 @@ const Move = (props: IMoveComponent) => {
   const [currentMove, setCurrentMove] = useState<ISelectMoveModel>();
   const [showMove, setShowMove] = useState(false);
 
-  const findMove = useCallback(
-    (value: IMoveComponent) => {
-      const result = retrieveMoves(value.id, value.form, value.pokemonType);
-      if (result) {
-        let simpleMove: ISelectMoveModel[] = [];
-        if (!props.type || props.type === TypeMove.Fast) {
-          simpleMove = addSelectMovesByType(result, TypeMove.Fast, simpleMove);
-          setCountFM(simpleMove.length);
-        }
-        if (!props.type || props.type === TypeMove.Charge) {
-          simpleMove = addSelectMovesByType(result, TypeMove.Charge, simpleMove);
-        }
-        if (
-          currentMove &&
-          isNotEmpty(simpleMove) &&
-          !isIncludeList(
-            simpleMove.map((m) => m.name),
-            currentMove.name
-          )
-        ) {
-          setCurrentMove(undefined);
-          props.setMove(undefined);
-        }
-        return setResultMove(simpleMove);
+  const findMove = () => {
+    const result = retrieveMoves(props.id, props.form, props.pokemonType);
+    if (result) {
+      let simpleMove: ISelectMoveModel[] = [];
+      if (!props.type || props.type === TypeMove.Fast) {
+        simpleMove = addSelectMovesByType(result, TypeMove.Fast, simpleMove);
+        setCountFM(simpleMove.length);
       }
-    },
-    [props.type, pokemonsData, currentMove]
-  );
+      if (!props.type || props.type === TypeMove.Charge) {
+        simpleMove = addSelectMovesByType(result, TypeMove.Charge, simpleMove);
+      }
+      if (
+        currentMove &&
+        isNotEmpty(simpleMove) &&
+        !isIncludeList(
+          simpleMove.map((m) => m.name),
+          currentMove.name
+        )
+      ) {
+        setCurrentMove(undefined);
+        props.setMove(undefined);
+      }
+      return setResultMove(simpleMove);
+    }
+  };
 
   useEffect(() => {
-    findMove(props);
+    findMove();
     if (!props.move) {
       setCurrentMove(undefined);
       props.setMove(undefined);
     }
-  }, [props, findMove]);
+  }, [props.id, props.form, props.pokemonType, props.move, props.type, currentMove]);
 
   const findType = (move: string | undefined) => {
     if (!move) {

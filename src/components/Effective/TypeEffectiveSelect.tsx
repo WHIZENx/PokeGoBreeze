@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/api.service';
-import { capitalize } from '../../utils/utils';
+import { splitAndCapitalize } from '../../utils/utils';
 
 import './TypeEffectiveSelect.scss';
 import { TypeEffectiveChart } from '../../core/models/type-effective.model';
@@ -17,7 +17,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
           <h6 className={combineClasses('mb-0', props.isBlock ? 'mt-2' : '')}>
             <b className="text-shadow-black">x{toFloat(amount, 3)}</b>
           </h6>
-          <div className="d-flex flex-wrap gap-1">
+          <div className="d-flex flex-wrap gap-2">
             {data?.map((value, index) => (
               <div
                 key={index}
@@ -31,7 +31,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
                   alt="Pokémon GO Type Logo"
                   src={APIService.getTypeHqSprite(value)}
                 />
-                <span>{capitalize(value)}</span>
+                <span>{splitAndCapitalize(value, /(?=[A-Z])/, ' ')}</span>
               </div>
             ))}
           </div>
@@ -53,7 +53,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type];
         });
         if (valueEffective >= EffectiveType.VeryWeakness) {
           data.veryWeak?.push(key);
@@ -72,7 +72,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type];
         });
         if (isNotEmpty(types) && valueEffective === EffectiveType.Neutral) {
           data.neutral?.push(key);
@@ -87,7 +87,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type];
         });
         if (valueEffective <= EffectiveType.SuperResistance) {
           data.superResist?.push(key);

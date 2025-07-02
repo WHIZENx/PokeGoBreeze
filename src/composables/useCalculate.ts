@@ -2,7 +2,7 @@ import { IPokemonDetail } from '../core/models/API/info.model';
 import { Combat, ICombat } from '../core/models/combat.model';
 import { MoveType, PokemonType, TypeMove } from '../enums/type.enum';
 import { OptionOtherDPS, Delay } from '../store/models/options.model';
-import { calculateStatsBattle, calculateAvgDPS } from '../utils/calculate';
+import { calculateStatsBattle, calculateAvgDPS, calculateStatsByTag, calculateTDO } from '../utils/calculate';
 import {
   defaultEnemyAtkDelay,
   defaultPokemonDefObj,
@@ -16,13 +16,22 @@ import {
   PokemonQueryRankMove,
   IPokemonQueryCounter,
   PokemonQueryCounter,
+  IPokemonTopMove,
+  PokemonTopMove,
 } from '../utils/models/pokemon-top-move.model';
-import { getMoveType, moveTypeToFormType, getAllMoves, checkMoveSetAvailable } from '../utils/utils';
+import {
+  getMoveType,
+  moveTypeToFormType,
+  getAllMoves,
+  checkMoveSetAvailable,
+  splitAndCapitalize,
+} from '../utils/utils';
 import useDataStore from './useDataStore';
 import { CounterModel } from '../components/Table/Counter/models/counter.model';
 import { isEqual, isInclude, toNumber } from '../utils/extension';
 import usePokemon from './usePokemon';
 import useCombats from './useCombats';
+import { useCallback } from 'react';
 
 export const useCalculate = () => {
   const { combatsData } = useDataStore();
@@ -193,9 +202,51 @@ export const useCalculate = () => {
     });
   };
 
+  const queryTopMove = useCallback(
+    (move: ICombat | undefined) => {
+      const dataPri: IPokemonTopMove[] = [];
+      if (move) {
+        getFilteredPokemons().forEach((pokemon) => {
+          if (pokemon) {
+            let name = move.name;
+            if (move.isMultipleWithType) {
+              name = move.name.replace(`_${move.type}`, '');
+            }
+            const moveType = getMoveType(pokemon, name);
+            if (!isEqual(moveType, MoveType.Unavailable)) {
+              const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+              const statsAtkBattle = calculateStatsBattle(stats.atk, maxIv(), defaultPokemonLevel());
+              const statsDefBattle = calculateStatsBattle(stats.def, maxIv(), defaultPokemonLevel());
+              const statsStaBattle = calculateStatsBattle(stats.sta, maxIv(), defaultPokemonLevel());
+              const dps = calculateAvgDPS(move, move, statsAtkBattle, statsDefBattle, statsStaBattle, pokemon.types);
+              const tdo = calculateTDO(statsDefBattle, statsStaBattle, dps);
+
+              dataPri.push(
+                new PokemonTopMove({
+                  num: pokemon.num,
+                  form: pokemon.form,
+                  name: splitAndCapitalize(pokemon.name, '-', ' '),
+                  baseSpecies: pokemon.baseSpecies,
+                  sprite: pokemon.sprite,
+                  releasedGO: pokemon.releasedGO,
+                  moveType,
+                  dps,
+                  tdo,
+                })
+              );
+            }
+          }
+        });
+      }
+      return dataPri;
+    },
+    [getFilteredPokemons]
+  );
+
   return {
     rankMove,
     counterPokemon,
+    queryTopMove,
   };
 };
 export default useCalculate;

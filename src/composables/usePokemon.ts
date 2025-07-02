@@ -30,6 +30,20 @@ export const usePokemon = () => {
     [pokemonsData]
   );
 
+  const findPokemonById = useCallback(
+    (id: number | undefined) => {
+      return getFilteredPokemons().find((pokemon) => pokemon.num === id);
+    },
+    [getFilteredPokemons]
+  );
+
+  const findPokemonBySlug = useCallback(
+    (name: string | undefined) => {
+      return getFilteredPokemons().find((pokemon) => isEqual(pokemon.slug, name));
+    },
+    [getFilteredPokemons]
+  );
+
   const checkPokemonGO = (id: number, name: string | undefined) =>
     getFilteredPokemons().find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
 
@@ -46,19 +60,22 @@ export const usePokemon = () => {
     [pokemonsData]
   );
 
-  const getPokemonById = (id: number) => {
-    const result = getFilteredPokemons()
-      .filter((pokemon) => pokemon.num === id)
-      .find(
-        (pokemon) =>
-          isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
-          (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
-      );
-    if (!result) {
-      return;
-    }
-    return new PokemonModel(result.num, result.name);
-  };
+  const getPokemonById = useCallback(
+    (id: number) => {
+      const result = getFilteredPokemons()
+        .filter((pokemon) => pokemon.num === id)
+        .find(
+          (pokemon) =>
+            isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
+            (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
+        );
+      if (!result) {
+        return;
+      }
+      return new PokemonModel(result.num, result.name);
+    },
+    [getFilteredPokemons]
+  );
 
   const checkPokemonIncludeShadowForm = (form: string) =>
     getFilteredPokemons().some(
@@ -120,39 +137,39 @@ export const usePokemon = () => {
     }
   };
 
-  const getPokemonDetails = (
-    id: number | undefined,
-    form: string | undefined,
-    pokemonType = PokemonType.None,
-    isDefault = false
-  ) => {
-    if (form) {
-      const name = getPokemonFormWithNoneSpecialForm(
-        form
-          .replace(/10$/, 'TEN_PERCENT')
-          .replace(/50$/, 'FIFTY_PERCENT')
-          .replace(/UNOWN-/i, '')
-          .replaceAll(' ', '-'),
-        pokemonType
-      );
-      const filterPokemons = getFilteredPokemons();
-      let pokemonForm = filterPokemons.find(
-        (item) => item.num === id && isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive)
-      );
-
-      if (isDefault && !pokemonForm) {
-        pokemonForm = filterPokemons.find(
-          (item) =>
-            item.num === id && (item.form === formNormal() || (item.baseForme && isEqual(item.baseForme, item.form)))
+  const getPokemonDetails = useCallback(
+    (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None, isDefault = false) => {
+      if (form) {
+        const name = getPokemonFormWithNoneSpecialForm(
+          form
+            .replace(/10$/, 'TEN_PERCENT')
+            .replace(/50$/, 'FIFTY_PERCENT')
+            .replace(/UNOWN-/i, '')
+            .replaceAll(' ', '-'),
+          pokemonType
         );
+        const filterPokemons = getFilteredPokemons();
+        let pokemonForm = filterPokemons.find(
+          (item) => item.num === id && isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive)
+        );
+
+        if (isDefault && !pokemonForm) {
+          pokemonForm = filterPokemons.find(
+            (item) =>
+              item.num === id && (item.form === formNormal() || (item.baseForme && isEqual(item.baseForme, item.form)))
+          );
+        }
+        return PokemonData.copyWithCreate(pokemonForm);
       }
-      return PokemonData.copyWithCreate(pokemonForm);
-    }
-    return new PokemonData();
-  };
+      return new PokemonData();
+    },
+    [getFilteredPokemons]
+  );
 
   return {
     getFilteredPokemons,
+    findPokemonById,
+    findPokemonBySlug,
     checkPokemonGO,
     mappingPokemonName,
     getPokemonById,

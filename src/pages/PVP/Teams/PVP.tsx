@@ -56,9 +56,11 @@ import useAssets from '../../../composables/useAssets';
 import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
 
 const TeamPVP = (props: IStyleSheetData) => {
-  const { pokemonsData, pvpData } = useDataStore();
+  const { pvpData } = useDataStore();
+  const { findPokemonBySlug } = usePokemon();
   const { findMoveByName, findMoveByTag, isCombatsNoneArchetype } = useCombats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
   const { findAssetForm } = useAssets();
@@ -79,7 +81,7 @@ const TeamPVP = (props: IStyleSheetData) => {
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-    const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
+    const pokemon = findPokemonBySlug(name);
     const id = pokemon?.num;
     const form = findAssetForm(pokemon?.num, pokemon?.form);
 
@@ -245,7 +247,6 @@ const TeamPVP = (props: IStyleSheetData) => {
       !rankingData &&
       isNotEmpty(pvpData.rankings) &&
       isNotEmpty(pvpData.trains) &&
-      isNotEmpty(pokemonsData) &&
       statsData?.attack?.ranking &&
       statsData?.defense?.ranking &&
       statsData?.stamina?.ranking &&
@@ -262,7 +263,6 @@ const TeamPVP = (props: IStyleSheetData) => {
     rankingData,
     pvpData.rankings,
     pvpData.trains,
-    pokemonsData,
     statsData?.attack?.ranking,
     statsData?.defense?.ranking,
     statsData?.stamina?.ranking,

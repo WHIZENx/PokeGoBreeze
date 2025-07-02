@@ -35,7 +35,6 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNu
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
-import useDataStore from '../../composables/useDataStore';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 
@@ -47,9 +46,8 @@ interface OptionsPokemon {
 
 const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
-  const { pokemonsData } = useDataStore();
   const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
-  const { generatePokemonGoForms, getPokemonDetails, getPokemonById } = usePokemon();
+  const { generatePokemonGoForms, getPokemonDetails, getPokemonById, findPokemonById } = usePokemon();
 
   const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
@@ -90,7 +88,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         return;
       });
 
-      const pokemon = pokemonsData.find((item) => item.num === specie.id);
+      const pokemon = findPokemonById(specie.id);
       const isShadow = Boolean(
         pokemon?.hasShadowForm && toNumber(pokemon.purified?.candy) >= 0 && toNumber(pokemon.purified?.stardust) >= 0
       );
@@ -184,7 +182,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(pokemonsData)) {
+    if (id > 0 && toNumber(data?.id) !== id) {
       clearData();
       queryPokemon(id);
     }
@@ -193,7 +191,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         APIService.cancel(axiosSource.current);
       }
     };
-  }, [props.id, pokemonsData, data?.id, queryPokemon]);
+  }, [props.id, data?.id, queryPokemon]);
 
   useEffect(() => {
     const id = toNumber(props.id);
@@ -220,11 +218,11 @@ const FormSelect = (props: IFormSelectComponent) => {
         }
       }
     }
-  }, [currentForm, props.isObjective, dispatch, pokemonsData]);
+  }, [currentForm, props.isObjective, dispatch, getPokemonDetails]);
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (isNotEmpty(pokemonsData) && id > 0) {
+    if (id > 0) {
       const currentPokemon = getPokemonById(id);
       if (currentPokemon) {
         setDataStorePokemon({
@@ -234,7 +232,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         });
       }
     }
-  }, [pokemonsData, props.id]);
+  }, [getPokemonById, props.id]);
 
   const clearData = () => {
     setCurrentForm(undefined);

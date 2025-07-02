@@ -6,7 +6,7 @@ import { PokemonVersus } from '../../../core/models/pvp.model';
 import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/api.service';
 import { computeBgType } from '../../../utils/compute';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
+import { getValueOrDefault, isInclude, isNotEmpty } from '../../../utils/extension';
 import {
   convertNameRankingToOri,
   convertNameRankingToForm,
@@ -22,11 +22,11 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
+import usePokemon from '../../../composables/usePokemon';
 
 const BodyPVP = (props: BodyComponent) => {
-  const { pokemonsData } = useDataStore();
+  const { findPokemonBySlug } = usePokemon();
   const { findAssetForm } = useAssets();
   const [matchups, setMatchups] = useState<IBody[]>();
   const [counters, setCounters] = useState<IBody[]>();
@@ -36,7 +36,7 @@ const BodyPVP = (props: BodyComponent) => {
       ?.sort((a, b) => a.rating - b.rating)
       .map((versus) => {
         const name = convertNameRankingToOri(versus.opponent, convertNameRankingToForm(versus.opponent));
-        const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
+        const pokemon = findPokemonBySlug(name);
         const id = pokemon?.num;
         const form = findAssetForm(pokemon?.num, pokemon?.form);
         let pokemonType;

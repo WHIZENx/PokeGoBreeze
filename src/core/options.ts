@@ -315,10 +315,10 @@ export const optionPokemonData = (
 
     const types: string[] = [];
     if (pokemonSettings.type) {
-      types.push(pokemonSettings.type.replace(`${PokemonConfig.Type}_`, ''));
+      types.push(splitAndCamelCase(pokemonSettings.type.replace(`${PokemonConfig.Type}_`, ''), '_', ''));
     }
     if (pokemonSettings.type2) {
-      types.push(pokemonSettings.type2.replace(`${PokemonConfig.Type}_`, ''));
+      types.push(splitAndCamelCase(pokemonSettings.type2.replace(`${PokemonConfig.Type}_`, ''), '_', ''));
     }
     pokemon.types = types;
 
@@ -488,7 +488,7 @@ export const optionPokemonData = (
               const opponentPokemonBattle = new OpponentPokemonBattle();
               opponentPokemonBattle.requireDefeat = condition.withOpponentPokemonBattleStatus.requireDefeat;
               opponentPokemonBattle.types = condition.withOpponentPokemonBattleStatus.opponentPokemonType.map((type) =>
-                type.replace(`${PokemonConfig.Type}_`, '')
+                splitAndCamelCase(type.replace(`${PokemonConfig.Type}_`, ''), '_', '')
               );
               quest.opponentPokemonBattle = opponentPokemonBattle;
             }
@@ -626,9 +626,9 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         );
         if (tempEvo && isNotEmpty(pokemon.types)) {
           pokemon.stats = tempEvo.stats;
-          pokemon.types[0] = tempEvo.typeOverride1.replace(`${PokemonConfig.Type}_`, '');
+          pokemon.types[0] = splitAndCamelCase(tempEvo.typeOverride1.replace(`${PokemonConfig.Type}_`, ''), '_', '');
           if (tempEvo.typeOverride2) {
-            pokemon.types[1] = tempEvo.typeOverride2.replace(`${PokemonConfig.Type}_`, '');
+            pokemon.types[1] = splitAndCamelCase(tempEvo.typeOverride2.replace(`${PokemonConfig.Type}_`, ''), '_', '');
           }
         } else {
           if (pokemon.pokemonType === PokemonType.Mega) {
@@ -1015,7 +1015,11 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel):
         result.id = lastTrackId + id;
         result.track = lastTrackId + id;
         result.name = item.data.moveSettings.vfxName.split('_')[1].toUpperCase();
-        result.type = item.data.moveSettings.pokemonType.replace(`${PokemonConfig.Type}_`, '');
+        result.type = splitAndCamelCase(
+          item.data.moveSettings.pokemonType.replace(`${PokemonConfig.Type}_`, ''),
+          '_',
+          ''
+        );
         result.typeMove = TypeMove.Charge;
         result.moveType = MoveType.Dynamax;
         result.durationMs = item.data.moveSettings.durationMs;
@@ -1039,7 +1043,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel):
           result.name = item.templateId.replace(/^COMBAT_V\d{4}_MOVE_/, '');
         }
 
-        result.type = item.data.combatMove.type.replace(`${PokemonConfig.Type}_`, '');
+        result.type = splitAndCamelCase(item.data.combatMove.type.replace(`${PokemonConfig.Type}_`, ''), '_', '');
         const fastMoveType = getValueOrDefault(String, getKeyWithData(TypeMove, TypeMove.Fast)?.toUpperCase());
 
         if (item.templateId.endsWith(`_${fastMoveType}`) || isInclude(item.templateId, `_${fastMoveType}_`)) {
@@ -1264,7 +1268,9 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           case LeagueConditionType.PokemonType:
             result.conditions.uniqueType = getValueOrDefault(
               Array,
-              con.withPokemonType?.pokemonType.map((type) => type.replace(`${PokemonConfig.Type}_`, ''))
+              con.withPokemonType?.pokemonType.map((type) =>
+                splitAndCamelCase(type.replace(`${PokemonConfig.Type}_`, ''), '_', '')
+              )
             );
             break;
           case LeagueConditionType.PokemonLevelRange:

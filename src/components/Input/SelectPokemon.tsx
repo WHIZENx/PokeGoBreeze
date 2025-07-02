@@ -9,15 +9,13 @@ import APIService from '../../services/api.service';
 import { TypeMove } from '../../enums/type.enum';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, isUndefined } from '../../utils/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isUndefined } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import { SelectPosition } from './enums/input-type.enum';
-import { useDataStore } from '../../composables/useDataStore';
 import usePokemon from '../../composables/usePokemon';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
-  const { pokemonsData } = useDataStore();
-  const { retrieveMoves } = usePokemon();
+  const { retrieveMoves, getFilteredPokemons } = usePokemon();
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -89,11 +87,11 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData)) {
-      setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
-      setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' ') : '');
+    if (props.pokemon) {
+      setPokemonIcon(APIService.getPokeIconSprite(props.pokemon.sprite));
+      setSearch(splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' '));
     }
-  }, [props.pokemon, pokemonsData]);
+  }, [props.pokemon]);
 
   const setPos = (position = SelectPosition.Down) => (
     <div
@@ -106,12 +104,11 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       style={{ maxHeight: props.maxHeight ?? 274 }}
     >
       <div>
-        {pokemonsData
+        {getFilteredPokemons()
           .filter(
             (item) =>
-              item.num > 0 &&
-              (isInclude(splitAndCapitalize(item.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
-                isInclude(item.num, search))
+              isInclude(splitAndCapitalize(item.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+              isInclude(item.num, search)
           )
           .slice(0, firstInit.current + eachCounter.current * startIndex)
           .map((value, index) => (

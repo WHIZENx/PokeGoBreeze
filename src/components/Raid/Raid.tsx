@@ -13,19 +13,19 @@ import { getKeyWithData, isSpecialMegaFormType } from '../../utils/utils';
 import { IRaidComponent } from '../models/component.model';
 import { toNumber } from '../../utils/extension';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
-import { useDataStore } from '../../composables/useDataStore';
+import usePokemon from '../../composables/usePokemon';
 
 const Raid = (props: IRaidComponent) => {
-  const { pokemonsData } = useDataStore();
+  const { findPokemonById } = usePokemon();
   const [tier, setTier] = useState(1);
   const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
 
   useEffect(() => {
-    const pokemonClass = pokemonsData.find((item) => item.num === props.id)?.pokemonClass;
+    const pokemonClass = findPokemonById(props.id)?.pokemonClass;
     if (pokemonClass) {
       setPokemonClass(pokemonClass);
     }
-  }, [props.id]);
+  }, [props.id, findPokemonById]);
 
   useEffect(() => {
     if (tier > 5 && props.currForm && !isSpecialMegaFormType(props.currForm.form?.pokemonType)) {
