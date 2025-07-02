@@ -19,13 +19,20 @@ import StatsTable from './StatsDamageTable';
 import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../utils/compute';
 import { useSelector } from 'react-redux';
-import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../utils/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  padding,
+  safeObjectEntries,
+  toNumber,
+} from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
-import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/context.helpers';
+import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -82,7 +89,6 @@ const Damage = () => {
       'battle strategy',
     ],
   });
-  const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [move, setMove] = useState<ICombat>();
@@ -165,7 +171,7 @@ const Damage = () => {
           isTrainer: battleState.isTrainer,
           friendshipLevel: enableFriend ? battleState.friendshipLevel : 0,
           throwLevel: battleState.throwLevel,
-          effective: getTypeEffective(typeEff, move.type, searching?.object?.form?.form?.types),
+          effective: getTypeEffective(move.type, searching?.object?.form?.form?.types),
         });
         setResult((r) =>
           PokemonDmgOption.create({
@@ -366,7 +372,7 @@ const Damage = () => {
                           );
                         }}
                       >
-                        {Object.entries(getThrowCharge()).map(([type, value], index) => (
+                        {safeObjectEntries(getThrowCharge()).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>

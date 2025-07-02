@@ -1,12 +1,11 @@
-import { IAsset } from '../core/models/asset.model';
 import { Color, ICandy } from '../core/models/candy.model';
 import { PokemonClass, PokemonType } from '../enums/type.enum';
-import APIService from '../services/API.service';
-import { BattleLeagueCPType, BattleLeagueIconType, FormType } from './enums/compute.enum';
-import { EqualMode, IncludeMode } from './enums/string.enum';
-import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from './extension';
-import { formGmax, formMega, formNormal } from './helpers/context.helpers';
+import APIService from '../services/api.service';
+import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
+import { EqualMode } from './enums/string.enum';
+import { getValueOrDefault, isEqual, isIncludeList, toNumber } from './extension';
 import { IStyleData } from './models/util.model';
+import candy from '../data/pokemon_candy_color_data.json';
 
 export const priorityBadge = (priority: number) => {
   if (priority === 0) {
@@ -89,8 +88,8 @@ export const raidEgg = (tier: number, pokemonType?: PokemonType, pokemonClass?: 
   }
 };
 
-export const computeCandyColor = (candyData: ICandy[], id: number | undefined) => {
-  const data = candyData.find(
+export const computeCandyColor = (id: number | undefined) => {
+  const data = (candy as ICandy[]).find(
     (item) =>
       isIncludeList(
         item.familyGroup.map((value) => value.id),
@@ -101,8 +100,8 @@ export const computeCandyColor = (candyData: ICandy[], id: number | undefined) =
   return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 };
 
-export const computeCandyBgColor = (candyData: ICandy[], id: number | undefined) => {
-  const data = candyData.find(
+export const computeCandyBgColor = (id: number | undefined) => {
+  const data = (candy as ICandy[]).find(
     (item) =>
       isIncludeList(
         item.familyGroup.map((value) => value.id),
@@ -151,49 +150,6 @@ export const computeBgType = (
     default:
       return `linear-gradient(to bottom right, ${priColor}, ${secColor})`;
   }
-};
-
-export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName = formNormal()) => {
-  const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets) {
-    return;
-  }
-  const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
-  if (asset) {
-    return asset;
-  } else if (
-    isNotEmpty(pokemonAssets.image) &&
-    !isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive)
-  ) {
-    const formOrigin = pokemonAssets.image.find((img) => img.form === formNormal());
-    if (!formOrigin) {
-      return pokemonAssets.image[0];
-    }
-    return formOrigin;
-  }
-  return;
-};
-
-export const findAssetForm = (
-  pokemonAssets: IAsset[],
-  id: number | undefined,
-  formName = formNormal(),
-  formType = FormType.Default
-) => {
-  if (isEqual(formName, formGmax(), EqualMode.IgnoreCaseSensitive)) {
-    return;
-  }
-  const form = queryAssetForm(pokemonAssets, id, formName);
-  if (form) {
-    switch (formType) {
-      case FormType.Shiny:
-        return form.shiny;
-      case FormType.Default:
-      default:
-        return form.default;
-    }
-  }
-  return;
 };
 
 export const findStabType = (types: string[] | undefined, findType: string | undefined) =>

@@ -19,7 +19,7 @@ import {
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import './CalculateStats.scss';
 
@@ -39,7 +39,7 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../..
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/context.helpers';
+import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 
 const Calculate = () => {
   useTitle({

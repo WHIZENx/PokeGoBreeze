@@ -1,18 +1,15 @@
 import React, { Fragment } from 'react';
-import { useSelector } from 'react-redux';
-import APIService from '../../services/API.service';
-import { capitalize } from '../../utils/utils';
+import APIService from '../../services/api.service';
+import { splitAndCapitalize } from '../../utils/utils';
 
 import './TypeEffectiveSelect.scss';
-import { StoreState } from '../../store/models/state.model';
-import { TypeEffChart } from '../../core/models/type-eff.model';
+import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
-import { combineClasses, isNotEmpty, toFloat } from '../../utils/extension';
+import { combineClasses, DynamicObj, isNotEmpty, safeObjectEntries, toFloat } from '../../utils/extension';
 import { EffectiveType } from './enums/type-effective.enum';
+import { getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
-  const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
-
   const renderEffective = (amount: EffectiveType, data: string[] | undefined) => (
     <Fragment>
       {isNotEmpty(data) && (
@@ -20,7 +17,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
           <h6 className={combineClasses('mb-0', props.isBlock ? 'mt-2' : '')}>
             <b className="text-shadow-black">x{toFloat(amount, 3)}</b>
           </h6>
-          <div className="d-flex flex-wrap gap-1">
+          <div className="d-flex flex-wrap gap-2">
             {data?.map((value, index) => (
               <div
                 key={index}
@@ -34,7 +31,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
                   alt="Pokémon GO Type Logo"
                   src={APIService.getTypeHqSprite(value)}
                 />
-                <span>{capitalize(value)}</span>
+                <span>{splitAndCapitalize(value, /(?=[A-Z])/, ' ')}</span>
               </div>
             ))}
           </div>
@@ -44,7 +41,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   );
 
   const getTypeEffect = (effect: EffectiveType, types: string[] | undefined) => {
-    const data = TypeEffChart.create({
+    const data = TypeEffectiveChart.create({
       veryWeak: [],
       weak: [],
       superResist: [],
@@ -53,10 +50,10 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       neutral: [],
     });
     if (effect === EffectiveType.Weakness) {
-      Object.entries(typeEffective).forEach(([key, value]) => {
+      safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type];
         });
         if (valueEffective >= EffectiveType.VeryWeakness) {
           data.veryWeak?.push(key);
@@ -72,10 +69,10 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         </div>
       );
     } else if (effect === EffectiveType.Neutral) {
-      Object.entries(typeEffective).forEach(([key, value]) => {
+      safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type];
         });
         if (isNotEmpty(types) && valueEffective === EffectiveType.Neutral) {
           data.neutral?.push(key);
@@ -87,10 +84,10 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         </div>
       );
     } else if (effect === EffectiveType.Resistance) {
-      Object.entries(typeEffective).forEach(([key, value]) => {
+      safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type];
         });
         if (valueEffective <= EffectiveType.SuperResistance) {
           data.superResist?.push(key);

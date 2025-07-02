@@ -1,21 +1,18 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { RouterActions } from '../../store/actions';
+import useRouter from '../../composables/useRouter';
 
 const RouterSync = () => {
   const location = useLocation();
   const navType = useNavigationType();
-  const dispatch = useDispatch();
+  const { locationChange } = useRouter();
 
   useEffect(() => {
-    dispatch(
-      RouterActions.LocationChangeAction.create({
-        location,
-        action: navType,
-      })
-    );
-  }, [location, navType, dispatch]);
+    locationChange({
+      location,
+      action: navType,
+    });
+  }, [location, navType]);
 
   return null;
 };

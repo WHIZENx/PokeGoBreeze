@@ -5,7 +5,7 @@ import { Badge, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 import './SearchBattle.scss';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import {
   capitalize,
@@ -14,16 +14,16 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { calculateStats, queryStatesEvoChain } from '../../../utils/calculate';
+import { calculateStats } from '../../../utils/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 
 import { marks, PokeGoSlider } from '../../../utils/utils';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
-import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import { IEvolution } from '../../../core/models/evolution.model';
 import {
   BattleBaseStats,
@@ -34,7 +34,6 @@ import {
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
   DynamicObj,
@@ -48,11 +47,15 @@ import {
 } from '../../../utils/extension';
 import { Toggle } from '../../../core/models/pvp.model';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
-import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
-import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/context.helpers';
+import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
+import useAssets from '../../../composables/useAssets';
+import useSpinner from '../../../composables/useSpinner';
+import useCalculate from '../../../composables/useCalculate';
+import usePokemon from '../../../composables/usePokemon';
 
 const FindBattle = () => {
   useTitle({
@@ -68,8 +71,10 @@ const FindBattle = () => {
       'PVP optimization',
     ],
   });
-  const dispatch = useDispatch();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const { getFilteredPokemons, getFindPokemon } = usePokemon();
+  const { queryStatesEvoChain } = useCalculate();
+  const { findAssetForm } = useAssets();
+  const { hideSpinner, showSpinner } = useSpinner();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
   const [maxCP, setMaxCP] = useState(0);
@@ -99,7 +104,7 @@ const FindBattle = () => {
       if (!isNotEmpty(currId)) {
         return arr;
       }
-      const curr = dataStore.pokemons.find((item) => isIncludeList(currId, item.num) && isInclude(item.form, form));
+      const curr = getFindPokemon((item) => isIncludeList(currId, item.num) && isInclude(item.form, form));
       if (
         !isIncludeList(
           arr.map((i) => i.id),
@@ -124,7 +129,7 @@ const FindBattle = () => {
         arr
       );
     },
-    [dataStore.pokemons]
+    [getFindPokemon]
   );
 
   const prevEvoChain = useCallback(
@@ -147,8 +152,8 @@ const FindBattle = () => {
       obj.evoList?.forEach((i) => {
         currEvoChain([i.evoToId], i.evoToForm, arr);
       });
-      const curr = dataStore.pokemons.filter((item) =>
-        item.evoList?.find((i) => obj.num === i.evoToId && isEqual(i.evoToForm, defaultForm))
+      const curr = getFilteredPokemons((item) =>
+        item.evoList?.some((i) => obj.num === i.evoToId && isEqual(i.evoToForm, defaultForm))
       );
       if (isNotEmpty(curr)) {
         curr?.forEach((item) => prevEvoChain(item, defaultForm, arr, result));
@@ -156,30 +161,30 @@ const FindBattle = () => {
         result.push(arr);
       }
     },
-    [currEvoChain, dataStore.pokemons]
+    [currEvoChain, getFilteredPokemons]
   );
 
   const getEvoChain = useCallback(
     (id: number) => {
       const currentForm = convertPokemonAPIDataName(pokemon?.form?.form?.formName, formNormal());
-      let curr = dataStore.pokemons.filter((item) =>
-        item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm))
+      let curr = getFilteredPokemons((item) =>
+        item.evoList?.some((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm))
       );
       if (!isNotEmpty(curr)) {
         if (currentForm === formNormal()) {
-          curr = dataStore.pokemons.filter((item) => id === item.num && isEqual(currentForm, item.form));
+          curr = getFilteredPokemons((item) => id === item.num && isEqual(currentForm, item.form));
         } else {
-          curr = dataStore.pokemons.filter((item) => id === item.num && isInclude(item.form, currentForm));
+          curr = getFilteredPokemons((item) => id === item.num && isInclude(item.form, currentForm));
         }
       }
       if (!isNotEmpty(curr)) {
-        curr = dataStore.pokemons.filter((item) => id === item.num && item.form === formNormal());
+        curr = getFilteredPokemons((item) => id === item.num && item.form === formNormal());
       }
       const result: IEvolution[][] = [];
       curr?.forEach((item) => prevEvoChain(item, currentForm, [], result));
       return result;
     },
-    [prevEvoChain, pokemon?.form, dataStore.pokemons]
+    [prevEvoChain, pokemon?.form, getFilteredPokemons]
   );
 
   const searchStatsPoke = useCallback(
@@ -188,7 +193,7 @@ const FindBattle = () => {
       getEvoChain(toNumber(pokemon?.form?.defaultId)).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(dataStore.pokemons, value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(value, level, ATKIv, DEFIv, STAIv);
           if (data.id === pokemon?.form?.defaultId) {
             setMaxCP(data.maxCP);
           }
@@ -259,7 +264,7 @@ const FindBattle = () => {
           bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
         }
         if (!isNotEmpty(bestLeague)) {
-          dispatch(SpinnerActions.HideSpinner.create());
+          hideSpinner();
           return setBestInLeague([currBastStats]);
         }
         if (ratio >= 90) {
@@ -275,9 +280,9 @@ const FindBattle = () => {
           300
         );
       }
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     },
-    [dispatch, ATKIv, DEFIv, STAIv, getEvoChain, pokemon?.form?.defaultId]
+    [ATKIv, DEFIv, STAIv, getEvoChain, pokemon?.form?.defaultId]
   );
 
   const onSearchStatsPoke = useCallback(
@@ -286,7 +291,7 @@ const FindBattle = () => {
       if (toNumber(searchCP) < minCp()) {
         return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
       }
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       const statATK = toNumber(pokemon?.pokemon?.statsGO?.atk);
       const statDEF = toNumber(pokemon?.pokemon?.statsGO?.def);
       const statSTA = toNumber(pokemon?.pokemon?.statsGO?.sta);
@@ -296,7 +301,6 @@ const FindBattle = () => {
       }, 200);
     },
     [
-      dispatch,
       searchStatsPoke,
       ATKIv,
       DEFIv,
@@ -313,7 +317,7 @@ const FindBattle = () => {
   const processStatsPoke = (result: StatsCalculate) => {
     const name = splitAndCapitalize(pokemon?.pokemon?.fullName, '_', ' ');
     if (result.level === 0) {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
       return enqueueSnackbar(
         `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} impossible found in ${name}`,
         {
@@ -368,7 +372,7 @@ const FindBattle = () => {
   };
 
   const renderPokemon = (value: IBattleBaseStats | IQueryStatesEvoChain, className?: string, height = 100) => {
-    const assets = findAssetForm(dataStore.assets, value.id, pokemon?.form?.form?.formName);
+    const assets = findAssetForm(value.id, pokemon?.form?.form?.formName);
     return (
       <img
         className={className}

@@ -1,17 +1,13 @@
 import React from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ISearchBarComponent } from '../../models/page.model';
-import { Action } from 'history';
 import { combineClasses } from '../../../utils/extension';
-import { RouterState } from '../../../store/models/state.model';
-import { useSelector } from 'react-redux';
 
 const SearchBar = (props: ISearchBarComponent) => {
-  const router = useSelector((state: RouterState) => state.router);
   return (
     <>
       {props.data?.prev && (
@@ -26,9 +22,6 @@ const SearchBar = (props: ISearchBarComponent) => {
           <div
             className="d-flex justify-content-start align-items-center h-100"
             onClick={() => {
-              if (router.action === Action.Pop) {
-                router.action = null;
-              }
               props.onDecId?.();
             }}
             title={`#${props.data.prev.id} ${splitAndCapitalize(props.data.prev.name, '-', ' ')}`}
@@ -71,9 +64,6 @@ const SearchBar = (props: ISearchBarComponent) => {
           <div
             className="d-flex justify-content-end align-items-center h-100"
             onClick={() => {
-              if (router.action === Action.Pop) {
-                router.action = null;
-              }
               props.onIncId?.();
             }}
             title={`#${props.data.next.id} ${splitAndCapitalize(props.data.next.name, '-', ' ')}`}

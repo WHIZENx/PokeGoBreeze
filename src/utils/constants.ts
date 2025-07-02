@@ -5,7 +5,7 @@ import { LeagueBattleType } from '../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { PokemonType } from '../enums/type.enum';
-import { maxLevel, minLevel, stepLevel } from './helpers/context.helpers';
+import { maxLevel, minLevel, stepLevel } from './helpers/options-context.helpers';
 
 // Parameters
 export class Params {

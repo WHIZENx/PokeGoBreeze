@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import SelectPoke from './Select';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import {
   convertNameRankingToOri,
   getArrayBySeq,
@@ -11,7 +11,7 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
@@ -46,13 +46,11 @@ import HP_LOGO from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
-import { StoreState } from '../../../store/models/state.model';
 import { BattlePokemonData, IBattlePokemonData, RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { ICombat } from '../../../core/models/combat.model';
 import {
@@ -66,13 +64,10 @@ import {
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
-import { SpinnerActions } from '../../../store/actions';
-import { loadPVPMoves } from '../../../store/effects/store.effects';
 import {
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
-  isEqual,
   isInclude,
   isNotEmpty,
   toFloat,
@@ -103,7 +98,11 @@ import {
   minIv,
   minLevel,
   stepLevel,
-} from '../../../utils/helpers/context.helpers';
+} from '../../../utils/helpers/options-context.helpers';
+import usePVP from '../../../composables/usePVP';
+import useAssets from '../../../composables/useAssets';
+import useSpinner from '../../../composables/useSpinner';
+import usePokemon from '../../../composables/usePokemon';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -123,8 +122,10 @@ class BattleState implements IBattleState {
 }
 
 const Battle = () => {
-  const dispatch = useDispatch();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const { findPokemonBySlug } = usePokemon();
+  const { loadPVPMoves } = usePVP();
+  const { findAssetForm } = useAssets();
+  const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
@@ -176,7 +177,7 @@ const Battle = () => {
     resetTimeline();
     clearInterval(timelineInterval);
 
-    const battle = BattlePVP.create(pokemonCurr, pokemonObj, dataStore);
+    const battle = BattlePVP.create(pokemonCurr, pokemonObj);
 
     timelineInterval = setInterval(() => {
       battle.updateBattle();
@@ -262,14 +263,12 @@ const Battle = () => {
 
   const fetchPokemonBattle = useCallback(
     async (league: number) => {
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       try {
         clearData();
-        const file = (
-          await APIService.getFetchUrl<RankingsPVP[]>(
-            APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
-          )
-        ).data;
+        const { data: file } = await APIService.getFetchUrl<RankingsPVP[]>(
+          APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
+        );
         if (!isNotEmpty(file)) {
           setIsFound(false);
           return;
@@ -294,13 +293,13 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+            const pokemon = findPokemonBySlug(name);
             if (!pokemon) {
               return new BattlePokemonData();
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.form);
+            const form = findAssetForm(pokemon.num, pokemon.form);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -323,38 +322,34 @@ const Battle = () => {
           })
           .filter((pokemon) => pokemon.id > 0);
         setData(result);
-        dispatch(SpinnerActions.HideSpinner.create());
+        hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
           setIsFound(false);
         } else {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as AxiosError).message,
-            })
-          );
+          showSpinnerMsg({
+            isError: true,
+            message: (e as AxiosError).message,
+          });
         }
       }
     },
-    [dataStore.pokemons, dataStore.assets, dispatch]
+    [findPokemonBySlug]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.assets)) {
-      fetchPokemon(league);
-    }
+    fetchPokemon(league);
     return () => {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     };
-  }, [fetchPokemonBattle, league, dispatch]);
+  }, [fetchPokemonBattle, league]);
 
   useEffect(() => {
-    loadPVPMoves(dispatch);
-  }, [dispatch]);
+    loadPVPMoves();
+  }, []);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));

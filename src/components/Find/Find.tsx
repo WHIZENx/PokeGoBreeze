@@ -1,10 +1,7 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import FormSelect from './FormSelect';
 
-import { useSelector } from 'react-redux';
-import { getPokemonById, mappingPokemonName } from '../../utils/utils';
-import { SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import { IFindComponent } from '../models/component.model';
@@ -13,6 +10,8 @@ import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } fr
 import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
+import useSearch from '../../composables/useSearch';
+import usePokemon from '../../composables/usePokemon';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -20,15 +19,14 @@ const Find = (props: IFindComponent) => {
   const eachCounter = useRef(10);
   const cardHeight = useRef(65);
 
-  const stats = useSelector((state: StatsState) => state.stats);
-  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
+  const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
+  const { mappingPokemonName, getPokemonById } = usePokemon();
 
   const [id, setId] = useState(
-    searching
+    searchingToolData
       ? props.isObjective
-        ? toNumber(searching?.object?.pokemon?.id, 1)
-        : toNumber(searching.current?.pokemon?.id, 1)
+        ? toNumber(searchingToolObjectData?.pokemon?.id, 1)
+        : toNumber(searchingToolCurrentData?.pokemon?.id, 1)
       : 1
   );
 
@@ -40,11 +38,9 @@ const Find = (props: IFindComponent) => {
   const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isNotEmpty(pokemonData)) {
-      const result = mappingPokemonName(pokemonData);
-      setPokemonList(result);
-    }
-  }, [pokemonData]);
+    const result = mappingPokemonName();
+    setPokemonList(result);
+  }, [mappingPokemonName]);
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
@@ -71,7 +67,7 @@ const Find = (props: IFindComponent) => {
   };
 
   const getInfoPoke = (value: IPokemonSearching) => {
-    const currentPokemon = getPokemonById(pokemonData, value.id);
+    const currentPokemon = getPokemonById(value.id);
     setId(value.id);
     if (props.setId) {
       props.setId(value.id);
@@ -95,9 +91,9 @@ const Find = (props: IFindComponent) => {
   };
 
   const modifyId = (modify: number) => {
-    const currentPokemon = getPokemonById(pokemonData, id);
+    const currentPokemon = getPokemonById(id);
     if (currentPokemon) {
-      const current = getPokemonById(pokemonData, currentPokemon.id + modify);
+      const current = getPokemonById(currentPokemon.id + modify);
       if (current) {
         setId(current.id);
         if (props.setId) {
@@ -185,7 +181,6 @@ const Find = (props: IFindComponent) => {
       <div>
         {isNotEmpty(pokemonList) && (
           <FormSelect
-            searching={searching}
             isHide={props.isHide}
             isRaid={props.isRaid}
             setRaid={props.setRaid}
@@ -195,8 +190,6 @@ const Find = (props: IFindComponent) => {
             id={id}
             setName={props.setName}
             name={pokemonList.find((item) => item.id === id)?.name}
-            pokemonData={pokemonData}
-            stats={stats}
             onHandleSetStats={handleSetStats}
             onClearStats={props.clearStats}
             onSetPrev={() => modifyId(-1)}

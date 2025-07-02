@@ -1,28 +1,26 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import TypeEffective from '../../components/Effective/TypeEffective';
+import TypeEffectiveComponent from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../utils/utils';
-import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
-import { ITypeEffComponent } from '../models/page.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isEqual } from '../../utils/extension';
-import { PokemonTypeBadge } from '../../core/models/type.model';
+import { capitalize, getKeyWithData, getMultiplyTypeEffect, splitAndCapitalize } from '../../utils/utils';
+import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-effective.model';
+import { DynamicObj, getPropertyName, isEmpty, safeObjectEntries } from '../../utils/extension';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
+import { getTypes } from '../../utils/helpers/options-context.helpers';
+import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';
+import { camelCase } from 'lodash';
 
-const Defender = (prop: ITypeEffComponent) => {
-  const [types, setTypes] = useState<string[]>([]);
+const Defender = () => {
+  const typesEffective = getTypeEffectiveContext();
+  const [typeEffective, setTypeEffective] = useState<ITypeEffectiveChart>();
 
-  const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
-
-  const [currentTypePri, setCurrentTypePri] = useState(
-    getValueOrDefault(String, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase())
-  );
+  const [currentTypePri, setCurrentTypePri] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [currentTypeSec, setCurrentTypeSec] = useState('');
 
   const [showTypePri, setShowTypePri] = useState(false);
   const [showTypeSec, setShowTypeSec] = useState(false);
 
   const getTypeEffective = useCallback(() => {
-    const data = TypeEffChart.create({
+    const data = TypeEffectiveChart.create({
       veryWeak: [],
       weak: [],
       superResist: [],
@@ -30,32 +28,28 @@ const Defender = (prop: ITypeEffComponent) => {
       resist: [],
       neutral: [],
     });
-    Object.entries(prop.types ?? new TypeEff()).forEach(([key, value]: [string, DynamicObj<number>]) => {
+    safeObjectEntries<DynamicObj<number>>(typesEffective).forEach(([key, value]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= isEmpty(currentTypeSec) ? 1 : value[currentTypeSec];
       getMultiplyTypeEffect(data, valueEffective, key);
     });
     setTypeEffective(data);
-  }, [currentTypePri, currentTypeSec, prop.types]);
+  }, [currentTypePri, currentTypeSec, typesEffective]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? new TypeEff()).filter(
-      (item) => !isEqual(item, currentTypePri) && !isEqual(item, currentTypeSec)
-    );
-    setTypes(results);
     getTypeEffective();
-  }, [currentTypePri, currentTypeSec, getTypeEffective, prop.types]);
+  }, [currentTypePri, currentTypeSec, getTypeEffective]);
 
   const changeTypePri = (value: string) => {
     setShowTypePri(false);
-    setCurrentTypePri(value);
+    setCurrentTypePri(camelCase(value));
     getTypeEffective();
   };
 
   const changeTypeSec = (value: string) => {
     setShowTypeSec(false);
-    setCurrentTypeSec(value);
+    setCurrentTypeSec(camelCase(value));
     getTypeEffective();
   };
 
@@ -87,13 +81,13 @@ const Defender = (prop: ITypeEffComponent) => {
               {showTypePri && (
                 <div className="result-type">
                   <ul>
-                    {types.map((value, index) => (
+                    {getTypes().map((value, index) => (
                       <li
                         className="container card-pokemon theme-bg-default"
                         key={index}
                         onMouseDown={() => changeTypePri(value)}
                       >
-                        <CardType value={capitalize(value)} />
+                        <CardType value={splitAndCapitalize(value, /(?=[A-Z])/, ' ')} />
                       </li>
                     ))}
                   </ul>
@@ -133,9 +127,9 @@ const Defender = (prop: ITypeEffComponent) => {
               {showTypeSec && (
                 <div className="result-type">
                   <ul>
-                    {types.map((value, index) => (
+                    {getTypes().map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
-                        <CardType value={capitalize(value)} />
+                        <CardType value={splitAndCapitalize(value, /(?=[A-Z])/, ' ')} />
                       </li>
                     ))}
                   </ul>
@@ -145,7 +139,7 @@ const Defender = (prop: ITypeEffComponent) => {
           </div>
         </div>
       </div>
-      <TypeEffective typeEffective={typeEffective} />
+      <TypeEffectiveComponent typeEffective={typeEffective} />
     </div>
   );
 };

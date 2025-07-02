@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../utils/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
@@ -9,7 +8,6 @@ import { Tabs, Tab } from 'react-bootstrap';
 import { calculateStatsByTag } from '../../../utils/calculate';
 import { FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
-import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
@@ -31,6 +29,10 @@ import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDat
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
+import { getTypes } from '../../../utils/helpers/options-context.helpers';
+import useIcon from '../../../composables/useIcon';
+import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -202,9 +204,9 @@ class PokemonTypeData implements IPokemonTypeData {
 }
 
 const SearchTypes = (props: IStyleSheetData) => {
-  const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
-  const [typeList, setTypeList] = useState<string[]>([]);
+  const { iconData } = useIcon();
+  const { getFilteredPokemons } = usePokemon();
+  const { getCombatsByTypeMove, getCombatsByTypeAndTypeMove } = useCombats();
 
   const [releasedGO, setReleaseGO] = useState(true);
 
@@ -242,42 +244,38 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(data.combats) && isNotEmpty(data.pokemons)) {
+    if (isNotEmpty(getFilteredPokemons())) {
       setAllData(
         PokemonTypeData.create({
-          pokemon: data.pokemons.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-          fastMoves: data.combats.filter((type) => type.typeMove === TypeMove.Fast).length,
-          chargedMoves: data.combats.filter((type) => type.typeMove === TypeMove.Charge).length,
+          pokemon: getFilteredPokemons((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
+          fastMoves: getCombatsByTypeMove(TypeMove.Fast).length,
+          chargedMoves: getCombatsByTypeMove(TypeMove.Charge).length,
         })
       );
     }
-  }, [releasedGO, data.combats, data.pokemons]);
+  }, [releasedGO, getCombatsByTypeMove, getFilteredPokemons]);
 
   useEffect(() => {
-    setTypeList(Object.keys(data.typeEff));
-  }, [data.typeEff]);
-
-  useEffect(() => {
-    if (isNotEmpty(typeList) && !currentType) {
-      setCurrentType(typeList[0]);
+    if (isNotEmpty(getTypes()) && !currentType) {
+      setCurrentType(getTypes()[0]);
     }
-  }, [typeList, currentType]);
+  }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
+    if (isNotEmpty(getFilteredPokemons())) {
       setResult(
         PokemonTypeMove.create({
-          pokemonList: data.pokemons
-            .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-            .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
-          fastMove: data.combats.filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
-          chargedMove: data.combats.filter(
-            (type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)
+          pokemonList: getFilteredPokemons(
+            (pokemon) =>
+              (releasedGO ? pokemon.releasedGO : true) &&
+              isIncludeList(pokemon.types, currentType, IncludeMode.IncludeIgnoreCaseSensitive)
           ),
+          fastMove: getCombatsByTypeAndTypeMove(currentType, TypeMove.Fast),
+          chargedMove: getCombatsByTypeAndTypeMove(currentType, TypeMove.Charge),
         })
       );
     }
-  }, [currentType, releasedGO, data.pokemons, data.combats]);
+  }, [currentType, releasedGO, getFilteredPokemons, getCombatsByTypeAndTypeMove]);
 
   const changeType = (value: string) => {
     setShowType(false);
@@ -303,7 +301,7 @@ const SearchTypes = (props: IStyleSheetData) => {
             {showType && (
               <div className="result-type">
                 <ul>
-                  {Object.keys(data.typeEff)
+                  {getTypes()
                     .filter((value) => !isEqual(value, currentType))
                     .map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
@@ -326,7 +324,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               width={28}
               height={28}
               alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(icon)}
+              src={APIService.getPokemonGoIcon(iconData)}
             />
             <b>{`Filter from ${allData?.pokemon} Pokémon`}</b>
           </span>

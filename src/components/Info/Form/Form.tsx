@@ -12,7 +12,7 @@ import {
   isSpecialFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import './Form.scss';
 import Gender from '../Gender';
@@ -23,9 +23,8 @@ import TableMove from '../../Table/Move/MoveTable';
 import Info from '../Info';
 import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
-import { RouterState, SearchingState, StatsState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
-import { Action } from 'history';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
 import { IncludeMode } from '../../../utils/enums/string.enum';
@@ -34,12 +33,15 @@ import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { SearchingActions } from '../../../store/actions';
 import { PokemonGenderRatio } from '../../../core/models/pokemon.model';
 import { PokemonDetail } from '../../../core/models/API/info.model';
-import { formNormal } from '../../../utils/helpers/context.helpers';
+import { formNormal } from '../../../utils/helpers/options-context.helpers';
+import useRouter from '../../../composables/useRouter';
+import useStats from '../../../composables/useStats';
+import { Action } from 'history';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
-  const router = useSelector((state: RouterState) => state.router);
-  const stats = useSelector((state: StatsState) => state.stats);
+  const { routerAction } = useRouter();
+  const { statsData } = useStats();
   const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
   const form = useSelector((state: SearchingState) => state.searching.mainSearching?.form);
 
@@ -62,15 +64,20 @@ const FormComponent = (props: IFormInfoComponent) => {
   );
 
   useEffect(() => {
-    if (stats?.attack?.ranking && stats?.defense?.ranking && stats?.stamina?.ranking && stats?.statProd?.ranking) {
+    if (
+      statsData?.attack?.ranking &&
+      statsData?.defense?.ranking &&
+      statsData?.stamina?.ranking &&
+      statsData?.statProd?.ranking
+    ) {
       setStatsPokemon({
-        atk: filterFormList(stats.attack.ranking),
-        def: filterFormList(stats.defense.ranking),
-        sta: filterFormList(stats.stamina.ranking),
-        prod: filterFormList(stats.statProd.ranking),
+        atk: filterFormList(statsData.attack.ranking),
+        def: filterFormList(statsData.defense.ranking),
+        sta: filterFormList(statsData.stamina.ranking),
+        prod: filterFormList(statsData.statProd.ranking),
       });
     }
-  }, [filterFormList, stats]);
+  }, [filterFormList, statsData]);
 
   const findFormData = (name: string) => {
     let currentData = props.pokeData.find((item) => isEqual(name, item.name));
@@ -86,7 +93,7 @@ const FormComponent = (props: IFormInfoComponent) => {
   };
 
   useEffect(() => {
-    if (router.action === Action.Pop) {
+    if (routerAction === Action.Pop) {
       const form = getValueOrDefault(
         String,
         searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-'),
@@ -102,7 +109,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         findFormData(currentData.name);
       }
     }
-  }, [router]);
+  }, [routerAction]);
 
   const changeForm = (isSelected: boolean, name: string, form: string | undefined, pokemonType = PokemonType.None) => {
     if (isSelected) {
@@ -225,10 +232,9 @@ const FormComponent = (props: IFormInfoComponent) => {
         statDEF={statsPokemon?.def}
         statSTA={statsPokemon?.sta}
         statProd={statsPokemon?.prod}
-        pokemonStats={stats}
         id={props.defaultId}
         form={pokemonData?.form}
-        isDisabled={!stats}
+        isDisabled={!statsData}
       />
       <hr className="w-100" />
       <div className="row w-100 m-0">

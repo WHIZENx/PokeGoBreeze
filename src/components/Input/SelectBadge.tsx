@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { priorityBadge } from '../../utils/compute';
 import { capitalize, getDataWithKey, getKeysObj, getKeyWithData } from '../../utils/utils';
 import { ISelectBadgeComponent } from '../models/component.model';

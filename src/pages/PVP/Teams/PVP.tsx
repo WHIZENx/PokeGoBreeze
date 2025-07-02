@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import {
   convertNameRankingToForm,
@@ -10,15 +10,9 @@ import {
   getKeyWithData,
   getMoveType,
   getValidPokemonImgPath,
-  reverseReplaceTempMovePvpName,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import {
-  computeBgType,
-  findAssetForm,
-  getPokemonBattleLeagueIcon,
-  getPokemonBattleLeagueName,
-} from '../../../utils/compute';
+import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateStatsByTag } from '../../../utils/calculate';
 import { Accordion } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
@@ -28,14 +22,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
-import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
 import { Params } from '../../../utils/constants';
-import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
   DynamicObj,
@@ -44,7 +33,6 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
-  isNullOrUndefined,
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
@@ -61,19 +49,27 @@ import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { formShadow } from '../../../utils/helpers/context.helpers';
+import { formShadow } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
+import usePVP from '../../../composables/usePVP';
+import useAssets from '../../../composables/useAssets';
+import useStats from '../../../composables/useStats';
+import useSpinner from '../../../composables/useSpinner';
+import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
 
 const TeamPVP = (props: IStyleSheetData) => {
-  const dispatch = useDispatch();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
-  const allMoves = useSelector((state: StoreState) => state.store.data.combats.map((c) => c.name));
-  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const { pvpData } = useDataStore();
+  const { findPokemonBySlug } = usePokemon();
+  const { findMoveByName, findMoveByTag, isCombatsNoneArchetype } = useCombats();
+  const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
+  const { findAssetForm } = useAssets();
+  const { loadPVP, loadPVPMoves } = usePVP();
+  const { statsData } = useStats();
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<TeamsPVP>();
   const [search, setSearch] = useState('');
-  const statsRanking = useSelector((state: StatsState) => state.stats);
   const [sortedBy, setSortedBy] = useState(SortType.TeamScore);
   const [sorted, setSorted] = useState(SortDirectionType.DESC);
 
@@ -85,9 +81,9 @@ const TeamPVP = (props: IStyleSheetData) => {
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-    const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+    const pokemon = findPokemonBySlug(name);
     const id = pokemon?.num;
-    const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
+    const form = findAssetForm(pokemon?.num, pokemon?.form);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -131,9 +127,9 @@ const TeamPVP = (props: IStyleSheetData) => {
       pokemonData: pokemon,
       form,
       stats,
-      atk: statsRanking?.attack?.ranking?.find((i) => i.attack === stats.atk),
-      def: statsRanking?.defense?.ranking?.find((i) => i.defense === stats.def),
-      sta: statsRanking?.stamina?.ranking?.find((i) => i.stamina === stats.sta),
+      atk: statsData?.attack?.ranking?.find((i) => i.attack === stats.atk),
+      def: statsData?.defense?.ranking?.find((i) => i.defense === stats.def),
+      sta: statsData?.stamina?.ranking?.find((i) => i.stamina === stats.sta),
       fMove,
       cMovePri,
       cMoveSec,
@@ -143,14 +139,14 @@ const TeamPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvp);
+    loadPVP();
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
-      loadPVPMoves(dispatch);
+    if (isCombatsNoneArchetype()) {
+      loadPVPMoves();
     }
-  }, [dispatch, dataStore.combats]);
+  }, [findMoveByName]);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PVP Teams',
@@ -163,11 +159,12 @@ const TeamPVP = (props: IStyleSheetData) => {
 
   useEffect(() => {
     const fetchPokemon = async () => {
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       try {
         const cp = toNumber(params.cp);
-        const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp)))
-          .data;
+        const { data: file } = await APIService.getFetchUrl<TeamsPVP>(
+          APIService.getTeamFile('analysis', params.serie, cp)
+        );
         if (!file) {
           setIsFound(false);
           return;
@@ -234,56 +231,47 @@ const TeamPVP = (props: IStyleSheetData) => {
           });
         });
         setRankingData(file);
-        dispatch(SpinnerActions.HideSpinner.create());
+        hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
           setIsFound(false);
         } else {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as AxiosError).message,
-            })
-          );
+          showSpinnerMsg({
+            isError: true,
+            message: (e as AxiosError).message,
+          });
         }
       }
     };
     if (
       !rankingData &&
-      isNotEmpty(pvp.rankings) &&
-      isNotEmpty(pvp.trains) &&
-      isNotEmpty(dataStore.combats) &&
-      isNotEmpty(dataStore.pokemons) &&
-      isNotEmpty(dataStore.assets) &&
-      statsRanking?.attack?.ranking &&
-      statsRanking?.defense?.ranking &&
-      statsRanking?.stamina?.ranking &&
-      statsRanking?.statProd?.ranking
+      isNotEmpty(pvpData.rankings) &&
+      isNotEmpty(pvpData.trains) &&
+      statsData?.attack?.ranking &&
+      statsData?.defense?.ranking &&
+      statsData?.stamina?.ranking &&
+      statsData?.statProd?.ranking
     ) {
       fetchPokemon();
     }
     return () => {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     };
   }, [
-    dispatch,
     params.cp,
     params.serie,
     rankingData,
-    pvp.rankings,
-    pvp.trains,
-    dataStore.combats,
-    dataStore.pokemons,
-    dataStore.assets,
-    statsRanking?.attack?.ranking,
-    statsRanking?.defense?.ranking,
-    statsRanking?.stamina?.ranking,
-    statsRanking?.statProd?.ranking,
+    pvpData.rankings,
+    pvpData.trains,
+    statsData?.attack?.ranking,
+    statsData?.defense?.ranking,
+    statsData?.stamina?.ranking,
+    statsData?.statProd?.ranking,
   ]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvp.trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = pvpData.trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -325,33 +313,6 @@ const TeamPVP = (props: IStyleSheetData) => {
     return sortedTeam === SortDirectionType.DESC
       ? b[sortedColumn] - a[sortedColumn]
       : a[sortedColumn] - b[sortedColumn];
-  };
-
-  const findMoveByTag = (nameSet: string[], tag: string) => {
-    let move: ICombat | undefined;
-    if (!tag) {
-      return move;
-    }
-
-    for (const name of nameSet) {
-      move = dataStore.combats.find(
-        (item) =>
-          (item.abbreviation && isEqual(item.abbreviation, tag)) ||
-          (!item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(name)))
-      );
-      if (!isNullOrUndefined(move)) {
-        return move;
-      }
-    }
-
-    nameSet = findMoveTeam(tag, allMoves, true);
-    move = dataStore.combats.find(
-      (item) =>
-        (item.abbreviation && isEqual(item.abbreviation, tag)) ||
-        (isNotEmpty(nameSet) && !item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(nameSet[0])))
-    );
-
-    return move;
   };
 
   return (

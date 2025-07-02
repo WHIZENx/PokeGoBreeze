@@ -26,8 +26,10 @@ import {
 import { IToolsComponent } from '../models/component.model';
 import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
 import { isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
+import useStats from '../../composables/useStats';
 
 const Tools = (props: IToolsComponent) => {
+  const { statsData } = useStats();
   const pokemonData = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
   const currentForm = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.form);
   const [currTier, setCurrTier] = useState(props.tier);
@@ -60,16 +62,16 @@ const Tools = (props: IToolsComponent) => {
 
   useEffect(() => {
     if (
-      props.stats?.attack?.ranking &&
-      props.stats?.defense?.ranking &&
-      props.stats?.stamina?.ranking &&
-      props.stats?.statProd?.ranking
+      statsData?.attack?.ranking &&
+      statsData?.defense?.ranking &&
+      statsData?.stamina?.ranking &&
+      statsData?.statProd?.ranking
     ) {
       const formResult: StatsRankingPokemonGO = {
-        atk: filterFormList(props.stats.attack.ranking),
-        def: filterFormList(props.stats.defense.ranking),
-        sta: filterFormList(props.stats.stamina.ranking),
-        prod: filterFormList(props.stats.statProd.ranking),
+        atk: filterFormList(statsData.attack.ranking),
+        def: filterFormList(statsData.defense.ranking),
+        sta: filterFormList(statsData.stamina.ranking),
+        prod: filterFormList(statsData.statProd.ranking),
       };
 
       setStatsPokemon({
@@ -115,7 +117,7 @@ const Tools = (props: IToolsComponent) => {
         );
       }
     }
-  }, [filterFormList, currentForm, props.dataPoke, props.id, props.stats, props.isRaid, props.tier, props.isHide]);
+  }, [filterFormList, currentForm, props.dataPoke, props.id, statsData, props.isRaid, props.tier, props.isHide]);
 
   return (
     <Fragment>
@@ -207,7 +209,6 @@ const Tools = (props: IToolsComponent) => {
           statDEF={statsPokemon?.def}
           statSTA={statsPokemon?.sta}
           statProd={statsPokemon?.prod}
-          pokemonStats={props.stats}
           stats={pokemonData?.statsGO}
           id={props.id}
           form={pokemonData?.form}

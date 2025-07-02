@@ -1,20 +1,21 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { leaguesTeamBattle } from '../../utils/constants';
-import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
 import { Link } from 'react-router-dom';
-import { SpinnerState, StoreState, TimestampState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../utils/compute';
 import { useTitle } from '../../utils/hooks/useTitle';
-import { SpinnerActions } from '../../store/actions';
 import { getTime } from '../../utils/utils';
 import { isEqual, isInclude, isNotEmpty } from '../../utils/extension';
 import { EqualMode } from '../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../utils/enums/compute.enum';
+import useDataStore from '../../composables/useDataStore';
+import usePVP from '../../composables/usePVP';
+import useSpinner from '../../composables/useSpinner';
+import useTimestamp from '../../composables/useTimestamp';
+import useCombats from '../../composables/useCombats';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -39,39 +40,39 @@ const PVPHome = () => {
       'Simulate Pokémon GO PVP battles with our comprehensive battle simulator. Test different teams, moves, and strategies for Great, Ultra, and Master League.',
     keywords: ['PVP simulator', 'Pokémon GO battles', 'battle simulator', 'PVP team builder', 'battle strategies'],
   });
-  const dispatch = useDispatch();
-  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const { pvpData } = useDataStore();
+  const { isCombatsNoneArchetype } = useCombats();
+  const { loadPVP, loadPVPMoves } = usePVP();
+  const { spinnerIsLoading, hideSpinner } = useSpinner();
+  const { timestampPVP } = useTimestamp();
 
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvp);
+    loadPVP();
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
-      loadPVPMoves(dispatch);
+    if (isCombatsNoneArchetype()) {
+      loadPVPMoves();
     }
-    if (spinner.isLoading) {
-      dispatch(SpinnerActions.HideSpinner.create());
+    if (spinnerIsLoading) {
+      hideSpinner();
     }
-  }, [spinner, combat, dispatch]);
+  }, [spinnerIsLoading, isCombatsNoneArchetype]);
 
   useEffect(() => {
-    if (!rank && !team && isNotEmpty(pvp.rankings) && isNotEmpty(pvp.trains)) {
+    if (!rank && !team && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
       setOptions(
         OptionsHome.create({
-          rank: pvp.rankings.at(0),
-          team: pvp.trains.at(0),
+          rank: pvpData.rankings.at(0),
+          team: pvpData.trains.at(0),
         })
       );
     }
-  }, [rank, team, pvp.rankings, pvp.trains]);
+  }, [rank, team, pvpData.rankings, pvpData.trains]);
 
   const renderLeagueLogo = (logo: string | undefined, cp: number) => {
     if (
@@ -111,9 +112,9 @@ const PVPHome = () => {
 
   return (
     <div className="container mt-2 pb-3">
-      {timestamp.pvp > 0 && (
+      {timestampPVP > 0 && (
         <h4>
-          <b>Updated: {getTime(timestamp.pvp, true)}</b>
+          <b>Updated: {getTime(timestampPVP, true)}</b>
         </h4>
       )}
       <p className="text-danger">
@@ -133,12 +134,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                rank: pvp.rankings.find((item) => isEqual(item.id, e.target.value)),
+                rank: pvpData.rankings.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvp.rankings.map((value, index) => (
+          {pvpData.rankings.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>
@@ -177,12 +178,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                team: pvp.trains.find((item) => isEqual(item.id, e.target.value)),
+                team: pvpData.trains.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvp.trains.map((value, index) => (
+          {pvpData.trains.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>

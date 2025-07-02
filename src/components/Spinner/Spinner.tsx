@@ -1,22 +1,21 @@
 import React, { Fragment } from 'react';
-import { useSelector } from 'react-redux';
 import loading from '../../assets/loading.png';
 import './Spinner.scss';
-import { SpinnerState } from '../../store/models/state.model';
 import { clearLocalStorageExcept } from '../../utils/configs/local-storage.config';
+import useSpinner from '../../composables/useSpinner';
 
 const Spinner = () => {
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const { spinnerIsLoading, spinnerIsError, spinnerMessage } = useSpinner();
 
   return (
     <Fragment>
-      {spinner.isLoading && (
+      {spinnerIsLoading && (
         <div className="spinner-container">
           <div className="loading-group-spin" />
           <div className="loading-spin-container">
             <div className="loading-spin text-center">
               <img
-                className={spinner.error?.isError ? '' : 'loading'}
+                className={spinnerIsError ? '' : 'loading'}
                 width={64}
                 height={64}
                 alt="Pokémon Image"
@@ -24,7 +23,7 @@ const Spinner = () => {
               />
               <span className="caption text-white text-shadow-black" style={{ fontSize: 18 }}>
                 <b>
-                  {spinner.error?.isError ? (
+                  {spinnerIsError ? (
                     <Fragment>
                       Oops
                       <br />
@@ -38,8 +37,8 @@ const Spinner = () => {
                       >
                         Retry Again
                       </p>
-                      {spinner.error.message && process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
-                        <p className="text-danger">{spinner.error.message}</p>
+                      {spinnerMessage && process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
+                        <p className="text-danger">{spinnerMessage}</p>
                       )}
                     </Fragment>
                   ) : (

@@ -25,7 +25,7 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/context.helpers';
+import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/options-context.helpers';
 
 interface IFindCP {
   level: number;
