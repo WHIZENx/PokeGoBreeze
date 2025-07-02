@@ -15,6 +15,7 @@ import { isNotEmpty } from '../utils/extension';
 import APIService from '../services/api.service';
 import { useDataStore } from '../composables/useDataStore';
 import { Timestamp } from '../store/models/timestamp.model';
+import usePokemon from './usePokemon';
 
 /**
  * Custom hook to access and update the timestamp state from Redux store
@@ -26,7 +27,7 @@ export const useTimestamp = () => {
   const dispatch = useDispatch();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const { getAuthorizationHeaders, loadPokeGOLogo, loadGameMaster, loadAssets } = useDataStore();
-  const { pokemonsData } = useDataStore();
+  const { getFilteredPokemons } = usePokemon();
 
   /**
    * Update timestamp game master state in the store
@@ -102,7 +103,7 @@ export const useTimestamp = () => {
           if (!timestampLoaded.isCurrentGameMaster || !timestampLoaded.isCurrentVersion) {
             await loadGameMaster(imageRoot.data, soundsRoot.data, timestampLoaded);
           } else if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
-            await loadAssets(imageRoot.data, soundsRoot.data, pokemonsData, timestampLoaded);
+            await loadAssets(imageRoot.data, soundsRoot.data, getFilteredPokemons(), timestampLoaded);
           } else {
             dispatch(SpinnerActions.SetPercent.create(100));
             setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);

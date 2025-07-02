@@ -94,7 +94,6 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { StatsIV } from '../../../core/models/stats.model';
 import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
@@ -117,7 +116,7 @@ const RaidBattle = () => {
     ],
   });
   const { iconData } = useIcon();
-  const { pokemonsData } = useDataStore();
+  const { getFilteredPokemons } = usePokemon();
   const { findMoveByName } = useCombats();
   const { findAssetForm } = useAssets();
   const { showSpinner, hideSpinner } = useSpinner();
@@ -456,7 +455,7 @@ const RaidBattle = () => {
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: IPokemonMoveData[] = [];
-    pokemonsData.forEach((pokemon) => {
+    getFilteredPokemons().forEach((pokemon) => {
       if (pokemon.pokemonType !== PokemonType.GMax) {
         addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast), pokemonTarget);
       }
@@ -651,14 +650,14 @@ const RaidBattle = () => {
   }, [pokemon]);
 
   useEffect(() => {
-    if (pokemon?.form && isNotEmpty(pokemonsData)) {
+    if (pokemon?.form && isNotEmpty(getFilteredPokemons())) {
       findMove(
         toNumber(pokemon?.form.defaultId, 1),
         getValueOrDefault(String, pokemon?.form.form?.name),
         pokemon?.form.form?.pokemonType
       );
     }
-  }, [pokemonsData, pokemon?.form]);
+  }, [getFilteredPokemons, pokemon?.form]);
 
   const handleCalculate = () => {
     showSpinner();

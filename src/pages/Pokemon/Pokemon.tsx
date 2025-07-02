@@ -69,7 +69,6 @@ import { StatsPokemonGO } from '../../core/models/stats.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
 import { formStandard, keyLeft, keyRight } from '../../utils/helpers/options-context.helpers';
-import useDataStore from '../../composables/useDataStore';
 import useIcon from '../../composables/useIcon';
 import useSpinner from '../../composables/useSpinner';
 import useRouter from '../../composables/useRouter';
@@ -94,7 +93,7 @@ const Pokemon = (props: IPokemonPage) => {
   const { routerAction } = useRouter();
   const dispatch = useDispatch();
   const { iconData } = useIcon();
-  const { pokemonsData } = useDataStore();
+  const { getFilteredPokemons, getFindPokemon } = usePokemon();
   const { getPokemonById, checkPokemonIncludeShadowForm, generatePokemonGoForms, getPokemonDetails } = usePokemon();
 
   const currentSearchingForm = useSelector((state: SearchingState) => state.searching.mainSearching?.form);
@@ -130,8 +129,8 @@ const Pokemon = (props: IPokemonPage) => {
 
   const getPokemonIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
-    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemonsData)) {
-      const pokemon = pokemonsData.find((p) =>
+    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(getFilteredPokemons())) {
+      const pokemon = getFindPokemon((p) =>
         isEqual(p.pokemonId?.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
       );
       id = toNumber(pokemon?.num);
@@ -191,7 +190,7 @@ const Pokemon = (props: IPokemonPage) => {
       }
       setUrlEvolutionChain(specie.evolutionChainPath);
 
-      const pokemon = pokemonsData.find((item) => item.num === specie.id);
+      const pokemon = getFindPokemon((item) => item.num === specie.id);
       setCostModifier(
         new TypeCost({
           purified: PokemonTypeCost.create({
@@ -319,7 +318,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     },
-    [pokemonsData, searchParams, dispatch]
+    [getFindPokemon, searchParams, dispatch]
   );
 
   const queryPokemon = useCallback(
@@ -391,9 +390,10 @@ const Pokemon = (props: IPokemonPage) => {
   useTitle(titleProps);
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData)) {
+    const pokemons = getFilteredPokemons();
+    if (isNotEmpty(pokemons)) {
       let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
-      if (id <= 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemonsData)) {
+      if (id <= 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemons)) {
         id = getPokemonIdByParam();
         if (id <= 0) {
           enqueueSnackbar(`Pokémon ID or name: ${params.id} Not found!`, { variant: VariantType.Error });
@@ -412,7 +412,7 @@ const Pokemon = (props: IPokemonPage) => {
         }
       };
     }
-  }, [params.id, props.searchOption?.id, pokemonsData, data?.id, queryPokemon]);
+  }, [params.id, props.searchOption?.id, getFilteredPokemons, data?.id, queryPokemon]);
 
   useEffect(() => {
     if (!data) {
@@ -426,7 +426,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = getPokemonIdByParam();
-    if (id > 0 && isNotEmpty(pokemonsData)) {
+    if (id > 0 && isNotEmpty(getFilteredPokemons())) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinnerIsLoading) {
           const currentPokemon = getPokemonById(id);
@@ -448,7 +448,7 @@ const Pokemon = (props: IPokemonPage) => {
         document.removeEventListener('keyup', keyDownHandler);
       };
     }
-  }, [params.id, props.searchOption?.id, spinnerIsLoading, pokemonsData]);
+  }, [params.id, props.searchOption?.id, spinnerIsLoading, getFilteredPokemons]);
 
   const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined) => {
     if (!form) {
@@ -578,7 +578,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = getPokemonIdByParam();
-    if (id > 0 && isNotEmpty(pokemonsData)) {
+    if (id > 0 && isNotEmpty(getFilteredPokemons())) {
       const currentPokemon = getPokemonById(id);
       if (currentPokemon) {
         setDataStorePokemon({
@@ -588,7 +588,7 @@ const Pokemon = (props: IPokemonPage) => {
         });
       }
     }
-  }, [pokemonsData, params.id, props.searchOption?.id]);
+  }, [getFilteredPokemons, params.id, props.searchOption?.id]);
 
   const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
     if (progress.isLoadedForms) {
