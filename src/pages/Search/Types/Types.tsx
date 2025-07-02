@@ -30,9 +30,9 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -205,7 +205,7 @@ class PokemonTypeData implements IPokemonTypeData {
 
 const SearchTypes = (props: IStyleSheetData) => {
   const { iconData } = useIcon();
-  const { pokemonsData } = useDataStore();
+  const { getFilteredPokemons } = usePokemon();
   const { getCombatsByTypeMove, getCombatsByTypeAndTypeMove } = useCombats();
 
   const [releasedGO, setReleaseGO] = useState(true);
@@ -244,16 +244,16 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData)) {
+    if (isNotEmpty(getFilteredPokemons())) {
       setAllData(
         PokemonTypeData.create({
-          pokemon: pokemonsData.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
+          pokemon: getFilteredPokemons((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
           fastMoves: getCombatsByTypeMove(TypeMove.Fast).length,
           chargedMoves: getCombatsByTypeMove(TypeMove.Charge).length,
         })
       );
     }
-  }, [releasedGO, getCombatsByTypeMove, pokemonsData]);
+  }, [releasedGO, getCombatsByTypeMove, getFilteredPokemons]);
 
   useEffect(() => {
     if (isNotEmpty(getTypes()) && !currentType) {
@@ -262,10 +262,10 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData)) {
+    if (isNotEmpty(getFilteredPokemons())) {
       setResult(
         PokemonTypeMove.create({
-          pokemonList: pokemonsData.filter(
+          pokemonList: getFilteredPokemons(
             (pokemon) =>
               (releasedGO ? pokemon.releasedGO : true) &&
               isIncludeList(pokemon.types, currentType, IncludeMode.IncludeIgnoreCaseSensitive)
@@ -275,7 +275,7 @@ const SearchTypes = (props: IStyleSheetData) => {
         })
       );
     }
-  }, [currentType, releasedGO, pokemonsData, getCombatsByTypeAndTypeMove]);
+  }, [currentType, releasedGO, getFilteredPokemons, getCombatsByTypeAndTypeMove]);
 
   const changeType = (value: string) => {
     setShowType(false);

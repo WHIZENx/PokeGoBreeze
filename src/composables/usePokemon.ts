@@ -24,37 +24,47 @@ export const usePokemon = () => {
    * @returns The filtered array of IPokemonData
    */
   const getFilteredPokemons = useCallback(
-    (filterFn?: (item: IPokemonData) => boolean) => {
-      return pokemonsData.filter((item) => item.num > 0 && (filterFn?.(item) || true));
+    (filterFn?: (item: IPokemonData) => boolean | undefined) => {
+      return pokemonsData.filter((item) => item.num > 0 && (filterFn === undefined || filterFn(item)));
+    },
+    [pokemonsData]
+  );
+
+  /**
+   * Returns a find version of the pokemons data based on the provided find function
+   * @param findFn - A function to find the pokemons array
+   * @returns The IPokemonData
+   */
+  const getFindPokemon = useCallback(
+    (findFn?: (item: IPokemonData) => boolean | undefined) => {
+      return pokemonsData.find((item) => item.num > 0 && (findFn === undefined || findFn(item)));
     },
     [pokemonsData]
   );
 
   const findPokemonById = useCallback(
     (id: number | undefined) => {
-      return getFilteredPokemons().find((pokemon) => pokemon.num === id);
+      return getFindPokemon((pokemon) => pokemon.num === id);
     },
-    [getFilteredPokemons]
+    [pokemonsData]
   );
 
   const findPokemonBySlug = useCallback(
     (name: string | undefined) => {
-      return getFilteredPokemons().find((pokemon) => isEqual(pokemon.slug, name));
+      return getFindPokemon((pokemon) => isEqual(pokemon.slug, name));
     },
-    [getFilteredPokemons]
+    [pokemonsData]
   );
 
   const checkPokemonGO = (id: number, name: string | undefined) =>
-    getFilteredPokemons().find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
+    getFindPokemon((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
 
   const mappingPokemonName = useCallback(
     () =>
-      getFilteredPokemons()
-        .filter(
-          (pokemon) =>
-            pokemon.num > 0 &&
-            (pokemon.form === formNormal() || (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form)))
-        )
+      getFilteredPokemons(
+        (pokemon) =>
+          pokemon.form === formNormal() || (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form))
+      )
         .map((pokemon) => new PokemonSearching(pokemon))
         .sort((a, b) => a.id - b.id),
     [pokemonsData]
@@ -62,19 +72,18 @@ export const usePokemon = () => {
 
   const getPokemonById = useCallback(
     (id: number) => {
-      const result = getFilteredPokemons()
-        .filter((pokemon) => pokemon.num === id)
-        .find(
-          (pokemon) =>
-            isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
-            (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
-        );
+      const result = getFindPokemon(
+        (pokemon) =>
+          pokemon.num === id &&
+          (isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
+            (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive)))
+      );
       if (!result) {
         return;
       }
       return new PokemonModel(result.num, result.name);
     },
-    [getFilteredPokemons]
+    [pokemonsData]
   );
 
   const checkPokemonIncludeShadowForm = (form: string) =>
@@ -92,28 +101,26 @@ export const usePokemon = () => {
     const formList = dataFormList
       .flatMap((form) => form)
       .map((p) => convertPokemonAPIDataName(p.formName, formNormal()));
-    getFilteredPokemons()
-      .filter((pokemon) => pokemon.num === id)
-      .forEach((pokemon) => {
-        const isIncludeFormGO = formList.some((form) => isInclude(pokemon.form, form));
-        if (!isIncludeFormGO) {
-          index--;
-          const pokemonGOModify = new PokemonFormModifyModel(
-            id,
-            name,
-            pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase(),
-            pokemon.form?.replaceAll('_', '-')?.toLowerCase(),
-            pokemon.fullName?.replaceAll('_', '-')?.toLowerCase(),
-            versionList[0].replace(' ', '-'),
-            pokemon.types,
-            new PokemonSprit(),
-            index,
-            PokemonType.Normal,
-            false
-          );
-          formListResult.push([pokemonGOModify]);
-        }
-      });
+    getFilteredPokemons((pokemon) => pokemon.num === id).forEach((pokemon) => {
+      const isIncludeFormGO = formList.some((form) => isInclude(pokemon.form, form));
+      if (!isIncludeFormGO) {
+        index--;
+        const pokemonGOModify = new PokemonFormModifyModel(
+          id,
+          name,
+          pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase(),
+          pokemon.form?.replaceAll('_', '-')?.toLowerCase(),
+          pokemon.fullName?.replaceAll('_', '-')?.toLowerCase(),
+          versionList[0].replace(' ', '-'),
+          pokemon.types,
+          new PokemonSprit(),
+          index,
+          PokemonType.Normal,
+          false
+        );
+        formListResult.push([pokemonGOModify]);
+      }
+    });
 
     return index;
   };
@@ -148,26 +155,27 @@ export const usePokemon = () => {
             .replaceAll(' ', '-'),
           pokemonType
         );
-        const filterPokemons = getFilteredPokemons();
-        let pokemonForm = filterPokemons.find(
+        let pokemonForm = getFindPokemon(
           (item) => item.num === id && isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive)
         );
 
         if (isDefault && !pokemonForm) {
-          pokemonForm = filterPokemons.find(
+          pokemonForm = getFindPokemon(
             (item) =>
-              item.num === id && (item.form === formNormal() || (item.baseForme && isEqual(item.baseForme, item.form)))
+              item.num === id &&
+              (item.form === formNormal() || (isNotEmpty(item.baseForme) && isEqual(item.baseForme, item.form)))
           );
         }
         return PokemonData.copyWithCreate(pokemonForm);
       }
       return new PokemonData();
     },
-    [getFilteredPokemons]
+    [pokemonsData]
   );
 
   return {
     getFilteredPokemons,
+    getFindPokemon,
     findPokemonById,
     findPokemonBySlug,
     checkPokemonGO,

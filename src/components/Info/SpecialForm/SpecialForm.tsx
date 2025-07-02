@@ -9,11 +9,11 @@ import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import IconType from '../../Sprites/Icon/Type/Type';
-import { useDataStore } from '../../../composables/useDataStore';
 import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
-  const { pokemonsData } = useDataStore();
+  const { getFindPokemon } = usePokemon();
   const { findMoveByName } = useCombats();
 
   const [pokemonType, setPokemonType] = useState(PokemonType.None);
@@ -47,9 +47,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
 
   const getQuestEvo = (name: string) => {
     name = splitAndCapitalize(name, '-', '_').toUpperCase();
-    const pokemonEvo = pokemonsData
-      .find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)))
-      ?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
+    const pokemonEvo = getFindPokemon((item) =>
+      item.tempEvo?.some((value) => isEqual(value.tempEvolutionName, name))
+    )?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     return TempEvo.create({
       ...pokemonEvo,
       firstTempEvolution: pokemonEvo?.firstTempEvolution ? `x${pokemonEvo.firstTempEvolution}` : 'Unavailable',

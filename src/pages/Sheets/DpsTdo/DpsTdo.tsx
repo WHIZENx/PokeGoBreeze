@@ -74,7 +74,6 @@ import {
   minIv,
   minLevel,
 } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useOptionStore from '../../../composables/useOptions';
 import useRouter from '../../../composables/useRouter';
@@ -282,7 +281,7 @@ const DpsTdo = () => {
     keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
   });
   const { iconData } = useIcon();
-  const { pokemonsData } = useDataStore();
+  const { getFilteredPokemons } = usePokemon();
   const { findMoveByName } = useCombats();
   const { optionsDpsSheet, setDpsSheetOptions } = useOptionStore();
   const { routerAction } = useRouter();
@@ -455,7 +454,7 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
-    pokemonsData.forEach((pokemon) => {
+    getFilteredPokemons().forEach((pokemon) => {
       addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
     });
     setIsShowSpinner(false);
@@ -556,7 +555,7 @@ const DpsTdo = () => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData)) {
+    if (isNotEmpty(getFilteredPokemons())) {
       setIsShowSpinner(true);
       const debounced = debounce(() => {
         setDpsTable(calculateDPSTable());
@@ -566,7 +565,7 @@ const DpsTdo = () => {
         debounced.cancel();
       };
     }
-  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, pokemonsData]);
+  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, getFilteredPokemons]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
