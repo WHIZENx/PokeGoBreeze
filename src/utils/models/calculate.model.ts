@@ -302,20 +302,12 @@ export class BattleLeague implements IBattleLeague {
 }
 
 export class QueryMovesCounterPokemon {
-  combats: ICombat[] = [];
   pokemon: IPokemonData;
   def: number;
   types: string[] | undefined = [];
   dataList: IPokemonQueryCounter[];
 
-  constructor(
-    combats: ICombat[],
-    pokemon: IPokemonData,
-    def: number,
-    types: string[] | undefined,
-    dataList: IPokemonQueryCounter[] = []
-  ) {
-    this.combats = combats;
+  constructor(pokemon: IPokemonData, def: number, types: string[] | undefined, dataList: IPokemonQueryCounter[] = []) {
     this.pokemon = pokemon;
     this.def = def;
     this.types = getValueOrDefault(Array, types);

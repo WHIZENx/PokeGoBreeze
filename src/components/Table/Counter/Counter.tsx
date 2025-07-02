@@ -9,7 +9,6 @@ import {
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { counterPokemon } from '../../../utils/calculate';
 
 import './Counter.scss';
 import { TableStyles } from 'react-data-table-component';
@@ -38,11 +37,11 @@ import CustomDataTable from '../CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
 import { counterDelay } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useAssets from '../../../composables/useAssets';
 import useOptionStore from '../../../composables/useOptions';
 import usePokemon from '../../../composables/usePokemon';
+import useCalculate from '../../../composables/useCalculate';
 
 const customStyles: TableStyles = {
   head: {
@@ -116,10 +115,10 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 
 const Counter = (props: ICounterComponent) => {
   const { iconData } = useIcon();
-  const { combatsData, pokemonsData } = useDataStore();
   const { findAssetForm } = useAssets();
   const { optionsCounter, setCounterOptions } = useOptionStore();
   const { checkPokemonGO } = usePokemon();
+  const { counterPokemon } = useCalculate();
 
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
   const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
@@ -291,12 +290,7 @@ const Counter = (props: ICounterComponent) => {
 
       const resolveHandler = () => {
         if (props.pokemonData) {
-          result = counterPokemon(
-            pokemonsData,
-            toNumber(props.pokemonData.statsGO?.def),
-            props.pokemonData.types,
-            combatsData
-          );
+          result = counterPokemon(toNumber(props.pokemonData.statsGO?.def), props.pokemonData.types);
         }
 
         if (signal instanceof AbortSignal) {
