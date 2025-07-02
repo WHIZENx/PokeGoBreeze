@@ -1,6 +1,5 @@
-import { DynamicObj, toFloat, toNumber } from '../utils/extension';
+import { DynamicObj, safeObjectEntries, toFloat, toNumber } from '../utils/extension';
 import { stepLevel } from '../utils/helpers/options-context.helpers';
-import { safeObjectEntries } from '../utils/utils';
 import { CPM, ICPM } from './models/cpm.model';
 
 export const calculateBaseCPM = (baseCPM: DynamicObj<number>, min: number, max: number) => {

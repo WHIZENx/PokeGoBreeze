@@ -5,13 +5,13 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/api.service';
-import { capitalize, getValidPokemonImgPath, safeObjectEntries, splitAndCapitalize } from '../../../utils/utils';
+import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 import { SearchingState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
-import { combineClasses, isNotEmpty, UniqValueInArray } from '../../../utils/extension';
+import { combineClasses, isNotEmpty, safeObjectEntries, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 import { useDataStore } from '../../../composables/useDataStore';
 import { useIcon } from '../../../composables/useIcon';

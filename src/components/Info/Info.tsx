@@ -6,9 +6,9 @@ import TypeInfo from '../Sprites/Type/Type';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../store/models/state.model';
 import { TypeEffectiveChart } from '../../core/models/type-effective.model';
-import { DynamicObj, isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
+import { DynamicObj, isIncludeList, isNotEmpty, safeObjectEntries, toNumber } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
-import { camelCase, getMultiplyTypeEffect, safeObjectEntries } from '../../utils/utils';
+import { camelCase, getMultiplyTypeEffect } from '../../utils/utils';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
 const Info = () => {

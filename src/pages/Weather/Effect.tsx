@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
-import { camelCase, getKeyWithData, safeObjectEntries, splitAndCapitalize } from '../../utils/utils';
-import { getPropertyName, isEmpty, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
+import { camelCase, getKeyWithData, splitAndCapitalize } from '../../utils/utils';
+import { getPropertyName, isEmpty, isEqual, isIncludeList, isNotEmpty, safeObjectEntries } from '../../utils/extension';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
 

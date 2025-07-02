@@ -5,14 +5,13 @@ import {
   getKeyWithData,
   getPokemonClass,
   replaceTempMoveName,
-  safeObjectEntries,
 } from '../../utils/utils';
 import { ICombat } from './combat.model';
 import { genList, regionList, versionList } from '../../utils/constants';
 import { IStatsIV, IStatsPokemon, IStatsPokemonGO, StatsIV, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
-import { getValueOrDefault, isUndefined, toNumber, UniqValueInArray } from '../../utils/extension';
+import { getValueOrDefault, isUndefined, safeObjectEntries, toNumber, UniqValueInArray } from '../../utils/extension';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
 import { GlobalType, MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
 import { Species, Variety } from './API/species.model';

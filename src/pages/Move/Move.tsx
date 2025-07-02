@@ -8,7 +8,6 @@ import {
   generateParamForm,
   getItemSpritePath,
   getKeyWithData,
-  safeObjectEntries,
   splitAndCapitalize,
 } from '../../utils/utils';
 import { Params } from '../../utils/constants';
@@ -41,6 +40,7 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
+  safeObjectEntries,
   toFloat,
   toFloatWithPadding,
   toNumber,

@@ -1,15 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffectiveComponent from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import {
-  capitalize,
-  getKeyWithData,
-  getMultiplyTypeEffect,
-  safeObjectEntries,
-  splitAndCapitalize,
-} from '../../utils/utils';
+import { capitalize, getKeyWithData, getMultiplyTypeEffect, splitAndCapitalize } from '../../utils/utils';
 import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-effective.model';
-import { DynamicObj, getPropertyName, isEmpty } from '../../utils/extension';
+import { DynamicObj, getPropertyName, isEmpty, safeObjectEntries } from '../../utils/extension';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 import { getTypes } from '../../utils/helpers/options-context.helpers';
 import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';

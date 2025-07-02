@@ -37,7 +37,6 @@ import {
   isSpecialMegaFormType,
   replacePokemonGoForm,
   replaceTempMoveName,
-  safeObjectEntries,
   splitAndCamelCase,
   splitAndCapitalize,
 } from '../utils/utils';
@@ -82,6 +81,7 @@ import {
   toNumber,
   UniqValueInArray,
   isNull,
+  safeObjectEntries,
 } from '../utils/extension';
 import { GenderType } from './enums/asset.enum';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';

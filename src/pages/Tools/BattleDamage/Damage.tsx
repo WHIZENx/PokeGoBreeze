@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating, safeObjectEntries } from '../../../utils/utils';
+import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 
 import './Damage.scss';
@@ -23,7 +23,14 @@ import { SearchingState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../utils/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  padding,
+  safeObjectEntries,
+  toNumber,
+} from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 

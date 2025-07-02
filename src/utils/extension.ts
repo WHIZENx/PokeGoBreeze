@@ -262,3 +262,8 @@ export const UniqValueInArray = <T>(array: (T | null | undefined)[] | null | und
   }
   return out;
 };
+
+export const safeObjectEntries = <T extends object | string | number, S extends string | number = string | number>(
+  obj: Record<S, T> | object | undefined,
+  defaultObj = new Object()
+) => Object.entries(obj || defaultObj) as [string, T][];

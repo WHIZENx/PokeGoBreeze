@@ -19,7 +19,6 @@ import {
   getKeyWithData,
   getPokemonFormWithNoneSpecialForm,
   LevelSlider,
-  safeObjectEntries,
   splitAndCapitalize,
 } from '../../../utils/utils';
 
@@ -30,6 +29,7 @@ import {
   getValueOrDefault,
   isNotEmpty,
   isUndefined,
+  safeObjectEntries,
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';

@@ -29,6 +29,7 @@ import {
   isNullOrUndefined,
   isUndefined,
   toNumber,
+  safeObjectEntries,
 } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
@@ -1354,8 +1355,3 @@ export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
 
 export const isSpecialMegaFormType = (pokemonType: PokemonType | undefined) =>
   pokemonType === PokemonType.Mega || pokemonType === PokemonType.Primal;
-
-export const safeObjectEntries = <T extends object | string | number, S extends string | number = string | number>(
-  obj: Record<S, T> | object | undefined,
-  defaultObj = new Object()
-) => Object.entries(obj || defaultObj) as [string, T][];

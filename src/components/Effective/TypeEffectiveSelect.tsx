@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/api.service';
-import { capitalize, safeObjectEntries } from '../../utils/utils';
+import { capitalize } from '../../utils/utils';
 
 import './TypeEffectiveSelect.scss';
 import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
-import { combineClasses, DynamicObj, isNotEmpty, toFloat } from '../../utils/extension';
+import { combineClasses, DynamicObj, isNotEmpty, safeObjectEntries, toFloat } from '../../utils/extension';
 import { EffectiveType } from './enums/type-effective.enum';
 import { getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
