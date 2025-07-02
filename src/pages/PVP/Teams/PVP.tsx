@@ -10,7 +10,6 @@ import {
   getKeyWithData,
   getMoveType,
   getValidPokemonImgPath,
-  reverseReplaceTempMovePvpName,
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
@@ -23,7 +22,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
 import { Params } from '../../../utils/constants';
@@ -35,7 +33,6 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
-  isNullOrUndefined,
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
@@ -58,9 +55,11 @@ import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
+import useCombats from '../../../composables/useCombats';
 
 const TeamPVP = (props: IStyleSheetData) => {
-  const { combatsData, pokemonsData, pvpData } = useDataStore();
+  const { pokemonsData, pvpData } = useDataStore();
+  const { findMoveByName, findMoveByTag, isCombatsNoneArchetype } = useCombats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
@@ -142,10 +141,10 @@ const TeamPVP = (props: IStyleSheetData) => {
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(combatsData) && combatsData.every((combat) => !combat.archetype)) {
+    if (isCombatsNoneArchetype()) {
       loadPVPMoves();
     }
-  }, [combatsData]);
+  }, [findMoveByName]);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PVP Teams',
@@ -246,7 +245,6 @@ const TeamPVP = (props: IStyleSheetData) => {
       !rankingData &&
       isNotEmpty(pvpData.rankings) &&
       isNotEmpty(pvpData.trains) &&
-      isNotEmpty(combatsData) &&
       isNotEmpty(pokemonsData) &&
       statsData?.attack?.ranking &&
       statsData?.defense?.ranking &&
@@ -264,7 +262,6 @@ const TeamPVP = (props: IStyleSheetData) => {
     rankingData,
     pvpData.rankings,
     pvpData.trains,
-    combatsData,
     pokemonsData,
     statsData?.attack?.ranking,
     statsData?.defense?.ranking,
@@ -316,37 +313,6 @@ const TeamPVP = (props: IStyleSheetData) => {
     return sortedTeam === SortDirectionType.DESC
       ? b[sortedColumn] - a[sortedColumn]
       : a[sortedColumn] - b[sortedColumn];
-  };
-
-  const findMoveByTag = (nameSet: string[], tag: string) => {
-    let move: ICombat | undefined;
-    if (!tag) {
-      return move;
-    }
-
-    for (const name of nameSet) {
-      move = combatsData.find(
-        (item) =>
-          (item.abbreviation && isEqual(item.abbreviation, tag)) ||
-          (!item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(name)))
-      );
-      if (!isNullOrUndefined(move)) {
-        return move;
-      }
-    }
-
-    nameSet = findMoveTeam(
-      tag,
-      combatsData.map((item) => item.name),
-      true
-    );
-    move = combatsData.find(
-      (item) =>
-        (item.abbreviation && isEqual(item.abbreviation, tag)) ||
-        (isNotEmpty(nameSet) && !item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(nameSet[0])))
-    );
-
-    return move;
   };
 
   return (

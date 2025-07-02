@@ -8,16 +8,16 @@ import IconType from '../Sprites/Icon/Type/Type';
 import useCombats from '../../composables/useCombats';
 
 const CardMove = (props: ICardMoveComponent) => {
-  const { findMoveData } = useCombats();
+  const { findMoveByName } = useCombats();
 
   const [move, setMove] = useState<ICombat>();
 
   useEffect(() => {
     if (props.value) {
-      const move = findMoveData(props.value?.name);
+      const move = findMoveByName(props.value?.name);
       setMove(move);
     }
-  }, [findMoveData, props.value]);
+  }, [findMoveByName, props.value]);
 
   return (
     <Fragment>

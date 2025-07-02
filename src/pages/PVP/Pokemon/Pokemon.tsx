@@ -49,7 +49,7 @@ import useCombats from '../../../composables/useCombats';
 const PokemonPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
   const { pvpData, assetsData, pokemonsData } = useDataStore();
-  const { isCombatsNoneArchetype, findMoveData } = useCombats();
+  const { isCombatsNoneArchetype, findMoveByName } = useCombats();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const { routerAction } = useRouter();
@@ -154,11 +154,11 @@ const PokemonPVP = (props: IStyleSheetData) => {
         cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
         cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
 
-        const fMove = findMoveData(fMoveData);
-        const cMovePri = findMoveData(cMoveDataPri);
+        const fMove = findMoveByName(fMoveData);
+        const cMovePri = findMoveByName(cMoveDataPri);
         let cMoveSec;
         if (cMoveDataSec) {
-          cMoveSec = findMoveData(cMoveDataSec);
+          cMoveSec = findMoveByName(cMoveDataSec);
         }
 
         let pokemonType = PokemonType.Normal;
@@ -203,7 +203,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
         }
       }
     }
-  }, [params.serie, params.pokemon, params.cp, searchParams, statsData, findMoveData, pokemonsData, assetsData]);
+  }, [params.serie, params.pokemon, params.cp, searchParams, statsData, findMoveByName, pokemonsData, assetsData]);
 
   useEffect(() => {
     const fetchPokemon = async () => {

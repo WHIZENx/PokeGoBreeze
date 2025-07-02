@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { getAllMoves, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
-import { rankMove } from '../../../utils/calculate';
 
 import './MoveTable.scss';
 import { Tab, Tabs } from 'react-bootstrap';
@@ -29,8 +28,8 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import IconType from '../../Sprites/Icon/Type/Type';
-import useDataStore from '../../../composables/useDataStore';
 import useCombats from '../../../composables/useCombats';
+import useCalculate from '../../../composables/useCalculate';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -77,7 +76,7 @@ class TableSort implements ITableSort {
 }
 
 const TableMove = (props: ITableMoveComponent) => {
-  const { combatsData } = useDataStore();
+  const { rankMove } = useCalculate();
   const { filterUnknownMove } = useCombats();
   const [move, setMove] = useState<IPokemonQueryRankMove>(new PokemonQueryRankMove());
   const [moveOrigin, setMoveOrigin] = useState<PokemonMoves>();
@@ -130,7 +129,7 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const setRankMove = (result: Partial<IPokemonDetail>) => {
-    return rankMove(combatsData, result, result.statsGO?.atk, result.statsGO?.def, result.statsGO?.sta, result.types);
+    return rankMove(result, result.statsGO?.atk, result.statsGO?.def, result.statsGO?.sta, result.types);
   };
 
   useEffect(() => {

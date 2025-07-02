@@ -64,10 +64,12 @@ import useAssets from '../../../composables/useAssets';
 import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
+import useCombats from '../../../composables/useCombats';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
-  const { assetsData, pokemonsData, combatsData, pvpData } = useDataStore();
+  const { assetsData, pokemonsData, pvpData } = useDataStore();
+  const { findMoveByName, isCombatsNoneArchetype } = useCombats();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const { routerAction } = useRouter();
@@ -193,11 +195,11 @@ const RankingPVP = (props: IStyleSheetData) => {
           cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
           cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
 
-          const fMove = combatsData.find((item) => isEqual(item.name, fMoveData));
-          const cMovePri = combatsData.find((item) => isEqual(item.name, cMoveDataPri));
+          const fMove = findMoveByName(fMoveData);
+          const cMovePri = findMoveByName(cMoveDataPri);
           let cMoveSec;
           if (cMoveDataSec) {
-            cMoveSec = combatsData.find((item) => isEqual(item.name, cMoveDataSec));
+            cMoveSec = findMoveByName(cMoveDataSec);
           }
 
           data.scorePVP = HexagonStats.create(data.scores);
@@ -250,7 +252,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     statsData?.defense?.ranking,
     statsData?.stamina?.ranking,
     statsData?.statProd?.ranking,
-    combatsData,
+    findMoveByName,
     pokemonsData,
     assetsData,
   ]);
@@ -263,11 +265,10 @@ const RankingPVP = (props: IStyleSheetData) => {
       statsData &&
       isNotEmpty(pvpData.rankings) &&
       isNotEmpty(pvpData.trains) &&
-      isNotEmpty(combatsData) &&
       isNotEmpty(pokemonsData) &&
       isNotEmpty(assetsData)
     ) {
-      if (combatsData.every((combat) => !combat.archetype)) {
+      if (isCombatsNoneArchetype()) {
         loadPVPMoves();
       } else if (routerAction) {
         fetchPokemon();

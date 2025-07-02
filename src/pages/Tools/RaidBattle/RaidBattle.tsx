@@ -100,6 +100,7 @@ import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import { useSelector } from 'react-redux';
 import usePokemon from '../../../composables/usePokemon';
+import useCombats from '../../../composables/useCombats';
 
 const RaidBattle = () => {
   useTitle({
@@ -116,7 +117,8 @@ const RaidBattle = () => {
     ],
   });
   const { iconData } = useIcon();
-  const { pokemonsData, combatsData } = useDataStore();
+  const { pokemonsData } = useDataStore();
+  const { findMoveByName } = useCombats();
   const { findAssetForm } = useAssets();
   const { showSpinner, hideSpinner } = useSpinner();
   const { retrieveMoves, checkPokemonGO } = usePokemon();
@@ -352,7 +354,7 @@ const RaidBattle = () => {
     pokemonType = PokemonType.Normal
   ) =>
     movePoke?.forEach((vc) => {
-      const cMoveCurrent = combatsData.find((item) => isEqual(item.name, vc));
+      const cMoveCurrent = findMoveByName(vc);
       if (cMoveCurrent) {
         const cMoveType = getMoveType(value, vc);
         if (!isEqual(cMoveType, MoveType.Dynamax)) {
@@ -370,8 +372,8 @@ const RaidBattle = () => {
             atk: statBossATK,
             def: statBossDEF,
             hp: statBossHP,
-            fMove: combatsData.find((item) => isEqual(item.name, fMove?.name)),
-            cMove: combatsData.find((item) => isEqual(item.name, cMove?.name)),
+            fMove: findMoveByName(fMove?.name),
+            cMove: findMoveByName(cMove?.name),
             types: pokemon?.form?.form?.types,
             isStab: isWeatherBoss,
           });
@@ -423,7 +425,7 @@ const RaidBattle = () => {
     pokemonTarget: boolean
   ) =>
     movePoke.forEach((vf) => {
-      const fMove = combatsData.find((item) => isEqual(item.name, vf));
+      const fMove = findMoveByName(vf);
       if (!fMove) {
         return;
       }
@@ -492,8 +494,8 @@ const RaidBattle = () => {
   };
 
   const calculateDPSBattle = (pokemonRaid: IPokemonRaidModel, hpRemain: number, timer: number) => {
-    const fMoveCurrent = combatsData.find((item) => isEqual(item.name, pokemonRaid.fMoveTargetPokemon?.name));
-    const cMoveCurrent = combatsData.find((item) => isEqual(item.name, pokemonRaid.cMoveTargetPokemon?.name));
+    const fMoveCurrent = findMoveByName(pokemonRaid.fMoveTargetPokemon?.name);
+    const cMoveCurrent = findMoveByName(pokemonRaid.cMoveTargetPokemon?.name);
 
     if (fMoveCurrent && cMoveCurrent) {
       fMoveCurrent.moveType = pokemonRaid.fMoveTargetPokemon?.moveType;
@@ -517,8 +519,8 @@ const RaidBattle = () => {
         atk: statBossATK,
         def: statBossDEF,
         hp: Math.floor(hpRemain),
-        fMove: combatsData.find((item) => isEqual(item.name, fMove?.name)),
-        cMove: combatsData.find((item) => isEqual(item.name, cMove?.name)),
+        fMove: findMoveByName(fMove?.name),
+        cMove: findMoveByName(cMove?.name),
         types: pokemon?.form?.form?.types,
         isStab: isWeatherBoss,
       });

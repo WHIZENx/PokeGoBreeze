@@ -10,9 +10,11 @@ import { PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { useDataStore } from '../../../composables/useDataStore';
+import useCombats from '../../../composables/useCombats';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
-  const { pokemonsData, combatsData } = useDataStore();
+  const { pokemonsData } = useDataStore();
+  const { findMoveByName } = useCombats();
 
   const [pokemonType, setPokemonType] = useState(PokemonType.None);
   const [arrEvoList, setArrEvoList] = useState<IForm[]>();
@@ -54,8 +56,6 @@ const SpecialForm = (props: IFormSpecialComponent) => {
       tempEvolution: pokemonEvo?.tempEvolution ? `x${pokemonEvo.tempEvolution}` : 'Unavailable',
     });
   };
-
-  const getCombatMove = (moveName: string | undefined) => combatsData.find((item) => isEqual(item.name, moveName));
 
   return (
     <Fragment>
@@ -128,9 +128,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                         height={25}
                         alt="Pokémon GO Type Logo"
                         className="me-1"
-                        type={getCombatMove(getQuestEvo(value.name).requireMove)?.type}
+                        type={findMoveByName(getQuestEvo(value.name).requireMove)?.type}
                       />
-                      <LinkToTop to={`../move/${getCombatMove(getQuestEvo(value.name).requireMove)?.id}`}>
+                      <LinkToTop to={`../move/${findMoveByName(getQuestEvo(value.name).requireMove)?.id}`}>
                         <b>{splitAndCapitalize(getQuestEvo(value.name).requireMove, '_', ' ')}</b>
                       </LinkToTop>
                     </span>

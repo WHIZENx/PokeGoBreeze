@@ -1,5 +1,5 @@
 import { CounterModel } from '../components/Table/Counter/models/counter.model';
-import { IPokemonDetail, Stats } from '../core/models/API/info.model';
+import { Stats } from '../core/models/API/info.model';
 import { Combat, ICombat } from '../core/models/combat.model';
 import { CPMData, CPMDetail, ICPM } from '../core/models/cpm.model';
 import { IEvolution } from '../core/models/evolution.model';
@@ -22,7 +22,7 @@ import {
 } from '../core/models/stats.model';
 import dataCPM from '../data/cp_multiplier.json';
 import { MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
-import { Delay, IOptionOtherDPS, OptionOtherDPS, Specific } from '../store/models/options.model';
+import { IOptionOtherDPS, OptionOtherDPS, Specific } from '../store/models/options.model';
 import { findStabType } from './compute';
 import { RAID_BOSS_TIER, typeCostPowerUp } from './constants';
 import {
@@ -42,7 +42,6 @@ import {
   PredictStatsCalculate,
   IPredictStatsModel,
   QueryMovesCounterPokemon,
-  QueryMovesPokemon,
   QueryStatesEvoChain,
   StatsCalculate,
   StatsLeagueCalculate,
@@ -60,11 +59,8 @@ import {
 import {
   IPokemonQueryCounter,
   PokemonQueryCounter,
-  PokemonQueryMove,
-  PokemonQueryRankMove,
   IPokemonTopMove,
   PokemonTopMove,
-  EDPS,
 } from './models/pokemon-top-move.model';
 import {
   DynamicObj,
@@ -1124,94 +1120,6 @@ export const queryTopMove = (pokemonList: IPokemonData[] | undefined, move: ICom
     });
   }
   return dataPri;
-};
-
-const queryMove = (data: QueryMovesPokemon, mf: ICombat, cMove: string[], fMoveType: MoveType) => {
-  cMove.forEach((vc) => {
-    const mc = data.combats.find((item) => isEqual(item.name, vc));
-
-    if (mc) {
-      const cMoveType = getMoveType(data.pokemon, vc);
-      if (!isEqual(cMoveType, MoveType.Dynamax)) {
-        mf.moveType = fMoveType;
-        mc.moveType = cMoveType;
-
-        const options = OptionOtherDPS.create({
-          delay: Delay.create({
-            fTime: defaultEnemyAtkDelay(),
-            cTime: defaultEnemyAtkDelay(),
-          }),
-          pokemonDefObj: defaultPokemonDefObj(),
-          ivAtk: maxIv(),
-          ivDef: maxIv(),
-          ivHp: maxIv(),
-          pokemonLevel: defaultPokemonLevel(),
-        });
-
-        const statsAtkBattle = calculateStatsBattle(data.atk, options.ivAtk, options.pokemonLevel, true);
-        const statsDefBattle = calculateStatsBattle(data.def, options.ivDef, options.pokemonLevel, true);
-        const statsStaBattle = calculateStatsBattle(data.sta, options.ivHp, options.pokemonLevel, true);
-
-        const pokemonType = moveTypeToFormType(cMoveType);
-
-        const offensive = calculateAvgDPS(
-          mf,
-          mc,
-          statsAtkBattle,
-          statsDefBattle,
-          statsStaBattle,
-          data.types,
-          pokemonType
-        );
-        const defensive = calculateAvgDPS(
-          mf,
-          mc,
-          statsAtkBattle,
-          statsDefBattle,
-          statsStaBattle,
-          data.types,
-          pokemonType,
-          options
-        );
-
-        data.dataList.push(new PokemonQueryMove({ fMove: mf, cMove: mc, eDPS: EDPS.create({ offensive, defensive }) }));
-      }
-    }
-  });
-};
-
-export const rankMove = (
-  combats: ICombat[],
-  pokemon: Partial<IPokemonDetail> | undefined,
-  atk: number | undefined,
-  def: number | undefined,
-  sta: number | undefined,
-  types: string[] | undefined
-) => {
-  if (!pokemon) {
-    return new PokemonQueryRankMove();
-  }
-  const data = new QueryMovesPokemon(combats, pokemon, atk, def, sta, types);
-  const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
-  const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
-  setQueryMove(data, fastMoveSet, chargedMoveSet);
-
-  return PokemonQueryRankMove.create({
-    data: data.dataList,
-    maxOff: Math.max(...data.dataList.map((item) => item.eDPS.offensive)),
-    maxDef: Math.max(...data.dataList.map((item) => item.eDPS.defensive)),
-  });
-};
-
-const setQueryMove = (data: QueryMovesPokemon, fastMoveSet: string[], chargedMoveSet: string[]) => {
-  fastMoveSet.forEach((vf) => {
-    const fMove = data.combats.find((item) => isEqual(item.name, vf));
-    if (!fMove) {
-      return;
-    }
-    const quickMoveType = getMoveType(data.pokemon, vf);
-    queryMove(data, fMove, chargedMoveSet, quickMoveType);
-  });
 };
 
 export const queryStatesEvoChain = (

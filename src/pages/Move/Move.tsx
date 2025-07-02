@@ -58,6 +58,7 @@ import { TitleSEOProps } from '../../utils/models/hook.model';
 import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/options-context.helpers';
 import useDataStore from '../../composables/useDataStore';
 import usePokemon from '../../composables/usePokemon';
+import useCombats from '../../composables/useCombats';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -147,7 +148,8 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
 const Move = (props: IMovePage) => {
   const { iconData } = useIcon();
   const { checkPokemonGO } = usePokemon();
-  const { combatsData, pokemonsData } = useDataStore();
+  const { pokemonsData } = useDataStore();
+  const { findMoveByName, findMoveById, getCombatsById } = useCombats();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -223,8 +225,8 @@ const Move = (props: IMovePage) => {
 
   const queryMoveData = useCallback(
     (id: number) => {
-      if (isNotEmpty(combatsData)) {
-        const moves = combatsData.filter((item) => item.track === id || item.id === id);
+      const moves = getCombatsById(id);
+      if (isNotEmpty(moves)) {
         let move = moves.find((item) => item.id === id);
         if (move?.isMultipleWithType) {
           let type = searchParams.get(Params.MoveType);
@@ -236,7 +238,7 @@ const Move = (props: IMovePage) => {
             searchParams.set(Params.MoveType, type);
           }
           setSearchParams(searchParams);
-          setMoveType(type.toUpperCase());
+          setMoveType(type.toLowerCase());
         } else if (!isEqual(move?.moveType, MoveType.Dynamax)) {
           move = moves.find((item) => item.track === id);
         }
@@ -275,15 +277,13 @@ const Move = (props: IMovePage) => {
         }
       }
     },
-    [enqueueSnackbar, combatsData]
+    [enqueueSnackbar, getCombatsById]
   );
 
   const getMoveIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
-    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(combatsData)) {
-      const move = combatsData.find((m) =>
-        isEqual(m.name.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
-      );
+    if (id === 0 && params.id && isNotEmpty(params.id)) {
+      const move = findMoveByName(params.id);
       if (move) {
         id = move.id;
       }
@@ -298,7 +298,7 @@ const Move = (props: IMovePage) => {
         queryMoveData(id);
       }
     }
-  }, [params.id, props.id, queryMoveData, move, combatsData]);
+  }, [params.id, props.id, queryMoveData, move, findMoveByName]);
 
   useEffect(() => {
     if (move && isNotEmpty(pokemonsData)) {
@@ -324,15 +324,13 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     const type = searchParams.get(Params.MoveType);
-    if (isNotEmpty(combatsData) && move?.isMultipleWithType && type) {
+    if (move?.isMultipleWithType && type) {
       searchParams.set(Params.MoveType, type.toLowerCase());
       setSearchParams(searchParams);
-      setMove(
-        combatsData.find((item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive))
-      );
-      setMoveType(type.toUpperCase());
+      setMove(findMoveById(move.track, type));
+      setMoveType(type.toLowerCase());
     }
-  }, [move?.isMultipleWithType, searchParams, combatsData]);
+  }, [move?.isMultipleWithType, searchParams, findMoveById]);
 
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">
@@ -374,7 +372,7 @@ const Move = (props: IMovePage) => {
                 )
                 .map((value, index) => (
                   <option key={index} value={value}>
-                    {capitalize(value)}
+                    {splitAndCapitalize(value, /(?=[A-Z])/, ' ')}
                   </option>
                 ))}
             </Form.Select>

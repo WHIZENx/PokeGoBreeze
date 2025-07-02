@@ -102,11 +102,12 @@ export const usePokemon = () => {
   };
 
   const retrieveMoves = (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None) => {
-    if (isNotEmpty(getFilteredPokemons())) {
+    const filterPokemons = getFilteredPokemons();
+    if (isNotEmpty(filterPokemons)) {
       if (pokemonType === PokemonType.GMax) {
-        return getFilteredPokemons().find((item) => item.num === id && isEqual(item.form, formGmax()));
+        return filterPokemons.find((item) => item.num === id && isEqual(item.form, formGmax()));
       }
-      const resultFilter = getFilteredPokemons().filter((item) => item.num === id);
+      const resultFilter = filterPokemons.filter((item) => item.num === id);
       const pokemonForm = getValueOrDefault(
         String,
         form?.replaceAll('-', '_').toUpperCase().replace(`_${formStandard()}`, '').replace(formGmax(), formNormal()),
@@ -134,12 +135,13 @@ export const usePokemon = () => {
           .replaceAll(' ', '-'),
         pokemonType
       );
-      let pokemonForm = getFilteredPokemons().find(
+      const filterPokemons = getFilteredPokemons();
+      let pokemonForm = filterPokemons.find(
         (item) => item.num === id && isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive)
       );
 
       if (isDefault && !pokemonForm) {
-        pokemonForm = getFilteredPokemons().find(
+        pokemonForm = filterPokemons.find(
           (item) =>
             item.num === id && (item.form === formNormal() || (item.baseForme && isEqual(item.baseForme, item.form)))
         );

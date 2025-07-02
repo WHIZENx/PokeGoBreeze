@@ -11,7 +11,7 @@ import useCombats from '../../composables/useCombats';
 
 const Move = (props: IMoveComponent) => {
   const { pokemonsData } = useDataStore();
-  const { findMoveData } = useCombats();
+  const { findMoveByName } = useCombats();
   const { retrieveMoves } = usePokemon();
 
   const [countFM, setCountFM] = useState(0);
@@ -60,13 +60,13 @@ const Move = (props: IMoveComponent) => {
     if (!move) {
       return;
     }
-    return findMoveData(move)?.type;
+    return findMoveByName(move)?.type;
   };
 
   const changeMove = (value: ISelectMoveModel) => {
     setShowMove(false);
     setCurrentMove(value);
-    props.setMove(findMoveData(value.name));
+    props.setMove(findMoveByName(value.name));
 
     if (props.clearData) {
       props.clearData();

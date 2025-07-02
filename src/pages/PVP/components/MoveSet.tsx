@@ -28,7 +28,7 @@ import IconType from '../../../components/Sprites/Icon/Type/Type';
 import useCombats from '../../../composables/useCombats';
 
 const MoveSet = (props: MoveSetComponent) => {
-  const { findMoveData } = useCombats();
+  const { findMoveByName } = useCombats();
   const [fastMoves, setFastMoves] = useState<IMoveSet[]>();
   const [chargedMoves, setChargedMoves] = useState<IMoveSet[]>();
 
@@ -152,7 +152,7 @@ const MoveSet = (props: MoveSetComponent) => {
       })
       .sort((a, b) => toNumber(b.uses) - toNumber(a.uses))
       .map((move) => {
-        const combat = findMoveData(move.moveId);
+        const combat = findMoveByName(move.moveId);
         if (combat) {
           combat.moveType = getMoveType(props.pokemon, move.moveId);
           return MoveSetModel.create({ ...combat, uses: toNumber(move.uses) });

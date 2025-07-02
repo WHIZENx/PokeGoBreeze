@@ -11,14 +11,14 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import useCombats from '../../../composables/useCombats';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
-  const { findMoveData } = useCombats();
+  const { findMoveByName } = useCombats();
 
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {
     if (props.move?.name) {
-      setMove(findMoveData(props.move?.name));
+      setMove(findMoveByName(props.move?.name));
     }
-  }, [findMoveData, props.move?.name]);
+  }, [findMoveByName, props.move?.name]);
 
   return (
     <div className={combineClasses('type-badge-container', props.isGrow ? 'filter-shadow' : '')} style={props.style}>
