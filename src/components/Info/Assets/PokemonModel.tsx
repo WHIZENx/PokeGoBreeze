@@ -13,13 +13,13 @@ import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { combineClasses, isNotEmpty, safeObjectEntries, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
-import { useDataStore } from '../../../composables/useDataStore';
 import { useIcon } from '../../../composables/useIcon';
 import { useSelector } from 'react-redux';
+import { useAssets } from '../../../composables/useAssets';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const { iconData } = useIcon();
-  const { assetsData } = useDataStore();
+  const { findAssetsById } = useAssets();
   const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
@@ -27,7 +27,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const [asset, setAsset] = useState<IAsset>();
 
   const getImageList = (id: number | undefined, genderRatio: IPokemonGenderRatio) => {
-    const pokemonAsset = assetsData.find((item) => item.id === id);
+    const pokemonAsset = findAssetsById(id);
     setAsset(pokemonAsset);
     setGender({
       malePercent: genderRatio.M,
@@ -41,10 +41,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(assetsData) && pokemonData?.fullName && pokemonData.genderRatio) {
+    if (pokemonData?.fullName && pokemonData.genderRatio) {
       setPokeAssets(getImageList(pokemonData.id, pokemonData.genderRatio));
     }
-  }, [assetsData, pokemonData]);
+  }, [pokemonData]);
 
   return (
     <div className="mt-2 position-relative">

@@ -123,7 +123,7 @@ class BattleState implements IBattleState {
 }
 
 const Battle = () => {
-  const { pokemonsData, assetsData } = useDataStore();
+  const { pokemonsData } = useDataStore();
   const { loadPVPMoves } = usePVP();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
@@ -335,14 +335,14 @@ const Battle = () => {
         }
       }
     },
-    [pokemonsData, assetsData]
+    [pokemonsData]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (isNotEmpty(pokemonsData) && isNotEmpty(assetsData)) {
+    if (isNotEmpty(pokemonsData)) {
       fetchPokemon(league);
     }
     return () => {

@@ -17,10 +17,10 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
-import { useDataStore } from '../../../composables/useDataStore';
+import { useAssets } from '../../../composables/useAssets';
 
 const FromChange = (props: IFromChangeComponent) => {
-  const { assetsData } = useDataStore();
+  const { findAssetsById } = useAssets();
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const [dataSrc, setDataSrc] = useState<string>();
@@ -28,7 +28,7 @@ const FromChange = (props: IFromChangeComponent) => {
   const [pokemon, setPokemon] = useState<Partial<IPokemonDetail>>();
 
   const getImageList = (id: number | undefined) => {
-    const model = assetsData.find((item) => item.id === id);
+    const model = findAssetsById(id);
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
       (value) => new PokemonModelComponent(value, model?.image)
     );
@@ -42,10 +42,10 @@ const FromChange = (props: IFromChangeComponent) => {
       setPokemon(undefined);
       return;
     }
-    if (toNumber(props.currentId) > 0 && isNotEmpty(assetsData)) {
+    if (toNumber(props.currentId) > 0) {
       setPokeAssets(getImageList(props.currentId));
     }
-  }, [assetsData, props.currentId, props.pokemonData]);
+  }, [props.currentId, props.pokemonData]);
 
   useEffect(() => {
     if (isNotEmpty(pokeAssets) && props.pokemonData?.fullName) {

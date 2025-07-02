@@ -3,9 +3,17 @@ import { FormType } from '../utils/enums/compute.enum';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { formNormal, formGmax, formMega } from '../utils/helpers/options-context.helpers';
 import { isEqual, isInclude, isNotEmpty } from '../utils/extension';
+import { useCallback } from 'react';
 
 export const useAssets = () => {
   const { assetsData } = useDataStore();
+
+  const findAssetsById = useCallback(
+    (id: number | undefined) => {
+      return assetsData.find((asset) => asset.id === id);
+    },
+    [assetsData]
+  );
 
   const findAssetForm = (id: number | undefined, formName = formNormal(), formType = FormType.Default) => {
     if (isEqual(formName, formGmax(), EqualMode.IgnoreCaseSensitive)) {
@@ -46,6 +54,7 @@ export const useAssets = () => {
   };
 
   return {
+    findAssetsById,
     findAssetForm,
     queryAssetForm,
   };

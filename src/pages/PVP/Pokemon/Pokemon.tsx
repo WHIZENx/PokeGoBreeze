@@ -48,7 +48,7 @@ import useCombats from '../../../composables/useCombats';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
-  const { pvpData, assetsData, pokemonsData } = useDataStore();
+  const { pvpData, pokemonsData } = useDataStore();
   const { isCombatsNoneArchetype, findMoveByName } = useCombats();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
@@ -203,19 +203,13 @@ const PokemonPVP = (props: IStyleSheetData) => {
         }
       }
     }
-  }, [params.serie, params.pokemon, params.cp, searchParams, statsData, findMoveByName, pokemonsData, assetsData]);
+  }, [params.serie, params.pokemon, params.cp, searchParams, statsData, findMoveByName, pokemonsData]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
     };
-    if (
-      statsData &&
-      isNotEmpty(pvpData.rankings) &&
-      isNotEmpty(pvpData.trains) &&
-      isNotEmpty(pokemonsData) &&
-      isNotEmpty(assetsData)
-    ) {
+    if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains) && isNotEmpty(pokemonsData)) {
       if (isCombatsNoneArchetype()) {
         loadPVPMoves();
       } else if (routerAction) {

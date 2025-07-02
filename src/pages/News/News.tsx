@@ -31,6 +31,7 @@ import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import { useDataStore } from '../../composables/useDataStore';
+import useAssets from '../../composables/useAssets';
 
 const News = () => {
   useTitle({
@@ -46,7 +47,8 @@ const News = () => {
       'upcoming features',
     ],
   });
-  const { informationData, assetsData } = useDataStore();
+  const { informationData } = useDataStore();
+  const { findAssetsById } = useAssets();
 
   const [data, setData] = useState<INewsModel[]>([]);
 
@@ -109,7 +111,7 @@ const News = () => {
   };
 
   const getImageList = (pokemon: RewardPokemon | undefined) => {
-    const model = assetsData.find((item) => item.id === pokemon?.id);
+    const model = findAssetsById(pokemon?.id);
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
       (value) => new PokemonModelComponent(value, model?.image)
     );
