@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/api.service';
-import { capitalize } from '../../utils/utils';
+import { capitalize, safeObjectEntries } from '../../utils/utils';
 
 import './TypeEffectiveSelect.scss';
 import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
-import { combineClasses, isNotEmpty, toFloat } from '../../utils/extension';
+import { combineClasses, DynamicObj, isNotEmpty, toFloat } from '../../utils/extension';
 import { EffectiveType } from './enums/type-effective.enum';
 import { getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
@@ -50,7 +50,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       neutral: [],
     });
     if (effect === EffectiveType.Weakness) {
-      Object.entries(getTypeEffective()).forEach(([key, value]) => {
+      safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
@@ -69,7 +69,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         </div>
       );
     } else if (effect === EffectiveType.Neutral) {
-      Object.entries(getTypeEffective()).forEach(([key, value]) => {
+      safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
@@ -84,7 +84,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         </div>
       );
     } else if (effect === EffectiveType.Resistance) {
-      Object.entries(getTypeEffective()).forEach(([key, value]) => {
+      safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];

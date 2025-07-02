@@ -37,6 +37,7 @@ import {
   isSpecialMegaFormType,
   replacePokemonGoForm,
   replaceTempMoveName,
+  safeObjectEntries,
   splitAndCamelCase,
   splitAndCapitalize,
 } from '../utils/utils';
@@ -280,7 +281,7 @@ const convertAndReplaceNameGO = (name: string, defaultName = ''): string => {
     GALARIAN_STANDARD: formGalarian(),
   };
 
-  Object.entries(formReplacements).forEach(([pattern, replacement]) => {
+  safeObjectEntries(formReplacements).forEach(([pattern, replacement]) => {
     result = result.replace(new RegExp(pattern, 'gi'), replacement);
   });
 
@@ -1520,7 +1521,9 @@ const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData
 };
 
 const getTextWithKey = <T>(data: object, findKey: string | number) => {
-  const result = Object.entries(data).find(([key]) => isInclude(key, findKey, IncludeMode.IncludeIgnoreCaseSensitive));
+  const result = safeObjectEntries(data).find(([key]) =>
+    isInclude(key, findKey, IncludeMode.IncludeIgnoreCaseSensitive)
+  );
   return result && isNotEmpty(result) ? (result[1] as T) : undefined;
 };
 

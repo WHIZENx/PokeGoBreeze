@@ -8,7 +8,7 @@ import { SearchingState } from '../../store/models/state.model';
 import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { DynamicObj, isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
-import { camelCase, getMultiplyTypeEffect } from '../../utils/utils';
+import { camelCase, getMultiplyTypeEffect, safeObjectEntries } from '../../utils/utils';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
 const Info = () => {
@@ -24,7 +24,7 @@ const Info = () => {
 
   const getWeatherEffective = (types: string[] | undefined) => {
     const data: string[] = [];
-    Object.entries(getWeatherBoost()).forEach(([key, value]: [string, string[]]) => {
+    safeObjectEntries(getWeatherBoost()).forEach(([key, value]) => {
       types?.forEach((type) => {
         if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive) && !isIncludeList(data, key)) {
           data.push(key);
@@ -43,7 +43,7 @@ const Info = () => {
       resist: [],
       neutral: [],
     });
-    Object.entries(getTypeEffective()).forEach(([key, value]: [string, DynamicObj<string>]) => {
+    safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
       if (isNotEmpty(types)) {
         let valueEffective = 1;
         types?.forEach((type) => {

@@ -6,6 +6,7 @@ import { getValuesObj } from '../utils';
 import { WeatherBoost } from '../../core/models/weather-boost.model';
 import { isNotEmpty } from '../extension';
 import { TypeModel } from '../../core/models/type.model';
+import { TypeEffectiveModel } from '../../core/models/type-effective.model';
 
 if (!process.env.REACT_APP_CONFIG) {
   throw new Error('Missing config environment variable');
@@ -94,10 +95,10 @@ export const getWeatherTypes = () =>
     : (getValuesObj(new WeatherBoost(), 1) as unknown as string[]);
 
 // Type effective
-export const getTypeEffective = () => currentOptions.typeEffective;
+export const getTypeEffective = () => currentOptions.typeEffective || new TypeEffectiveModel();
 
 // Weather boost
-export const getWeatherBoost = () => currentOptions.weatherBoost;
+export const getWeatherBoost = () => currentOptions.weatherBoost || new WeatherBoost();
 
 // Config
 export const getConfig = () => currentOptions.config;

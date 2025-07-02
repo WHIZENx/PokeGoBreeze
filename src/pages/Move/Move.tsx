@@ -8,6 +8,7 @@ import {
   generateParamForm,
   getItemSpritePath,
   getKeyWithData,
+  safeObjectEntries,
   splitAndCapitalize,
 } from '../../utils/utils';
 import { Params } from '../../utils/constants';
@@ -191,7 +192,7 @@ const Move = (props: IMovePage) => {
   ];
 
   const getWeatherEffective = (type: string | undefined) => {
-    const result = Object.entries(getWeatherBoost())?.find(([, value]: [string, string[]]) => {
+    const result = safeObjectEntries(getWeatherBoost())?.find(([, value]) => {
       if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive)) {
         return value;
       }
@@ -737,14 +738,14 @@ const Move = (props: IMovePage) => {
                                   {move.bonus.cost.stardustCost}
                                 </td>
                               </tr>
-                              {Object.entries(move.bonus.bonusEffect).map(([k, v]: [string, BonusEffectType], i) => (
+                              {safeObjectEntries<BonusEffectType>(move.bonus.bonusEffect).map(([k, v], i) => (
                                 <Fragment key={i}>
                                   <tr>
                                     <td colSpan={3} className="text-center">
                                       {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
                                     </td>
                                   </tr>
-                                  {Object.entries(v).map(([key, value], j) => (
+                                  {safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
                                     <tr key={j}>
                                       <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
                                       <td colSpan={2} key={j}>
@@ -753,12 +754,12 @@ const Move = (props: IMovePage) => {
                                           value
                                         ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
                                           <div className="d-flex flex-wrap gap-2">
-                                            {getValueOrDefault<string[]>(Array, value).map((item) =>
+                                            {getValueOrDefault<string[]>(Array, value as string[]).map((item) =>
                                               renderReward(item)
                                             )}
                                           </div>
                                         ) : (
-                                          renderReward(value)
+                                          renderReward(value as string)
                                         )}
                                       </td>
                                     </tr>

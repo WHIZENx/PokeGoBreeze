@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
-import { camelCase, getKeyWithData, splitAndCapitalize } from '../../utils/utils';
+import { camelCase, getKeyWithData, safeObjectEntries, splitAndCapitalize } from '../../utils/utils';
 import { getPropertyName, isEmpty, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
@@ -22,7 +22,7 @@ const Effect = () => {
 
   const getWeatherEffective = useCallback(() => {
     const data: string[] = [];
-    Object.entries(weathersBoost).forEach(([key, value]: [string, string[]]) => {
+    safeObjectEntries(weathersBoost).forEach(([key, value]) => {
       if (isIncludeList(value, currentTypePri) && !isIncludeList(data, key)) {
         data.push(key);
       }

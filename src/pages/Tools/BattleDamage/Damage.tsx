@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
+import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating, safeObjectEntries } from '../../../utils/utils';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 
 import './Damage.scss';
@@ -365,7 +365,7 @@ const Damage = () => {
                           );
                         }}
                       >
-                        {Object.entries(getThrowCharge()).map(([type, value], index) => (
+                        {safeObjectEntries(getThrowCharge()).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>

@@ -5,7 +5,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/api.service';
-import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
+import { capitalize, getValidPokemonImgPath, safeObjectEntries, splitAndCapitalize } from '../../../utils/utils';
 import { SearchingState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
@@ -169,7 +169,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
                   <ul className="m-0">
                     {value.cries &&
-                      Object.entries(value.cries).map(([k, v], i) => (
+                      safeObjectEntries(value.cries).map(([k, v], i) => (
                         <Fragment key={i}>
                           {v && (
                             <li className="list-style-circle">

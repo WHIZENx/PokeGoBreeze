@@ -5,6 +5,7 @@ import {
   getKeyWithData,
   getPokemonClass,
   replaceTempMoveName,
+  safeObjectEntries,
 } from '../../utils/utils';
 import { ICombat } from './combat.model';
 import { genList, regionList, versionList } from '../../utils/constants';
@@ -578,7 +579,7 @@ export class PokemonData implements IPokemonData {
 
   static create(pokemon: PokemonDataModel, options?: IPokemonDataOptional) {
     const obj = new PokemonData();
-    Object.entries(genList).forEach(([key, value]) => {
+    safeObjectEntries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;
       if (pokemon.id >= minId && pokemon.id <= maxId) {
         obj.gen = toNumber(key);

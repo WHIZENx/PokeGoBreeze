@@ -682,12 +682,12 @@ export const getDataWithKey = <T>(
   findKey: string | number | undefined | null,
   mode = EqualMode.CaseSensitive
 ) => {
-  const result = Object.entries(data).find(([key]) => isEqual(key, findKey, mode));
+  const result = safeObjectEntries(data).find(([key]) => isEqual(key, findKey, mode));
   return result && isNotEmpty(result) ? (result[1] as T) : undefined;
 };
 
 export const getKeyWithData = <T>(data: object, findValue: T) => {
-  const result = Object.entries(data).find(([, value]: [string, T]) => value === findValue);
+  const result = safeObjectEntries(data).find(([, value]: [string, T]) => value === findValue);
   return result && isNotEmpty(result) ? result[0] : undefined;
 };
 
@@ -1354,3 +1354,8 @@ export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
 
 export const isSpecialMegaFormType = (pokemonType: PokemonType | undefined) =>
   pokemonType === PokemonType.Mega || pokemonType === PokemonType.Primal;
+
+export const safeObjectEntries = <T extends object | string | number, S extends string | number = string | number>(
+  obj: Record<S, T> | object | undefined,
+  defaultObj = new Object()
+) => Object.entries(obj || defaultObj) as [string, T][];
