@@ -10,7 +10,6 @@ import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } fr
 import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
-import { useDataStore } from '../../composables/useDataStore';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 
@@ -21,7 +20,6 @@ const Find = (props: IFindComponent) => {
   const cardHeight = useRef(65);
 
   const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
-  const { pokemonsData } = useDataStore();
   const { mappingPokemonName, getPokemonById } = usePokemon();
 
   const [id, setId] = useState(
@@ -40,11 +38,9 @@ const Find = (props: IFindComponent) => {
   const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData)) {
-      const result = mappingPokemonName();
-      setPokemonList(result);
-    }
-  }, [pokemonsData]);
+    const result = mappingPokemonName();
+    setPokemonList(result);
+  }, [mappingPokemonName]);
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {

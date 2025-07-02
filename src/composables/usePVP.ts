@@ -10,12 +10,6 @@ import APIService from '../services/api.service';
 import useDataStore from './useDataStore';
 import useTimestamp from './useTimestamp';
 
-/**
- * Custom hook to access and update the pvp state from Redux store
- * This replaces direct usage of useSelector((state: StoreState) => state.store.data.pvp)
- *
- * @returns The pvp state and update methods
- */
 export const usePVP = () => {
   const dispatch = useDispatch();
   const { getAuthorizationHeaders, pvpData } = useDataStore();

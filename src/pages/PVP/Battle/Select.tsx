@@ -14,11 +14,11 @@ import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.m
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
-import useDataStore from '../../../composables/useDataStore';
 import useSpinner from '../../../composables/useSpinner';
+import useCombats from '../../../composables/useCombats';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
-  const { combatsData } = useDataStore();
+  const { findMoveData } = useCombats();
   const { showSpinner, hideSpinner } = useSpinner();
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
@@ -58,15 +58,15 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);
 
-    const fMoveCombat = combatsData.find((item) => isEqual(item.name, fMove));
+    const fMoveCombat = findMoveData(fMove);
     setFMove(fMoveCombat);
     cMovePri = replaceTempMovePvpName(cMovePri);
 
-    const cMovePriCombat = combatsData.find((item) => isEqual(item.name, cMovePri));
+    const cMovePriCombat = findMoveData(cMovePri);
     setCMovePri(cMovePriCombat);
     cMoveSec = replaceTempMovePvpName(cMoveSec);
 
-    const cMoveSecCombat = combatsData.find((item) => isEqual(item.name, cMoveSec));
+    const cMoveSecCombat = findMoveData(cMoveSec);
     setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
@@ -257,7 +257,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div>
                 {props.data
                   .find((value) => isEqual(value.speciesId, pokemon.speciesId))
-                  ?.moves.fastMoves.map((value) => combatsData.find((item) => isEqual(item.name, value.moveId)))
+                  ?.moves.fastMoves.map((value) => findMoveData(value.moveId))
                   .filter((value) => value && !isEqual(value.name, fMove?.name))
                   .map((value, index) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
@@ -325,7 +325,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return combatsData.find((item) => isEqual(item.name, move));
+                      return findMoveData(move);
                     })
                     .filter(
                       (value) => value && !isEqual(value.name, cMovePri?.name) && !isEqual(value.name, cMoveSec?.name)
@@ -410,7 +410,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return combatsData.find((item) => isEqual(item.name, move));
+                      return findMoveData(move);
                     })
                     .filter(
                       (value) =>

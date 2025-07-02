@@ -2,22 +2,22 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import { ICombat } from '../../core/models/combat.model';
 import { ICardMoveComponent } from '../models/component.model';
-import { combineClasses, isEqual, isNotEmpty } from '../../utils/extension';
+import { combineClasses } from '../../utils/extension';
 import { MoveType } from '../../enums/type.enum';
 import IconType from '../Sprites/Icon/Type/Type';
-import { useDataStore } from '../../composables/useDataStore';
+import useCombats from '../../composables/useCombats';
 
 const CardMove = (props: ICardMoveComponent) => {
-  const { combatsData } = useDataStore();
+  const { findMoveData } = useCombats();
 
   const [move, setMove] = useState<ICombat>();
 
   useEffect(() => {
-    if (isNotEmpty(combatsData) && props.value) {
-      const move = combatsData.find((item) => isEqual(item.name, props.value?.name));
+    if (props.value) {
+      const move = findMoveData(props.value?.name);
       setMove(move);
     }
-  }, [combatsData, props.value]);
+  }, [findMoveData, props.value]);
 
   return (
     <Fragment>

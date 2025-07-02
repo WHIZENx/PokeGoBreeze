@@ -5,20 +5,20 @@ import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 import './TypeBadge.scss';
 import { ICombat } from '../../../core/models/combat.model';
 import { ITypeBadgeComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../utils/extension';
+import { combineClasses, getValueOrDefault } from '../../../utils/extension';
 import { MoveType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
-import { useDataStore } from '../../../composables/useDataStore';
+import useCombats from '../../../composables/useCombats';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
-  const { combatsData } = useDataStore();
+  const { findMoveData } = useCombats();
 
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {
-    if (props.move?.name && isNotEmpty(combatsData)) {
-      setMove(combatsData.find((item) => isEqual(item.name, props.move?.name)));
+    if (props.move?.name) {
+      setMove(findMoveData(props.move?.name));
     }
-  }, [combatsData, props.move?.name]);
+  }, [findMoveData, props.move?.name]);
 
   return (
     <div className={combineClasses('type-badge-container', props.isGrow ? 'filter-shadow' : '')} style={props.style}>

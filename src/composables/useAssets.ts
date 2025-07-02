@@ -4,12 +4,6 @@ import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { formNormal, formGmax, formMega } from '../utils/helpers/options-context.helpers';
 import { isEqual, isInclude, isNotEmpty } from '../utils/extension';
 
-/**
- * Custom hook to access and update the assets state from Redux store
- * This replaces direct usage of useSelector((state: StoreState) => state.store.data.assets)
- *
- * @returns The assets state and update methods
- */
 export const useAssets = () => {
   const { assetsData } = useDataStore();
 

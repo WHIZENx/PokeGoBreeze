@@ -369,7 +369,7 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
   if (isInclude(text, formStandard(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     form = `-${formStandard().toLowerCase()}`;
   }
-  const invalidForm: string[] = [
+  const invalidForm = [
     '-therian',
     '-o',
     '-origin',

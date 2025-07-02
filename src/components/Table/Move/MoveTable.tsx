@@ -7,7 +7,7 @@ import { Tab, Tabs } from 'react-bootstrap';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Combat, ICombat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
 import {
   IPokemonQueryMove,
   IPokemonQueryRankMove,
@@ -18,8 +18,6 @@ import {
   combineClasses,
   DynamicObj,
   getPropertyName,
-  getValueOrDefault,
-  isEqual,
   isNotEmpty,
   isUndefined,
   toFloatWithPadding,
@@ -32,6 +30,7 @@ import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import IconType from '../../Sprites/Icon/Type/Type';
 import useDataStore from '../../../composables/useDataStore';
+import useCombats from '../../../composables/useCombats';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -79,6 +78,7 @@ class TableSort implements ITableSort {
 
 const TableMove = (props: ITableMoveComponent) => {
   const { combatsData } = useDataStore();
+  const { filterUnknownMove } = useCombats();
   const [move, setMove] = useState<IPokemonQueryRankMove>(new PokemonQueryRankMove());
   const [moveOrigin, setMoveOrigin] = useState<PokemonMoves>();
 
@@ -102,15 +102,6 @@ const TableMove = (props: ITableMoveComponent) => {
   );
 
   const { offensive, defensive, disableSortFM, disableSortCM } = stateSorted;
-
-  const filterUnknownMove = (moves: string[] | undefined) => {
-    return getValueOrDefault(
-      Array,
-      moves
-        ?.map((move) => combatsData.find((item) => isEqual(item.name, move)) ?? new Combat())
-        .filter((move) => move.id > 0)
-    );
-  };
 
   const filterMoveType = (pokemon: Partial<IPokemonDetail> | undefined) => {
     if (!pokemon) {

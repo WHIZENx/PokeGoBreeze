@@ -15,6 +15,7 @@ import useDataStore from '../../composables/useDataStore';
 import usePVP from '../../composables/usePVP';
 import useSpinner from '../../composables/useSpinner';
 import useTimestamp from '../../composables/useTimestamp';
+import useCombats from '../../composables/useCombats';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -39,7 +40,8 @@ const PVPHome = () => {
       'Simulate Pokémon GO PVP battles with our comprehensive battle simulator. Test different teams, moves, and strategies for Great, Ultra, and Master League.',
     keywords: ['PVP simulator', 'Pokémon GO battles', 'battle simulator', 'PVP team builder', 'battle strategies'],
   });
-  const { pvpData, combatsData } = useDataStore();
+  const { pvpData } = useDataStore();
+  const { isCombatsNoneArchetype } = useCombats();
   const { loadPVP, loadPVPMoves } = usePVP();
   const { spinnerIsLoading, hideSpinner } = useSpinner();
   const { timestampPVP } = useTimestamp();
@@ -53,13 +55,13 @@ const PVPHome = () => {
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(combatsData) && combatsData.every((combat) => !combat.archetype)) {
+    if (isCombatsNoneArchetype()) {
       loadPVPMoves();
     }
     if (spinnerIsLoading) {
       hideSpinner();
     }
-  }, [spinnerIsLoading, combatsData]);
+  }, [spinnerIsLoading, isCombatsNoneArchetype]);
 
   useEffect(() => {
     if (!rank && !team && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {

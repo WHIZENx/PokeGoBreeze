@@ -39,7 +39,6 @@ import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
 import { getTypes, transitionTime } from '../../utils/helpers/options-context.helpers';
-import useDataStore from '../../composables/useDataStore';
 import useIcon from '../../composables/useIcon';
 import useAssets from '../../composables/useAssets';
 import usePokemon from '../../composables/usePokemon';
@@ -111,7 +110,6 @@ const Pokedex = (props: IStyleSheetData) => {
 
   const dispatch = useDispatch();
   const { iconData } = useIcon();
-  const { pokemonsData } = useDataStore();
   const { getFilteredPokemons } = usePokemon();
   const { queryAssetForm } = useAssets();
 
@@ -152,18 +150,16 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData)) {
-      const filteredPokemons = getFilteredPokemons();
-      setDataList(
-        filteredPokemons
-          .map((item) => {
-            const assetForm = queryAssetForm(item.num, item.form);
-            return new PokemonHomeModel(item, assetForm);
-          })
-          .sort((a, b) => a.id - b.id)
-      );
-    }
-  }, [pokemonsData]);
+    const filteredPokemons = getFilteredPokemons();
+    setDataList(
+      filteredPokemons
+        .map((item) => {
+          const assetForm = queryAssetForm(item.num, item.form);
+          return new PokemonHomeModel(item, assetForm);
+        })
+        .sort((a, b) => a.id - b.id)
+    );
+  }, [getFilteredPokemons]);
 
   useEffect(() => {
     setIsLoading(true);

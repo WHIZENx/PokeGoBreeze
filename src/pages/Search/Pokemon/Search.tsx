@@ -16,7 +16,6 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
 import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../composables/useDataStore';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 
@@ -30,7 +29,6 @@ const Search = () => {
   const { routerAction } = useRouter();
   const { getPokemonById, mappingPokemonName } = usePokemon();
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
-  const { pokemonsData } = useDataStore();
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -54,11 +52,9 @@ const Search = () => {
   const resultsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData)) {
-      const result = mappingPokemonName();
-      setPokemonList(result);
-    }
-  }, [pokemonsData]);
+    const result = mappingPokemonName();
+    setPokemonList(result);
+  }, [mappingPokemonName]);
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {

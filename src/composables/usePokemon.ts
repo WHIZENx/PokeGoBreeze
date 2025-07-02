@@ -13,6 +13,7 @@ import {
 import { PokemonType } from '../enums/type.enum';
 import { versionList } from '../utils/constants';
 import useDataStore from './useDataStore';
+import { useCallback } from 'react';
 
 export const usePokemon = () => {
   const { pokemonsData } = useDataStore();
@@ -22,22 +23,28 @@ export const usePokemon = () => {
    * @param filterFn - A function to filter the pokemons array
    * @returns The filtered array of IPokemonData
    */
-  const getFilteredPokemons = (filterFn?: (item: IPokemonData) => boolean) => {
-    return pokemonsData.filter((item) => item.num > 0 && (filterFn?.(item) || true));
-  };
+  const getFilteredPokemons = useCallback(
+    (filterFn?: (item: IPokemonData) => boolean) => {
+      return pokemonsData.filter((item) => item.num > 0 && (filterFn?.(item) || true));
+    },
+    [pokemonsData]
+  );
 
   const checkPokemonGO = (id: number, name: string | undefined) =>
     getFilteredPokemons().find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
 
-  const mappingPokemonName = () =>
-    getFilteredPokemons()
-      .filter(
-        (pokemon) =>
-          pokemon.num > 0 &&
-          (pokemon.form === formNormal() || (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form)))
-      )
-      .map((pokemon) => new PokemonSearching(pokemon))
-      .sort((a, b) => a.id - b.id);
+  const mappingPokemonName = useCallback(
+    () =>
+      getFilteredPokemons()
+        .filter(
+          (pokemon) =>
+            pokemon.num > 0 &&
+            (pokemon.form === formNormal() || (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form)))
+        )
+        .map((pokemon) => new PokemonSearching(pokemon))
+        .sort((a, b) => a.id - b.id),
+    [pokemonsData]
+  );
 
   const getPokemonById = (id: number) => {
     const result = getFilteredPokemons()

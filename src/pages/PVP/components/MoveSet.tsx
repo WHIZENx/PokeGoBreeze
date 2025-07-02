@@ -17,7 +17,7 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import PersonIcon from '@mui/icons-material/Person';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { combineClasses, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
 import { getMoveType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
 import { ArcheType } from '../enums/arche-type.enum';
 import { MoveType } from '../../../enums/type.enum';
@@ -25,10 +25,10 @@ import { PokemonRankingMove } from '../../../core/models/pvp.model';
 import { IMoveSet, MoveSetModel } from '../models/move-set.model';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
-import useDataStore from '../../../composables/useDataStore';
+import useCombats from '../../../composables/useCombats';
 
 const MoveSet = (props: MoveSetComponent) => {
-  const { combatsData } = useDataStore();
+  const { findMoveData } = useCombats();
   const [fastMoves, setFastMoves] = useState<IMoveSet[]>();
   const [chargedMoves, setChargedMoves] = useState<IMoveSet[]>();
 
@@ -152,7 +152,7 @@ const MoveSet = (props: MoveSetComponent) => {
       })
       .sort((a, b) => toNumber(b.uses) - toNumber(a.uses))
       .map((move) => {
-        const combat = combatsData.find((m) => isEqual(m.name, move.moveId));
+        const combat = findMoveData(move.moveId);
         if (combat) {
           combat.moveType = getMoveType(props.pokemon, move.moveId);
           return MoveSetModel.create({ ...combat, uses: toNumber(move.uses) });

@@ -7,22 +7,17 @@ import { IMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
 import useDataStore from '../../composables/useDataStore';
 import usePokemon from '../../composables/usePokemon';
+import useCombats from '../../composables/useCombats';
 
 const Move = (props: IMoveComponent) => {
-  const { combatsData, pokemonsData } = useDataStore();
+  const { pokemonsData } = useDataStore();
+  const { findMoveData } = useCombats();
   const { retrieveMoves } = usePokemon();
 
   const [countFM, setCountFM] = useState(0);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [currentMove, setCurrentMove] = useState<ISelectMoveModel>();
   const [showMove, setShowMove] = useState(false);
-
-  const findMoveData = useCallback(
-    (move: string | undefined) => {
-      return combatsData.find((item) => isEqual(item.name, move));
-    },
-    [combatsData]
-  );
 
   const findMove = useCallback(
     (value: IMoveComponent) => {

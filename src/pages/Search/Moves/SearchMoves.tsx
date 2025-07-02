@@ -12,7 +12,6 @@ import {
   getValueOrDefault,
   isEqual,
   isInclude,
-  isNotEmpty,
   toFloat,
   toFloatWithPadding,
   toNumber,
@@ -26,7 +25,7 @@ import CircularProgressTable from '../../../components/Sprites/CircularProgress/
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { PokemonTypeBadge } from '../../../core/enums/pokemon-type.enum';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../composables/useDataStore';
+import useCombats from '../../../composables/useCombats';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -119,7 +118,7 @@ const Search = () => {
       'Search and filter Pokémon GO moves by type, power, energy, and more. Find the best moves for your Pokémon in battles and raids.',
     keywords: ['Pokémon moves', 'move search', 'best moves', 'PVP moves', 'raid moves', 'Pokémon GO attacks'],
   });
-  const { combatsData } = useDataStore();
+  const { getCombatsByTypeMove } = useCombats();
 
   const [filters, setFilters] = useState(new Filter());
 
@@ -133,11 +132,9 @@ const Search = () => {
   const [cMoveIsLoad, setCMoveIsLoad] = useState(false);
 
   useEffect(() => {
-    if (isNotEmpty(combatsData)) {
-      setCombatFMoves(combatsData.filter((item) => item.typeMove === TypeMove.Fast));
-      setCombatCMoves(combatsData.filter((item) => item.typeMove === TypeMove.Charge));
-    }
-  }, [combatsData]);
+    setCombatFMoves(getCombatsByTypeMove(TypeMove.Fast));
+    setCombatCMoves(getCombatsByTypeMove(TypeMove.Charge));
+  }, [getCombatsByTypeMove]);
 
   useEffect(() => {
     const debounced = debounce(() => {
