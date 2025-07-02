@@ -14,7 +14,7 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { calculateStats, queryStatesEvoChain } from '../../../utils/calculate';
+import { calculateStats } from '../../../utils/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
@@ -55,6 +55,7 @@ import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
+import useCalculate from '../../../composables/useCalculate';
 
 const FindBattle = () => {
   useTitle({
@@ -71,6 +72,7 @@ const FindBattle = () => {
     ],
   });
   const { pokemonsData } = useDataStore();
+  const { queryStatesEvoChain } = useCalculate();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner } = useSpinner();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
@@ -191,7 +193,7 @@ const FindBattle = () => {
       getEvoChain(toNumber(pokemon?.form?.defaultId)).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(pokemonsData, value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(value, level, ATKIv, DEFIv, STAIv);
           if (data.id === pokemon?.form?.defaultId) {
             setMaxCP(data.maxCP);
           }
