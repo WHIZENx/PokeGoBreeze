@@ -5,7 +5,6 @@ import Find from '../../../components/Find/Find';
 
 import {
   addSelectMovesByType,
-  convertPokemonAPIDataFormName,
   generateParamForm,
   getAllMoves,
   getKeyWithData,
@@ -119,7 +118,7 @@ const RaidBattle = () => {
   const { iconData } = useIcon();
   const { getFilteredPokemons } = usePokemon();
   const { findMoveByName } = useCombats();
-  const { findAssetForm } = useAssets();
+  const { getAssetNameById } = useAssets();
   const { showSpinner, hideSpinner } = useSpinner();
   const { retrieveMoves, checkPokemonGO } = usePokemon();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
@@ -1229,8 +1228,7 @@ const RaidBattle = () => {
   };
 
   const renderPokemon = (value: IPokemonMoveData) => {
-    const formAsset = convertPokemonAPIDataFormName(value.pokemon?.form, value.pokemon?.name);
-    const assets = findAssetForm(value.pokemon?.num, formAsset);
+    const assets = getAssetNameById(value.pokemon?.num, value.pokemon?.name, value.pokemon?.form);
     return (
       <LinkToTop
         to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.form, value.pokemonType)}`}
