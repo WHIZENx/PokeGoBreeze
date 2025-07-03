@@ -6,7 +6,6 @@ import FemaleIcon from '@mui/icons-material/Female';
 import './PokemonModel.scss';
 import APIService from '../../../services/api.service';
 import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
-import { SearchingState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
@@ -14,13 +13,13 @@ import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { combineClasses, isNotEmpty, safeObjectEntries, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 import { useIcon } from '../../../composables/useIcon';
-import { useSelector } from 'react-redux';
 import { useAssets } from '../../../composables/useAssets';
+import { useSearch } from '../../../composables/useSearch';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const { iconData } = useIcon();
   const { findAssetsById } = useAssets();
-  const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
+  const { searchingMainDetails } = useSearch();
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const [gender, setGender] = useState<PokemonGender>();
@@ -41,15 +40,15 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   };
 
   useEffect(() => {
-    if (pokemonData?.fullName && pokemonData.genderRatio) {
-      setPokeAssets(getImageList(pokemonData.id, pokemonData.genderRatio));
+    if (searchingMainDetails?.fullName && searchingMainDetails.genderRatio) {
+      setPokeAssets(getImageList(searchingMainDetails.id, searchingMainDetails.genderRatio));
     }
-  }, [pokemonData]);
+  }, [searchingMainDetails]);
 
   return (
     <div className="mt-2 position-relative">
       <h4 className="title-evo">
-        <b>{`Assets of ${splitAndCapitalize(pokemonData?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
+        <b>{`Assets of ${splitAndCapitalize(searchingMainDetails?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
         <img
           className="ms-1"
           width={36}
@@ -148,7 +147,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         </div>
       )}
       <h4 className="title-evo">
-        <b>{`Sound of ${splitAndCapitalize(pokemonData?.pokemonId, '_', ' ')}`}</b>
+        <b>{`Sound of ${splitAndCapitalize(searchingMainDetails?.pokemonId, '_', ' ')}`}</b>
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (

@@ -19,13 +19,12 @@ import {
   PredictStatsModel,
   PredictCPModel,
 } from '../../../utils/models/calculate.model';
-import { useSelector } from 'react-redux';
-import { SearchingState } from '../../../store/models/state.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/options-context.helpers';
+import useSearch from '../../../composables/useSearch';
 
 interface IFindCP {
   level: number;
@@ -177,7 +176,7 @@ const FindTable = () => {
       'Find specific CP and IV combinations for any Pokémon in Pokémon GO. Our advanced search tool helps you locate perfect IVs and optimal CP values.',
     keywords: ['Find CP', 'Find IV', 'Pokémon GO CP search', 'IV finder', 'CP calculator', 'optimal Pokémon stats'],
   });
-  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
+  const { searchingToolCurrentDetails } = useSearch();
 
   const [searchCP, setSearchCP] = useState('');
 
@@ -191,25 +190,25 @@ const FindTable = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
-    if (!pokemon) {
+    if (!searchingToolCurrentDetails) {
       return;
     }
     if (toNumber(searchCP) < minCp()) {
       return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
     }
     const result = predictStat(
-      toNumber(pokemon.statsGO?.atk),
-      toNumber(pokemon.statsGO?.def),
-      toNumber(pokemon.statsGO?.sta),
+      toNumber(searchingToolCurrentDetails.statsGO?.atk),
+      toNumber(searchingToolCurrentDetails.statsGO?.def),
+      toNumber(searchingToolCurrentDetails.statsGO?.sta),
       searchCP
     );
     if (!isNotEmpty(result.result)) {
       setPreIvArr(undefined);
-      const name = splitAndCapitalize(pokemon.fullName, '_', ' ');
+      const name = splitAndCapitalize(searchingToolCurrentDetails.fullName, '_', ' ');
       return enqueueSnackbar(`At CP: ${result.CP} impossible found in ${name}`, { variant: VariantType.Error });
     }
     setPreIvArr(result);
-  }, [enqueueSnackbar, pokemon, searchCP]);
+  }, [enqueueSnackbar, searchingToolCurrentDetails, searchCP]);
 
   const onFindStats = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -229,7 +228,7 @@ const FindTable = () => {
   };
 
   const findStatsCP = useCallback(() => {
-    if (!pokemon) {
+    if (!searchingToolCurrentDetails) {
       return;
     }
     if (isInvalidIV(searchATKIv) || isInvalidIV(searchDEFIv) || isInvalidIV(searchSTAIv)) {
@@ -237,15 +236,15 @@ const FindTable = () => {
       return;
     }
     const result = predictCPList(
-      toNumber(pokemon.statsGO?.atk),
-      toNumber(pokemon.statsGO?.def),
-      toNumber(pokemon.statsGO?.sta),
+      toNumber(searchingToolCurrentDetails.statsGO?.atk),
+      toNumber(searchingToolCurrentDetails.statsGO?.def),
+      toNumber(searchingToolCurrentDetails.statsGO?.sta),
       searchATKIv,
       searchDEFIv,
       searchSTAIv
     );
     setPreCpArr(result);
-  }, [enqueueSnackbar, pokemon, searchATKIv, searchDEFIv, searchSTAIv]);
+  }, [enqueueSnackbar, searchingToolCurrentDetails, searchATKIv, searchDEFIv, searchSTAIv]);
 
   const onFindCP = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -352,12 +351,12 @@ const FindTable = () => {
   };
 
   const findMinMax = () => {
-    if (!pokemon) {
+    if (!searchingToolCurrentDetails) {
       return;
     }
-    const statATK = toNumber(pokemon.statsGO?.atk);
-    const statDEF = toNumber(pokemon.statsGO?.def);
-    const statSTA = toNumber(pokemon.statsGO?.sta);
+    const statATK = toNumber(searchingToolCurrentDetails.statsGO?.atk);
+    const statDEF = toNumber(searchingToolCurrentDetails.statsGO?.def);
+    const statSTA = toNumber(searchingToolCurrentDetails.statsGO?.sta);
     const dataTable = dataCPM
       .filter((item) => item.level >= minLevel() && item.level <= maxLevel())
       .map((item) => {

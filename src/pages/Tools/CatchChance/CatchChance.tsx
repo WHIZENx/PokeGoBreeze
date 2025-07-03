@@ -8,7 +8,6 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
@@ -23,7 +22,6 @@ import {
 } from '../../../utils/utils';
 
 import './CatchChance.scss';
-import { SearchingState } from '../../../store/models/state.model';
 import {
   DynamicObj,
   getValueOrDefault,
@@ -72,6 +70,7 @@ import {
   stepLevel,
   ultraBallIncChance,
 } from '../../../utils/helpers/options-context.helpers';
+import useSearch from '../../../composables/useSearch';
 
 const balls: PokeBallThreshold[] = [
   {
@@ -101,8 +100,7 @@ const throws: ThrowThreshold[] = [
 ];
 
 const CatchChance = () => {
-  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
-
+  const { searchingToolCurrentDetails } = useSearch();
   const circleDistance = useRef(200);
 
   const [form, setForm] = useState<IPokemonFormModify>();
@@ -142,10 +140,10 @@ const CatchChance = () => {
   });
 
   useEffect(() => {
-    if (pokemon) {
-      findCatchCapture(pokemon);
+    if (searchingToolCurrentDetails) {
+      findCatchCapture(searchingToolCurrentDetails);
     }
-  }, [pokemon]);
+  }, [searchingToolCurrentDetails]);
 
   useEffect(() => {
     if (!isAdvance && data && medal) {

@@ -3,24 +3,23 @@ import TypeEffectiveComponent from '../Effective/TypeEffective';
 import WeatherTypeEffective from '../Effective/WeatherTypeEffective';
 import TypeInfo from '../Sprites/Type/Type';
 
-import { useSelector } from 'react-redux';
-import { SearchingState } from '../../store/models/state.model';
 import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { DynamicObj, isIncludeList, isNotEmpty, safeObjectEntries, toNumber } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import { camelCase, getMultiplyTypeEffect } from '../../utils/utils';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
+import useSearch from '../../composables/useSearch';
 
 const Info = () => {
-  const formTypes = useSelector((state: SearchingState) => state.searching.mainSearching?.form?.form?.types);
+  const { searchingMainForm } = useSearch();
 
   const [types, setTypes] = useState<string[]>([]);
 
   useEffect(() => {
-    if (formTypes && isNotEmpty(formTypes)) {
-      setTypes(formTypes);
+    if (searchingMainForm?.form?.types && isNotEmpty(searchingMainForm?.form?.types)) {
+      setTypes(searchingMainForm?.form?.types);
     }
-  }, [formTypes]);
+  }, [searchingMainForm?.form?.types]);
 
   const getWeatherEffective = (types: string[] | undefined) => {
     const data: string[] = [];
