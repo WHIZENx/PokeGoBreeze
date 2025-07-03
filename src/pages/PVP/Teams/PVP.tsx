@@ -80,7 +80,8 @@ const TeamPVP = (props: IStyleSheetData) => {
 
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
-    const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
+    const speciesName = convertNameRankingToForm(speciesId);
+    const name = convertNameRankingToOri(speciesId, speciesName);
     const pokemon = findPokemonBySlug(name);
     const id = pokemon?.num;
     const form = getAssetNameById(id, name, pokemon?.form);

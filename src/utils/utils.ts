@@ -364,6 +364,7 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     .replace('-red-striped', '')
     .replace('-full-belly', '')
     .replace('-rider', '')
+    .replace('-hero', '')
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
     .replace('-shaymin', '');
