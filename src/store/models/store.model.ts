@@ -7,20 +7,17 @@ import { ILeagueData, LeagueData } from '../../core/models/league.model';
 import { IOptions, Options } from '../../core/models/options.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { IPVPDataModel, PVPDataModel } from '../../core/models/pvp.model';
-import { SearchingOptionsModel } from '../../core/models/searching.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { ITrainerLevelUp } from '../../core/models/trainer.model';
 
 export interface StoreModel {
   icon?: string;
   data: IDataModel;
-  searching?: SearchingOptionsModel;
 }
 
 export class Store implements StoreModel {
   icon?: string;
   data: IDataModel = new Data();
-  searching?: SearchingOptionsModel;
 }
 
 export interface IDataModel {

@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { StoreState } from '../store/models/state.model';
+import { SearchingState } from '../store/models/state.model';
 import {
   SetPokemonMainSearch,
   ResetPokemonMainSearch,
@@ -27,7 +27,7 @@ import { IPokemonDetail } from '../core/models/API/info.model';
  */
 export const useSearch = () => {
   const dispatch = useDispatch();
-  const searchData = useSelector((state: StoreState) => state.store.searching);
+  const searchData = useSelector((state: SearchingState) => state.searching);
 
   // Main Pokemon Search
   const setPokemonMainSearch = (value: ISearchingModel) => {
@@ -86,13 +86,13 @@ export const useSearch = () => {
     dispatch(ResetToolObjectPokemon.create());
   };
 
-  const searchingMainData = searchData?.mainSearching;
-  const searchingMainForm = searchData?.mainSearching?.form;
-  const searchingMainDetails = searchData?.mainSearching?.pokemon;
+  const searchingMainData = searchData.mainSearching;
+  const searchingMainForm = searchData.mainSearching?.form;
+  const searchingMainDetails = searchData.mainSearching?.pokemon;
 
-  const searchingToolData = searchData?.toolSearching;
-  const searchingToolCurrentData = searchData?.toolSearching?.current;
-  const searchingToolObjectData = searchData?.toolSearching?.object;
+  const searchingToolData = searchData.toolSearching;
+  const searchingToolCurrentData = searchData.toolSearching?.current;
+  const searchingToolObjectData = searchData.toolSearching?.object;
 
   return {
     searchData,

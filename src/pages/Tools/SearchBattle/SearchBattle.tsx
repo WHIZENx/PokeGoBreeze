@@ -73,7 +73,7 @@ const FindBattle = () => {
   });
   const { getFilteredPokemons, getFindPokemon } = usePokemon();
   const { queryStatesEvoChain } = useCalculate();
-  const { findAssetForm } = useAssets();
+  const { getAssetNameById } = useAssets();
   const { hideSpinner, showSpinner } = useSpinner();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
@@ -372,7 +372,7 @@ const FindBattle = () => {
   };
 
   const renderPokemon = (value: IBattleBaseStats | IQueryStatesEvoChain, className?: string, height = 100) => {
-    const assets = findAssetForm(value.id, pokemon?.form?.form?.formName);
+    const assets = getAssetNameById(value.id, value.name, value.form);
     return (
       <img
         className={className}

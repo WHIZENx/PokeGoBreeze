@@ -118,7 +118,7 @@ const RaidBattle = () => {
   const { iconData } = useIcon();
   const { getFilteredPokemons } = usePokemon();
   const { findMoveByName } = useCombats();
-  const { findAssetForm } = useAssets();
+  const { getAssetNameById } = useAssets();
   const { showSpinner, hideSpinner } = useSpinner();
   const { retrieveMoves, checkPokemonGO } = usePokemon();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
@@ -1228,7 +1228,7 @@ const RaidBattle = () => {
   };
 
   const renderPokemon = (value: IPokemonMoveData) => {
-    const assets = findAssetForm(value.pokemon?.num, value.pokemon?.form);
+    const assets = getAssetNameById(value.pokemon?.num, value.pokemon?.name, value.pokemon?.form);
     return (
       <LinkToTop
         to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.form, value.pokemonType)}`}

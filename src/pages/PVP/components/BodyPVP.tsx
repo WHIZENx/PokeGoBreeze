@@ -27,7 +27,7 @@ import usePokemon from '../../../composables/usePokemon';
 
 const BodyPVP = (props: BodyComponent) => {
   const { findPokemonBySlug } = usePokemon();
-  const { findAssetForm } = useAssets();
+  const { getAssetNameById } = useAssets();
   const [matchups, setMatchups] = useState<IBody[]>();
   const [counters, setCounters] = useState<IBody[]>();
 
@@ -35,10 +35,12 @@ const BodyPVP = (props: BodyComponent) => {
     return data
       ?.sort((a, b) => a.rating - b.rating)
       .map((versus) => {
-        const name = convertNameRankingToOri(versus.opponent, convertNameRankingToForm(versus.opponent));
+        const speciesId = versus.opponent;
+        const speciesName = convertNameRankingToForm(speciesId);
+        const name = convertNameRankingToOri(speciesId, speciesName);
         const pokemon = findPokemonBySlug(name);
         const id = pokemon?.num;
-        const form = findAssetForm(pokemon?.num, pokemon?.form);
+        const form = getAssetNameById(id, name, pokemon?.form);
         let pokemonType;
         if (isInclude(versus.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;

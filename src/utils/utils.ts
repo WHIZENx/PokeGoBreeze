@@ -309,7 +309,10 @@ export const convertModelSpritName = (text: string | undefined) =>
 export const convertNameRankingToForm = (text: string) => {
   let form = '';
   if (isInclude(text, '_')) {
-    form = ` (${capitalize(text.split('_').at(1))})`;
+    form = ` (${text
+      .split('_')
+      .map((t) => capitalize(t))
+      .join(' ')})`;
   }
   return text + form;
 };
@@ -360,9 +363,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     .replace('-reine', '')
     .replace('-red-striped', '')
     .replace('-full-belly', '')
-    .replace('-sword', '')
-    .replace('-shield', '')
     .replace('-rider', '')
+    .replace('-hero', '')
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
     .replace('-shaymin', '');
@@ -390,6 +392,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     '-speed',
     '-dusk',
     '-dawn',
+    '-white',
+    '-black',
     `-${formHisuian().toLowerCase()}`,
     `-${formGalarian().toLowerCase()}`,
   ];

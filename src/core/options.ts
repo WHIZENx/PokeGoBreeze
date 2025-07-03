@@ -582,7 +582,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         return;
       }
 
-      pokemon.types = item.types.map((type) => type.toUpperCase());
+      pokemon.types = item.types.map((type) => splitAndCamelCase(type, '_', ''));
       const optional = new PokemonDataOptional({
         ...item,
         baseForme: isNull(item.baseForme) ? undefined : item.baseForme,

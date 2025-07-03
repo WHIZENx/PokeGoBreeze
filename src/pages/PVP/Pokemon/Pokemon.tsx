@@ -51,7 +51,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
   const { pvpData } = useDataStore();
   const { isCombatsNoneArchetype, findMoveByName } = useCombats();
-  const { findAssetForm } = useAssets();
+  const { getAssetNameById } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const { findPokemonBySlug } = usePokemon();
   const { routerAction } = useRouter();
@@ -124,7 +124,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
         const name = convertNameRankingToOri(pokemonData.speciesId, pokemonData.speciesName);
         const pokemon = findPokemonBySlug(name);
         const id = pokemon?.num;
-        const form = findAssetForm(pokemon?.num, pokemon?.form);
+        const form = getAssetNameById(id, name, pokemon?.form);
         setTitleProps({
           title: `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
             cp
