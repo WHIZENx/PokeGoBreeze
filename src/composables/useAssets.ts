@@ -19,10 +19,11 @@ export const useAssets = () => {
   const getAssetNameById = (
     id: number | undefined,
     name: string | undefined | null,
-    formName: string | undefined | null
+    formName: string | undefined | null,
+    formType = FormType.Default
   ) => {
     const formAsset = convertPokemonAPIDataFormName(formName, name);
-    return findAssetForm(id, formAsset);
+    return findAssetForm(id, formAsset, formType);
   };
 
   const findAssetForm = (id: number | undefined, formName = formNormal(), formType = FormType.Default) => {

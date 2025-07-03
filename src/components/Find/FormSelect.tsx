@@ -195,7 +195,13 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (currentForm && toNumber(data?.id) > 0 && id > 0) {
+    if (
+      currentForm &&
+      toNumber(data?.id) > 0 &&
+      id > 0 &&
+      (searchingToolObjectData?.pokemon?.id !== id ||
+        !isEqual(searchingToolObjectData?.form?.form?.formName, currentForm.form.formName))
+    ) {
       const formName = getValueOrDefault(
         String,
         currentForm.form.name,
@@ -204,18 +210,13 @@ const FormSelect = (props: IFormSelectComponent) => {
       );
       const details = getPokemonDetails(id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
       details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
-      if (
-        searchingToolObjectData?.pokemon?.id !== props.id ||
-        !isEqual(searchingToolObjectData?.form?.form?.formName, currentForm.form.formName)
-      ) {
-        const pokemonDetails = PokemonDetail.setData(details);
-        if (props.isObjective) {
-          dispatch(SearchingActions.SetToolObjectPokemonDetails.create(pokemonDetails));
-          dispatch(SearchingActions.SetToolObjectPokemonForm.create(currentForm));
-        } else {
-          dispatch(SearchingActions.SetToolPokemonDetails.create(pokemonDetails));
-          dispatch(SearchingActions.SetToolPokemonForm.create(currentForm));
-        }
+      const pokemonDetails = PokemonDetail.setData(details);
+      if (props.isObjective) {
+        dispatch(SearchingActions.SetToolObjectPokemonDetails.create(pokemonDetails));
+        dispatch(SearchingActions.SetToolObjectPokemonForm.create(currentForm));
+      } else {
+        dispatch(SearchingActions.SetToolPokemonDetails.create(pokemonDetails));
+        dispatch(SearchingActions.SetToolPokemonForm.create(currentForm));
       }
     }
   }, [currentForm, props.isObjective, dispatch, getPokemonDetails]);
