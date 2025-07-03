@@ -63,7 +63,7 @@ const TeamPVP = (props: IStyleSheetData) => {
   const { findPokemonBySlug } = usePokemon();
   const { findMoveByName, findMoveByTag, isCombatsNoneArchetype } = useCombats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
-  const { findAssetForm } = useAssets();
+  const { getAssetNameById } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const { statsData } = useStats();
   const params = useParams();
@@ -83,7 +83,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
     const pokemon = findPokemonBySlug(name);
     const id = pokemon?.num;
-    const form = findAssetForm(pokemon?.num, pokemon?.form);
+    const form = getAssetNameById(id, name, pokemon?.form);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 

@@ -9,6 +9,7 @@ import {
   getKeysObj,
   getValidPokemonImgPath,
   getKeyWithData,
+  convertPokemonAPIDataFormName,
 } from '../../../utils/utils';
 import { calculateStatsByTag } from '../../../utils/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
@@ -188,7 +189,8 @@ const RankingPVP = (props: IStyleSheetData) => {
           const name = convertNameRankingToOri(data.speciesId, data.speciesName);
           const pokemon = findPokemonBySlug(name);
           const id = pokemon?.num;
-          const form = findAssetForm(pokemon?.num, pokemon?.form);
+          const formAsset = convertPokemonAPIDataFormName(pokemon?.form, name);
+          const form = findAssetForm(pokemon?.num, formAsset);
 
           const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 

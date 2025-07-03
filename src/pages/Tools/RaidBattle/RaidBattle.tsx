@@ -5,6 +5,7 @@ import Find from '../../../components/Find/Find';
 
 import {
   addSelectMovesByType,
+  convertPokemonAPIDataFormName,
   generateParamForm,
   getAllMoves,
   getKeyWithData,
@@ -1228,7 +1229,8 @@ const RaidBattle = () => {
   };
 
   const renderPokemon = (value: IPokemonMoveData) => {
-    const assets = findAssetForm(value.pokemon?.num, value.pokemon?.form);
+    const formAsset = convertPokemonAPIDataFormName(value.pokemon?.form, value.pokemon?.name);
+    const assets = findAssetForm(value.pokemon?.num, formAsset);
     return (
       <LinkToTop
         to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.form, value.pokemonType)}`}

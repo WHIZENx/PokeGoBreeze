@@ -4,6 +4,7 @@ import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { formNormal, formGmax, formMega } from '../utils/helpers/options-context.helpers';
 import { isEqual, isInclude, isNotEmpty } from '../utils/extension';
 import { useCallback } from 'react';
+import { convertPokemonAPIDataFormName } from '../utils/utils';
 
 export const useAssets = () => {
   const { assetsData } = useDataStore();
@@ -14,6 +15,15 @@ export const useAssets = () => {
     },
     [assetsData]
   );
+
+  const getAssetNameById = (
+    id: number | undefined,
+    name: string | undefined | null,
+    formName: string | undefined | null
+  ) => {
+    const formAsset = convertPokemonAPIDataFormName(formName, name);
+    return findAssetForm(id, formAsset);
+  };
 
   const findAssetForm = (id: number | undefined, formName = formNormal(), formType = FormType.Default) => {
     if (isEqual(formName, formGmax(), EqualMode.IgnoreCaseSensitive)) {
@@ -33,10 +43,11 @@ export const useAssets = () => {
   };
 
   const queryAssetForm = (id: number | undefined, formName = formNormal()) => {
-    const pokemonAssets = assetsData.find((asset) => asset.id === id);
+    const pokemonAssets = findAssetsById(id);
     if (!pokemonAssets) {
       return;
     }
+    formName = formName.replaceAll('-', '_');
     const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
     if (asset) {
       return asset;
@@ -57,6 +68,7 @@ export const useAssets = () => {
     findAssetsById,
     findAssetForm,
     queryAssetForm,
+    getAssetNameById,
   };
 };
 
