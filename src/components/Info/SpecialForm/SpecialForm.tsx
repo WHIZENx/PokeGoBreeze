@@ -7,7 +7,7 @@ import { IFormSpecialComponent } from '../../models/component.model';
 import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../utils/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../LinkToTop';
 import IconType from '../../Sprites/Icon/Type/Type';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';

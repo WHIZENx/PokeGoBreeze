@@ -8,7 +8,7 @@ import APIService from '../../services/api.service';
 import { ICardPokemonInfoComponent } from '../models/component.model';
 import { combineClasses } from '../../utils/extension';
 import { PokemonType } from '../../enums/type.enum';
-import { LinkToTop } from '../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../LinkToTop';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);

@@ -24,7 +24,7 @@ import {
 } from '../../../utils/extension';
 import { TableType, TypeSorted } from './enums/table-type.enum';
 import { MoveType, PokemonType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../LinkToTop';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import IconType from '../../Sprites/Icon/Type/Type';

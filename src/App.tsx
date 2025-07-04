@@ -47,7 +47,7 @@ import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
 import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
-import optionsObserver from './utils/hooks/optionsObserver';
+import useOptionsObserver from './utils/hooks/useOptionsObserver';
 import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
 import useTimestamp from './composables/useTimestamp';
 import useSpinner from './composables/useSpinner';
@@ -78,7 +78,7 @@ function App() {
   const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
 
-  optionsObserver();
+  useOptionsObserver();
 
   useEffect(() => {
     setTimeout(() => {

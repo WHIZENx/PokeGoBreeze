@@ -78,7 +78,7 @@ import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { TimelineEvent } from '../../../utils/models/overrides/dom.model';
-import { LinkToTop, useNavigateToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop, useNavigateToTop } from '../../../components/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';
@@ -602,7 +602,7 @@ const Battle = () => {
             arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineNormal.current?.clientWidth) - 2;
+        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineNormal.current?.clientWidth);
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${Math.max(0, transform)}px, -50%)`;
@@ -1284,16 +1284,8 @@ const Battle = () => {
                           )
                         }
                       >
-                        <FormControlLabel
-                          value={TimelineType.Fit}
-                          control={<Radio />}
-                          label={<span>Fit Timeline</span>}
-                        />
-                        <FormControlLabel
-                          value={TimelineType.Normal}
-                          control={<Radio />}
-                          label={<span>Normal Timeline</span>}
-                        />
+                        <FormControlLabel value={TimelineType.Fit} control={<Radio />} label="Fit Timeline" />
+                        <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
                       </RadioGroup>
                       <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
                         <InputLabel>Speed</InputLabel>

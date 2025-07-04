@@ -27,7 +27,7 @@ import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/informa
 import { PokemonModelComponent } from '../../components/Info/Assets/models/pokemon-model.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
-import { LinkToTop } from '../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../components/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import { useDataStore } from '../../composables/useDataStore';
