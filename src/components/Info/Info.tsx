@@ -34,14 +34,7 @@ const Info = () => {
   };
 
   const getTypeEffectiveChart = (types: string[] | undefined) => {
-    const data = TypeEffectiveChart.create({
-      veryWeak: [],
-      weak: [],
-      superResist: [],
-      veryResist: [],
-      resist: [],
-      neutral: [],
-    });
+    const data = new TypeEffectiveChart();
     safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
       if (isNotEmpty(types)) {
         let valueEffective = 1;

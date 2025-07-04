@@ -103,6 +103,7 @@ import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
+import { Params } from '../../../utils/constants';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -801,10 +802,9 @@ const Battle = () => {
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center gap-1">
               <LinkToTop
-                to={`/pvp/${params.cp}/${getKeyWithData(
-                  ScoreType,
-                  ScoreType.Overall
-                )?.toLowerCase()}/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}`}
+                to={`/pvp/${params.cp}/all/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}?${
+                  Params.LeagueType
+                }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
               >
                 <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
               </LinkToTop>

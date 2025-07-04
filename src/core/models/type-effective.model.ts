@@ -59,6 +59,15 @@ export class TypeEffectiveChart implements ITypeEffectiveChart {
   resist?: string[];
   neutral?: string[];
 
+  constructor() {
+    this.veryWeak = [];
+    this.weak = [];
+    this.superResist = [];
+    this.veryResist = [];
+    this.resist = [];
+    this.neutral = [];
+  }
+
   static create(value: ITypeEffectiveChart) {
     const obj = new TypeEffectiveChart();
     Object.assign(obj, value);

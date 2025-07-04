@@ -41,14 +41,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   );
 
   const getTypeEffect = (effect: EffectiveType, types: string[] | undefined) => {
-    const data = TypeEffectiveChart.create({
-      veryWeak: [],
-      weak: [],
-      superResist: [],
-      veryResist: [],
-      resist: [],
-      neutral: [],
-    });
+    const data = new TypeEffectiveChart();
     if (effect === EffectiveType.Weakness) {
       safeObjectEntries<DynamicObj<number>>(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;

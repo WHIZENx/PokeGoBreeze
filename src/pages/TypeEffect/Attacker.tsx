@@ -16,14 +16,7 @@ const Attacker = () => {
   const [typeEffective, setTypeEffective] = useState<ITypeEffectiveChart>();
 
   const getTypeEffective = useCallback(() => {
-    const data = TypeEffectiveChart.create({
-      veryWeak: [],
-      weak: [],
-      superResist: [],
-      veryResist: [],
-      resist: [],
-      neutral: [],
-    });
+    const data = new TypeEffectiveChart();
     safeObjectEntries((typesEffective as unknown as DynamicObj<ITypeModel>)[currentType], new TypeModel()).forEach(
       ([key, value]) => getMultiplyTypeEffect(data, value, key)
     );

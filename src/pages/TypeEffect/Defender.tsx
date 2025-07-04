@@ -21,14 +21,7 @@ const Defender = () => {
   const [showTypeSec, setShowTypeSec] = useState(false);
 
   const getTypeEffective = useCallback(() => {
-    const data = TypeEffectiveChart.create({
-      veryWeak: [],
-      weak: [],
-      superResist: [],
-      veryResist: [],
-      resist: [],
-      neutral: [],
-    });
+    const data = new TypeEffectiveChart();
     safeObjectEntries<DynamicObj<number>>(typesEffective).forEach(([key, value]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
