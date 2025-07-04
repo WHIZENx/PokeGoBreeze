@@ -5,13 +5,14 @@ import { capitalize, getKeyWithData, getMultiplyTypeEffect, splitAndCapitalize }
 import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { DynamicObj, getPropertyName, isEmpty, safeObjectEntries } from '../../utils/extension';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
-import { getTypes } from '../../utils/helpers/options-context.helpers';
 import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';
-import { camelCase } from 'lodash';
+import { camelCase, isEqual } from 'lodash';
 
 const Defender = () => {
   const typesEffective = getTypeEffectiveContext();
   const [typeEffective, setTypeEffective] = useState<ITypeEffectiveChart>();
+
+  const [types, setTypes] = useState<string[]>([]);
 
   const [currentTypePri, setCurrentTypePri] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [currentTypeSec, setCurrentTypeSec] = useState('');
@@ -38,8 +39,12 @@ const Defender = () => {
   }, [currentTypePri, currentTypeSec, typesEffective]);
 
   useEffect(() => {
+    const results = Object.keys(typesEffective).filter(
+      (item) => !isEqual(item, currentTypePri) && !isEqual(item, currentTypeSec)
+    );
+    setTypes(results);
     getTypeEffective();
-  }, [currentTypePri, currentTypeSec, getTypeEffective]);
+  }, [currentTypePri, currentTypeSec, getTypeEffective, typesEffective]);
 
   const changeTypePri = (value: string) => {
     setShowTypePri(false);
@@ -81,7 +86,7 @@ const Defender = () => {
               {showTypePri && (
                 <div className="result-type">
                   <ul>
-                    {getTypes().map((value, index) => (
+                    {types.map((value, index) => (
                       <li
                         className="container card-pokemon theme-bg-default"
                         key={index}
@@ -127,7 +132,7 @@ const Defender = () => {
               {showTypeSec && (
                 <div className="result-type">
                   <ul>
-                    {getTypes().map((value, index) => (
+                    {types.map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
                         <CardType value={splitAndCapitalize(value, /(?=[A-Z])/, ' ')} />
                       </li>

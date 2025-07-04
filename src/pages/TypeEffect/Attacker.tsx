@@ -4,14 +4,14 @@ import CardType from '../../components/Card/CardType';
 import { camelCase, capitalize, getMultiplyTypeEffect, splitAndCapitalize } from '../../utils/utils';
 import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ITypeModel, TypeModel } from '../../core/models/type.model';
-import { DynamicObj, getPropertyName, safeObjectEntries } from '../../utils/extension';
-import { getTypes } from '../../utils/helpers/options-context.helpers';
+import { DynamicObj, getPropertyName, isEqual, safeObjectEntries } from '../../utils/extension';
 import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';
 
 const Attacker = () => {
   const typesEffective = getTypeEffectiveContext();
   const [currentType, setCurrentType] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [showType, setShowType] = useState(false);
+  const [types, setTypes] = useState<string[]>([]);
 
   const [typeEffective, setTypeEffective] = useState<ITypeEffectiveChart>();
 
@@ -31,8 +31,10 @@ const Attacker = () => {
   }, [currentType, typesEffective]);
 
   useEffect(() => {
+    const results = Object.keys(typesEffective).filter((item) => !isEqual(item, currentType));
+    setTypes(results);
     getTypeEffective();
-  }, [currentType, getTypeEffective]);
+  }, [currentType, getTypeEffective, typesEffective]);
 
   const changeType = (value: string) => {
     setShowType(false);
@@ -64,7 +66,7 @@ const Attacker = () => {
                 {showType && (
                   <div className="result-type">
                     <ul>
-                      {getTypes().map((value, index) => (
+                      {types.map((value, index) => (
                         <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                           <CardType value={splitAndCapitalize(value, /(?=[A-Z])/, ' ')} />
                         </li>
