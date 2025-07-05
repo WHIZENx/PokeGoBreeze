@@ -352,6 +352,35 @@ const Battle = () => {
     loadPVPMoves();
   }, []);
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)) {
+      arrBound.current = [];
+      arrStore.current = [];
+      const elem = document.getElementById('play-line');
+      if (elem) {
+        elem.style.transform = 'translate(0px, -50%)';
+      }
+      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+        arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+      }
+      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+        arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+      }
+    }
+  }, [windowWidth]);
+
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
     setPlayTimeline(new BattleState());
