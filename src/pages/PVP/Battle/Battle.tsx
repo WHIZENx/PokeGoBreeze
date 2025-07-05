@@ -78,7 +78,7 @@ import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { TimelineEvent } from '../../../utils/models/overrides/dom.model';
-import { LinkToTop, useNavigateToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop, useNavigateToTop } from '../../../components/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';
@@ -103,6 +103,7 @@ import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
+import { Params } from '../../../utils/constants';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -350,6 +351,35 @@ const Battle = () => {
   useEffect(() => {
     loadPVPMoves();
   }, []);
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)) {
+      arrBound.current = [];
+      arrStore.current = [];
+      const elem = document.getElementById('play-line');
+      if (elem) {
+        elem.style.transform = 'translate(0px, -50%)';
+      }
+      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+        arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+      }
+      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+        arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+      }
+    }
+  }, [windowWidth]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
@@ -601,7 +631,7 @@ const Battle = () => {
             arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineNormal.current?.clientWidth) - 2;
+        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineNormal.current?.clientWidth);
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${Math.max(0, transform)}px, -50%)`;
@@ -801,10 +831,9 @@ const Battle = () => {
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center gap-1">
               <LinkToTop
-                to={`/pvp/${params.cp}/${getKeyWithData(
-                  ScoreType,
-                  ScoreType.Overall
-                )?.toLowerCase()}/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}`}
+                to={`/pvp/${params.cp}/all/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}?${
+                  Params.LeagueType
+                }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
               >
                 <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
               </LinkToTop>
@@ -1284,16 +1313,8 @@ const Battle = () => {
                           )
                         }
                       >
-                        <FormControlLabel
-                          value={TimelineType.Fit}
-                          control={<Radio />}
-                          label={<span>Fit Timeline</span>}
-                        />
-                        <FormControlLabel
-                          value={TimelineType.Normal}
-                          control={<Radio />}
-                          label={<span>Normal Timeline</span>}
-                        />
+                        <FormControlLabel value={TimelineType.Fit} control={<Radio />} label="Fit Timeline" />
+                        <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
                       </RadioGroup>
                       <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
                         <InputLabel>Speed</InputLabel>

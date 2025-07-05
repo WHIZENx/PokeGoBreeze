@@ -1,5 +1,4 @@
 import { OptionsPokemon } from '../../core/models/pokemon.model';
-import { ISearchingModel } from '../../store/models/searching.model';
 import { IBattlePokemonData } from '../../core/models/pvp.model';
 import { IPokemonBattle } from '../PVP/models/battle.model';
 import { IPokemonDmgOption } from '../../core/models/damage.model';
@@ -38,7 +37,6 @@ export interface ISearchBarMainComponent {
 }
 
 export interface IPokemonPage {
-  searching?: ISearchingModel | null;
   searchOption?: SearchOption;
   onDecId?: () => void;
   onIncId?: () => void;

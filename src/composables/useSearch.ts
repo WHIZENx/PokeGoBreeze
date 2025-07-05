@@ -92,7 +92,11 @@ export const useSearch = () => {
 
   const searchingToolData = searchData.toolSearching;
   const searchingToolCurrentData = searchData.toolSearching?.current;
+  const searchingToolCurrentForm = searchData.toolSearching?.current?.form;
+  const searchingToolCurrentDetails = searchData.toolSearching?.current?.pokemon;
   const searchingToolObjectData = searchData.toolSearching?.object;
+  const searchingToolObjectForm = searchData.toolSearching?.object?.form;
+  const searchingToolObjectDetails = searchData.toolSearching?.object?.pokemon;
 
   return {
     searchData,
@@ -114,7 +118,11 @@ export const useSearch = () => {
     searchingMainDetails,
     searchingToolData,
     searchingToolCurrentData,
+    searchingToolCurrentForm,
+    searchingToolCurrentDetails,
     searchingToolObjectData,
+    searchingToolObjectForm,
+    searchingToolObjectDetails,
   };
 };
 

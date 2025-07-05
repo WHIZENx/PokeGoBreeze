@@ -44,7 +44,6 @@ import { useSnackbar } from 'notistack';
 import { Modal, Button, Form, OverlayTrigger } from 'react-bootstrap';
 
 import update from 'immutability-helper';
-import { SearchingState } from '../../../store/models/state.model';
 import {
   IPokemonData,
   IPokemonMoveData,
@@ -90,16 +89,16 @@ import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import CustomPopover from '../../../components/Popover/CustomPopover';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { StatsIV } from '../../../core/models/stats.model';
 import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
 import useIcon from '../../../composables/useIcon';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
-import { useSelector } from 'react-redux';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
+import useSearch from '../../../composables/useSearch';
 
 const RaidBattle = () => {
   useTitle({
@@ -121,7 +120,7 @@ const RaidBattle = () => {
   const { getAssetNameById } = useAssets();
   const { showSpinner, hideSpinner } = useSpinner();
   const { retrieveMoves, checkPokemonGO } = usePokemon();
-  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
+  const { searchingToolCurrentData } = useSearch();
 
   const [statBossATK, setStatBossATK] = useState(0);
   const [statBossDEF, setStatBossDEF] = useState(0);
@@ -373,7 +372,7 @@ const RaidBattle = () => {
             hp: statBossHP,
             fMove: findMoveByName(fMove?.name),
             cMove: findMoveByName(cMove?.name),
-            types: pokemon?.form?.form?.types,
+            types: searchingToolCurrentData?.form?.form?.types,
             isStab: isWeatherBoss,
           });
           const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
@@ -520,7 +519,7 @@ const RaidBattle = () => {
         hp: Math.floor(hpRemain),
         fMove: findMoveByName(fMove?.name),
         cMove: findMoveByName(cMove?.name),
-        types: pokemon?.form?.form?.types,
+        types: searchingToolCurrentData?.form?.form?.types,
         isStab: isWeatherBoss,
       });
 
@@ -642,22 +641,22 @@ const RaidBattle = () => {
   };
 
   useEffect(() => {
-    if (pokemon) {
+    if (searchingToolCurrentData) {
       setIsLoadedForms(true);
     } else {
       setIsLoadedForms(false);
     }
-  }, [pokemon]);
+  }, [searchingToolCurrentData]);
 
   useEffect(() => {
-    if (pokemon?.form && isNotEmpty(getFilteredPokemons())) {
+    if (searchingToolCurrentData?.form && isNotEmpty(getFilteredPokemons())) {
       findMove(
-        toNumber(pokemon?.form.defaultId, 1),
-        getValueOrDefault(String, pokemon?.form.form?.name),
-        pokemon?.form.form?.pokemonType
+        toNumber(searchingToolCurrentData?.form.defaultId, 1),
+        getValueOrDefault(String, searchingToolCurrentData?.form.form?.name),
+        searchingToolCurrentData?.form.form?.pokemonType
       );
     }
-  }, [getFilteredPokemons, pokemon?.form]);
+  }, [getFilteredPokemons, searchingToolCurrentData?.form]);
 
   const handleCalculate = () => {
     showSpinner();
@@ -1273,9 +1272,9 @@ const RaidBattle = () => {
                   <SelectMove
                     pokemon={
                       new SelectMovePokemonModel(
-                        pokemon?.form?.defaultId,
-                        pokemon?.form?.form?.formName,
-                        pokemon?.form?.form?.pokemonType
+                        searchingToolCurrentData?.form?.defaultId,
+                        searchingToolCurrentData?.form?.form?.formName,
+                        searchingToolCurrentData?.form?.form?.pokemonType
                       )
                     }
                     clearData={clearDataBoss}
@@ -1293,9 +1292,9 @@ const RaidBattle = () => {
                   <SelectMove
                     pokemon={
                       new SelectMovePokemonModel(
-                        pokemon?.form?.defaultId,
-                        pokemon?.form?.form?.formName,
-                        pokemon?.form?.form?.pokemonType
+                        searchingToolCurrentData?.form?.defaultId,
+                        searchingToolCurrentData?.form?.form?.formName,
+                        searchingToolCurrentData?.form?.form?.pokemonType
                       )
                     }
                     clearData={clearDataBoss}
@@ -1311,10 +1310,10 @@ const RaidBattle = () => {
               clearData={clearDataBoss}
               setTierBoss={setTier}
               setTimeAllow={setTimeAllow}
-              currForm={pokemon?.form}
-              id={pokemon?.form?.defaultId}
-              statATK={pokemon?.pokemon?.statsGO?.atk}
-              statDEF={pokemon?.pokemon?.statsGO?.def}
+              currForm={searchingToolCurrentData?.form}
+              id={searchingToolCurrentData?.form?.defaultId}
+              statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
+              statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
               setStatBossATK={setStatBossATK}
               setStatBossDEF={setStatBossDEF}
               setStatBossHP={setStatBossHP}
@@ -1610,14 +1609,14 @@ const RaidBattle = () => {
             <div className="d-flex flex-wrap align-items-center column-gap-3">
               <h3>
                 <b>
-                  {pokemon?.form ? `#${pokemon?.form?.defaultId}` : ''}{' '}
-                  {pokemon?.form
-                    ? splitAndCapitalize(pokemon?.form.form?.name, '-', ' ')
-                    : splitAndCapitalize(pokemon?.pokemon?.fullName, '_', ' ')}{' '}
+                  {searchingToolCurrentData?.form ? `#${searchingToolCurrentData?.form?.defaultId}` : ''}{' '}
+                  {searchingToolCurrentData?.form
+                    ? splitAndCapitalize(searchingToolCurrentData?.form.form?.name, '-', ' ')
+                    : splitAndCapitalize(searchingToolCurrentData?.pokemon?.fullName, '_', ' ')}{' '}
                   Tier {tier}
                 </b>
               </h3>
-              <TypeInfo arr={pokemon?.form?.form?.types} />
+              <TypeInfo arr={searchingToolCurrentData?.form?.form?.types} />
             </div>
             <div className="d-flex flex-wrap align-items-center column-gap-3">
               <TypeBadge title="Fast Move" move={fMove} moveType={fMove?.moveType ?? MoveType.None} />

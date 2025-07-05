@@ -18,8 +18,6 @@ import StatsTable from './StatsDamageTable';
 
 import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../utils/compute';
-import { useSelector } from 'react-redux';
-import { SearchingState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -33,6 +31,7 @@ import {
 } from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
+import useSearch from '../../../composables/useSearch';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -89,7 +88,7 @@ const Damage = () => {
       'battle strategy',
     ],
   });
-  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
+  const { searchingToolCurrentData, searchingToolObjectData } = useSearch();
 
   const [move, setMove] = useState<ICombat>();
 
@@ -112,10 +111,10 @@ const Damage = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    if (searching?.current?.pokemon?.statsGO?.atk !== 0) {
+    if (searchingToolCurrentData?.pokemon?.statsGO?.atk !== 0) {
       setStatLvATK(
         calculateStatsBattle(
-          searching?.current?.pokemon?.statsGO?.atk,
+          searchingToolCurrentData?.pokemon?.statsGO?.atk,
           maxIv(),
           statLevel,
           false,
@@ -123,10 +122,10 @@ const Damage = () => {
         )
       );
     }
-    if (searching?.object?.pokemon?.statsGO?.def !== 0) {
+    if (searchingToolObjectData?.pokemon?.statsGO?.def !== 0) {
       setStatLvDEFObj(
         calculateStatsBattle(
-          searching?.object?.pokemon?.statsGO?.def,
+          searchingToolObjectData?.pokemon?.statsGO?.def,
           maxIv(),
           statLevelObj,
           false,
@@ -134,19 +133,19 @@ const Damage = () => {
         )
       );
     }
-    if (searching?.object?.pokemon?.statsGO?.sta !== 0) {
-      setStatLvSTAObj(calculateStatsBattle(searching?.object?.pokemon?.statsGO?.sta, maxIv(), statLevelObj));
+    if (searchingToolObjectData?.pokemon?.statsGO?.sta !== 0) {
+      setStatLvSTAObj(calculateStatsBattle(searchingToolObjectData?.pokemon?.statsGO?.sta, maxIv(), statLevelObj));
     }
   }, [
-    searching?.current?.pokemon?.statsGO?.atk,
+    searchingToolCurrentData?.pokemon?.statsGO?.atk,
     statLevel,
     statType,
-    searching?.object?.pokemon?.statsGO?.atk,
-    searching?.current?.pokemon?.statsGO?.def,
-    searching?.object?.pokemon?.statsGO?.def,
+    searchingToolObjectData?.pokemon?.statsGO?.atk,
+    searchingToolCurrentData?.pokemon?.statsGO?.def,
+    searchingToolObjectData?.pokemon?.statsGO?.def,
     statLevelObj,
-    searching?.current?.pokemon?.statsGO?.sta,
-    searching?.object?.pokemon?.statsGO?.sta,
+    searchingToolCurrentData?.pokemon?.statsGO?.sta,
+    searchingToolObjectData?.pokemon?.statsGO?.sta,
     statTypeObj,
   ]);
 
@@ -164,14 +163,14 @@ const Damage = () => {
       e.preventDefault();
       if (move) {
         const eff = BattleState.create({
-          isStab: findStabType(searching?.current?.form?.form?.types, move.type),
+          isStab: findStabType(searchingToolCurrentData?.form?.form?.types, move.type),
           isWb: battleState.isWeather,
           isDodge: battleState.isDodge,
-          isMega: searching?.current?.form?.form?.pokemonType === PokemonType.Mega,
+          isMega: searchingToolCurrentData?.form?.form?.pokemonType === PokemonType.Mega,
           isTrainer: battleState.isTrainer,
           friendshipLevel: enableFriend ? battleState.friendshipLevel : 0,
           throwLevel: battleState.throwLevel,
-          effective: getTypeEffective(move.type, searching?.object?.form?.form?.types),
+          effective: getTypeEffective(move.type, searchingToolObjectData?.form?.form?.types),
         });
         setResult((r) =>
           PokemonDmgOption.create({
@@ -180,8 +179,8 @@ const Damage = () => {
             move,
             damage: calculateDamagePVE(statLvATK, statLvDEFObj, move.pvePower, eff),
             hp: statLvSTAObj,
-            currPoke: searching?.current?.form,
-            objPoke: searching?.object?.form,
+            currPoke: searchingToolCurrentData?.form,
+            objPoke: searchingToolObjectData?.form,
             type: statType,
             typeObj: statTypeObj,
             currLevel: statLevel,
@@ -197,8 +196,8 @@ const Damage = () => {
       enableFriend,
       battleState,
       move,
-      searching?.current?.form,
-      searching?.object?.form,
+      searchingToolCurrentData?.form,
+      searchingToolObjectData?.form,
       statLvATK,
       statLvDEFObj,
       statLvSTAObj,
@@ -225,10 +224,10 @@ const Damage = () => {
             setStatLvATK={setStatLvATK}
             setStatLevel={setStatLevel}
             setStatType={setStatType}
-            statATK={searching?.current?.pokemon?.statsGO?.atk}
-            statDEF={searching?.current?.pokemon?.statsGO?.def}
-            statSTA={searching?.current?.pokemon?.statsGO?.sta}
-            pokemonType={searching?.current?.form?.form?.pokemonType}
+            statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
+            statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
+            statSTA={searchingToolCurrentData?.pokemon?.statsGO?.sta}
+            pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
           />
         </div>
         <div className="col-lg border-window">
@@ -238,10 +237,10 @@ const Damage = () => {
             setStatLvSTA={setStatLvSTAObj}
             setStatLevel={setStatLevelObj}
             setStatType={setStatTypeObj}
-            statATK={searching?.object?.pokemon?.statsGO?.atk}
-            statDEF={searching?.object?.pokemon?.statsGO?.def}
-            statSTA={searching?.object?.pokemon?.statsGO?.sta}
-            pokemonType={searching?.object?.form?.form?.pokemonType}
+            statATK={searchingToolObjectData?.pokemon?.statsGO?.atk}
+            statDEF={searchingToolObjectData?.pokemon?.statsGO?.def}
+            statSTA={searchingToolObjectData?.pokemon?.statsGO?.sta}
+            pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
           />
         </div>
       </div>
@@ -256,28 +255,28 @@ const Damage = () => {
                 <div className="row text-center" style={{ width: 520 }}>
                   <div className="col">
                     <h5 className="text-success">- Current Pokémon Type -</h5>
-                    {searching?.current?.form && <TypeInfo arr={searching?.current?.form.form?.types} />}
+                    {searchingToolCurrentData?.form && <TypeInfo arr={searchingToolCurrentData?.form.form?.types} />}
                   </div>
                   <div className="col">
                     <h5 className="text-danger">- Object Pokémon Type -</h5>
-                    {searching?.object?.form && <TypeInfo arr={searching?.object?.form.form?.types} />}
+                    {searchingToolObjectData?.form && <TypeInfo arr={searchingToolObjectData?.form.form?.types} />}
                   </div>
                 </div>
               </div>
               <Move
                 text="Select Moves"
-                id={searching?.current?.form?.defaultId}
+                id={searchingToolCurrentData?.form?.defaultId}
                 isSelectDefault
                 form={getValueOrDefault(
                   String,
-                  searching?.current?.form
-                    ? searching?.current?.form.form?.name
-                    : searching?.current?.form?.form?.formName
+                  searchingToolCurrentData?.form
+                    ? searchingToolCurrentData?.form.form?.name
+                    : searchingToolCurrentData?.form?.form?.formName
                 )}
                 setMove={setMove}
                 move={move}
                 isHighlight
-                pokemonType={searching?.current?.form?.form?.pokemonType}
+                pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
               />
               <div className="mt-2">
                 {move && (
@@ -291,12 +290,12 @@ const Damage = () => {
                         {capitalize(move.type)}
                       </span>
                     </p>
-                    {findStabType(searching?.current?.form?.form?.types, move.type)}
+                    {findStabType(searchingToolCurrentData?.form?.form?.types, move.type)}
                     <p>
                       {'- Damage: '}
                       <b>
                         {move.pvePower}
-                        {findStabType(searching?.current?.form?.form?.types, move.type) && (
+                        {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
                           <span className="caption-small text-success"> (x1.2)</span>
                         )}
                       </b>

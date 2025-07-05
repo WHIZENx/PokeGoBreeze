@@ -21,7 +21,7 @@ import {
   toNumber,
 } from '../../../utils/extension';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { IStyleSheetData } from '../../models/page.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';

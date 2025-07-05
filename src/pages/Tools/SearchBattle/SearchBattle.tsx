@@ -20,10 +20,8 @@ import { Accordion, useAccordionButton } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 
 import { marks, PokeGoSlider } from '../../../utils/utils';
-import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
-import { SearchingState } from '../../../store/models/state.model';
 import { IEvolution } from '../../../core/models/evolution.model';
 import {
   BattleBaseStats,
@@ -50,12 +48,13 @@ import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/LinkToTop';
 import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import useCalculate from '../../../composables/useCalculate';
 import usePokemon from '../../../composables/usePokemon';
+import useSearch from '../../../composables/useSearch';
 
 const FindBattle = () => {
   useTitle({
@@ -75,7 +74,7 @@ const FindBattle = () => {
   const { queryStatesEvoChain } = useCalculate();
   const { getAssetNameById } = useAssets();
   const { hideSpinner, showSpinner } = useSpinner();
-  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
+  const { searchingToolCurrentData } = useSearch();
 
   const [maxCP, setMaxCP] = useState(0);
 
@@ -166,7 +165,7 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const currentForm = convertPokemonAPIDataName(pokemon?.form?.form?.formName, formNormal());
+      const currentForm = convertPokemonAPIDataName(searchingToolCurrentData?.form?.form?.formName, formNormal());
       let curr = getFilteredPokemons((item) =>
         item.evoList?.some((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm))
       );
@@ -184,17 +183,17 @@ const FindBattle = () => {
       curr?.forEach((item) => prevEvoChain(item, currentForm, [], result));
       return result;
     },
-    [prevEvoChain, pokemon?.form, getFilteredPokemons]
+    [prevEvoChain, searchingToolCurrentData?.form, getFilteredPokemons]
   );
 
   const searchStatsPoke = useCallback(
     (level: number) => {
       const arr: IQueryStatesEvoChain[][] = [];
-      getEvoChain(toNumber(pokemon?.form?.defaultId)).forEach((item) => {
+      getEvoChain(toNumber(searchingToolCurrentData?.form?.defaultId)).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
           const data = queryStatesEvoChain(value, level, ATKIv, DEFIv, STAIv);
-          if (data.id === pokemon?.form?.defaultId) {
+          if (data.id === searchingToolCurrentData?.form?.defaultId) {
             setMaxCP(data.maxCP);
           }
           tempArr.push(data);
@@ -206,7 +205,7 @@ const FindBattle = () => {
       const evoBaseStats: IBattleBaseStats[] = [];
       arr.forEach((item) => {
         item.forEach((value) => {
-          if (value.id !== pokemon?.form?.defaultId) {
+          if (value.id !== searchingToolCurrentData?.form?.defaultId) {
             evoBaseStats.push(
               BattleBaseStats.create({
                 ...Object.values(value.battleLeague).reduce((a: IBattleBaseStats, b: IBattleBaseStats) =>
@@ -282,7 +281,7 @@ const FindBattle = () => {
       }
       hideSpinner();
     },
-    [ATKIv, DEFIv, STAIv, getEvoChain, pokemon?.form?.defaultId]
+    [ATKIv, DEFIv, STAIv, getEvoChain, searchingToolCurrentData?.form?.defaultId]
   );
 
   const onSearchStatsPoke = useCallback(
@@ -292,9 +291,9 @@ const FindBattle = () => {
         return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
       }
       showSpinner();
-      const statATK = toNumber(pokemon?.pokemon?.statsGO?.atk);
-      const statDEF = toNumber(pokemon?.pokemon?.statsGO?.def);
-      const statSTA = toNumber(pokemon?.pokemon?.statsGO?.sta);
+      const statATK = toNumber(searchingToolCurrentData?.pokemon?.statsGO?.atk);
+      const statDEF = toNumber(searchingToolCurrentData?.pokemon?.statsGO?.def);
+      const statSTA = toNumber(searchingToolCurrentData?.pokemon?.statsGO?.sta);
       setTimeout(() => {
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
         processStatsPoke(result);
@@ -307,15 +306,15 @@ const FindBattle = () => {
       STAIv,
       enqueueSnackbar,
       searchCP,
-      pokemon?.pokemon?.statsGO?.atk,
-      pokemon?.pokemon?.statsGO?.def,
-      pokemon?.pokemon?.statsGO?.sta,
-      pokemon?.form,
+      searchingToolCurrentData?.pokemon?.statsGO?.atk,
+      searchingToolCurrentData?.pokemon?.statsGO?.def,
+      searchingToolCurrentData?.pokemon?.statsGO?.sta,
+      searchingToolCurrentData?.form,
     ]
   );
 
   const processStatsPoke = (result: StatsCalculate) => {
-    const name = splitAndCapitalize(pokemon?.pokemon?.fullName, '_', ' ');
+    const name = splitAndCapitalize(searchingToolCurrentData?.pokemon?.fullName, '_', ' ');
     if (result.level === 0) {
       hideSpinner();
       return enqueueSnackbar(
@@ -337,7 +336,7 @@ const FindBattle = () => {
   };
 
   const getCandyEvo = (item: IEvolution[], evoId: number, candy = 0): number => {
-    if (evoId === pokemon?.form?.defaultId) {
+    if (evoId === searchingToolCurrentData?.form?.defaultId) {
       return candy;
     }
     const data = item.find((i) => i.evoList.find((e) => e.evoToId === evoId));
@@ -398,9 +397,9 @@ const FindBattle = () => {
           <Box className="w-50" sx={{ minWidth: 350 }}>
             <div className="justify-content-center input-group mb-3">
               <DynamicInputCP
-                statATK={pokemon?.pokemon?.statsGO?.atk}
-                statDEF={pokemon?.pokemon?.statsGO?.def}
-                statSTA={pokemon?.pokemon?.statsGO?.sta}
+                statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
+                statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
+                statSTA={searchingToolCurrentData?.pokemon?.statsGO?.sta}
                 ivAtk={ATKIv}
                 ivDef={DEFIv}
                 ivSta={STAIv}
@@ -495,7 +494,7 @@ const FindBattle = () => {
                       <span className="caption border-best-poke best-name">
                         <b>
                           #{value.id} {splitAndCapitalize(value.name, '_', ' ')}{' '}
-                          {splitAndCapitalize(pokemon?.form?.form?.formName, '-', ' ')}
+                          {splitAndCapitalize(searchingToolCurrentData?.form?.form?.formName, '-', ' ')}
                         </b>
                       </span>
                     </div>
@@ -553,7 +552,7 @@ const FindBattle = () => {
                                 <div>
                                   <b>
                                     {`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')} `}
-                                    {splitAndCapitalize(pokemon?.form?.form?.formName, '-', ' ')}
+                                    {splitAndCapitalize(searchingToolCurrentData?.form?.form?.formName, '-', ' ')}
                                   </b>
                                 </div>
                               </LinkToTop>
@@ -604,7 +603,7 @@ const FindBattle = () => {
                                               (+{getCandyEvo(value, item.id)})
                                             </span>
                                           </span>
-                                          <CandyXL id={pokemon?.form?.defaultId} />
+                                          <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
                                           {item.battleLeague.little.resultBetweenXLCandy}
                                         </span>
                                       </li>
@@ -671,7 +670,7 @@ const FindBattle = () => {
                                               (+{getCandyEvo(value, item.id)})
                                             </span>
                                           </span>
-                                          <CandyXL id={pokemon?.form?.defaultId} />
+                                          <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
                                           {item.battleLeague.great.resultBetweenXLCandy}
                                         </span>
                                       </li>
@@ -738,7 +737,7 @@ const FindBattle = () => {
                                               (+{getCandyEvo(value, item.id)})
                                             </span>
                                           </span>
-                                          <CandyXL id={pokemon?.form?.defaultId} />
+                                          <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
                                           {item.battleLeague.ultra.resultBetweenXLCandy}
                                         </span>
                                       </li>
@@ -801,7 +800,7 @@ const FindBattle = () => {
                                               (+{getCandyEvo(value, item.id)})
                                             </span>
                                           </span>
-                                          <CandyXL id={pokemon?.form?.defaultId} />
+                                          <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
                                           {item.battleLeague.master.resultBetweenXLCandy}
                                         </span>
                                       </li>

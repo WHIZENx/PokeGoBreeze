@@ -4,7 +4,7 @@ import { updateCurrentOptions } from '../helpers/options-context.helpers';
 import { defaultOptions } from '../../contexts/options.context';
 import useDataStore from '../../composables/useDataStore';
 
-const optionsObserver = () => {
+const useOptionsObserver = () => {
   const { optionsData } = useDataStore();
 
   useEffect(() => {
@@ -14,4 +14,4 @@ const optionsObserver = () => {
   return null;
 };
 
-export default optionsObserver;
+export default useOptionsObserver;

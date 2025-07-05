@@ -19,7 +19,7 @@ import {
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { Params } from '../../../utils/constants';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';

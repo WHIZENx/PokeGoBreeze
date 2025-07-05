@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Params } from '../../../utils/constants';
 import {
@@ -23,7 +23,6 @@ import TableMove from '../../Table/Move/MoveTable';
 import Info from '../Info';
 import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
-import { SearchingState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
@@ -37,13 +36,13 @@ import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import { Action } from 'history';
+import { useSearch } from '../../../composables/useSearch';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
   const { routerAction } = useRouter();
   const { statsData } = useStats();
-  const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
-  const form = useSelector((state: SearchingState) => state.searching.mainSearching?.form);
+  const { searchingMainDetails, searchingMainForm } = useSearch();
 
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,15 +51,15 @@ const FormComponent = (props: IFormInfoComponent) => {
   const [genderRatio, setGenderRatio] = useState(new PokemonGenderRatio());
 
   useEffect(() => {
-    if (pokemonData?.fullName && pokemonData.genderRatio) {
-      setGenderRatio(pokemonData.genderRatio);
+    if (searchingMainDetails?.fullName && searchingMainDetails.genderRatio) {
+      setGenderRatio(searchingMainDetails.genderRatio);
     }
-  }, [pokemonData]);
+  }, [searchingMainDetails]);
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
-      getFormFromForms(stats, props.defaultId, form?.form?.formName, form?.form?.pokemonType),
-    [props.defaultId, form?.form?.formName]
+      getFormFromForms(stats, props.defaultId, searchingMainForm?.form?.formName, searchingMainForm?.form?.pokemonType),
+    [props.defaultId, searchingMainForm?.form?.formName]
   );
 
   useEffect(() => {
@@ -137,7 +136,7 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const renderEvolution = () => (
     <Evolution
-      pokemonData={pokemonData}
+      pokemonData={searchingMainDetails}
       id={props.defaultId}
       setSearchOption={props.setSearchOption}
       isLoadedForms={props.isLoadedForms}
@@ -161,11 +160,11 @@ const FormComponent = (props: IFormInfoComponent) => {
                       key={index}
                       className={combineClasses(
                         'btn btn-form',
-                        value.form.id === form?.form?.id ? 'form-selected' : ''
+                        value.form.id === searchingMainForm?.form?.id ? 'form-selected' : ''
                       )}
                       onClick={() =>
                         changeForm(
-                          value.form.id === form?.form?.id,
+                          value.form.id === searchingMainForm?.form?.id,
                           value.form.name,
                           value.form.formName,
                           value.form.pokemonType
@@ -220,48 +219,53 @@ const FormComponent = (props: IFormInfoComponent) => {
       </div>
       {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
         <div className="d-flex flex-wrap row-gap-3" style={{ columnGap: 50 }}>
-          {genderRatio.M !== 0 && <Gender ratio={genderRatio} sex={TypeSex.Male} sprit={form?.form?.sprites} />}
-          {genderRatio.F !== 0 && <Gender ratio={genderRatio} sex={TypeSex.Female} sprit={form?.form?.sprites} />}
+          {genderRatio.M !== 0 && (
+            <Gender ratio={genderRatio} sex={TypeSex.Male} sprit={searchingMainForm?.form?.sprites} />
+          )}
+          {genderRatio.F !== 0 && (
+            <Gender ratio={genderRatio} sex={TypeSex.Female} sprit={searchingMainForm?.form?.sprites} />
+          )}
         </div>
       ) : (
         <Gender sex={TypeSex.Genderless} />
       )}
       <Stats
-        pokemonType={form?.form?.pokemonType}
+        pokemonType={searchingMainForm?.form?.pokemonType}
         statATK={statsPokemon?.atk}
         statDEF={statsPokemon?.def}
         statSTA={statsPokemon?.sta}
         statProd={statsPokemon?.prod}
         id={props.defaultId}
-        form={pokemonData?.form}
+        form={searchingMainDetails?.form}
         isDisabled={!statsData}
       />
       <hr className="w-100" />
       <div className="row w-100 m-0">
         <div className="col-md-5 p-0 overflow-auto">
           <Info />
-          {!isSpecialFormType(form?.form?.pokemonType) && (
+          {!isSpecialFormType(searchingMainForm?.form?.pokemonType) && (
             <Fragment>
               <h5>
                 <li>Raid</li>
               </h5>
               <Raid
-                currForm={form}
+                currForm={searchingMainForm?.form}
                 id={props.defaultId}
-                statATK={pokemonData?.statsGO?.atk}
-                statDEF={pokemonData?.statsGO?.def}
+                statATK={searchingMainDetails?.statsGO?.atk}
+                statDEF={searchingMainDetails?.statsGO?.def}
                 isLoadedForms={props.isLoadedForms}
               />
             </Fragment>
           )}
         </div>
         <div className="col-md-7 p-0">
-          <TableMove pokemonData={pokemonData} />
-          <Counter pokemonData={pokemonData} />
+          <TableMove pokemonData={searchingMainDetails} />
+          <Counter pokemonData={searchingMainDetails} />
         </div>
       </div>
       <hr className="w-100" />
-      {pokemonData?.pokemonType !== PokemonType.GMax && !isSpecialFormType(pokemonData?.pokemonType) ? (
+      {searchingMainDetails?.pokemonType !== PokemonType.GMax &&
+      !isSpecialFormType(searchingMainDetails?.pokemonType) ? (
         <div className="row w-100 m-0 p-0">
           <div className="col-xl h-100 position-relative">{renderEvolution()}</div>
           <SpecialForm className="col-xl h-100 position-relative p-0" formList={props.formList} id={props.defaultId} />
@@ -269,7 +273,9 @@ const FormComponent = (props: IFormInfoComponent) => {
       ) : (
         renderEvolution()
       )}
-      {isNotEmpty(pokemonData?.formChange) && <FromChange currentId={props.defaultId} pokemonData={pokemonData} />}
+      {isNotEmpty(searchingMainDetails?.formChange) && (
+        <FromChange currentId={props.defaultId} pokemonData={searchingMainDetails} />
+      )}
     </Fragment>
   );
 };

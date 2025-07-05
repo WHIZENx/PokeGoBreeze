@@ -15,9 +15,7 @@ import { useSnackbar } from 'notistack';
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import APIService from '../../../services/api.service';
-import { useSelector } from 'react-redux';
 import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
-import { SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -33,6 +31,7 @@ import {
 import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
 import { Color } from '../../../core/models/candy.model';
 import { minLevel, maxLevel, minIv, maxIv, stepLevel } from '../../../utils/helpers/options-context.helpers';
+import useSearch from '../../../composables/useSearch';
 
 const CalculatePoint = () => {
   useTitle({
@@ -48,7 +47,7 @@ const CalculatePoint = () => {
       'team optimization',
     ],
   });
-  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
+  const { searchingToolCurrentData, searchingToolObjectData } = useSearch();
 
   const [move, setMove] = useState<ICombat>();
 
@@ -109,12 +108,12 @@ const CalculatePoint = () => {
     for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
       dataList[level] = getValueOrDefault(Array, dataList[level]);
       for (let j = minIv(); j <= maxIv(); j += 1) {
-        const atk = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.atk, j, i, true);
+        const atk = calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.atk, j, i, true);
         const result = getMoveDamagePVE(
           atk,
-          toNumber(searching?.object?.pokemon?.statsGO?.def, 1),
-          searching?.object?.form,
-          searching?.current?.form,
+          toNumber(searchingToolObjectData?.pokemon?.statsGO?.def, 1),
+          searchingToolObjectData?.form,
+          searchingToolCurrentData?.form,
           move
         );
         dataList[level].push(result);
@@ -138,17 +137,17 @@ const CalculatePoint = () => {
       dataListDef[level] ??= [];
       dataListSta[level] ??= [];
       for (let j = minIv(); j <= maxIv(); j += 1) {
-        const def = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.def, j, i, true);
+        const def = calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.def, j, i, true);
         const resultDef = getMoveDamagePVE(
-          toNumber(searching?.object?.pokemon?.statsGO?.atk, 1),
+          toNumber(searchingToolObjectData?.pokemon?.statsGO?.atk, 1),
           def,
-          searching?.current?.form,
-          searching?.object?.form,
+          searchingToolCurrentData?.form,
+          searchingToolObjectData?.form,
           moveDef
         );
         dataListDef[level].push(resultDef);
         groupDef.push(resultDef);
-        const resultSta = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.sta, j, i, true);
+        const resultSta = calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.sta, j, i, true);
         dataListSta[level].push(resultSta);
         groupSta.push(resultSta);
       }
@@ -213,24 +212,24 @@ const CalculatePoint = () => {
   };
 
   const computeBulk = (count: number, level: number) => {
-    const def = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.def, DEFIv, level, true);
+    const def = calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.def, DEFIv, level, true);
     return Math.max(
       0,
       Math.ceil(
-        (calculateStatsBattle(searching?.current?.pokemon?.statsGO?.sta, STAIv, level, true) -
+        (calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.sta, STAIv, level, true) -
           count *
             getMoveDamagePVE(
-              toNumber(searching?.object?.pokemon?.statsGO?.atk),
+              toNumber(searchingToolObjectData?.pokemon?.statsGO?.atk),
               def,
-              searching?.current?.form,
-              searching?.object?.form,
+              searchingToolCurrentData?.form,
+              searchingToolObjectData?.form,
               cMove
             )) /
           getMoveDamagePVE(
-            toNumber(searching?.object?.pokemon?.statsGO?.atk),
+            toNumber(searchingToolObjectData?.pokemon?.statsGO?.atk),
             def,
-            searching?.current?.form,
-            searching?.object?.form,
+            searchingToolCurrentData?.form,
+            searchingToolObjectData?.form,
             fMove
           )
       )
@@ -293,8 +292,8 @@ const CalculatePoint = () => {
   const setIconBattle = (atk: TypeAction, def: TypeAction) => (
     <>
       <div className="d-flex">
-        {getIconBattle(atk, searching?.current?.form)}
-        {getIconBattle(def, searching?.object?.form)}
+        {getIconBattle(atk, searchingToolCurrentData?.form)}
+        {getIconBattle(def, searchingToolObjectData?.form)}
       </div>
       <FormControlLabel
         control={<Checkbox checked={showDiffBorder} onChange={(_, check) => setShowDiffBorder(check)} />}
@@ -372,18 +371,18 @@ const CalculatePoint = () => {
                   <h2 className="text-center text-decoration-underline">Attacker move</h2>
                   <Move
                     text="Select Moves"
-                    id={searching?.current?.pokemon?.id}
+                    id={searchingToolCurrentData?.pokemon?.id}
                     isSelectDefault
                     form={
-                      searching?.current?.form
-                        ? searching?.current?.form.form?.name
-                        : searching?.current?.pokemon?.fullName
+                      searchingToolCurrentData?.form
+                        ? searchingToolCurrentData?.form.form?.name
+                        : searchingToolCurrentData?.pokemon?.fullName
                     }
                     setMove={setMove}
                     move={move}
                     clearData={clearDataAtk}
                     isHighlight
-                    pokemonType={searching?.current?.form?.form?.pokemonType}
+                    pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
                   />
                   <FormControlLabel
                     control={
@@ -422,12 +421,12 @@ const CalculatePoint = () => {
                           {capitalize(move.type)}
                         </span>
                       </p>
-                      {findStabType(searching?.current?.form?.form?.types, move.type)}
+                      {findStabType(searchingToolCurrentData?.form?.form?.types, move.type)}
                       <p>
                         {'- Damage: '}
                         <b>
                           {move.pvePower}
-                          {findStabType(searching?.current?.form?.form?.types, move.type) && (
+                          {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
                             <span className="caption-small text-success"> (x1.2)</span>
                           )}
                         </b>
@@ -509,18 +508,18 @@ const CalculatePoint = () => {
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
                   <Move
                     text="Select Moves"
-                    id={searching?.object?.pokemon?.id}
+                    id={searchingToolObjectData?.pokemon?.id}
                     isSelectDefault
                     form={
-                      searching?.object?.form
-                        ? searching?.object?.form.form?.name
-                        : searching?.object?.pokemon?.fullName
+                      searchingToolObjectData?.form
+                        ? searchingToolObjectData?.form.form?.name
+                        : searchingToolObjectData?.pokemon?.fullName
                     }
                     setMove={setMoveDef}
                     move={moveDef}
                     clearData={clearDataDef}
                     isHighlight
-                    pokemonType={searching?.object?.form?.form?.pokemonType}
+                    pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
                   />
                   <FormControlLabel
                     control={
@@ -559,12 +558,12 @@ const CalculatePoint = () => {
                           {capitalize(moveDef.type)}
                         </span>
                       </p>
-                      {findStabType(searching?.object?.form?.form?.types, moveDef.type)}
+                      {findStabType(searchingToolObjectData?.form?.form?.types, moveDef.type)}
                       <p>
                         {'- Damage: '}
                         <b>
                           {moveDef.pvePower}
-                          {findStabType(searching?.object?.form?.form?.types, moveDef.type) && (
+                          {findStabType(searchingToolObjectData?.form?.form?.types, moveDef.type) && (
                             <span className="caption-small text-success"> (x1.2)</span>
                           )}
                         </b>
@@ -702,19 +701,19 @@ const CalculatePoint = () => {
                   <div className="mb-3">
                     <Move
                       text="Fast Moves"
-                      id={searching?.object?.pokemon?.id}
+                      id={searchingToolObjectData?.pokemon?.id}
                       isSelectDefault
                       form={
-                        searching?.object?.form
-                          ? searching?.object?.form.form?.name
-                          : searching?.object?.pokemon?.fullName
+                        searchingToolObjectData?.form
+                          ? searchingToolObjectData?.form.form?.name
+                          : searchingToolObjectData?.pokemon?.fullName
                       }
                       setMove={setFMove}
                       move={fMove}
                       type={TypeMove.Fast}
                       clearData={clearDataBulk}
                       isHighlight
-                      pokemonType={searching?.object?.form?.form?.pokemonType}
+                      pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
                     />
                     {fMove && (
                       <div className="mt-2 m-auto" style={{ width: 300 }}>
@@ -727,12 +726,12 @@ const CalculatePoint = () => {
                             {capitalize(fMove.type)}
                           </span>
                         </p>
-                        {findStabType(searching?.object?.form?.form?.types, fMove.type)}
+                        {findStabType(searchingToolObjectData?.form?.form?.types, fMove.type)}
                         <p>
                           {'- Damage: '}
                           <b>
                             {fMove.pvePower}
-                            {findStabType(searching?.object?.form?.form?.types, fMove.type) && (
+                            {findStabType(searchingToolObjectData?.form?.form?.types, fMove.type) && (
                               <span className="caption-small text-success"> (x1.2)</span>
                             )}
                           </b>
@@ -743,19 +742,19 @@ const CalculatePoint = () => {
                   <div>
                     <Move
                       text="Charged Moves"
-                      id={searching?.object?.pokemon?.id}
+                      id={searchingToolObjectData?.pokemon?.id}
                       isSelectDefault
                       form={
-                        searching?.object?.form
-                          ? searching?.object?.form.form?.name
-                          : searching?.object?.pokemon?.fullName
+                        searchingToolObjectData?.form
+                          ? searchingToolObjectData?.form.form?.name
+                          : searchingToolObjectData?.pokemon?.fullName
                       }
                       setMove={setCMove}
                       move={cMove}
                       type={TypeMove.Charge}
                       clearData={clearDataBulk}
                       isHighlight
-                      pokemonType={searching?.object?.form?.form?.pokemonType}
+                      pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
                     />
                     {cMove && (
                       <div className="mt-2 m-auto" style={{ width: 300 }}>
@@ -768,12 +767,12 @@ const CalculatePoint = () => {
                             {capitalize(cMove.type)}
                           </span>
                         </p>
-                        {findStabType(searching?.object?.form?.form?.types, cMove.type)}
+                        {findStabType(searchingToolObjectData?.form?.form?.types, cMove.type)}
                         <p>
                           {'- Damage: '}
                           <b>
                             {cMove.pvePower}
-                            {findStabType(searching?.object?.form?.form?.types, cMove.type) && (
+                            {findStabType(searchingToolObjectData?.form?.form?.types, cMove.type) && (
                               <span className="caption-small text-success"> (x1.2)</span>
                             )}
                           </b>

@@ -9,8 +9,6 @@ import Find from '../../../components/Find/Find';
 import { leaguesTeamBattle } from '../../../utils/constants';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
-import { useSelector } from 'react-redux';
-import { SearchingState } from '../../../store/models/state.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { combineClasses, isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
@@ -21,6 +19,7 @@ import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/options-context.helpers';
+import useSearch from '../../../composables/useSearch';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -94,7 +93,7 @@ const StatsTable = () => {
       'Analyze Pokémon GO battle league stats with our comprehensive tool. Compare Pokémon performance, CP values, and optimal IVs for competitive play.',
     keywords: ['battle league stats', 'PVP stats', 'Pokémon GO battle stats', 'CP optimization', 'PVP IV calculator'],
   });
-  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
+  const { searchingToolCurrentDetails } = useSearch();
 
   const [searchCP, setSearchCP] = useState('');
 
@@ -118,9 +117,9 @@ const StatsTable = () => {
       setIsLoading(true);
     }
     if (
-      toNumber(pokemon?.statsGO?.atk) > 0 &&
-      toNumber(pokemon?.statsGO?.def) > 0 &&
-      toNumber(pokemon?.statsGO?.sta) > 0
+      toNumber(searchingToolCurrentDetails?.statsGO?.atk) > 0 &&
+      toNumber(searchingToolCurrentDetails?.statsGO?.def) > 0 &&
+      toNumber(searchingToolCurrentDetails?.statsGO?.sta) > 0
     ) {
       calculateStats(controller.signal)
         .then((data) => {
@@ -129,7 +128,11 @@ const StatsTable = () => {
         .catch(() => setStatsBattle([]));
     }
     return () => controller.abort();
-  }, [pokemon?.statsGO?.atk, pokemon?.statsGO?.def, pokemon?.statsGO?.sta]);
+  }, [
+    searchingToolCurrentDetails?.statsGO?.atk,
+    searchingToolCurrentDetails?.statsGO?.def,
+    searchingToolCurrentDetails?.statsGO?.sta,
+  ]);
 
   const calculateStats = (signal: AbortSignal, delay = statsDelay()) => {
     return new Promise<IBattleBaseStats[]>((resolve, reject) => {
@@ -145,9 +148,9 @@ const StatsTable = () => {
           signal.removeEventListener('abort', abortHandler);
         }
         result = calStatsProd(
-          toNumber(pokemon?.statsGO?.atk),
-          toNumber(pokemon?.statsGO?.def),
-          toNumber(pokemon?.statsGO?.sta),
+          toNumber(searchingToolCurrentDetails?.statsGO?.atk),
+          toNumber(searchingToolCurrentDetails?.statsGO?.def),
+          toNumber(searchingToolCurrentDetails?.statsGO?.sta),
           minCp(),
           BattleLeagueCPType.InsMaster,
           true
@@ -246,9 +249,9 @@ const StatsTable = () => {
           <Box className="w-50" sx={{ minWidth: 350 }}>
             <div className="input-group mb-3 justify-content-center">
               <DynamicInputCP
-                statATK={pokemon?.statsGO?.atk}
-                statDEF={pokemon?.statsGO?.def}
-                statSTA={pokemon?.statsGO?.sta}
+                statATK={searchingToolCurrentDetails?.statsGO?.atk}
+                statDEF={searchingToolCurrentDetails?.statsGO?.def}
+                statSTA={searchingToolCurrentDetails?.statsGO?.sta}
                 ivAtk={ATKIv}
                 ivDef={DEFIv}
                 ivSta={STAIv}
@@ -326,7 +329,7 @@ const StatsTable = () => {
         </div>
       </form>
       <CustomDataTable
-        title={`Stat Battle for ${splitAndCapitalize(pokemon?.fullName, '_', ' ')}`}
+        title={`Stat Battle for ${splitAndCapitalize(searchingToolCurrentDetails?.fullName, '_', ' ')}`}
         columns={columnsStats}
         data={filterStatsBattle}
         pagination

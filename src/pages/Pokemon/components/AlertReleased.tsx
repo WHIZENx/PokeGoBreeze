@@ -4,14 +4,13 @@ import APIService from '../../../services/api.service';
 import { splitAndCapitalize, getPokemonFormWithNoneSpecialForm } from '../../../utils/utils';
 import { IAlertReleasedComponent } from '../../models/page.model';
 import { VariantType } from '../../../enums/type.enum';
-import { useSelector } from 'react-redux';
-import { SearchingState } from '../../../store/models/state.model';
+import useSearch from '../../../composables/useSearch';
 
 const AlertReleased = (props: IAlertReleasedComponent) => {
-  const pokemon = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
+  const { searchingMainDetails } = useSearch();
   return (
     <>
-      {pokemon && !pokemon.releasedGO && (
+      {searchingMainDetails && !searchingMainDetails.releasedGO && (
         <Alert variant={VariantType.Danger}>
           <h5 className="text-danger m-0">
             {'* '}

@@ -5,9 +5,7 @@ import '../../Tools/CalculateStats/CalculateStats.scss';
 import APIService from '../../../services/api.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
-import { useSelector } from 'react-redux';
 import { Action } from 'history';
-import { SearchingState } from '../../../store/models/state.model';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { PokemonType } from '../../../enums/type.enum';
@@ -18,6 +16,7 @@ import { debounce } from 'lodash';
 import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context.helpers';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
+import useSearch from '../../../composables/useSearch';
 
 const Search = () => {
   useTitle({
@@ -28,19 +27,19 @@ const Search = () => {
   });
   const { routerAction } = useRouter();
   const { getPokemonById, mappingPokemonName } = usePokemon();
-  const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
+  const { searchingMainData } = useSearch();
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
   const eachCounter = useRef(10);
 
   const [searchOption, setSearchOption] = useState<SearchOption>({
-    id: routerAction === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1,
-    form: routerAction === Action.Pop && searching ? searching.form?.form?.formName : '',
+    id: routerAction === Action.Pop && searchingMainData ? toNumber(searchingMainData.pokemon?.id, 1) : 1,
+    form: routerAction === Action.Pop && searchingMainData ? searchingMainData.form?.form?.formName : '',
     pokemonType: PokemonType.Normal,
   });
   const [selectId, setSelectId] = useState(
-    routerAction === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1
+    routerAction === Action.Pop && searchingMainData ? toNumber(searchingMainData.pokemon?.id, 1) : 1
   );
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -230,7 +229,6 @@ const Search = () => {
           onIncId={() => modifyId(1)}
           onDecId={() => modifyId(-1)}
           isSearch
-          searching={searching}
         />
       </div>
     </Fragment>
