@@ -2,9 +2,9 @@ import React, { Fragment } from 'react';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { getKeyWithData } from '../../../../utils/utils';
 import CloseIcon from '@mui/icons-material/Close';
-import { IPokemonBattle } from '../../models/battle.model';
+import { IPokemonBattle, ITimeline } from '../../models/battle.model';
 import { AttackType } from '../enums/attack-type.enum';
-import { combineClasses, isNotEmpty } from '../../../../utils/extension';
+import { combineClasses, isNotEmpty, toNumber } from '../../../../utils/extension';
 import { TypeAction } from '../../../../enums/type.enum';
 import { TimelineElement, TimelineEvent } from '../../../../utils/models/overrides/dom.model';
 
@@ -17,7 +17,14 @@ const TimelineFit = (
   showTap: boolean,
   isHide = false
 ) => {
-  const calculateFitPoint = (length: number, index: number) => `${(index * 100) / (length - 2)}%`;
+  const calculateWidthBasedPosition = (timeline: ITimeline[], index: number) => {
+    const totalScaledWidth = timeline.reduce((sum, item) => sum + toNumber(item.size), 0);
+    const scaleFactor = 100 / totalScaledWidth;
+    const position = timeline
+      .filter((_, i) => i < index)
+      .reduce((sum, item) => sum + toNumber(item.size) * scaleFactor, 0);
+    return `${position}%`;
+  };
 
   const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle) => (
     <Fragment>
@@ -30,7 +37,7 @@ const TimelineFit = (
                   className={combineClasses('charge-attack opacity-50', showTap ? 'd-block' : 'd-none')}
                   style={{
                     width: value.size,
-                    left: calculateFitPoint(poke.timeline.length, index),
+                    left: calculateWidthBasedPosition(poke.timeline, index),
                     borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                   }}
                 />
@@ -40,7 +47,7 @@ const TimelineFit = (
                   {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                     <div
                       className="position-absolute icon-buff-timeline"
-                      style={{ left: calculateFitPoint(poke.timeline.length, index), top: 10 }}
+                      style={{ left: calculateWidthBasedPosition(poke.timeline, index), top: 10 }}
                     >
                       {value.buff?.map((b, i) => (
                         <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
@@ -56,7 +63,7 @@ const TimelineFit = (
                         <div
                           className="position-absolute icon-buff-timeline"
                           style={{
-                            left: calculateFitPoint(poke.timeline.length, index),
+                            left: calculateWidthBasedPosition(poke.timeline, index),
                             top: 10,
                           }}
                         >
@@ -71,7 +78,7 @@ const TimelineFit = (
                           className={combineClasses('wait-attack', showTap ? 'd-block' : 'd-none')}
                           style={{
                             width: value.size,
-                            left: calculateFitPoint(poke.timeline.length, index),
+                            left: calculateWidthBasedPosition(poke.timeline, index),
                           }}
                         />
                       )}
@@ -87,7 +94,7 @@ const TimelineFit = (
         {poke.timeline.map((value, index) => (
           <Fragment key={index}>
             {value.type === AttackType.Block && (
-              <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>
+              <div id={index.toString()} style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}>
                 <HexagonIcon sx={{ color: 'purple', fontSize: value.size }} />
               </div>
             )}
@@ -95,7 +102,7 @@ const TimelineFit = (
               <div
                 id={index.toString()}
                 className={combineClasses('fast-attack', value.color, 'black-border')}
-                style={{ left: calculateFitPoint(poke.timeline.length, index) }}
+                style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}
               />
             )}
             {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
@@ -105,7 +112,7 @@ const TimelineFit = (
                 style={{
                   width: value.size,
                   height: value.size,
-                  left: calculateFitPoint(poke.timeline.length, index),
+                  left: calculateWidthBasedPosition(poke.timeline, index),
                 }}
               />
             )}
@@ -116,7 +123,7 @@ const TimelineFit = (
                 style={{
                   width: value.size,
                   height: value.size,
-                  left: calculateFitPoint(poke.timeline.length, index),
+                  left: calculateWidthBasedPosition(poke.timeline, index),
                 }}
               />
             )}
@@ -124,7 +131,7 @@ const TimelineFit = (
               <div
                 id={index.toString()}
                 className="wait-attack"
-                style={{ left: calculateFitPoint(poke.timeline.length, index) }}
+                style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}
               />
             )}
             {!value.type && (
@@ -134,12 +141,12 @@ const TimelineFit = (
                 style={{
                   width: value.size,
                   height: value.size,
-                  left: calculateFitPoint(poke.timeline.length, index),
+                  left: calculateWidthBasedPosition(poke.timeline, index),
                 }}
               />
             )}
             {value.type === AttackType.Dead && (
-              <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>
+              <div id={index.toString()} style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}>
                 <CloseIcon color="error" />
               </div>
             )}

@@ -86,7 +86,7 @@ import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { getRandomNumber, overlappingPos } from '../utils/battle.utils';
+import { getRandomNumber, overlappingPos, pushBoundingById } from '../utils/battle.utils';
 import {
   battleDelay,
   battleMaxEnergy,
@@ -104,6 +104,7 @@ import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import { Params } from '../../../utils/constants';
+import useDevice from '../../../composables/useDevice';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -127,6 +128,7 @@ const Battle = () => {
   const { loadPVPMoves } = usePVP();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
+  const { isMobile } = useDevice();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
@@ -366,6 +368,7 @@ const Battle = () => {
 
   useEffect(() => {
     if (isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)) {
+      stopTimeline();
       arrBound.current = [];
       arrStore.current = [];
       const elem = document.getElementById('play-line');
@@ -373,10 +376,10 @@ const Battle = () => {
         elem.style.transform = 'translate(0px, -50%)';
       }
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+        pushBoundingById(arrBound.current, i);
       }
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+        pushBoundingById(arrStore.current, i);
       }
     }
   }, [windowWidth]);
@@ -428,7 +431,7 @@ const Battle = () => {
       arrBound.current.length < pokemonCurr.timeline.length
     ) {
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+        pushBoundingById(arrBound.current, i);
       }
     }
     if (xPos <= 0) {
@@ -455,7 +458,7 @@ const Battle = () => {
     ) {
       xFit.current = e.currentTarget.clientWidth;
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+        pushBoundingById(arrStore.current, i);
       }
     }
     checkOverlap(arrStore.current, elem?.getBoundingClientRect().left);
@@ -484,7 +487,7 @@ const Battle = () => {
         }
         if (!isNotEmpty(arrBound.current)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-            arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+            pushBoundingById(arrBound.current, i);
           }
         }
       } else {
@@ -493,7 +496,7 @@ const Battle = () => {
         xFit.current = clientWidth;
         if (!isNotEmpty(arrStore.current)) {
           for (let i = 0; i < range; i++) {
-            arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+            pushBoundingById(arrStore.current, i);
           }
         }
       }
@@ -615,7 +618,7 @@ const Battle = () => {
     scrollWidth.current = e.currentTarget.scrollLeft;
   };
 
-  const onChangeTimeline = (type: TimelineType, prevWidth: number | undefined) => {
+  const onChangeTimeline = (type: TimelineType) => {
     stopTimeline();
     let elem = document.getElementById('play-line');
     let xCurrent = 0,
@@ -623,18 +626,25 @@ const Battle = () => {
     if (elem) {
       xCurrent = toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', ''));
     }
+    const prevWidth = toNumber(
+      timelineType === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
+    );
     setOptions({ ...options, timelineType: type });
     setTimeout(() => {
+      elem = document.getElementById('play-line');
+      const currentWidth = toNumber(
+        type === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
+      );
+      transform = (xCurrent / prevWidth) * currentWidth;
       if (type === TimelineType.Normal) {
         if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-            arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+            pushBoundingById(arrBound.current, i);
           }
         }
-        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineNormal.current?.clientWidth);
-        elem = document.getElementById('play-line');
         if (elem) {
-          elem.style.transform = `translate(${Math.max(0, transform)}px, -50%)`;
+          elem.style.transform = `translate(${transform}px, -50%)`;
+          checkOverlap(arrBound.current, elem.getBoundingClientRect().left);
         }
         timelineNormalContainer.current?.scrollTo({
           left: Math.min(transform, transform - timelineNormalContainer.current?.clientWidth / 2),
@@ -642,13 +652,12 @@ const Battle = () => {
       } else {
         if (!isNotEmpty(arrStore.current) && isNotEmpty(pokemonCurr.timeline)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-            arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+            pushBoundingById(arrStore.current, i);
           }
         }
-        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineFit.current?.clientWidth);
-        elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${transform}px, -50%)`;
+          checkOverlap(arrStore.current, elem.getBoundingClientRect().left);
         }
       }
     }, 100);
@@ -1304,14 +1313,7 @@ const Battle = () => {
                         aria-labelledby="row-timeline-group-label"
                         name="row-timeline-group"
                         value={timelineType}
-                        onChange={(e) =>
-                          onChangeTimeline(
-                            toNumber(e.target.value),
-                            timelineType === TimelineType.Normal
-                              ? timelineNormal.current?.clientWidth
-                              : timelineFit.current?.clientWidth
-                          )
-                        }
+                        onChange={(e) => onChangeTimeline(toNumber(e.target.value))}
                       >
                         <FormControlLabel value={TimelineType.Fit} control={<Radio />} label="Fit Timeline" />
                         <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
@@ -1334,8 +1336,8 @@ const Battle = () => {
                     <div className="d-flex justify-content-center column-gap-2">
                       <button
                         className="btn btn-primary"
-                        onMouseDown={() => (playState ? stopTimeline() : playingTimeline())}
-                        onTouchEnd={() => (playState ? stopTimeline() : playingTimeline())}
+                        onMouseDown={() => (isMobile ? undefined : playState ? stopTimeline() : playingTimeline())}
+                        onTouchEnd={() => (isMobile ? (playState ? stopTimeline() : playingTimeline()) : undefined)}
                       >
                         {playState ? (
                           <Fragment>

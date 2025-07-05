@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { isMobile as isMobileDetect } from 'react-device-detect';
 import { DeviceState } from '../store/models/state.model';
 import { SetDevice } from '../store/actions/device.action';
 
@@ -19,9 +20,14 @@ export const useDevice = () => {
     dispatch(SetDevice.create());
   };
 
+  const isMobileStore = deviceData.isMobile;
+  const isMobile = isMobileDetect;
+
   return {
     deviceData,
     setDevice,
+    isMobileStore,
+    isMobile,
   };
 };
 
