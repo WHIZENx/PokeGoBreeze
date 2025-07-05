@@ -3,25 +3,24 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
 import { ICardSmallComponent } from '../models/component.model';
-import { combineClasses, isEqual, isNotEmpty } from '../../utils/extension';
+import { combineClasses } from '../../utils/extension';
 import { MoveType } from '../../enums/type.enum';
 import { ICombat } from '../../core/models/combat.model';
 import IconType from '../Sprites/Icon/Type/Type';
+import useCombats from '../../composables/useCombats';
 
 const CardMoveSmall = (props: ICardSmallComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
+  const { findMoveByName } = useCombats();
 
   const [move, setMove] = useState<ICombat>();
 
   useEffect(() => {
-    if (!props.isEmpty && isNotEmpty(combat) && props.value) {
-      const move = combat.find((item) => isEqual(item.name, props.value?.name));
+    if (!props.isEmpty && props.value) {
+      const move = findMoveByName(props.value?.name);
       setMove(move);
     }
-  }, [combat, props.value, props.isEmpty]);
+  }, [findMoveByName, props.value, props.isEmpty]);
 
   return (
     <Fragment>

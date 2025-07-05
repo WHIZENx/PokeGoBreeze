@@ -10,7 +10,7 @@ import {
 } from '../../../utils/utils';
 import { calculateStatsBattle } from '../../../utils/calculate';
 
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
@@ -18,7 +18,7 @@ import HP_LOGO from '../../../assets/hp.png';
 import { IStatsTableComponent } from '../../models/page.model';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
-import { maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/context.helpers';
+import { maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const [currStatLevel, setCurrStatLevel] = useState(1);

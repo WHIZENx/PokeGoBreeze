@@ -1,24 +1,23 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
-import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
 import { ICardMoveComponent } from '../models/component.model';
-import { combineClasses, isEqual, isNotEmpty } from '../../utils/extension';
+import { combineClasses } from '../../utils/extension';
 import { MoveType } from '../../enums/type.enum';
 import IconType from '../Sprites/Icon/Type/Type';
+import useCombats from '../../composables/useCombats';
 
 const CardMove = (props: ICardMoveComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
+  const { findMoveByName } = useCombats();
 
   const [move, setMove] = useState<ICombat>();
 
   useEffect(() => {
-    if (isNotEmpty(combat) && props.value) {
-      const move = combat.find((item) => isEqual(item.name, props.value?.name));
+    if (props.value) {
+      const move = findMoveByName(props.value?.name);
       setMove(move);
     }
-  }, [combat, props.value]);
+  }, [findMoveByName, props.value]);
 
   return (
     <Fragment>

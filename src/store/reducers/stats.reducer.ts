@@ -3,7 +3,7 @@ import { IStatsRank, StatsPokemonGO } from '../../core/models/stats.model';
 import { PokemonType, TypeAction } from '../../enums/type.enum';
 import { sortStatsPokemon } from '../../utils/calculate';
 import { getValueOrDefault } from '../../utils/extension';
-import { formPurified, formShadow, formNormal } from '../../utils/helpers/context.helpers';
+import { formPurified, formShadow, formNormal } from '../../utils/helpers/options-context.helpers';
 import { ArrayStats, IArrayStats } from '../../utils/models/util.model';
 import { getDmgMultiplyBonus } from '../../utils/utils';
 import { StatsActions } from '../actions';

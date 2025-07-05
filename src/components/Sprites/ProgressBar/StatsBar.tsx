@@ -4,7 +4,7 @@ import { IStatsBarComponent } from '../../models/component.model';
 import { combineClasses, getValueOrDefault, isUndefined } from '../../../utils/extension';
 import { generateParamForm } from '../../../utils/utils';
 import { Params } from '../../../utils/constants';
-import { useNavigateToTop } from '../../../utils/hooks/LinkToTop';
+import { useNavigateToTop } from '../../LinkToTop';
 
 interface Element {
   $isRank?: boolean;

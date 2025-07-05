@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { loadTimestamp } from './store/effects/store.effects';
 
 import './App.scss';
 
@@ -38,32 +36,36 @@ import CatchChance from './pages/Tools/CatchChance/CatchChance';
 import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
-import { loadTheme } from './store/effects/theme.effects';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './utils/models/overrides/themes.model';
 import { TypeTheme } from './enums/type.enum';
-import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/local-storage';
-import { RouterState, StoreState, TimestampState } from './store/models/state.model';
 import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
 import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
-import optionsObserver from './utils/hooks/optionsObserver';
-import { loadDataDelay, transitionTime } from './utils/helpers/context.helpers';
+import useOptionsObserver from './utils/hooks/useOptionsObserver';
+import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
+import useTimestamp from './composables/useTimestamp';
+import useSpinner from './composables/useSpinner';
+import useDevice from './composables/useDevice';
+import { useTheme as useThemeStore } from './composables/useTheme';
+import useRouter from './composables/useRouter';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
 });
 
 function App() {
-  const dispatch = useDispatch();
-  const data = useSelector((state: StoreState) => state.store.data);
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
-  const router = useSelector((state: RouterState) => state.router);
+  const { loadTimestamp } = useTimestamp();
+  const { timestampGameMaster } = useTimestamp();
+  const { setBar, setPercent } = useSpinner();
+  const { setDevice } = useDevice();
+  const { loadTheme } = useThemeStore();
+  const { routerData, routerAction } = useRouter();
 
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
@@ -76,7 +78,7 @@ function App() {
   const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
 
-  optionsObserver();
+  useOptionsObserver();
 
   useEffect(() => {
     setTimeout(() => {
@@ -90,7 +92,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (router && router.action === Action.Pop) {
+    if (routerData && routerAction === Action.Pop) {
       const debounced = debounce(() => {
         window.scrollTo({
           top: 0,
@@ -103,21 +105,21 @@ function App() {
         debounced.cancel();
       };
     }
-  }, [router]);
+  }, [routerData]);
 
   useEffect(() => {
-    if (timestamp?.gamemaster) {
-      setStateTimestamp(timestamp.gamemaster);
+    if (timestampGameMaster) {
+      setStateTimestamp(timestampGameMaster);
     }
-  }, [timestamp?.gamemaster]);
+  }, [timestampGameMaster]);
 
   useEffect(() => {
     const controller = new AbortController();
     if (!isLoaded) {
       const currentVersion = process.env.REACT_APP_VERSION;
       setCurrentVersion(currentVersion);
-      dispatch(SpinnerActions.SetBar.create(true));
-      dispatch(SpinnerActions.SetPercent.create(0));
+      setBar(true);
+      setPercent(0);
       setIsLoaded(true);
       const isCurrentVersion = currentVersion === version;
       setStateVersion(currentVersion || '');
@@ -126,14 +128,14 @@ function App() {
   }, [isLoaded]);
 
   useEffect(() => {
-    dispatch(DeviceActions.SetDevice.create());
-    loadTheme(dispatch, stateTheme, setStateTheme);
-  }, [dispatch]);
+    setDevice();
+    loadTheme(stateTheme, setStateTheme);
+  }, []);
 
   const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = loadDataDelay()) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
-        resolve(await loadTimestamp(dispatch, data, timestamp, isCurrentVersion));
+        resolve(await loadTimestamp(isCurrentVersion));
       };
 
       const debouncedResolve = debounce(resolveHandler, delay);

@@ -1,8 +1,5 @@
-import { IAsset } from '../../../core/models/asset.model';
-import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { IMovePokemonRanking, RankingsPVP } from '../../../core/models/pvp.model';
-import { IStatsRank } from '../../../core/models/stats.model';
 import { IStyleData } from '../../../utils/models/util.model';
 import { IPokemonBattleRanking } from './battle.model';
 
@@ -11,8 +8,6 @@ export interface HeaderComponent {
 }
 
 export interface BodyComponent {
-  assets: IAsset[];
-  pokemonData: IPokemonData[];
   data: RankingsPVP | undefined;
   cp: string | undefined;
   serie: string | null | undefined;
@@ -26,7 +21,6 @@ export interface TypeEffectiveComponent {
 
 export interface OverAllStatsComponent {
   data: IPokemonBattleRanking | undefined;
-  statsRanking: IStatsRank | null;
   cp: string | undefined;
   type: string | null | undefined;
 }
@@ -34,5 +28,4 @@ export interface OverAllStatsComponent {
 export interface MoveSetComponent {
   moves: IMovePokemonRanking | undefined;
   pokemon: IPokemonData | undefined;
-  combatData: ICombat[];
 }

@@ -15,7 +15,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import React, { Fragment, useEffect, useState } from 'react';
 import Xarrow, { cAnchorEdge } from 'react-xarrows';
 import { Link } from 'react-router-dom';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import './Evolution.scss';
 import {
@@ -34,13 +34,10 @@ import {
 
 import { OverlayTrigger } from 'react-bootstrap';
 import CustomPopover from '../../Popover/CustomPopover';
-import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
-import { RouterState, StoreState } from '../../../store/models/state.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { Action } from 'history';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
@@ -55,7 +52,9 @@ import { ItemName } from '../../../pages/News/enums/item-type.enum';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { APIUrl } from '../../../services/constants';
-import { formNormal, formStandard } from '../../../utils/helpers/context.helpers';
+import { formNormal, formStandard } from '../../../utils/helpers/options-context.helpers';
+import usePokemon from '../../../composables/usePokemon';
+import useEvolution from '../../../composables/useEvolution';
 
 interface IPokemonEvo {
   prev?: string;
@@ -98,9 +97,8 @@ class PokemonEvo implements IPokemonEvo {
 }
 
 const Evolution = (props: IEvolutionComponent) => {
-  const router = useSelector((state: RouterState) => state.router);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
-  const evolutionChains = useSelector((state: StoreState) => state.store.data.evolutionChains);
+  const { findEvoChainsById } = useEvolution();
+  const { getFilteredPokemons, getFindPokemon } = usePokemon();
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const [idEvoChain, setIdEvoChain] = useState(0);
@@ -186,8 +184,8 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getPrevEvoChainStore = (id: number | undefined, form: string | undefined, result: IPokemonEvo[][]) => {
     const evoList: IPokemonEvo[] = [];
-    const pokemon = pokemonData.filter((pokemon) =>
-      pokemon.evoList?.find((evo) => evo.evoToId === id && isEqual(evo.evoToForm, form))
+    const pokemon = getFilteredPokemons((pokemon) =>
+      pokemon.evoList?.some((evo) => evo.evoToId === id && isEqual(evo.evoToForm, form))
     );
     if (!isNotEmpty(pokemon)) {
       return;
@@ -212,8 +210,8 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getCurrEvoChainStore = (poke: Partial<IPokemonDetail>, result: IPokemonEvo[][]) => {
     let evoList: IPokemonEvo[] = [];
-    const pokemon = pokemonData.find((pokemon) =>
-      pokemon.evoList?.find(
+    const pokemon = getFindPokemon((pokemon) =>
+      pokemon.evoList?.some(
         (evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.form?.replace(`_${formStandard()}`, ''))
       )
     );
@@ -276,9 +274,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
 
     evoList?.forEach((evo) => {
-      const pokemon = pokemonData.find(
-        (pokemon) => pokemon.num === evo.evoToId && isEqual(pokemon.form, evo.evoToForm)
-      );
+      const pokemon = getFindPokemon((pokemon) => pokemon.num === evo.evoToId && isEqual(pokemon.form, evo.evoToForm));
       getNextEvoChainStore(pokemon?.name, pokemon?.evoList, result);
     });
 
@@ -286,7 +282,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number | undefined, form: string | undefined) => {
-    const pokemonChain = evolutionChains.find((chain) => chain.id === id);
+    const pokemonChain = findEvoChainsById(id);
     if (pokemonChain) {
       const chainForms = pokemonChain.evolutionInfos.filter((info) =>
         isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)
@@ -369,8 +365,8 @@ const Evolution = (props: IEvolutionComponent) => {
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
   const getQuestEvo = (prevId: number, form: string) => {
-    const pokemon = pokemonData.find((item) =>
-      item.evoList?.find(
+    const pokemon = getFindPokemon((item) =>
+      item.evoList?.some(
         (value) =>
           (isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
             (isPokemonNoneSpecialForm(form) && value.evoToForm === formNormal())) &&
@@ -385,13 +381,13 @@ const Evolution = (props: IEvolutionComponent) => {
           item.evoToId === prevId
       );
     } else {
-      const pokemonChain = evolutionChains.find((chain) => chain.id === prevId);
+      const pokemonChain = findEvoChainsById(prevId);
       if (pokemonChain) {
         const chainForm = pokemonChain.evolutionInfos.find(
           (info) => info.id !== prevId && isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)
         );
         if (chainForm && prevId === props.id) {
-          const pokemon = pokemonData.find((item) => item.evoList?.find((value) => value.evoToId === prevId));
+          const pokemon = getFindPokemon((item) => item.evoList?.some((value) => value.evoToId === prevId));
           if (pokemon) {
             return pokemon.evoList?.find((item) => item.evoToId === prevId);
           }
@@ -778,9 +774,6 @@ const Evolution = (props: IEvolutionComponent) => {
                         <div
                           className="select-evo"
                           onClick={() => {
-                            if (router.action === Action.Pop) {
-                              router.action = Action.Replace;
-                            }
                             props.setSearchOption?.({ id: value.id, form: value.form, pokemonType: value.pokemonType });
                           }}
                           title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}

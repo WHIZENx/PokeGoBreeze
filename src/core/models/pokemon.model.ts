@@ -11,11 +11,11 @@ import { genList, regionList, versionList } from '../../utils/constants';
 import { IStatsIV, IStatsPokemon, IStatsPokemonGO, StatsIV, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
-import { getValueOrDefault, isUndefined, toNumber, UniqValueInArray } from '../../utils/extension';
+import { getValueOrDefault, isUndefined, safeObjectEntries, toNumber, UniqValueInArray } from '../../utils/extension';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
 import { GlobalType, MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
 import { Species, Variety } from './API/species.model';
-import { minLevel, formNormal, defaultSpriteName } from '../../utils/helpers/context.helpers';
+import { minLevel, formNormal, defaultSpriteName } from '../../utils/helpers/options-context.helpers';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -578,7 +578,7 @@ export class PokemonData implements IPokemonData {
 
   static create(pokemon: PokemonDataModel, options?: IPokemonDataOptional) {
     const obj = new PokemonData();
-    Object.entries(genList).forEach(([key, value]) => {
+    safeObjectEntries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;
       if (pokemon.id >= minId && pokemon.id <= maxId) {
         obj.gen = toNumber(key);

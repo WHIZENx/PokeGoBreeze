@@ -1,8 +1,7 @@
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import {
-  checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
   getKeyWithData,
@@ -10,14 +9,10 @@ import {
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { findAssetForm } from '../../../utils/compute';
-import { counterPokemon } from '../../../utils/calculate';
 
 import './Counter.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { OptionsSheetState, StoreState } from '../../../store/models/state.model';
 import { TableStyles } from 'react-data-table-component';
-import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
+import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
 import { ColumnType, MoveType, PokemonType } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
@@ -33,8 +28,7 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
-import { OptionsActions } from '../../../store/actions';
+import { LinkToTop } from '../../LinkToTop';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import IconType from '../../Sprites/Icon/Type/Type';
@@ -42,7 +36,12 @@ import { debounce } from 'lodash';
 import CustomDataTable from '../CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
-import { counterDelay } from '../../../utils/helpers/context.helpers';
+import { counterDelay } from '../../../utils/helpers/options-context.helpers';
+import useIcon from '../../../composables/useIcon';
+import useAssets from '../../../composables/useAssets';
+import useOptionStore from '../../../composables/useOptions';
+import usePokemon from '../../../composables/usePokemon';
+import useCalculate from '../../../composables/useCalculate';
 
 const customStyles: TableStyles = {
   head: {
@@ -115,16 +114,17 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 };
 
 const Counter = (props: ICounterComponent) => {
-  const dispatch = useDispatch();
-  const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
-  const optionStore = useSelector((state: OptionsSheetState) => state.options);
+  const { iconData } = useIcon();
+  const { findAssetForm } = useAssets();
+  const { optionsCounter, setCounterOptions } = useOptionStore();
+  const { checkPokemonGO } = usePokemon();
+  const { counterPokemon } = useCalculate();
 
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
   const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
   const [showFrame, setShowFrame] = useState(true);
 
-  const [options, setOptions] = useState(optionStore?.counter ?? new OptionFiltersCounter());
+  const [options, setOptions] = useState(optionsCounter);
 
   const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
 
@@ -160,7 +160,7 @@ const Counter = (props: ICounterComponent) => {
       id: ColumnType.Pokemon,
       name: 'Pokémon',
       selector: (row) => {
-        const assets = findAssetForm(data.assets, row.pokemonId, row.pokemonForm);
+        const assets = findAssetForm(row.pokemonId, row.pokemonForm);
         return (
           <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForm, row.pokemonType)}`}>
             <div className="d-flex justify-content-center">
@@ -290,14 +290,7 @@ const Counter = (props: ICounterComponent) => {
 
       const resolveHandler = () => {
         if (props.pokemonData) {
-          result = counterPokemon(
-            data.pokemons,
-            data.typeEff,
-            data.weatherBoost,
-            toNumber(props.pokemonData.statsGO?.def),
-            props.pokemonData.types,
-            data.combats
-          );
+          result = counterPokemon(toNumber(props.pokemonData.statsGO?.def), props.pokemonData.types);
         }
 
         if (signal instanceof AbortSignal) {
@@ -320,7 +313,7 @@ const Counter = (props: ICounterComponent) => {
   };
 
   useEffect(() => {
-    dispatch(OptionsActions.SetCounterOptions.create(options));
+    setCounterOptions(options);
     if (isNotEmpty(counterList)) {
       const result = enableBest ? filterBestOptions(counterList) : counterList;
       setCounterFilter(
@@ -336,14 +329,14 @@ const Counter = (props: ICounterComponent) => {
               return true;
             }
             if (!pokemon.releasedGO) {
-              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemons);
+              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName));
             }
             return pokemon.releasedGO;
           })
       );
       setShowFrame(false);
     }
-  }, [dispatch, counterList, showMegaPrimal, releasedGO, enableBest]);
+  }, [counterList, showMegaPrimal, releasedGO, enableBest]);
 
   const filterBestOptions = (result: ICounterModel[]) => {
     const group = result.reduce((res, obj) => {
@@ -371,7 +364,7 @@ const Counter = (props: ICounterComponent) => {
               width={28}
               height={28}
               alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(icon)}
+              src={APIService.getPokemonGoIcon(iconData)}
             />
           </span>
         }

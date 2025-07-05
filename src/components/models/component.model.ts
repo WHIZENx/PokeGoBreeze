@@ -7,10 +7,8 @@ import {
   IPokemonGenderRatio,
   PokemonRaidModel,
 } from '../../core/models/pokemon.model';
-import { IToolSearching } from '../../core/models/searching.model';
 import {
   IStatsPokemon,
-  IStatsRank,
   IStatsAtk,
   IStatsDef,
   IStatsProd,
@@ -22,7 +20,7 @@ import {
   IStatsRankSta,
   IStatsRankProd,
 } from '../../core/models/stats.model';
-import { ITypeEffChart } from '../../core/models/type-eff.model';
+import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
@@ -85,7 +83,7 @@ export interface ICardWeatherComponent {
 }
 
 export interface ITypeEffectiveComponent {
-  typeEffective: ITypeEffChart | undefined;
+  typeEffective: ITypeEffectiveChart | undefined;
 }
 
 export interface ITypeEffectiveSelectComponent {
@@ -117,7 +115,6 @@ export interface IFindComponent {
 }
 
 export interface IFormSelectComponent {
-  searching: IToolSearching | null;
   isRaid?: boolean;
   tier?: number;
   id?: number;
@@ -130,16 +127,13 @@ export interface IFormSelectComponent {
   isHide?: boolean;
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   setForm?: (form: IPokemonFormModify | undefined) => void;
-  stats: IStatsRank | null;
   onHandleSetStats?: (type: TypeAction, value: number) => void;
-  pokemonData: IPokemonData[];
   isObjective?: boolean;
 }
 
 export interface IToolsComponent {
   id: number | undefined;
   dataPoke: IPokemonDetailInfo[];
-  stats: IStatsRank | null;
   onSetStats: ((type: TypeAction, value: number) => void) | undefined;
   onClearStats: ((reset?: boolean) => void) | undefined;
   isRaid: boolean | undefined;
@@ -184,7 +178,6 @@ export interface IFormSpecialComponent {
 
 export interface IStatsComponent {
   pokemonType?: PokemonType;
-  pokemonStats: IStatsRank | null;
   stats?: IStatsPokemon;
   statATK?: IStatsAtk;
   statDEF?: IStatsDef;

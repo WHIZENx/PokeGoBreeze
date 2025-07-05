@@ -3,7 +3,6 @@ import { replaceTempMovePvpName } from '../../utils/utils';
 import { Store } from '../models/store.model';
 import { StoreActions } from '../actions';
 import { StoreActionsUnion } from '../actions/store.action';
-import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { isEqual } from '../../utils/extension';
 
 const initialize = new Store();
@@ -23,7 +22,7 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
     case StoreActions.StoreActionTypes.setLogoPokeGO:
       return {
         ...state,
-        icon: action.payload,
+        icon: action.payload.replace('Images/App Icons/', '').replace('.png', ''),
       };
     case StoreActions.StoreActionTypes.setOptions:
       return {
@@ -31,22 +30,6 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
         data: {
           ...state.data,
           options: action.payload,
-        },
-      };
-    case StoreActions.StoreActionTypes.setTypeEff:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          typeEff: action.payload,
-        },
-      };
-    case StoreActions.StoreActionTypes.setWeatherBoost:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          weatherBoost: action.payload as unknown as IWeatherBoost,
         },
       };
     case StoreActions.StoreActionTypes.setPokemon:

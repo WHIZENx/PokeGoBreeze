@@ -1,12 +1,10 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
 
 import Attacker from './Attacker';
 import Defender from './Defender';
 
 import './TypeEffect.scss';
-import { StoreState } from '../../store/models/state.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 
 const TypeEffect = () => {
@@ -23,16 +21,15 @@ const TypeEffect = () => {
       'battle strategy',
     ],
   });
-  const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
 
   return (
     <div className="container mt-2 pb-3">
       <Row>
         <Col>
-          <Attacker types={typeEffective} />
+          <Attacker />
         </Col>
         <Col>
-          <Defender types={typeEffective} />
+          <Defender />
         </Col>
       </Row>
     </div>

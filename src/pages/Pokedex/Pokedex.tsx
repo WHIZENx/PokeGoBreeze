@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../utils/utils';
-import APIService from '../../services/API.service';
-import { queryAssetForm } from '../../utils/compute';
+import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
+import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
 import {
   Checkbox,
@@ -21,7 +20,6 @@ import {
   SelectChangeEvent,
   Switch,
 } from '@mui/material';
-import { StoreState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
@@ -36,12 +34,14 @@ import {
 } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
-import { TypeEff } from '../../core/models/type-eff.model';
 import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
 import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
-import { transitionTime } from '../../utils/helpers/context.helpers';
+import { getTypes, transitionTime } from '../../utils/helpers/options-context.helpers';
+import useIcon from '../../composables/useIcon';
+import useAssets from '../../composables/useAssets';
+import usePokemon from '../../composables/usePokemon';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -109,11 +109,10 @@ const Pokedex = (props: IStyleSheetData) => {
   });
 
   const dispatch = useDispatch();
+  const { iconData } = useIcon();
+  const { getFilteredPokemons } = usePokemon();
+  const { queryAssetForm } = useAssets();
 
-  const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
-
-  const [types, setTypes] = useState(getKeysObj(new TypeEff()));
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
   const [selectTypes, setSelectTypes] = useState<string[]>([]);
   const [listOfPokemon, setListOfPokemon] = useState<IPokemonHomeModel[]>([]);
@@ -151,21 +150,16 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    setTypes(Object.keys(data.typeEff));
-  }, [data.typeEff]);
-
-  useEffect(() => {
-    if (isNotEmpty(data.assets) && isNotEmpty(data.pokemons)) {
-      setDataList(
-        data.pokemons
-          .map((item) => {
-            const assetForm = queryAssetForm(data.assets, item.num, item.form);
-            return new PokemonHomeModel(item, assetForm);
-          })
-          .sort((a, b) => a.id - b.id)
-      );
-    }
-  }, [data.assets, data.pokemons]);
+    const filteredPokemons = getFilteredPokemons();
+    setDataList(
+      filteredPokemons
+        .map((item) => {
+          const assetForm = queryAssetForm(item.num, item.form);
+          return new PokemonHomeModel(item, assetForm);
+        })
+        .sort((a, b) => a.id - b.id)
+    );
+  }, [getFilteredPokemons]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -340,7 +334,7 @@ const Pokedex = (props: IStyleSheetData) => {
       <div className="text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
         <div className="row w-100 m-0 types-select-btn">
-          {types.map((item, index) => (
+          {getTypes().map((item, index) => (
             <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
@@ -393,7 +387,7 @@ const Pokedex = (props: IStyleSheetData) => {
                           width={28}
                           height={28}
                           alt="Pokémon GO Icon"
-                          src={APIService.getPokemonGoIcon(icon)}
+                          src={APIService.getPokemonGoIcon(iconData)}
                         />
                       </span>
                     }
@@ -596,7 +590,7 @@ const Pokedex = (props: IStyleSheetData) => {
               id={row.id}
               types={row.types}
               pokemonStat={row.goStats}
-              icon={icon}
+              icon={iconData}
               releasedGO={row.releasedGO}
               styleList={props.styleSheet}
             />

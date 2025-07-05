@@ -4,7 +4,6 @@ import { useParams, useSearchParams } from 'react-router-dom';
 
 import {
   capitalize,
-  checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
   getItemSpritePath,
@@ -12,11 +11,11 @@ import {
   splitAndCapitalize,
 } from '../../utils/utils';
 import { Params } from '../../utils/constants';
-import { getBarCharge, queryTopMove } from '../../utils/calculate';
+import { getBarCharge } from '../../utils/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import './Move.scss';
 
 import DoneIcon from '@mui/icons-material/Done';
@@ -26,10 +25,9 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Checkbox } from '@mui/material';
-import { useSelector } from 'react-redux';
 import { Accordion, Form } from 'react-bootstrap';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
-import { StoreState } from '../../store/models/state.model';
+import { useIcon } from '../../composables/useIcon';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
@@ -42,13 +40,14 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
+  safeObjectEntries,
   toFloat,
   toFloatWithPadding,
   toNumber,
 } from '../../utils/extension';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
-import { PokemonTypeBadge } from '../../core/models/type.model';
-import { LinkToTop } from '../../utils/hooks/LinkToTop';
+import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
+import { LinkToTop } from '../../components/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
@@ -56,7 +55,10 @@ import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTa
 import { IMenuItem } from '../../components/models/component.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
-import { battleStab } from '../../utils/helpers/context.helpers';
+import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/options-context.helpers';
+import usePokemon from '../../composables/usePokemon';
+import useCombats from '../../composables/useCombats';
+import useCalculate from '../../composables/useCalculate';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -144,8 +146,10 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
 ];
 
 const Move = (props: IMovePage) => {
-  const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
+  const { iconData } = useIcon();
+  const { checkPokemonGO } = usePokemon();
+  const { findMoveByName, findMoveById, getCombatsById } = useCombats();
+  const { queryTopMove } = useCalculate();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -172,7 +176,7 @@ const Move = (props: IMovePage) => {
                 width={28}
                 height={28}
                 alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(icon)}
+                src={APIService.getPokemonGoIcon(iconData)}
               />
             </span>
           }
@@ -190,7 +194,7 @@ const Move = (props: IMovePage) => {
   ];
 
   const getWeatherEffective = (type: string | undefined) => {
-    const result = Object.entries(data.weatherBoost)?.find(([, value]: [string, string[]]) => {
+    const result = safeObjectEntries(getWeatherBoost())?.find(([, value]) => {
       if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive)) {
         return value;
       }
@@ -221,8 +225,8 @@ const Move = (props: IMovePage) => {
 
   const queryMoveData = useCallback(
     (id: number) => {
-      if (isNotEmpty(data.combats)) {
-        const moves = data.combats.filter((item) => item.track === id || item.id === id);
+      const moves = getCombatsById(id);
+      if (isNotEmpty(moves)) {
         let move = moves.find((item) => item.id === id);
         if (move?.isMultipleWithType) {
           let type = searchParams.get(Params.MoveType);
@@ -234,7 +238,7 @@ const Move = (props: IMovePage) => {
             searchParams.set(Params.MoveType, type);
           }
           setSearchParams(searchParams);
-          setMoveType(type.toUpperCase());
+          setMoveType(type.toLowerCase());
         } else if (!isEqual(move?.moveType, MoveType.Dynamax)) {
           move = moves.find((item) => item.track === id);
         }
@@ -273,15 +277,13 @@ const Move = (props: IMovePage) => {
         }
       }
     },
-    [enqueueSnackbar, data.combats]
+    [enqueueSnackbar, getCombatsById]
   );
 
   const getMoveIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
-    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(data.combats)) {
-      const move = data.combats.find((m) =>
-        isEqual(m.name.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
-      );
+    if (id === 0 && params.id && isNotEmpty(params.id)) {
+      const move = findMoveByName(params.id);
       if (move) {
         id = move.id;
       }
@@ -296,15 +298,15 @@ const Move = (props: IMovePage) => {
         queryMoveData(id);
       }
     }
-  }, [params.id, props.id, queryMoveData, move, data.combats]);
+  }, [params.id, props.id, queryMoveData, move, findMoveByName]);
 
   useEffect(() => {
-    if (move && isNotEmpty(data.pokemons)) {
-      const result = queryTopMove(data.pokemons, data.typeEff, data.weatherBoost, move);
+    if (move) {
+      const result = queryTopMove(move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, data.pokemons, data.typeEff, data.weatherBoost]);
+  }, [move, queryTopMove]);
 
   useEffect(() => {
     setTopListFilter(
@@ -313,11 +315,7 @@ const Move = (props: IMovePage) => {
           return true;
         }
         if (!pokemon.releasedGO) {
-          return checkPokemonGO(
-            pokemon.num,
-            convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')),
-            data.pokemons
-          );
+          return checkPokemonGO(pokemon.num, convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')));
         }
         return pokemon.releasedGO;
       })
@@ -326,17 +324,13 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     const type = searchParams.get(Params.MoveType);
-    if (isNotEmpty(data.combats) && move?.isMultipleWithType && type) {
+    if (move?.isMultipleWithType && type) {
       searchParams.set(Params.MoveType, type.toLowerCase());
       setSearchParams(searchParams);
-      setMove(
-        data.combats.find(
-          (item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)
-        )
-      );
-      setMoveType(type.toUpperCase());
+      setMove(findMoveById(move.track, type));
+      setMoveType(type.toLowerCase());
     }
-  }, [move?.isMultipleWithType, searchParams, data.combats]);
+  }, [move?.isMultipleWithType, searchParams, findMoveById]);
 
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">
@@ -367,7 +361,7 @@ const Move = (props: IMovePage) => {
               }}
               value={moveType}
             >
-              {Object.keys(data.typeEff)
+              {getTypes()
                 .filter(
                   (type) =>
                     !isEqual(
@@ -378,7 +372,7 @@ const Move = (props: IMovePage) => {
                 )
                 .map((value, index) => (
                   <option key={index} value={value}>
-                    {capitalize(value)}
+                    {splitAndCapitalize(value, /(?=[A-Z])/, ' ')}
                   </option>
                 ))}
             </Form.Select>
@@ -742,14 +736,14 @@ const Move = (props: IMovePage) => {
                                   {move.bonus.cost.stardustCost}
                                 </td>
                               </tr>
-                              {Object.entries(move.bonus.bonusEffect).map(([k, v]: [string, BonusEffectType], i) => (
+                              {safeObjectEntries<BonusEffectType>(move.bonus.bonusEffect).map(([k, v], i) => (
                                 <Fragment key={i}>
                                   <tr>
                                     <td colSpan={3} className="text-center">
                                       {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
                                     </td>
                                   </tr>
-                                  {Object.entries(v).map(([key, value], j) => (
+                                  {safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
                                     <tr key={j}>
                                       <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
                                       <td colSpan={2} key={j}>
@@ -758,12 +752,12 @@ const Move = (props: IMovePage) => {
                                           value
                                         ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
                                           <div className="d-flex flex-wrap gap-2">
-                                            {getValueOrDefault<string[]>(Array, value).map((item) =>
+                                            {getValueOrDefault<string[]>(Array, value as string[]).map((item) =>
                                               renderReward(item)
                                             )}
                                           </div>
                                         ) : (
-                                          renderReward(value)
+                                          renderReward(value as string)
                                         )}
                                       </td>
                                     </tr>

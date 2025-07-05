@@ -1,14 +1,12 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import { getKeyWithData, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateStatsByTag, calculateStatsTopRank } from '../../../utils/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
-import { useDispatch, useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
-import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
@@ -16,11 +14,12 @@ import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.m
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
-import { SpinnerActions } from '../../../store/actions';
+import useSpinner from '../../../composables/useSpinner';
+import useCombats from '../../../composables/useCombats';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
-  const dispatch = useDispatch();
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
+  const { findMoveByName } = useCombats();
+  const { showSpinner, hideSpinner } = useSpinner();
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -59,15 +58,15 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);
 
-    const fMoveCombat = combat.find((item) => isEqual(item.name, fMove));
+    const fMoveCombat = findMoveByName(fMove);
     setFMove(fMoveCombat);
     cMovePri = replaceTempMovePvpName(cMovePri);
 
-    const cMovePriCombat = combat.find((item) => isEqual(item.name, cMovePri));
+    const cMovePriCombat = findMoveByName(cMovePri);
     setCMovePri(cMovePriCombat);
     cMoveSec = replaceTempMovePvpName(cMoveSec);
 
-    const cMoveSecCombat = combat.find((item) => isEqual(item.name, cMoveSec));
+    const cMoveSecCombat = findMoveByName(cMoveSec);
     setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
@@ -105,7 +104,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         pokemonType: getPokemonType(value.speciesId),
       })
     );
-    dispatch(SpinnerActions.HideSpinner.create());
+    hideSpinner();
   };
 
   const selectFMove = (value: ICombat | undefined) => {
@@ -230,7 +229,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                 className="card-pokemon-select"
                 key={index}
                 onMouseDown={() => {
-                  dispatch(SpinnerActions.ShowSpinner.create());
+                  showSpinner();
                   setTimeout(() => selectPokemon(value), 200);
                 }}
               >
@@ -258,7 +257,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div>
                 {props.data
                   .find((value) => isEqual(value.speciesId, pokemon.speciesId))
-                  ?.moves.fastMoves.map((value) => combat.find((item) => isEqual(item.name, value.moveId)))
+                  ?.moves.fastMoves.map((value) => findMoveByName(value.moveId))
                   .filter((value) => value && !isEqual(value.name, fMove?.name))
                   .map((value, index) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
@@ -326,7 +325,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return combat.find((item) => isEqual(item.name, move));
+                      return findMoveByName(move);
                     })
                     .filter(
                       (value) => value && !isEqual(value.name, cMovePri?.name) && !isEqual(value.name, cMoveSec?.name)
@@ -411,7 +410,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return combat.find((item) => isEqual(item.name, move));
+                      return findMoveByName(move);
                     })
                     .filter(
                       (value) =>

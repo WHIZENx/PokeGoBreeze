@@ -1,6 +1,6 @@
 import { PokemonType } from '../../../enums/type.enum';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../utils/extension';
-import { formNormal } from '../../../utils/helpers/context.helpers';
+import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import { convertPokemonAPIDataFormName, getPokemonType } from '../../../utils/utils';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';

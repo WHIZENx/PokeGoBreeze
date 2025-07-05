@@ -3,8 +3,6 @@ import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { IStatsIV, IStatsPokemonGO, StatsIV } from '../../core/models/stats.model';
-import { ITypeEff } from '../../core/models/type-eff.model';
-import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { PokemonType } from '../../enums/type.enum';
 import { getValueOrDefault, toNumber } from '../extension';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
@@ -304,26 +302,12 @@ export class BattleLeague implements IBattleLeague {
 }
 
 export class QueryMovesCounterPokemon {
-  typeEff: ITypeEff | undefined;
-  weatherBoost: IWeatherBoost | undefined;
-  combats: ICombat[] = [];
   pokemon: IPokemonData;
   def: number;
   types: string[] | undefined = [];
   dataList: IPokemonQueryCounter[];
 
-  constructor(
-    typeEff: ITypeEff | undefined,
-    weatherBoost: IWeatherBoost | undefined,
-    combats: ICombat[],
-    pokemon: IPokemonData,
-    def: number,
-    types: string[] | undefined,
-    dataList: IPokemonQueryCounter[] = []
-  ) {
-    this.typeEff = typeEff;
-    this.weatherBoost = weatherBoost;
-    this.combats = combats;
+  constructor(pokemon: IPokemonData, def: number, types: string[] | undefined, dataList: IPokemonQueryCounter[] = []) {
     this.pokemon = pokemon;
     this.def = def;
     this.types = getValueOrDefault(Array, types);
@@ -332,9 +316,6 @@ export class QueryMovesCounterPokemon {
 }
 
 export class QueryMovesPokemon {
-  typeEff: ITypeEff | undefined;
-  weatherBoost: IWeatherBoost | undefined;
-  combats: ICombat[] = [];
   pokemon: Partial<IPokemonDetail>;
   atk: number;
   def: number;
@@ -343,9 +324,6 @@ export class QueryMovesPokemon {
   dataList: IPokemonQueryMove[];
 
   constructor(
-    typeEff: ITypeEff | undefined,
-    weatherBoost: IWeatherBoost | undefined,
-    combats: ICombat[],
     pokemon: Partial<IPokemonDetail>,
     atk: number | undefined,
     def: number | undefined,
@@ -353,9 +331,6 @@ export class QueryMovesPokemon {
     types: string[] | undefined,
     dataList: IPokemonQueryMove[] = []
   ) {
-    this.typeEff = typeEff;
-    this.weatherBoost = weatherBoost;
-    this.combats = combats;
     this.pokemon = pokemon;
     this.atk = toNumber(atk);
     this.def = toNumber(def);

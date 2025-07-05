@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
 import { Form } from 'react-bootstrap';
 import { getValueOrDefault, isNotEmpty, toNumber } from '../../utils/extension';
 import { getItemSpritePath, splitAndCapitalize } from '../../utils/utils';
 
 import './Trainer.scss';
 import { AwardItem } from '../../core/models/trainer.model';
+import useDataStore from '../../composables/useDataStore';
 
 interface TrainerLevelUp {
   levelUps: AwardItem[];
@@ -14,20 +13,20 @@ interface TrainerLevelUp {
 }
 
 const Trainer = () => {
-  const trainers = useSelector((state: StoreState) => state.store.data.trainers);
+  const { trainersData } = useDataStore();
 
   const [level, setLevel] = useState(2);
   const [data, setData] = useState<TrainerLevelUp>();
 
   useEffect(() => {
-    if (isNotEmpty(trainers)) {
-      const result = trainers.find((trainer) => trainer.level === level);
+    if (isNotEmpty(trainersData)) {
+      const result = trainersData.find((trainer) => trainer.level === level);
       setData({
         levelUps: getValueOrDefault(Array, result?.items),
         itemUnlocks: result?.itemsUnlock,
       });
     }
-  }, [trainers, level]);
+  }, [trainersData, level]);
 
   return (
     <div className="container p-3">
@@ -35,7 +34,7 @@ const Trainer = () => {
       <hr />
       <div>
         <Form.Select onChange={(e) => setLevel(toNumber(e.target.value))} defaultValue={level}>
-          {trainers.map((value, index) => (
+          {trainersData.map((value, index) => (
             <option key={index} value={value.level}>
               Level {value.level}
             </option>

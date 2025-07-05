@@ -9,7 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 import update from 'immutability-helper';
 import { PokemonType, TypeMove } from '../../enums/type.enum';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { IPokemonRaidComponent } from '../models/component.model';
 import { combineClasses } from '../../utils/extension';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';

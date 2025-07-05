@@ -10,7 +10,6 @@ import {
   StatsPokemonGO,
 } from '../../../core/models/stats.model';
 import { BuffType, PokemonType, TypeAction } from '../../../enums/type.enum';
-import { IDataModel } from '../../../store/models/store.model';
 import { isNotEmpty, isUndefined, toFloat, toNumber } from '../../../utils/extension';
 import {
   battleDelay,
@@ -18,7 +17,7 @@ import {
   defaultBlock,
   defaultPlusSize,
   defaultSize,
-} from '../../../utils/helpers/context.helpers';
+} from '../../../utils/helpers/options-context.helpers';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
 import { getPokemonType } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';
@@ -304,7 +303,6 @@ export interface IBattlePVP {
   timer: number;
   isDelay: boolean;
   delay: number;
-  dataStore: IDataModel;
 }
 
 export class BattlePVP implements IBattlePVP {
@@ -317,13 +315,11 @@ export class BattlePVP implements IBattlePVP {
   timer = 0;
   isDelay = false;
   delay = battleDelay();
-  dataStore!: IDataModel;
 
-  static create(initPokemon: PokemonBattle, initPokemonOpponent: PokemonBattle, store: IDataModel, isWaiting = true) {
+  static create(initPokemon: PokemonBattle, initPokemonOpponent: PokemonBattle, isWaiting = true) {
     const obj = new BattlePVP();
     obj.pokemon = PokemonBattleData.battle(initPokemon);
     obj.pokemonOpponent = PokemonBattleData.battle(initPokemonOpponent);
-    obj.dataStore = store;
     obj.config.chargeSlot = initPokemon.chargeSlot;
     obj.configOpponent.chargeSlot = initPokemonOpponent.chargeSlot;
 
@@ -458,7 +454,7 @@ export class BattlePVP implements IBattlePVP {
       if (config.tap && config.fastDelay === 0) {
         config.tap = false;
         if (!configOpponent.preCharge) {
-          playerOpponent.hp -= calculateMoveDmgActual(this.dataStore, player, playerOpponent, player.fMove);
+          playerOpponent.hp -= calculateMoveDmgActual(player, playerOpponent, player.fMove);
         }
         player.energy += player.fMove.pvpEnergy;
         updateState(timeline, {
@@ -523,7 +519,7 @@ export class BattlePVP implements IBattlePVP {
     } else {
       const move = config.chargeType === ChargeType.Primary ? player.cMove : player.cMoveSec;
       if (playerOpponent.block === 0) {
-        playerOpponent.hp -= calculateMoveDmgActual(this.dataStore, player, playerOpponent, move);
+        playerOpponent.hp -= calculateMoveDmgActual(player, playerOpponent, move);
       } else {
         playerOpponent.block -= 1;
       }
@@ -562,7 +558,7 @@ export class BattlePVP implements IBattlePVP {
     const playerOpponent = isOpponent ? this.pokemonOpponent : this.pokemon;
     const timeline = isOpponent ? this.timelineOpponent : this.timeline;
 
-    playerOpponent.hp -= calculateMoveDmgActual(this.dataStore, player, playerOpponent, player.fMove);
+    playerOpponent.hp -= calculateMoveDmgActual(player, playerOpponent, player.fMove);
     if (playerOpponent.hp > 0) {
       const lastTapPos = timeline.map((tl) => tl.isTap && !isUndefined(tl.type)).lastIndexOf(true);
       const lastFastAtkPos = timeline.map((tl) => tl.type).lastIndexOf(AttackType.Fast);

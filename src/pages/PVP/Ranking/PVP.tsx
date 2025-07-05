@@ -13,13 +13,8 @@ import {
 import { calculateStatsByTag } from '../../../utils/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
-import APIService from '../../../services/API.service';
-import {
-  computeBgType,
-  findAssetForm,
-  getPokemonBattleLeagueIcon,
-  getPokemonBattleLeagueName,
-} from '../../../utils/compute';
+import APIService from '../../../services/api.service';
+import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 
 import update from 'immutability-helper';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -29,13 +24,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { Params } from '../../../utils/constants';
-import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
-import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
   DynamicObj,
@@ -58,7 +49,7 @@ import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
 import Error from '../../Error/Error';
@@ -66,15 +57,26 @@ import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { formShadow } from '../../../utils/helpers/context.helpers';
+import { formShadow } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
+import usePVP from '../../../composables/usePVP';
+import useAssets from '../../../composables/useAssets';
+import useRouter from '../../../composables/useRouter';
+import useStats from '../../../composables/useStats';
+import useSpinner from '../../../composables/useSpinner';
+import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
 
 const RankingPVP = (props: IStyleSheetData) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
-  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
-  const router = useSelector((state: RouterState) => state.router);
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const { pvpData } = useDataStore();
+  const { findPokemonBySlug } = usePokemon();
+  const { findMoveByName, isCombatsNoneArchetype } = useCombats();
+  const { getAssetNameById } = useAssets();
+  const { loadPVP, loadPVPMoves } = usePVP();
+  const { routerAction } = useRouter();
+  const { statsData } = useStats();
+  const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
   const [searchParams] = useSearchParams();
   const params = useParams();
@@ -86,8 +88,6 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   const [search, setSearch] = useState('');
   const [isFound, setIsFound] = useState(true);
-
-  const statsRanking = useSelector((state: StatsState) => state.stats);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -112,7 +112,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvp);
+    loadPVP();
   }, []);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
@@ -126,12 +126,12 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   const fetchPokemonRanking = useCallback(async () => {
     if (
-      statsRanking?.attack?.ranking &&
-      statsRanking?.defense?.ranking &&
-      statsRanking?.stamina?.ranking &&
-      statsRanking?.statProd?.ranking
+      statsData?.attack?.ranking &&
+      statsData?.defense?.ranking &&
+      statsData?.stamina?.ranking &&
+      statsData?.statProd?.ranking
     ) {
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       try {
         const cp = toNumber(params.cp);
         const pvpType = getValueOrDefault(
@@ -186,9 +186,9 @@ const RankingPVP = (props: IStyleSheetData) => {
         }
         const filePVP = file.map((data) => {
           const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-          const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+          const pokemon = findPokemonBySlug(name);
           const id = pokemon?.num;
-          const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
+          const form = getAssetNameById(id, name, pokemon?.form);
 
           const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -197,11 +197,11 @@ const RankingPVP = (props: IStyleSheetData) => {
           cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
           cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
 
-          const fMove = dataStore.combats.find((item) => isEqual(item.name, fMoveData));
-          const cMovePri = dataStore.combats.find((item) => isEqual(item.name, cMoveDataPri));
+          const fMove = findMoveByName(fMoveData);
+          const cMovePri = findMoveByName(cMoveDataPri);
           let cMoveSec;
           if (cMoveDataSec) {
-            cMoveSec = dataStore.combats.find((item) => isEqual(item.name, cMoveDataSec));
+            cMoveSec = findMoveByName(cMoveDataSec);
           }
 
           data.scorePVP = HexagonStats.create(data.scores);
@@ -222,10 +222,10 @@ const RankingPVP = (props: IStyleSheetData) => {
             form,
             pokemon,
             stats,
-            atk: statsRanking.attack?.ranking?.find((i) => i.attack === stats.atk),
-            def: statsRanking.defense?.ranking?.find((i) => i.defense === stats.def),
-            sta: statsRanking.stamina?.ranking?.find((i) => i.stamina === stats.sta),
-            prod: statsRanking.statProd?.ranking?.find((i) => i.product === stats.prod),
+            atk: statsData?.attack?.ranking?.find((i) => i.attack === stats.atk),
+            def: statsData?.defense?.ranking?.find((i) => i.defense === stats.def),
+            sta: statsData?.stamina?.ranking?.find((i) => i.stamina === stats.sta),
+            prod: statsData?.statProd?.ranking?.find((i) => i.product === stats.prod),
             fMove,
             cMovePri,
             cMoveSec,
@@ -234,17 +234,15 @@ const RankingPVP = (props: IStyleSheetData) => {
         });
         setRankingData(filePVP);
         setStoreStats([...Array(filePVP.length).keys()].map(() => false));
-        dispatch(SpinnerActions.HideSpinner.create());
+        hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
           setIsFound(false);
         } else {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as AxiosError).message,
-            })
-          );
+          showSpinnerMsg({
+            isError: true,
+            message: (e as AxiosError).message,
+          });
         }
       }
     }
@@ -252,39 +250,29 @@ const RankingPVP = (props: IStyleSheetData) => {
     searchParams,
     params.serie,
     params.cp,
-    statsRanking?.attack?.ranking,
-    statsRanking?.defense?.ranking,
-    statsRanking?.stamina?.ranking,
-    statsRanking?.statProd?.ranking,
-    dataStore.combats,
-    dataStore.pokemons,
-    dataStore.assets,
-    dispatch,
+    statsData?.attack?.ranking,
+    statsData?.defense?.ranking,
+    statsData?.stamina?.ranking,
+    statsData?.statProd?.ranking,
+    findMoveByName,
+    findPokemonBySlug,
   ]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonRanking();
-      router.action = null;
     };
-    if (
-      statsRanking &&
-      isNotEmpty(pvp.rankings) &&
-      isNotEmpty(pvp.trains) &&
-      isNotEmpty(dataStore.combats) &&
-      isNotEmpty(dataStore.pokemons) &&
-      isNotEmpty(dataStore.assets)
-    ) {
-      if (dataStore.combats.every((combat) => !combat.archetype)) {
-        loadPVPMoves(dispatch);
-      } else if (router.action) {
+    if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
+      if (isCombatsNoneArchetype()) {
+        loadPVPMoves();
+      } else if (routerAction) {
         fetchPokemon();
       }
     }
     return () => {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     };
-  }, [fetchPokemonRanking, rankingData, pvp.rankings, pvp.trains, router.action, dispatch]);
+  }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains, routerAction]);
 
   const renderItem = (data: IPokemonBattleRanking, key: number) => (
     <Accordion.Item eventKey={key.toString()}>
@@ -343,8 +331,6 @@ const RankingPVP = (props: IStyleSheetData) => {
                 <HeaderPVP data={data} />
                 <hr />
                 <BodyPVP
-                  assets={dataStore.assets}
-                  pokemonData={dataStore.pokemons}
                   data={data.data}
                   cp={params.cp}
                   serie={params.serie}
@@ -356,19 +342,14 @@ const RankingPVP = (props: IStyleSheetData) => {
                 <hr />
               </div>
               <div className="stats-container">
-                <OverAllStats
-                  data={data}
-                  statsRanking={statsRanking}
-                  cp={params.cp}
-                  type={searchParams.get(Params.LeagueType)}
-                />
+                <OverAllStats data={data} cp={params.cp} type={searchParams.get(Params.LeagueType)} />
               </div>
               <div className="container">
                 <hr />
                 <TypeEffectivePVP types={data.pokemon?.types} />
               </div>
               <div className="container">
-                <MoveSet moves={data.data?.moves} pokemon={data.pokemon} combatData={dataStore.combats} />
+                <MoveSet moves={data.data?.moves} pokemon={data.pokemon} />
               </div>
             </div>
             <LeaveToggle eventKey={key.toString()}>
@@ -391,7 +372,7 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvp.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = pvpData.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league ? (

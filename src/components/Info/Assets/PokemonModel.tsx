@@ -4,28 +4,29 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
-import { useSelector } from 'react-redux';
-import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
-import { combineClasses, isNotEmpty, UniqValueInArray } from '../../../utils/extension';
+import { combineClasses, isNotEmpty, safeObjectEntries, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
+import { useIcon } from '../../../composables/useIcon';
+import { useAssets } from '../../../composables/useAssets';
+import { useSearch } from '../../../composables/useSearch';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
-  const icon = useSelector((state: StoreState) => state.store.icon);
-  const assets = useSelector((state: StoreState) => state.store.data.assets);
-  const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
+  const { iconData } = useIcon();
+  const { findAssetsById } = useAssets();
+  const { searchingMainDetails } = useSearch();
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const [gender, setGender] = useState<PokemonGender>();
   const [asset, setAsset] = useState<IAsset>();
 
   const getImageList = (id: number | undefined, genderRatio: IPokemonGenderRatio) => {
-    const pokemonAsset = assets.find((item) => item.id === id);
+    const pokemonAsset = findAssetsById(id);
     setAsset(pokemonAsset);
     setGender({
       malePercent: genderRatio.M,
@@ -39,16 +40,22 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(assets) && pokemonData?.fullName && pokemonData.genderRatio) {
-      setPokeAssets(getImageList(pokemonData.id, pokemonData.genderRatio));
+    if (searchingMainDetails?.fullName && searchingMainDetails.genderRatio) {
+      setPokeAssets(getImageList(searchingMainDetails.id, searchingMainDetails.genderRatio));
     }
-  }, [assets, pokemonData]);
+  }, [searchingMainDetails]);
 
   return (
     <div className="mt-2 position-relative">
       <h4 className="title-evo">
-        <b>{`Assets of ${splitAndCapitalize(pokemonData?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
-        <img className="ms-1" width={36} height={36} alt="Pokémon GO Icon" src={APIService.getPokemonGoIcon(icon)} />
+        <b>{`Assets of ${splitAndCapitalize(searchingMainDetails?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
+        <img
+          className="ms-1"
+          width={36}
+          height={36}
+          alt="Pokémon GO Icon"
+          src={APIService.getPokemonGoIcon(iconData)}
+        />
       </h4>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100 m-0 p-0" style={{ height: 176 }}>
@@ -140,7 +147,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         </div>
       )}
       <h4 className="title-evo">
-        <b>{`Sound of ${splitAndCapitalize(pokemonData?.pokemonId, '_', ' ')}`}</b>
+        <b>{`Sound of ${splitAndCapitalize(searchingMainDetails?.pokemonId, '_', ' ')}`}</b>
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
@@ -161,7 +168,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
                   <ul className="m-0">
                     {value.cries &&
-                      Object.entries(value.cries).map(([k, v], i) => (
+                      safeObjectEntries(value.cries).map(([k, v], i) => (
                         <Fragment key={i}>
                           {v && (
                             <li className="list-style-circle">

@@ -1,76 +1,67 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
-import { addSelectMovesByType, retrieveMoves, splitAndCapitalize } from '../../utils/utils';
-import { useSelector } from 'react-redux';
+import { addSelectMovesByType, splitAndCapitalize } from '../../utils/utils';
 import { TypeMove } from '../../enums/type.enum';
-import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
+import usePokemon from '../../composables/usePokemon';
+import useCombats from '../../composables/useCombats';
 
 const Move = (props: IMoveComponent) => {
-  const data = useSelector((state: StoreState) => state.store.data);
+  const { findMoveByName } = useCombats();
+  const { retrieveMoves } = usePokemon();
 
   const [countFM, setCountFM] = useState(0);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [currentMove, setCurrentMove] = useState<ISelectMoveModel>();
   const [showMove, setShowMove] = useState(false);
 
-  const findMoveData = useCallback(
-    (move: string | undefined) => {
-      return data.combats.find((item) => isEqual(item.name, move));
-    },
-    [data.combats]
-  );
-
-  const findMove = useCallback(
-    (value: IMoveComponent) => {
-      const result = retrieveMoves(data.pokemons, value.id, value.form, value.pokemonType);
-      if (result) {
-        let simpleMove: ISelectMoveModel[] = [];
-        if (!props.type || props.type === TypeMove.Fast) {
-          simpleMove = addSelectMovesByType(result, TypeMove.Fast, simpleMove);
-          setCountFM(simpleMove.length);
-        }
-        if (!props.type || props.type === TypeMove.Charge) {
-          simpleMove = addSelectMovesByType(result, TypeMove.Charge, simpleMove);
-        }
-        if (
-          currentMove &&
-          isNotEmpty(simpleMove) &&
-          !isIncludeList(
-            simpleMove.map((m) => m.name),
-            currentMove.name
-          )
-        ) {
-          setCurrentMove(undefined);
-          props.setMove(undefined);
-        }
-        return setResultMove(simpleMove);
+  const findMove = () => {
+    const result = retrieveMoves(props.id, props.form, props.pokemonType);
+    if (result) {
+      let simpleMove: ISelectMoveModel[] = [];
+      if (!props.type || props.type === TypeMove.Fast) {
+        simpleMove = addSelectMovesByType(result, TypeMove.Fast, simpleMove);
+        setCountFM(simpleMove.length);
       }
-    },
-    [props.type, data.pokemons, currentMove]
-  );
+      if (!props.type || props.type === TypeMove.Charge) {
+        simpleMove = addSelectMovesByType(result, TypeMove.Charge, simpleMove);
+      }
+      if (
+        currentMove &&
+        isNotEmpty(simpleMove) &&
+        !isIncludeList(
+          simpleMove.map((m) => m.name),
+          currentMove.name
+        )
+      ) {
+        setCurrentMove(undefined);
+        props.setMove(undefined);
+      }
+      return setResultMove(simpleMove);
+    }
+  };
 
   useEffect(() => {
-    findMove(props);
+    findMove();
     if (!props.move) {
       setCurrentMove(undefined);
       props.setMove(undefined);
     }
-  }, [props, findMove]);
+  }, [props.id, props.form, props.pokemonType, props.move, props.type, currentMove]);
 
   const findType = (move: string | undefined) => {
     if (!move) {
       return;
     }
-    return findMoveData(move)?.type;
+    return findMoveByName(move)?.type;
   };
 
   const changeMove = (value: ISelectMoveModel) => {
     setShowMove(false);
     setCurrentMove(value);
-    props.setMove(findMoveData(value.name));
+    props.setMove(findMoveByName(value.name));
 
     if (props.clearData) {
       props.clearData();
