@@ -19,6 +19,10 @@ export const getRandomNumber = (min: number, max: number, step = 1) => {
   }
 };
 
+export const pushBoundingById = (arr: (DOMRect | undefined)[], id: number | string) => {
+  arr.push(document.getElementById(id.toString())?.getBoundingClientRect());
+};
+
 export const state = (timer: number, block: number, energy: number, hp: number, type?: AttackType) =>
   new TimelineModel({
     timer,
