@@ -104,6 +104,7 @@ import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import { Params } from '../../../utils/constants';
+import useDevice from '../../../composables/useDevice';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -127,6 +128,7 @@ const Battle = () => {
   const { loadPVPMoves } = usePVP();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
+  const { isMobile } = useDevice();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
@@ -1334,8 +1336,8 @@ const Battle = () => {
                     <div className="d-flex justify-content-center column-gap-2">
                       <button
                         className="btn btn-primary"
-                        onMouseDown={() => (playState ? stopTimeline() : playingTimeline())}
-                        onTouchEnd={() => (playState ? stopTimeline() : playingTimeline())}
+                        onMouseDown={() => (isMobile ? undefined : playState ? stopTimeline() : playingTimeline())}
+                        onTouchEnd={() => (isMobile ? (playState ? stopTimeline() : playingTimeline()) : undefined)}
                       >
                         {playState ? (
                           <Fragment>
