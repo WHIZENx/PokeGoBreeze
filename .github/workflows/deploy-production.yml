@@ -20,3 +20,10 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.REACT_APP_EDGE_TOKEN }}
           VERCEL_EDGE_CONFIG_ID: ${{ secrets.REACT_APP_EDGE_ID }}
+          NEON_API_URL: ${{ secrets.NEON_API_URL }}
+          NEON_AUTH_URL: ${{ secrets.NEON_AUTH_URL }}
+          NEXT_PUBLIC_STACK_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_STACK_PROJECT_ID }}
+          NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY: ${{ secrets.NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY }}
+          STACK_SECRET_SERVER_KEY: ${{ secrets.STACK_SECRET_SERVER_KEY }}
+          NEON_REFRESH_TOKEN: ${{ secrets.NEON_REFRESH_TOKEN }}
+          NEON_AUTH_USER_ID: ${{ secrets.NEON_AUTH_USER_ID }}
