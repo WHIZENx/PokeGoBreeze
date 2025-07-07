@@ -56,16 +56,20 @@ class APIService {
     return this.axios;
   }
 
-  getFetchUrl<T>(url: string | null | undefined, options?: AxiosRequestConfig<any> | undefined) {
-    return this.axios.get<T>(getValueOrDefault(String, url), options);
+  async getFetchUrl<T>(url: string | null | undefined, options?: AxiosRequestConfig<any> | undefined) {
+    return await this.axios.get<T>(getValueOrDefault(String, url), options);
   }
 
-  getPokeSpices(value: number, options?: AxiosRequestConfig<any> | undefined) {
-    return this.getFetchUrl<Species>(this.getPokeAPI('pokemon-species', value), options);
+  async getFetchNeon<T>(path: string | null | undefined, options?: AxiosRequestConfig<any> | undefined) {
+    return await this.axios.get<T>(`${process.env.REACT_APP_NEON_API_URL}/${getValueOrDefault(String, path)}`, options);
   }
 
-  getPokeJSON(path: string, options?: AxiosRequestConfig<any> | undefined) {
-    return this.getFetchUrl(`${APIUrl.POGO_API_URL}${path}`, options);
+  async getPokeSpices(value: number, options?: AxiosRequestConfig<any> | undefined) {
+    return await this.getFetchUrl<Species>(this.getPokeAPI('pokemon-species', value), options);
+  }
+
+  async getPokeJSON(path: string, options?: AxiosRequestConfig<any> | undefined) {
+    return await this.getFetchUrl(`${APIUrl.POGO_API_URL}${path}`, options);
   }
 
   getPokeAPI(path: string, value: number) {
