@@ -13,10 +13,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Make deploy script executable
-        run: chmod +x ./deploy-prod.sh
+        run: chmod +x ./deploy.sh
 
       - name: Deploy with Edge Config updates
-        run: ./deploy-prod.sh
+        run: ./deploy.sh
         env:
           VERCEL_TOKEN: ${{ secrets.REACT_APP_EDGE_TOKEN }}
           VERCEL_EDGE_CONFIG_ID: ${{ secrets.REACT_APP_EDGE_ID }}
