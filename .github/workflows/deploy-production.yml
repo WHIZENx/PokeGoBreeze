@@ -27,3 +27,4 @@ jobs:
           STACK_SECRET_SERVER_KEY: ${{ secrets.STACK_SECRET_SERVER_KEY }}
           NEON_REFRESH_TOKEN: ${{ secrets.NEON_REFRESH_TOKEN }}
           NEON_AUTH_USER_ID: ${{ secrets.NEON_AUTH_USER_ID }}
+          APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
