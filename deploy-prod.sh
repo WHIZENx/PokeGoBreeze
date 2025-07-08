@@ -25,12 +25,17 @@ NEON_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=${NEON_PUBLIC_STACK_PUBLISHABLE_CLIENT_
 NEON_SECRET_SERVER_KEY=${NEON_SECRET_SERVER_KEY:-$STACK_SECRET_SERVER_KEY}
 NEON_REFRESH_TOKEN=${NEON_REFRESH_TOKEN:-$NEON_REFRESH_TOKEN}
 NEON_AUTH_USER_ID=${NEON_AUTH_USER_ID:-$NEON_AUTH_USER_ID}
+APP_DEPLOYMENT_MODE=${REACT_APP_DEPLOYMENT_MODE:-$REACT_APP_DEPLOYMENT_MODE}
 
 YEAR_DIGIT=$(date +"%Y" | grep -o '.$')
 MONTH_DAY=$(date +"%m%d")
 HOUR_MINUTE=$(date +"%H%M")
 
-VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR_MINUTE"
+if [[ "$APP_DEPLOYMENT_MODE" == "development" ]]; then
+  VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR_MINUTE-develop"
+else
+  VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR_MINUTE"
+fi
 
 echo "=== Environment Information ==="
 echo "Deploy Time: $(date)"
@@ -58,7 +63,7 @@ NEON_RESPONSE=$(curl -s -w "\n%{http_code}" -X 'POST' "$NEON_API_URL/versions" \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $NEON_API_KEY" \
-  -d '{"track":"'"$VERSION"-develop'"}')
+  -d '{"track":"'"$VERSION"'"}')
 
 NEON_HTTP_STATUS=$(echo "$NEON_RESPONSE" | tail -n1)
 NEON_RESPONSE_BODY=$(echo "$NEON_RESPONSE" | sed '$d')
@@ -71,20 +76,24 @@ else
   exit 1
 fi
 
-echo "=== Updating Vercel Edge Config ==="
-RESPONSE=$(curl -s -w "\n%{http_code}" -X 'PATCH' "https://api.vercel.com/v1/edge-config/${EDGE_ID}/items" \
-     -H "Authorization: Bearer $EDGE_TOKEN" \
-     -H "edgeConfigId: $EDGE_ID" \
-     -H 'Content-Type: application/json' \
-     -d '{ "items": [ { "operation": "update", "key": "version", "value": "'"$VERSION"'" } ] }')
+if [[ "$APP_DEPLOYMENT_MODE" != "development" ]]; then
+  echo "=== Updating Vercel Edge Config ==="
+  RESPONSE=$(curl -s -w "\n%{http_code}" -X 'PATCH' "https://api.vercel.com/v1/edge-config/${EDGE_ID}/items" \
+       -H "Authorization: Bearer $EDGE_TOKEN" \
+       -H "edgeConfigId: $EDGE_ID" \
+       -H 'Content-Type: application/json' \
+       -d '{ "items": [ { "operation": "update", "key": "version", "value": "'"$VERSION"'" } ] }')
 
-HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
-RESPONSE_BODY=$(echo "$RESPONSE" | sed '$d')
+  HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+  RESPONSE_BODY=$(echo "$RESPONSE" | sed '$d')
 
-if [[ $HTTP_STATUS -ge 200 && $HTTP_STATUS -lt 300 ]]; then
-  echo "=== Edge Config Update Complete ==="
+  if [[ $HTTP_STATUS -ge 200 && $HTTP_STATUS -lt 300 ]]; then
+    echo "=== Edge Config Update Complete ==="
+  else
+    echo "=== Edge Config Update Failed ==="
+    echo "Error response: $RESPONSE_BODY"
+    exit 1
+  fi
 else
-  echo "=== Edge Config Update Failed ==="
-  echo "Error response: $RESPONSE_BODY"
-  exit 1
+  echo "=== Skipping Vercel Edge Config Update in development mode ==="
 fi
