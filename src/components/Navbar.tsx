@@ -6,7 +6,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import logo from '../assets/pokedex.png';
-import { capitalize, getTime } from '../utils/utils';
+import { getTime } from '../utils/utils';
 
 import './Navbar.scss';
 import { Box, IconButton, LinearProgress } from '@mui/material';
@@ -61,11 +61,7 @@ const NavbarComponent = (props: INavbarComponent) => {
           <span className="text-white">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
         <span className="text-end text-warning" style={{ fontSize: 10 }}>
-          <b>
-            {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
-              `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
-            {props.version}
-          </b>
+          <b>{props.version}</b>
         </span>
       </>
     );
