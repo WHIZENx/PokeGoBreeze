@@ -26,7 +26,6 @@ import { ICPM } from '../core/models/cpm.model';
 import { ITrainerLevelUp } from '../core/models/trainer.model';
 import { PokemonPVPMove } from '../core/models/pvp.model';
 import { isEqual } from 'lodash';
-import { Database } from '../core/models/API/db.model';
 import {
   optionPokemonData,
   optionLeagues,
@@ -45,7 +44,6 @@ import {
   mappingReleasedPokemonGO,
 } from '../core/options';
 import { APIUrl } from '../services/constants';
-import { getDbPokemonEncounter } from '../services/db.service';
 import { APITreeRoot, APITree } from '../services/models/api.model';
 import { SpinnerActions, StoreActions, StatsActions, TimestampActions } from '../store/actions';
 import { DynamicObj, isInclude, isNotEmpty } from '../utils/extension';
@@ -194,9 +192,10 @@ export const useDataStore = () => {
           );
           return;
         }
-        let pokemonEncounter = new Database<PokemonEncounter>();
+        const pokemonEncounter: PokemonEncounter[] = [];
         try {
-          pokemonEncounter = await getDbPokemonEncounter();
+          const { data } = await APIService.getFetchNeon<PokemonEncounter[]>('tblpokemonencounter');
+          pokemonEncounter.push(...data);
         } catch (e) {
           dispatch(
             SpinnerActions.ShowSpinnerMsg.create({
@@ -207,7 +206,7 @@ export const useDataStore = () => {
           return;
         }
 
-        const pokemon = optionPokemonData(gm.data, pokemonEncounter.rows);
+        const pokemon = optionPokemonData(gm.data, pokemonEncounter);
 
         const league = optionLeagues(gm.data, pokemon);
 
