@@ -20,7 +20,7 @@ const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
     </div>
   );
   return (
-    <div className="row text-white">
+    <div className="row text-white text-shadow-black">
       {renderTypeEffective(EffectiveType.Weakness)}
       {renderTypeEffective(EffectiveType.Neutral)}
       {renderTypeEffective(EffectiveType.Resistance)}

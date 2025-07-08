@@ -4,9 +4,9 @@ import { BackgroundType } from '../enums/model-type.enum';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { PokemonVersus } from '../../../core/models/pvp.model';
 import { PokemonType } from '../../../enums/type.enum';
-import APIService from '../../../services/API.service';
-import { findAssetForm, computeBgType } from '../../../utils/compute';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
+import APIService from '../../../services/api.service';
+import { computeBgType } from '../../../utils/compute';
+import { getValueOrDefault, isInclude, isNotEmpty } from '../../../utils/extension';
 import {
   convertNameRankingToOri,
   convertNameRankingToForm,
@@ -18,12 +18,16 @@ import {
 import { BodyModel, IBody } from '../models/body.model';
 import { Params } from '../../../utils/constants';
 import { IncludeMode } from '../../../utils/enums/string.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { ScoreType } from '../../../utils/enums/constants.enum';
-import { formShadow } from '../../../utils/helpers/context.helpers';
+import { formShadow } from '../../../utils/helpers/options-context.helpers';
+import useAssets from '../../../composables/useAssets';
+import usePokemon from '../../../composables/usePokemon';
 
 const BodyPVP = (props: BodyComponent) => {
+  const { findPokemonBySlug } = usePokemon();
+  const { getAssetNameById } = useAssets();
   const [matchups, setMatchups] = useState<IBody[]>();
   const [counters, setCounters] = useState<IBody[]>();
 
@@ -31,10 +35,12 @@ const BodyPVP = (props: BodyComponent) => {
     return data
       ?.sort((a, b) => a.rating - b.rating)
       .map((versus) => {
-        const name = convertNameRankingToOri(versus.opponent, convertNameRankingToForm(versus.opponent));
-        const pokemon = props.pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
+        const speciesId = versus.opponent;
+        const speciesName = convertNameRankingToForm(speciesId);
+        const name = convertNameRankingToOri(speciesId, speciesName);
+        const pokemon = findPokemonBySlug(name);
         const id = pokemon?.num;
-        const form = findAssetForm(props.assets, pokemon?.num, pokemon?.form);
+        const form = getAssetNameById(id, name, pokemon?.form);
         let pokemonType;
         if (isInclude(versus.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;

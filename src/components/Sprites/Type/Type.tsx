@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
-import APIService from '../../../services/API.service';
-import { capitalize } from '../../../utils/utils';
+import APIService from '../../../services/api.service';
+import { splitAndCapitalize } from '../../../utils/utils';
 
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
@@ -61,7 +61,7 @@ const TypeInfo = (props: ITypeComponent) => {
                           )}
                           style={{ color: `${props.color} !important` }}
                         >
-                          {capitalize(value)}
+                          {splitAndCapitalize(value, /(?=[A-Z])/, ' ')}
                         </span>
                       </div>
                     )}

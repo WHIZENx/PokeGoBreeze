@@ -1,10 +1,9 @@
 import { ICombat } from '../../../core/models/combat.model';
 import { TypeAction } from '../../../enums/type.enum';
-import { IDataModel } from '../../../store/models/store.model';
 import { calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { findStabType } from '../../../utils/compute';
 import { isNotEmpty, toNumber } from '../../../utils/extension';
-import { battleStab, defaultSize, minLevel } from '../../../utils/helpers/context.helpers';
+import { battleStab, defaultSize, minLevel } from '../../../utils/helpers/options-context.helpers';
 import { getDmgMultiplyBonus } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';
 import { IPokemonBattleData, ITimeline, TimelineConfig, TimelineModel } from '../models/battle.model';
@@ -18,6 +17,10 @@ export const getRandomNumber = (min: number, max: number, step = 1) => {
     const steps = Math.floor((max - min) / step) + 1;
     return min + Math.floor(Math.random() * steps) * step;
   }
+};
+
+export const pushBoundingById = (arr: (DOMRect | undefined)[], id: number | string) => {
+  arr.push(document.getElementById(id.toString())?.getBoundingClientRect());
 };
 
 export const state = (timer: number, block: number, energy: number, hp: number, type?: AttackType) =>
@@ -50,7 +53,6 @@ export const updateState = (timeline: ITimeline[], value: TimelineConfig) => {
 };
 
 export const calculateMoveDmgActual = (
-  dataStore: IDataModel,
   pokemon: IPokemonBattleData,
   pokemonOpponent: IPokemonBattleData,
   move: ICombat | undefined
@@ -73,11 +75,44 @@ export const calculateMoveDmgActual = (
         move.pvpPower *
         (findStabType(pokemon.pokemon?.types, move.type) ? battleStab() : 1) *
         getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk) *
-        getTypeEffective(dataStore.typeEff, move.type, pokemonOpponent.pokemon?.types)) /
+        getTypeEffective(move.type, pokemonOpponent.pokemon?.types)) /
       (defPokemonOpponent * getDmgMultiplyBonus(pokemonOpponent.pokemonType, TypeAction.Def))
     );
   }
   return 1;
+};
+
+/**
+ * Detects which elements are overlapped by a given position as it moves from left to right.
+ * Specifically designed for timeline interactions where we need to know which element's left edge
+ * the position has just crossed.
+ *
+ * @param pos - The horizontal position (in pixels) to check for overlaps
+ * @param selectors - CSS selectors for potential overlapping elements to check against
+ * @returns The element whose left edge is closest to the position from the left, or undefined if no overlaps
+ */
+export const getOverlappingElements = (pos = 0, selectors = '[id]') => {
+  // Get all potential elements to check for overlap
+  const potentialElements = Array.from(document.querySelectorAll(selectors)) as HTMLElement[];
+
+  // Filter elements to only those with numeric IDs
+  const numericIdElements = potentialElements.filter((el) => {
+    const id = el.getAttribute('id');
+    return id !== null && /^\d+$/.test(id);
+  });
+
+  // Sort elements by their left position (ascending)
+  const sortedElements = [...numericIdElements].sort((a, b) => {
+    const rectA = a.getBoundingClientRect();
+    const rectB = b.getBoundingClientRect();
+    return rectA.left - rectB.left;
+  });
+
+  const sortedRects = sortedElements.map((el) => el.getBoundingClientRect());
+  const index = overlappingPos(sortedRects, pos);
+  if (index !== -1) {
+    return sortedElements[index];
+  }
 };
 
 /**

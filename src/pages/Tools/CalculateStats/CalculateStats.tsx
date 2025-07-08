@@ -19,7 +19,7 @@ import {
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import './CalculateStats.scss';
 
@@ -27,10 +27,8 @@ import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import Find from '../../../components/Find/Find';
-import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
-import { SearchingState } from '../../../store/models/state.model';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -39,7 +37,8 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../..
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/context.helpers';
+import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
+import useSearch from '../../../composables/useSearch';
 
 const Calculate = () => {
   useTitle({
@@ -55,7 +54,7 @@ const Calculate = () => {
       'Pokémon stats tool',
     ],
   });
-  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
+  const { searchingToolCurrentDetails } = useSearch();
 
   const [searchCP, setSearchCP] = useState('');
 
@@ -95,10 +94,10 @@ const Calculate = () => {
       enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
       return;
     }
-    const statATK = toNumber(pokemon?.statsGO?.atk);
-    const statDEF = toNumber(pokemon?.statsGO?.def);
-    const statSTA = toNumber(pokemon?.statsGO?.sta);
-    const name = splitAndCapitalize(pokemon?.fullName, '_', ' ');
+    const statATK = toNumber(searchingToolCurrentDetails?.statsGO?.atk);
+    const statDEF = toNumber(searchingToolCurrentDetails?.statsGO?.def);
+    const statSTA = toNumber(searchingToolCurrentDetails?.statsGO?.sta);
+    const name = splitAndCapitalize(searchingToolCurrentDetails?.fullName, '_', ' ');
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
     if (!result.level) {
       enqueueSnackbar(
@@ -167,14 +166,14 @@ const Calculate = () => {
     );
   }, [
     enqueueSnackbar,
-    pokemon?.statsGO?.atk,
-    pokemon?.statsGO?.def,
-    pokemon?.statsGO?.sta,
+    searchingToolCurrentDetails?.statsGO?.atk,
+    searchingToolCurrentDetails?.statsGO?.def,
+    searchingToolCurrentDetails?.statsGO?.sta,
     ATKIv,
     DEFIv,
     STAIv,
     searchCP,
-    pokemon?.fullName,
+    searchingToolCurrentDetails?.fullName,
     typePoke,
   ]);
 
@@ -189,9 +188,9 @@ const Calculate = () => {
   const onHandleLevel = (level: number) => {
     if (pokeStats) {
       setStatLevel(level);
-      const statATK = toNumber(pokemon?.statsGO?.atk);
-      const statDEF = toNumber(pokemon?.statsGO?.def);
-      const statSTA = toNumber(pokemon?.statsGO?.sta);
+      const statATK = toNumber(searchingToolCurrentDetails?.statsGO?.atk);
+      const statDEF = toNumber(searchingToolCurrentDetails?.statsGO?.def);
+      const statSTA = toNumber(searchingToolCurrentDetails?.statsGO?.sta);
       setStatData(
         calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, level, typePoke)
       );
@@ -210,9 +209,9 @@ const Calculate = () => {
             <Box className="w-50" sx={{ minWidth: 350 }}>
               <div className="input-group mb-3 justify-content-center">
                 <DynamicInputCP
-                  statATK={pokemon?.statsGO?.atk}
-                  statDEF={pokemon?.statsGO?.def}
-                  statSTA={pokemon?.statsGO?.sta}
+                  statATK={searchingToolCurrentDetails?.statsGO?.atk}
+                  statDEF={searchingToolCurrentDetails?.statsGO?.def}
+                  statSTA={searchingToolCurrentDetails?.statsGO?.sta}
                   ivAtk={ATKIv}
                   ivDef={DEFIv}
                   ivSta={STAIv}
@@ -443,7 +442,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           {statData ? (
-                            <Candy id={pokemon?.id} className="me-2" />
+                            <Candy id={searchingToolCurrentDetails?.id} className="me-2" />
                           ) : (
                             <img
                               className="me-2"
@@ -484,7 +483,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           {statData ? (
-                            <CandyXL id={pokemon?.id} />
+                            <CandyXL id={searchingToolCurrentDetails?.id} />
                           ) : (
                             <img
                               className="me-2"
@@ -536,7 +535,7 @@ const Calculate = () => {
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
                               calculateStatsBattle(
-                                toNumber(pokemon?.statsGO?.atk),
+                                toNumber(searchingToolCurrentDetails?.statsGO?.atk),
                                 pokeStats?.IV.atkIV,
                                 statLevel,
                                 true
@@ -563,7 +562,7 @@ const Calculate = () => {
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
                               calculateStatsBattle(
-                                toNumber(pokemon?.statsGO?.def),
+                                toNumber(searchingToolCurrentDetails?.statsGO?.def),
                                 pokeStats?.IV.defIV,
                                 statLevel,
                                 true
@@ -589,7 +588,7 @@ const Calculate = () => {
                         <td>
                           {statData
                             ? calculateStatsBattle(
-                                toNumber(pokemon?.statsGO?.sta),
+                                toNumber(searchingToolCurrentDetails?.statsGO?.sta),
                                 pokeStats?.IV.staIV,
                                 statLevel,
                                 true
@@ -660,7 +659,7 @@ const Calculate = () => {
                         <td colSpan={3} className="p-0">
                           <div className="d-flex align-items-center td-style custom-border-right float-start w-50">
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
-                              <Candy id={pokemon?.id} className="me-2" />
+                              <Candy id={searchingToolCurrentDetails?.id} className="me-2" />
                             ) : (
                               <img
                                 className="me-2"
@@ -685,7 +684,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style float-end w-50">
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
-                              <CandyXL id={pokemon?.id} />
+                              <CandyXL id={searchingToolCurrentDetails?.id} />
                             ) : (
                               <img
                                 className="me-2"
@@ -787,7 +786,7 @@ const Calculate = () => {
                         <td colSpan={3} className="p-0">
                           <div className="d-flex align-items-center td-style custom-border-right float-start w-50">
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
-                              <Candy id={pokemon?.id} className="me-2" />
+                              <Candy id={searchingToolCurrentDetails?.id} className="me-2" />
                             ) : (
                               <img
                                 className="me-2"
@@ -812,7 +811,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style float-end w-50">
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
-                              <CandyXL id={pokemon?.id} />
+                              <CandyXL id={searchingToolCurrentDetails?.id} />
                             ) : (
                               <img
                                 className="me-2"
@@ -914,7 +913,7 @@ const Calculate = () => {
                         <td colSpan={3} className="p-0">
                           <div className="d-flex align-items-center td-style custom-border-right float-start w-50">
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
-                              <Candy id={pokemon?.id} className="me-2" />
+                              <Candy id={searchingToolCurrentDetails?.id} className="me-2" />
                             ) : (
                               <img
                                 className="me-2"
@@ -939,7 +938,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style float-end w-50">
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
-                              <CandyXL id={pokemon?.id} />
+                              <CandyXL id={searchingToolCurrentDetails?.id} />
                             ) : (
                               <img
                                 className="me-2"
@@ -1038,7 +1037,7 @@ const Calculate = () => {
                         <td colSpan={3} className="p-0">
                           <div className="d-flex align-items-center td-style custom-border-right float-start w-50">
                             {dataMasterLeague ? (
-                              <Candy id={pokemon?.id} className="me-2" />
+                              <Candy id={searchingToolCurrentDetails?.id} className="me-2" />
                             ) : (
                               <img
                                 className="me-2"
@@ -1063,7 +1062,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style float-end w-50">
                             {dataMasterLeague ? (
-                              <CandyXL id={pokemon?.id} />
+                              <CandyXL id={searchingToolCurrentDetails?.id} />
                             ) : (
                               <img
                                 className="me-2"

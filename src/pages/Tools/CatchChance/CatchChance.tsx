@@ -8,11 +8,10 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { calculateCatchChance, calculateCP } from '../../../utils/calculate';
 import {
   getItemSpritePath,
@@ -23,12 +22,12 @@ import {
 } from '../../../utils/utils';
 
 import './CatchChance.scss';
-import { SearchingState } from '../../../store/models/state.model';
 import {
   DynamicObj,
   getValueOrDefault,
   isNotEmpty,
   isUndefined,
+  safeObjectEntries,
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
@@ -70,7 +69,8 @@ import {
   silverPinapsIncChance,
   stepLevel,
   ultraBallIncChance,
-} from '../../../utils/helpers/context.helpers';
+} from '../../../utils/helpers/options-context.helpers';
+import useSearch from '../../../composables/useSearch';
 
 const balls: PokeBallThreshold[] = [
   {
@@ -100,8 +100,7 @@ const throws: ThrowThreshold[] = [
 ];
 
 const CatchChance = () => {
-  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
-
+  const { searchingToolCurrentDetails } = useSearch();
   const circleDistance = useRef(200);
 
   const [form, setForm] = useState<IPokemonFormModify>();
@@ -141,10 +140,10 @@ const CatchChance = () => {
   });
 
   useEffect(() => {
-    if (pokemon) {
-      findCatchCapture(pokemon);
+    if (searchingToolCurrentDetails) {
+      findCatchCapture(searchingToolCurrentDetails);
     }
-  }, [pokemon]);
+  }, [searchingToolCurrentDetails]);
 
   useEffect(() => {
     if (!isAdvance && data && medal) {
@@ -336,7 +335,7 @@ const CatchChance = () => {
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) /
       (medal.typeSec ? 2 : 1);
-    const pokeBall = Object.entries(balls).find((_, type) => type === ballType);
+    const pokeBall = safeObjectEntries<PokeBallThreshold>(balls).find((_, type) => type === ballType);
     let result = 0;
     if (pokeBall && isNotEmpty(pokeBall)) {
       const multiplier =
@@ -356,7 +355,7 @@ const CatchChance = () => {
   const calculateAdvance = () => {
     const threshold = isNormalThrow ? 1 : 1 + (100 - radius) / 100;
     const result = calculateProb(false, threshold);
-    const pokeBall = Object.entries(balls).find((_, index) => index === ballType);
+    const pokeBall = safeObjectEntries<PokeBallThreshold>(balls).find((_, index) => index === ballType);
     let throwText = '';
     if (isNormalThrow) {
       throwText = getValueOrDefault(String, throws.find((t) => t.throwType === ThrowType.Normal)?.name);
@@ -709,7 +708,7 @@ const CatchChance = () => {
                   {throws.map((value, index) => (
                     <tr key={index} className="text-center">
                       <td>{value.name}</td>
-                      {Object.entries(data.result ?? new Object())
+                      {safeObjectEntries(data.result)
                         .reduce(
                           (p, c) => [
                             ...p,

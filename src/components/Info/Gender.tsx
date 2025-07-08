@@ -1,5 +1,5 @@
 import React from 'react';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
 import { getKeyWithData } from '../../utils/utils';

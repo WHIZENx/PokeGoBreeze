@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import './News.scss';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
 import { Accordion } from 'react-bootstrap';
 import {
   generateParamForm,
@@ -22,16 +20,18 @@ import {
   toNumber,
   UniqValueInArray,
 } from '../../utils/extension';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { DateEvent, TitleName } from './enums/item-type.enum';
 import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/information';
 import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/information.enum';
 import { PokemonModelComponent } from '../../components/Info/Assets/models/pokemon-model.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
-import { LinkToTop } from '../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../components/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
-import { formNormal } from '../../utils/helpers/context.helpers';
+import { formNormal } from '../../utils/helpers/options-context.helpers';
+import { useDataStore } from '../../composables/useDataStore';
+import useAssets from '../../composables/useAssets';
 
 const News = () => {
   useTitle({
@@ -47,17 +47,17 @@ const News = () => {
       'upcoming features',
     ],
   });
-  const information = useSelector((state: StoreState) => state.store.data.information);
-  const assets = useSelector((state: StoreState) => state.store.data.assets);
+  const { informationData } = useDataStore();
+  const { findAssetsById } = useAssets();
 
   const [data, setData] = useState<INewsModel[]>([]);
 
   useEffect(() => {
-    if (information.isLoaded && !isNotEmpty(data)) {
-      const result = mapDataInformation(information.data);
+    if (informationData.isLoaded && !isNotEmpty(data)) {
+      const result = mapDataInformation(informationData.data);
       setData(result);
     }
-  }, [information, data]);
+  }, [informationData, data]);
 
   const mapDataInformation = (information: IInformation[]) =>
     information.map((info) =>
@@ -86,11 +86,9 @@ const News = () => {
         reward.pokemon?.form && !isEqual(reward.pokemon?.form, formNormal()) ? `_${reward.pokemon?.form}` : ''
       }`.replace(/_MR_/i, '_MR._');
     } else if (reward?.type === TicketRewardType.PokeCoin) {
-      result = getKeyWithData(TicketRewardType, TicketRewardType.PokeCoin)
-        ?.split(/(?=[A-Z])/)
-        .join('_');
+      result = splitAndCapitalize(getKeyWithData(TicketRewardType, TicketRewardType.PokeCoin), /(?=[A-Z])/, '_');
     } else if (reward?.type === TicketRewardType.Stardust) {
-      result = getKeyWithData(TicketRewardType, TicketRewardType.Stardust);
+      result = splitAndCapitalize(getKeyWithData(TicketRewardType, TicketRewardType.Stardust), /(?=[A-Z])/, '_');
     } else if (reward?.type === TicketRewardType.Exp) {
       result = TitleName.Exp;
     } else if (reward?.type === TicketRewardType.Avatar) {
@@ -113,7 +111,7 @@ const News = () => {
   };
 
   const getImageList = (pokemon: RewardPokemon | undefined) => {
-    const model = assets.find((item) => item.id === pokemon?.id);
+    const model = findAssetsById(pokemon?.id);
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
       (value) => new PokemonModelComponent(value, model?.image)
     );
@@ -220,7 +218,7 @@ const News = () => {
   );
 
   const reload = (element: JSX.Element) => {
-    if (information.isLoaded) {
+    if (informationData.isLoaded) {
       return element;
     }
     return (

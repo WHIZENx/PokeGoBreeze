@@ -1,25 +1,25 @@
 import React, { Fragment, useMemo, useState } from 'react';
 import { Navbar, Nav, NavDropdown, OverlayTrigger } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
 
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import logo from '../assets/pokedex.png';
-import { capitalize, getTime } from '../utils/utils';
+import { getTime } from '../utils/utils';
 
 import './Navbar.scss';
 import { Box, IconButton, LinearProgress } from '@mui/material';
-import { SpinnerState, TimestampState } from '../store/models/state.model';
 import { TypeTheme, VariantType } from '../enums/type.enum';
 import { INavbarComponent } from './models/component.model';
 import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/local-storage';
-import { loadTheme } from '../store/effects/theme.effects';
 import { combineClasses, toNumber } from '../utils/extension';
 import CustomPopover from './Popover/CustomPopover';
-import { LinkToTop } from '../utils/hooks/LinkToTop';
+import { LinkToTop } from './LinkToTop';
+import useTheme from '../composables/useTheme';
+import useTimestamp from '../composables/useTimestamp';
+import useSpinner from '../composables/useSpinner';
 
 type ToggleEvent = React.SyntheticEvent | KeyboardEvent | MouseEvent;
 interface ToggleMetadata {
@@ -28,9 +28,9 @@ interface ToggleMetadata {
 }
 
 const NavbarComponent = (props: INavbarComponent) => {
-  const dispatch = useDispatch();
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const { loadTheme } = useTheme();
+  const { timestamp } = useTimestamp();
+  const { spinnerPercent, spinnerBarIsShow } = useSpinner();
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [expanded, setExpanded] = useState(false);
@@ -41,7 +41,7 @@ const NavbarComponent = (props: INavbarComponent) => {
   const onChangeTheme = () => {
     if (!isDelay) {
       setIsDelay(true);
-      loadTheme(dispatch, props.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light, setStateTheme);
+      loadTheme(props.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light, setStateTheme);
       setTimeout(() => {
         setIsDelay(false);
         props.toggleColorMode();
@@ -61,11 +61,7 @@ const NavbarComponent = (props: INavbarComponent) => {
           <span className="text-white">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
         <span className="text-end text-warning" style={{ fontSize: 10 }}>
-          <b>
-            {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
-              `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
-            {props.version}
-          </b>
+          <b>{props.version}</b>
         </span>
       </>
     );
@@ -208,9 +204,9 @@ const NavbarComponent = (props: INavbarComponent) => {
         </Navbar.Collapse>
         <div className="nav-info-top column-gap-2">{navigateInfo}</div>
       </Navbar>
-      {spinner.bar.isShow && (
+      {spinnerBarIsShow && (
         <Box className="w-100 position-absolute z-7">
-          <LinearProgress variant={VariantType.Determinate} value={spinner.bar.percent} />
+          <LinearProgress variant={VariantType.Determinate} value={spinnerPercent} />
         </Box>
       )}
     </Fragment>

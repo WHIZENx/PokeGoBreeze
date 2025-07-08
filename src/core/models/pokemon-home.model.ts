@@ -1,8 +1,8 @@
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { versionList } from '../../utils/constants';
 import { getValueOrDefault, toNumber } from '../../utils/extension';
-import { formNormal } from '../../utils/helpers/context.helpers';
+import { formNormal } from '../../utils/helpers/options-context.helpers';
 import { convertPokemonImageName, splitAndCapitalize } from '../../utils/utils';
 import { IImage, ImageModel } from './asset.model';
 import { IPokemonData } from './pokemon.model';

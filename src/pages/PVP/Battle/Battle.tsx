@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import SelectPoke from './Select';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import {
   convertNameRankingToOri,
   getArrayBySeq,
@@ -11,7 +11,7 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
@@ -46,13 +46,11 @@ import HP_LOGO from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
-import { StoreState } from '../../../store/models/state.model';
 import { BattlePokemonData, IBattlePokemonData, RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { ICombat } from '../../../core/models/combat.model';
 import {
@@ -66,13 +64,10 @@ import {
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
-import { SpinnerActions } from '../../../store/actions';
-import { loadPVPMoves } from '../../../store/effects/store.effects';
 import {
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
-  isEqual,
   isInclude,
   isNotEmpty,
   toFloat,
@@ -83,7 +78,7 @@ import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { TimelineEvent } from '../../../utils/models/overrides/dom.model';
-import { LinkToTop, useNavigateToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop, useNavigateToTop } from '../../../components/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';
@@ -91,7 +86,7 @@ import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { getRandomNumber, overlappingPos } from '../utils/battle.utils';
+import { getRandomNumber, overlappingPos, pushBoundingById } from '../utils/battle.utils';
 import {
   battleDelay,
   battleMaxEnergy,
@@ -103,7 +98,13 @@ import {
   minIv,
   minLevel,
   stepLevel,
-} from '../../../utils/helpers/context.helpers';
+} from '../../../utils/helpers/options-context.helpers';
+import usePVP from '../../../composables/usePVP';
+import useAssets from '../../../composables/useAssets';
+import useSpinner from '../../../composables/useSpinner';
+import usePokemon from '../../../composables/usePokemon';
+import { Params } from '../../../utils/constants';
+import useDevice from '../../../composables/useDevice';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -123,8 +124,11 @@ class BattleState implements IBattleState {
 }
 
 const Battle = () => {
-  const dispatch = useDispatch();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const { findPokemonBySlug } = usePokemon();
+  const { loadPVPMoves } = usePVP();
+  const { findAssetForm } = useAssets();
+  const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
+  const { isMobile } = useDevice();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
@@ -176,7 +180,7 @@ const Battle = () => {
     resetTimeline();
     clearInterval(timelineInterval);
 
-    const battle = BattlePVP.create(pokemonCurr, pokemonObj, dataStore);
+    const battle = BattlePVP.create(pokemonCurr, pokemonObj);
 
     timelineInterval = setInterval(() => {
       battle.updateBattle();
@@ -262,14 +266,12 @@ const Battle = () => {
 
   const fetchPokemonBattle = useCallback(
     async (league: number) => {
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       try {
         clearData();
-        const file = (
-          await APIService.getFetchUrl<RankingsPVP[]>(
-            APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
-          )
-        ).data;
+        const { data: file } = await APIService.getFetchUrl<RankingsPVP[]>(
+          APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
+        );
         if (!isNotEmpty(file)) {
           setIsFound(false);
           return;
@@ -294,13 +296,13 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+            const pokemon = findPokemonBySlug(name);
             if (!pokemon) {
               return new BattlePokemonData();
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.form);
+            const form = findAssetForm(pokemon.num, pokemon.form);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -323,38 +325,64 @@ const Battle = () => {
           })
           .filter((pokemon) => pokemon.id > 0);
         setData(result);
-        dispatch(SpinnerActions.HideSpinner.create());
+        hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
           setIsFound(false);
         } else {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as AxiosError).message,
-            })
-          );
+          showSpinnerMsg({
+            isError: true,
+            message: (e as AxiosError).message,
+          });
         }
       }
     },
-    [dataStore.pokemons, dataStore.assets, dispatch]
+    [findPokemonBySlug]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.assets)) {
-      fetchPokemon(league);
-    }
+    fetchPokemon(league);
     return () => {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     };
-  }, [fetchPokemonBattle, league, dispatch]);
+  }, [fetchPokemonBattle, league]);
 
   useEffect(() => {
-    loadPVPMoves(dispatch);
-  }, [dispatch]);
+    loadPVPMoves();
+  }, []);
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)) {
+      stopTimeline();
+      arrBound.current = [];
+      arrStore.current = [];
+      const elem = document.getElementById('play-line');
+      if (elem) {
+        elem.style.transform = 'translate(0px, -50%)';
+      }
+      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+        pushBoundingById(arrBound.current, i);
+      }
+      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+        pushBoundingById(arrStore.current, i);
+      }
+    }
+  }, [windowWidth]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
@@ -403,7 +431,7 @@ const Battle = () => {
       arrBound.current.length < pokemonCurr.timeline.length
     ) {
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+        pushBoundingById(arrBound.current, i);
       }
     }
     if (xPos <= 0) {
@@ -430,7 +458,7 @@ const Battle = () => {
     ) {
       xFit.current = e.currentTarget.clientWidth;
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+        pushBoundingById(arrStore.current, i);
       }
     }
     checkOverlap(arrStore.current, elem?.getBoundingClientRect().left);
@@ -459,7 +487,7 @@ const Battle = () => {
         }
         if (!isNotEmpty(arrBound.current)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-            arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+            pushBoundingById(arrBound.current, i);
           }
         }
       } else {
@@ -468,7 +496,7 @@ const Battle = () => {
         xFit.current = clientWidth;
         if (!isNotEmpty(arrStore.current)) {
           for (let i = 0; i < range; i++) {
-            arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+            pushBoundingById(arrStore.current, i);
           }
         }
       }
@@ -590,7 +618,7 @@ const Battle = () => {
     scrollWidth.current = e.currentTarget.scrollLeft;
   };
 
-  const onChangeTimeline = (type: TimelineType, prevWidth: number | undefined) => {
+  const onChangeTimeline = (type: TimelineType) => {
     stopTimeline();
     let elem = document.getElementById('play-line');
     let xCurrent = 0,
@@ -598,18 +626,25 @@ const Battle = () => {
     if (elem) {
       xCurrent = toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', ''));
     }
+    const prevWidth = toNumber(
+      timelineType === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
+    );
     setOptions({ ...options, timelineType: type });
     setTimeout(() => {
+      elem = document.getElementById('play-line');
+      const currentWidth = toNumber(
+        type === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
+      );
+      transform = (xCurrent / prevWidth) * currentWidth;
       if (type === TimelineType.Normal) {
         if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-            arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+            pushBoundingById(arrBound.current, i);
           }
         }
-        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineNormal.current?.clientWidth) - 2;
-        elem = document.getElementById('play-line');
         if (elem) {
-          elem.style.transform = `translate(${Math.max(0, transform)}px, -50%)`;
+          elem.style.transform = `translate(${transform}px, -50%)`;
+          checkOverlap(arrBound.current, elem.getBoundingClientRect().left);
         }
         timelineNormalContainer.current?.scrollTo({
           left: Math.min(transform, transform - timelineNormalContainer.current?.clientWidth / 2),
@@ -617,13 +652,12 @@ const Battle = () => {
       } else {
         if (!isNotEmpty(arrStore.current) && isNotEmpty(pokemonCurr.timeline)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-            arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+            pushBoundingById(arrStore.current, i);
           }
         }
-        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineFit.current?.clientWidth);
-        elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${transform}px, -50%)`;
+          checkOverlap(arrStore.current, elem.getBoundingClientRect().left);
         }
       }
     }, 100);
@@ -806,10 +840,9 @@ const Battle = () => {
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center gap-1">
               <LinkToTop
-                to={`/pvp/${params.cp}/${getKeyWithData(
-                  ScoreType,
-                  ScoreType.Overall
-                )?.toLowerCase()}/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}`}
+                to={`/pvp/${params.cp}/all/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}?${
+                  Params.LeagueType
+                }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
               >
                 <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
               </LinkToTop>
@@ -1280,25 +1313,10 @@ const Battle = () => {
                         aria-labelledby="row-timeline-group-label"
                         name="row-timeline-group"
                         value={timelineType}
-                        onChange={(e) =>
-                          onChangeTimeline(
-                            toNumber(e.target.value),
-                            timelineType === TimelineType.Normal
-                              ? timelineNormal.current?.clientWidth
-                              : timelineFit.current?.clientWidth
-                          )
-                        }
+                        onChange={(e) => onChangeTimeline(toNumber(e.target.value))}
                       >
-                        <FormControlLabel
-                          value={TimelineType.Fit}
-                          control={<Radio />}
-                          label={<span>Fit Timeline</span>}
-                        />
-                        <FormControlLabel
-                          value={TimelineType.Normal}
-                          control={<Radio />}
-                          label={<span>Normal Timeline</span>}
-                        />
+                        <FormControlLabel value={TimelineType.Fit} control={<Radio />} label="Fit Timeline" />
+                        <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
                       </RadioGroup>
                       <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
                         <InputLabel>Speed</InputLabel>
@@ -1318,8 +1336,8 @@ const Battle = () => {
                     <div className="d-flex justify-content-center column-gap-2">
                       <button
                         className="btn btn-primary"
-                        onMouseDown={() => (playState ? stopTimeline() : playingTimeline())}
-                        onTouchEnd={() => (playState ? stopTimeline() : playingTimeline())}
+                        onMouseDown={() => (isMobile ? undefined : playState ? stopTimeline() : playingTimeline())}
+                        onTouchEnd={() => (isMobile ? (playState ? stopTimeline() : playingTimeline()) : undefined)}
                       >
                         {playState ? (
                           <Fragment>

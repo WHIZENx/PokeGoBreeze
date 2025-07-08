@@ -4,11 +4,9 @@ import {
   LevelRating,
   splitAndCapitalize,
   capitalize,
-  checkPokemonGO,
   getKeyWithData,
   getMoveType,
   generateParamForm,
-  getKeysObj,
   getAllMoves,
   isSpecialMegaFormType,
 } from '../../../utils/utils';
@@ -24,7 +22,7 @@ import {
   calculateStatsBattle,
 } from '../../../utils/calculate';
 
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
@@ -35,10 +33,8 @@ import './DpsTdo.scss';
 import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
-import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'history';
 import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
-import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
@@ -46,7 +42,6 @@ import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../..
 import { BattleCalculate } from '../../../utils/models/calculate.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
-import { OptionsActions } from '../../../store/actions';
 import { SortOrderType, TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -65,13 +60,25 @@ import {
 import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
-import { TypeEff } from '../../../core/models/type-eff.model';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { defaultSheetPage, defaultSheetRow, maxIv, minIv, minLevel } from '../../../utils/helpers/context.helpers';
+import {
+  defaultSheetPage,
+  defaultSheetRow,
+  getTypes,
+  getWeatherTypes,
+  maxIv,
+  minIv,
+  minLevel,
+} from '../../../utils/helpers/options-context.helpers';
+import useIcon from '../../../composables/useIcon';
+import useOptionStore from '../../../composables/useOptions';
+import useRouter from '../../../composables/useRouter';
+import usePokemon from '../../../composables/usePokemon';
+import useCombats from '../../../composables/useCombats';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -273,45 +280,40 @@ const DpsTdo = () => {
       'Analyze Pokémon GO DPS (Damage Per Second) and TDO (Total Damage Output) with our comprehensive sheets. Optimize your raid counters and battle teams.',
     keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
   });
-  const dispatch = useDispatch();
-  const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
-  const optionStore = useSelector((state: OptionsSheetState) => state.options);
-  const router = useSelector((state: RouterState) => state.router);
-
-  const [types, setTypes] = useState(getKeysObj(new TypeEff()));
+  const { iconData } = useIcon();
+  const { getFilteredPokemons } = usePokemon();
+  const { findMoveByName } = useCombats();
+  const { optionsDpsSheet, setDpsSheetOptions } = useOptionStore();
+  const { routerAction } = useRouter();
+  const { checkPokemonGO } = usePokemon();
 
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
   const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   const [dataTargetPokemon, setDataTargetPokemon] = useState<IPokemonData | undefined>(
-    optionStore?.dpsSheet?.dataTargetPokemon
+    optionsDpsSheet?.dataTargetPokemon
   );
   const [fMoveTargetPokemon, setFMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(
-    optionStore?.dpsSheet?.fMoveTargetPokemon
+    optionsDpsSheet?.fMoveTargetPokemon
   );
   const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(
-    optionStore?.dpsSheet?.cMoveTargetPokemon
+    optionsDpsSheet?.cMoveTargetPokemon
   );
 
   const [defaultPage, setDefaultPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage
-      ? optionStore.dpsSheet.defaultPage
-      : defaultSheetPage()
+    routerAction === Action.Pop && optionsDpsSheet?.defaultPage ? optionsDpsSheet.defaultPage : defaultSheetPage()
   );
   const [defaultRowPerPage, setDefaultRowPerPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage
-      ? optionStore.dpsSheet.defaultRowPerPage
+    routerAction === Action.Pop && optionsDpsSheet?.defaultRowPerPage
+      ? optionsDpsSheet.defaultRowPerPage
       : defaultSheetRow()
   );
   const [defaultSorted, setDefaultSorted] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
-      ? optionStore.dpsSheet.defaultSorted
-      : new OptionDPSSort()
+    routerAction === Action.Pop && optionsDpsSheet?.defaultSorted ? optionsDpsSheet.defaultSorted : new OptionDPSSort()
   );
 
-  const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPS());
+  const [filters, setFilters] = useState(optionsDpsSheet?.filters ?? new OptionFiltersDPS());
 
   const {
     isMatch,
@@ -345,7 +347,7 @@ const DpsTdo = () => {
   const { weatherBoosts, isTrainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
 
   const [isShowSpinner, setIsShowSpinner] = useState(false);
-  const [selectTypes, setSelectTypes] = useState(getValueOrDefault(Array, optionStore?.dpsSheet?.selectTypes));
+  const [selectTypes, setSelectTypes] = useState(getValueOrDefault(Array, optionsDpsSheet?.selectTypes));
 
   const addCPokeData = (
     dataList: PokemonSheetData[],
@@ -356,7 +358,7 @@ const DpsTdo = () => {
     pokemonType = PokemonType.Normal
   ) => {
     movePoke?.forEach((vc: string) => {
-      const cMove = data.combats.find((item) => isEqual(item.name, vc));
+      const cMove = findMoveByName(vc);
 
       if (cMove) {
         const cMoveType = getMoveType(pokemon, vc);
@@ -387,19 +389,17 @@ const DpsTdo = () => {
               atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
               def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
               hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
-              fMove: data.combats.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
-              cMove: data.combats.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
+              fMove: findMoveByName(fMoveTargetPokemon.name),
+              cMove: findMoveByName(cMoveTargetPokemon.name),
               types: dataTargetPokemon.types,
               weatherBoosts: options.weatherBoosts,
             });
 
-            const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-            dps = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+            const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
+            dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
             tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
           } else {
             dps = calculateAvgDPS(
-              data.typeEff,
-              data.weatherBoost,
               statsAttacker.fMove,
               statsAttacker.cMove,
               statsAttacker.atk,
@@ -430,7 +430,7 @@ const DpsTdo = () => {
 
   const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[]) => {
     movePoke.forEach((vf) => {
-      const fMove = data.combats.find((item) => isEqual(item.name, vf));
+      const fMove = findMoveByName(vf);
       if (!fMove) {
         return;
       }
@@ -454,7 +454,7 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
-    data.pokemons.forEach((pokemon) => {
+    getFilteredPokemons().forEach((pokemon) => {
       addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
     });
     setIsShowSpinner(false);
@@ -508,8 +508,7 @@ const DpsTdo = () => {
       if (releasedGO) {
         const isReleasedGO = checkPokemonGO(
           item.pokemon.num,
-          getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
-          data.pokemons
+          getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId)
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, isReleasedGO);
       }
@@ -556,13 +555,7 @@ const DpsTdo = () => {
   };
 
   useEffect(() => {
-    if (data.typeEff) {
-      setTypes(Object.keys(data.typeEff));
-    }
-  }, [data.typeEff]);
-
-  useEffect(() => {
-    if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
+    if (isNotEmpty(getFilteredPokemons())) {
       setIsShowSpinner(true);
       const debounced = debounce(() => {
         setDpsTable(calculateDPSTable());
@@ -572,15 +565,7 @@ const DpsTdo = () => {
         debounced.cancel();
       };
     }
-  }, [
-    dataTargetPokemon,
-    fMoveTargetPokemon,
-    cMoveTargetPokemon,
-    data.pokemons,
-    data.combats,
-    data.typeEff,
-    data.weatherBoost,
-  ]);
+  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, getFilteredPokemons]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
@@ -632,22 +617,19 @@ const DpsTdo = () => {
   ]);
 
   useEffect(() => {
-    dispatch(
-      OptionsActions.SetDpsSheetOptions.create({
-        filters,
-        options,
-        selectTypes,
-        dataTargetPokemon,
-        fMoveTargetPokemon,
-        cMoveTargetPokemon,
-        searchTerm,
-        defaultPage,
-        defaultRowPerPage,
-        defaultSorted,
-      })
-    );
+    setDpsSheetOptions({
+      filters,
+      options,
+      selectTypes,
+      dataTargetPokemon,
+      fMoveTargetPokemon,
+      cMoveTargetPokemon,
+      searchTerm,
+      defaultPage,
+      defaultRowPerPage,
+      defaultSorted,
+    });
   }, [
-    dispatch,
     filters,
     options,
     selectTypes,
@@ -685,7 +667,7 @@ const DpsTdo = () => {
       <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100 m-0 types-select-btn">
-          {types.map((item, index) => (
+          {getTypes().map((item, index) => (
             <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
@@ -974,7 +956,7 @@ const DpsTdo = () => {
                             width={28}
                             height={28}
                             alt="Pokémon GO Icon"
-                            src={APIService.getPokemonGoIcon(icon)}
+                            src={APIService.getPokemonGoIcon(iconData)}
                           />
                         </span>
                       }
@@ -1212,7 +1194,7 @@ const DpsTdo = () => {
                     }
                   >
                     <option value="">Extreme</option>
-                    {Object.keys(data.weatherBoost).map((value, index) => (
+                    {getWeatherTypes().map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
                       </option>

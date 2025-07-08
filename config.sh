@@ -18,6 +18,13 @@ fi
 # Set Edge Config variables - use GitHub Actions env vars if available, otherwise use .env values
 EDGE_ID=${VERCEL_EDGE_CONFIG_ID:-$REACT_APP_EDGE_ID}
 EDGE_READ_TOKEN=${VERCEL_TOKEN:-$REACT_APP_EDGE_READ_TOKEN}
+APP_DEPLOYMENT_MODE=${APP_DEPLOYMENT_MODE:-$REACT_APP_DEPLOYMENT_MODE}
+
+if [[ "$APP_DEPLOYMENT_MODE" == "development" ]]; then
+  VERSION_VAR="version-dev"
+else
+  VERSION_VAR="version"
+fi
 
 echo "Fetching version from Vercel Edge Config..."
 FETCHED_DATA=$(curl -s "https://edge-config.vercel.com/${EDGE_ID}/items" \
@@ -26,17 +33,17 @@ FETCHED_DATA=$(curl -s "https://edge-config.vercel.com/${EDGE_ID}/items" \
 if [ $? -eq 0 ] && [ -n "$FETCHED_DATA" ]; then
   DATA=$(echo "$FETCHED_DATA" | sed -e 's/^"//' -e 's/"$//')
   
-  VERSION=$(echo "$DATA" | grep -o '"version":"[^"]*"' | sed 's/"version":"//;s/"//')
+  VERSION=$(echo "$DATA" | grep -o '"'$VERSION_VAR'":"[^"]*"' | sed 's/"'$VERSION_VAR'":"//;s/"//')
   export REACT_APP_VERSION="$VERSION"
   echo "Successfully fetched version: $VERSION"
 
   CONFIG=$(echo "$DATA" | sed -E '
-    # Case 1: {"version":"value",...} - version at start
-    s/\{[[:space:]]*"version":"[^"]*",[[:space:]]*/\{/g;
-    # Case 2: {...,"version":"value"} - version at end
-    s/,[[:space:]]*"version":"[^"]*"[[:space:]]*\}/\}/g;
-    # Case 3: {...,"version":"value",...} - version in middle
-    s/,[[:space:]]*"version":"[^"]*",[[:space:]]*/,/g;
+    # Case 1: {"$VERSION_VAR":"value",...} - version at start
+    s/\{[[:space:]]*"'$VERSION_VAR'":"[^"]*",[[:space:]]*/\{/g;
+    # Case 2: {...,"$VERSION_VAR":"value"} - version at end
+    s/,[[:space:]]*"'$VERSION_VAR'":"[^"]*"[[:space:]]*\}/\}/g;
+    # Case 3: {...,"$VERSION_VAR":"value",...} - version in middle
+    s/,[[:space:]]*"'$VERSION_VAR'":"[^"]*",[[:space:]]*/,/g;
   ')
   export REACT_APP_CONFIG="$CONFIG"
   echo "Successfully exported config"

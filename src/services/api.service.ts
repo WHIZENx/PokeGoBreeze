@@ -5,7 +5,7 @@ import { getValueOrDefault, isEqual, isInclude } from '../utils/extension';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
 import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../utils/utils';
-import { PokemonTypeBadge } from '../core/models/type.model';
+import { PokemonTypeBadge } from '../core/enums/pokemon-type.enum';
 import { ScoreType } from '../utils/enums/constants.enum';
 import {
   defaultSpriteName,
@@ -19,7 +19,7 @@ import {
   formPrimal,
   formStandard,
   pathAssetPokeGo,
-} from '../utils/helpers/context.helpers';
+} from '../utils/helpers/options-context.helpers';
 
 class APIService {
   date: Date;
@@ -56,16 +56,20 @@ class APIService {
     return this.axios;
   }
 
-  getFetchUrl<T>(url: string | null | undefined, options?: AxiosRequestConfig<any> | undefined) {
-    return this.axios.get<T>(getValueOrDefault(String, url), options);
+  async getFetchUrl<T>(url: string | null | undefined, options?: AxiosRequestConfig<any>) {
+    return await this.axios.get<T>(getValueOrDefault(String, url), options);
   }
 
-  getPokeSpices(value: number, options?: AxiosRequestConfig<any> | undefined) {
-    return this.getFetchUrl<Species>(this.getPokeAPI('pokemon-species', value), options);
+  async getFetchNeon<T>(path: string | null | undefined, options?: AxiosRequestConfig<any>) {
+    return await this.axios.get<T>(`${process.env.REACT_APP_NEON_API_URL}/${getValueOrDefault(String, path)}`, options);
   }
 
-  getPokeJSON(path: string, options?: AxiosRequestConfig<any> | undefined) {
-    return this.getFetchUrl(`${APIUrl.POGO_API_URL}${path}`, options);
+  async getPokeSpices(value: number, options?: AxiosRequestConfig<any>) {
+    return await this.getFetchUrl<Species>(this.getPokeAPI('pokemon-species', value), options);
+  }
+
+  async getPokeJSON(path: string, options?: AxiosRequestConfig<any>) {
+    return await this.getFetchUrl(`${APIUrl.POGO_API_URL}${path}`, options);
   }
 
   getPokeAPI(path: string, value: number) {

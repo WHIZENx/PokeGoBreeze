@@ -42,6 +42,7 @@ module.exports = {
         REACT_APP_VERSION: process.env.REACT_APP_VERSION,
         REACT_APP_CONFIG: process.env.REACT_APP_CONFIG,
         REACT_APP_BASE_URL: process.env.REACT_APP_BASE_URL,
+        REACT_APP_NEON_API_URL: process.env.NEON_API_URL,
         NODE_ENV: JSON.stringify('development'),
         DEBUG: true,
       }),

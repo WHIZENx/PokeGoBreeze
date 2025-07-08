@@ -4,20 +4,22 @@ import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '.
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
 
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { ICardPokemonInfoComponent } from '../models/component.model';
 import { combineClasses } from '../../utils/extension';
 import { PokemonType } from '../../enums/type.enum';
-import { LinkToTop } from '../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../LinkToTop';
+import { useDevice } from '../../composables/useDevice';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);
+  const { isMobile } = useDevice();
 
   const imageRef: React.LegacyRef<HTMLImageElement> = useRef(null);
   const shinyRef: React.LegacyRef<HTMLImageElement> = useRef(null);
 
   const onTouchEnd = () => {
-    if (props.isDefaultImg) {
+    if (!isMobile || props.isDefaultImg) {
       return;
     }
 
@@ -30,7 +32,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   };
 
   const onHoverShiny = () => {
-    if (props.isDefaultImg) {
+    if (isMobile || props.isDefaultImg) {
       return;
     }
 
@@ -39,7 +41,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   };
 
   const onLeaveShiny = () => {
-    if (props.isDefaultImg) {
+    if (isMobile || props.isDefaultImg) {
       return;
     }
 
