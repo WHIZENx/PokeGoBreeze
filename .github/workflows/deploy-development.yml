@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: development
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
