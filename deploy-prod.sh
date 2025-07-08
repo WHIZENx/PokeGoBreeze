@@ -33,8 +33,10 @@ HOUR_MINUTE=$(date +"%H%M")
 
 if [[ "$APP_DEPLOYMENT_MODE" == "development" ]]; then
   VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR_MINUTE-develop"
+  VERSION_VAR="version-dev"
 else
   VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR_MINUTE"
+  VERSION_VAR="version"
 fi
 
 echo "=== Environment Information ==="
@@ -76,24 +78,20 @@ else
   exit 1
 fi
 
-if [[ "$APP_DEPLOYMENT_MODE" != "development" ]]; then
-  echo "=== Updating Vercel Edge Config ==="
-  RESPONSE=$(curl -s -w "\n%{http_code}" -X 'PATCH' "https://api.vercel.com/v1/edge-config/${EDGE_ID}/items" \
-       -H "Authorization: Bearer $EDGE_TOKEN" \
-       -H "edgeConfigId: $EDGE_ID" \
-       -H 'Content-Type: application/json' \
-       -d '{ "items": [ { "operation": "update", "key": "version", "value": "'"$VERSION"'" } ] }')
+echo "=== Updating Vercel Edge Config ==="
+RESPONSE=$(curl -s -w "\n%{http_code}" -X 'PATCH' "https://api.vercel.com/v1/edge-config/${EDGE_ID}/items" \
+  -H "Authorization: Bearer $EDGE_TOKEN" \
+  -H "edgeConfigId: $EDGE_ID" \
+  -H 'Content-Type: application/json' \
+  -d '{ "items": [ { "operation": "update", "key": "'"$VERSION_VAR"'", "value": "'"$VERSION"'" } ] }')
 
-  HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
-  RESPONSE_BODY=$(echo "$RESPONSE" | sed '$d')
+HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+RESPONSE_BODY=$(echo "$RESPONSE" | sed '$d')
 
-  if [[ $HTTP_STATUS -ge 200 && $HTTP_STATUS -lt 300 ]]; then
-    echo "=== Edge Config Update Complete ==="
-  else
-    echo "=== Edge Config Update Failed ==="
-    echo "Error response: $RESPONSE_BODY"
-    exit 1
-  fi
+if [[ $HTTP_STATUS -ge 200 && $HTTP_STATUS -lt 300 ]]; then
+  echo "=== Edge Config Update Complete ==="
 else
-  echo "=== Skipping Vercel Edge Config Update in development mode ==="
+  echo "=== Edge Config Update Failed ==="
+  echo "Error response: $RESPONSE_BODY"
+  exit 1
 fi
