@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import APIService from '../../../services/api.service';
-import { capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../utils/utils';
+import { camelCase, capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../utils/utils';
 import './Types.scss';
-import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../utils/compute';
 import { Tabs, Tab } from 'react-bootstrap';
 import { calculateStatsByTag } from '../../../utils/calculate';
@@ -13,8 +12,8 @@ import { ICombat } from '../../../core/models/combat.model';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
+  getPropertyName,
   getValueOrDefault,
-  isEqual,
   isInclude,
   isIncludeList,
   isNotEmpty,
@@ -29,10 +28,11 @@ import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDat
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { getTypes } from '../../../utils/helpers/options-context.helpers';
+import { getTypeEffective } from '../../../utils/helpers/options-context.helpers';
 import useIcon from '../../../composables/useIcon';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
+import SelectTypeComponent from '../../../components/Input/SelectType';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -204,17 +204,16 @@ class PokemonTypeData implements IPokemonTypeData {
 }
 
 const SearchTypes = (props: IStyleSheetData) => {
+  const typesEffective = getTypeEffective();
   const { iconData } = useIcon();
   const { getFilteredPokemons } = usePokemon();
   const { getCombatsByTypeMove, getCombatsByTypeAndTypeMove } = useCombats();
 
   const [releasedGO, setReleaseGO] = useState(true);
 
-  const [currentType, setCurrentType] = useState('');
+  const [currentType, setCurrentType] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [result, setResult] = useState(new PokemonTypeMove());
   const [allData, setAllData] = useState<IPokemonTypeData>();
-
-  const [showType, setShowType] = useState(false);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PokéGO Breeze - Type',
@@ -256,12 +255,6 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [releasedGO, getCombatsByTypeMove, getFilteredPokemons]);
 
   useEffect(() => {
-    if (isNotEmpty(getTypes()) && !currentType) {
-      setCurrentType(getTypes()[0]);
-    }
-  }, [currentType]);
-
-  useEffect(() => {
     if (isNotEmpty(getFilteredPokemons())) {
       setResult(
         PokemonTypeMove.create({
@@ -277,42 +270,16 @@ const SearchTypes = (props: IStyleSheetData) => {
     }
   }, [currentType, releasedGO, getFilteredPokemons, getCombatsByTypeAndTypeMove]);
 
-  const changeType = (value: string) => {
-    setShowType(false);
-    setCurrentType(value);
-  };
-
   return (
     <div className="container mt-2">
       <div className="d-flex justify-content-end">
-        <div>
-          <h6 className="text-center">
-            <b>Select Type</b>
-          </h6>
-          <div
-            className="card-input mb-3"
-            tabIndex={0}
-            onClick={() => setShowType(true)}
-            onBlur={() => setShowType(false)}
-          >
-            <div className="card-select">
-              <CardType value={capitalize(currentType)} />
-            </div>
-            {showType && (
-              <div className="result-type">
-                <ul>
-                  {getTypes()
-                    .filter((value) => !isEqual(value, currentType))
-                    .map((value, index) => (
-                      <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
-                        <CardType value={capitalize(value)} />
-                      </li>
-                    ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
+        <SelectTypeComponent
+          title="Select Type"
+          data={typesEffective}
+          currentType={currentType}
+          setCurrentType={setCurrentType}
+          filterType={[currentType]}
+        />
       </div>
       <FormControlLabel
         control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}

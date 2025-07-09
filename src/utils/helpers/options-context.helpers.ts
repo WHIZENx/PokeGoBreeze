@@ -96,11 +96,13 @@ export const getWeatherTypes = () =>
 
 // Type effective
 export const getTypeEffective = () => currentOptions.typeEffective || new TypeEffectiveModel();
-export const getSafeTypes = (currentType: string) =>
+export const getSafeTypesEffective = (currentType: string) =>
   safeObjectEntries((getTypeEffective() as unknown as DynamicObj<ITypeModel>)[currentType], new TypeModel());
 
 // Weather boost
 export const getWeatherBoost = () => currentOptions.weatherBoost || new WeatherBoost();
+export const getSafeWeatherEffective = (currentWeather: string) =>
+  Object.values((getWeatherBoost() as unknown as DynamicObj<string>)[currentWeather] ?? new WeatherBoost());
 
 // Config
 export const getConfig = () => currentOptions.config;

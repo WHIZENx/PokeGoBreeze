@@ -53,6 +53,12 @@ export enum VariantType {
   Primary = 'primary',
 }
 
+export enum CardType {
+  Type,
+  Weather,
+  Move,
+}
+
 export enum MoveType {
   None,
   Shadow,

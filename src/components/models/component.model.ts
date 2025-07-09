@@ -24,7 +24,7 @@ import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
-import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
+import { CardType, MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
 import { BadgeType } from '../Input/enums/badge-type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
@@ -73,10 +73,11 @@ export interface ICardPokemonInfoComponent {
 }
 
 export interface ICardTypeComponent {
+  isHideDefaultTitle?: boolean;
   value?: string;
   name?: string;
   moveType?: MoveType;
-  isWeather?: boolean;
+  cardType?: CardType;
 }
 
 export interface ITypeEffectiveComponent {
@@ -230,7 +231,7 @@ export interface ISelectBadgeComponent<T> {
   setCurrentType: React.Dispatch<React.SetStateAction<string>>;
   filterType?: string[];
   isShowRemove?: boolean;
-  isWeather?: boolean;
+  cardType?: CardType;
 }
 
 export interface ISelectMoveComponent {

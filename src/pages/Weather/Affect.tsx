@@ -5,6 +5,7 @@ import { WeatherBoost } from '../../core/models/weather-boost.model';
 import { DynamicObj, getPropertyName } from '../../utils/extension';
 import { getWeatherBoost } from '../../utils/helpers/options-context.helpers';
 import SelectTypeComponent from '../../components/Input/SelectType';
+import { CardType } from '../../enums/type.enum';
 
 const Affect = () => {
   const weathersBoost = getWeatherBoost();
@@ -36,7 +37,7 @@ const Affect = () => {
             currentType={currentWeather}
             setCurrentType={setCurrentWeather}
             filterType={[currentWeather]}
-            isWeather
+            cardType={CardType.Weather}
           />
         </div>
       </div>

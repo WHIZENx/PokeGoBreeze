@@ -3,7 +3,10 @@ import TypeEffectiveComponent from '../../components/Effective/TypeEffective';
 import { camelCase, getMultiplyTypeEffect } from '../../utils/utils';
 import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { getPropertyName } from '../../utils/extension';
-import { getTypeEffective as getTypeEffectiveContext, getSafeTypes } from '../../utils/helpers/options-context.helpers';
+import {
+  getTypeEffective as getTypeEffectiveContext,
+  getSafeTypesEffective,
+} from '../../utils/helpers/options-context.helpers';
 import SelectTypeComponent from '../../components/Input/SelectType';
 
 const Attacker = () => {
@@ -14,7 +17,7 @@ const Attacker = () => {
 
   const getTypeEffective = useCallback(() => {
     const data = new TypeEffectiveChart();
-    getSafeTypes(currentType).forEach(([key, value]) => getMultiplyTypeEffect(data, value, key));
+    getSafeTypesEffective(currentType).forEach(([key, value]) => getMultiplyTypeEffect(data, value, key));
     setTypeEffective(data);
   }, [currentType, typesEffective]);
 
