@@ -76,10 +76,7 @@ export interface ICardTypeComponent {
   value?: string;
   name?: string;
   moveType?: MoveType;
-}
-
-export interface ICardWeatherComponent {
-  value: string;
+  isWeather?: boolean;
 }
 
 export interface ITypeEffectiveComponent {
@@ -226,10 +223,14 @@ export interface IDynamicInputCPComponent {
   minWidth?: number | string;
 }
 
-export interface ISelectBadgeComponent {
-  type: string;
-  priority: BadgeType;
-  setPriority: (priority: BadgeType) => void;
+export interface ISelectBadgeComponent<T> {
+  title: string;
+  data: T;
+  currentType: string;
+  setCurrentType: React.Dispatch<React.SetStateAction<string>>;
+  filterType?: string[];
+  isShowRemove?: boolean;
+  isWeather?: boolean;
 }
 
 export interface ISelectMoveComponent {
@@ -256,6 +257,12 @@ export interface ISelectPokemonComponent {
   defaultSetting?: IPokemonDataStats;
   maxHeight?: number;
   position?: SelectPosition;
+}
+
+export interface ISelectTypeComponent {
+  type: string;
+  priority: BadgeType;
+  setPriority: (priority: BadgeType) => void;
 }
 
 export interface IPokemonRaidComponent {

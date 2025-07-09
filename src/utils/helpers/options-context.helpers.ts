@@ -4,8 +4,8 @@ import { ThrowType } from '../../enums/type.enum';
 import { IConfig } from '../../core/models/options.model';
 import { getValuesObj } from '../utils';
 import { WeatherBoost } from '../../core/models/weather-boost.model';
-import { isNotEmpty } from '../extension';
-import { TypeModel } from '../../core/models/type.model';
+import { DynamicObj, isNotEmpty, safeObjectEntries } from '../extension';
+import { ITypeModel, TypeModel } from '../../core/models/type.model';
 import { TypeEffectiveModel } from '../../core/models/type-effective.model';
 
 if (!process.env.REACT_APP_CONFIG) {
@@ -96,6 +96,8 @@ export const getWeatherTypes = () =>
 
 // Type effective
 export const getTypeEffective = () => currentOptions.typeEffective || new TypeEffectiveModel();
+export const getSafeTypes = (currentType: string) =>
+  safeObjectEntries((getTypeEffective() as unknown as DynamicObj<ITypeModel>)[currentType], new TypeModel());
 
 // Weather boost
 export const getWeatherBoost = () => currentOptions.weatherBoost || new WeatherBoost();
