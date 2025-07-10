@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import SelectMove from '../../../components/Input/SelectMove';
+import SelectMove from '../../../components/Select/SelectMove';
 import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 

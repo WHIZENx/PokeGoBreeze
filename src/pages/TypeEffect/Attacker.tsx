@@ -7,7 +7,7 @@ import {
   getTypeEffective as getTypeEffectiveContext,
   getSafeTypesEffective,
 } from '../../utils/helpers/options-context.helpers';
-import SelectTypeComponent from '../../components/Input/SelectType';
+import SelectTypeComponent from '../../components/Select/SelectType';
 
 const Attacker = () => {
   const typesEffective = getTypeEffectiveContext();

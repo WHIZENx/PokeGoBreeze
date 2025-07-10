@@ -31,8 +31,8 @@ import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import './DpsTdo.scss';
 import { Form } from 'react-bootstrap';
-import SelectPokemon from '../../../components/Input/SelectPokemon';
-import SelectMove from '../../../components/Input/SelectMove';
+import SelectPokemon from '../../../components/Select/SelectPokemon';
+import SelectMove from '../../../components/Select/SelectMove';
 import { Action } from 'history';
 import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';

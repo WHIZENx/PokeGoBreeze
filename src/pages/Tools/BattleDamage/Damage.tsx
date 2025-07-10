@@ -16,7 +16,7 @@ import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Find from '../../../components/Find/Find';
 import StatsTable from './StatsDamageTable';
 
-import Move from '../../../components/Table/Move';
+import SelectCustomMove from '../../../components/Select/SelectCustomMove';
 import { findStabType } from '../../../utils/compute';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
@@ -263,7 +263,7 @@ const Damage = () => {
                   </div>
                 </div>
               </div>
-              <Move
+              <SelectCustomMove
                 text="Select Moves"
                 id={searchingToolCurrentData?.form?.defaultId}
                 isSelectDefault

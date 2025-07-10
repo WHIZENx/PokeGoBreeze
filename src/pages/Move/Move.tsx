@@ -459,9 +459,8 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <>
                       <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
-                      <span className="text-success d-inline-block caption">
-                        {' +'}
-                        {toFloatWithPadding(move.pvePower * 0.2, 2)}
+                      <span className="text-success d-inline-block caption ms-1">
+                        {`+${toFloatWithPadding(move.pvePower * 0.2, 2)}`}
                       </span>
                     </>
                   )}
@@ -500,9 +499,8 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <>
                       <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
-                      <span className="text-success d-inline-block caption">
-                        {' +'}
-                        {toFloatWithPadding(move.pvpPower * 0.2, 2)}
+                      <span className="text-success d-inline-block caption ms-1">
+                        {`+${toFloatWithPadding(move.pvpPower * 0.2, 2)}`}
                       </span>
                     </>
                   )}

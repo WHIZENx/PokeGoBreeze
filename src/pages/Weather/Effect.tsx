@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 import { getPropertyName, isIncludeList, isNotEmpty, safeObjectEntries } from '../../utils/extension';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
-import SelectTypeComponent from '../../components/Input/SelectType';
+import SelectTypeComponent from '../../components/Select/SelectType';
 import { camelCase } from '../../utils/utils';
 
 const Effect = () => {

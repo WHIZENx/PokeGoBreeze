@@ -4,12 +4,13 @@ import CardMoveSmall from '../Card/CardMoveSmall';
 import './Select.scss';
 import Card from '../Card/Card';
 import { CardType, TypeMove } from '../../enums/type.enum';
-import { ISelectMoveModel, ISelectMovePokemonModel } from './models/select-move.model';
 import { addSelectMovesByType } from '../../utils/utils';
 import { ISelectMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
-import { InputType, SelectPosition } from './enums/input-type.enum';
 import usePokemon from '../../composables/usePokemon';
+import { InputType } from '../Input/enums/input-type.enum';
+import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
+import { SelectPosition } from './enums/select-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
   const { retrieveMoves } = usePokemon();

@@ -23,9 +23,9 @@ import {
 import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
-import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
+import { InputType } from '../Input/enums/input-type.enum';
 import { CardType, MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
-import { BadgeType } from '../Input/enums/badge-type.enum';
+import { BadgeType } from '../enums/badge-type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
@@ -33,6 +33,7 @@ import { IStyleData } from '../../utils/models/util.model';
 import { PaletteMode } from '@mui/material';
 import { TableProps, TableStyles } from 'react-data-table-component';
 import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
+import { SelectPosition } from '../Select/enums/select-type.enum';
 
 export interface INavbarComponent {
   mode: PaletteMode;
@@ -224,7 +225,7 @@ export interface IDynamicInputCPComponent {
   minWidth?: number | string;
 }
 
-export interface ISelectBadgeComponent<T> {
+export interface ISelectTypeComponent<T> {
   title: string;
   data: T;
   currentType: string;
@@ -260,7 +261,7 @@ export interface ISelectPokemonComponent {
   position?: SelectPosition;
 }
 
-export interface ISelectTypeComponent {
+export interface ISelectBadgeComponent {
   type: string;
   priority: BadgeType;
   setPriority: (priority: BadgeType) => void;
@@ -479,7 +480,7 @@ export interface IPokemonTableComponent {
   isLoadedForms?: boolean;
 }
 
-export interface IMoveComponent {
+export interface ISelectCustomMoveComponent {
   type?: TypeMove;
   id: number | undefined;
   form: string | undefined;

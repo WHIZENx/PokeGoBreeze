@@ -2,9 +2,9 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/api.service';
 import { priorityBadge } from '../../utils/compute';
 import { capitalize, getDataWithKey, getKeysObj, getKeyWithData } from '../../utils/utils';
-import { ISelectBadgeComponent } from '../models/component.model';
 import { combineClasses } from '../../utils/extension';
-import { BadgeType } from './enums/badge-type.enum';
+import { BadgeType } from '../enums/badge-type.enum';
+import { ISelectBadgeComponent } from '../models/component.model';
 
 const SelectBadge = (props: ISelectBadgeComponent) => {
   const Badge = (props: ISelectBadgeComponent, type = BadgeType.None) => (

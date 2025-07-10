@@ -5,7 +5,7 @@ import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-
 import { DynamicObj, getPropertyName, isEmpty, safeObjectEntries } from '../../utils/extension';
 import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';
 import { camelCase } from 'lodash';
-import SelectTypeComponent from '../../components/Input/SelectType';
+import SelectTypeComponent from '../../components/Select/SelectType';
 
 const Defender = () => {
   const typesEffective = getTypeEffectiveContext();

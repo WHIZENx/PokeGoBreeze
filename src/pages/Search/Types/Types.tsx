@@ -32,7 +32,7 @@ import { getTypeEffective } from '../../../utils/helpers/options-context.helpers
 import useIcon from '../../../composables/useIcon';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
-import SelectTypeComponent from '../../../components/Input/SelectType';
+import SelectTypeComponent from '../../../components/Select/SelectType';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());

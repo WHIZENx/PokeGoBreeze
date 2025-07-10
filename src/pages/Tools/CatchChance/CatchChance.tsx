@@ -8,7 +8,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import SelectBadge from '../../../components/Input/SelectBadge';
+import SelectBadge from '../../../components/Select/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
 import APIService from '../../../services/api.service';
@@ -43,7 +43,7 @@ import {
 } from './models/catch-chance.model';
 import { PokeBallType } from './enums/poke-ball.enum';
 import { PokemonType, ThrowType } from '../../../enums/type.enum';
-import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
+import { BadgeType } from '../../../components/enums/badge-type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
