@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import {
   capitalize,
   convertPokemonDataName,
+  createDataRows,
   generateParamForm,
   getItemSpritePath,
   getKeyWithData,
@@ -78,7 +79,7 @@ const numSortTdo = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   return a - b;
 };
 
-const columns: TableColumnModify<IPokemonTopMove>[] = [
+const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
   {
     id: ColumnType.Id,
     name: 'Id',
@@ -142,8 +143,8 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     sortable: true,
     sortFunction: numSortTdo,
     minWidth: '90px',
-  },
-];
+  }
+);
 
 const Move = (props: IMovePage) => {
   const { iconData } = useIcon();
@@ -163,7 +164,7 @@ const Move = (props: IMovePage) => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const menuItems: IMenuItem[] = [
+  const menuItems = createDataRows<IMenuItem>(
     {
       label: (
         <FormControlLabel
@@ -190,8 +191,8 @@ const Move = (props: IMovePage) => {
           label="Match Pokémon"
         />
       ),
-    },
-  ];
+    }
+  );
 
   const getWeatherEffective = (type: string | undefined) => {
     const result = safeObjectEntries(getWeatherBoost())?.find(([, value]) => {

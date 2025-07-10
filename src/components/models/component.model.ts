@@ -494,15 +494,15 @@ export interface ISelectCustomMoveComponent {
   pokemonType?: PokemonType;
 }
 
-interface ITableRowOption {
+interface IRowOption {
   value: string | number | React.ReactNode;
   className?: string;
   colSpan?: number;
   isSubTitle?: boolean;
 }
 
-export interface ITableRow {
-  subRows?: ITableRowOption[];
+export interface IRow {
+  subRows?: IRowOption[];
   align?: string;
   className?: string;
 }
@@ -519,7 +519,7 @@ export interface ICol {
 export interface ITableComponent {
   isTableInfo?: boolean;
   tableClass?: string;
-  rows: ITableRow[];
-  headerRows?: ITableRow[];
+  rows: IRow[];
+  headerRows?: IRow[];
   colGroups?: IColGroup[];
 }

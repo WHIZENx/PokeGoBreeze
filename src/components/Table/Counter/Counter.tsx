@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/api.service';
 import {
   convertPokemonDataName,
+  createDataRows,
   generateParamForm,
   getKeyWithData,
   getValidPokemonImgPath,
@@ -128,7 +129,7 @@ const Counter = (props: ICounterComponent) => {
 
   const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
 
-  const menuItems: IMenuItem[] = [
+  const menuItems = createDataRows<IMenuItem>(
     {
       label: (
         <FormControlLabel
@@ -152,10 +153,10 @@ const Counter = (props: ICounterComponent) => {
           label="Match Pokémon"
         />
       ),
-    },
-  ];
+    }
+  );
 
-  const columns: TableColumnModify<ICounterModel>[] = [
+  const columns = createDataRows<TableColumnModify<ICounterModel>>(
     {
       id: ColumnType.Pokemon,
       name: 'Pokémon',
@@ -248,8 +249,8 @@ const Counter = (props: ICounterComponent) => {
       sortable: true,
       sortFunction: numSortRatio,
       width: '20%',
-    },
-  ];
+    }
+  );
 
   const CounterLoader = () => (
     <div className="w-100 counter-none v-align-top">

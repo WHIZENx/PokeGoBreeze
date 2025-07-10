@@ -9,6 +9,7 @@ import {
   generateParamForm,
   getAllMoves,
   isSpecialMegaFormType,
+  createDataRows,
 } from '../../../utils/utils';
 import { levelList } from '../../../utils/constants';
 import {
@@ -129,7 +130,7 @@ const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   return a - b;
 };
 
-const columns: TableColumnModify<PokemonSheetData>[] = [
+const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
   {
     id: ColumnType.Id,
     name: 'ID',
@@ -270,8 +271,8 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     selector: (row) => row.cp,
     sortable: true,
     minWidth: '100px',
-  },
-];
+  }
+);
 
 const DpsTdo = () => {
   useTitle({

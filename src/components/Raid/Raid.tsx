@@ -9,8 +9,8 @@ import ATK_LOGO from '../../assets/attack.png';
 import DEF_LOGO from '../../assets/defense.png';
 import STA_LOGO from '../../assets/stamina.png';
 
-import { getKeyWithData, isSpecialMegaFormType } from '../../utils/utils';
-import { IRaidComponent, ITableRow } from '../models/component.model';
+import { createDataRows, getKeyWithData, isSpecialMegaFormType } from '../../utils/utils';
+import { IRaidComponent, IRow } from '../models/component.model';
 import { toNumber } from '../../utils/extension';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import usePokemon from '../../composables/usePokemon';
@@ -75,7 +75,7 @@ const Raid = (props: IRaidComponent) => {
     );
   };
 
-  const rows: ITableRow[] = [
+  const rows = createDataRows<IRow>(
     {
       align: 'center',
       subRows: [
@@ -130,8 +130,8 @@ const Raid = (props: IRaidComponent) => {
           className: 'text-center theme-text-primary',
         },
       ],
-    },
-  ];
+    }
+  );
 
   return (
     <Fragment>

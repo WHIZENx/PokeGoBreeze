@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import APIService from '../../../services/api.service';
-import { camelCase, capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../utils/utils';
+import {
+  camelCase,
+  capitalize,
+  createDataRows,
+  generateParamForm,
+  getItemSpritePath,
+  splitAndCapitalize,
+} from '../../../utils/utils';
 import './Types.scss';
 import { computeBgType } from '../../../utils/compute';
 import { Tabs, Tab } from 'react-bootstrap';
@@ -40,7 +47,7 @@ const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) =>
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const columnPokemon: TableColumnModify<IPokemonData>[] = [
+const columnPokemon = createDataRows<TableColumnModify<IPokemonData>>(
   {
     id: ColumnType.Id,
     name: 'ID',
@@ -110,10 +117,10 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).sta,
     sortable: true,
     width: '100px',
-  },
-];
+  }
+);
 
-const columnMove: TableColumnModify<ICombat>[] = [
+const columnMove = createDataRows<TableColumnModify<ICombat>>(
   {
     id: ColumnType.Type,
     name: 'ID',
@@ -164,8 +171,8 @@ const columnMove: TableColumnModify<ICombat>[] = [
     selector: (row) => `${row.pvpEnergy > 0 ? '+' : ''}${row.pvpEnergy}`,
     sortable: true,
     width: '120px',
-  },
-];
+  }
+);
 
 interface IPokemonTypeMove {
   pokemonList: IPokemonData[];

@@ -14,6 +14,7 @@ import Circle from '../../../components/Sprites/Circle/Circle';
 import APIService from '../../../services/api.service';
 import { calculateCatchChance, calculateCP } from '../../../utils/calculate';
 import {
+  createDataRows,
   getItemSpritePath,
   getKeyWithData,
   getPokemonFormWithNoneSpecialForm,
@@ -72,7 +73,7 @@ import {
 } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 
-const balls: PokeBallThreshold[] = [
+const balls = createDataRows<PokeBallThreshold>(
   {
     name: 'Poké Ball',
     itemName: ItemName.PokeBall,
@@ -90,14 +91,14 @@ const balls: PokeBallThreshold[] = [
     itemName: ItemName.UltraBall,
     threshold: ultraBallIncChance(),
     pokeBallType: PokeBallType.UltraBall,
-  },
-];
-const throws: ThrowThreshold[] = [
+  }
+);
+const throws = createDataRows<ThrowThreshold>(
   { name: 'Normal Throw', threshold: normalThrowIncChance(), throwType: ThrowType.Normal },
   { name: 'Nice Throw', threshold: niceThrowIncChance(), throwType: ThrowType.Nice },
   { name: 'Great Throw', threshold: greatThrowIncChance(), throwType: ThrowType.Great },
-  { name: 'Excellent Throw', threshold: excellentThrowIncChance(), throwType: ThrowType.Excellent },
-];
+  { name: 'Excellent Throw', threshold: excellentThrowIncChance(), throwType: ThrowType.Excellent }
+);
 
 const CatchChance = () => {
   const { searchingToolCurrentDetails } = useSearch();

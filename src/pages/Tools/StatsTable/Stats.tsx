@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { TableColumn } from 'react-data-table-component';
 
-import { marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
+import { createDataRows, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { calStatsProd, sortStatsProd } from '../../../utils/calculate';
 
 import Find from '../../../components/Find/Find';
@@ -33,7 +33,7 @@ const numSortStatsProdsPercent = (rowA: IBattleBaseStats, rowB: IBattleBaseStats
   return a - b;
 };
 
-export const columnsStats: TableColumn<IBattleBaseStats>[] = [
+export const columnsStats = createDataRows<TableColumn<IBattleBaseStats>>(
   {
     id: ColumnType.Ranking,
     name: 'Rank',
@@ -83,8 +83,8 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
     selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })),
     sortable: true,
     sortFunction: numSortStatsProdsPercent,
-  },
-];
+  }
+);
 
 const StatsTable = () => {
   useTitle({
