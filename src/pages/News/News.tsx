@@ -263,14 +263,13 @@ const News = () => {
                           <div className="d-flex align-items-center flex-end">
                             <div
                               className={combineClasses(
-                                'p-1 rounded-1',
+                                'p-1 rounded-1 u-fs-3',
                                 value.eventType === DateEvent.End
                                   ? 'info-event-ending'
                                   : DateEvent.Progressing
                                   ? 'info-event-progress'
                                   : 'info-event-future'
                               )}
-                              style={{ fontSize: 14 }}
                             >
                               <b>{getKeyWithData(DateEvent, value.eventType)}</b>
                             </div>

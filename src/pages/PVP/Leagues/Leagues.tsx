@@ -177,7 +177,7 @@ const Leagues = () => {
           </div>
           {isEqual(league.leagueType, LeagueType.Premier) && (
             <div className="d-flex align-items-center flex-end">
-              <div className="info-event-future p-1 rounded-1" style={{ fontSize: 14 }}>
+              <div className="info-event-future p-1 rounded-1 u-fs-3">
                 <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
               </div>
             </div>

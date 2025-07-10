@@ -1552,7 +1552,7 @@ const RaidBattle = () => {
                       }
                     }}
                   >
-                    <ContentCopyIcon sx={{ fontSize: 14 }} />
+                    <ContentCopyIcon className="u-fs-3" />
                   </span>
                   <span
                     className={combineClasses(
@@ -1566,7 +1566,7 @@ const RaidBattle = () => {
                       }
                     }}
                   >
-                    <DeleteIcon sx={{ fontSize: 14 }} />
+                    <DeleteIcon className="u-fs-3" />
                   </span>
                 </span>
               </div>

@@ -351,7 +351,7 @@ const Damage = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                    <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
+                    <Box className="u-fs-2-75" sx={{ ml: 2, color: 'green' }}>
                       x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>

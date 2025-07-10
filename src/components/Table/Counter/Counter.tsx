@@ -194,7 +194,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="me-1 v-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
-          <span className="me-1 text-wrap" style={{ fontSize: '0.9rem' }}>
+          <span className="me-1 pt-1 text-wrap u-fs-3">
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
@@ -221,7 +221,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="me-1 v-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
-          <span className="me-1 text-wrap" style={{ fontSize: '0.9rem' }}>
+          <span className="me-1 pt-1 text-wrap u-fs-3">
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">

@@ -421,7 +421,6 @@ export interface ILoadGroupComponent {
   className?: string;
   isShow: boolean;
   size?: number;
-  fontSize?: number;
   opacity?: number;
   bgColor?: string;
   isVertical?: boolean;

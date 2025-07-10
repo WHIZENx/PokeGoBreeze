@@ -65,6 +65,7 @@ import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../util
 import { AttackType } from './enums/attack-type.enum';
 import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import {
+  combineClasses,
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
@@ -677,11 +678,11 @@ const Battle = () => {
               {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
               {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
               {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
-              <span className={value.power < 0 ? 'text-danger' : 'text-success'} style={{ fontSize: 12 }}>
+              <span className={combineClasses('u-fs-2-75', value.power < 0 ? 'text-danger' : 'text-success')}>
                 {value.power}
               </span>
             </div>
-            <b style={{ fontSize: 12 }}>{toNumber(value.buffChance) * 100}%</b>
+            <b className="u-fs-2-75">{toNumber(value.buffChance) * 100}%</b>
           </div>
         ))}
       </div>

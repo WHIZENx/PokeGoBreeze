@@ -105,25 +105,27 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
             </div>
             <TypeInfo arr={props.types} isHideText height={24} />
             <b>
-              <span style={{ fontSize: 14 }} className="text-center theme-text-primary">{`#${
-                props.id
-              } ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}</span>
+              <span className="u-fs-3 text-center theme-text-primary">{`#${props.id} ${splitAndCapitalize(
+                props.name.replaceAll('_', '-'),
+                '-',
+                ' '
+              )}`}</span>
             </b>
           </div>
           <div>
             <div className="d-flex align-items-center justify-content-center w-100">
               <b>
-                <span className="caption" style={{ color: 'var(--bs-danger)' }}>{`ATK ${props.pokemonStat.atk}`}</span>
+                <span className="caption text-danger">{`ATK ${props.pokemonStat.atk}`}</span>
               </b>
             </div>
             <div className="d-flex align-items-center justify-content-center w-100">
               <b>
-                <span className="caption" style={{ color: 'var(--bs-success)' }}>{`DEF ${props.pokemonStat.def}`}</span>
+                <span className="caption text-success">{`DEF ${props.pokemonStat.def}`}</span>
               </b>
             </div>
             <div className="d-flex align-items-center justify-content-center w-100">
               <b>
-                <span className="caption" style={{ color: 'var(--bs-info)' }}>{`STA ${props.pokemonStat.sta}`}</span>
+                <span className="caption text-info">{`STA ${props.pokemonStat.sta}`}</span>
               </b>
             </div>
           </div>

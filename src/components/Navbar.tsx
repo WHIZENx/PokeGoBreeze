@@ -60,7 +60,7 @@ const NavbarComponent = (props: INavbarComponent) => {
         {toNumber(timestamp?.gamemaster) > 0 && (
           <span className="text-white">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
-        <span className="text-end text-warning" style={{ fontSize: 10 }}>
+        <span className="text-end text-warning u-fs-2">
           <b>{props.version}</b>
         </span>
       </>
