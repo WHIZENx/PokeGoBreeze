@@ -8,7 +8,7 @@ import APIService from '../../services/api.service';
 import { ICardPokemonInfoComponent } from '../models/component.model';
 import { combineClasses } from '../../utils/extension';
 import { PokemonType } from '../../enums/type.enum';
-import { LinkToTop } from '../LinkToTop';
+import { LinkToTop } from '../Link/LinkToTop';
 import { useDevice } from '../../composables/useDevice';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {

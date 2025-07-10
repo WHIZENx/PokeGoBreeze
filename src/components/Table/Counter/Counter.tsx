@@ -29,7 +29,7 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
-import { LinkToTop } from '../../LinkToTop';
+import { LinkToTop } from '../../Link/LinkToTop';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import IconType from '../../Sprites/Icon/Type/Type';

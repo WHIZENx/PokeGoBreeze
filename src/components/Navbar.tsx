@@ -16,7 +16,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/local-storage';
 import { combineClasses, toNumber } from '../utils/extension';
 import CustomPopover from './Popover/CustomPopover';
-import { LinkToTop } from './LinkToTop';
+import { LinkToTop } from './Link/LinkToTop';
 import useTheme from '../composables/useTheme';
 import useTimestamp from '../composables/useTimestamp';
 import useSpinner from '../composables/useSpinner';

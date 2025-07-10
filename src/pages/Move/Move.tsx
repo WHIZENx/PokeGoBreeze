@@ -48,7 +48,7 @@ import {
 } from '../../utils/extension';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
-import { LinkToTop } from '../../components/LinkToTop';
+import { LinkToTop } from '../../components/Link/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';

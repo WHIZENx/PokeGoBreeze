@@ -79,7 +79,7 @@ import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { TimelineEvent } from '../../../utils/models/overrides/dom.model';
-import { LinkToTop, useNavigateToTop } from '../../../components/LinkToTop';
+import { LinkToTop, useNavigateToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';

@@ -6,7 +6,6 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './comput
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { PokemonType } from '../enums/type.enum';
 import { maxLevel, minLevel, stepLevel } from './helpers/options-context.helpers';
-import { createDataRows } from './utils';
 
 // Parameters
 export class Params {
@@ -144,7 +143,7 @@ export const typeCostPowerUp = (type: PokemonType | undefined) => {
   }
 };
 
-export const leaguesTeamBattle = createDataRows<PVPInfo>(
+export const leaguesTeamBattle: PVPInfo[] = [
   {
     id: LeagueBattleType.All,
     name: getPokemonBattleLeagueName(BattleLeagueCPType.Little),
@@ -168,8 +167,8 @@ export const leaguesTeamBattle = createDataRows<PVPInfo>(
     name: getPokemonBattleLeagueName(),
     cp: [BattleLeagueCPType.InsMaster],
     logo: getPokemonBattleLeagueIcon(),
-  }
-);
+  },
+];
 
 export const genRoman = (gen: number | string) => {
   switch (toNumber(gen)) {

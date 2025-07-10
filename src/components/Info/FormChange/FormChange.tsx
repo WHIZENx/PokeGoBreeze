@@ -13,7 +13,7 @@ import {
   toNumber,
   UniqValueInArray,
 } from '../../../utils/extension';
-import { LinkToTop } from '../../LinkToTop';
+import { LinkToTop } from '../../Link/LinkToTop';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';

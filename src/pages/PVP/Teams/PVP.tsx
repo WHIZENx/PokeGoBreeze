@@ -42,7 +42,7 @@ import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
