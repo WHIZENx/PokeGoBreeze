@@ -10,10 +10,11 @@ import DEF_LOGO from '../../assets/defense.png';
 import STA_LOGO from '../../assets/stamina.png';
 
 import { getKeyWithData, isSpecialMegaFormType } from '../../utils/utils';
-import { IRaidComponent } from '../models/component.model';
+import { IRaidComponent, ITableRow } from '../models/component.model';
 import { toNumber } from '../../utils/extension';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import usePokemon from '../../composables/usePokemon';
+import Table from '../Table/Table';
 
 const Raid = (props: IRaidComponent) => {
   const { findPokemonById } = usePokemon();
@@ -73,6 +74,53 @@ const Raid = (props: IRaidComponent) => {
       </div>
     );
   };
+
+  const rows: ITableRow[] = [
+    {
+      value: 'Stats',
+      isSubTitle: true,
+      colSpan: 2,
+    },
+    {
+      value: (
+        <>
+          <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} /> ATK
+        </>
+      ),
+      subRows: [
+        {
+          value: reload(<>{props.currForm ? calculateRaidStat(props.statATK, tier) : ''}</>),
+          className: 'text-center theme-text-primary',
+        },
+      ],
+    },
+    {
+      value: (
+        <>
+          <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} /> DEF
+        </>
+      ),
+      subRows: [
+        {
+          value: reload(<>{props.currForm ? calculateRaidStat(props.statDEF, tier) : ''}</>),
+          className: 'text-center theme-text-primary',
+        },
+      ],
+    },
+    {
+      value: (
+        <>
+          <img className="me-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} /> HP
+        </>
+      ),
+      subRows: [
+        {
+          value: reload(<>{props.currForm ? Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm) : ''}</>),
+          className: 'text-center theme-text-primary',
+        },
+      ],
+    },
+  ];
 
   return (
     <Fragment>
@@ -153,43 +201,7 @@ const Raid = (props: IRaidComponent) => {
           />
         </div>
         <div className="col d-flex justify-content-center mb-3">
-          <table className="table-info table-raid">
-            <thead />
-            <tbody>
-              <tr className="text-center">
-                <td className="table-sub-header" colSpan={2}>
-                  Stats
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
-                  ATK
-                </td>
-                <td className="text-center theme-text-primary">
-                  {reload(<>{props.currForm ? calculateRaidStat(props.statATK, tier) : ''}</>)}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
-                  DEF
-                </td>
-                <td className="text-center theme-text-primary">
-                  {reload(<>{props.currForm ? calculateRaidStat(props.statDEF, tier) : ''}</>)}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <img className="me-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} />
-                  STA
-                </td>
-                <td className="text-center theme-text-primary">
-                  {reload(<>{props.currForm ? Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm) : ''}</>)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <Table tableClass="table-raid" rows={rows} />
         </div>
       </div>
     </Fragment>

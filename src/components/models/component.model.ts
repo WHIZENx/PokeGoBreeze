@@ -34,6 +34,7 @@ import { PaletteMode } from '@mui/material';
 import { TableProps, TableStyles } from 'react-data-table-component';
 import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
 import { SelectPosition } from '../Select/enums/select-type.enum';
+import React from 'react';
 
 export interface INavbarComponent {
   mode: PaletteMode;
@@ -491,4 +492,20 @@ export interface ISelectCustomMoveComponent {
   clearData?: (option?: boolean) => void;
   isHighlight?: boolean;
   pokemonType?: PokemonType;
+}
+
+interface ITableRowOption {
+  value: string | number | React.ReactNode;
+  className?: string;
+  colSpan?: number;
+}
+
+export interface ITableRow extends ITableRowOption {
+  isSubTitle?: boolean;
+  subRows?: ITableRowOption[];
+}
+
+export interface ITableComponent {
+  tableClass?: string;
+  rows: ITableRow[];
 }
