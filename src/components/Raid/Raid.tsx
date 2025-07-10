@@ -77,17 +77,24 @@ const Raid = (props: IRaidComponent) => {
 
   const rows: ITableRow[] = [
     {
-      value: 'Stats',
-      isSubTitle: true,
-      colSpan: 2,
+      align: 'center',
+      subRows: [
+        {
+          value: 'Stats',
+          isSubTitle: true,
+          colSpan: 2,
+        },
+      ],
     },
     {
-      value: (
-        <>
-          <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} /> ATK
-        </>
-      ),
       subRows: [
+        {
+          value: (
+            <>
+              <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} /> ATK
+            </>
+          ),
+        },
         {
           value: reload(<>{props.currForm ? calculateRaidStat(props.statATK, tier) : ''}</>),
           className: 'text-center theme-text-primary',
@@ -95,12 +102,14 @@ const Raid = (props: IRaidComponent) => {
       ],
     },
     {
-      value: (
-        <>
-          <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} /> DEF
-        </>
-      ),
       subRows: [
+        {
+          value: (
+            <>
+              <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} /> DEF
+            </>
+          ),
+        },
         {
           value: reload(<>{props.currForm ? calculateRaidStat(props.statDEF, tier) : ''}</>),
           className: 'text-center theme-text-primary',
@@ -108,12 +117,14 @@ const Raid = (props: IRaidComponent) => {
       ],
     },
     {
-      value: (
-        <>
-          <img className="me-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} /> HP
-        </>
-      ),
       subRows: [
+        {
+          value: (
+            <>
+              <img className="me-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} /> HP
+            </>
+          ),
+        },
         {
           value: reload(<>{props.currForm ? Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm) : ''}</>),
           className: 'text-center theme-text-primary',

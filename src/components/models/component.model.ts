@@ -498,14 +498,28 @@ interface ITableRowOption {
   value: string | number | React.ReactNode;
   className?: string;
   colSpan?: number;
+  isSubTitle?: boolean;
 }
 
-export interface ITableRow extends ITableRowOption {
-  isSubTitle?: boolean;
+export interface ITableRow {
   subRows?: ITableRowOption[];
+  align?: string;
+  className?: string;
+}
+
+export interface IColGroup {
+  className?: string;
+  cols?: ICol[];
+}
+
+export interface ICol {
+  className?: string;
 }
 
 export interface ITableComponent {
+  isTableInfo?: boolean;
   tableClass?: string;
   rows: ITableRow[];
+  headerRows?: ITableRow[];
+  colGroups?: IColGroup[];
 }
