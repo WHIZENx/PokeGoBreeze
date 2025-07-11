@@ -11,7 +11,7 @@ const Input = (props: IInputComponent) => {
         {props.prepend?.map(
           (item, index) =>
             (item.type === LabelType.Text && (
-              <InputGroup.Text key={index} className={item.className}>
+              <InputGroup.Text key={index} className={item.className} onClick={item.onClick}>
                 {item.value}
               </InputGroup.Text>
             )) ||
@@ -47,7 +47,7 @@ const Input = (props: IInputComponent) => {
         {props.append?.map(
           (item, index) =>
             (item.type === LabelType.Text && (
-              <InputGroup.Text key={index} className={item.className}>
+              <InputGroup.Text key={index} className={item.className} onClick={item.onClick}>
                 {item.value}
               </InputGroup.Text>
             )) ||

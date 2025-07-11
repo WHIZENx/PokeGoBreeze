@@ -28,11 +28,8 @@ const InputSearch = (props: IInputSearchComponent) => {
         {
           type: LabelType.Text,
           className: 'cursor-pointer',
-          value: searchTerm ? (
-            <CloseIcon color="error" onClick={handleClear} />
-          ) : (
-            <SearchIcon onClick={props.onSearch} />
-          ),
+          value: searchTerm ? <CloseIcon color="error" /> : <SearchIcon />,
+          onClick: searchTerm ? handleClear : props.onSearch,
         },
       ]}
       controls={[
