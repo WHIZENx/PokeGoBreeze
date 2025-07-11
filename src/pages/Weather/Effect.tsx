@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 import { getPropertyName, isIncludeList, isNotEmpty, safeObjectEntries } from '../../utils/extension';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
 import SelectTypeComponent from '../../components/Select/SelectType';
 import { camelCase } from '../../utils/utils';
+import Effective from '../../components/Effective/Effective';
+import Weather from '../../components/Sprites/Weather';
 
 const Effect = () => {
   const weathersBoost = getWeatherBoost();
@@ -57,7 +58,9 @@ const Effect = () => {
           />
         </div>
       </div>
-      <WeatherTypeEffective weatherEffective={weatherEffective} />
+      <Effective title="Weather Boosts">
+        <Weather arr={weatherEffective} className="ms-3" />
+      </Effective>
     </div>
   );
 };

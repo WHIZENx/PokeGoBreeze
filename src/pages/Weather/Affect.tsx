@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import WeatherEffective from '../../components/Effective/WeatherEffective';
 import { camelCase } from '../../utils/utils';
 import { WeatherBoost } from '../../core/models/weather-boost.model';
 import { DynamicObj, getPropertyName } from '../../utils/extension';
 import { getWeatherBoost } from '../../utils/helpers/options-context.helpers';
 import SelectTypeComponent from '../../components/Select/SelectType';
 import { CardType } from '../../enums/type.enum';
+import Effective from '../../components/Effective/Effective';
+import TypeInfo from '../../components/Sprites/Type/Type';
 
 const Affect = () => {
   const weathersBoost = getWeatherBoost();
@@ -41,7 +42,9 @@ const Affect = () => {
           />
         </div>
       </div>
-      <WeatherEffective weatherEffective={weatherEffective} />
+      <Effective title="Types Pokémon for Boosts">
+        <TypeInfo arr={weatherEffective} className="ms-3" isShow />
+      </Effective>
     </div>
   );
 };

@@ -82,6 +82,11 @@ export interface ICardTypeComponent {
   cardType?: CardType;
 }
 
+export interface IEffectiveComponent {
+  title: string;
+  children: React.ReactNode;
+}
+
 export interface ITypeEffectiveComponent {
   typeEffective: ITypeEffectiveChart | undefined;
 }
