@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
+import { createDataRows, HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../utils/calculate';
 
 import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
@@ -42,7 +42,7 @@ class FindCP implements IFindCP {
   }
 }
 
-const columnsIV: TableColumn<IPredictStatsModel>[] = [
+const columnsIV = createDataRows<TableColumn<IPredictStatsModel>>(
   {
     id: ColumnType.Level,
     name: 'Level',
@@ -78,10 +78,10 @@ const columnsIV: TableColumn<IPredictStatsModel>[] = [
     name: 'Percent',
     selector: (row) => row.percent,
     sortable: true,
-  },
-];
+  }
+);
 
-const columnsCP: TableColumn<IPredictCPModel>[] = [
+const columnsCP = createDataRows<TableColumn<IPredictCPModel>>(
   {
     id: ColumnType.Level,
     name: 'Level',
@@ -99,8 +99,8 @@ const columnsCP: TableColumn<IPredictCPModel>[] = [
     name: 'HP',
     selector: (row) => row.hp,
     sortable: true,
-  },
-];
+  }
+);
 
 const customStyles: TableStyles = {
   rows: {
@@ -115,7 +115,7 @@ const customStyles: TableStyles = {
   },
 };
 
-const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
+const conditionalRowStyles = createDataRows<ConditionalStyles<IPredictStatsModel>>(
   {
     when: (row) => row.percent === 100,
     style: {
@@ -145,10 +145,10 @@ const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
     style: {
       backgroundColor: '#d7d7d7',
     },
-  },
-];
+  }
+);
 
-const columns: TableColumn<IFindCP>[] = [
+const columns = createDataRows<TableColumn<IFindCP>>(
   {
     id: ColumnType.Level,
     name: 'Level',
@@ -166,8 +166,8 @@ const columns: TableColumn<IFindCP>[] = [
     name: 'MAX CP',
     selector: (row) => row.maxCP,
     sortable: true,
-  },
-];
+  }
+);
 
 const FindTable = () => {
   useTitle({

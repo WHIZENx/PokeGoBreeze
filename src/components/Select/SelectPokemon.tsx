@@ -11,7 +11,7 @@ import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isUndefined } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
-import { SelectPosition } from './enums/input-type.enum';
+import { SelectPosition } from './enums/select-type.enum';
 import usePokemon from '../../composables/usePokemon';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {

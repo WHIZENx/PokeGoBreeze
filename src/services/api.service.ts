@@ -214,9 +214,9 @@ class APIService {
     return `${APIUrl.POKE_ICON_SPRITES_TYPE_API_URL}${encryptUrl}/${type}.png`;
   }
 
-  getWeatherSprite(weather: string) {
+  getWeatherSprite(weather: string | undefined) {
     weather = weather
-      .toLowerCase()
+      ?.toLowerCase()
       .replaceAll(' ', '')
       .replaceAll('_', '')
       .replaceAll('rainy', 'rain')

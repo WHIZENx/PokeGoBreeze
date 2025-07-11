@@ -9,8 +9,9 @@ import {
   generateParamForm,
   getAllMoves,
   isSpecialMegaFormType,
+  createDataRows,
 } from '../../../utils/utils';
-import { levelList } from '../../../utils/constants';
+import { levelList } from '../../../utils/compute';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -31,8 +32,8 @@ import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import './DpsTdo.scss';
 import { Form } from 'react-bootstrap';
-import SelectPokemon from '../../../components/Input/SelectPokemon';
-import SelectMove from '../../../components/Input/SelectMove';
+import SelectPokemon from '../../../components/Select/SelectPokemon';
+import SelectMove from '../../../components/Select/SelectMove';
 import { Action } from 'history';
 import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
@@ -60,7 +61,7 @@ import {
 import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
@@ -129,7 +130,7 @@ const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   return a - b;
 };
 
-const columns: TableColumnModify<PokemonSheetData>[] = [
+const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
   {
     id: ColumnType.Id,
     name: 'ID',
@@ -270,8 +271,8 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     selector: (row) => row.cp,
     sortable: true,
     minWidth: '100px',
-  },
-];
+  }
+);
 
 const DpsTdo = () => {
   useTitle({

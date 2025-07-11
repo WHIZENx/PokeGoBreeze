@@ -2,14 +2,15 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardMoveSmall from '../Card/CardMoveSmall';
 
 import './Select.scss';
-import CardMove from '../Card/CardMove';
-import { TypeMove } from '../../enums/type.enum';
-import { ISelectMoveModel, ISelectMovePokemonModel } from './models/select-move.model';
+import Card from '../Card/Card';
+import { CardType, TypeMove } from '../../enums/type.enum';
 import { addSelectMovesByType } from '../../utils/utils';
 import { ISelectMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
-import { InputType, SelectPosition } from './enums/input-type.enum';
 import usePokemon from '../../composables/usePokemon';
+import { InputType } from '../Input/enums/input-type.enum';
+import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
+import { SelectPosition } from './enums/select-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
   const { retrieveMoves } = usePokemon();
@@ -113,7 +114,9 @@ const SelectMove = (props: ISelectMoveComponent) => {
     </div>
   );
 
-  const defaultCardInput = () => <CardMove value={props.move} />;
+  const defaultCardInput = () => (
+    <Card value={props.move?.name} moveType={props.move?.moveType} cardType={CardType.Move} />
+  );
 
   const defaultCardList = (position = SelectPosition.Down) => (
     <>
@@ -129,7 +132,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
               .filter((value) => !isEqual(value.name, props.move?.name))
               .map((value, index) => (
                 <div className="container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
-                  <CardMove value={value} />
+                  <Card value={value.name} moveType={value.moveType} cardType={CardType.Move} />
                 </div>
               ))}
           </div>

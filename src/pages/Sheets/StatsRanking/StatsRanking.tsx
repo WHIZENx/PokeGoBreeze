@@ -11,6 +11,7 @@ import {
   isSpecialFormType,
   getKeyWithData,
   getCustomThemeDataTable,
+  createDataRows,
 } from '../../../utils/utils';
 import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -51,7 +52,7 @@ import {
   toNumber,
 } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
 import { Action } from 'history';
@@ -66,7 +67,7 @@ import useStats from '../../../composables/useStats';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 
-const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
+const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
     id: ColumnType.None,
     name: '',
@@ -162,8 +163,8 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     selector: (row) => toNumber(row.prod.product),
     sortable: true,
     width: '150px',
-  },
-];
+  }
+);
 
 const customStyles: TableStyles = {
   rows: {
@@ -210,7 +211,7 @@ const StatsRanking = () => {
   });
   const [searchParams, setSearchParams] = useSearchParams();
   const [select, setSelect] = useState<IPokemonStatsRanking>();
-  const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
+  const conditionalRowStyles = createDataRows<ConditionalStyles<IPokemonStatsRanking>>(
     {
       when: () => true,
       style: { backgroundColor: 'var(--background-table-primary)' },
@@ -219,8 +220,8 @@ const StatsRanking = () => {
       when: (row) =>
         !isNullOrUndefined(select) && row.fullName === select.fullName && row.pokemonType === select.pokemonType,
       style: { backgroundColor: 'var(--table-highlight-row)', fontWeight: 'bold' },
-    },
-  ];
+    }
+  );
 
   const { statsData } = useStats();
   const { getFilteredPokemons, getFindPokemon } = usePokemon();
@@ -402,7 +403,7 @@ const StatsRanking = () => {
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
-  const menuItems: IMenuItem[] = [
+  const menuItems = createDataRows<IMenuItem>(
     {
       label: (
         <FormControlLabel
@@ -439,8 +440,8 @@ const StatsRanking = () => {
           }
         />
       ),
-    },
-  ];
+    }
+  );
 
   useEffect(() => {
     if (

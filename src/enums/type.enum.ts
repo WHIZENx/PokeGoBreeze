@@ -53,6 +53,12 @@ export enum VariantType {
   Primary = 'primary',
 }
 
+export enum CardType {
+  Type,
+  Weather,
+  Move,
+}
+
 export enum MoveType {
   None,
   Shadow,
@@ -119,4 +125,11 @@ export enum ColumnType {
   EnergyPVE,
   EnergyPVP,
   Power,
+}
+
+export enum LabelType {
+  Text,
+  Button,
+  Dropdown,
+  SplitButton,
 }

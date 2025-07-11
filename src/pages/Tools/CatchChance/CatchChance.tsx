@@ -8,12 +8,13 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import SelectBadge from '../../../components/Input/SelectBadge';
+import SelectBadge from '../../../components/Select/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
 import APIService from '../../../services/api.service';
 import { calculateCatchChance, calculateCP } from '../../../utils/calculate';
 import {
+  createDataRows,
   getItemSpritePath,
   getKeyWithData,
   getPokemonFormWithNoneSpecialForm,
@@ -43,7 +44,7 @@ import {
 } from './models/catch-chance.model';
 import { PokeBallType } from './enums/poke-ball.enum';
 import { PokemonType, ThrowType } from '../../../enums/type.enum';
-import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
+import { BadgeType } from '../../../components/enums/badge-type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
@@ -72,7 +73,7 @@ import {
 } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 
-const balls: PokeBallThreshold[] = [
+const balls = createDataRows<PokeBallThreshold>(
   {
     name: 'Poké Ball',
     itemName: ItemName.PokeBall,
@@ -90,14 +91,14 @@ const balls: PokeBallThreshold[] = [
     itemName: ItemName.UltraBall,
     threshold: ultraBallIncChance(),
     pokeBallType: PokeBallType.UltraBall,
-  },
-];
-const throws: ThrowThreshold[] = [
+  }
+);
+const throws = createDataRows<ThrowThreshold>(
   { name: 'Normal Throw', threshold: normalThrowIncChance(), throwType: ThrowType.Normal },
   { name: 'Nice Throw', threshold: niceThrowIncChance(), throwType: ThrowType.Nice },
   { name: 'Great Throw', threshold: greatThrowIncChance(), throwType: ThrowType.Great },
-  { name: 'Excellent Throw', threshold: excellentThrowIncChance(), throwType: ThrowType.Excellent },
-];
+  { name: 'Excellent Throw', threshold: excellentThrowIncChance(), throwType: ThrowType.Excellent }
+);
 
 const CatchChance = () => {
   const { searchingToolCurrentDetails } = useSearch();

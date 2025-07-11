@@ -580,7 +580,7 @@ const Evolution = (props: IEvolutionComponent) => {
                                     />
                                   ))}
                                 </div>
-                                <span style={{ fontSize: 11, lineHeight: 1 }}>{`Battle x${data.quest.goal} ${
+                                <span className="u-fs-2-75" style={{ lineHeight: 1 }}>{`Battle x${data.quest.goal} ${
                                   data.quest.condition.opponentPokemonBattle?.requireDefeat ? 'Defeat' : ''
                                 }`}</span>
                               </Fragment>
@@ -612,7 +612,9 @@ const Evolution = (props: IEvolutionComponent) => {
                                 height={20}
                                 src={getItemSpritePath(ItemName.Incense)}
                               />
-                              <div style={{ fontSize: 11, lineHeight: 1 }}>Use Incense</div>
+                              <div className="u-fs-2-75" style={{ lineHeight: 1 }}>
+                                Use Incense
+                              </div>
                             </Fragment>
                           </span>
                         )}

@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import {
   capitalize,
   convertPokemonDataName,
+  createDataRows,
   generateParamForm,
   getItemSpritePath,
   getKeyWithData,
@@ -47,7 +48,7 @@ import {
 } from '../../utils/extension';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
-import { LinkToTop } from '../../components/LinkToTop';
+import { LinkToTop } from '../../components/Link/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
@@ -78,7 +79,7 @@ const numSortTdo = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   return a - b;
 };
 
-const columns: TableColumnModify<IPokemonTopMove>[] = [
+const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
   {
     id: ColumnType.Id,
     name: 'Id',
@@ -142,8 +143,8 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     sortable: true,
     sortFunction: numSortTdo,
     minWidth: '90px',
-  },
-];
+  }
+);
 
 const Move = (props: IMovePage) => {
   const { iconData } = useIcon();
@@ -163,7 +164,7 @@ const Move = (props: IMovePage) => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const menuItems: IMenuItem[] = [
+  const menuItems = createDataRows<IMenuItem>(
     {
       label: (
         <FormControlLabel
@@ -190,8 +191,8 @@ const Move = (props: IMovePage) => {
           label="Match Pokémon"
         />
       ),
-    },
-  ];
+    }
+  );
 
   const getWeatherEffective = (type: string | undefined) => {
     const result = safeObjectEntries(getWeatherBoost())?.find(([, value]) => {
@@ -459,9 +460,8 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <>
                       <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
-                      <span className="text-success d-inline-block caption">
-                        {' +'}
-                        {toFloatWithPadding(move.pvePower * 0.2, 2)}
+                      <span className="text-success d-inline-block caption ms-1">
+                        {`+${toFloatWithPadding(move.pvePower * 0.2, 2)}`}
                       </span>
                     </>
                   )}
@@ -500,9 +500,8 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <>
                       <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
-                      <span className="text-success d-inline-block caption">
-                        {' +'}
-                        {toFloatWithPadding(move.pvpPower * 0.2, 2)}
+                      <span className="text-success d-inline-block caption ms-1">
+                        {`+${toFloatWithPadding(move.pvpPower * 0.2, 2)}`}
                       </span>
                     </>
                   )}
@@ -533,7 +532,7 @@ const Move = (props: IMovePage) => {
                   {move?.buffs.map((value, index) => (
                     <tr key={index}>
                       <td className="target-buff">
-                        <CircleIcon sx={{ fontSize: '5px' }} /> {getKeyWithData(BuffType, value.target)}
+                        <CircleIcon className="u-fs-1" /> {getKeyWithData(BuffType, value.target)}
                       </td>
                       <td>
                         {value.power > 0 ? (

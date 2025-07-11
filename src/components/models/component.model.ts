@@ -23,9 +23,18 @@ import {
 import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
-import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
-import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
-import { BadgeType } from '../Input/enums/badge-type.enum';
+import { InputType } from '../Input/enums/input-type.enum';
+import {
+  CardType,
+  LabelType,
+  MoveType,
+  PokemonClass,
+  PokemonType,
+  TypeAction,
+  TypeMove,
+  TypeSex,
+} from '../../enums/type.enum';
+import { BadgeType } from '../enums/badge-type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
@@ -33,6 +42,8 @@ import { IStyleData } from '../../utils/models/util.model';
 import { PaletteMode } from '@mui/material';
 import { TableProps, TableStyles } from 'react-data-table-component';
 import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
+import { SelectPosition } from '../Select/enums/select-type.enum';
+import React from 'react';
 
 export interface INavbarComponent {
   mode: PaletteMode;
@@ -73,13 +84,16 @@ export interface ICardPokemonInfoComponent {
 }
 
 export interface ICardTypeComponent {
+  isHideDefaultTitle?: boolean;
   value?: string;
   name?: string;
   moveType?: MoveType;
+  cardType?: CardType;
 }
 
-export interface ICardWeatherComponent {
-  value: string;
+export interface IEffectiveComponent {
+  title: string;
+  children: React.ReactNode;
 }
 
 export interface ITypeEffectiveComponent {
@@ -226,10 +240,61 @@ export interface IDynamicInputCPComponent {
   minWidth?: number | string;
 }
 
-export interface ISelectBadgeComponent {
-  type: string;
-  priority: BadgeType;
-  setPriority: (priority: BadgeType) => void;
+interface IFormControlProps {
+  isTextarea?: boolean;
+  size: number;
+}
+
+interface ILabelControl {
+  value?: React.ReactNode;
+  type?: LabelType;
+  onClick?: () => void;
+  className?: string;
+  disabled?: boolean;
+  variant?: string;
+}
+
+export interface IInputComponent {
+  prepend?: ILabelControl[];
+  append?: ILabelControl[];
+  label?: string;
+  size?: 'sm' | 'lg';
+  controls: IFormControl[];
+  className?: string;
+}
+
+export type IFormControl = IFormControlProps & React.InputHTMLAttributes<HTMLInputElement>;
+
+export interface IInputSearchComponent {
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+  onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>, value: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  className?: string;
+  size?: number;
+  onSearch?: () => void;
+}
+
+export interface ISelectTierComponent {
+  pokemonType: PokemonType | undefined;
+  pokemonClass?: PokemonClass;
+  tier: number;
+  className?: string;
+  setCurrTier?: (tier: number) => void;
+  setTier?: (tier: number) => void;
+  clearData?: () => void;
+}
+
+export interface ISelectTypeComponent<T> {
+  title: string;
+  data: T;
+  currentType: string;
+  setCurrentType: React.Dispatch<React.SetStateAction<string>>;
+  filterType?: string[];
+  isShowRemove?: boolean;
+  cardType?: CardType;
 }
 
 export interface ISelectMoveComponent {
@@ -258,6 +323,12 @@ export interface ISelectPokemonComponent {
   position?: SelectPosition;
 }
 
+export interface ISelectBadgeComponent {
+  type: string;
+  priority: BadgeType;
+  setPriority: (priority: BadgeType) => void;
+}
+
 export interface IPokemonRaidComponent {
   id: number;
   pokemon: PokemonRaidModel;
@@ -274,7 +345,7 @@ export interface IPokemonRaidComponent {
 export interface IRaidComponent {
   clearData?: (isForceClear?: boolean) => void;
   setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
-  currForm: Partial<IPokemonFormModify> | undefined;
+  pokemonType: PokemonType | undefined;
   id: number | undefined;
   statATK: number | undefined;
   statDEF: number | undefined;
@@ -413,7 +484,6 @@ export interface ILoadGroupComponent {
   className?: string;
   isShow: boolean;
   size?: number;
-  fontSize?: number;
   opacity?: number;
   bgColor?: string;
   isVertical?: boolean;
@@ -472,7 +542,7 @@ export interface IPokemonTableComponent {
   isLoadedForms?: boolean;
 }
 
-export interface IMoveComponent {
+export interface ISelectCustomMoveComponent {
   type?: TypeMove;
   id: number | undefined;
   form: string | undefined;
@@ -483,4 +553,44 @@ export interface IMoveComponent {
   clearData?: (option?: boolean) => void;
   isHighlight?: boolean;
   pokemonType?: PokemonType;
+}
+
+export interface IStatsTableComponent {
+  isLoadedForms?: boolean;
+  isShowHp?: boolean;
+  tier: number;
+  pokemonType: PokemonType | undefined;
+  statATK: number | undefined;
+  statDEF: number | undefined;
+  statSTA?: number;
+}
+
+interface IRowOption {
+  value: string | number | React.ReactNode;
+  className?: string;
+  colSpan?: number;
+  isSubTitle?: boolean;
+}
+
+export interface IRow {
+  subRows?: IRowOption[];
+  align?: string;
+  className?: string;
+}
+
+export interface IColGroup {
+  className?: string;
+  cols?: ICol[];
+}
+
+export interface ICol {
+  className?: string;
+}
+
+export interface ITableComponent {
+  isTableInfo?: boolean;
+  tableClass?: string;
+  rows: IRow[];
+  headerRows?: IRow[];
+  colGroups?: IColGroup[];
 }

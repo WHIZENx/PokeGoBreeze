@@ -1,14 +1,14 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import CardType from '../Card/CardType';
+import Card from '../Card/Card';
 import { addSelectMovesByType, splitAndCapitalize } from '../../utils/utils';
 import { TypeMove } from '../../enums/type.enum';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
-import { IMoveComponent } from '../models/component.model';
+import { ISelectCustomMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
 import usePokemon from '../../composables/usePokemon';
 import useCombats from '../../composables/useCombats';
 
-const Move = (props: IMoveComponent) => {
+const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
   const { findMoveByName } = useCombats();
   const { retrieveMoves } = usePokemon();
 
@@ -76,7 +76,7 @@ const Move = (props: IMoveComponent) => {
       <div className="d-flex justify-content-center">
         <div className="card-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
           <div className="card-select">
-            <CardType
+            <Card
               value={findType(currentMove?.name)}
               name={splitAndCapitalize(currentMove?.name, '_', ' ')}
               moveType={currentMove?.moveType}
@@ -108,7 +108,7 @@ const Move = (props: IMoveComponent) => {
                             )}
                             onMouseDown={() => changeMove(value)}
                           >
-                            <CardType
+                            <Card
                               value={findType(value.name)}
                               name={splitAndCapitalize(value.name, '_', ' ')}
                               moveType={value.moveType}
@@ -127,4 +127,4 @@ const Move = (props: IMoveComponent) => {
   );
 };
 
-export default Move;
+export default SelectCustomMove;

@@ -1,7 +1,7 @@
 import React, { MouseEventHandler } from 'react';
 import { Link, To, useNavigate } from 'react-router-dom';
-import { LinkToTopProps, NavigateToTopProps } from '../utils/models/hook.model';
-import { toNumber } from '../utils/extension';
+import { LinkToTopProps, NavigateToTopProps } from '../../utils/models/hook.model';
+import { toNumber } from '../../utils/extension';
 
 export const useNavigateToTop = () => {
   const navigate = useNavigate();

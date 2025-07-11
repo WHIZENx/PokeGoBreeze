@@ -14,9 +14,9 @@ import DamageTable from './DamageTable';
 import ATK_LOGO from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Find from '../../../components/Find/Find';
-import StatsTable from './StatsDamageTable';
+import StatsDamageTable from './StatsDamageTable';
 
-import Move from '../../../components/Table/Move';
+import SelectCustomMove from '../../../components/Select/SelectCustomMove';
 import { findStabType } from '../../../utils/compute';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
@@ -220,7 +220,7 @@ const Damage = () => {
       <div className="row battle-game">
         <div className="col-lg border-window">
           <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
-          <StatsTable
+          <StatsDamageTable
             setStatLvATK={setStatLvATK}
             setStatLevel={setStatLevel}
             setStatType={setStatType}
@@ -232,7 +232,7 @@ const Damage = () => {
         </div>
         <div className="col-lg border-window">
           <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
-          <StatsTable
+          <StatsDamageTable
             setStatLvDEF={setStatLvDEFObj}
             setStatLvSTA={setStatLvSTAObj}
             setStatLevel={setStatLevelObj}
@@ -263,7 +263,7 @@ const Damage = () => {
                   </div>
                 </div>
               </div>
-              <Move
+              <SelectCustomMove
                 text="Select Moves"
                 id={searchingToolCurrentData?.form?.defaultId}
                 isSelectDefault
@@ -351,7 +351,7 @@ const Damage = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                    <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
+                    <Box className="u-fs-2-75" sx={{ ml: 2, color: 'green' }}>
                       x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>

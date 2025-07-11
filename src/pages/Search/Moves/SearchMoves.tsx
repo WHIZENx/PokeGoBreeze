@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
+import { capitalize, createDataRows, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './SearchMoves.scss';
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
@@ -19,7 +19,7 @@ import {
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { Params } from '../../../utils/constants';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
@@ -45,7 +45,7 @@ const numSortDps = (rowA: ICombat, rowB: ICombat) => {
   return a - b;
 };
 
-const columns: TableColumnModify<ICombat>[] = [
+const columns = createDataRows<TableColumnModify<ICombat>>(
   {
     id: ColumnType.Id,
     name: 'id',
@@ -88,8 +88,8 @@ const columns: TableColumnModify<ICombat>[] = [
     selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
     sortFunction: numSortDps,
     sortable: true,
-  },
-];
+  }
+);
 
 interface IFilter {
   fMoveType: SelectType;

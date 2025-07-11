@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/api.service';
 import {
   convertPokemonDataName,
+  createDataRows,
   generateParamForm,
   getKeyWithData,
   getValidPokemonImgPath,
@@ -28,7 +29,7 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
-import { LinkToTop } from '../../LinkToTop';
+import { LinkToTop } from '../../Link/LinkToTop';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import IconType from '../../Sprites/Icon/Type/Type';
@@ -128,7 +129,7 @@ const Counter = (props: ICounterComponent) => {
 
   const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
 
-  const menuItems: IMenuItem[] = [
+  const menuItems = createDataRows<IMenuItem>(
     {
       label: (
         <FormControlLabel
@@ -152,10 +153,10 @@ const Counter = (props: ICounterComponent) => {
           label="Match Pokémon"
         />
       ),
-    },
-  ];
+    }
+  );
 
-  const columns: TableColumnModify<ICounterModel>[] = [
+  const columns = createDataRows<TableColumnModify<ICounterModel>>(
     {
       id: ColumnType.Pokemon,
       name: 'Pokémon',
@@ -194,7 +195,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="me-1 v-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
-          <span className="me-1 text-wrap" style={{ fontSize: '0.9rem' }}>
+          <span className="me-1 pt-1 text-wrap u-fs-3">
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
@@ -221,7 +222,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="me-1 v-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
-          <span className="me-1 text-wrap" style={{ fontSize: '0.9rem' }}>
+          <span className="me-1 pt-1 text-wrap u-fs-3">
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
@@ -248,8 +249,8 @@ const Counter = (props: ICounterComponent) => {
       sortable: true,
       sortFunction: numSortRatio,
       width: '20%',
-    },
-  ];
+    }
+  );
 
   const CounterLoader = () => (
     <div className="w-100 counter-none v-align-top">

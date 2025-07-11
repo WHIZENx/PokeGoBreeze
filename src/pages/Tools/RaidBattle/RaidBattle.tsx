@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import SelectMove from '../../../components/Input/SelectMove';
+import SelectMove from '../../../components/Select/SelectMove';
 import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 
@@ -14,7 +14,7 @@ import {
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { levelList, RAID_BOSS_TIER } from '../../../utils/constants';
+import { RAID_BOSS_TIER } from '../../../utils/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -89,7 +89,7 @@ import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import CustomPopover from '../../../components/Popover/CustomPopover';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { StatsIV } from '../../../core/models/stats.model';
 import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
@@ -99,6 +99,7 @@ import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
 import useSearch from '../../../composables/useSearch';
+import { levelList } from '../../../utils/compute';
 
 const RaidBattle = () => {
   useTitle({
@@ -1310,7 +1311,7 @@ const RaidBattle = () => {
               clearData={clearDataBoss}
               setTierBoss={setTier}
               setTimeAllow={setTimeAllow}
-              currForm={searchingToolCurrentData?.form}
+              pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
               id={searchingToolCurrentData?.form?.defaultId}
               statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
               statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
@@ -1552,7 +1553,7 @@ const RaidBattle = () => {
                       }
                     }}
                   >
-                    <ContentCopyIcon sx={{ fontSize: 14 }} />
+                    <ContentCopyIcon className="u-fs-3" />
                   </span>
                   <span
                     className={combineClasses(
@@ -1566,7 +1567,7 @@ const RaidBattle = () => {
                       }
                     }}
                   >
-                    <DeleteIcon sx={{ fontSize: 14 }} />
+                    <DeleteIcon className="u-fs-3" />
                   </span>
                 </span>
               </div>
