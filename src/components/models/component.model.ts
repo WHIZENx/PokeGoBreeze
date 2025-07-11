@@ -24,7 +24,16 @@ import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
 import { InputType } from '../Input/enums/input-type.enum';
-import { CardType, MoveType, PokemonClass, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
+import {
+  CardType,
+  LabelType,
+  MoveType,
+  PokemonClass,
+  PokemonType,
+  TypeAction,
+  TypeMove,
+  TypeSex,
+} from '../../enums/type.enum';
 import { BadgeType } from '../enums/badge-type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
@@ -229,6 +238,43 @@ export interface IDynamicInputCPComponent {
   label?: string;
   width?: number | string;
   minWidth?: number | string;
+}
+
+interface IFormControlProps {
+  isTextarea?: boolean;
+  size: number;
+}
+
+interface ILabelControl {
+  value?: React.ReactNode;
+  type?: LabelType;
+  onClick?: () => void;
+  className?: string;
+  disabled?: boolean;
+  variant?: string;
+}
+
+export interface IInputComponent {
+  prepend?: ILabelControl[];
+  append?: ILabelControl[];
+  label?: string;
+  size?: 'sm' | 'lg';
+  controls: IFormControl[];
+  className?: string;
+}
+
+export type IFormControl = IFormControlProps & React.InputHTMLAttributes<HTMLInputElement>;
+
+export interface IInputSearchComponent {
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+  onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>, value: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  className?: string;
+  size?: number;
+  onSearch?: () => void;
 }
 
 export interface ISelectTierComponent {

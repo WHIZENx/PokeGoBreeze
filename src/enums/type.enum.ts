@@ -126,3 +126,10 @@ export enum ColumnType {
   EnergyPVP,
   Power,
 }
+
+export enum LabelType {
+  Text,
+  Button,
+  Dropdown,
+  SplitButton,
+}

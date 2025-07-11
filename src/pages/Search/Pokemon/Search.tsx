@@ -9,7 +9,7 @@ import { Action } from 'history';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { PokemonType } from '../../../enums/type.enum';
-import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { combineClasses, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
@@ -17,6 +17,7 @@ import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
+import InputSearch from '../../../components/Input/InputSearch';
 
 const Search = () => {
   useTitle({
@@ -167,27 +168,14 @@ const Search = () => {
         <h1 id="main" className="text-center">
           Pokémon Info Search
         </h1>
-        <div className="input-group mb-12 mt-2">
-          <div className="input-group-prepend">
-            <span className="input-group-text">Search</span>
-          </div>
-          <input
-            id="input-search-pokemon"
-            type="text"
-            autoComplete="false"
-            className="form-control input-search"
-            placeholder="Enter Name or ID"
-            defaultValue={searchTerm}
-            onFocus={(e) => {
-              setShowResult(true);
-              if (!isEqual(e.currentTarget.value, searchTerm)) {
-                setSearchTerm(e.currentTarget.value);
-              }
-            }}
-            onBlur={() => setShowResult(false)}
-            onKeyUp={(e) => onChangeSelect(e, e.currentTarget.value)}
-          />
-        </div>
+        <InputSearch
+          value={searchTerm}
+          onChange={(value) => setSearchTerm(value)}
+          placeholder="Enter Name or ID"
+          onKeyUp={(e, value) => onChangeSelect(e, value)}
+          onFocus={() => setShowResult(true)}
+          onBlur={() => setShowResult(false)}
+        />
         <div
           ref={resultsContainerRef}
           className={combineClasses('result', showResult ? 'd-block' : 'd-none')}
