@@ -4,11 +4,6 @@ import { calculateRaidStat } from '../../utils/calculate';
 
 import { RAID_BOSS_TIER } from '../../utils/constants';
 
-import ATK_LOGO from '../../assets/attack.png';
-import DEF_LOGO from '../../assets/defense.png';
-import HP_LOGO from '../../assets/hp.png';
-import STA_LOGO from '../../assets/stamina.png';
-
 import { getFormFromForms } from '../../utils/utils';
 import {
   IStatsAtk,
@@ -152,6 +147,7 @@ const Tools = (props: IToolsComponent) => {
             pokemonClass={searchingToolCurrentData?.pokemon?.pokemonClass}
           />
           <StatsTable
+            isLoadedForms={!!statsPokemon}
             tier={currTier}
             pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
             statATK={statsPokemon?.atk?.attack}
@@ -159,48 +155,6 @@ const Tools = (props: IToolsComponent) => {
             statSTA={statsPokemon?.sta?.stamina}
             isShowHp
           />
-          <table className="table-info">
-            <thead />
-            <tbody>
-              <tr className="text-center">
-                <td className="table-sub-header" colSpan={2}>
-                  Stats
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
-                  ATK
-                </td>
-                <td className="text-center">{toNumber(statsPokemon?.atk?.attack)}</td>
-              </tr>
-              <tr>
-                <td>
-                  <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
-                  DEF
-                </td>
-                <td className="text-center">{toNumber(statsPokemon?.def?.defense)}</td>
-              </tr>
-              <tr>
-                <td>
-                  <img className="me-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} />
-                  STA
-                </td>
-                <td className="text-center">
-                  {statsPokemon?.sta
-                    ? Math.floor(toNumber(statsPokemon.sta.stamina) / RAID_BOSS_TIER[props.tier].CPm)
-                    : 0}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
-                  HP
-                </td>
-                <td className="text-center">{RAID_BOSS_TIER[props.tier].sta}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       ) : (
         <Stats

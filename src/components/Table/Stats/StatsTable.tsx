@@ -8,6 +8,7 @@ import { RAID_BOSS_TIER } from '../../../utils/constants';
 import { createDataRows } from '../../../utils/utils';
 import { IRow, IStatsTableComponent } from '../../models/component.model';
 import Table from '../Table';
+import { isUndefined } from '../../../utils/extension';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
@@ -33,6 +34,7 @@ const StatsTable = (props: IStatsTableComponent) => {
       ],
     },
     {
+      align: 'start',
       subRows: [
         {
           value: (
@@ -42,12 +44,13 @@ const StatsTable = (props: IStatsTableComponent) => {
           ),
         },
         {
-          value: reload(<>{props.pokemonType ? calculateRaidStat(props.statATK, props.tier) : ''}</>),
+          value: reload(<>{!isUndefined(props.pokemonType) ? calculateRaidStat(props.statATK, props.tier) : ''}</>),
           className: 'text-center theme-text-primary',
         },
       ],
     },
     {
+      align: 'start',
       subRows: [
         {
           value: (
@@ -57,12 +60,13 @@ const StatsTable = (props: IStatsTableComponent) => {
           ),
         },
         {
-          value: reload(<>{props.pokemonType ? calculateRaidStat(props.statDEF, props.tier) : ''}</>),
+          value: reload(<>{!isUndefined(props.pokemonType) ? calculateRaidStat(props.statDEF, props.tier) : ''}</>),
           className: 'text-center theme-text-primary',
         },
       ],
     },
     {
+      align: 'start',
       subRows: [
         {
           value: (
@@ -74,7 +78,7 @@ const StatsTable = (props: IStatsTableComponent) => {
         {
           value: reload(
             <>
-              {props.pokemonType
+              {!isUndefined(props.pokemonType)
                 ? Math.floor(RAID_BOSS_TIER[props.tier].sta / RAID_BOSS_TIER[props.tier].CPm)
                 : props.statSTA || ''}
             </>
@@ -88,6 +92,7 @@ const StatsTable = (props: IStatsTableComponent) => {
   const setRows = () => {
     if (props.isShowHp) {
       rows.push({
+        align: 'start',
         subRows: [
           {
             value: (
