@@ -14,7 +14,7 @@ import {
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { levelList, RAID_BOSS_TIER } from '../../../utils/constants';
+import { RAID_BOSS_TIER } from '../../../utils/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -99,6 +99,7 @@ import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
 import useSearch from '../../../composables/useSearch';
+import { levelList } from '../../../utils/compute';
 
 const RaidBattle = () => {
   useTitle({

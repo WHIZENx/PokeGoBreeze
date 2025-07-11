@@ -8,7 +8,7 @@ import SelectCustomMove from '../../../components/Select/SelectCustomMove';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { findStabType } from '../../../utils/compute';
-import { levelList } from '../../../utils/constants';
+import { levelList } from '../../../utils/compute';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { useSnackbar } from 'notistack';
 

@@ -11,7 +11,7 @@ import {
   isSpecialMegaFormType,
   createDataRows,
 } from '../../../utils/utils';
-import { levelList } from '../../../utils/constants';
+import { levelList } from '../../../utils/compute';
 import {
   calculateAvgDPS,
   calculateCP,
