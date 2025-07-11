@@ -42,6 +42,7 @@ import { getTypes, transitionTime } from '../../utils/helpers/options-context.he
 import useIcon from '../../composables/useIcon';
 import useAssets from '../../composables/useAssets';
 import usePokemon from '../../composables/usePokemon';
+import InputSearch from '../../components/Input/InputSearch';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -356,13 +357,11 @@ const Pokedex = (props: IStyleSheetData) => {
             <div className="row m-0">
               <div className="col-xl-4 p-0">
                 <div className="d-flex">
-                  <span className="input-group-text">Search name or ID</span>
-                  <input
-                    type="text"
-                    className="form-control input-search"
+                  <InputSearch
+                    value={searchTerm}
+                    onKeyUp={(_, value) => setSearchTerm(value)}
                     placeholder="Enter Name or ID"
-                    defaultValue={searchTerm}
-                    onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
+                    prepend="Search name or ID"
                   />
                 </div>
                 <div className="d-flex flex-wrap px-2">

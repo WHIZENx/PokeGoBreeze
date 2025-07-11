@@ -19,19 +19,37 @@ const InputSearch = (props: IInputSearchComponent) => {
 
   const handleClear = () => {
     setSearchTerm('');
-    props.onChange?.('');
+    if (props.onChange) {
+      props.onChange('');
+    } else if (props.onKeyUp) {
+      props.onKeyUp({} as React.KeyboardEvent<HTMLInputElement>, '');
+    }
   };
 
   return (
     <Input
-      append={[
-        {
-          type: LabelType.Text,
-          className: 'cursor-pointer',
-          value: searchTerm ? <CloseIcon color="error" /> : <SearchIcon />,
-          onClick: searchTerm ? handleClear : props.onSearch,
-        },
-      ]}
+      prepend={
+        props.prepend
+          ? [
+              {
+                type: LabelType.Text,
+                value: props.prepend,
+              },
+            ]
+          : undefined
+      }
+      append={
+        !props.isHideIcon
+          ? [
+              {
+                type: LabelType.Text,
+                className: 'cursor-pointer',
+                value: searchTerm ? <CloseIcon color="error" /> : <SearchIcon />,
+                onClick: searchTerm ? handleClear : props.onSearch,
+              },
+            ]
+          : undefined
+      }
       controls={[
         {
           ...props,

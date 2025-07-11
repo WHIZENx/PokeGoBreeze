@@ -275,6 +275,8 @@ export interface IInputSearchComponent {
   className?: string;
   size?: number;
   onSearch?: () => void;
+  isHideIcon?: boolean;
+  prepend?: React.ReactNode;
 }
 
 export interface ISelectTierComponent {
