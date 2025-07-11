@@ -14,7 +14,7 @@ import DamageTable from './DamageTable';
 import ATK_LOGO from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Find from '../../../components/Find/Find';
-import StatsTable from './StatsDamageTable';
+import StatsDamageTable from './StatsDamageTable';
 
 import SelectCustomMove from '../../../components/Select/SelectCustomMove';
 import { findStabType } from '../../../utils/compute';
@@ -220,7 +220,7 @@ const Damage = () => {
       <div className="row battle-game">
         <div className="col-lg border-window">
           <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
-          <StatsTable
+          <StatsDamageTable
             setStatLvATK={setStatLvATK}
             setStatLevel={setStatLevel}
             setStatType={setStatType}
@@ -232,7 +232,7 @@ const Damage = () => {
         </div>
         <div className="col-lg border-window">
           <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
-          <StatsTable
+          <StatsDamageTable
             setStatLvDEF={setStatLvDEFObj}
             setStatLvSTA={setStatLvSTAObj}
             setStatLevel={setStatLevelObj}

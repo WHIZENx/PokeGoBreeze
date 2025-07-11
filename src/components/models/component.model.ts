@@ -24,7 +24,7 @@ import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
 import { InputType } from '../Input/enums/input-type.enum';
-import { CardType, MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
+import { CardType, MoveType, PokemonClass, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
 import { BadgeType } from '../enums/badge-type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
@@ -226,6 +226,16 @@ export interface IDynamicInputCPComponent {
   minWidth?: number | string;
 }
 
+export interface ISelectTierComponent {
+  pokemonType: PokemonType | undefined;
+  pokemonClass?: PokemonClass;
+  tier: number;
+  className?: string;
+  setCurrTier?: (tier: number) => void;
+  setTier?: (tier: number) => void;
+  clearData?: () => void;
+}
+
 export interface ISelectTypeComponent<T> {
   title: string;
   data: T;
@@ -284,7 +294,7 @@ export interface IPokemonRaidComponent {
 export interface IRaidComponent {
   clearData?: (isForceClear?: boolean) => void;
   setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
-  currForm: Partial<IPokemonFormModify> | undefined;
+  pokemonType: PokemonType | undefined;
   id: number | undefined;
   statATK: number | undefined;
   statDEF: number | undefined;
@@ -492,6 +502,16 @@ export interface ISelectCustomMoveComponent {
   clearData?: (option?: boolean) => void;
   isHighlight?: boolean;
   pokemonType?: PokemonType;
+}
+
+export interface IStatsTableComponent {
+  isLoadedForms?: boolean;
+  isShowHp?: boolean;
+  tier: number;
+  pokemonType: PokemonType | undefined;
+  statATK: number | undefined;
+  statDEF: number | undefined;
+  statSTA?: number;
 }
 
 interface IRowOption {

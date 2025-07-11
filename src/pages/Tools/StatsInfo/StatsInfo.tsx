@@ -86,7 +86,7 @@ export const columnsStats = createDataRows<TableColumn<IBattleBaseStats>>(
   }
 );
 
-const StatsTable = () => {
+const StatsInfo = () => {
   useTitle({
     title: 'Stats Battle League - Tool',
     description:
@@ -343,4 +343,4 @@ const StatsTable = () => {
   );
 };
 
-export default StatsTable;
+export default StatsInfo;

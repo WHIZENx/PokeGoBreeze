@@ -2,7 +2,6 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import Stats from '../Info/Stats/Stats';
 import { calculateRaidStat } from '../../utils/calculate';
 
-import { Form } from 'react-bootstrap';
 import { RAID_BOSS_TIER } from '../../utils/constants';
 
 import ATK_LOGO from '../../assets/attack.png';
@@ -26,6 +25,8 @@ import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
 import { isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
 import useStats from '../../composables/useStats';
 import useSearch from '../../composables/useSearch';
+import SelectTier from '../Select/SelectTier';
+import StatsTable from '../Table/Stats/StatsTable';
 
 const Tools = (props: IToolsComponent) => {
   const { statsData } = useStats();
@@ -141,45 +142,23 @@ const Tools = (props: IToolsComponent) => {
     <Fragment>
       {props.isRaid ? (
         <div className="mt-2 mb-3">
-          <Form.Select
+          <SelectTier
             className="w-100"
-            onChange={(e) => {
-              const tier = toNumber(e.target.value);
-              setCurrTier(tier);
-              if (props.setTier) {
-                props.setTier(tier);
-              }
-              if (props.onClearStats) {
-                props.onClearStats(true);
-              }
-            }}
-            value={currTier}
-          >
-            <optgroup label="Normal Tiers">
-              <option value={1}>Tier 1</option>
-              <option value={3}>Tier 3</option>
-              {searchingToolCurrentData?.form?.form?.pokemonType !== PokemonType.Mega && (
-                <option value={5}>Tier 5</option>
-              )}
-            </optgroup>
-            <optgroup label="Legacy Tiers">
-              <option value={2}>Tier 2</option>
-              <option value={4}>Tier 4</option>
-            </optgroup>
-            {searchingToolCurrentData?.form?.form?.pokemonType === PokemonType.Mega && (
-              <Fragment>
-                {searchingToolCurrentData?.pokemon?.pokemonClass !== PokemonClass.None ? (
-                  <optgroup label="Legendary Mega Tiers">
-                    <option value={6}>Tier Mega</option>
-                  </optgroup>
-                ) : (
-                  <optgroup label="Mega Tiers">
-                    <option value={5}>Tier Mega</option>
-                  </optgroup>
-                )}
-              </Fragment>
-            )}
-          </Form.Select>
+            tier={currTier}
+            setTier={props.setTier}
+            setCurrTier={setCurrTier}
+            clearData={() => props.onClearStats?.(true)}
+            pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
+            pokemonClass={searchingToolCurrentData?.pokemon?.pokemonClass}
+          />
+          <StatsTable
+            tier={currTier}
+            pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
+            statATK={statsPokemon?.atk?.attack}
+            statDEF={statsPokemon?.def?.defense}
+            statSTA={statsPokemon?.sta?.stamina}
+            isShowHp
+          />
           <table className="table-info">
             <thead />
             <tbody>

@@ -21,7 +21,7 @@ import Move from './pages/Move/Move';
 import Error from './pages/Error/Error';
 import Leagues from './pages/PVP/Leagues/Leagues';
 import SearchBattle from './pages/Tools/SearchBattle/SearchBattle';
-import StatsTable from './pages/Tools/StatsTable/Stats';
+import StatsInfo from './pages/Tools/StatsInfo/StatsInfo';
 import Sticker from './pages/Sticker/Sticker';
 import RaidBattle from './pages/Tools/RaidBattle/RaidBattle';
 import CalculatePoint from './pages/Tools/CalculatePoint/CalculatePoint';
@@ -175,7 +175,7 @@ function App() {
         <Route path="/find-cp-iv" element={<FindTable />} />
         <Route path="/calculate-stats" element={<CalculateStats />} />
         <Route path="/search-battle-stats" element={<SearchBattle />} />
-        <Route path="/stats-table" element={<StatsTable />} />
+        <Route path="/stats-table" element={<StatsInfo />} />
         <Route path="/damage-calculate" element={<Damage />} />
         <Route path="/raid-battle" element={<RaidBattle />} />
         <Route path="/calculate-point" element={<CalculatePoint />} />

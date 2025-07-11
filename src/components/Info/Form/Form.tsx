@@ -249,7 +249,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                 <li>Raid</li>
               </h5>
               <Raid
-                currForm={searchingMainForm?.form}
+                pokemonType={searchingMainForm?.form?.pokemonType}
                 id={props.defaultId}
                 statATK={searchingMainDetails?.statsGO?.atk}
                 statDEF={searchingMainDetails?.statsGO?.def}

@@ -1311,7 +1311,7 @@ const RaidBattle = () => {
               clearData={clearDataBoss}
               setTierBoss={setTier}
               setTimeAllow={setTimeAllow}
-              currForm={searchingToolCurrentData?.form}
+              pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
               id={searchingToolCurrentData?.form?.defaultId}
               statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
               statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
