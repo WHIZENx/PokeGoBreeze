@@ -4,6 +4,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import { IInputSearchComponent } from '../models/component.model';
 import { combineClasses } from '../../utils/extension';
+import { InputSearchType } from './enums/input-type.enum';
 
 const InputSearch = (props: IInputSearchComponent) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,6 +35,12 @@ const InputSearch = (props: IInputSearchComponent) => {
     }
   };
 
+  const iconSearch = () => ({
+    className: 'cursor-pointer',
+    value: searchTerm || props.isShowRemove ? <CloseIcon color="error" /> : <SearchIcon />,
+    onClick: searchTerm || props.isShowRemove ? handleClear : props.onSearch,
+  });
+
   return (
     <Input
       prepend={
@@ -43,17 +50,19 @@ const InputSearch = (props: IInputSearchComponent) => {
                 value: props.prepend,
               },
             ]
+          : !props.isHideIcon && props.inputType === InputSearchType.Prepend
+          ? [iconSearch()]
           : undefined
       }
       append={
-        !props.isHideIcon
+        props.append
           ? [
               {
-                className: 'cursor-pointer',
-                value: searchTerm || props.isShowRemove ? <CloseIcon color="error" /> : <SearchIcon />,
-                onClick: searchTerm || props.isShowRemove ? handleClear : props.onSearch,
+                value: props.append,
               },
             ]
+          : !props.isHideIcon && props.inputType === InputSearchType.Append
+          ? [iconSearch()]
           : undefined
       }
       controls={[

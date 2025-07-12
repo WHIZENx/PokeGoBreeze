@@ -2,7 +2,6 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import APIService from '../../../services/api.service';
 
 import { getKeyWithData, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
-import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateStatsByTag, calculateStatsTopRank } from '../../../utils/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
@@ -16,6 +15,8 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
+import InputSearch from '../../../components/Input/InputSearch';
+import { InputSearchType } from '../../../components/Input/enums/input-type.enum';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const { findMoveByName } = useCombats();
@@ -172,7 +173,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   return (
     <Fragment>
       <h5>Pokémon</h5>
-      <div className="border-box-battle position-relative">
+      <div className="position-relative">
         {(score > 0 || isNotEmpty(pokemonIcon) || pokemon) && (
           <span className="pokemon-select-right">
             {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
@@ -186,25 +187,22 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               </span>
             )}
             {score > 0 && <span className="type-icon-small ic elite-ic me-1">{score}</span>}
-            {isNotEmpty(pokemonIcon) && (
-              <span onClick={() => removePokemon()} className="remove-pokemon-select">
-                <CloseIcon sx={{ color: 'red' }} />
-              </span>
-            )}
           </span>
         )}
-        <input
-          className="input-pokemon-select form-control shadow-none"
-          onClick={() => setShow(true)}
-          onBlur={() => setShow(false)}
-          type="text"
-          onInput={(e) => setSearch(e.currentTarget.value)}
+        <InputSearch
+          value={search}
+          onChange={(value) => setSearch(value)}
           placeholder="Enter Name"
+          className="input-pokemon-select shadow-none"
+          onFocus={() => setShow(true)}
+          onBlur={() => setShow(false)}
           style={{
             background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
             paddingLeft: pokemonIcon ? 56 : '',
           }}
-          value={search}
+          onRemove={() => removePokemon()}
+          isShowRemove={!!pokemonIcon}
+          inputType={InputSearchType.Prepend}
         />
       </div>
       {isNotEmpty(props.data) && (

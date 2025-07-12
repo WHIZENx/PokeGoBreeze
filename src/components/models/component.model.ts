@@ -23,7 +23,7 @@ import {
 import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
-import { InputType } from '../Input/enums/input-type.enum';
+import { InputSearchType, InputType } from '../Input/enums/input-type.enum';
 import {
   CardType,
   LabelType,
@@ -277,7 +277,9 @@ export interface IInputSearchComponent {
   isHideIcon?: boolean;
   isShowRemove?: boolean;
   prepend?: React.ReactNode;
+  append?: React.ReactNode;
   style?: React.CSSProperties;
+  inputType?: InputSearchType;
 }
 
 export interface ISelectTierComponent {
