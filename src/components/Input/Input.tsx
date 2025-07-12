@@ -3,6 +3,7 @@ import { Button, Form, InputGroup } from 'react-bootstrap';
 import { IInputComponent } from '../models/component.model';
 import { LabelType } from '../../enums/type.enum';
 import { isUndefined } from '../../utils/extension';
+import { VariantType } from '../../enums/type.enum';
 
 const Input = (props: IInputComponent) => {
   return (
@@ -18,7 +19,7 @@ const Input = (props: IInputComponent) => {
             )) ||
             (item.type === LabelType.Button && (
               <Button
-                variant={item.variant || 'outline-secondary'}
+                variant={item.variant || VariantType.OutlinedSecondary}
                 key={index}
                 onClick={item.onClick}
                 className={item.className}
@@ -48,7 +49,7 @@ const Input = (props: IInputComponent) => {
             )) ||
             (item.type === LabelType.Button && (
               <Button
-                variant={item.variant || 'outline-secondary'}
+                variant={item.variant || VariantType.OutlinedSecondary}
                 key={index}
                 onClick={item.onClick}
                 className={item.className}

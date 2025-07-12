@@ -57,6 +57,7 @@ import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
+import InputSearch from '../../../components/Input/InputSearch';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const { pvpData } = useDataStore();
@@ -322,15 +323,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         {renderLeague()}
         <hr />
         <h2>Top Performer Pokémon</h2>
-        <div className="input-group border-input">
-          <input
-            type="text"
-            className="form-control input-search"
-            placeholder="Enter Name or ID"
-            defaultValue={search}
-            onKeyUp={(e) => setSearch(e.currentTarget.value)}
-          />
-        </div>
+        <InputSearch value={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
         <div className="ranking-container card-container">
           <div className="ranking-group w-100 ranking-header column-gap-3">
             <div className="ranking-score">Pokémon</div>

@@ -106,6 +106,7 @@ import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import { Params } from '../../../utils/constants';
 import useDevice from '../../../composables/useDevice';
+import Input from '../../../components/Input/Input';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -898,67 +899,85 @@ const Battle = () => {
                 calculateStatPokemon(e, type, pokemon, setPokemon);
               }}
             >
-              <div className="mt-2 input-group">
-                <span className="input-group-text">Level</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.level}
-                  id={`level${battleType}`}
-                  type="number"
-                  step={stepLevel()}
-                  min={minLevel()}
-                  max={maxLevel()}
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-group-text">Attack IV</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.atkIV}
-                  id={`atkIV${battleType}`}
-                  type="number"
-                  step={1}
-                  min={minIv()}
-                  max={maxIv()}
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-group-text">Defense IV</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.defIV}
-                  id={`defIV${battleType}`}
-                  type="number"
-                  step={1}
-                  min={minIv()}
-                  max={maxIv()}
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-group-text">HP IV</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.staIV}
-                  id={`hpIV${battleType}`}
-                  type="number"
-                  step={1}
-                  min={minIv()}
-                  max={maxIv()}
-                />
-              </div>
+              <Input
+                prepend={[{ value: 'Level' }]}
+                className="mt-2"
+                controls={[
+                  {
+                    defaultValue: pokemon.pokemonData?.currentStats?.level,
+                    type: 'number',
+                    min: minLevel(),
+                    max: maxLevel(),
+                    step: stepLevel(),
+                    placeholder: 'Enter Level',
+                    className: 'rounded-0',
+                    id: `level${battleType}`,
+                  },
+                ]}
+              />
+              <Input
+                prepend={[{ value: 'Attack IV' }]}
+                controls={[
+                  {
+                    defaultValue: pokemon.pokemonData?.currentStats?.IV?.atkIV,
+                    type: 'number',
+                    min: minIv(),
+                    max: maxIv(),
+                    placeholder: 'Enter Attack IV',
+                    className: 'rounded-0',
+                    id: `atkIV${battleType}`,
+                  },
+                ]}
+              />
+              <Input
+                prepend={[{ value: 'Defense IV' }]}
+                controls={[
+                  {
+                    defaultValue: pokemon.pokemonData?.currentStats?.IV?.defIV,
+                    type: 'number',
+                    min: minIv(),
+                    max: maxIv(),
+                    placeholder: 'Enter Defense IV',
+                    className: 'rounded-0',
+                    id: `defIV${battleType}`,
+                  },
+                ]}
+              />
+              <Input
+                prepend={[{ value: 'HP IV' }]}
+                controls={[
+                  {
+                    defaultValue: pokemon.pokemonData?.currentStats?.IV?.staIV,
+                    type: 'number',
+                    min: minIv(),
+                    max: maxIv(),
+                    placeholder: 'Enter HP IV',
+                    className: 'rounded-0',
+                    id: `hpIV${battleType}`,
+                  },
+                ]}
+              />
               <div className="w-100 mt-2">
-                <Button type="submit" className="w-100" color="primary">
+                <Button type="submit" className="w-100" variant={VariantType.Success}>
                   Calculate Stats
                 </Button>
               </div>
             </form>
             <div className="w-100 mt-2">
-              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
+              <Button
+                className="w-100"
+                variant={VariantType.Primary}
+                onClick={() => onSetStats(type, pokemon, setPokemon, true)}
+              >
                 Set Random Stats
               </Button>
             </div>
             <div className="w-100 mt-2">
-              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon)}>
+              <Button
+                className="w-100"
+                variant={VariantType.Primary}
+                onClick={() => onSetStats(type, pokemon, setPokemon)}
+              >
                 Set Best Stats
               </Button>
             </div>
@@ -1015,40 +1034,43 @@ const Battle = () => {
         />
         {pokemon.pokemonData && (
           <Fragment>
-            <div className="input-group">
-              <span className="input-group-text">Energy</span>
-              <input
-                className="form-control shadow-none"
-                defaultValue={pokemon.energy}
-                type="number"
-                min={0}
-                max={battleMaxEnergy()}
-                onInput={(e) => {
-                  const value = toNumber(e.currentTarget.value);
-                  if (isNaN(value)) {
-                    return;
-                  }
-                  if (type === BattleType.Current) {
-                    setPlayTimeline({
-                      ...playTimeline,
-                      pokemonCurr: PokemonBattleData.create({
-                        ...playTimeline.pokemonCurr,
-                        energy: value,
-                      }),
-                    });
-                  } else if (type === BattleType.Object) {
-                    setPlayTimeline({
-                      ...playTimeline,
-                      pokemonObj: PokemonBattleData.create({
-                        ...playTimeline.pokemonObj,
-                        energy: value,
-                      }),
-                    });
-                  }
-                  setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: value }));
-                }}
-              />
-            </div>
+            <Input
+              prepend={[{ value: 'Energy' }]}
+              controls={[
+                {
+                  value: pokemon.energy,
+                  type: 'number',
+                  min: 0,
+                  max: battleMaxEnergy(),
+                  className: 'rounded-0',
+                  onChange: (e) => {
+                    const value = toNumber(e.currentTarget.value);
+                    if (isNaN(value)) {
+                      return;
+                    }
+                    if (type === BattleType.Current) {
+                      setPlayTimeline({
+                        ...playTimeline,
+                        pokemonCurr: PokemonBattleData.create({
+                          ...playTimeline.pokemonCurr,
+                          energy: value,
+                        }),
+                      });
+                    } else if (type === BattleType.Object) {
+                      setPlayTimeline({
+                        ...playTimeline,
+                        pokemonObj: PokemonBattleData.create({
+                          ...playTimeline.pokemonObj,
+                          energy: value,
+                        }),
+                      });
+                    }
+                    setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: value }));
+                  },
+                  required: true,
+                },
+              ]}
+            />
             <div className="input-group">
               <span className="input-group-text">Block</span>
               <Form.Select

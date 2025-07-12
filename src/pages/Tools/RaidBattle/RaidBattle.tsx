@@ -100,6 +100,7 @@ import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
 import useSearch from '../../../composables/useSearch';
 import { levelList } from '../../../utils/compute';
+import Input from '../../../components/Input/Input';
 
 const RaidBattle = () => {
   useTitle({
@@ -738,54 +739,63 @@ const RaidBattle = () => {
         </Form.Select>
       </div>
       <label className="form-label">Pokémon IV</label>
-      <div className="input-group mb-3">
-        <span className="input-group-text">ATK</span>
-        <input
-          value={filters.selected.iv.atkIV}
-          type="number"
-          min={minIv()}
-          max={maxIv()}
-          required
-          className="form-control"
-          placeholder="IV ATK"
-          onInput={(e) =>
-            setFilters({
-              ...filters,
-              selected: { ...selected, iv: { ...selected.iv, atkIV: toNumber(e.currentTarget.value) } },
-            })
-          }
+      <div className="input-control-group mb-3">
+        <Input
+          prepend={[{ value: 'ATK' }]}
+          controls={[
+            {
+              value: filters.selected.iv.atkIV,
+              type: 'number',
+              min: minIv(),
+              max: maxIv(),
+              placeholder: 'IV ATK',
+              className: 'rounded-0',
+              required: true,
+              onInput: (e) =>
+                setFilters({
+                  ...filters,
+                  selected: { ...selected, iv: { ...selected.iv, atkIV: toNumber(e.currentTarget.value) } },
+                }),
+            },
+          ]}
         />
-        <span className="input-group-text">DEF</span>
-        <input
-          value={filters.selected.iv.defIV}
-          type="number"
-          min={minIv()}
-          max={maxIv()}
-          required
-          className="form-control"
-          placeholder="IV DEF"
-          onInput={(e) =>
-            setFilters({
-              ...filters,
-              selected: { ...selected, iv: { ...selected.iv, defIV: toNumber(e.currentTarget.value) } },
-            })
-          }
+        <Input
+          prepend={[{ value: 'DEF' }]}
+          controls={[
+            {
+              value: filters.selected.iv.defIV,
+              type: 'number',
+              min: minIv(),
+              max: maxIv(),
+              placeholder: 'IV DEF',
+              className: 'rounded-0',
+              required: true,
+              onInput: (e) =>
+                setFilters({
+                  ...filters,
+                  selected: { ...selected, iv: { ...selected.iv, defIV: toNumber(e.currentTarget.value) } },
+                }),
+            },
+          ]}
         />
-        <span className="input-group-text">STA</span>
-        <input
-          value={filters.selected.iv.staIV}
-          type="number"
-          min={minIv()}
-          max={maxIv()}
-          required
-          className="form-control"
-          placeholder="IV STA"
-          onInput={(e) =>
-            setFilters({
-              ...filters,
-              selected: { ...selected, iv: { ...selected.iv, staIV: toNumber(e.currentTarget.value) } },
-            })
-          }
+        <Input
+          prepend={[{ value: 'STA' }]}
+          controls={[
+            {
+              value: filters.selected.iv.staIV,
+              type: 'number',
+              min: minIv(),
+              max: maxIv(),
+              placeholder: 'IV STA',
+              className: 'rounded-0',
+              required: true,
+              onInput: (e) =>
+                setFilters({
+                  ...filters,
+                  selected: { ...selected, iv: { ...selected.iv, staIV: toNumber(e.currentTarget.value) } },
+                }),
+            },
+          ]}
         />
       </div>
       <div className="input-group mb-3 border-input">
@@ -971,84 +981,96 @@ const RaidBattle = () => {
             </Form.Select>
           </div>
           <label className="form-label">Pokémon IV</label>
-          <div className="input-group mb-3">
-            <span className="input-group-text">ATK</span>
-            <input
-              value={pokemon.stats?.iv.atkIV}
-              type="number"
-              min={minIv()}
-              max={maxIv()}
-              required
-              className="form-control"
-              placeholder="IV ATK"
-              onInput={(e) => {
-                if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon(
-                    RaidSetting.create({
-                      ...showSettingPokemon,
-                      pokemon: {
-                        ...showSettingPokemon.pokemon,
-                        stats: {
-                          ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, atkIV: toNumber(e.currentTarget.value) },
-                        },
-                      },
-                    })
-                  );
-                }
-              }}
+          <div className="input-control-group mb-3">
+            <Input
+              prepend={[{ value: 'ATK' }]}
+              controls={[
+                {
+                  value: pokemon.stats?.iv.atkIV,
+                  type: 'number',
+                  min: minIv(),
+                  max: maxIv(),
+                  required: true,
+                  className: 'rounded-0',
+                  placeholder: 'IV ATK',
+                  onInput: (e) => {
+                    if (showSettingPokemon.pokemon?.stats) {
+                      setShowSettingPokemon(
+                        RaidSetting.create({
+                          ...showSettingPokemon,
+                          pokemon: {
+                            ...showSettingPokemon.pokemon,
+                            stats: {
+                              ...showSettingPokemon.pokemon.stats,
+                              iv: { ...showSettingPokemon.pokemon.stats.iv, atkIV: toNumber(e.currentTarget.value) },
+                            },
+                          },
+                        })
+                      );
+                    }
+                  },
+                },
+              ]}
             />
-            <span className="input-group-text">DEF</span>
-            <input
-              value={pokemon.stats?.iv.defIV}
-              type="number"
-              min={minIv()}
-              max={maxIv()}
-              required
-              className="form-control"
-              placeholder="IV DEF"
-              onInput={(e) => {
-                if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon(
-                    RaidSetting.create({
-                      ...showSettingPokemon,
-                      pokemon: {
-                        ...showSettingPokemon.pokemon,
-                        stats: {
-                          ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, defIV: toNumber(e.currentTarget.value) },
-                        },
-                      },
-                    })
-                  );
-                }
-              }}
+            <Input
+              prepend={[{ value: 'DEF' }]}
+              controls={[
+                {
+                  value: pokemon.stats?.iv.defIV,
+                  type: 'number',
+                  min: minIv(),
+                  max: maxIv(),
+                  required: true,
+                  className: 'rounded-0',
+                  placeholder: 'IV DEF',
+                  onInput: (e) => {
+                    if (showSettingPokemon.pokemon?.stats) {
+                      setShowSettingPokemon(
+                        RaidSetting.create({
+                          ...showSettingPokemon,
+                          pokemon: {
+                            ...showSettingPokemon.pokemon,
+                            stats: {
+                              ...showSettingPokemon.pokemon.stats,
+                              iv: { ...showSettingPokemon.pokemon.stats.iv, defIV: toNumber(e.currentTarget.value) },
+                            },
+                          },
+                        })
+                      );
+                    }
+                  },
+                },
+              ]}
             />
-            <span className="input-group-text">STA</span>
-            <input
-              value={pokemon.stats?.iv.staIV}
-              type="number"
-              min={minIv()}
-              max={maxIv()}
-              required
-              className="form-control"
-              placeholder="IV STA"
-              onInput={(e) => {
-                if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon(
-                    RaidSetting.create({
-                      ...showSettingPokemon,
-                      pokemon: {
-                        ...showSettingPokemon.pokemon,
-                        stats: {
-                          ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, staIV: toNumber(e.currentTarget.value) },
-                        },
-                      },
-                    })
-                  );
-                }
-              }}
+            <Input
+              prepend={[{ value: 'STA' }]}
+              controls={[
+                {
+                  value: pokemon.stats?.iv.staIV,
+                  type: 'number',
+                  min: minIv(),
+                  max: maxIv(),
+                  required: true,
+                  className: 'rounded-0',
+                  placeholder: 'IV STA',
+                  onInput: (e) => {
+                    if (showSettingPokemon.pokemon?.stats) {
+                      setShowSettingPokemon(
+                        RaidSetting.create({
+                          ...showSettingPokemon,
+                          pokemon: {
+                            ...showSettingPokemon.pokemon,
+                            stats: {
+                              ...showSettingPokemon.pokemon.stats,
+                              iv: { ...showSettingPokemon.pokemon.stats.iv, staIV: toNumber(e.currentTarget.value) },
+                            },
+                          },
+                        })
+                      );
+                    }
+                  },
+                },
+              ]}
             />
           </div>
         </form>
@@ -1358,19 +1380,20 @@ const RaidBattle = () => {
                 />
               </div>
               <div className="col-6 ps-0">
-                <div className="input-group">
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={timeAllow}
-                    placeholder="Battle Time"
-                    aria-label="Battle Time"
-                    min={0}
-                    disabled={!enableTimeAllow}
-                    onInput={(e) => setTimeAllow(toNumber(e.currentTarget.value))}
-                  />
-                  <span className="input-group-text">sec</span>
-                </div>
+                <Input
+                  append={[{ value: 'sec' }]}
+                  controls={[
+                    {
+                      value: timeAllow,
+                      type: 'number',
+                      placeholder: 'Battle Time',
+                      className: 'rounded-0',
+                      min: 0,
+                      disabled: !enableTimeAllow,
+                      onInput: (e) => setTimeAllow(toNumber(e.currentTarget.value)),
+                    },
+                  ]}
+                />
               </div>
             </div>
             {resultFMove && resultCMove && (

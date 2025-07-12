@@ -47,6 +47,7 @@ import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
+import InputSearch from '../../../components/Input/InputSearch';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -688,13 +689,12 @@ const Leagues = () => {
       </div>
       <Accordion alwaysOpen>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
 
-      <div className="w-25 input-group border-input mt-2" style={{ minWidth: 300 }}>
-        <span className="input-group-text">Find League</span>
-        <input
-          type="text"
-          className="form-control input-search"
+      <div className="w-50 mt-2" style={{ minWidth: 300 }}>
+        <InputSearch
+          prepend="Find League"
+          value={search}
+          onChange={(value) => setSearch(value)}
           placeholder="Enter League Name"
-          defaultValue={search}
           onKeyUp={(e) => setSearch(e.currentTarget.value)}
         />
       </div>

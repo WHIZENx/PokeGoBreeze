@@ -61,7 +61,7 @@ const InputSearch = (props: IInputSearchComponent) => {
                 value: props.append,
               },
             ]
-          : !props.isHideIcon && props.inputType === InputSearchType.Append
+          : !props.isHideIcon && props.inputType !== InputSearchType.Prepend
           ? [iconSearch()]
           : undefined
       }

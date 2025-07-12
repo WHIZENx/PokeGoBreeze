@@ -50,7 +50,9 @@ export enum VariantType {
   Standard = 'standard',
   Secondary = 'secondary',
   Outlined = 'outlined',
+  OutlinedSecondary = 'outlined-secondary',
   Primary = 'primary',
+  Contained = 'contained',
 }
 
 export enum CardType {
