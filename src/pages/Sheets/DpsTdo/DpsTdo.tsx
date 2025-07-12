@@ -80,6 +80,8 @@ import useOptionStore from '../../../composables/useOptions';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
+import InputSearch from '../../../components/Input/InputSearch';
+import Input from '../../../components/Input/Input';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -688,13 +690,11 @@ const DpsTdo = () => {
             <div>
               <div className="row w-100 m-0">
                 <div className="d-flex col-md-9 p-0">
-                  <span className="input-group-text">Search name or ID</span>
-                  <input
-                    type="text"
-                    className="form-control input-search"
+                  <InputSearch
+                    value={searchTerm}
+                    onKeyUp={(_, value) => setSearchTerm(value)}
                     placeholder="Enter Name or ID"
-                    defaultValue={searchTerm}
-                    onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
+                    prepend="Search name or ID"
                   />
                 </div>
                 <div className="d-flex col-md-3">
@@ -1025,7 +1025,7 @@ const DpsTdo = () => {
           <div className="col-xxl p-0 w-fit-content">
             <div className="head-types">Options</div>
             <form className="w-100" onSubmit={onCalculateTable.bind(this)}>
-              <div className="input-group">
+              <div className="input-control-group">
                 <FormControlLabel
                   sx={{ marginLeft: 1 }}
                   control={
@@ -1043,101 +1043,116 @@ const DpsTdo = () => {
                   }
                   label="Delay"
                 />
-                <span className="input-group-text">Fast Move Time</span>
-                <input
-                  type="number"
-                  className="form-control h-6"
-                  placeholder="Delay time (sec)"
-                  aria-label="Fast Move Time"
-                  min={0}
-                  disabled={!enableDelay}
-                  required={enableDelay}
-                  onInput={(e) =>
-                    setOptions(
-                      OptionOtherDPS.create({
-                        ...options,
-                        delay: Delay.create({
-                          fTime: toFloat(e.currentTarget.value),
-                          cTime: toNumber(options.delay?.cTime),
-                        }),
-                      })
-                    )
-                  }
+                <Input
+                  prepend={[{ value: 'Fast Move Time' }]}
+                  controls={[
+                    {
+                      type: 'number',
+                      placeholder: 'Delay time (sec)',
+                      min: 0,
+                      disabled: !enableDelay,
+                      required: enableDelay,
+                      className: 'rounded-0 h-6',
+                      onChange: (e) =>
+                        setOptions(
+                          OptionOtherDPS.create({
+                            ...options,
+                            delay: Delay.create({
+                              fTime: toFloat(e.currentTarget.value),
+                              cTime: toNumber(options.delay?.cTime),
+                            }),
+                          })
+                        ),
+                    },
+                  ]}
                 />
-                <span className="input-group-text">Charged Move Time</span>
-                <input
-                  type="number"
-                  className="form-control rounded-0 h-6"
-                  placeholder="Delay time (sec)"
-                  aria-label="Charged Move Time"
-                  min={0}
-                  disabled={!enableDelay}
-                  required={enableDelay}
-                  onInput={(e) =>
-                    setOptions(
-                      OptionOtherDPS.create({
-                        ...options,
-                        delay: Delay.create({
-                          fTime: toNumber(options.delay?.fTime),
-                          cTime: toFloat(e.currentTarget.value),
-                        }),
-                      })
-                    )
-                  }
+                <Input
+                  prepend={[{ value: 'Charged Move Time' }]}
+                  controls={[
+                    {
+                      type: 'number',
+                      placeholder: 'Delay time (sec)',
+                      min: 0,
+                      disabled: !enableDelay,
+                      required: enableDelay,
+                      className: 'rounded-0 h-6',
+                      onChange: (e) =>
+                        setOptions(
+                          OptionOtherDPS.create({
+                            ...options,
+                            delay: Delay.create({
+                              fTime: toNumber(options.delay?.fTime),
+                              cTime: toFloat(e.currentTarget.value),
+                            }),
+                          })
+                        ),
+                    },
+                  ]}
                 />
               </div>
               <div className="row m-0">
-                <Box className="col-5 input-group p-0">
-                  <span className="input-group-text">IV ATK</span>
-                  <input
-                    defaultValue={ivAtk}
-                    type="number"
-                    className="form-control w-6"
-                    placeholder={`${minIv()}-${maxIv()}`}
-                    min={minIv()}
-                    max={maxIv()}
-                    required
-                    onChange={(e) =>
-                      setFilters({
-                        ...filters,
-                        ivAtk: toNumber(e.target.value),
-                      })
-                    }
-                    name="ivAtk"
+                <Box className="col-5 input-control-group p-0">
+                  <Input
+                    prepend={[{ value: 'IV ATK' }]}
+                    controls={[
+                      {
+                        type: 'number',
+                        placeholder: `${minIv()}-${maxIv()}`,
+                        min: minIv(),
+                        max: maxIv(),
+                        className: 'w-6 rounded-0',
+                        required: true,
+                        name: 'ivAtk',
+                        defaultValue: ivAtk,
+                        onChange: (e) =>
+                          setFilters({
+                            ...filters,
+                            ivAtk: toNumber(e.target.value),
+                          }),
+                      },
+                    ]}
                   />
-                  <span className="input-group-text">IV DEF</span>
-                  <input
-                    defaultValue={ivDef}
-                    type="number"
-                    className="form-control w-6"
-                    placeholder={`${minIv()}-${maxIv()}`}
-                    min={minIv()}
-                    max={maxIv()}
-                    required
-                    onChange={(e) =>
-                      setFilters({
-                        ...filters,
-                        ivDef: toNumber(e.target.value),
-                      })
-                    }
-                    name="ivDef"
+                  <Input
+                    prepend={[{ value: 'IV DEF' }]}
+                    className=""
+                    controls={[
+                      {
+                        type: 'number',
+                        placeholder: `${minIv()}-${maxIv()}`,
+                        min: minIv(),
+                        max: maxIv(),
+                        className: 'w-6 rounded-0',
+                        required: true,
+                        name: 'ivDef',
+                        defaultValue: ivDef,
+                        onChange: (e) =>
+                          setFilters({
+                            ...filters,
+                            ivDef: toNumber(e.target.value),
+                          }),
+                      },
+                    ]}
                   />
-                  <span className="input-group-text">IV HP</span>
-                  <input
-                    defaultValue={ivHp}
-                    type="number"
-                    className="form-control w-6"
-                    placeholder={`${minIv()}-${maxIv()}`}
-                    min={minIv()}
-                    max={maxIv()}
-                    required
-                    onChange={(e) =>
-                      setFilters({
-                        ...filters,
-                        ivHp: toNumber(e.target.value),
-                      })
-                    }
-                    name="ivHp"
+                  <Input
+                    prepend={[{ value: 'IV DEF' }]}
+                    className=""
+                    controls={[
+                      {
+                        type: 'number',
+                        placeholder: `${minIv()}-${maxIv()}`,
+                        min: minIv(),
+                        max: maxIv(),
+                        className: 'w-6 rounded-0',
+                        required: true,
+                        name: 'ivDef',
+                        defaultValue: ivDef,
+                        onChange: (e) =>
+                          setFilters({
+                            ...filters,
+                            ivDef: toNumber(e.target.value),
+                          }),
+                      },
+                    ]}
                   />
                   <div className="input-group-prepend">
                     <label className="input-group-text">Levels</label>
@@ -1169,7 +1184,7 @@ const DpsTdo = () => {
                     min={1}
                     disabled={Boolean(dataTargetPokemon)}
                     required
-                    onInput={(e) =>
+                    onChange={(e) =>
                       setOptions(
                         OptionOtherDPS.create({
                           ...options,

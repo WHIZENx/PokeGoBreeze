@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { IInputComponent } from '../models/component.model';
 import { LabelType } from '../../enums/type.enum';
+import { isUndefined } from '../../utils/extension';
 
 const Input = (props: IInputComponent) => {
   return (
@@ -10,7 +11,7 @@ const Input = (props: IInputComponent) => {
       <InputGroup size={props.size} className={props.className}>
         {props.prepend?.map(
           (item, index) =>
-            (item.type === LabelType.Text && (
+            ((isUndefined(item.type) || item.type === LabelType.Text) && (
               <InputGroup.Text key={index} className={item.className} onClick={item.onClick}>
                 {item.value}
               </InputGroup.Text>
@@ -30,23 +31,17 @@ const Input = (props: IInputComponent) => {
         {props.controls?.map((control, index) => (
           <Form.Control
             key={index}
-            placeholder={control.placeholder}
+            {...control}
+            size={undefined}
             value={control.value as string | number | string | undefined}
-            onChange={control.onChange}
-            onKeyDown={control.onKeyDown}
-            onKeyUp={control.onKeyUp}
-            onFocus={control.onFocus}
-            onBlur={control.onBlur}
-            className={control.className}
             as={control.isTextarea ? 'textarea' : 'input'}
-            disabled={control.disabled}
-            readOnly={control.readOnly}
+            type={control.type || 'text'}
             autoComplete={control.autoComplete || 'off'}
           />
         ))}
         {props.append?.map(
           (item, index) =>
-            (item.type === LabelType.Text && (
+            ((isUndefined(item.type) || item.type === LabelType.Text) && (
               <InputGroup.Text key={index} className={item.className} onClick={item.onClick}>
                 {item.value}
               </InputGroup.Text>

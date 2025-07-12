@@ -1,5 +1,4 @@
 import CardPokemon from '../Card/CardPokemon';
-import CloseIcon from '@mui/icons-material/Close';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -13,6 +12,7 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isUndefined } fr
 import { IncludeMode } from '../../utils/enums/string.enum';
 import { SelectPosition } from './enums/select-type.enum';
 import usePokemon from '../../composables/usePokemon';
+import InputSearch from '../Input/InputSearch';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
@@ -122,23 +122,19 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   const inputPos = () => (
     <div className="d-flex align-items-center">
-      {pokemonIcon && (
-        <span onClick={() => removePokemon()} className="remove-pokemon-select">
-          <CloseIcon sx={{ color: 'red' }} />
-        </span>
-      )}
-      <input
-        className="input-pokemon-select form-control shadow-none"
-        onClick={() => setShowPokemon(true)}
-        onBlur={() => setShowPokemon(false)}
+      <InputSearch
         value={search}
-        type="text"
-        onInput={(e) => setSearch(e.currentTarget.value)}
+        onChange={(value) => setSearch(value)}
         placeholder="Enter Name or ID"
+        className="input-pokemon-select shadow-none"
+        onFocus={() => setShowPokemon(true)}
+        onBlur={() => setShowPokemon(false)}
         style={{
           background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
           paddingLeft: pokemonIcon ? 56 : '',
         }}
+        onRemove={() => removePokemon()}
+        isShowRemove={!!pokemonIcon}
       />
     </div>
   );

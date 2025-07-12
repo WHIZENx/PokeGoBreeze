@@ -9,3 +9,14 @@
   opacity: 0.4;
   z-index: 2;
 }
+
+.input-control-group {
+  display: flex;
+  width: 100%;
+}
+
+@media (width < 768px) {
+  .input-control-group {
+    flex-wrap: wrap;
+  }
+}

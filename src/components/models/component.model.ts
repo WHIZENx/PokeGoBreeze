@@ -242,7 +242,6 @@ export interface IDynamicInputCPComponent {
 
 interface IFormControlProps {
   isTextarea?: boolean;
-  size: number;
 }
 
 interface ILabelControl {
@@ -273,10 +272,12 @@ export interface IInputSearchComponent {
   onFocus?: () => void;
   onBlur?: () => void;
   className?: string;
-  size?: number;
   onSearch?: () => void;
+  onRemove?: () => void;
   isHideIcon?: boolean;
+  isShowRemove?: boolean;
   prepend?: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 export interface ISelectTierComponent {

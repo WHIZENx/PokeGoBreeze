@@ -12,6 +12,7 @@ import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
+import InputSearch from '../Input/InputSearch';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -140,13 +141,7 @@ const Find = (props: IFindComponent) => {
       }}
     >
       <div className="btn-group-search">
-        <input
-          type="text"
-          className="form-control input-search"
-          placeholder="Enter Name or ID"
-          defaultValue={searchTerm}
-          onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
-        />
+        <InputSearch value={searchTerm} onKeyUp={(_, value) => setSearchTerm(value)} placeholder="Enter Name or ID" />
       </div>
       <div className="result tools" ref={resultRef} onScroll={listenScrollEvent.bind(this)}>
         <Fragment>
