@@ -37,6 +37,7 @@ import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import { Action } from 'history';
 import { useSearch } from '../../../composables/useSearch';
+import { Button } from 'react-bootstrap';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
@@ -156,10 +157,10 @@ const FormComponent = (props: IFormInfoComponent) => {
               {props.formList.map((value, index) => (
                 <Fragment key={index}>
                   {value.map((value, index) => (
-                    <button
+                    <Button
                       key={index}
                       className={combineClasses(
-                        'btn btn-form',
+                        'btn-form',
                         value.form.id === searchingMainForm?.form?.id ? 'form-selected' : ''
                       )}
                       onClick={() =>
@@ -199,7 +200,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                         )}
                         {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
                       </div>
-                    </button>
+                    </Button>
                   ))}
                 </Fragment>
               ))}

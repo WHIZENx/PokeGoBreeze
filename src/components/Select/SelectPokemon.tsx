@@ -12,7 +12,7 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isUndefined } fr
 import { IncludeMode } from '../../utils/enums/string.enum';
 import { SelectPosition } from './enums/select-type.enum';
 import usePokemon from '../../composables/usePokemon';
-import InputSearch from '../Input/InputSearch';
+import InputMuiSearch from '../Input/InputMuiSearch';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
@@ -121,18 +121,14 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   );
 
   const inputPos = () => (
-    <div className="d-flex align-items-center">
-      <InputSearch
+    <div className="input-control-group">
+      <InputMuiSearch
         value={search}
         onChange={(value) => setSearch(value)}
         placeholder="Enter Name or ID"
-        className="input-pokemon-select shadow-none"
         onFocus={() => setShowPokemon(true)}
         onBlur={() => setShowPokemon(false)}
-        style={{
-          background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
-          paddingLeft: pokemonIcon ? 56 : '',
-        }}
+        customPrepend={pokemonIcon ? <img width={40} height={40} alt="Pokémon Image" src={pokemonIcon} /> : undefined}
         onRemove={() => removePokemon()}
         isShowRemove={!!pokemonIcon}
       />

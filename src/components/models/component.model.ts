@@ -39,7 +39,7 @@ import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../utils/models/util.model';
-import { PaletteMode } from '@mui/material';
+import { BaseTextFieldProps, PaletteMode } from '@mui/material';
 import { TableProps, TableStyles } from 'react-data-table-component';
 import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
 import { SelectPosition } from '../Select/enums/select-type.enum';
@@ -209,7 +209,8 @@ export interface IGenderComponent {
 }
 
 export interface IMenuItem {
-  label: string | React.ReactNode;
+  label: string | number | React.ReactNode;
+  value?: string | number;
   onClick?: () => void;
   disabled?: boolean;
   isClose?: boolean;
@@ -280,6 +281,29 @@ export interface IInputSearchComponent {
   append?: React.ReactNode;
   style?: React.CSSProperties;
   inputType?: InputSearchType;
+}
+
+export interface IInputMuiComponent extends BaseTextFieldProps {
+  onChange?: (value: string) => void;
+  labelPrepend?: string;
+  width?: number | string;
+  menuItems?: IMenuItem[];
+}
+
+export interface IInputMuiSearchComponent extends IInputMuiComponent {
+  value?: string;
+  onChange?: (value: string) => void;
+  onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  onSearch?: () => void;
+  onRemove?: () => void;
+  isHideIcon?: boolean;
+  isShowRemove?: boolean;
+  inputType?: InputSearchType;
+  maxHeight?: number | string;
+  customPrepend?: React.ReactNode;
+  customAppend?: React.ReactNode;
 }
 
 export interface ISelectTierComponent {

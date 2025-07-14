@@ -1,7 +1,7 @@
 import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch } from '@mui/material';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { FormGroup } from 'react-bootstrap';
+import { Button, FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
@@ -382,9 +382,9 @@ const Damage = () => {
                       </Select>
                     </FormControl>
                   </Box>
-                  <button type="submit" className="btn btn-primary mt-2">
+                  <Button variant={VariantType.Primary} type="submit" className="mt-2">
                     <img alt="ATK" width={20} height={20} src={ATK_LOGO} /> Battle
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>

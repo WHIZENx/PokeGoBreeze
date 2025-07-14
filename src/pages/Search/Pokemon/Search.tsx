@@ -17,7 +17,8 @@ import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
-import InputSearch from '../../../components/Input/InputSearch';
+import InputMuiSearch from '../../../components/Input/InputMuiSearch';
+import { MenuItem, MenuList } from '@mui/material';
 
 const Search = () => {
   useTitle({
@@ -50,6 +51,7 @@ const Search = () => {
   const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
 
   const resultsContainerRef = useRef<HTMLDivElement>(null);
+  const scrollDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const result = mappingPokemonName();
@@ -77,10 +79,19 @@ const Search = () => {
   }, [searchOption.id]);
 
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = ele.currentTarget.scrollTop;
-    const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
-      setStartIndex(startIndex + 1);
+    const scrollingElement = ele.currentTarget;
+    const scrollTop = toNumber(scrollingElement.scrollTop);
+    const fullHeight = toNumber(scrollingElement.offsetHeight);
+    const scrollHeight = toNumber(scrollingElement.scrollHeight);
+
+    if (scrollTop + fullHeight >= scrollHeight * 0.8) {
+      if (scrollDebounceRef.current) {
+        clearTimeout(scrollDebounceRef.current);
+      }
+
+      scrollDebounceRef.current = setTimeout(() => {
+        setStartIndex((prevIndex) => prevIndex + 1);
+      }, 100);
     }
   };
 
@@ -98,7 +109,7 @@ const Search = () => {
     }
   };
 
-  const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>, search: string) => {
+  const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const currentPokemon = getPokemonById(selectId);
     if (currentPokemon) {
       const prev = getPokemonById(currentPokemon.id - 1);
@@ -116,8 +127,6 @@ const Search = () => {
         event.preventDefault();
         setSelectId(next.id);
         scrollToSelectedItem(next.id);
-      } else {
-        setSearchTerm(search);
       }
     }
   };
@@ -162,54 +171,61 @@ const Search = () => {
     });
   };
 
+  const pokemonListFilterSlice = pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex);
+
   return (
     <Fragment>
       <div className="container mt-2">
         <h1 id="main" className="text-center">
           Pokémon Info Search
         </h1>
-        <InputSearch
+        <InputMuiSearch
+          id="input-search-pokemon"
           value={searchTerm}
           onChange={(value) => setSearchTerm(value)}
           placeholder="Enter Name or ID"
-          onKeyUp={(e, value) => onChangeSelect(e, value)}
+          onKeyUp={(e) => onChangeSelect(e)}
           onFocus={() => setShowResult(true)}
           onBlur={() => setShowResult(false)}
+          labelPrepend="Search"
+          className="p-0"
         />
         <div
           ref={resultsContainerRef}
           className={combineClasses('result', showResult ? 'd-block' : 'd-none')}
           onScroll={listenScrollEvent.bind(this)}
         >
-          <Fragment>
-            {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
-              <div
-                id={`pokemon-card-${value.id}`}
-                className={combineClasses(
-                  'container card-pokemon',
-                  value.id === searchOption.id ? 'highlight-select-pokemon' : '',
-                  value.id === selectId ? 'current-select-pokemon' : ''
-                )}
-                key={index}
-                onMouseDown={() => getInfoPoke(value)}
-                onMouseOver={() => setSelectId(value.id)}
-              >
-                <b>#{value.id}</b>
-                <img
-                  width={36}
-                  height={36}
-                  className="img-search"
-                  alt="Pokémon Image"
-                  src={value.sprites}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = APIService.getPokeSprite();
-                  }}
-                />
-                {value.name}
-              </div>
-            ))}
-          </Fragment>
+          {isNotEmpty(pokemonListFilterSlice) && (
+            <MenuList>
+              {pokemonListFilterSlice.map((value, index) => (
+                <MenuItem
+                  id={`pokemon-card-${value.id}`}
+                  className={combineClasses(
+                    'container card-pokemon',
+                    value.id === searchOption.id ? 'highlight-select-pokemon' : '',
+                    value.id === selectId ? 'current-select-pokemon' : ''
+                  )}
+                  key={index}
+                  onMouseDown={() => getInfoPoke(value)}
+                  onMouseOver={() => setSelectId(value.id)}
+                >
+                  <b>#{value.id}</b>
+                  <img
+                    width={36}
+                    height={36}
+                    className="img-search"
+                    alt="Pokémon Image"
+                    src={value.sprites}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = APIService.getPokeSprite();
+                    }}
+                  />
+                  {value.name}
+                </MenuItem>
+              ))}
+            </MenuList>
+          )}
         </div>
         <Pokemon
           searchOption={searchOption}

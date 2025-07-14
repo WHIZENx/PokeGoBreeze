@@ -10,7 +10,7 @@ import { toNumber } from '../../utils/extension';
 import { PokemonClass } from '../../enums/type.enum';
 import usePokemon from '../../composables/usePokemon';
 import StatsTable from '../Table/Stats/StatsTable';
-import SelectTier from '../Select/SelectTier';
+import SelectTierMui from '../Select/SelectTierMui';
 
 const Raid = (props: IRaidComponent) => {
   const { findPokemonById } = usePokemon();
@@ -63,7 +63,7 @@ const Raid = (props: IRaidComponent) => {
   return (
     <Fragment>
       <div className="d-flex justify-content-center">
-        <SelectTier
+        <SelectTierMui
           className="w-50"
           tier={tier}
           setTier={setTier}
