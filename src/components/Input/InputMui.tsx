@@ -8,10 +8,10 @@ const InputMui = (props: IInputMuiComponent) => {
     props.onChange?.(event.target.value);
   };
 
-  const { labelPrepend, menuItems, ...textFieldProps } = props;
+  const { labelPrepend, labelAppend, menuItems, ...textFieldProps } = props;
 
   return (
-    <div className={combineClasses('d-flex', props.fullWidth ? 'w-100' : '')}>
+    <div className={combineClasses('d-flex', props.fullWidth ? 'w-100' : '', props.className)}>
       {labelPrepend && <div className="input-group-text">{labelPrepend}</div>}
       <TextField
         {...textFieldProps}
@@ -24,6 +24,7 @@ const InputMui = (props: IInputMuiComponent) => {
           },
           ...props.sx,
         }}
+        className={props.inputProps?.className}
         autoComplete="off"
         select={isNotEmpty(menuItems) && props.select}
       >
@@ -33,6 +34,7 @@ const InputMui = (props: IInputMuiComponent) => {
           </MenuItem>
         ))}
       </TextField>
+      {labelAppend && <div className="input-group-text">{labelAppend}</div>}
     </div>
   );
 };

@@ -39,7 +39,7 @@ import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../utils/models/util.model';
-import { BaseTextFieldProps, PaletteMode } from '@mui/material';
+import { BaseTextFieldProps, FormControlLabelProps, PaletteMode } from '@mui/material';
 import { TableProps, TableStyles } from 'react-data-table-component';
 import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
 import { SelectPosition } from '../Select/enums/select-type.enum';
@@ -286,6 +286,7 @@ export interface IInputSearchComponent {
 export interface IInputMuiComponent extends BaseTextFieldProps {
   onChange?: (value: string) => void;
   labelPrepend?: string;
+  labelAppend?: string;
   width?: number | string;
   menuItems?: IMenuItem[];
 }
@@ -304,6 +305,9 @@ export interface IInputMuiSearchComponent extends IInputMuiComponent {
   maxHeight?: number | string;
   customPrepend?: React.ReactNode;
   customAppend?: React.ReactNode;
+  customIconStart?: React.ReactNode;
+  customIconEnd?: React.ReactNode;
+  isNoWrap?: boolean;
 }
 
 export interface ISelectTierComponent {
@@ -314,6 +318,13 @@ export interface ISelectTierComponent {
   setCurrTier?: (tier: number) => void;
   setTier?: (tier: number) => void;
   clearData?: () => void;
+}
+
+export interface FormControlMuiComponent extends FormControlLabelProps {
+  boxClassName?: string;
+  labelPrepend?: string;
+  children?: React.ReactNode;
+  width?: number | string;
 }
 
 export interface ISelectTypeComponent<T> {

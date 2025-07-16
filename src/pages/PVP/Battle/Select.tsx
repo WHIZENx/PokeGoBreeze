@@ -15,8 +15,7 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
-import InputSearch from '../../../components/Input/InputSearch';
-import { InputSearchType } from '../../../components/Input/enums/input-type.enum';
+import InputMuiSearch from '../../../components/Input/InputMuiSearch';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const { findMoveByName } = useCombats();
@@ -174,35 +173,48 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     <Fragment>
       <h5>Pokémon</h5>
       <div className="position-relative">
-        {(score > 0 || isNotEmpty(pokemonIcon) || pokemon) && (
-          <span className="pokemon-select-right">
-            {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
-              <span
-                className={combineClasses(
-                  'type-icon-small ic me-1',
-                  `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
-                )}
-              >
-                {getKeyWithData(MoveType, MoveType.Shadow)}
-              </span>
-            )}
-            {score > 0 && <span className="type-icon-small ic elite-ic me-1">{score}</span>}
-          </span>
-        )}
-        <InputSearch
+        <InputMuiSearch
           value={search}
           onChange={(value) => setSearch(value)}
           placeholder="Enter Name"
-          className="input-pokemon-select shadow-none"
           onFocus={() => setShow(true)}
           onBlur={() => setShow(false)}
-          style={{
-            background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
-            paddingLeft: pokemonIcon ? 56 : '',
-          }}
+          customPrepend={
+            pokemonIcon && (
+              <img
+                className="me-2"
+                width={40}
+                height={40}
+                alt="Pokémon Image"
+                src={pokemonIcon}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeIconSprite();
+                }}
+              />
+            )
+          }
           onRemove={() => removePokemon()}
           isShowRemove={!!pokemonIcon}
-          inputType={InputSearchType.Prepend}
+          customIconStart={
+            (score > 0 || isNotEmpty(pokemonIcon) || pokemon) && (
+              <>
+                {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
+                  <span
+                    className={combineClasses(
+                      'type-icon-small ic me-1 d-flex align-items-center h-3',
+                      `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
+                    )}
+                  >
+                    {getKeyWithData(MoveType, MoveType.Shadow)}
+                  </span>
+                )}
+                {score > 0 && (
+                  <span className="type-icon-small ic elite-ic me-1 d-flex align-items-center h-3">{score}</span>
+                )}
+              </>
+            )
+          }
         />
       </div>
       {isNotEmpty(props.data) && (

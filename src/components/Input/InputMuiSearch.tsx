@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import { IInputMuiSearchComponent } from '../models/component.model';
-import { IconButton, InputAdornment, MenuItem, TextField } from '@mui/material';
+import { Box, IconButton, InputAdornment, MenuItem, TextField } from '@mui/material';
 import { InputSearchType } from './enums/input-type.enum';
-import { isNotEmpty } from '../../utils/extension';
+import { combineClasses, isNotEmpty } from '../../utils/extension';
 
 const InputMuiSearch = (props: IInputMuiSearchComponent) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,6 +58,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
 
   const iconSearch = () => (
     <InputAdornment position={position.current}>
+      {customIconStart && customIconStart}
       <IconButton
         aria-label={searchTerm || isShowRemove ? 'clear' : 'search'}
         onClick={searchTerm || isShowRemove ? handleClear : props.onSearch}
@@ -65,6 +66,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
       >
         {searchTerm || isShowRemove ? <CloseIcon color="error" /> : <SearchIcon />}
       </IconButton>
+      {customIconEnd && customIconEnd}
     </InputAdornment>
   );
 
@@ -75,14 +77,17 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
     maxHeight,
     customAppend,
     customPrepend,
+    customIconStart,
+    customIconEnd,
     isShowRemove,
     onRemove,
     sx,
+    isNoWrap,
     ...textFieldProps
   } = props;
 
   return (
-    <div className="input-control-group">
+    <Box className={combineClasses('input-control-group', isNoWrap ? 'flex-nowrap' : '')}>
       {labelPrepend && <div className="input-group-text">{labelPrepend}</div>}
       <TextField
         {...textFieldProps}
@@ -127,7 +132,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
           ...sx,
         }}
         fullWidth
-        autoComplete="on"
+        autoComplete="off"
         select={isNotEmpty(menuItems) && props.select}
       >
         {menuItems?.map((item, index) => (
@@ -136,7 +141,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
           </MenuItem>
         ))}
       </TextField>
-    </div>
+    </Box>
   );
 };
 

@@ -41,7 +41,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useSnackbar } from 'notistack';
-import { Modal, Button, Form, OverlayTrigger } from 'react-bootstrap';
+import { Modal, Button, OverlayTrigger } from 'react-bootstrap';
 
 import update from 'immutability-helper';
 import {
@@ -100,7 +100,8 @@ import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
 import useSearch from '../../../composables/useSearch';
 import { levelList } from '../../../utils/compute';
-import Input from '../../../components/Input/Input';
+import InputMui from '../../../components/Input/InputMui';
+import FormControlMui from '../../../components/Form/FormControlMui';
 
 const RaidBattle = () => {
   useTitle({
@@ -724,78 +725,67 @@ const RaidBattle = () => {
   const modalFormFilters = () => (
     <form>
       <label className="form-label">Pokémon level</label>
-      <div className="input-group mb-3">
-        <span className="input-group-text">Level</span>
-        <Form.Select
-          value={filters.selected.level}
-          className="form-control"
-          onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: toFloat(e.target.value) } })}
-        >
-          {levelList.map((value, index) => (
-            <option key={index} value={value}>
-              {value}
-            </option>
-          ))}
-        </Form.Select>
-      </div>
+      <InputMui
+        labelPrepend="Level"
+        className="mb-3"
+        value={filters.selected.level}
+        fullWidth
+        select
+        menuItems={levelList.map((value) => ({ value, label: value }))}
+        onChange={(value) => setFilters({ ...filters, selected: { ...selected, level: toFloat(value) } })}
+      />
       <label className="form-label">Pokémon IV</label>
       <div className="input-control-group mb-3">
-        <Input
-          prepend={[{ value: 'ATK' }]}
-          controls={[
-            {
-              value: filters.selected.iv.atkIV,
-              type: 'number',
-              min: minIv(),
-              max: maxIv(),
-              placeholder: 'IV ATK',
-              className: 'rounded-0',
-              required: true,
-              onInput: (e) =>
-                setFilters({
-                  ...filters,
-                  selected: { ...selected, iv: { ...selected.iv, atkIV: toNumber(e.currentTarget.value) } },
-                }),
-            },
-          ]}
+        <InputMui
+          labelPrepend="ATK"
+          value={filters.selected.iv.atkIV}
+          placeholder="IV ATK"
+          fullWidth
+          inputProps={{
+            type: 'number',
+            min: minIv(),
+            max: maxIv(),
+            required: true,
+            onInput: (e) =>
+              setFilters({
+                ...filters,
+                selected: { ...selected, iv: { ...selected.iv, atkIV: toNumber(e.currentTarget.value) } },
+              }),
+          }}
         />
-        <Input
-          prepend={[{ value: 'DEF' }]}
-          controls={[
-            {
-              value: filters.selected.iv.defIV,
-              type: 'number',
-              min: minIv(),
-              max: maxIv(),
-              placeholder: 'IV DEF',
-              className: 'rounded-0',
-              required: true,
-              onInput: (e) =>
-                setFilters({
-                  ...filters,
-                  selected: { ...selected, iv: { ...selected.iv, defIV: toNumber(e.currentTarget.value) } },
-                }),
-            },
-          ]}
+        <InputMui
+          labelPrepend="DEF"
+          value={filters.selected.iv.defIV}
+          placeholder="IV DEF"
+          fullWidth
+          inputProps={{
+            type: 'number',
+            min: minIv(),
+            max: maxIv(),
+            required: true,
+            onInput: (e) =>
+              setFilters({
+                ...filters,
+                selected: { ...selected, iv: { ...selected.iv, defIV: toNumber(e.currentTarget.value) } },
+              }),
+          }}
         />
-        <Input
-          prepend={[{ value: 'STA' }]}
-          controls={[
-            {
-              value: filters.selected.iv.staIV,
-              type: 'number',
-              min: minIv(),
-              max: maxIv(),
-              placeholder: 'IV STA',
-              className: 'rounded-0',
-              required: true,
-              onInput: (e) =>
-                setFilters({
-                  ...filters,
-                  selected: { ...selected, iv: { ...selected.iv, staIV: toNumber(e.currentTarget.value) } },
-                }),
-            },
-          ]}
+        <InputMui
+          labelPrepend="STA"
+          value={filters.selected.iv.staIV}
+          placeholder="IV STA"
+          fullWidth
+          inputProps={{
+            type: 'number',
+            min: minIv(),
+            max: maxIv(),
+            required: true,
+            onInput: (e) =>
+              setFilters({
+                ...filters,
+                selected: { ...selected, iv: { ...selected.iv, staIV: toNumber(e.currentTarget.value) } },
+              }),
+          }}
         />
       </div>
       <div className="input-group mb-3 border-input">
@@ -851,29 +841,30 @@ const RaidBattle = () => {
           }
         />
       </div>
-      <label className="form-label">Sorting</label>
-      <div className="input-group mb-3">
-        <span className="input-group-text">Sort By</span>
-        <Form.Select
-          value={filters.selected.sortBy}
-          className="form-control w-pct-40"
-          onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
-        >
-          <option value={SortType.DPS}>Damage Per Second</option>
-          <option value={SortType.TDO}>Total Damage Output</option>
-          <option value={SortType.TTK}>Time To Kill</option>
-          <option value={SortType.TANK}>Tankiness</option>
-        </Form.Select>
-        <span className="input-group-text">Priority</span>
-        <Form.Select
-          className="form-control w-pct-15"
-          value={filters.selected.sorted}
-          onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
-        >
-          <option value={SortDirectionType.ASC}>Best</option>
-          <option value={SortDirectionType.DESC}>Worst</option>
-        </Form.Select>
-      </div>
+      <InputMui
+        labelPrepend="Sorting"
+        value={filters.selected.sortBy}
+        fullWidth
+        select
+        menuItems={[
+          { value: SortType.DPS, label: 'Damage Per Second' },
+          { value: SortType.TDO, label: 'Total Damage Output' },
+          { value: SortType.TTK, label: 'Time To Kill' },
+          { value: SortType.TANK, label: 'Tankiness' },
+        ]}
+        onChange={(value) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(value) } })}
+      />
+      <InputMui
+        labelPrepend="Priority"
+        value={filters.selected.sorted}
+        fullWidth
+        select
+        menuItems={[
+          { value: SortDirectionType.ASC, label: 'Best' },
+          { value: SortDirectionType.DESC, label: 'Worst' },
+        ]}
+        onChange={(value) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(value) } })}
+      />
     </form>
   );
 
@@ -903,7 +894,7 @@ const RaidBattle = () => {
           </div>
         </div>
         <form className="mt-2">
-          <FormControlLabel
+          <FormControlMui
             control={
               <Checkbox
                 checked={showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow}
@@ -954,123 +945,112 @@ const RaidBattle = () => {
           <div>
             <label className="form-label">Pokémon level</label>
           </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text">Level</span>
-            <Form.Select
-              value={pokemon.stats?.level}
-              className="form-control"
-              onChange={(e) => {
-                if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon(
-                    RaidSetting.create({
-                      ...showSettingPokemon,
-                      pokemon: {
-                        ...showSettingPokemon.pokemon,
-                        stats: { ...showSettingPokemon.pokemon.stats, level: toFloat(e.target.value) },
-                      },
-                    })
-                  );
-                }
-              }}
-            >
-              {levelList.map((value, index) => (
-                <option key={index} value={value}>
-                  {value}
-                </option>
-              ))}
-            </Form.Select>
-          </div>
+          <InputMui
+            labelPrepend="Level"
+            className="mb-3"
+            value={pokemon.stats?.level}
+            fullWidth
+            select
+            menuItems={levelList.map((value) => ({ value, label: value }))}
+            onChange={(value) => {
+              if (showSettingPokemon.pokemon?.stats) {
+                setShowSettingPokemon(
+                  RaidSetting.create({
+                    ...showSettingPokemon,
+                    pokemon: {
+                      ...showSettingPokemon.pokemon,
+                      stats: { ...showSettingPokemon.pokemon.stats, level: toFloat(value) },
+                    },
+                  })
+                );
+              }
+            }}
+          />
           <label className="form-label">Pokémon IV</label>
           <div className="input-control-group mb-3">
-            <Input
-              prepend={[{ value: 'ATK' }]}
-              controls={[
-                {
-                  value: pokemon.stats?.iv.atkIV,
-                  type: 'number',
-                  min: minIv(),
-                  max: maxIv(),
-                  required: true,
-                  className: 'rounded-0',
-                  placeholder: 'IV ATK',
-                  onInput: (e) => {
-                    if (showSettingPokemon.pokemon?.stats) {
-                      setShowSettingPokemon(
-                        RaidSetting.create({
-                          ...showSettingPokemon,
-                          pokemon: {
-                            ...showSettingPokemon.pokemon,
-                            stats: {
-                              ...showSettingPokemon.pokemon.stats,
-                              iv: { ...showSettingPokemon.pokemon.stats.iv, atkIV: toNumber(e.currentTarget.value) },
-                            },
+            <InputMui
+              labelPrepend="ATK"
+              value={pokemon.stats?.iv.atkIV}
+              placeholder="IV ATK"
+              fullWidth
+              inputProps={{
+                type: 'number',
+                min: minIv(),
+                max: maxIv(),
+                required: true,
+                onInput: (e) => {
+                  if (showSettingPokemon.pokemon?.stats) {
+                    setShowSettingPokemon(
+                      RaidSetting.create({
+                        ...showSettingPokemon,
+                        pokemon: {
+                          ...showSettingPokemon.pokemon,
+                          stats: {
+                            ...showSettingPokemon.pokemon.stats,
+                            iv: { ...showSettingPokemon.pokemon.stats.iv, atkIV: toNumber(e.currentTarget.value) },
                           },
-                        })
-                      );
-                    }
-                  },
+                        },
+                      })
+                    );
+                  }
                 },
-              ]}
+              }}
             />
-            <Input
-              prepend={[{ value: 'DEF' }]}
-              controls={[
-                {
-                  value: pokemon.stats?.iv.defIV,
-                  type: 'number',
-                  min: minIv(),
-                  max: maxIv(),
-                  required: true,
-                  className: 'rounded-0',
-                  placeholder: 'IV DEF',
-                  onInput: (e) => {
-                    if (showSettingPokemon.pokemon?.stats) {
-                      setShowSettingPokemon(
-                        RaidSetting.create({
-                          ...showSettingPokemon,
-                          pokemon: {
-                            ...showSettingPokemon.pokemon,
-                            stats: {
-                              ...showSettingPokemon.pokemon.stats,
-                              iv: { ...showSettingPokemon.pokemon.stats.iv, defIV: toNumber(e.currentTarget.value) },
-                            },
+            <InputMui
+              labelPrepend="DEF"
+              value={pokemon.stats?.iv.defIV}
+              placeholder="IV DEF"
+              fullWidth
+              inputProps={{
+                type: 'number',
+                min: minIv(),
+                max: maxIv(),
+                required: true,
+                onInput: (e) => {
+                  if (showSettingPokemon.pokemon?.stats) {
+                    setShowSettingPokemon(
+                      RaidSetting.create({
+                        ...showSettingPokemon,
+                        pokemon: {
+                          ...showSettingPokemon.pokemon,
+                          stats: {
+                            ...showSettingPokemon.pokemon.stats,
+                            iv: { ...showSettingPokemon.pokemon.stats.iv, defIV: toNumber(e.currentTarget.value) },
                           },
-                        })
-                      );
-                    }
-                  },
+                        },
+                      })
+                    );
+                  }
                 },
-              ]}
+              }}
             />
-            <Input
-              prepend={[{ value: 'STA' }]}
-              controls={[
-                {
-                  value: pokemon.stats?.iv.staIV,
-                  type: 'number',
-                  min: minIv(),
-                  max: maxIv(),
-                  required: true,
-                  className: 'rounded-0',
-                  placeholder: 'IV STA',
-                  onInput: (e) => {
-                    if (showSettingPokemon.pokemon?.stats) {
-                      setShowSettingPokemon(
-                        RaidSetting.create({
-                          ...showSettingPokemon,
-                          pokemon: {
-                            ...showSettingPokemon.pokemon,
-                            stats: {
-                              ...showSettingPokemon.pokemon.stats,
-                              iv: { ...showSettingPokemon.pokemon.stats.iv, staIV: toNumber(e.currentTarget.value) },
-                            },
+            <InputMui
+              labelPrepend="STA"
+              value={pokemon.stats?.iv.staIV}
+              placeholder="IV STA"
+              fullWidth
+              inputProps={{
+                type: 'number',
+                min: minIv(),
+                max: maxIv(),
+                required: true,
+                onInput: (e) => {
+                  if (showSettingPokemon.pokemon?.stats) {
+                    setShowSettingPokemon(
+                      RaidSetting.create({
+                        ...showSettingPokemon,
+                        pokemon: {
+                          ...showSettingPokemon.pokemon,
+                          stats: {
+                            ...showSettingPokemon.pokemon.stats,
+                            iv: { ...showSettingPokemon.pokemon.stats.iv, staIV: toNumber(e.currentTarget.value) },
                           },
-                        })
-                      );
-                    }
-                  },
+                        },
+                      })
+                    );
+                  }
                 },
-              ]}
+              }}
             />
           </div>
         </form>
@@ -1380,19 +1360,16 @@ const RaidBattle = () => {
                 />
               </div>
               <div className="col-6 ps-0">
-                <Input
-                  append={[{ value: 'sec' }]}
-                  controls={[
-                    {
-                      value: timeAllow,
-                      type: 'number',
-                      placeholder: 'Battle Time',
-                      className: 'rounded-0',
-                      min: 0,
-                      disabled: !enableTimeAllow,
-                      onInput: (e) => setTimeAllow(toNumber(e.currentTarget.value)),
-                    },
-                  ]}
+                <InputMui
+                  labelAppend="sec"
+                  placeholder="Battle Time"
+                  value={timeAllow}
+                  inputProps={{
+                    type: 'number',
+                    min: 0,
+                    disabled: !enableTimeAllow,
+                    onInput: (e) => setTimeAllow(toNumber(e.currentTarget.value)),
+                  }}
                 />
               </div>
             </div>

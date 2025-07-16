@@ -25,7 +25,7 @@ import { ColumnType, VariantType } from '../../../enums/type.enum';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
-import Input from '../../../components/Input/Input';
+import InputMui from '../../../components/Input/InputMui';
 
 interface IFindCP {
   level: number;
@@ -389,21 +389,18 @@ const FindTable = () => {
           Find IV
         </h1>
         <form className="d-flex justify-content-center mt-2" onSubmit={onFindStats.bind(this)}>
-          <Box className="w-50" sx={{ minWidth: 350 }}>
-            <Input
-              prepend={[{ value: 'CP' }]}
-              className="mb-3"
-              controls={[
-                {
-                  value: searchCP,
-                  type: 'number',
-                  min: minCp(),
-                  placeholder: 'Enter CP',
-                  className: 'rounded-0',
-                  onChange: (e) => setSearchCP(e.currentTarget.value),
-                  required: true,
-                },
-              ]}
+          <Box className="w-50">
+            <InputMui
+              labelPrepend="CP"
+              className="mb-3 justify-content-center"
+              placeholder="Enter CP"
+              value={searchCP}
+              onChange={(value) => setSearchCP(value)}
+              inputProps={{
+                type: 'number',
+                min: minCp(),
+                required: true,
+              }}
             />
             <div className="btn-search d-flex justify-content-center text-center">
               <button type="submit" className="btn btn-primary">

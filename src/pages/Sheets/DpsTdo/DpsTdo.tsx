@@ -26,16 +26,15 @@ import {
 import APIService from '../../../services/api.service';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
-import { Button, Checkbox, FormControlLabel, Switch } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, MenuItem, Select, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import './DpsTdo.scss';
-import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Select/SelectPokemon';
 import SelectMove from '../../../components/Select/SelectMove';
 import { Action } from 'history';
-import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
+import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
@@ -82,6 +81,7 @@ import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
 import InputMuiSearch from '../../../components/Input/InputMuiSearch';
 import InputMui from '../../../components/Input/InputMui';
+import FormControlMui from '../../../components/Form/FormControlMui';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -695,6 +695,7 @@ const DpsTdo = () => {
                     onChange={(value) => setSearchTerm(value)}
                     placeholder="Enter Name or ID"
                     labelPrepend="Search name or ID"
+                    isNoWrap
                   />
                 </div>
                 <div className="d-flex col-md-3">
@@ -916,53 +917,53 @@ const DpsTdo = () => {
             <div className="input-group">
               <div className="row w-100 m-0">
                 <Box className="col-xxl-8 p-0">
-                  <div className="input-group">
-                    <span className="input-group-text">Filter best move sets</span>
-                    <FormControlLabel
-                      className="me-0 pe-3"
-                      control={
-                        <Switch
-                          checked={enableBest}
-                          onChange={(_, check) => setFilters({ ...filters, enableBest: check })}
-                        />
-                      }
-                      label="Best move set of"
-                    />
-                    <Form.Select
-                      className="form-control rounded-0"
+                  <FormControlMui
+                    width={130}
+                    labelPrepend="Filter best move sets"
+                    control={
+                      <Switch
+                        checked={enableBest}
+                        onChange={(_, check) => setFilters({ ...filters, enableBest: check })}
+                      />
+                    }
+                    label="Best move set of"
+                  >
+                    <Select
+                      size="small"
+                      className="rounded-0 h-5-375"
                       value={bestOf}
                       disabled={!enableBest}
                       onChange={(e) => setFilters({ ...filters, bestOf: toNumber(e.target.value) })}
+                      fullWidth
                     >
-                      <option value={BestOptionType.dps}>DPS</option>
-                      <option value={BestOptionType.tdo}>TDO</option>
-                      <option value={BestOptionType.multiDpsTdo}>DPS^3*TDO</option>
-                    </Form.Select>
-                  </div>
+                      <MenuItem value={BestOptionType.dps}>DPS</MenuItem>
+                      <MenuItem value={BestOptionType.tdo}>TDO</MenuItem>
+                      <MenuItem value={BestOptionType.multiDpsTdo}>DPS^3*TDO</MenuItem>
+                    </Select>
+                  </FormControlMui>
                 </Box>
                 <Box className="col-xxl-4">
-                  <div className="input-group">
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={releasedGO}
-                          onChange={(_, check) => setFilters({ ...filters, releasedGO: check })}
+                  <FormControlMui
+                    width={150}
+                    control={
+                      <Switch
+                        checked={releasedGO}
+                        onChange={(_, check) => setFilters({ ...filters, releasedGO: check })}
+                      />
+                    }
+                    label={
+                      <span className="d-flex align-items-center">
+                        Released in GO
+                        <img
+                          className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
+                          width={28}
+                          height={28}
+                          alt="Pokémon GO Icon"
+                          src={APIService.getPokemonGoIcon(iconData)}
                         />
-                      }
-                      label={
-                        <span className="d-flex align-items-center">
-                          Released in GO
-                          <img
-                            className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                            width={28}
-                            height={28}
-                            alt="Pokémon GO Icon"
-                            src={APIService.getPokemonGoIcon(iconData)}
-                          />
-                        </span>
-                      }
-                    />
-                  </div>
+                      </span>
+                    }
+                  />
                 </Box>
               </div>
             </div>
@@ -1202,23 +1203,23 @@ const DpsTdo = () => {
                     ]}
                     width={150}
                   />
-                  <Box className="w-100 px-3 d-flex align-items-center justify-content-start">
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onChange={(_, check) => {
-                            setOptions(
-                              OptionOtherDPS.create({
-                                ...options,
-                                isTrainerFriend: check,
-                                pokemonFriendLevel: 0,
-                              })
-                            );
-                          }}
-                        />
-                      }
-                      label="Friendship Level:"
-                    />
+                  <FormControlMui
+                    width={130}
+                    control={
+                      <Switch
+                        onChange={(_, check) => {
+                          setOptions(
+                            OptionOtherDPS.create({
+                              ...options,
+                              isTrainerFriend: check,
+                              pokemonFriendLevel: 0,
+                            })
+                          );
+                        }}
+                      />
+                    }
+                    label="Friendship Level:"
+                  >
                     <LevelRating
                       disabled={!isTrainerFriend}
                       onChange={(_, value) => {
@@ -1235,9 +1236,9 @@ const DpsTdo = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                  </Box>
+                  </FormControlMui>
                 </Box>
-                <Button type="submit" className="btn btn-primary w-100 rounded-0">
+                <Button variant={VariantType.Contained} type="submit" className="w-100 rounded-0">
                   Calculate
                 </Button>
               </div>

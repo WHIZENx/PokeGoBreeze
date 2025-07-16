@@ -13,13 +13,14 @@ import {
 } from '../../../utils/utils';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
-import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
+import { Accordion, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
 import TimelineVertical from './Timeline/TimelineVertical';
 
 import {
+  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -106,7 +107,7 @@ import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import { Params } from '../../../utils/constants';
 import useDevice from '../../../composables/useDevice';
-import Input from '../../../components/Input/Input';
+import InputMui from '../../../components/Input/InputMui';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -895,70 +896,66 @@ const Battle = () => {
             </b>
             <br />
             <form
+              className="mt-2"
               onSubmit={(e) => {
                 calculateStatPokemon(e, type, pokemon, setPokemon);
               }}
             >
-              <Input
-                prepend={[{ value: 'Level' }]}
-                className="mt-2"
-                controls={[
-                  {
-                    defaultValue: pokemon.pokemonData?.currentStats?.level,
-                    type: 'number',
-                    min: minLevel(),
-                    max: maxLevel(),
-                    step: stepLevel(),
-                    placeholder: 'Enter Level',
-                    className: 'rounded-0',
-                    id: `level${battleType}`,
-                  },
-                ]}
+              <InputMui
+                labelPrepend="Level"
+                defaultValue={pokemon.pokemonData?.currentStats?.level}
+                inputProps={{
+                  type: 'number',
+                  min: minLevel(),
+                  max: maxLevel(),
+                  step: stepLevel(),
+                  required: true,
+                }}
+                placeholder="Enter Level"
+                id={`level${battleType}`}
+                fullWidth
               />
-              <Input
-                prepend={[{ value: 'Attack IV' }]}
-                controls={[
-                  {
-                    defaultValue: pokemon.pokemonData?.currentStats?.IV?.atkIV,
-                    type: 'number',
-                    min: minIv(),
-                    max: maxIv(),
-                    placeholder: 'Enter Attack IV',
-                    className: 'rounded-0',
-                    id: `atkIV${battleType}`,
-                  },
-                ]}
+              <InputMui
+                labelPrepend="Attack IV"
+                defaultValue={pokemon.pokemonData?.currentStats?.IV?.atkIV}
+                inputProps={{
+                  type: 'number',
+                  min: minIv(),
+                  max: maxIv(),
+                  required: true,
+                }}
+                placeholder="Enter Attack IV"
+                id={`atkIV${battleType}`}
+                fullWidth
               />
-              <Input
-                prepend={[{ value: 'Defense IV' }]}
-                controls={[
-                  {
-                    defaultValue: pokemon.pokemonData?.currentStats?.IV?.defIV,
-                    type: 'number',
-                    min: minIv(),
-                    max: maxIv(),
-                    placeholder: 'Enter Defense IV',
-                    className: 'rounded-0',
-                    id: `defIV${battleType}`,
-                  },
-                ]}
+              <InputMui
+                labelPrepend="Defense IV"
+                defaultValue={pokemon.pokemonData?.currentStats?.IV?.defIV}
+                inputProps={{
+                  type: 'number',
+                  min: minIv(),
+                  max: maxIv(),
+                  required: true,
+                }}
+                placeholder="Enter Defense IV"
+                id={`defIV${battleType}`}
+                fullWidth
               />
-              <Input
-                prepend={[{ value: 'HP IV' }]}
-                controls={[
-                  {
-                    defaultValue: pokemon.pokemonData?.currentStats?.IV?.staIV,
-                    type: 'number',
-                    min: minIv(),
-                    max: maxIv(),
-                    placeholder: 'Enter HP IV',
-                    className: 'rounded-0',
-                    id: `hpIV${battleType}`,
-                  },
-                ]}
+              <InputMui
+                labelPrepend="HP IV"
+                defaultValue={pokemon.pokemonData?.currentStats?.IV?.staIV}
+                inputProps={{
+                  type: 'number',
+                  min: minIv(),
+                  max: maxIv(),
+                  required: true,
+                }}
+                placeholder="Enter HP IV"
+                id={`hpIV${battleType}`}
+                fullWidth
               />
               <div className="w-100 mt-2">
-                <Button type="submit" className="w-100" variant={VariantType.Success}>
+                <Button type="submit" className="w-100" variant={VariantType.Contained} color="success">
                   Calculate Stats
                 </Button>
               </div>
@@ -966,7 +963,8 @@ const Battle = () => {
             <div className="w-100 mt-2">
               <Button
                 className="w-100"
-                variant={VariantType.Primary}
+                variant={VariantType.Contained}
+                color="primary"
                 onClick={() => onSetStats(type, pokemon, setPokemon, true)}
               >
                 Set Random Stats
@@ -975,7 +973,8 @@ const Battle = () => {
             <div className="w-100 mt-2">
               <Button
                 className="w-100"
-                variant={VariantType.Primary}
+                variant={VariantType.Contained}
+                color="primary"
                 onClick={() => onSetStats(type, pokemon, setPokemon)}
               >
                 Set Best Stats
@@ -1034,49 +1033,71 @@ const Battle = () => {
         />
         {pokemon.pokemonData && (
           <Fragment>
-            <Input
-              prepend={[{ value: 'Energy' }]}
-              controls={[
-                {
-                  value: pokemon.energy,
-                  type: 'number',
-                  min: 0,
-                  max: battleMaxEnergy(),
-                  className: 'rounded-0',
-                  onChange: (e) => {
-                    const value = toNumber(e.currentTarget.value);
-                    if (isNaN(value)) {
-                      return;
-                    }
-                    if (type === BattleType.Current) {
-                      setPlayTimeline({
-                        ...playTimeline,
-                        pokemonCurr: PokemonBattleData.create({
-                          ...playTimeline.pokemonCurr,
-                          energy: value,
-                        }),
-                      });
-                    } else if (type === BattleType.Object) {
-                      setPlayTimeline({
-                        ...playTimeline,
-                        pokemonObj: PokemonBattleData.create({
-                          ...playTimeline.pokemonObj,
-                          energy: value,
-                        }),
-                      });
-                    }
-                    setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: value }));
-                  },
-                  required: true,
-                },
-              ]}
+            <InputMui
+              labelPrepend="Energy"
+              defaultValue={pokemon.energy}
+              inputProps={{
+                type: 'number',
+                min: 0,
+                max: battleMaxEnergy(),
+                step: 1,
+                required: true,
+              }}
+              id={`energy${type}`}
+              fullWidth
+              onChange={(value) => {
+                const energy = toNumber(value);
+                if (type === BattleType.Current) {
+                  setPlayTimeline({
+                    ...playTimeline,
+                    pokemonCurr: PokemonBattleData.create({
+                      ...playTimeline.pokemonCurr,
+                      energy,
+                    }),
+                  });
+                } else if (type === BattleType.Object) {
+                  setPlayTimeline({
+                    ...playTimeline,
+                    pokemonObj: PokemonBattleData.create({
+                      ...playTimeline.pokemonObj,
+                      energy,
+                    }),
+                  });
+                }
+                setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy }));
+              }}
             />
-            <div className="input-group">
-              <span className="input-group-text">Block</span>
-              <Form.Select
-                className="form-control rounded-0"
-                defaultValue={pokemon.block}
-                onChange={(e) => {
+            <InputMui
+              labelPrepend="Block"
+              defaultValue={pokemon.block}
+              fullWidth
+              onChange={(value) => {
+                const block = toNumber(value);
+                setPlayTimeline({
+                  ...playTimeline,
+                  pokemonCurr: PokemonBattleData.create({
+                    ...playTimeline.pokemonCurr,
+                    energy: 0,
+                  }),
+                  pokemonObj: PokemonBattleData.create({
+                    ...playTimeline.pokemonObj,
+                    energy: 0,
+                  }),
+                });
+                setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block }));
+              }}
+              select
+              menuItems={getArrayBySeq(defaultBlock() + 1).map((value) => ({
+                label: value,
+                value,
+              }))}
+            />
+            {(!pokemon.disableCMovePri || !pokemon.disableCMoveSec) && (pokemon.cMovePri || pokemon.cMoveSec) && (
+              <InputMui
+                labelPrepend="Charge Slot"
+                value={pokemon.chargeSlot}
+                fullWidth
+                onChange={(value) => {
                   setPlayTimeline({
                     ...playTimeline,
                     pokemonCurr: PokemonBattleData.create({
@@ -1089,61 +1110,29 @@ const Battle = () => {
                     }),
                   });
                   setPokemon(
-                    PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block: toNumber(e.target.value) })
+                    PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, chargeSlot: toNumber(value) })
                   );
                 }}
-              >
-                {getArrayBySeq(defaultBlock() + 1).map((value, index) => (
-                  <option key={index} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </Form.Select>
-            </div>
-            {(!pokemon.disableCMovePri || !pokemon.disableCMoveSec) && (pokemon.cMovePri || pokemon.cMoveSec) && (
-              <div className="input-group">
-                <span className="input-group-text">Charge Slot</span>
-                <Form.Select
-                  className="form-control rounded-0"
-                  value={pokemon.chargeSlot}
-                  onChange={(e) => {
-                    setPlayTimeline({
-                      ...playTimeline,
-                      pokemonCurr: PokemonBattleData.create({
-                        ...playTimeline.pokemonCurr,
-                        energy: 0,
-                      }),
-                      pokemonObj: PokemonBattleData.create({
-                        ...playTimeline.pokemonObj,
-                        energy: 0,
-                      }),
-                    });
-                    setPokemon(
-                      PokemonBattle.create({
-                        ...pokemon,
-                        timeline: [],
-                        energy: 0,
-                        chargeSlot: toNumber(e.target.value),
-                      })
-                    );
-                  }}
-                >
-                  <option value={ChargeType.Primary} disabled={pokemon.disableCMovePri || !pokemon.cMovePri}>
-                    {ChargeType.Primary}
-                  </option>
-                  <option value={ChargeType.Secondary} disabled={pokemon.disableCMoveSec || !pokemon.cMoveSec}>
-                    {ChargeType.Secondary}
-                  </option>
-                  <option
-                    value={ChargeType.Random}
-                    disabled={
-                      pokemon.disableCMovePri || pokemon.disableCMoveSec || !pokemon.cMovePri || !pokemon.cMoveSec
-                    }
-                  >
-                    Random
-                  </option>
-                </Form.Select>
-              </div>
+                select
+                menuItems={[
+                  {
+                    label: ChargeType.Primary,
+                    value: ChargeType.Primary,
+                    disabled: pokemon.disableCMovePri || !pokemon.cMovePri,
+                  },
+                  {
+                    label: ChargeType.Secondary,
+                    value: ChargeType.Secondary,
+                    disabled: pokemon.disableCMoveSec || !pokemon.cMoveSec,
+                  },
+                  {
+                    label: 'Random',
+                    value: ChargeType.Random,
+                    disabled:
+                      pokemon.disableCMovePri || pokemon.disableCMoveSec || !pokemon.cMovePri || !pokemon.cMoveSec,
+                  },
+                ]}
+              />
             )}
             {pokemon && (
               <div className="w-100 bg-ref-pokemon">

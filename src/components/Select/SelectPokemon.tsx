@@ -128,7 +128,21 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         placeholder="Enter Name or ID"
         onFocus={() => setShowPokemon(true)}
         onBlur={() => setShowPokemon(false)}
-        customPrepend={pokemonIcon ? <img width={40} height={40} alt="Pokémon Image" src={pokemonIcon} /> : undefined}
+        customPrepend={
+          pokemonIcon && (
+            <img
+              className="me-2"
+              width={40}
+              height={40}
+              alt="Pokémon Image"
+              src={pokemonIcon}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeIconSprite();
+              }}
+            />
+          )
+        }
         onRemove={() => removePokemon()}
         isShowRemove={!!pokemonIcon}
       />
