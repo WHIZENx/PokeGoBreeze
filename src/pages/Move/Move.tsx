@@ -25,10 +25,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { FormControlLabel, Checkbox } from '@mui/material';
+import { Checkbox } from '@mui/material';
 import { Accordion, Form } from 'react-bootstrap';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
-import { useIcon } from '../../composables/useIcon';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
@@ -60,6 +59,8 @@ import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/optio
 import usePokemon from '../../composables/usePokemon';
 import useCombats from '../../composables/useCombats';
 import useCalculate from '../../composables/useCalculate';
+import InputReleased from '../../components/Commons/Input/InputReleased';
+import FormControlMui from '../../components/Commons/Form/FormControlMui';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -147,7 +148,6 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
 );
 
 const Move = (props: IMovePage) => {
-  const { iconData } = useIcon();
   const { checkPokemonGO } = usePokemon();
   const { findMoveByName, findMoveById, getCombatsById } = useCombats();
   const { queryTopMove } = useCalculate();
@@ -167,26 +167,17 @@ const Move = (props: IMovePage) => {
   const menuItems = createDataRows<IMenuItem>(
     {
       label: (
-        <FormControlLabel
-          control={<Checkbox checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                width={28}
-                height={28}
-                alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(iconData)}
-              />
-            </span>
-          }
+        <InputReleased
+          releasedGO={releasedGO}
+          setReleaseGO={(check) => setReleaseGO(check)}
+          isAvailable={releasedGO}
+          inputMode={'checkbox'}
         />
       ),
     },
     {
       label: (
-        <FormControlLabel
+        <FormControlMui
           control={<Checkbox checked={isMatch} onChange={(_, check) => setIsMatch(check)} />}
           label="Match Pokémon"
         />

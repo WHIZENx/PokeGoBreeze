@@ -4,7 +4,7 @@ import { priorityBadge } from '../../../utils/compute';
 import { capitalize, getDataWithKey, getKeysObj, getKeyWithData } from '../../../utils/utils';
 import { combineClasses } from '../../../utils/extension';
 import { BadgeType } from '../../enums/badge-type.enum';
-import { ISelectBadgeComponent } from '../../models/component.model';
+import { ISelectBadgeComponent } from '../models/component.model';
 
 const SelectBadge = (props: ISelectBadgeComponent) => {
   const Badge = (props: ISelectBadgeComponent, type = BadgeType.None) => (

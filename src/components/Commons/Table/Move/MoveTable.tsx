@@ -12,7 +12,7 @@ import {
   IPokemonQueryRankMove,
   PokemonQueryRankMove,
 } from '../../../../utils/models/pokemon-top-move.model';
-import { ITableMoveComponent } from '../../../models/component.model';
+import { ITableMoveComponent } from '../../models/component.model';
 import {
   combineClasses,
   DynamicObj,

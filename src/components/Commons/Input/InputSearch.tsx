@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Input from './Input';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
-import { IInputSearchComponent } from '../../models/component.model';
+import { IInputSearchComponent } from '../models/component.model';
 import { combineClasses } from '../../../utils/extension';
 import { InputSearchType } from './enums/input-type.enum';
 

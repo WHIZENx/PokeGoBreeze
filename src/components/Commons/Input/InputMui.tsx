@@ -1,5 +1,5 @@
 import React from 'react';
-import { IInputMuiComponent } from '../../models/component.model';
+import { IInputMuiComponent } from '../models/component.model';
 import { MenuItem, TextField } from '@mui/material';
 import { combineClasses, isNotEmpty } from '../../../utils/extension';
 

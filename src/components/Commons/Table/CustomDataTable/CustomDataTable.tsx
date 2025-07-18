@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal } from 'react-bootstrap';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { StyleSheetManager } from 'styled-components';
-import { ICustomDataTableProps } from '../../../models/component.model';
+import { ICustomDataTableProps } from '../../models/component.model';
 import { convertColumnDataType, isIncludeList } from '../../../../utils/extension';
 import { getCustomThemeDataTable } from '../../../../utils/utils';
 import { isNotEmpty } from '../../../../utils/extension';

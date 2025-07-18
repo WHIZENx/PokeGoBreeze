@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Form, InputGroup } from 'react-bootstrap';
-import { IInputComponent } from '../../models/component.model';
+import { IInputComponent } from '../models/component.model';
 import { LabelType } from '../../../enums/type.enum';
 import { isUndefined } from '../../../utils/extension';
 import { VariantType } from '../../../enums/type.enum';

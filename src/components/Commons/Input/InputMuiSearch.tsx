@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
-import { IInputMuiSearchComponent } from '../../models/component.model';
+import { IInputMuiSearchComponent } from '../models/component.model';
 import { Box, IconButton, InputAdornment, MenuItem, TextField } from '@mui/material';
 import { InputSearchType } from './enums/input-type.enum';
 import { combineClasses, isNotEmpty } from '../../../utils/extension';

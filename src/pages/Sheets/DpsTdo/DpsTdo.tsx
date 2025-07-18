@@ -74,7 +74,6 @@ import {
   minIv,
   minLevel,
 } from '../../../utils/helpers/options-context.helpers';
-import useIcon from '../../../composables/useIcon';
 import useOptionStore from '../../../composables/useOptions';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
@@ -82,6 +81,7 @@ import useCombats from '../../../composables/useCombats';
 import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
 import InputMui from '../../../components/Commons/Input/InputMui';
 import FormControlMui from '../../../components/Commons/Form/FormControlMui';
+import InputReleased from '../../../components/Commons/Input/InputReleased';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -283,7 +283,6 @@ const DpsTdo = () => {
       'Analyze Pokémon GO DPS (Damage Per Second) and TDO (Total Damage Output) with our comprehensive sheets. Optimize your raid counters and battle teams.',
     keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
   });
-  const { iconData } = useIcon();
   const { getFilteredPokemons } = usePokemon();
   const { findMoveByName } = useCombats();
   const { optionsDpsSheet, setDpsSheetOptions } = useOptionStore();
@@ -943,26 +942,10 @@ const DpsTdo = () => {
                   </FormControlMui>
                 </Box>
                 <Box className="col-xxl-4">
-                  <FormControlMui
-                    width={150}
-                    control={
-                      <Switch
-                        checked={releasedGO}
-                        onChange={(_, check) => setFilters({ ...filters, releasedGO: check })}
-                      />
-                    }
-                    label={
-                      <span className="d-flex align-items-center">
-                        Released in GO
-                        <img
-                          className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                          width={28}
-                          height={28}
-                          alt="Pokémon GO Icon"
-                          src={APIService.getPokemonGoIcon(iconData)}
-                        />
-                      </span>
-                    }
+                  <InputReleased
+                    releasedGO={releasedGO}
+                    setReleaseGO={(check) => setFilters({ ...filters, releasedGO: check })}
+                    isAvailable={releasedGO}
                   />
                 </Box>
               </div>

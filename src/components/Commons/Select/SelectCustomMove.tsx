@@ -3,7 +3,7 @@ import Card from '../../Card/Card';
 import { addSelectMovesByType, splitAndCapitalize } from '../../../utils/utils';
 import { TypeMove } from '../../../enums/type.enum';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
-import { ISelectCustomMoveComponent } from '../../models/component.model';
+import { ISelectCustomMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../../utils/extension';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';

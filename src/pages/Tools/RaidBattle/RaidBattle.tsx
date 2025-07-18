@@ -93,7 +93,6 @@ import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { StatsIV } from '../../../core/models/stats.model';
 import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
-import useIcon from '../../../composables/useIcon';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
@@ -102,6 +101,7 @@ import useSearch from '../../../composables/useSearch';
 import { levelList } from '../../../utils/compute';
 import InputMui from '../../../components/Commons/Input/InputMui';
 import FormControlMui from '../../../components/Commons/Form/FormControlMui';
+import InputReleased from '../../../components/Commons/Input/InputReleased';
 
 const RaidBattle = () => {
   useTitle({
@@ -117,7 +117,6 @@ const RaidBattle = () => {
       'raid team builder',
     ],
   });
-  const { iconData } = useIcon();
   const { getFilteredPokemons } = usePokemon();
   const { findMoveByName } = useCombats();
   const { getAssetNameById } = useAssets();
@@ -820,25 +819,10 @@ const RaidBattle = () => {
         />
       </div>
       <div className="input-group mb-3">
-        <FormControlLabel
-          control={
-            <Switch
-              checked={filters.selected.onlyReleasedGO}
-              onChange={(_, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
-            />
-          }
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={combineClasses('ms-1', filters.selected.onlyReleasedGO ? '' : 'filter-gray')}
-                width={28}
-                height={28}
-                alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(iconData)}
-              />
-            </span>
-          }
+        <InputReleased
+          releasedGO={filters.selected.onlyReleasedGO}
+          setReleaseGO={(check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
+          isAvailable={filters.selected.onlyReleasedGO}
         />
       </div>
       <InputMui

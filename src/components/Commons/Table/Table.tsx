@@ -1,5 +1,5 @@
 import React from 'react';
-import { ITableComponent } from '../../models/component.model';
+import { ITableComponent } from '../models/component.model';
 import { combineClasses, isUndefined } from '../../../utils/extension';
 
 const Table = (props: ITableComponent) => {

@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 import { toNumber } from '../../../utils/extension';
 import { PokemonClass, PokemonType } from '../../../enums/type.enum';
 import { getKeyWithData, isSpecialMegaFormType } from '../../../utils/utils';
-import { ISelectTierComponent } from '../../models/component.model';
+import { ISelectTierComponent } from '../models/component.model';
 
 const SelectTier = (props: ISelectTierComponent) => {
   return (

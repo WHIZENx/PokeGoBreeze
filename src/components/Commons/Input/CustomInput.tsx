@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import { ICustomInputComponent } from '../../models/component.model';
+import { ICustomInputComponent } from '../models/component.model';
 import { Menu, MenuItem } from '@mui/material';
 import { isNotEmpty } from '../../../utils/extension';
 

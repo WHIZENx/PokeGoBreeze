@@ -1,0 +1,50 @@
+import React from 'react';
+import FormControlMui from '../Form/FormControlMui';
+import { Checkbox, Switch } from '@mui/material';
+import { combineClasses } from '../../../utils/extension';
+import APIService from '../../../services/api.service';
+import { SwitchReleasedComponent } from '../models/component.model';
+import useIcon from '../../../composables/useIcon';
+
+const InputReleased = (props: SwitchReleasedComponent) => {
+  const { iconData } = useIcon();
+
+  return (
+    <FormControlMui
+      width={props.width || 150}
+      control={
+        <>
+          {props.inputMode === 'checkbox' ? (
+            <Checkbox
+              disabled={props.isDisabled}
+              checked={props.releasedGO}
+              onChange={(_, check) => props.setReleaseGO(check)}
+            />
+          ) : (
+            <Switch
+              disabled={props.isDisabled}
+              checked={props.releasedGO}
+              onChange={(_, check) => props.setReleaseGO(check)}
+            />
+          )}
+        </>
+      }
+      label={
+        <span className="d-flex align-items-center">
+          Released in GO
+          <img
+            className={combineClasses('ms-1', props.isAvailable ? '' : 'filter-gray')}
+            width={28}
+            height={28}
+            alt="Pokémon GO Icon"
+            src={APIService.getPokemonGoIcon(iconData)}
+          />
+          {props.label}
+        </span>
+      }
+      disabled={props.isBlock}
+    />
+  );
+};
+
+export default InputReleased;

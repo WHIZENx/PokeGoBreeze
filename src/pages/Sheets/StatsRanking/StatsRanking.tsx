@@ -21,7 +21,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
 import './StatsRanking.scss';
-import { FormControlLabel, Checkbox } from '@mui/material';
+import { Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
@@ -39,7 +39,6 @@ import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
-  combineClasses,
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
@@ -62,10 +61,11 @@ import CircularProgressTable from '../../../components/Sprites/CircularProgress/
 import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../../components/models/component.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
-import useIcon from '../../../composables/useIcon';
 import useStats from '../../../composables/useStats';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
+import InputReleased from '../../../components/Commons/Input/InputReleased';
+import FormControlMui from '../../../components/Commons/Form/FormControlMui';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
@@ -194,7 +194,6 @@ const defaultPerPages = 25;
 
 const StatsRanking = () => {
   const { routerAction } = useRouter();
-  const { iconData } = useIcon();
   const { getPokemonDetails } = usePokemon();
   useTitle({
     title: 'PokéGO Breeze - Stats Ranking',
@@ -406,7 +405,7 @@ const StatsRanking = () => {
   const menuItems = createDataRows<IMenuItem>(
     {
       label: (
-        <FormControlLabel
+        <FormControlMui
           control={
             <Checkbox
               checked={isMatch}
@@ -419,25 +418,11 @@ const StatsRanking = () => {
     },
     {
       label: (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={releasedGO}
-              onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
-            />
-          }
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                width={28}
-                height={28}
-                alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(iconData)}
-              />
-            </span>
-          }
+        <InputReleased
+          releasedGO={releasedGO}
+          setReleaseGO={(check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
+          isAvailable={releasedGO}
+          inputMode={'checkbox'}
         />
       ),
     }

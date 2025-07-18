@@ -6,7 +6,7 @@ import STA_LOGO from '../../../../assets/stamina.png';
 import { calculateRaidStat } from '../../../../utils/calculate';
 import { RAID_BOSS_TIER } from '../../../../utils/constants';
 import { createDataRows } from '../../../../utils/utils';
-import { IRow, IStatsTableComponent } from '../../../models/component.model';
+import { IRow, IStatsTableComponent } from '../../models/component.model';
 import Table from '../Table';
 import { isUndefined } from '../../../../utils/extension';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { toNumber } from '../../../utils/extension';
 import { PokemonClass, PokemonType } from '../../../enums/type.enum';
 import { getKeyWithData, isSpecialMegaFormType } from '../../../utils/utils';
-import { ISelectTierComponent } from '../../models/component.model';
+import { ISelectTierComponent } from '../models/component.model';
 import { ListSubheader, MenuItem, Select } from '@mui/material';
 
 const SelectTierMui = (props: ISelectTierComponent) => {

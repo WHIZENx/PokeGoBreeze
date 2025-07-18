@@ -1,7 +1,7 @@
 import React from 'react';
 import { splitAndCapitalize } from '../../../../utils/utils';
 import { genRoman } from '../../../../utils/compute';
-import { IPokemonTableComponent } from '../../../models/component.model';
+import { IPokemonTableComponent } from '../../models/component.model';
 import { combineClasses, isNumber, isUndefined, toFloatWithPadding, toNumber } from '../../../../utils/extension';
 
 const PokemonTable = (props: IPokemonTableComponent) => {

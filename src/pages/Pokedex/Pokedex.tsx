@@ -43,6 +43,7 @@ import useIcon from '../../composables/useIcon';
 import useAssets from '../../composables/useAssets';
 import usePokemon from '../../composables/usePokemon';
 import InputMuiSearch from '../../components/Commons/Input/InputMuiSearch';
+import InputReleased from '../../components/Commons/Input/InputReleased';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -371,25 +372,10 @@ const Pokedex = (props: IStyleSheetData) => {
                     }
                     label="Match Pokémon"
                   />
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={releasedGO}
-                        onChange={(_, check) => setFilters({ ...filters, releasedGO: check })}
-                      />
-                    }
-                    label={
-                      <span className="d-flex align-items-center">
-                        Released in GO
-                        <img
-                          className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                          width={28}
-                          height={28}
-                          alt="Pokémon GO Icon"
-                          src={APIService.getPokemonGoIcon(iconData)}
-                        />
-                      </span>
-                    }
+                  <InputReleased
+                    releasedGO={releasedGO}
+                    setReleaseGO={(check) => setFilters({ ...filters, releasedGO: check })}
+                    isAvailable={releasedGO}
                   />
                 </div>
                 <div className="d-flex px-2">

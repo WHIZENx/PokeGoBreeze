@@ -7,7 +7,7 @@ import { addSelectMovesByType, splitAndCapitalize } from '../../../utils/utils';
 import APIService from '../../../services/api.service';
 import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { ISelectPokemonComponent } from '../../models/component.model';
+import { ISelectPokemonComponent } from '../models/component.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isUndefined } from '../../../utils/extension';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { SelectPosition } from './enums/select-type.enum';

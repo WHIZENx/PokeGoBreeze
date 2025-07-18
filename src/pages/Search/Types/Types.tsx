@@ -12,7 +12,6 @@ import './Types.scss';
 import { computeBgType } from '../../../utils/compute';
 import { Tabs, Tab } from 'react-bootstrap';
 import { calculateStatsByTag } from '../../../utils/calculate';
-import { FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -36,10 +35,10 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { getTypeEffective } from '../../../utils/helpers/options-context.helpers';
-import useIcon from '../../../composables/useIcon';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
 import SelectTypeComponent from '../../../components/Commons/Select/SelectType';
+import InputReleased from '../../../components/Commons/Input/InputReleased';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -212,7 +211,6 @@ class PokemonTypeData implements IPokemonTypeData {
 
 const SearchTypes = (props: IStyleSheetData) => {
   const typesEffective = getTypeEffective();
-  const { iconData } = useIcon();
   const { getFilteredPokemons } = usePokemon();
   const { getCombatsByTypeMove, getCombatsByTypeAndTypeMove } = useCombats();
 
@@ -288,21 +286,11 @@ const SearchTypes = (props: IStyleSheetData) => {
           filterType={[currentType]}
         />
       </div>
-      <FormControlLabel
-        control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
-        label={
-          <span className="d-flex align-items-center">
-            Released in GO
-            <img
-              className={combineClasses('mx-1', releasedGO ? '' : 'filter-gray')}
-              width={28}
-              height={28}
-              alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(iconData)}
-            />
-            <b>{`Filter from ${allData?.pokemon} Pokémon`}</b>
-          </span>
-        }
+      <InputReleased
+        releasedGO={releasedGO}
+        setReleaseGO={(check) => setReleaseGO(check)}
+        isAvailable={releasedGO}
+        label={<b>{`Filter from ${allData?.pokemon} Pokémon`}</b>}
       />
       <div className="row">
         <div className="col-xl-4 mt-2">

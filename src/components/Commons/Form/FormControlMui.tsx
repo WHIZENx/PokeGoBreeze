@@ -1,6 +1,6 @@
 import { Box, FormControlLabel } from '@mui/material';
 import React from 'react';
-import { FormControlMuiComponent } from '../../models/component.model';
+import { FormControlMuiComponent } from '../models/component.model';
 import { combineClasses } from '../../../utils/extension';
 
 const FormControlMui = (props: FormControlMuiComponent) => {

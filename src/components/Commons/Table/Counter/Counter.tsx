@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../../services/api.service';
 import {
@@ -38,11 +38,11 @@ import CustomDataTable from '../CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../../utils/enums/string.enum';
 import { IMenuItem } from '../../../models/component.model';
 import { counterDelay } from '../../../../utils/helpers/options-context.helpers';
-import useIcon from '../../../../composables/useIcon';
 import useAssets from '../../../../composables/useAssets';
 import useOptionStore from '../../../../composables/useOptions';
 import usePokemon from '../../../../composables/usePokemon';
 import useCalculate from '../../../../composables/useCalculate';
+import InputReleased from '../../Input/InputReleased';
 
 const customStyles: TableStyles = {
   head: {
@@ -115,7 +115,6 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 };
 
 const Counter = (props: ICounterComponent) => {
-  const { iconData } = useIcon();
   const { findAssetForm } = useAssets();
   const { optionsCounter, setCounterOptions } = useOptionStore();
   const { checkPokemonGO } = usePokemon();
@@ -349,27 +348,12 @@ const Counter = (props: ICounterComponent) => {
 
   const modalOptions = () => (
     <form>
-      <FormControlLabel
-        control={
-          <Switch
-            disabled={!isNotEmpty(counterList)}
-            checked={releasedGO}
-            onChange={(_, check) => setOptions({ ...options, releasedGO: check })}
-          />
-        }
-        label={
-          <span className="d-flex align-items-center">
-            Released in GO
-            <img
-              className={combineClasses('ms-1', releasedGO && !showFrame ? '' : 'filter-gray')}
-              width={28}
-              height={28}
-              alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(iconData)}
-            />
-          </span>
-        }
-        disabled={showFrame}
+      <InputReleased
+        releasedGO={releasedGO}
+        setReleaseGO={(check) => setOptions({ ...options, releasedGO: check })}
+        isDisabled={!isNotEmpty(counterList)}
+        isAvailable={releasedGO && !showFrame}
+        isBlock={showFrame}
       />
       <FormControlLabel
         control={

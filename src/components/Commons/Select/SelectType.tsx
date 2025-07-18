@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { camelCase, splitAndCapitalize } from '../../../utils/utils';
-import { ISelectTypeComponent } from '../../models/component.model';
+import { ISelectTypeComponent } from '../models/component.model';
 import Card from '../../Card/Card';
 import { isIncludeList } from '../../../utils/extension';
 import { IncludeMode } from '../../../utils/enums/string.enum';
