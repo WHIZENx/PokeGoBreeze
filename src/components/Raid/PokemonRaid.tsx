@@ -1,7 +1,7 @@
 import { Badge } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import SelectMove from '../Select/SelectMove';
-import SelectPokemon from '../Select/SelectPokemon';
+import SelectMove from '../Commons/Select/SelectMove';
+import SelectPokemon from '../Commons/Select/SelectPokemon';
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,9 +12,9 @@ import { PokemonType, TypeMove } from '../../enums/type.enum';
 import APIService from '../../services/api.service';
 import { IPokemonRaidComponent } from '../models/component.model';
 import { combineClasses } from '../../utils/extension';
-import { InputType } from '../Input/enums/input-type.enum';
-import { SelectMovePokemonModel } from '../Input/models/select-move.model';
-import { SelectPosition } from '../Select/enums/select-type.enum';
+import { InputType } from '../Commons/Input/enums/input-type.enum';
+import { SelectMovePokemonModel } from '../Commons/Input/models/select-move.model';
+import { SelectPosition } from '../Commons/Select/enums/select-type.enum';
 
 const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);

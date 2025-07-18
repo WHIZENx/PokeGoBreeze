@@ -52,7 +52,7 @@ import { LinkToTop } from '../../components/Link/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../components/Commons/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../components/models/component.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';

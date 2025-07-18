@@ -22,7 +22,7 @@ import { Params } from '../../../utils/constants';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
 import { PokemonTypeBadge } from '../../../core/enums/pokemon-type.enum';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
 import useCombats from '../../../composables/useCombats';

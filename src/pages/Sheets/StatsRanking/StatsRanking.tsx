@@ -15,7 +15,7 @@ import {
 } from '../../../utils/utils';
 import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import Stats from '../../../components/Info/Stats/Stats';
-import TableMove from '../../../components/Table/Move/MoveTable';
+import TableMove from '../../../components/Commons/Table/Move/MoveTable';
 
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -33,7 +33,7 @@ import {
   StatsProd,
   StatsSta,
 } from '../../../core/models/stats.model';
-import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
+import PokemonTable from '../../../components/Commons/Table/Pokemon/PokemonTable';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
@@ -59,7 +59,7 @@ import { Action } from 'history';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../../components/models/component.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import useIcon from '../../../composables/useIcon';

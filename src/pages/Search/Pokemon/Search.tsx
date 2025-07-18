@@ -17,7 +17,7 @@ import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
-import InputMuiSearch from '../../../components/Input/InputMuiSearch';
+import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
 import { MenuItem, MenuList } from '@mui/material';
 
 const Search = () => {

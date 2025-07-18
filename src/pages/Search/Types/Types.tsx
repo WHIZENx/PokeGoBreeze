@@ -31,7 +31,7 @@ import { LinkToTop } from '../../../components/Link/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { IStyleSheetData } from '../../models/page.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
@@ -39,7 +39,7 @@ import { getTypeEffective } from '../../../utils/helpers/options-context.helpers
 import useIcon from '../../../composables/useIcon';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
-import SelectTypeComponent from '../../../components/Select/SelectType';
+import SelectTypeComponent from '../../../components/Commons/Select/SelectType';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());

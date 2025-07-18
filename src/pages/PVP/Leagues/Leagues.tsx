@@ -47,7 +47,7 @@ import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
-import InputSearch from '../../../components/Input/InputSearch';
+import InputSearch from '../../../components/Commons/Input/InputSearch';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];

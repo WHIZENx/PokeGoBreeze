@@ -3,7 +3,7 @@ import { camelCase } from '../../utils/utils';
 import { WeatherBoost } from '../../core/models/weather-boost.model';
 import { DynamicObj, getPropertyName } from '../../utils/extension';
 import { getWeatherBoost } from '../../utils/helpers/options-context.helpers';
-import SelectTypeComponent from '../../components/Select/SelectType';
+import SelectTypeComponent from '../../components/Commons/Select/SelectType';
 import { CardType } from '../../enums/type.enum';
 import Effective from '../../components/Effective/Effective';
 import TypeInfo from '../../components/Sprites/Type/Type';

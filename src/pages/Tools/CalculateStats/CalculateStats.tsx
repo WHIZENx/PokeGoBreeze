@@ -30,7 +30,7 @@ import Find from '../../../components/Find/Find';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
-import DynamicInputCP from '../../../components/Input/DynamicInputCP';
+import DynamicInputCP from '../../../components/Commons/Input/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { isUndefined, toNumber } from '../../../utils/extension';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';

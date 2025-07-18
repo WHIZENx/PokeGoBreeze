@@ -21,9 +21,9 @@ import {
   IStatsRankProd,
 } from '../../core/models/stats.model';
 import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
-import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
+import { ISelectMoveModel, ISelectMovePokemonModel } from '../Commons/Input/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
-import { InputSearchType, InputType } from '../Input/enums/input-type.enum';
+import { InputSearchType, InputType } from '../Commons/Input/enums/input-type.enum';
 import {
   CardType,
   LabelType,
@@ -42,7 +42,7 @@ import { IStyleData } from '../../utils/models/util.model';
 import { BaseTextFieldProps, FormControlLabelProps, PaletteMode } from '@mui/material';
 import { TableProps, TableStyles } from 'react-data-table-component';
 import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
-import { SelectPosition } from '../Select/enums/select-type.enum';
+import { SelectPosition } from '../Commons/Select/enums/select-type.enum';
 import React from 'react';
 
 export interface INavbarComponent {
@@ -289,6 +289,7 @@ export interface IInputMuiComponent extends BaseTextFieldProps {
   labelAppend?: string;
   width?: number | string;
   menuItems?: IMenuItem[];
+  inputAlign?: 'left' | 'center' | 'right';
 }
 
 export interface IInputMuiSearchComponent extends IInputMuiComponent {

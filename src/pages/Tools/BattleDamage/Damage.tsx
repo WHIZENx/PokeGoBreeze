@@ -16,7 +16,7 @@ import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Find from '../../../components/Find/Find';
 import StatsDamageTable from './StatsDamageTable';
 
-import SelectCustomMove from '../../../components/Select/SelectCustomMove';
+import SelectCustomMove from '../../../components/Commons/Select/SelectCustomMove';
 import { findStabType } from '../../../utils/compute';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';

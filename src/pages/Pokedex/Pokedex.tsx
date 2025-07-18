@@ -42,7 +42,7 @@ import { getTypes, transitionTime } from '../../utils/helpers/options-context.he
 import useIcon from '../../composables/useIcon';
 import useAssets from '../../composables/useAssets';
 import usePokemon from '../../composables/usePokemon';
-import InputMuiSearch from '../../components/Input/InputMuiSearch';
+import InputMuiSearch from '../../components/Commons/Input/InputMuiSearch';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {

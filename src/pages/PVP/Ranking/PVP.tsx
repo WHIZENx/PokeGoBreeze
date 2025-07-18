@@ -66,7 +66,7 @@ import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
-import InputSearch from '../../../components/Input/InputSearch';
+import InputSearch from '../../../components/Commons/Input/InputSearch';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();

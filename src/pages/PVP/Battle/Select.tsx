@@ -15,7 +15,7 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
-import InputMuiSearch from '../../../components/Input/InputMuiSearch';
+import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const { findMoveByName } = useCombats();

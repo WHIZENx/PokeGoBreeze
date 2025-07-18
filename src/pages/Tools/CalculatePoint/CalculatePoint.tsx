@@ -4,7 +4,7 @@ import Find from '../../../components/Find/Find';
 import { Tabs, Tab } from 'react-bootstrap';
 
 import './CalculatePoint.scss';
-import SelectCustomMove from '../../../components/Select/SelectCustomMove';
+import SelectCustomMove from '../../../components/Commons/Select/SelectCustomMove';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { findStabType } from '../../../utils/compute';

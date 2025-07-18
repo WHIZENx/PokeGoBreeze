@@ -33,7 +33,7 @@ import {
 } from '../../../utils/utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../Popover/CustomPopover';
+import CustomPopover from '../../Commons/Popover/CustomPopover';
 import Candy from '../../Sprites/Candy/Candy';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
 import { IEvolutionComponent } from '../../models/component.model';

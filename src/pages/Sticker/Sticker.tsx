@@ -8,7 +8,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Form, OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../components/Popover/CustomPopover';
+import CustomPopover from '../../components/Commons/Popover/CustomPopover';
 import { ISticker } from '../../core/models/sticker.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';

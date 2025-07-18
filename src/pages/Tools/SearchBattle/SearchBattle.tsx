@@ -29,7 +29,7 @@ import {
   IQueryStatesEvoChain,
   StatsCalculate,
 } from '../../../utils/models/calculate.model';
-import DynamicInputCP from '../../../components/Input/DynamicInputCP';
+import DynamicInputCP from '../../../components/Commons/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import {

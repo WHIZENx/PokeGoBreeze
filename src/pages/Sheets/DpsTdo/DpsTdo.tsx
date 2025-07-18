@@ -31,13 +31,13 @@ import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import './DpsTdo.scss';
-import SelectPokemon from '../../../components/Select/SelectPokemon';
-import SelectMove from '../../../components/Select/SelectMove';
+import SelectPokemon from '../../../components/Commons/Select/SelectPokemon';
+import SelectMove from '../../../components/Commons/Select/SelectMove';
 import { Action } from 'history';
 import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Commons/Input/models/select-move.model';
 import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../utils/models/calculate.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -57,14 +57,14 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
-import { InputType } from '../../../components/Input/enums/input-type.enum';
+import { InputType } from '../../../components/Commons/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
 import {
   defaultSheetPage,
   defaultSheetRow,
@@ -79,9 +79,9 @@ import useOptionStore from '../../../composables/useOptions';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
-import InputMuiSearch from '../../../components/Input/InputMuiSearch';
-import InputMui from '../../../components/Input/InputMui';
-import FormControlMui from '../../../components/Form/FormControlMui';
+import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
+import InputMui from '../../../components/Commons/Input/InputMui';
+import FormControlMui from '../../../components/Commons/Form/FormControlMui';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;

@@ -8,7 +8,7 @@ import { calStatsProd, sortStatsProd } from '../../../utils/calculate';
 import Find from '../../../components/Find/Find';
 import { leaguesTeamBattle } from '../../../utils/constants';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
-import DynamicInputCP from '../../../components/Input/DynamicInputCP';
+import DynamicInputCP from '../../../components/Commons/Input/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { combineClasses, isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
@@ -17,7 +17,7 @@ import { useSnackbar } from 'notistack';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
 import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 
