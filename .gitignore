@@ -6,6 +6,7 @@
 
 # development
 .vs
+.github
 .vscode
 
 # production
