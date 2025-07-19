@@ -1,4 +1,4 @@
-import { BaseTextFieldProps, FormControlLabelProps } from '@mui/material';
+import { BaseSelectProps, BaseTextFieldProps, FormControlLabelProps, SxProps, Theme } from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats } from '../../../core/models/pokemon.model';
 import { LabelType, PokemonType, PokemonClass, CardType, TypeMove } from '../../../enums/type.enum';
@@ -132,6 +132,16 @@ export interface FormControlMuiComponent extends FormControlLabelProps {
   labelPrepend?: string;
   children?: React.ReactNode;
   width?: number | string;
+}
+
+export interface ISelectMuiComponent<T> extends BaseSelectProps {
+  inputLabel?: string;
+  formClassName?: string;
+  formSx?: SxProps<Theme>;
+  insertItems?: IMenuItem[];
+  extendItems?: IMenuItem[];
+  menuItems?: IMenuItem[];
+  onChangeSelect?: (value: T) => void;
 }
 
 export interface ISelectTypeComponent<T> {

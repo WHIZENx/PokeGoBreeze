@@ -25,8 +25,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { Checkbox } from '@mui/material';
-import { Accordion, Form } from 'react-bootstrap';
+import { Checkbox, MenuItem, Select } from '@mui/material';
+import { Accordion } from 'react-bootstrap';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
@@ -344,7 +344,8 @@ const Move = (props: IMovePage) => {
             <TypeBar type={move.type} />
           </div>
           {move.isMultipleWithType && (
-            <Form.Select
+            <Select
+              size="small"
               style={{ maxWidth: 250 }}
               className="mt-2 w-50"
               onChange={(e) => {
@@ -363,11 +364,11 @@ const Move = (props: IMovePage) => {
                     )
                 )
                 .map((value, index) => (
-                  <option key={index} value={value}>
+                  <MenuItem key={index} value={value}>
                     {splitAndCapitalize(value, /(?=[A-Z])/, ' ')}
-                  </option>
+                  </MenuItem>
                 ))}
-            </Form.Select>
+            </Select>
           )}
         </>
       ) : (
