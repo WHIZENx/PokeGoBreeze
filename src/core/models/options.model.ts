@@ -289,7 +289,7 @@ interface IconRewardItem {
 
 interface IconRewardPokemonDisplay {
   costume: string;
-  form?: string;
+  form?: string | number;
 }
 
 interface IconRewardPokemon {

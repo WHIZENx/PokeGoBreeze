@@ -1509,7 +1509,9 @@ const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData
         reward.pokemon = {
           id,
           pokemonId: result.pokemonEncounter.pokemonId,
-          form: result.pokemonEncounter.pokemonDisplay?.form?.replace(`${result.pokemonEncounter.pokemonId}_`, ''),
+          form: result.pokemonEncounter.pokemonDisplay?.form
+            ?.toString()
+            .replace(`${result.pokemonEncounter.pokemonId}_`, ''),
           costume: result.pokemonEncounter.pokemonDisplay?.costume,
         };
       } else if (result.candy) {
