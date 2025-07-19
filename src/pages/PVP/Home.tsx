@@ -16,7 +16,7 @@ import usePVP from '../../composables/usePVP';
 import useSpinner from '../../composables/useSpinner';
 import useTimestamp from '../../composables/useTimestamp';
 import useCombats from '../../composables/useCombats';
-import { MenuItem, Select } from '@mui/material';
+import SelectMui from '../../components/Commons/Select/SelectMui';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -128,25 +128,22 @@ const PVPHome = () => {
       </p>
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Rank Pokémon Leagues</h1>
-        <Select
-          size="small"
-          className="w-25 form-control h-fit-content"
+        <SelectMui
+          formClassName="w-25"
           value={rank?.id}
-          onChange={(e) =>
+          onChangeSelect={(value) =>
             setOptions(
               OptionsHome.create({
                 ...options,
-                rank: pvpData.rankings.find((item) => isEqual(item.id, e.target.value)),
+                rank: pvpData.rankings.find((item) => isEqual(item.id, value)),
               })
             )
           }
-        >
-          {pvpData.rankings.map((value, index) => (
-            <MenuItem key={index} value={value.id}>
-              {value.name}
-            </MenuItem>
-          ))}
-        </Select>
+          menuItems={pvpData.rankings.map((value) => ({
+            value: value.id,
+            label: value.name,
+          }))}
+        />
       </div>
       {rank ? (
         <div className="group-selected">
@@ -173,25 +170,22 @@ const PVPHome = () => {
       )}
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Teams Pokémon Leagues</h1>
-        <Select
-          size="small"
-          className="w-25 form-control h-fit-content"
+        <SelectMui
+          formClassName="w-25"
           value={team?.id}
-          onChange={(e) =>
+          onChangeSelect={(value) =>
             setOptions(
               OptionsHome.create({
                 ...options,
-                team: pvpData.trains.find((item) => isEqual(item.id, e.target.value)),
+                team: pvpData.trains.find((item) => isEqual(item.id, value)),
               })
             )
           }
-        >
-          {pvpData.trains.map((value, index) => (
-            <MenuItem key={index} value={value.id}>
-              {value.name}
-            </MenuItem>
-          ))}
-        </Select>
+          menuItems={pvpData.trains.map((value) => ({
+            value: value.id,
+            label: value.name,
+          }))}
+        />
       </div>
       {team ? (
         <div className="group-selected">

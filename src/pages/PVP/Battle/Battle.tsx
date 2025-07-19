@@ -19,17 +19,7 @@ import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
 import TimelineVertical from './Timeline/TimelineVertical';
 
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-} from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -108,6 +98,7 @@ import usePokemon from '../../../composables/usePokemon';
 import { Params } from '../../../utils/constants';
 import useDevice from '../../../composables/useDevice';
 import InputMui from '../../../components/Commons/Input/InputMui';
+import SelectMui from '../../../components/Commons/Select/SelectMui';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -1330,20 +1321,20 @@ const Battle = () => {
                         <FormControlLabel value={TimelineType.Fit} control={<Radio />} label="Fit Timeline" />
                         <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
                       </RadioGroup>
-                      <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
-                        <InputLabel>Speed</InputLabel>
-                        <Select
-                          value={duration}
-                          onChange={(e) => setOptions({ ...options, duration: toFloat(e.target.value) })}
-                          label="Speed"
-                        >
-                          <MenuItem value={0.5}>x0.5</MenuItem>
-                          <MenuItem value={1}>Normal</MenuItem>
-                          <MenuItem value={2}>x2</MenuItem>
-                          <MenuItem value={5}>x5</MenuItem>
-                          <MenuItem value={10}>x10</MenuItem>
-                        </Select>
-                      </FormControl>
+                      <SelectMui
+                        formClassName="mt-2"
+                        formSx={{ m: 1, minWidth: 120 }}
+                        onChangeSelect={(value) => setOptions({ ...options, duration: toFloat(value) })}
+                        value={duration}
+                        inputLabel="Speed"
+                        menuItems={[
+                          { value: 0.5, label: 'x0.5' },
+                          { value: 1, label: 'Normal' },
+                          { value: 2, label: 'x2' },
+                          { value: 5, label: 'x5' },
+                          { value: 10, label: 'x10' },
+                        ]}
+                      />
                     </div>
                     <div className="d-flex justify-content-center column-gap-2">
                       <button

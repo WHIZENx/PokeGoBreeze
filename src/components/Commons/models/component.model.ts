@@ -146,6 +146,7 @@ export interface ISelectMuiComponent<T> extends BaseSelectProps<T> {
   insertItems?: IMenuItem[];
   extendItems?: IMenuItem[];
   menuItems?: IMenuItem[];
+  isNoneBorder?: boolean;
   onChangeSelect?: (value: T) => void;
 }
 

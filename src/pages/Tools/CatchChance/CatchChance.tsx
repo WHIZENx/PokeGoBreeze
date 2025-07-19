@@ -1,12 +1,4 @@
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import SelectBadge from '../../../components/Commons/Select/SelectBadge';
 import Find from '../../../components/Find/Find';
@@ -72,6 +64,7 @@ import {
   ultraBallIncChance,
 } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import SelectMui from '../../../components/Commons/Select/SelectMui';
 
 const balls = createDataRows<PokeBallThreshold>(
   {
@@ -300,10 +293,6 @@ const CatchChance = () => {
     if (data) {
       setRadius(v);
     }
-  };
-
-  const handleChangeBallType = (event: SelectChangeEvent) => {
-    setAdvanceOption({ ...advanceOption, ballType: toNumber(event.target.value) });
   };
 
   const renderRingColor = () => {
@@ -621,16 +610,21 @@ const CatchChance = () => {
           {isAdvance && (
             <Fragment>
               <div className="d-flex flex-wrap justify-content-center gap-2">
-                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                  <InputLabel id="demo-select-small">Ball</InputLabel>
-                  <Select value={ballType.toString()} label="Ball" onChange={handleChangeBallType}>
-                    {balls.map((value, index) => (
-                      <MenuItem key={index} value={value.pokeBallType} className="d-flex gap-1">
+                <SelectMui
+                  formSx={{ m: 1, minWidth: 120 }}
+                  inputLabel="Ball"
+                  value={ballType}
+                  onChangeSelect={(value) => setAdvanceOption({ ...advanceOption, ballType: value })}
+                  menuItems={balls.map((value) => ({
+                    className: 'd-flex gap-1',
+                    value: value.pokeBallType,
+                    label: (
+                      <>
                         <img alt="Icon Item" height={16} src={getItemSpritePath(value.itemName)} /> {value.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                      </>
+                    ),
+                  }))}
+                />
                 <FormControlLabel
                   control={
                     <Checkbox

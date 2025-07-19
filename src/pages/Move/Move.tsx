@@ -25,7 +25,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { Checkbox, MenuItem, Select } from '@mui/material';
+import { Checkbox } from '@mui/material';
 import { Accordion } from 'react-bootstrap';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
@@ -61,6 +61,7 @@ import useCombats from '../../composables/useCombats';
 import useCalculate from '../../composables/useCalculate';
 import InputReleased from '../../components/Commons/Input/InputReleased';
 import FormControlMui from '../../components/Commons/Form/FormControlMui';
+import SelectMui from '../../components/Commons/Select/SelectMui';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -344,17 +345,15 @@ const Move = (props: IMovePage) => {
             <TypeBar type={move.type} />
           </div>
           {move.isMultipleWithType && (
-            <Select
-              size="small"
-              style={{ maxWidth: 250 }}
-              className="mt-2 w-50"
-              onChange={(e) => {
-                searchParams.set(Params.MoveType, e.target.value.toLowerCase());
+            <SelectMui
+              formClassName="mt-2"
+              formSx={{ width: 250 }}
+              onChangeSelect={(value) => {
+                searchParams.set(Params.MoveType, value.toLowerCase());
                 setSearchParams(searchParams);
               }}
               value={moveType}
-            >
-              {getTypes()
+              menuItems={getTypes()
                 .filter(
                   (type) =>
                     !isEqual(
@@ -363,12 +362,11 @@ const Move = (props: IMovePage) => {
                       EqualMode.IgnoreCaseSensitive
                     )
                 )
-                .map((value, index) => (
-                  <MenuItem key={index} value={value}>
-                    {splitAndCapitalize(value, /(?=[A-Z])/, ' ')}
-                  </MenuItem>
-                ))}
-            </Select>
+                .map((value) => ({
+                  value,
+                  label: splitAndCapitalize(value, /(?=[A-Z])/, ' '),
+                }))}
+            />
           )}
         </>
       ) : (

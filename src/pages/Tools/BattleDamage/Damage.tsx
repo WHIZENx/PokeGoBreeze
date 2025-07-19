@@ -1,4 +1,4 @@
-import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { Button, FormGroup } from 'react-bootstrap';
@@ -32,6 +32,7 @@ import {
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import SelectMui from '../../../components/Commons/Select/SelectMui';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -356,31 +357,24 @@ const Damage = () => {
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
-                    <FormControl sx={{ width: 200 }}>
-                      <InputLabel id="demo-simple-select-label">Charge ability</InputLabel>
-                      <Select
-                        name="throwLevel"
-                        value={battleState.throwLevel}
-                        label="Charge ability"
-                        onChange={(event) => {
-                          setBattleState(
-                            Filter.create({
-                              ...battleState,
-                              throwLevel: toNumber(event.target.value),
-                            })
-                          );
-                        }}
-                      >
-                        {safeObjectEntries(getThrowCharge()).map(([type, value], index) => (
-                          <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
+                    <SelectMui
+                      formSx={{ width: 200 }}
+                      inputLabel="Charge ability"
+                      value={battleState.throwLevel}
+                      onChangeSelect={(throwLevel) => setBattleState({ ...battleState, throwLevel })}
+                      menuItems={safeObjectEntries(getThrowCharge()).map(([type, value], index) => ({
+                        value: index,
+                        label: (
+                          <>
                             {capitalize(type)}
                             <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>
                               x{value}
                             </span>
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                          </>
+                        ),
+                        sx: { color: labels[index].color },
+                      }))}
+                    />
                   </Box>
                   <Button variant={VariantType.Primary} type="submit" className="mt-2">
                     <img alt="ATK" width={20} height={20} src={ATK_LOGO} /> Battle

@@ -26,7 +26,7 @@ import {
 import APIService from '../../../services/api.service';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
-import { Button, Checkbox, FormControlLabel, MenuItem, Select, Switch } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
@@ -82,6 +82,7 @@ import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
 import InputMui from '../../../components/Commons/Input/InputMui';
 import FormControlMui from '../../../components/Commons/Form/FormControlMui';
 import InputReleased from '../../../components/Commons/Input/InputReleased';
+import SelectMui from '../../../components/Commons/Select/SelectMui';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -927,18 +928,18 @@ const DpsTdo = () => {
                     }
                     label="Best move set of"
                   >
-                    <Select
-                      size="small"
-                      className="rounded-0 h-5-375"
+                    <SelectMui
                       value={bestOf}
                       disabled={!enableBest}
-                      onChange={(e) => setFilters({ ...filters, bestOf: toNumber(e.target.value) })}
+                      onChangeSelect={(value) => setFilters({ ...filters, bestOf: toNumber(value) })}
                       fullWidth
-                    >
-                      <MenuItem value={BestOptionType.dps}>DPS</MenuItem>
-                      <MenuItem value={BestOptionType.tdo}>TDO</MenuItem>
-                      <MenuItem value={BestOptionType.multiDpsTdo}>DPS^3*TDO</MenuItem>
-                    </Select>
+                      isNoneBorder
+                      menuItems={[
+                        { value: BestOptionType.dps, label: 'DPS' },
+                        { value: BestOptionType.tdo, label: 'TDO' },
+                        { value: BestOptionType.multiDpsTdo, label: 'DPS^3*TDO' },
+                      ]}
+                    />
                   </FormControlMui>
                 </Box>
                 <Box className="col-xxl-4">
