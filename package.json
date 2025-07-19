@@ -139,6 +139,7 @@
     "postcss": "8.4.31",
     "semver-regex": "3.1.4",
     "ws": "8.17.1",
-    "webpack-dev-server": "5.2.1"
+    "webpack-dev-server": "5.2.1",
+    "on-headers": "1.1.0"
   }
 }
