@@ -7,7 +7,7 @@ import TypeInfo from '../../components/Sprites/Type/Type';
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
-import { Checkbox, FormControlLabel, ListItemText, MenuProps, OutlinedInput, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel, ListItemText, MenuProps, Switch } from '@mui/material';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
@@ -33,6 +33,7 @@ import usePokemon from '../../composables/usePokemon';
 import InputMuiSearch from '../../components/Commons/Input/InputMuiSearch';
 import InputReleased from '../../components/Commons/Input/InputReleased';
 import SelectMui from '../../components/Commons/Select/SelectMui';
+import ButtonMui from '../../components/Commons/Button/ButtonMui';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -396,7 +397,6 @@ const Pokedex = (props: IStyleSheetData) => {
                     inputLabel="Generation(s)"
                     value={gen}
                     onChangeSelect={handleChangeGen}
-                    input={<OutlinedInput label="Generation(s)" />}
                     renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
                     insertItems={[
                       {
@@ -404,15 +404,16 @@ const Pokedex = (props: IStyleSheetData) => {
                         label: (
                           <ListItemText
                             primary={
-                              <button
-                                className={combineClasses(
-                                  'btn',
-                                  btnSelected.isSelectGen ? 'btn-danger' : 'btn-success'
-                                )}
-                              >{`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}</button>
+                              <ButtonMui
+                                fullWidth
+                                variant="contained"
+                                color={btnSelected.isSelectGen ? 'error' : 'success'}
+                                label={`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}
+                              />
                             }
                           />
                         ),
+                        disabled: false,
                       },
                     ]}
                     menuItems={Object.values(genList).map((_, index) => ({
@@ -432,7 +433,6 @@ const Pokedex = (props: IStyleSheetData) => {
                     inputLabel="Version(s)"
                     value={version}
                     onChangeSelect={handleChangeVersion}
-                    input={<OutlinedInput label="Version(s)" />}
                     renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
                     MenuProps={versionProps}
                     insertItems={[
@@ -441,12 +441,12 @@ const Pokedex = (props: IStyleSheetData) => {
                         label: (
                           <ListItemText
                             primary={
-                              <button
-                                className={combineClasses(
-                                  'btn',
-                                  btnSelected.isSelectVersion ? 'btn-danger' : 'btn-success'
-                                )}
-                              >{`${btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'}`}</button>
+                              <ButtonMui
+                                fullWidth
+                                variant="contained"
+                                color={btnSelected.isSelectVersion ? 'error' : 'success'}
+                                label={`${btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'}`}
+                              />
                             }
                           />
                         ),

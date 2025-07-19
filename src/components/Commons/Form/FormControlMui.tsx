@@ -7,7 +7,13 @@ const FormControlMui = (props: FormControlMuiComponent) => {
   const { labelPrepend, ...controlProps } = props;
 
   return (
-    <Box className={combineClasses('input-control-group', props.boxClassName)}>
+    <Box
+      className={combineClasses(
+        'input-control-group',
+        props.width === 'fit-content' ? 'w-fit-content' : '',
+        props.boxClassName
+      )}
+    >
       {labelPrepend && <span className="input-group-text">{labelPrepend}</span>}
       <FormControlLabel
         {...controlProps}

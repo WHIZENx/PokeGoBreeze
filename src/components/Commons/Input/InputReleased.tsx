@@ -11,7 +11,7 @@ const InputReleased = (props: SwitchReleasedComponent) => {
 
   return (
     <FormControlMui
-      width={props.width || 150}
+      width={props.width || 'fit-content'}
       control={
         <>
           {props.inputMode === 'checkbox' ? (

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, OutlinedInput } from '@mui/material';
 import { ISelectMuiComponent } from '../models/component.model';
 import { isNotEmpty } from '../../../utils/extension';
 
@@ -21,7 +21,11 @@ const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
   return (
     <FormControl className={formClassName} sx={formSx} size="small">
       {inputLabel && <InputLabel>{inputLabel}</InputLabel>}
-      <Select onChange={(e) => onChangeSelect?.(e.target.value as T)} {...selectProps}>
+      <Select
+        onChange={(e) => onChangeSelect?.(e.target.value as T)}
+        input={inputLabel ? <OutlinedInput label={inputLabel} /> : undefined}
+        {...selectProps}
+      >
         {items?.map((item, index) => (
           <MenuItem key={index} {...item}>
             {item.label}
