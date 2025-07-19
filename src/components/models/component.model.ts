@@ -200,6 +200,7 @@ export interface IMenuItem extends ButtonBaseOwnProps {
   onClick?: () => void;
   disabled?: boolean;
   isClose?: boolean;
+  isSubHeader?: boolean;
   defaultChecked?: boolean;
 }
 

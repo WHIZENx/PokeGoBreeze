@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { Select, MenuItem, FormControl, InputLabel, OutlinedInput } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, OutlinedInput, ListSubheader } from '@mui/material';
 import { ISelectMuiComponent } from '../models/component.model';
 import { isNotEmpty, isNullOrUndefined } from '../../../utils/extension';
+import { IMenuItem } from '../../models/component.model';
 
 const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
   const {
@@ -28,6 +29,20 @@ const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
     return result;
   }, [insertItems, extendItems, menuItems]);
 
+  const renderItem = (item: IMenuItem, index: number) => {
+    const { isSubHeader, ...itemMenu } = item;
+
+    return isSubHeader ? (
+      <ListSubheader key={index} {...itemMenu}>
+        {itemMenu.label}
+      </ListSubheader>
+    ) : (
+      <MenuItem key={index} {...itemMenu}>
+        {itemMenu.label}
+      </MenuItem>
+    );
+  };
+
   return (
     <FormControl
       className={formClassName}
@@ -42,11 +57,7 @@ const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
         {...selectProps}
         value={isNullOrUndefined(selectProps.value) ? '' : selectProps.value}
       >
-        {items?.map((item, index) => (
-          <MenuItem key={index} {...item}>
-            {item.label}
-          </MenuItem>
-        ))}
+        {items?.map((item, index) => renderItem(item, index))}
       </Select>
     </FormControl>
   );
