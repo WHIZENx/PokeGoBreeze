@@ -134,7 +134,7 @@ export interface FormControlMuiComponent extends FormControlLabelProps {
   width?: number | string;
 }
 
-export interface ISelectMuiComponent<T> extends BaseSelectProps {
+export interface ISelectMuiComponent<T> extends BaseSelectProps<T> {
   inputLabel?: string;
   formClassName?: string;
   formSx?: SxProps<Theme>;

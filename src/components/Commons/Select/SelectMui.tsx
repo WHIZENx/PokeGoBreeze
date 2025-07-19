@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { Select, MenuItem, FormControl } from '@mui/material';
+import React, { useMemo } from 'react';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { ISelectMuiComponent } from '../models/component.model';
-import { InputLabel } from '@mui/material';
 import { isNotEmpty } from '../../../utils/extension';
 
 const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
-  const [items, setItems] = useState(props.menuItems || []);
+  const { insertItems, extendItems, menuItems, inputLabel, formSx, formClassName, onChangeSelect, ...selectProps } =
+    props;
 
-  useEffect(() => {
-    if (isNotEmpty(props.insertItems)) {
-      setItems((prevItems) => [...(props.insertItems || []), ...prevItems]);
+  const items = useMemo(() => {
+    const result = [];
+    if (isNotEmpty(insertItems)) {
+      result.push(...(insertItems || []), ...(menuItems || []));
     }
-    if (isNotEmpty(props.extendItems)) {
-      setItems((prevItems) => [...prevItems, ...(props.extendItems || [])]);
+    if (isNotEmpty(extendItems)) {
+      result.push(...(extendItems || []));
     }
-  }, [props.insertItems, props.extendItems]);
+    return result;
+  }, [insertItems, extendItems]);
 
   return (
-    <FormControl className={props.formClassName} sx={props.formSx} size="small">
-      {props.inputLabel && <InputLabel>{props.inputLabel}</InputLabel>}
-      <Select onChange={(e) => props.onChangeSelect?.(e.target.value as T)} {...props}>
+    <FormControl className={formClassName} sx={formSx} size="small">
+      {inputLabel && <InputLabel>{inputLabel}</InputLabel>}
+      <Select onChange={(e) => onChangeSelect?.(e.target.value as T)} {...selectProps}>
         {items?.map((item, index) => (
           <MenuItem key={index} {...item}>
             {item.label}
