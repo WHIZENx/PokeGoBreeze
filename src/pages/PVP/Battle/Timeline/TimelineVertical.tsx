@@ -27,10 +27,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
               src={APIService.getTypeHqSprite(move.type)}
             />
           </div>
-          <span
-            className={combineClasses(!isShowShadow ? 'theme-text-primary' : 'filter-shadow')}
-            style={{ fontSize: 14 }}
-          >
+          <span className={combineClasses('u-fs-3', !isShowShadow ? 'theme-text-primary' : 'filter-shadow')}>
             {splitAndCapitalize(move.name, '_', ' ')}
           </span>
         </span>
@@ -80,7 +77,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
               }}
             >
               <div className={combineClasses('fast-attack-content text-center', value.color)}>
-                <span className="text-warning text-shadow-black" style={{ fontSize: 12 }}>
+                <span className="text-warning text-shadow-black u-fs-2-75">
                   <b>Fast Attack!</b>
                 </span>
                 {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
@@ -107,7 +104,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
             >
               {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune ? (
                 <div className={combineClasses('fast-attack-content text-center', value.move?.type?.toLowerCase())}>
-                  <span className="text-warning text-shadow-black" style={{ fontSize: 12 }}>
+                  <span className="u-fs-2-75 text-warning text-shadow-black">
                     <b>Fast Attack!</b>
                   </span>
                   {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
@@ -123,7 +120,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
               className={combineClasses('d-flex align-items-center turn-battle', end ? 'justify-content-end' : '')}
             >
               <div className={combineClasses('swipe-attack-container', `${value.color}-border`, 'text-center')}>
-                <span style={{ fontSize: 12 }}>
+                <span className="u-fs-2-75">
                   <b>Swipe Charge</b>
                 </span>
                 <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>

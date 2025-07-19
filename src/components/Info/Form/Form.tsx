@@ -18,8 +18,8 @@ import './Form.scss';
 import Gender from '../Gender';
 import Stats from '../Stats/Stats';
 import Raid from '../../Raid/Raid';
-import Counter from '../../Table/Counter/Counter';
-import TableMove from '../../Table/Move/MoveTable';
+import Counter from '../../Commons/Table/Counter/Counter';
+import TableMove from '../../Commons/Table/Move/MoveTable';
 import Info from '../Info';
 import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
@@ -37,6 +37,7 @@ import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import { Action } from 'history';
 import { useSearch } from '../../../composables/useSearch';
+import { Button } from 'react-bootstrap';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
@@ -156,10 +157,10 @@ const FormComponent = (props: IFormInfoComponent) => {
               {props.formList.map((value, index) => (
                 <Fragment key={index}>
                   {value.map((value, index) => (
-                    <button
+                    <Button
                       key={index}
                       className={combineClasses(
-                        'btn btn-form',
+                        'btn-form',
                         value.form.id === searchingMainForm?.form?.id ? 'form-selected' : ''
                       )}
                       onClick={() =>
@@ -199,7 +200,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                         )}
                         {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
                       </div>
-                    </button>
+                    </Button>
                   ))}
                 </Fragment>
               ))}
@@ -249,7 +250,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                 <li>Raid</li>
               </h5>
               <Raid
-                currForm={searchingMainForm?.form}
+                pokemonType={searchingMainForm?.form?.pokemonType}
                 id={props.defaultId}
                 statATK={searchingMainDetails?.statsGO?.atk}
                 statDEF={searchingMainDetails?.statsGO?.def}

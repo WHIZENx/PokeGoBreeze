@@ -18,7 +18,7 @@ import {
 import { BodyModel, IBody } from '../models/body.model';
 import { Params } from '../../../utils/constants';
 import { IncludeMode } from '../../../utils/enums/string.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';

@@ -4,11 +4,11 @@ import Find from '../../../components/Find/Find';
 import { Tabs, Tab } from 'react-bootstrap';
 
 import './CalculatePoint.scss';
-import Move from '../../../components/Table/Move';
+import SelectCustomMove from '../../../components/Commons/Select/SelectCustomMove';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { findStabType } from '../../../utils/compute';
-import { levelList } from '../../../utils/constants';
+import { levelList } from '../../../utils/compute';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { useSnackbar } from 'notistack';
 
@@ -369,7 +369,7 @@ const CalculatePoint = () => {
               <div className="row">
                 <div className="col-lg-4">
                   <h2 className="text-center text-decoration-underline">Attacker move</h2>
-                  <Move
+                  <SelectCustomMove
                     text="Select Moves"
                     id={searchingToolCurrentData?.pokemon?.id}
                     isSelectDefault
@@ -506,7 +506,7 @@ const CalculatePoint = () => {
               <div className="row">
                 <div className="col-lg-4">
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
-                  <Move
+                  <SelectCustomMove
                     text="Select Moves"
                     id={searchingToolObjectData?.pokemon?.id}
                     isSelectDefault
@@ -699,7 +699,7 @@ const CalculatePoint = () => {
                 <div className="col-lg-4">
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
                   <div className="mb-3">
-                    <Move
+                    <SelectCustomMove
                       text="Fast Moves"
                       id={searchingToolObjectData?.pokemon?.id}
                       isSelectDefault
@@ -740,7 +740,7 @@ const CalculatePoint = () => {
                     )}
                   </div>
                   <div>
-                    <Move
+                    <SelectCustomMove
                       text="Charged Moves"
                       id={searchingToolObjectData?.pokemon?.id}
                       isSelectDefault

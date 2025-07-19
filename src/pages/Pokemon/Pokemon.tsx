@@ -39,7 +39,7 @@ import {
 } from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
-import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
+import PokemonTable from '../../components/Commons/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
@@ -62,7 +62,7 @@ import {
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonType, TypeAction, VariantType } from '../../enums/type.enum';
-import { useNavigateToTop } from '../../components/LinkToTop';
+import { useNavigateToTop } from '../../components/Link/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
 import { useTitle } from '../../utils/hooks/useTitle';

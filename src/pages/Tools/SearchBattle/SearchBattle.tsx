@@ -29,7 +29,7 @@ import {
   IQueryStatesEvoChain,
   StatsCalculate,
 } from '../../../utils/models/calculate.model';
-import DynamicInputCP from '../../../components/Input/DynamicInputCP';
+import DynamicInputCP from '../../../components/Commons/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import {
@@ -48,7 +48,7 @@ import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';

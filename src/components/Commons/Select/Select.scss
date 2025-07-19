@@ -1,0 +1,118 @@
+.card-select-disabled {
+  cursor: default !important;
+}
+
+.card-select-enabled {
+  cursor: pointer !important;
+}
+
+.card-pokemon-input,
+.card-move-input {
+  width: 100%;
+  height: 38px;
+}
+
+.input-pokemon-select {
+  background-size: auto 36px !important;
+  outline: none;
+  border-radius: 0;
+}
+
+.card-pokemon-select {
+  width: 100%;
+  padding-left: 23px;
+  padding-right: 15px;
+  cursor: pointer;
+}
+
+.pokemon-select-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
+  padding: 0 10px 0 5px;
+}
+
+.remove-pokemon-select {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.remove-pokemon-select:hover {
+  opacity: 1;
+}
+
+.card-move {
+  width: 100%;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.result-pokemon {
+  text-align: start !important;
+  position: absolute;
+  z-index: 2;
+  width: max-content;
+  overflow-y: auto;
+}
+
+.result-move-select {
+  text-align: start !important;
+  position: absolute;
+  z-index: 2;
+  width: auto; /* 275px; */
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.result-move-select-default {
+  position: absolute;
+  z-index: 2;
+  width: 298px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.select-down {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: calc(100% - 2px);
+  margin-top: 1px;
+  padding-right: 10px;
+}
+
+.frame-badge {
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px;
+  width: 62px;
+  height: 62px;
+}
+
+.position-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media screen and (max-width <= 420px) {
+  .result-pokemon {
+    max-width: 250px;
+  }
+}
+
+@media screen and (max-width <= 375px) {
+  .result-pokemon {
+    max-width: 230px;
+  }
+}
+
+.pos-up {
+  bottom: 40px;
+}
+
+.pos-up-default {
+  bottom: 86px;
+}

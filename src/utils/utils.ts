@@ -33,7 +33,7 @@ import {
 } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
-import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMoveModel } from '../components/Commons/Input/models/select-move.model';
 import { TypeEffectiveChart } from '../core/models/type-effective.model';
 import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
@@ -367,7 +367,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     .replace('-hero', '')
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
-    .replace('-shaymin', '');
+    .replace('-shaymin', '')
+    .replace('-altered', '');
   if (isInclude(text, formStandard(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     form = `-${formStandard().toLowerCase()}`;
   }
@@ -1359,3 +1360,7 @@ export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
 
 export const isSpecialMegaFormType = (pokemonType: PokemonType | undefined) =>
   pokemonType === PokemonType.Mega || pokemonType === PokemonType.Primal;
+
+export const createDataRows = <T>(...rows: T[]) => {
+  return [...rows];
+};

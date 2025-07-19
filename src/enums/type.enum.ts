@@ -50,7 +50,15 @@ export enum VariantType {
   Standard = 'standard',
   Secondary = 'secondary',
   Outlined = 'outlined',
+  OutlinedSecondary = 'outlined-secondary',
   Primary = 'primary',
+  Contained = 'contained',
+}
+
+export enum CardType {
+  Type,
+  Weather,
+  Move,
 }
 
 export enum MoveType {
@@ -119,4 +127,11 @@ export enum ColumnType {
   EnergyPVE,
   EnergyPVP,
   Power,
+}
+
+export enum LabelType {
+  Text,
+  Button,
+  Dropdown,
+  SplitButton,
 }

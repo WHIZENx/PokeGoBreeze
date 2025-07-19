@@ -37,6 +37,7 @@ import { ItemName } from '../../pages/News/enums/item-type.enum';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
+import { Button } from 'react-bootstrap';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -361,12 +362,9 @@ const FormSelect = (props: IFormSelectComponent) => {
             {formList.map((value, index) => (
               <Fragment key={index}>
                 {value.map((value, index) => (
-                  <button
+                  <Button
                     key={index}
-                    className={combineClasses(
-                      'btn btn-form',
-                      value.form.id === currentForm.form.id ? 'form-selected' : ''
-                    )}
+                    className={combineClasses('btn-form', value.form.id === currentForm.form.id ? 'form-selected' : '')}
                     onClick={() => changeForm(value.form.id === currentForm.form.id, value.form.name)}
                   >
                     <img
@@ -390,7 +388,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                       </b>
                     )}
                     {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
-                  </button>
+                  </Button>
                 ))}
               </Fragment>
             ))}

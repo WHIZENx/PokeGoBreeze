@@ -9,8 +9,9 @@ import {
   generateParamForm,
   getAllMoves,
   isSpecialMegaFormType,
+  createDataRows,
 } from '../../../utils/utils';
-import { levelList } from '../../../utils/constants';
+import { levelList } from '../../../utils/compute';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -25,19 +26,18 @@ import {
 import APIService from '../../../services/api.service';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
-import { Checkbox, FormControlLabel, Switch } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import './DpsTdo.scss';
-import { Form } from 'react-bootstrap';
-import SelectPokemon from '../../../components/Input/SelectPokemon';
-import SelectMove from '../../../components/Input/SelectMove';
+import SelectPokemon from '../../../components/Commons/Select/SelectPokemon';
+import SelectMove from '../../../components/Commons/Select/SelectMove';
 import { Action } from 'history';
-import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
+import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Commons/Input/models/select-move.model';
 import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../utils/models/calculate.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -57,14 +57,14 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
-import { InputType } from '../../../components/Input/enums/input-type.enum';
+import { InputType } from '../../../components/Commons/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
 import {
   defaultSheetPage,
   defaultSheetRow,
@@ -74,11 +74,15 @@ import {
   minIv,
   minLevel,
 } from '../../../utils/helpers/options-context.helpers';
-import useIcon from '../../../composables/useIcon';
 import useOptionStore from '../../../composables/useOptions';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
+import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
+import InputMui from '../../../components/Commons/Input/InputMui';
+import FormControlMui from '../../../components/Commons/Form/FormControlMui';
+import InputReleased from '../../../components/Commons/Input/InputReleased';
+import SelectMui from '../../../components/Commons/Select/SelectMui';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -129,7 +133,7 @@ const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   return a - b;
 };
 
-const columns: TableColumnModify<PokemonSheetData>[] = [
+const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
   {
     id: ColumnType.Id,
     name: 'ID',
@@ -270,8 +274,8 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     selector: (row) => row.cp,
     sortable: true,
     minWidth: '100px',
-  },
-];
+  }
+);
 
 const DpsTdo = () => {
   useTitle({
@@ -280,7 +284,6 @@ const DpsTdo = () => {
       'Analyze Pokémon GO DPS (Damage Per Second) and TDO (Total Damage Output) with our comprehensive sheets. Optimize your raid counters and battle teams.',
     keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
   });
-  const { iconData } = useIcon();
   const { getFilteredPokemons } = usePokemon();
   const { findMoveByName } = useCombats();
   const { optionsDpsSheet, setDpsSheetOptions } = useOptionStore();
@@ -687,13 +690,12 @@ const DpsTdo = () => {
             <div>
               <div className="row w-100 m-0">
                 <div className="d-flex col-md-9 p-0">
-                  <span className="input-group-text">Search name or ID</span>
-                  <input
-                    type="text"
-                    className="form-control input-search"
+                  <InputMuiSearch
+                    value={searchTerm}
+                    onChange={(value) => setSearchTerm(value)}
                     placeholder="Enter Name or ID"
-                    defaultValue={searchTerm}
-                    onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
+                    labelPrepend="Search name or ID"
+                    isNoWrap
                   />
                 </div>
                 <div className="d-flex col-md-3">
@@ -915,53 +917,37 @@ const DpsTdo = () => {
             <div className="input-group">
               <div className="row w-100 m-0">
                 <Box className="col-xxl-8 p-0">
-                  <div className="input-group">
-                    <span className="input-group-text">Filter best move sets</span>
-                    <FormControlLabel
-                      className="me-0 pe-3"
-                      control={
-                        <Switch
-                          checked={enableBest}
-                          onChange={(_, check) => setFilters({ ...filters, enableBest: check })}
-                        />
-                      }
-                      label="Best move set of"
-                    />
-                    <Form.Select
-                      className="form-control rounded-0"
+                  <FormControlMui
+                    width={130}
+                    labelPrepend="Filter best move sets"
+                    control={
+                      <Switch
+                        checked={enableBest}
+                        onChange={(_, check) => setFilters({ ...filters, enableBest: check })}
+                      />
+                    }
+                    label="Best move set of"
+                  >
+                    <SelectMui
                       value={bestOf}
                       disabled={!enableBest}
-                      onChange={(e) => setFilters({ ...filters, bestOf: toNumber(e.target.value) })}
-                    >
-                      <option value={BestOptionType.dps}>DPS</option>
-                      <option value={BestOptionType.tdo}>TDO</option>
-                      <option value={BestOptionType.multiDpsTdo}>DPS^3*TDO</option>
-                    </Form.Select>
-                  </div>
+                      onChangeSelect={(value) => setFilters({ ...filters, bestOf: toNumber(value) })}
+                      fullWidth
+                      isNoneBorder
+                      menuItems={[
+                        { value: BestOptionType.dps, label: 'DPS' },
+                        { value: BestOptionType.tdo, label: 'TDO' },
+                        { value: BestOptionType.multiDpsTdo, label: 'DPS^3*TDO' },
+                      ]}
+                    />
+                  </FormControlMui>
                 </Box>
                 <Box className="col-xxl-4">
-                  <div className="input-group">
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={releasedGO}
-                          onChange={(_, check) => setFilters({ ...filters, releasedGO: check })}
-                        />
-                      }
-                      label={
-                        <span className="d-flex align-items-center">
-                          Released in GO
-                          <img
-                            className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                            width={28}
-                            height={28}
-                            alt="Pokémon GO Icon"
-                            src={APIService.getPokemonGoIcon(iconData)}
-                          />
-                        </span>
-                      }
-                    />
-                  </div>
+                  <InputReleased
+                    releasedGO={releasedGO}
+                    setReleaseGO={(check) => setFilters({ ...filters, releasedGO: check })}
+                    isAvailable={releasedGO}
+                  />
                 </Box>
               </div>
             </div>
@@ -1024,7 +1010,7 @@ const DpsTdo = () => {
           <div className="col-xxl p-0 w-fit-content">
             <div className="head-types">Options</div>
             <form className="w-100" onSubmit={onCalculateTable.bind(this)}>
-              <div className="input-group">
+              <div className="input-control-group">
                 <FormControlLabel
                   sx={{ marginLeft: 1 }}
                   control={
@@ -1042,187 +1028,182 @@ const DpsTdo = () => {
                   }
                   label="Delay"
                 />
-                <span className="input-group-text">Fast Move Time</span>
-                <input
-                  type="number"
-                  className="form-control h-6"
+                <InputMui
+                  labelPrepend="Fast Move Time"
                   placeholder="Delay time (sec)"
-                  aria-label="Fast Move Time"
-                  min={0}
-                  disabled={!enableDelay}
-                  required={enableDelay}
-                  onInput={(e) =>
+                  value={options.delay?.fTime || ''}
+                  onChange={(value) =>
                     setOptions(
                       OptionOtherDPS.create({
                         ...options,
                         delay: Delay.create({
-                          fTime: toFloat(e.currentTarget.value),
+                          fTime: toFloat(value),
                           cTime: toNumber(options.delay?.cTime),
                         }),
                       })
                     )
                   }
-                />
-                <span className="input-group-text">Charged Move Time</span>
-                <input
-                  type="number"
-                  className="form-control rounded-0 h-6"
-                  placeholder="Delay time (sec)"
-                  aria-label="Charged Move Time"
-                  min={0}
+                  inputProps={{
+                    type: 'number',
+                    min: 0,
+                  }}
                   disabled={!enableDelay}
                   required={enableDelay}
-                  onInput={(e) =>
+                  fullWidth
+                />
+                <InputMui
+                  labelPrepend="Charged Move Time"
+                  placeholder="Delay time (sec)"
+                  value={options.delay?.cTime || ''}
+                  onChange={(value) =>
                     setOptions(
                       OptionOtherDPS.create({
                         ...options,
                         delay: Delay.create({
-                          fTime: toNumber(options.delay?.fTime),
-                          cTime: toFloat(e.currentTarget.value),
+                          fTime: toFloat(options.delay?.fTime),
+                          cTime: toFloat(value),
                         }),
                       })
                     )
                   }
+                  inputProps={{
+                    type: 'number',
+                    min: 0,
+                  }}
+                  disabled={!enableDelay}
+                  required={enableDelay}
+                  fullWidth
                 />
               </div>
               <div className="row m-0">
-                <Box className="col-5 input-group p-0">
-                  <span className="input-group-text">IV ATK</span>
-                  <input
-                    defaultValue={ivAtk}
-                    type="number"
-                    className="form-control w-6"
+                <Box className="col-5 input-control-group p-0">
+                  <InputMui
+                    labelPrepend="IV ATK"
                     placeholder={`${minIv()}-${maxIv()}`}
-                    min={minIv()}
-                    max={maxIv()}
-                    required
-                    onChange={(e) =>
+                    value={ivAtk}
+                    onChange={(value) =>
                       setFilters({
                         ...filters,
-                        ivAtk: toNumber(e.target.value),
+                        ivAtk: toNumber(value),
                       })
                     }
-                    name="ivAtk"
-                  />
-                  <span className="input-group-text">IV DEF</span>
-                  <input
-                    defaultValue={ivDef}
-                    type="number"
-                    className="form-control w-6"
-                    placeholder={`${minIv()}-${maxIv()}`}
-                    min={minIv()}
-                    max={maxIv()}
-                    required
-                    onChange={(e) =>
-                      setFilters({
-                        ...filters,
-                        ivDef: toNumber(e.target.value),
-                      })
-                    }
-                    name="ivDef"
-                  />
-                  <span className="input-group-text">IV HP</span>
-                  <input
-                    defaultValue={ivHp}
-                    type="number"
-                    className="form-control w-6"
-                    placeholder={`${minIv()}-${maxIv()}`}
-                    min={minIv()}
-                    max={maxIv()}
-                    required
-                    onChange={(e) =>
-                      setFilters({
-                        ...filters,
-                        ivHp: toNumber(e.target.value),
-                      })
-                    }
-                    name="ivHp"
-                  />
-                  <div className="input-group-prepend">
-                    <label className="input-group-text">Levels</label>
-                  </div>
-                  <Form.Select
-                    className="form-control rounded-0"
-                    defaultValue={pokemonLevel}
-                    onChange={(e) =>
-                      setFilters({
-                        ...filters,
-                        pokemonLevel: toFloat(e.target.value, -1, minLevel()),
-                      })
-                    }
-                  >
-                    {levelList.map((value, index) => (
-                      <option key={index} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Box>
-                <Box className="col-7 input-group p-0">
-                  <span className="input-group-text">DEF Target</span>
-                  <input
-                    defaultValue={pokemonDefObj}
-                    type="number"
-                    className="form-control"
-                    placeholder="Defense target"
-                    min={1}
-                    disabled={Boolean(dataTargetPokemon)}
-                    required
-                    onInput={(e) =>
-                      setOptions(
-                        OptionOtherDPS.create({
-                          ...options,
-                          pokemonDefObj: toFloat(e.currentTarget.value),
-                        })
-                      )
-                    }
-                    name="pokemonDefObj"
-                  />
-                  <div className="input-group-prepend">
-                    <label className="input-group-text">Weather Boosts</label>
-                  </div>
-                  <Form.Select
-                    className="form-control rounded-0"
-                    defaultValue={getValueOrDefault(String, weatherBoosts)}
-                    onChange={(e) =>
-                      setOptions(
-                        OptionOtherDPS.create({
-                          ...options,
-                          weatherBoosts: e.target.value,
-                        })
-                      )
-                    }
-                  >
-                    <option value="">Extreme</option>
-                    {getWeatherTypes().map((value, index) => (
-                      <option key={index} value={value}>
-                        {splitAndCapitalize(value, '_', ' ')}
-                      </option>
-                    ))}
-                  </Form.Select>
-                  <Box
-                    className="d-flex align-items-center justify-content-center"
-                    sx={{
-                      paddingLeft: 1,
-                      paddingRight: 1,
+                    inputProps={{
+                      type: 'number',
+                      min: minIv(),
+                      max: maxIv(),
                     }}
+                    fullWidth
+                  />
+                  <InputMui
+                    labelPrepend="IV DEF"
+                    placeholder={`${minIv()}-${maxIv()}`}
+                    value={ivDef}
+                    onChange={(value) =>
+                      setFilters({
+                        ...filters,
+                        ivDef: toNumber(value),
+                      })
+                    }
+                    inputProps={{
+                      type: 'number',
+                      min: minIv(),
+                      max: maxIv(),
+                    }}
+                    fullWidth
+                  />
+                  <InputMui
+                    labelPrepend="IV HP"
+                    placeholder={`${minIv()}-${maxIv()}`}
+                    value={ivHp}
+                    onChange={(value) =>
+                      setFilters({
+                        ...filters,
+                        ivHp: toNumber(value),
+                      })
+                    }
+                    inputProps={{
+                      type: 'number',
+                      min: minIv(),
+                      max: maxIv(),
+                    }}
+                    fullWidth
+                  />
+                  <InputMui
+                    labelPrepend="Levels"
+                    value={pokemonLevel}
+                    onChange={(value) =>
+                      setFilters({
+                        ...filters,
+                        pokemonLevel: toFloat(value, -1, minLevel()),
+                      })
+                    }
+                    select
+                    menuItems={levelList.map((value) => ({
+                      value,
+                      label: value,
+                    }))}
+                    fullWidth
+                  />
+                </Box>
+                <Box className="col-7 input-control-group p-0">
+                  <InputMui
+                    labelPrepend="DEF Target"
+                    placeholder="Defense target"
+                    value={pokemonDefObj.toString()}
+                    onChange={(value) =>
+                      setOptions(
+                        OptionOtherDPS.create({
+                          ...options,
+                          pokemonDefObj: toFloat(value),
+                        })
+                      )
+                    }
+                    inputProps={{
+                      type: 'number',
+                      min: 1,
+                      required: true,
+                      name: 'pokemonDefObj',
+                    }}
+                    width={100}
+                  />
+                  <InputMui
+                    labelPrepend="Weather Boosts"
+                    value={getValueOrDefault(String, weatherBoosts, 'extreme')}
+                    onChange={(value) =>
+                      setOptions(
+                        OptionOtherDPS.create({
+                          ...options,
+                          weatherBoosts: value,
+                        })
+                      )
+                    }
+                    select
+                    menuItems={[
+                      { value: 'extreme', label: 'Extreme' },
+                      ...getWeatherTypes().map((value) => ({
+                        value,
+                        label: splitAndCapitalize(value, '_', ' '),
+                      })),
+                    ]}
+                    width={150}
+                  />
+                  <FormControlMui
+                    width={130}
+                    control={
+                      <Switch
+                        onChange={(_, check) => {
+                          setOptions(
+                            OptionOtherDPS.create({
+                              ...options,
+                              isTrainerFriend: check,
+                              pokemonFriendLevel: 0,
+                            })
+                          );
+                        }}
+                      />
+                    }
+                    label="Friendship Level:"
                   >
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onChange={(_, check) => {
-                            setOptions(
-                              OptionOtherDPS.create({
-                                ...options,
-                                isTrainerFriend: check,
-                                pokemonFriendLevel: 0,
-                              })
-                            );
-                          }}
-                        />
-                      }
-                      label="Friendship Level:"
-                    />
                     <LevelRating
                       disabled={!isTrainerFriend}
                       onChange={(_, value) => {
@@ -1239,11 +1220,11 @@ const DpsTdo = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                  </Box>
+                  </FormControlMui>
                 </Box>
-                <button type="submit" className="btn btn-primary w-100 rounded-0">
+                <Button variant={VariantType.Contained} type="submit" className="w-100 rounded-0">
                   Calculate
-                </button>
+                </Button>
               </div>
             </form>
           </div>
