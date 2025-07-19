@@ -6,10 +6,6 @@
 
 # development
 .vs
-.github
-.github/workflows
-deploy-development.yml
-deploy-production.yml
 .vscode
 
 # production
