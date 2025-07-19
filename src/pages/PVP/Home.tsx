@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import APIService from '../../services/api.service';
 import { leaguesTeamBattle } from '../../utils/constants';
 import { Link } from 'react-router-dom';
@@ -16,6 +16,7 @@ import usePVP from '../../composables/usePVP';
 import useSpinner from '../../composables/useSpinner';
 import useTimestamp from '../../composables/useTimestamp';
 import useCombats from '../../composables/useCombats';
+import { MenuItem, Select } from '@mui/material';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -127,7 +128,8 @@ const PVPHome = () => {
       </p>
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Rank Pokémon Leagues</h1>
-        <Form.Select
+        <Select
+          size="small"
           className="w-25 form-control h-fit-content"
           value={rank?.id}
           onChange={(e) =>
@@ -140,11 +142,11 @@ const PVPHome = () => {
           }
         >
           {pvpData.rankings.map((value, index) => (
-            <option key={index} value={value.id}>
+            <MenuItem key={index} value={value.id}>
               {value.name}
-            </option>
+            </MenuItem>
           ))}
-        </Form.Select>
+        </Select>
       </div>
       {rank ? (
         <div className="group-selected">
@@ -171,7 +173,8 @@ const PVPHome = () => {
       )}
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Teams Pokémon Leagues</h1>
-        <Form.Select
+        <Select
+          size="small"
           className="w-25 form-control h-fit-content"
           value={team?.id}
           onChange={(e) =>
@@ -184,11 +187,11 @@ const PVPHome = () => {
           }
         >
           {pvpData.trains.map((value, index) => (
-            <option key={index} value={value.id}>
+            <MenuItem key={index} value={value.id}>
               {value.name}
-            </option>
+            </MenuItem>
           ))}
-        </Form.Select>
+        </Select>
       </div>
       {team ? (
         <div className="group-selected">
