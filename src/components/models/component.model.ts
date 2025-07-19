@@ -28,7 +28,7 @@ import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../utils/models/util.model';
-import { ButtonBaseOwnProps, PaletteMode } from '@mui/material';
+import { PaletteMode } from '@mui/material';
 import React from 'react';
 
 export interface INavbarComponent {
@@ -194,7 +194,7 @@ export interface IGenderComponent {
   sprit?: IPokemonSprit;
 }
 
-export interface IMenuItem extends ButtonBaseOwnProps {
+export interface IMenuItem {
   label: string | number | React.ReactNode;
   value?: string | number;
   onClick?: () => void;

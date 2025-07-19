@@ -44,7 +44,6 @@ import useAssets from '../../composables/useAssets';
 import usePokemon from '../../composables/usePokemon';
 import InputMuiSearch from '../../components/Commons/Input/InputMuiSearch';
 import InputReleased from '../../components/Commons/Input/InputReleased';
-import SelectMui from '../../components/Commons/Select/SelectMui';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -287,8 +286,8 @@ const Pokedex = (props: IStyleSheetData) => {
     }
   }, [listOfPokemon, result]);
 
-  const handleChangeGen = (value: number[]) => {
-    const isSelect = isIncludeList(value, -1);
+  const handleChangeGen = (event: SelectChangeEvent<number[]>) => {
+    const isSelect = isIncludeList(event.target.value as number[], -1);
     if (isSelect) {
       setBtnSelected({
         ...btnSelected,
@@ -296,7 +295,7 @@ const Pokedex = (props: IStyleSheetData) => {
       });
     }
     const gen = !isSelect
-      ? value.sort((a, b) => a - b)
+      ? (event.target.value as number[]).sort((a, b) => a - b)
       : btnSelected.isSelectGen
       ? []
       : Object.values(genList).map((_, index) => index);
@@ -401,39 +400,32 @@ const Pokedex = (props: IStyleSheetData) => {
               </div>
               <div className="col-xl-8 border-input p-2 gap-2">
                 <div className="d-flex">
-                  <SelectMui<number[]>
-                    formClassName="w-50"
-                    formSx={{ m: 1 }}
-                    inputLabel="Generation(s)"
-                    value={gen}
-                    onChangeSelect={(value) => handleChangeGen(value)}
-                    insertItems={[
-                      {
-                        value: -1,
-                        label: (
-                          <ListItemText
-                            primary={
-                              <button
-                                className={combineClasses(
-                                  'btn',
-                                  btnSelected.isSelectGen ? 'btn-danger' : 'btn-success'
-                                )}
-                              >{`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}</button>
-                            }
-                          />
-                        ),
-                      },
-                    ]}
-                    menuItems={Object.values(genList).map((_, index) => ({
-                      value: index,
-                      label: (
-                        <>
+                  <FormControl className="w-50" sx={{ m: 1 }} size="small">
+                    <InputLabel>Generation(s)</InputLabel>
+                    <Select
+                      multiple
+                      value={gen}
+                      onChange={handleChangeGen}
+                      input={<OutlinedInput label="Generation(s)" />}
+                      renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
+                    >
+                      <MenuItem disableRipple disableTouchRipple value={-1}>
+                        <ListItemText
+                          primary={
+                            <button
+                              className={combineClasses('btn', btnSelected.isSelectGen ? 'btn-danger' : 'btn-success')}
+                            >{`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}</button>
+                          }
+                        />
+                      </MenuItem>
+                      {Object.values(genList).map((_, index) => (
+                        <MenuItem key={index} value={index}>
                           <Checkbox checked={isIncludeList(gen, index)} />
                           <ListItemText primary={`Generation ${index + 1} (${regionList[index + 1]})`} />
-                        </>
-                      ),
-                    }))}
-                  />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                   <FormControl className="w-50" sx={{ m: 1 }} size="small">
                     <InputLabel>Version(s)</InputLabel>
                     <Select
