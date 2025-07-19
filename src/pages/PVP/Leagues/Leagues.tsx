@@ -1,6 +1,6 @@
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
-import { Accordion, Form, useAccordionButton } from 'react-bootstrap';
+import { Accordion, useAccordionButton } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import APIService from '../../../services/api.service';
@@ -48,6 +48,7 @@ import { debounce } from 'lodash';
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
 import InputSearch from '../../../components/Commons/Input/InputSearch';
+import SelectMui from '../../../components/Commons/Select/SelectMui';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -376,21 +377,20 @@ const Leagues = () => {
           </span>
         </div>
         <div className="col-md-4 d-flex justify-content-end p-0">
-          <Form.Select
-            onChange={(e) => {
-              setRank(toNumber(e.target.value));
-              if (toNumber(e.target.value) < 24) {
-                setSetting(leaguesData.season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1));
+          <SelectMui
+            formSx={{ width: 200 }}
+            value={rank}
+            onChangeSelect={(value) => {
+              setRank(value);
+              if (value < 24) {
+                setSetting(leaguesData.season.settings.find((data) => data.rankLevel === value + 1));
               }
             }}
-            defaultValue={rank}
-          >
-            {Object.keys(leaguesData.season.rewards.rank).map((value, index) => (
-              <option key={index} value={value}>
-                Rank {value} {toNumber(value) > 20 && `( ${rankName(toNumber(value))} )`}
-              </option>
-            ))}
-          </Form.Select>
+            menuItems={Object.keys(leaguesData.season.rewards.rank).map((value) => ({
+              value: value,
+              label: `Rank ${value} ${toNumber(value) > 20 ? `(${rankName(toNumber(value))})` : ''}`,
+            }))}
+          />
         </div>
       </div>
       {isNotEmpty(leaguesData.data) ? (

@@ -13,7 +13,7 @@ import {
 } from '../../../utils/utils';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
-import { Accordion, Card, Form, useAccordionButton } from 'react-bootstrap';
+import { Accordion, Card, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
@@ -1191,18 +1191,20 @@ const Battle = () => {
   return (
     <Error isError={!isFound}>
       <div className="container mt-2 battle-body-container">
-        <Form.Select
-          onChange={(e) => {
-            navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
-            setOptions({ ...options, league: toNumber(e.target.value) });
+        <SelectMui
+          fullWidth
+          value={league}
+          onChangeSelect={(value) => {
+            navigateToTop(`/pvp/battle/${value}`);
+            setOptions({ ...options, league: value });
           }}
-          defaultValue={league}
-        >
-          <option value={BattleLeagueCPType.Little}>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</option>
-          <option value={BattleLeagueCPType.Great}>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</option>
-          <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
-          <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
-        </Form.Select>
+          menuItems={[
+            { value: BattleLeagueCPType.Little, label: getPokemonBattleLeagueName(BattleLeagueCPType.Little) },
+            { value: BattleLeagueCPType.Great, label: getPokemonBattleLeagueName(BattleLeagueCPType.Great) },
+            { value: BattleLeagueCPType.Ultra, label: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra) },
+            { value: BattleLeagueCPType.InsMaster, label: getPokemonBattleLeagueName(BattleLeagueCPType.InsMaster) },
+          ]}
+        />
         <div className="row mt-2 m-0">
           <div className="col-lg-3">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
