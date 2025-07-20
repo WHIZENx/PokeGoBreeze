@@ -4,15 +4,11 @@ import { useDispatch } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Params } from '../../../utils/constants';
 import {
-  capitalize,
-  formIconAssets,
   getDataWithKey,
   getFormFromForms,
   getPokemonFormWithNoneSpecialForm,
   isSpecialFormType,
-  splitAndCapitalize,
 } from '../../../utils/utils';
-import APIService from '../../../services/api.service';
 
 import './Form.scss';
 import Gender from '../Gender';
@@ -25,10 +21,9 @@ import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
 import { IFormInfoComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
-import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { SearchingActions } from '../../../store/actions';
 import { PokemonGenderRatio } from '../../../core/models/pokemon.model';
 import { PokemonDetail } from '../../../core/models/API/info.model';
@@ -37,7 +32,8 @@ import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import { Action } from 'history';
 import { useSearch } from '../../../composables/useSearch';
-import { Button } from 'react-bootstrap';
+import ButtonGroupForm from '../../Commons/Button/ButtonGroupForm';
+import { IPokemonFormModify } from '../../../core/models/API/form.model';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
@@ -111,7 +107,11 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
   }, [routerAction]);
 
-  const changeForm = (isSelected: boolean, name: string, form: string | undefined, pokemonType = PokemonType.None) => {
+  const changeForm = (value: IPokemonFormModify) => {
+    const isSelected = value.form.id === searchingMainForm?.form?.id;
+    const name = value.form.name;
+    const form = value.form.formName;
+    const pokemonType = value.form.pokemonType || PokemonType.None;
     if (isSelected) {
       return;
     }
@@ -151,61 +151,15 @@ const FormComponent = (props: IFormInfoComponent) => {
         <h4 className="info-title">
           <b>Form varieties</b>
         </h4>
-        <div className={combineClasses('scroll-form', props.isLoadedForms ? 'w-100' : '')}>
-          {props.isLoadedForms ? (
-            <Fragment>
-              {props.formList.map((value, index) => (
-                <Fragment key={index}>
-                  {value.map((value, index) => (
-                    <Button
-                      key={index}
-                      className={combineClasses(
-                        'btn-form',
-                        value.form.id === searchingMainForm?.form?.id ? 'form-selected' : ''
-                      )}
-                      onClick={() =>
-                        changeForm(
-                          value.form.id === searchingMainForm?.form?.id,
-                          value.form.name,
-                          value.form.formName,
-                          value.form.pokemonType
-                        )
-                      }
-                    >
-                      <div className="d-flex w-100 justify-content-center">
-                        <div className="position-relative w-9">
-                          <PokemonIconType pokemonType={value.form.pokemonType} size={24}>
-                            <img
-                              className="pokemon-sprite-medium"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = APIService.getPokeIconSprite();
-                              }}
-                              alt="Image Icon Form"
-                              src={formIconAssets(value)}
-                            />
-                          </PokemonIconType>
-                        </div>
-                      </div>
-                      <p>
-                        {!value.form.formName
-                          ? capitalize(formNormal())
-                          : splitAndCapitalize(value.form.formName, '-', ' ')}
-                      </p>
-                      <div className="d-flex flex-column">
-                        {toNumber(value.form.id) > 0 && value.form.id === props.defaultId && (
-                          <b>
-                            <small>(Default)</small>
-                          </b>
-                        )}
-                        {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
-                      </div>
-                    </Button>
-                  ))}
-                </Fragment>
-              ))}
-            </Fragment>
-          ) : (
+        <ButtonGroupForm
+          isFullWidth
+          scrollClass="scroll-form"
+          isLoaded={props.isLoadedForms}
+          forms={props.formList}
+          id={searchingMainForm?.form?.id}
+          defaultId={props.defaultId}
+          changeForm={changeForm}
+          loading={
             <div className="ph-item flex-nowrap column-gap-2 w-100">
               {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
                 <div key={index} className="ph-col-3 p-0 my-1">
@@ -215,8 +169,8 @@ const FormComponent = (props: IFormInfoComponent) => {
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          }
+        />
       </div>
       {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
         <div className="d-flex flex-wrap row-gap-3" style={{ columnGap: 50 }}>

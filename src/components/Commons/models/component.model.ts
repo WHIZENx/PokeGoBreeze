@@ -18,6 +18,7 @@ import { SelectPosition } from '../Select/enums/select-type.enum';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import { TableProps, TableStyles } from 'react-data-table-component';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
+import { IPokemonFormModify } from '../../../core/models/API/form.model';
 
 export interface SwitchReleasedComponent {
   releasedGO: boolean;
@@ -154,6 +155,17 @@ export interface IButtonMuiComponent extends ButtonProps, IButtonMuiStyle {
 
 export interface IButtonGroupMuiComponent extends ButtonGroupProps, IButtonMuiStyle {
   buttons: IButtonMuiComponent[];
+}
+
+export interface IButtonGroupFormComponent {
+  scrollClass: string;
+  forms: IPokemonFormModify[][];
+  isLoaded: boolean;
+  isFullWidth?: boolean;
+  loading: React.ReactNode;
+  id: number | undefined;
+  defaultId: number | undefined;
+  changeForm: (value: IPokemonFormModify) => void;
 }
 
 export interface ISelectMuiComponent<T> extends BaseSelectProps<T> {

@@ -16,7 +16,7 @@ const ButtonGroupMui = (props: IButtonGroupMuiComponent) => {
       {...rest}
     >
       {props.buttons.map((button, index) => (
-        <ButtonMui key={index} isNoneBorder={isNoneBorder} {...button} />
+        <ButtonMui key={index} isNoneBorder={isNoneBorder} color={props.color} {...button} />
       ))}
     </ButtonGroup>
   );

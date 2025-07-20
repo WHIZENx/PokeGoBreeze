@@ -11,9 +11,9 @@ const ButtonMui = (props: IButtonMuiComponent) => {
         ...(isNoneBorder ? { borderRadius: 0 } : {}),
         ...(active
           ? {
-              backgroundColor: 'primary.dark',
+              backgroundColor: `${props.color || 'primary'}.dark`,
               '&:hover': {
-                backgroundColor: 'primary.dark',
+                backgroundColor: `${props.color || 'primary'}.dark`,
               },
             }
           : {}),

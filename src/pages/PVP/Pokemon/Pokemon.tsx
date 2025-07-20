@@ -269,6 +269,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
           <ButtonGroupMui
             className="mt-2"
             isNoneBorder
+            color="tertiary"
             buttons={getKeysObj(ScoreType).map((type) => ({
               label: type,
               active: isEqual(
