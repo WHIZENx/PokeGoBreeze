@@ -325,6 +325,23 @@ const Move = (props: IMovePage) => {
     }
   }, [move?.isMultipleWithType, searchParams, findMoveById]);
 
+  const renderBonus = (bonusType: BonusType | undefined, value: string | number | string[]) => {
+    if (
+      isEqual(bonusType, BonusType.SpaceBonus) ||
+      isEqual(bonusType, BonusType.SlowFreezeBonus) ||
+      isEqual(bonusType, BonusType.AttackDefenseBonus)
+    ) {
+      return value;
+    } else if (isEqual(bonusType, BonusType.TimeBonus)) {
+      return (
+        <div className="d-flex flex-wrap gap-2">
+          {getValueOrDefault<string[]>(Array, value as string[]).map((item) => renderReward(item))}
+        </div>
+      );
+    }
+    return renderReward(value as string);
+  };
+
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">
       <div style={{ width: 35 }}>
@@ -733,23 +750,34 @@ const Move = (props: IMovePage) => {
                                     </td>
                                   </tr>
                                   {safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
-                                    <tr key={j}>
-                                      <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
-                                      <td colSpan={2} key={j}>
-                                        {isEqual(move.bonus?.bonusType, BonusType.SpaceBonus) ||
-                                        isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
-                                          value
-                                        ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
-                                          <div className="d-flex flex-wrap gap-2">
-                                            {getValueOrDefault<string[]>(Array, value as string[]).map((item) =>
-                                              renderReward(item)
-                                            )}
-                                          </div>
-                                        ) : (
-                                          renderReward(value as string)
-                                        )}
-                                      </td>
-                                    </tr>
+                                    <Fragment key={j}>
+                                      {move?.bonus?.bonusEffect?.attackDefenseBonus ? (
+                                        move?.bonus?.bonusEffect?.attackDefenseBonus.attributes.map((attr, k) => (
+                                          <tr key={k}>
+                                            <td>
+                                              {splitAndCapitalize(key, /(?=[A-Z])/, ' ')}
+                                              <span className="caption">
+                                                (
+                                                {attr.combatTypes
+                                                  .map((type) => capitalize(type.replace('COMBAT_TYPE_', '')))
+                                                  .join(', ')}
+                                                )
+                                              </span>
+                                            </td>
+                                            <td colSpan={2} key={j}>
+                                              {renderBonus(move.bonus?.bonusType, `x${attr.attackMultiplier}`)}
+                                            </td>
+                                          </tr>
+                                        ))
+                                      ) : (
+                                        <tr key={j}>
+                                          <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
+                                          <td colSpan={2} key={j}>
+                                            {renderBonus(move.bonus?.bonusType, value)}
+                                          </td>
+                                        </tr>
+                                      )}
+                                    </Fragment>
                                   ))}
                                 </Fragment>
                               ))}

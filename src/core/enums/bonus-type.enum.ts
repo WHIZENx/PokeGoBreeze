@@ -5,4 +5,7 @@ export enum BonusType {
   DayBonus,
   NightBonus,
   SlowFreezeBonus,
+  SlowFreezeBonus2,
+  AttackDefenseBonus,
+  AttackDefenseBonus2,
 }
