@@ -137,6 +137,7 @@ export interface FormControlMuiComponent extends FormControlLabelProps {
 export interface IButtonMuiComponent extends ButtonProps {
   textTransform?: 'capitalize' | 'uppercase' | 'lowercase' | 'none';
   label?: React.ReactNode;
+  isNoneBorder?: boolean;
 }
 
 export interface ISelectMuiComponent<T> extends BaseSelectProps<T> {

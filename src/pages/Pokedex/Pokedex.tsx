@@ -406,7 +406,6 @@ const Pokedex = (props: IStyleSheetData) => {
                             primary={
                               <ButtonMui
                                 fullWidth
-                                variant="contained"
                                 color={btnSelected.isSelectGen ? 'error' : 'success'}
                                 label={`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}
                               />
@@ -443,7 +442,6 @@ const Pokedex = (props: IStyleSheetData) => {
                             primary={
                               <ButtonMui
                                 fullWidth
-                                variant="contained"
                                 color={btnSelected.isSelectVersion ? 'error' : 'success'}
                                 label={`${btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'}`}
                               />

@@ -28,6 +28,12 @@ export const PaletteData = (mode: TypeTheme) =>
       dark: '#388e3c',
       contrastText: 'rgba(0, 0, 0, 0.87)',
     },
+    tertiary: {
+      main: '#6c757d',
+      light: '#868e96',
+      dark: '#5a6268',
+      contrastText: '#ffffff',
+    },
     divider: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)',
     background: {
       default: mode === TypeTheme.Light ? '#fafafa' : '#222222',

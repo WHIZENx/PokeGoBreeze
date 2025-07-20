@@ -26,7 +26,7 @@ import {
 import APIService from '../../../services/api.service';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
-import { Button, Checkbox, FormControlLabel, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
@@ -34,7 +34,7 @@ import './DpsTdo.scss';
 import SelectPokemon from '../../../components/Commons/Select/SelectPokemon';
 import SelectMove from '../../../components/Commons/Select/SelectMove';
 import { Action } from 'history';
-import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
+import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Commons/Input/models/select-move.model';
@@ -83,6 +83,7 @@ import InputMui from '../../../components/Commons/Input/InputMui';
 import FormControlMui from '../../../components/Commons/Form/FormControlMui';
 import InputReleased from '../../../components/Commons/Input/InputReleased';
 import SelectMui from '../../../components/Commons/Select/SelectMui';
+import ButtonMui from '../../../components/Commons/Button/ButtonMui';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -1222,9 +1223,7 @@ const DpsTdo = () => {
                     />
                   </FormControlMui>
                 </Box>
-                <Button variant={VariantType.Contained} type="submit" className="w-100 rounded-0">
-                  Calculate
-                </Button>
+                <ButtonMui fullWidth isNoneBorder type="submit" label="Calculate" />
               </div>
             </form>
           </div>

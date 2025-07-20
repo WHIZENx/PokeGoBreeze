@@ -19,7 +19,7 @@ import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
 import TimelineVertical from './Timeline/TimelineVertical';
 
-import { Button, Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -99,6 +99,7 @@ import { Params } from '../../../utils/constants';
 import useDevice from '../../../composables/useDevice';
 import InputMui from '../../../components/Commons/Input/InputMui';
 import SelectMui from '../../../components/Commons/Select/SelectMui';
+import ButtonMui from '../../../components/Commons/Button/ButtonMui';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -946,30 +947,24 @@ const Battle = () => {
                 fullWidth
               />
               <div className="w-100 mt-2">
-                <Button type="submit" className="w-100" variant={VariantType.Contained} color="success">
-                  Calculate Stats
-                </Button>
+                <ButtonMui type="submit" color="success" fullWidth label="Calculate Stats" />
               </div>
             </form>
             <div className="w-100 mt-2">
-              <Button
-                className="w-100"
-                variant={VariantType.Contained}
+              <ButtonMui
+                fullWidth
                 color="primary"
                 onClick={() => onSetStats(type, pokemon, setPokemon, true)}
-              >
-                Set Random Stats
-              </Button>
+                label="Set Random Stats"
+              />
             </div>
             <div className="w-100 mt-2">
-              <Button
-                className="w-100"
-                variant={VariantType.Contained}
+              <ButtonMui
+                fullWidth
                 color="primary"
                 onClick={() => onSetStats(type, pokemon, setPokemon)}
-              >
-                Set Best Stats
-              </Button>
+                label="Set Best Stats"
+              />
             </div>
             <hr />
             <TypeBadge
