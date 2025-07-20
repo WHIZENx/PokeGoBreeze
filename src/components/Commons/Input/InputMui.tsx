@@ -8,7 +8,7 @@ const InputMui = (props: IInputMuiComponent) => {
     props.onChange?.(event.target.value);
   };
 
-  const { labelPrepend, labelAppend, menuItems, ...textFieldProps } = props;
+  const { labelPrepend, labelAppend, menuItems, inputAlign, ...textFieldProps } = props;
 
   return (
     <div className={combineClasses('d-flex', props.fullWidth ? 'w-100' : '', props.className)}>
@@ -26,7 +26,7 @@ const InputMui = (props: IInputMuiComponent) => {
         }}
         inputProps={{
           ...props.inputProps,
-          style: { ...props.inputProps?.style, textAlign: props.inputAlign },
+          style: { ...props.inputProps?.style, textAlign: inputAlign },
         }}
         className={props.inputProps?.className}
         autoComplete="off"

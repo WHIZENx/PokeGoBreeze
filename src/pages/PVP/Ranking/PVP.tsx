@@ -11,7 +11,7 @@ import {
   getKeyWithData,
 } from '../../../utils/utils';
 import { calculateStatsByTag } from '../../../utils/calculate';
-import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
+import { Accordion, useAccordionButton } from 'react-bootstrap';
 
 import APIService from '../../../services/api.service';
 import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
@@ -67,6 +67,7 @@ import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
 import InputSearch from '../../../components/Commons/Input/InputSearch';
+import ButtonGroupMui from '../../../components/Commons/Button/ButtonGroupMui';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
@@ -406,31 +407,24 @@ const RankingPVP = (props: IStyleSheetData) => {
       <div className="container pvp-container pb-3">
         {renderLeague()}
         <hr />
-        <div className="mt-2 ranking-link-group">
-          {getKeysObj(ScoreType).map((type, index) => (
-            <Button
-              key={index}
-              className={
-                isEqual(
-                  getValueOrDefault(
-                    String,
-                    searchParams.get(Params.LeagueType),
-                    getKeyWithData(ScoreType, ScoreType.Overall)
-                  ),
-                  type,
-                  EqualMode.IgnoreCaseSensitive
-                )
-                  ? 'active'
-                  : ''
-              }
-              onClick={() =>
-                navigate(`/pvp/rankings/${params.serie}/${params.cp}?${Params.LeagueType}=${type.toLowerCase()}`)
-              }
-            >
-              {type}
-            </Button>
-          ))}
-        </div>
+        <ButtonGroupMui
+          className="mt-2"
+          isNoneBorder
+          buttons={getKeysObj(ScoreType).map((type) => ({
+            label: type,
+            active: isEqual(
+              getValueOrDefault(
+                String,
+                searchParams.get(Params.LeagueType),
+                getKeyWithData(ScoreType, ScoreType.Overall)
+              ),
+              type,
+              EqualMode.IgnoreCaseSensitive
+            ),
+            onClick: () =>
+              navigate(`/pvp/rankings/${params.serie}/${params.cp}?${Params.LeagueType}=${type.toLowerCase()}`),
+          }))}
+        />
         <InputSearch value={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
         <div className="ranking-container" onScroll={listenScrollEvent.bind(this)}>
           <div className="ranking-group w-100 ranking-header column-gap-3">

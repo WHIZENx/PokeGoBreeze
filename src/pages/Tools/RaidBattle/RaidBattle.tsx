@@ -41,7 +41,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useSnackbar } from 'notistack';
-import { Modal, Button, OverlayTrigger } from 'react-bootstrap';
+import { Modal, OverlayTrigger } from 'react-bootstrap';
 
 import update from 'immutability-helper';
 import {
@@ -1820,13 +1820,9 @@ const RaidBattle = () => {
             />
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant={VariantType.Secondary} onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant={VariantType.Primary} onClick={handleSave}>
-            Save changes
-          </Button>
+        <Modal.Footer className="gap-2">
+          <ButtonMui color="tertiary" onClick={handleClose} label="Close" />
+          <ButtonMui onClick={handleSave} label="Save changes" />
         </Modal.Footer>
       </Modal>
 
@@ -1839,13 +1835,9 @@ const RaidBattle = () => {
             {modalFormFilters()}
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant={VariantType.Secondary} onClick={handleCloseOption}>
-            Close
-          </Button>
-          <Button variant={VariantType.Primary} onClick={handleSaveOption}>
-            Save changes
-          </Button>
+        <Modal.Footer className="gap-2">
+          <ButtonMui color="tertiary" onClick={handleCloseOption} label="Close" />
+          <ButtonMui onClick={handleSaveOption} label="Save changes" />
         </Modal.Footer>
       </Modal>
 
@@ -1858,13 +1850,9 @@ const RaidBattle = () => {
             {modalFormSetting()}
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant={VariantType.Secondary} onClick={handleCloseSettingPokemon}>
-            Close
-          </Button>
-          <Button variant={VariantType.Primary} onClick={handleSaveSettingPokemon}>
-            Save
-          </Button>
+        <Modal.Footer className="gap-2">
+          <ButtonMui color="tertiary" onClick={handleCloseSettingPokemon} label="Close" />
+          <ButtonMui onClick={handleSaveSettingPokemon} label="Save" />
         </Modal.Footer>
       </Modal>
 
@@ -1878,9 +1866,7 @@ const RaidBattle = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant={VariantType.Secondary} onClick={handleCloseMovePokemon}>
-            Close
-          </Button>
+          <ButtonMui color="tertiary" onClick={handleCloseMovePokemon} label="Close" />
         </Modal.Footer>
       </Modal>
     </Fragment>

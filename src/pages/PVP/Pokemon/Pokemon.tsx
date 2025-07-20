@@ -16,7 +16,6 @@ import { calculateStatsByTag } from '../../../utils/calculate';
 import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 
 import Error from '../../Error/Error';
-import { Button } from 'react-bootstrap';
 import { Params } from '../../../utils/constants';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -46,6 +45,7 @@ import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
+import ButtonGroupMui from '../../../components/Commons/Button/ButtonGroupMui';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
@@ -266,33 +266,26 @@ const PokemonPVP = (props: IStyleSheetData) => {
         <div className="pokemon-ranking-body container pvp-container">
           {renderLeague()}
           <hr />
-          <div className="ranking-link-group pt-2">
-            {getKeysObj(ScoreType).map((type, index) => (
-              <Button
-                key={index}
-                className={
-                  isEqual(
-                    getValueOrDefault(
-                      String,
-                      searchParams.get(Params.LeagueType),
-                      getKeyWithData(ScoreType, ScoreType.Overall)
-                    ).toLowerCase(),
-                    type,
-                    EqualMode.IgnoreCaseSensitive
-                  )
-                    ? 'active'
-                    : ''
-                }
-                onClick={() =>
-                  navigate(
-                    `/pvp/${params.cp}/${params.serie}/${params.pokemon}?${Params.LeagueType}=${type.toLowerCase()}`
-                  )
-                }
-              >
-                {type}
-              </Button>
-            ))}
-          </div>
+          <ButtonGroupMui
+            className="mt-2"
+            isNoneBorder
+            buttons={getKeysObj(ScoreType).map((type) => ({
+              label: type,
+              active: isEqual(
+                getValueOrDefault(
+                  String,
+                  searchParams.get(Params.LeagueType),
+                  getKeyWithData(ScoreType, ScoreType.Overall)
+                ),
+                type,
+                EqualMode.IgnoreCaseSensitive
+              ),
+              onClick: () =>
+                navigate(
+                  `/pvp/${params.cp}/${params.serie}/${params.pokemon}?${Params.LeagueType}=${type.toLowerCase()}`
+                ),
+            }))}
+          />
           <div className="w-100 ranking-info mt-2">
             <div className="d-flex flex-wrap align-items-center justify-content-center gap-4">
               <div className="position-relative filter-shadow" style={{ width: 128 }}>

@@ -1,4 +1,12 @@
-import { BaseSelectProps, BaseTextFieldProps, ButtonProps, FormControlLabelProps, SxProps, Theme } from '@mui/material';
+import {
+  BaseSelectProps,
+  BaseTextFieldProps,
+  ButtonGroupProps,
+  ButtonProps,
+  FormControlLabelProps,
+  SxProps,
+  Theme,
+} from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats } from '../../../core/models/pokemon.model';
 import { LabelType, PokemonType, PokemonClass, CardType, TypeMove } from '../../../enums/type.enum';
@@ -134,10 +142,18 @@ export interface FormControlMuiComponent extends FormControlLabelProps {
   width?: number | string;
 }
 
-export interface IButtonMuiComponent extends ButtonProps {
+interface IButtonMuiStyle {
   textTransform?: 'capitalize' | 'uppercase' | 'lowercase' | 'none';
-  label?: React.ReactNode;
   isNoneBorder?: boolean;
+  active?: boolean;
+}
+
+export interface IButtonMuiComponent extends ButtonProps, IButtonMuiStyle {
+  label?: React.ReactNode;
+}
+
+export interface IButtonGroupMuiComponent extends ButtonGroupProps, IButtonMuiStyle {
+  buttons: IButtonMuiComponent[];
 }
 
 export interface ISelectMuiComponent<T> extends BaseSelectProps<T> {

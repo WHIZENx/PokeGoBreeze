@@ -1,7 +1,8 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Button, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { VariantType } from '../../enums/type.enum';
+import ButtonMui from '../Commons/Button/ButtonMui';
 
 interface Props {
   children: ReactNode;
@@ -75,17 +76,13 @@ class ErrorBoundary extends Component<Props, IState> {
             The application encountered an error.
           </Typography>
           <div className="d-flex gap-2 mt-3">
-            <Button variant={VariantType.Contained} color="primary" onClick={this.handleGoHome}>
-              Back to Home
-            </Button>
-            <Button
+            <ButtonMui onClick={this.handleGoHome} label="Back to Home" />
+            <ButtonMui
               variant={VariantType.Outlined}
-              color="primary"
               onClick={this.handleRefresh}
               startIcon={<RefreshIcon />}
-            >
-              Refresh Page
-            </Button>
+              label="Refresh Page"
+            />
           </div>
           {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
             <div className="mt-4 mw-100 overflow-auto">
