@@ -102,6 +102,7 @@ import { levelList } from '../../../utils/compute';
 import InputMui from '../../../components/Commons/Input/InputMui';
 import FormControlMui from '../../../components/Commons/Form/FormControlMui';
 import InputReleased from '../../../components/Commons/Input/InputReleased';
+import ButtonMui from '../../../components/Commons/Button/ButtonMui';
 
 const RaidBattle = () => {
   useTitle({
@@ -1360,13 +1361,12 @@ const RaidBattle = () => {
             </div>
             {resultFMove && resultCMove && (
               <div className="text-center mt-2">
-                <button
-                  className="btn btn-primary w-50"
+                <ButtonMui
+                  className="w-50"
                   disabled={Boolean(resultBoss)}
                   onClick={() => handleCalculate()}
-                >
-                  Search
-                </button>
+                  label="Search"
+                />
               </div>
             )}
           </div>
@@ -1398,9 +1398,7 @@ const RaidBattle = () => {
             </p>
           </div>
           <div>
-            <button className="btn btn-primary" onClick={handleShowOption}>
-              Search options
-            </button>
+            <ButtonMui onClick={handleShowOption} label="Search options" />
           </div>
         </div>
         {isNotEmpty(result) && (
@@ -1492,9 +1490,11 @@ const RaidBattle = () => {
                     src={APIService.getTrainerModel(trainer.trainerId % 294)}
                   />
                 </Badge>
-                <button className="btn btn-primary me-2" onClick={() => handleShow(trainer.pokemons, index)}>
-                  <EditIcon fontSize="small" />
-                </button>
+                <ButtonMui
+                  className="me-2"
+                  onClick={() => handleShow(trainer.pokemons, index)}
+                  label={<EditIcon fontSize="small" />}
+                />
                 <div className="pokemon-battle-group">
                   {trainer.pokemons.map((pokemon, index) => (
                     <div key={index} className="pokemon-battle">
@@ -1558,13 +1558,11 @@ const RaidBattle = () => {
               </div>
             ))}
             <div className="text-center mt-2">
-              <button
-                className="btn btn-primary"
+              <ButtonMui
                 onClick={() => calculateTrainerBattle(trainerBattle)}
                 disabled={!resultBoss}
-              >
-                Raid Battle
-              </button>
+                label="Raid Battle"
+              />
             </div>
             <div className="d-flex flex-wrap justify-content-center align-items-center mt-2">
               <RemoveCircleIcon

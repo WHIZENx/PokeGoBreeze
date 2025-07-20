@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { Button, FormGroup } from 'react-bootstrap';
+import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
@@ -33,6 +33,7 @@ import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../..
 import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Select/SelectMui';
+import ButtonMui from '../../../components/Commons/Button/ButtonMui';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -376,9 +377,16 @@ const Damage = () => {
                       }))}
                     />
                   </Box>
-                  <Button variant={VariantType.Primary} type="submit" className="mt-2">
-                    <img alt="ATK" width={20} height={20} src={ATK_LOGO} /> Battle
-                  </Button>
+                  <ButtonMui
+                    label={
+                      <div className="d-flex align-items-center gap-1">
+                        <img alt="ATK" width={20} height={20} src={ATK_LOGO} />
+                        <span>Battle</span>
+                      </div>
+                    }
+                    type="submit"
+                    className="mt-2"
+                  />
                 </div>
               </div>
             </form>

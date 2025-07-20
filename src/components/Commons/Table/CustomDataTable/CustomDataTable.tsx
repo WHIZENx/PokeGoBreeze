@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { StyleSheetManager } from 'styled-components';
 import { ICustomDataTableProps } from '../../models/component.model';
@@ -8,10 +8,10 @@ import { convertColumnDataType, isIncludeList } from '../../../../utils/extensio
 import { getCustomThemeDataTable } from '../../../../utils/utils';
 import { isNotEmpty } from '../../../../utils/extension';
 import { debounce } from 'lodash';
-import { VariantType } from '../../../../enums/type.enum';
 import CustomInput from '../../Input/CustomInput';
 import { StyleSheetConfig } from '../../../../utils/configs/style-sheet.config';
 import { IncludeMode } from '../../../../utils/enums/string.enum';
+import ButtonMui from '../../Button/ButtonMui';
 
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -131,9 +131,7 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant={VariantType.Secondary} onClick={handleCloseOption}>
-              Close
-            </Button>
+            <ButtonMui color="tertiary" label="Close" onClick={handleCloseOption} />
           </Modal.Footer>
         </Modal>
       )}

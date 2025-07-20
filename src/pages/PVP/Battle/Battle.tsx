@@ -1334,24 +1334,34 @@ const Battle = () => {
                       />
                     </div>
                     <div className="d-flex justify-content-center column-gap-2">
-                      <button
-                        className="btn btn-primary"
+                      <ButtonMui
+                        label={
+                          playState ? (
+                            <div className="d-flex align-items-center gap-1">
+                              <PauseIcon />
+                              <span>Stop</span>
+                            </div>
+                          ) : (
+                            <div className="d-flex align-items-center gap-1">
+                              <PlayArrowIcon />
+                              <span>Play</span>
+                            </div>
+                          )
+                        }
                         onMouseDown={() => (isMobile ? undefined : playState ? stopTimeline() : playingTimeline())}
                         onTouchEnd={() => (isMobile ? (playState ? stopTimeline() : playingTimeline()) : undefined)}
-                      >
-                        {playState ? (
-                          <Fragment>
-                            <PauseIcon /> Stop
-                          </Fragment>
-                        ) : (
-                          <Fragment>
-                            <PlayArrowIcon /> Play
-                          </Fragment>
-                        )}
-                      </button>
-                      <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeline()}>
-                        <RestartAltIcon /> Reset
-                      </button>
+                      />
+                      <ButtonMui
+                        color="error"
+                        label={
+                          <div className="d-flex align-items-center gap-1">
+                            <RestartAltIcon />
+                            <span>Reset</span>
+                          </div>
+                        }
+                        onClick={() => resetTimeline()}
+                        disabled={playState}
+                      />
                     </div>
                   </div>
                 </Fragment>
@@ -1363,21 +1373,25 @@ const Battle = () => {
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
           <div className="text-center mt-2">
-            <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
-              {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
-                <Fragment>
-                  <RestartAltIcon /> Reset Battle
-                </Fragment>
-              ) : (
-                <Fragment>
-                  <span className="position-relative">
-                    <img height={36} alt="ATK Left" src={ATK_LOGO} />
-                    <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
-                  </span>
-                  {' Battle Simulator'}
-                </Fragment>
-              )}
-            </button>
+            <ButtonMui
+              style={{ height: 50 }}
+              label={
+                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
+                  <Fragment>
+                    <RestartAltIcon /> Reset Battle
+                  </Fragment>
+                ) : (
+                  <div className="d-flex align-items-center gap-1">
+                    <span className="position-relative">
+                      <img height={36} alt="ATK Left" src={ATK_LOGO} />
+                      <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
+                    </span>
+                    <span>Battle Simulator</span>
+                  </div>
+                )
+              }
+              onClick={() => battleAnimation()}
+            />
           </div>
         )}
       </div>

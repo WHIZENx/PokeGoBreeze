@@ -1,6 +1,6 @@
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
-import { Accordion, useAccordionButton } from 'react-bootstrap';
+import { Accordion, useAccordionButton, Modal } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import APIService from '../../../services/api.service';
@@ -19,7 +19,6 @@ import {
 import { rankIconCenterName, rankIconName, rankName } from '../../../utils/compute';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import {
   ILeague,
@@ -41,7 +40,7 @@ import {
 import { LeagueRewardType, LeagueBattleType, RewardType, LeagueType } from '../../../core/enums/league.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
-import { PokemonType, VariantType } from '../../../enums/type.enum';
+import { PokemonType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
@@ -49,6 +48,7 @@ import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
 import InputSearch from '../../../components/Commons/Input/InputSearch';
 import SelectMui from '../../../components/Commons/Select/SelectMui';
+import ButtonMui from '../../../components/Commons/Button/ButtonMui';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -824,9 +824,7 @@ const Leagues = () => {
             )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant={VariantType.Secondary} onClick={handleClose}>
-              Close
-            </Button>
+            <ButtonMui color="tertiary" label="Close" onClick={handleClose} />
           </Modal.Footer>
         </Modal>
       )}

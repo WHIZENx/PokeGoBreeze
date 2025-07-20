@@ -26,6 +26,7 @@ import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/C
 import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import InputMui from '../../../components/Commons/Input/InputMui';
+import ButtonMui from '../../../components/Commons/Button/ButtonMui';
 
 interface IFindCP {
   level: number;
@@ -403,9 +404,7 @@ const FindTable = () => {
               }}
             />
             <div className="btn-search d-flex justify-content-center text-center">
-              <button type="submit" className="btn btn-primary">
-                Search
-              </button>
+              <ButtonMui type="submit" label="Search" />
             </div>
           </Box>
         </form>
@@ -465,9 +464,7 @@ const FindTable = () => {
             </Box>
           </div>
           <div className="form-group d-flex justify-content-center text-center mt-2">
-            <button type="submit" className="btn btn-primary">
-              Search
-            </button>
+            <ButtonMui type="submit" label="Search" />
           </div>
         </form>
         {preCpArr && <Fragment>{showResultTableCP()}</Fragment>}

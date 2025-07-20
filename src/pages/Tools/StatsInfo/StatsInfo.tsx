@@ -20,6 +20,7 @@ import CircularProgressTable from '../../../components/Sprites/CircularProgress/
 import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
 import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import ButtonMui from '../../../components/Commons/Button/ButtonMui';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -323,9 +324,7 @@ const StatsInfo = () => {
           </Box>
         </div>
         <div className="form-group d-flex justify-content-center text-center mt-2">
-          <button type="submit" className="btn btn-primary">
-            Search
-          </button>
+          <ButtonMui type="submit" label="Search" />
         </div>
       </form>
       <CustomDataTable

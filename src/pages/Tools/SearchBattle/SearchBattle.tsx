@@ -55,6 +55,7 @@ import useSpinner from '../../../composables/useSpinner';
 import useCalculate from '../../../composables/useCalculate';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
+import ButtonMui from '../../../components/Commons/Button/ButtonMui';
 
 const FindBattle = () => {
   useTitle({
@@ -471,9 +472,7 @@ const FindBattle = () => {
           </Box>
         </div>
         <div className="form-group d-flex justify-content-center text-center mt-2">
-          <button type="submit" className="btn btn-primary">
-            Search
-          </button>
+          <ButtonMui type="submit" label="Search" />
         </div>
       </form>
       <Fragment>
