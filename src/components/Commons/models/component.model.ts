@@ -1,11 +1,12 @@
 import {
   BaseSelectProps,
   BaseTextFieldProps,
-  ButtonGroupProps,
   ButtonProps,
   FormControlLabelProps,
   SxProps,
   Theme,
+  ToggleButtonGroupProps,
+  ToggleButtonProps,
 } from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats } from '../../../core/models/pokemon.model';
@@ -19,6 +20,8 @@ import { IPokemonDetail } from '../../../core/models/API/info.model';
 import { TableProps, TableStyles } from 'react-data-table-component';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
+import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
+import { PVPInfo } from '../../../core/models/pvp.model';
 
 export interface SwitchReleasedComponent {
   releasedGO: boolean;
@@ -153,12 +156,18 @@ export interface IButtonMuiComponent extends ButtonProps, IButtonMuiStyle {
   label?: React.ReactNode;
 }
 
-export interface IButtonGroupMuiComponent extends ButtonGroupProps, IButtonMuiStyle {
-  buttons: IButtonMuiComponent[];
+interface IToggleButton extends ToggleButtonProps {
+  label?: React.ReactNode;
+}
+
+export interface IToggleGroupMuiComponent extends ToggleButtonGroupProps, IButtonMuiStyle {
+  toggles: IToggleButton[];
 }
 
 export interface IButtonGroupFormComponent {
-  scrollClass: string;
+  className?: string;
+  width?: number | string;
+  height?: number | string;
   forms: IPokemonFormModify[][];
   isLoaded: boolean;
   isFullWidth?: boolean;
@@ -166,6 +175,20 @@ export interface IButtonGroupFormComponent {
   id: number | undefined;
   defaultId: number | undefined;
   changeForm: (value: IPokemonFormModify) => void;
+}
+
+export interface IButtonGroupLeagueComponent {
+  className?: string;
+  width?: number | string;
+  height?: number | string;
+  leagues: BattleLeagueCPType[] | undefined;
+  isLoaded: boolean;
+  isFullWidth?: boolean;
+  loading?: React.ReactNode;
+  data?: PVPInfo;
+  path?: string;
+  onClick?: (value: BattleLeagueCPType) => void;
+  value?: BattleLeagueCPType;
 }
 
 export interface ISelectMuiComponent<T> extends BaseSelectProps<T> {

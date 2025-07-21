@@ -3,24 +3,35 @@ import React from 'react';
 import { IButtonMuiComponent } from '../models/component.model';
 
 const ButtonMui = (props: IButtonMuiComponent) => {
-  const { isNoneBorder, active, ...rest } = props;
+  const {
+    isNoneBorder,
+    active,
+    className,
+    variant = 'contained',
+    textTransform = 'none',
+    color = 'primary',
+    sx = {},
+    ...rest
+  } = props;
   return (
     <Button
+      {...rest}
+      className={className}
+      variant={variant}
+      color={color}
       sx={{
-        textTransform: props.textTransform || 'none',
+        ...sx,
+        textTransform,
         ...(isNoneBorder ? { borderRadius: 0 } : {}),
         ...(active
           ? {
-              backgroundColor: `${props.color || 'primary'}.dark`,
+              backgroundColor: `${color}.select`,
               '&:hover': {
-                backgroundColor: `${props.color || 'primary'}.dark`,
+                backgroundColor: `${color}.select`,
               },
             }
           : {}),
-        ...props.sx,
       }}
-      variant={props.variant || 'contained'}
-      {...rest}
     >
       {props.label}
     </Button>

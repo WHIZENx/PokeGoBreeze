@@ -9,18 +9,24 @@ import ButtonMui from './ButtonMui';
 
 const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
   return (
-    <div className={combineClasses(props.scrollClass, props.isLoaded && props.isFullWidth ? 'w-100' : '')}>
+    <div
+      style={{ width: props.width, height: props.height }}
+      className={combineClasses('scroll-form', props.className, props.isLoaded && props.isFullWidth ? 'w-100' : '')}
+    >
       {props.isLoaded ? (
         <Fragment>
           {props.forms.map((value, index) => (
             <Fragment key={index}>
-              {value.map((value, index) => (
+              {value.map((value, subIndex) => (
                 <ButtonMui
-                  key={index}
+                  key={subIndex}
                   active={value.form.id === props.id}
                   onClick={() => props.changeForm(value)}
+                  sx={{ minHeight: 142 }}
+                  className={combineClasses(index + subIndex === 0 ? '' : 'ms-3', 'btn-default')}
+                  color="default"
                   label={
-                    <>
+                    <div className="h-100">
                       <div className="d-flex w-100 justify-content-center">
                         <div className="position-relative w-9">
                           <PokemonIconType pokemonType={value.form.pokemonType} size={24}>
@@ -49,7 +55,7 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                         )}
                         {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
                       </div>
-                    </>
+                    </div>
                   }
                 />
               ))}

@@ -152,8 +152,8 @@ const FormComponent = (props: IFormInfoComponent) => {
           <b>Form varieties</b>
         </h4>
         <ButtonGroupForm
+          className="my-3"
           isFullWidth
-          scrollClass="scroll-form"
           isLoaded={props.isLoadedForms}
           forms={props.formList}
           id={searchingMainForm?.form?.id}

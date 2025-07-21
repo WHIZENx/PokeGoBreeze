@@ -10,7 +10,7 @@ import { leaguesTeamBattle } from '../../../utils/constants';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Commons/Input/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { combineClasses, isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
+import { isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
 import { useSnackbar } from 'notistack';
@@ -21,6 +21,7 @@ import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/C
 import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Button/ButtonMui';
+import ButtonGroupLeague from '../../../components/Commons/Button/ButtonGroupLeague';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -226,22 +227,17 @@ const StatsInfo = () => {
       <div className="d-flex justify-content-center w-100">
         <div className="w-100 overflow-x-auto">
           <div className="w-fit-content" style={{ margin: '0 auto' }}>
-            <div className="d-flex text-center my-3 gap-2">
-              {leaguesTeamBattle.map((value, index) => (
-                <button
-                  key={index}
-                  className={combineClasses('btn btn-form', battleLeague === value.cp[0] ? 'form-selected' : '')}
-                  style={{ height: 200 }}
-                  onClick={() => setBattleLeague(value.cp[0])}
-                >
-                  <img alt="Image League" width={128} height={128} src={value.logo} />
-                  <div>
-                    <b>{value.name}</b>
-                  </div>
-                  <span className="text-danger">CP below {value.cp[0]}</span>
-                </button>
-              ))}
-            </div>
+            <ButtonGroupLeague
+              className="my-3"
+              isFullWidth
+              isLoaded={true}
+              leagues={leaguesTeamBattle
+                .filter((value) => value.cp.length > 0)
+                .map((value) => value.cp)
+                .flat()}
+              onClick={(value) => setBattleLeague(value)}
+              value={battleLeague}
+            />
           </div>
         </div>
       </div>

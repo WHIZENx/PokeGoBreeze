@@ -67,7 +67,7 @@ import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
 import InputSearch from '../../../components/Commons/Input/InputSearch';
-import ButtonGroupMui from '../../../components/Commons/Button/ButtonGroupMui';
+import ToggleGroupMui from '../../../components/Commons/Button/ToggleGroupMui';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
@@ -407,20 +407,19 @@ const RankingPVP = (props: IStyleSheetData) => {
       <div className="container pvp-container pb-3">
         {renderLeague()}
         <hr />
-        <ButtonGroupMui
-          className="mt-2"
+        <ToggleGroupMui
+          className="d-flex overflow-x-auto mt-2"
           isNoneBorder
-          buttons={getKeysObj(ScoreType).map((type) => ({
+          color="primary"
+          exclusive
+          value={getValueOrDefault(
+            String,
+            searchParams.get(Params.LeagueType),
+            getKeyWithData(ScoreType, ScoreType.Overall)
+          )}
+          toggles={getKeysObj(ScoreType).map((type) => ({
             label: type,
-            active: isEqual(
-              getValueOrDefault(
-                String,
-                searchParams.get(Params.LeagueType),
-                getKeyWithData(ScoreType, ScoreType.Overall)
-              ),
-              type,
-              EqualMode.IgnoreCaseSensitive
-            ),
+            value: type,
             onClick: () =>
               navigate(`/pvp/rankings/${params.serie}/${params.cp}?${Params.LeagueType}=${type.toLowerCase()}`),
           }))}

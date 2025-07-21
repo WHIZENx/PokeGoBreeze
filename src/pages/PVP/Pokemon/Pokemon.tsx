@@ -45,7 +45,7 @@ import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
-import ButtonGroupMui from '../../../components/Commons/Button/ButtonGroupMui';
+import ToggleGroupMui from '../../../components/Commons/Button/ToggleGroupMui';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
@@ -266,21 +266,20 @@ const PokemonPVP = (props: IStyleSheetData) => {
         <div className="pokemon-ranking-body container pvp-container">
           {renderLeague()}
           <hr />
-          <ButtonGroupMui
-            className="mt-2"
+          <ToggleGroupMui
+            className="d-flex justify-content-center overflow-x-auto mt-2"
             isNoneBorder
-            color="tertiary"
-            buttons={getKeysObj(ScoreType).map((type) => ({
+            color="primary"
+            exclusive
+            value={getValueOrDefault(
+              String,
+              searchParams.get(Params.LeagueType),
+              getKeyWithData(ScoreType, ScoreType.Overall)
+            )}
+            toggles={getKeysObj(ScoreType).map((type) => ({
               label: type,
-              active: isEqual(
-                getValueOrDefault(
-                  String,
-                  searchParams.get(Params.LeagueType),
-                  getKeyWithData(ScoreType, ScoreType.Overall)
-                ),
-                type,
-                EqualMode.IgnoreCaseSensitive
-              ),
+              value: type,
+              variant: 'contained',
               onClick: () =>
                 navigate(
                   `/pvp/${params.cp}/${params.serie}/${params.pokemon}?${Params.LeagueType}=${type.toLowerCase()}`
