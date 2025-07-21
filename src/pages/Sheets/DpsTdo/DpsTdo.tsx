@@ -25,7 +25,6 @@ import {
 
 import APIService from '../../../services/api.service';
 
-import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
@@ -68,7 +67,6 @@ import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/C
 import {
   defaultSheetPage,
   defaultSheetRow,
-  getTypes,
   getWeatherTypes,
   maxIv,
   minIv,
@@ -84,6 +82,7 @@ import FormControlMui from '../../../components/Commons/Form/FormControlMui';
 import InputReleased from '../../../components/Commons/Input/InputReleased';
 import SelectMui from '../../../components/Commons/Select/SelectMui';
 import ButtonMui from '../../../components/Commons/Button/ButtonMui';
+import ToggleType from '../../../components/Commons/Button/ToggleType';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -670,22 +669,7 @@ const DpsTdo = () => {
       )}
       <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
-        <div className="row w-100 m-0 types-select-btn">
-          {getTypes().map((item, index) => (
-            <div key={index} className="col img-group m-0 p-0">
-              <button
-                value={item}
-                onClick={() => addTypeArr(item)}
-                className={combineClasses(
-                  'btn-select-type w-100 p-2',
-                  isIncludeList(selectTypes, item) ? 'select-type' : ''
-                )}
-              >
-                <TypeInfo isBlock arr={[item]} />
-              </button>
-            </div>
-          ))}
-        </div>
+        <ToggleType fullWidth value={selectTypes} onSelectType={(type) => addTypeArr(type)} />
         <div className="row w-100 m-0">
           <div className="col-xxl p-0 w-fit-content">
             <div>

@@ -4,6 +4,8 @@ import { ISelectTypeComponent } from '../models/component.model';
 import Card from '../../Card/Card';
 import { isIncludeList } from '../../../utils/extension';
 import { IncludeMode } from '../../../utils/enums/string.enum';
+import CloseIcon from '@mui/icons-material/Close';
+import { IconButton } from '@mui/material';
 
 const SelectTypeComponent = <T extends object>(props: ISelectTypeComponent<T>) => {
   const [types, setTypes] = useState<string[]>([]);
@@ -37,15 +39,12 @@ const SelectTypeComponent = <T extends object>(props: ISelectTypeComponent<T>) =
           onClick={() => setShowType(true)}
           onBlur={() => setShowType(false)}
         >
-          <div className="card-select">
+          <div className="card-select d-flex justify-content-between align-items-center">
             <Card value={splitAndCapitalize(props.currentType, /(?=[A-Z])/, ' ')} cardType={props.cardType} />
             {props.isShowRemove && props.currentType && (
-              <button
-                type="button"
-                className="btn-close btn-close-white remove-close"
-                onMouseDown={closeType}
-                aria-label="Remove"
-              />
+              <IconButton className="h-fit-content" sx={{ color: 'red' }} onMouseDown={closeType}>
+                <CloseIcon />
+              </IconButton>
             )}
           </div>
           {showType && (

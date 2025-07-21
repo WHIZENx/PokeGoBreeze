@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
-import TypeInfo from '../../components/Sprites/Type/Type';
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
@@ -26,7 +25,6 @@ import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
 import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
-import { getTypes, transitionTime } from '../../utils/helpers/options-context.helpers';
 import useIcon from '../../composables/useIcon';
 import useAssets from '../../composables/useAssets';
 import usePokemon from '../../composables/usePokemon';
@@ -34,6 +32,7 @@ import InputMuiSearch from '../../components/Commons/Input/InputMuiSearch';
 import InputReleased from '../../components/Commons/Input/InputReleased';
 import SelectMui from '../../components/Commons/Select/SelectMui';
 import ButtonMui from '../../components/Commons/Button/ButtonMui';
+import ToggleType from '../../components/Commons/Button/ToggleType';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -325,23 +324,7 @@ const Pokedex = (props: IStyleSheetData) => {
       )}
       <div className="text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
-        <div className="row w-100 m-0 types-select-btn">
-          {getTypes().map((item, index) => (
-            <div key={index} className="col img-group m-0 p-0">
-              <button
-                value={item}
-                onClick={() => addTypeArr(item)}
-                className={combineClasses(
-                  'btn-select-type w-100 p-2',
-                  isIncludeList(selectTypes, item) ? 'select-type' : ''
-                )}
-                style={{ transition: transitionTime() }}
-              >
-                <TypeInfo isBlock arr={[item]} />
-              </button>
-            </div>
-          ))}
-        </div>
+        <ToggleType fullWidth value={selectTypes} onSelectType={(type) => addTypeArr(type)} />
         <div className="w-100">
           <div className="border-input">
             <div className="head-types">Options</div>

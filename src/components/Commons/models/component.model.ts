@@ -156,12 +156,14 @@ export interface IButtonMuiComponent extends ButtonProps, IButtonMuiStyle {
   label?: React.ReactNode;
 }
 
-interface IToggleButton extends ToggleButtonProps {
+export interface IToggleButton extends ToggleButtonProps {
   label?: React.ReactNode;
 }
 
 export interface IToggleGroupMuiComponent extends ToggleButtonGroupProps, IButtonMuiStyle {
-  toggles: IToggleButton[];
+  toggles?: IToggleButton[];
+  isDivContain?: boolean;
+  isDivClassName?: string;
 }
 
 export interface IButtonGroupFormComponent {
@@ -189,6 +191,10 @@ export interface IButtonGroupLeagueComponent {
   path?: string;
   onClick?: (value: BattleLeagueCPType) => void;
   value?: BattleLeagueCPType;
+}
+
+export interface IToggleTypeComponent extends IToggleGroupMuiComponent {
+  onSelectType?: (value: string) => void;
 }
 
 export interface ISelectMuiComponent<T> extends BaseSelectProps<T> {
