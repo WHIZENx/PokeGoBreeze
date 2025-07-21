@@ -12,11 +12,6 @@
 
 .input-control-group {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
-}
-
-@media (width < 768px) {
-  .input-control-group {
-    flex-wrap: wrap;
-  }
 }

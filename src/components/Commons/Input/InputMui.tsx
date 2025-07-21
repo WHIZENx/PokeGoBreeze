@@ -8,10 +8,10 @@ const InputMui = (props: IInputMuiComponent) => {
     props.onChange?.(event.target.value);
   };
 
-  const { labelPrepend, labelAppend, menuItems, inputAlign, ...textFieldProps } = props;
+  const { labelPrepend, labelAppend, menuItems, inputAlign, disableGrow, ...textFieldProps } = props;
 
   return (
-    <div className={combineClasses('d-flex', props.fullWidth ? 'w-100' : '', props.className)}>
+    <div className={combineClasses('d-flex', disableGrow ? '' : 'flex-grow-1', props.className)}>
       {labelPrepend && <div className="input-group-text">{labelPrepend}</div>}
       <TextField
         {...textFieldProps}

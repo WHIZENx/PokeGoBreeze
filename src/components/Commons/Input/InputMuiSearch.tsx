@@ -83,12 +83,17 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
     onRemove,
     sx,
     isNoWrap,
+    prependRef,
     ...textFieldProps
   } = props;
 
   return (
     <Box className={combineClasses('input-control-group', isNoWrap ? 'flex-nowrap' : '')}>
-      {labelPrepend && <div className="input-group-text">{labelPrepend}</div>}
+      {labelPrepend && (
+        <div ref={prependRef} className="input-group-text">
+          {labelPrepend}
+        </div>
+      )}
       <TextField
         {...textFieldProps}
         value={searchTerm}

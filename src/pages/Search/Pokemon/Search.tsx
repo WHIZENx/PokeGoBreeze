@@ -181,6 +181,7 @@ const Search = () => {
         </h1>
         <InputMuiSearch
           id="input-search-pokemon"
+          isNoWrap
           value={searchTerm}
           onChange={(value) => setSearchTerm(value)}
           placeholder="Enter Name or ID"

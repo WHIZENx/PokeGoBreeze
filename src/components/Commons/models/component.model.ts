@@ -107,6 +107,7 @@ export interface IInputMuiComponent extends BaseTextFieldProps {
   labelAppend?: string;
   width?: number | string;
   menuItems?: IMenuItem[];
+  disableGrow?: boolean;
   inputAlign?: 'left' | 'center' | 'right';
 }
 
@@ -127,6 +128,7 @@ export interface IInputMuiSearchComponent extends IInputMuiComponent {
   customIconStart?: React.ReactNode;
   customIconEnd?: React.ReactNode;
   isNoWrap?: boolean;
+  prependRef?: React.RefObject<HTMLDivElement>;
 }
 
 export interface ISelectTierComponent {
@@ -139,14 +141,17 @@ export interface ISelectTierComponent {
   clearData?: () => void;
 }
 
-export interface FormControlMuiComponent extends FormControlLabelProps {
+export interface FormControlMuiComponent extends Omit<FormControlLabelProps, 'control' | 'label'> {
   boxClassName?: string;
   labelPrepend?: string;
   children?: React.ReactNode;
   width?: number | string;
+  isNotGroup?: boolean;
+  label?: string;
+  control?: React.ReactElement;
 }
 
-interface IButtonMuiStyle {
+export interface IButtonMuiStyle {
   textTransform?: 'capitalize' | 'uppercase' | 'lowercase' | 'none';
   isNoneBorder?: boolean;
   active?: boolean;
@@ -242,6 +247,8 @@ export interface ISelectPokemonComponent {
   defaultSetting?: IPokemonDataStats;
   maxHeight?: number;
   position?: SelectPosition;
+  labelPrepend?: string;
+  isNoWrap?: boolean;
 }
 
 export interface ISelectBadgeComponent {

@@ -46,7 +46,12 @@ const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
   return (
     <FormControl
       className={formClassName}
-      sx={{ ...formSx, ...(fullWidth ? { width: '100%' } : undefined) }}
+      sx={{
+        ...formSx,
+        flex: '1 1 auto',
+        ...(fullWidth ? { width: '100%' } : {}),
+        ...(fullWidth ? { width: '100%' } : {}),
+      }}
       size="small"
     >
       {inputLabel && <InputLabel>{inputLabel}</InputLabel>}

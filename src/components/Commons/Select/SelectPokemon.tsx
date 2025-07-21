@@ -27,6 +27,8 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   const [showPokemon, setShowPokemon] = useState(false);
   const [search, setSearch] = useState(props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : '');
 
+  const prependRef = useRef<HTMLDivElement | null>(null);
+
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
@@ -101,7 +103,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         showPokemon ? 'd-block' : 'd-none'
       )}
       onScroll={listenScrollEvent.bind(this)}
-      style={{ maxHeight: props.maxHeight ?? 274 }}
+      style={{ maxHeight: props.maxHeight ?? 274, left: prependRef.current?.clientWidth }}
     >
       <div>
         {getFilteredPokemons()
@@ -121,38 +123,39 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   );
 
   const inputPos = () => (
-    <div className="input-control-group">
-      <InputMuiSearch
-        value={search}
-        onChange={(value) => setSearch(value)}
-        placeholder="Enter Name or ID"
-        onFocus={() => setShowPokemon(true)}
-        onBlur={() => setShowPokemon(false)}
-        customPrepend={
-          pokemonIcon && (
-            <img
-              className="me-2"
-              width={40}
-              height={40}
-              alt="Pokémon Image"
-              src={pokemonIcon}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeIconSprite();
-              }}
-            />
-          )
-        }
-        onRemove={() => removePokemon()}
-        isShowRemove={!!pokemonIcon}
-      />
-    </div>
+    <InputMuiSearch
+      prependRef={prependRef}
+      value={search}
+      onChange={(value) => setSearch(value)}
+      placeholder="Enter Name or ID"
+      onFocus={() => setShowPokemon(true)}
+      onBlur={() => setShowPokemon(false)}
+      customPrepend={
+        pokemonIcon && (
+          <img
+            className="me-2"
+            width={40}
+            height={40}
+            alt="Pokémon Image"
+            src={pokemonIcon}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = APIService.getPokeIconSprite();
+            }}
+          />
+        )
+      }
+      onRemove={() => removePokemon()}
+      isShowRemove={!!pokemonIcon}
+      labelPrepend={props.labelPrepend}
+      isNoWrap={props.isNoWrap}
+    />
   );
 
   return (
     <div
       className={combineClasses(
-        'position-relative d-flex align-items-center form-control p-0 rounded-0',
+        'position-relative d-flex align-items-center p-0 rounded-0',
         props.isDisable ? 'card-select-disabled' : ''
       )}
     >

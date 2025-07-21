@@ -33,6 +33,7 @@ import InputReleased from '../../components/Commons/Input/InputReleased';
 import SelectMui from '../../components/Commons/Select/SelectMui';
 import ButtonMui from '../../components/Commons/Button/ButtonMui';
 import ToggleType from '../../components/Commons/Button/ToggleType';
+import FormControlMui from '../../components/Commons/Form/FormControlMui';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -330,32 +331,30 @@ const Pokedex = (props: IStyleSheetData) => {
             <div className="head-types">Options</div>
             <div className="row m-0">
               <div className="col-xl-4 p-0">
-                <div className="d-flex">
-                  <InputMuiSearch
-                    value={searchTerm}
-                    onChange={(value) => setSearchTerm(value)}
-                    placeholder="Enter Name or ID"
-                    labelPrepend="Search name or ID"
-                  />
-                </div>
-                <div className="d-flex flex-wrap px-2">
-                  <FormControlLabel
-                    control={
-                      <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
-                    }
-                    label="Match Pokémon"
-                  />
+                <InputMuiSearch
+                  isNoWrap
+                  value={searchTerm}
+                  onChange={(value) => setSearchTerm(value)}
+                  placeholder="Enter Name or ID"
+                  labelPrepend="Search name or ID"
+                />
+                <FormControlMui
+                  control={
+                    <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
+                  }
+                  label="Match Pokémon"
+                >
                   <InputReleased
                     releasedGO={releasedGO}
                     setReleaseGO={(check) => setFilters({ ...filters, releasedGO: check })}
                     isAvailable={releasedGO}
                   />
-                </div>
-                <div className="d-flex px-2">
-                  <FormControlLabel
+                  <FormControlMui
+                    isNotGroup
                     control={
                       <Switch checked={isShiny} onChange={(_, check) => setFilters({ ...filters, isShiny: check })} />
                     }
+                    className="h-100"
                     label={
                       <span className="d-flex align-items-center">
                         Show All Shiny Pokémon (Only Possible)
@@ -369,7 +368,7 @@ const Pokedex = (props: IStyleSheetData) => {
                       </span>
                     }
                   />
-                </div>
+                </FormControlMui>
               </div>
               <div className="col-xl-8 border-input p-2 gap-2">
                 <div className="d-flex">
