@@ -22,6 +22,7 @@ import { TableColumnModify } from '../../../utils/models/overrides/data-table.mo
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PVPInfo } from '../../../core/models/pvp.model';
+import React from 'react';
 
 export interface SwitchReleasedComponent {
   releasedGO: boolean;
@@ -147,7 +148,7 @@ export interface FormControlMuiComponent extends Omit<FormControlLabelProps, 'co
   children?: React.ReactNode;
   width?: number | string;
   isNotGroup?: boolean;
-  label?: string;
+  label?: React.ReactNode;
   control?: React.ReactElement;
 }
 

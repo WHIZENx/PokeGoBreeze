@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel } from '@mui/material';
+import { Checkbox } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../../services/api.service';
 import {
@@ -43,6 +43,7 @@ import useOptionStore from '../../../../composables/useOptions';
 import usePokemon from '../../../../composables/usePokemon';
 import useCalculate from '../../../../composables/useCalculate';
 import InputReleased from '../../Input/InputReleased';
+import FormControlMui from '../../Form/FormControlMui';
 
 const customStyles: TableStyles = {
   head: {
@@ -131,7 +132,7 @@ const Counter = (props: ICounterComponent) => {
   const menuItems = createDataRows<IMenuItem>(
     {
       label: (
-        <FormControlLabel
+        <FormControlMui
           control={
             <Checkbox checked={isSearchId} onChange={(_, check) => setOptions({ ...options, isSearchId: check })} />
           }
@@ -141,7 +142,7 @@ const Counter = (props: ICounterComponent) => {
     },
     {
       label: (
-        <FormControlLabel
+        <FormControlMui
           control={
             <Checkbox
               checked={isMatch}
@@ -355,7 +356,7 @@ const Counter = (props: ICounterComponent) => {
         isAvailable={releasedGO && !showFrame}
         isBlock={showFrame}
       />
-      <FormControlLabel
+      <FormControlMui
         control={
           <Checkbox
             disabled={!isNotEmpty(counterList)}
@@ -365,7 +366,7 @@ const Counter = (props: ICounterComponent) => {
         }
         label={`${getKeyWithData(PokemonType, PokemonType.Mega)}/${getKeyWithData(PokemonType, PokemonType.Primal)}`}
       />
-      <FormControlLabel
+      <FormControlMui
         control={
           <Checkbox
             disabled={!isNotEmpty(counterList)}
