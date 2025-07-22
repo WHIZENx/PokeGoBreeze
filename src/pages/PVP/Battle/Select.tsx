@@ -28,7 +28,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   const [cMovePri, setCMovePri] = useState<ICombat>();
   const [cMoveSec, setCMoveSec] = useState<ICombat>();
 
-  const [pokemonIcon, setPokemonIcon] = useState('');
   const [score, setScore] = useState(0);
 
   const selectPokemon = (value: IBattlePokemonData) => {
@@ -38,7 +37,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     props.clearData(false);
     const [fMove] = getValueOrDefault(Array, value.moveset);
     let [, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
-    setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);
 
     const fMoveCombat = findMoveByName(fMove);
@@ -131,7 +129,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   const removePokemon = useCallback(() => {
     props.clearData(false);
-    setPokemonIcon('');
     setPokemon(undefined);
     setFMove(undefined);
     setCMovePri(undefined);
@@ -164,23 +161,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         }}
         isFit
         placeholder="Enter Name"
-        customPrepend={
-          pokemonIcon && (
-            <img
-              className="me-2"
-              width={40}
-              height={40}
-              alt="Pokémon Image"
-              src={pokemonIcon}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeIconSprite();
-              }}
-            />
-          )
-        }
+        isShowPokemonIcon
+        onSprite={(pokemon) => pokemon?.pokemon?.sprite}
         customIconStart={
-          (score > 0 || isNotEmpty(pokemonIcon) || pokemon) && (
+          (score > 0 || pokemon) && (
             <>
               {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
                 <span
@@ -202,7 +186,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           <CardPokemon value={pokemon.pokemon} score={pokemon.score} pokemonType={getPokemonType(pokemon.speciesId)} />
         )}
         onRemove={() => removePokemon()}
-        isShowRemove={!!pokemonIcon}
       />
       <h5>Fast Moves</h5>
       <div

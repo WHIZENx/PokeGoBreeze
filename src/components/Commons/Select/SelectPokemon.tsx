@@ -83,24 +83,11 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.num })}
       label={props.labelPrepend}
       onRemove={() => removePokemon()}
-      isShowRemove={!!pokemonIcon}
       cardElement={(pokemon) => <CardPokemon value={pokemon} />}
       maxHeight={props.maxHeight}
-      customPrepend={
-        pokemonIcon && (
-          <img
-            className="me-2"
-            width={40}
-            height={40}
-            alt="Pokémon Image"
-            src={pokemonIcon}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = APIService.getPokeIconSprite();
-            }}
-          />
-        )
-      }
+      isShowPokemonIcon
+      onSprite={(pokemon) => pokemon?.sprite}
+      isDisable={props.isDisable}
     />
   );
 };

@@ -7,11 +7,14 @@ import { SelectPosition } from './enums/select-type.enum';
 import { debounce } from 'lodash';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { splitAndCapitalize } from '../../../utils/utils';
+import apiService from '../../../services/api.service';
 
 const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
   const [showPokemon, setShowPokemon] = useState(props.isShowPokemon);
   const [search, setSearch] = useState(props.value);
   const [startIndex, setStartIndex] = useState(0);
+
+  const [pokemonIcon, setPokemonIcon] = useState('');
 
   const prependRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLDivElement | null>(null);
@@ -84,17 +87,35 @@ const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
       onFocus={() => setShowPokemon(true)}
       onBlur={() => setShowPokemon(false)}
       labelPrepend={props.label}
-      customPrepend={props.customPrepend}
+      disabled={props.isDisable}
+      customPrepend={
+        pokemonIcon && (
+          <img
+            className={combineClasses('me-2', props.isDisable ? 'filter-gray' : '')}
+            width={40}
+            height={40}
+            alt="Pokémon Image"
+            src={pokemonIcon}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = apiService.getPokeIconSprite();
+            }}
+          />
+        )
+      }
       onRemove={() => {
         if (props.onRemove) {
           if (props.onSetSearch) {
             props.onSetSearch('');
           }
+          if (props.isShowPokemonIcon) {
+            setPokemonIcon('');
+          }
           setSearch('');
           props.onRemove();
         }
       }}
-      isShowRemove={props.isShowRemove}
+      isShowRemove={props.isShowPokemonIcon && !!pokemonIcon}
       customIconStart={props.customIconStart}
       className="p-0"
     />
@@ -104,9 +125,9 @@ const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
     <div
       ref={resultsContainerRef}
       className={combineClasses(
-        'result mt-1',
-        position === SelectPosition.Up ? 'pos-up' : '',
-        showPokemon ? 'd-block' : 'd-none'
+        'result',
+        position === SelectPosition.Up ? 'pos-up mb-1' : 'mt-1',
+        showPokemon && !props.isDisable ? 'd-block' : 'd-none'
       )}
       onScroll={listenScrollEvent.bind(this)}
       style={{
@@ -127,6 +148,9 @@ const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
                 }
                 if (props.onSelect) {
                   setSearch(props.onSelect(value));
+                }
+                if (props.isShowPokemonIcon && props.onSprite) {
+                  setPokemonIcon(apiService.getPokeIconSprite(props.onSprite(value)));
                 }
               }}
               onMouseOver={() => props.onSetSelectId?.(value)}

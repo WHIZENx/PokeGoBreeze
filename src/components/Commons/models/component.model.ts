@@ -320,14 +320,15 @@ export interface ISelectCustomPokemonComponent<T> {
   onSetSearch?: (value: string) => void;
   maxHeight?: number | string;
   isFit?: boolean;
-  customPrepend?: React.ReactNode;
   onRemove?: () => void;
-  isShowRemove?: boolean;
   onSelect?: (pokemon: T) => string | undefined;
   customIconStart?: JSX.Element;
   onIsSelectedPokemon?: (pokemon: T) => boolean;
   onFilter?: (pokemon: T) => { name: string | undefined; id: number };
   inputRef?: React.RefObject<HTMLInputElement>;
+  isShowPokemonIcon?: boolean;
+  onSprite?: (pokemon: T) => string | undefined;
+  isDisable?: boolean;
 }
 
 export interface IStatsTableComponent {

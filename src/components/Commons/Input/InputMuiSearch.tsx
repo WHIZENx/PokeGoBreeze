@@ -60,6 +60,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
     <InputAdornment position={position.current}>
       {customIconStart && customIconStart}
       <IconButton
+        disabled={textFieldProps.disabled}
         aria-label={searchTerm || isShowRemove ? 'clear' : 'search'}
         onClick={searchTerm || isShowRemove ? handleClear : props.onSearch}
         edge={position.current}
