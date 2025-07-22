@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { combineClasses, isNotEmpty, isUndefined, toNumber } from '../../../utils/extension';
+import { combineClasses, isInclude, isNotEmpty, isUndefined, toNumber } from '../../../utils/extension';
 import { ISelectCustomPokemonComponent } from '../models/component.model';
 import InputMuiSearch from '../Input/InputMuiSearch';
 import { MenuList, MenuItem } from '@mui/material';
 import { SelectPosition } from './enums/select-type.enum';
 import { debounce } from 'lodash';
+import { IncludeMode } from '../../../utils/enums/string.enum';
+import { splitAndCapitalize } from '../../../utils/utils';
 
 const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
   const [showPokemon, setShowPokemon] = useState(props.isShowPokemon);
@@ -27,7 +29,14 @@ const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
       const debounced = debounce(() => {
         const results = props.pokemonList.filter((item) => {
           if (props.onFilter) {
-            return props.onFilter(item, search);
+            const { name, id } = props.onFilter(item);
+            return (
+              isInclude(
+                splitAndCapitalize(name?.replaceAll('_', '-'), '-', ' '),
+                search,
+                IncludeMode.IncludeIgnoreCaseSensitive
+              ) || isInclude(id, search)
+            );
           }
           return true;
         });

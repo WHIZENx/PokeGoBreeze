@@ -11,7 +11,6 @@ import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
-import { IncludeMode } from '../../../utils/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
@@ -158,9 +157,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       <SelectCustomPokemon
         pokemonList={props.data}
         onSelect={(pokemon) => splitAndCapitalize(pokemon.name?.replaceAll('_', '-'), '-', ' ')}
-        onFilter={(pokemon, search) =>
-          isInclude(pokemon.name, search, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(pokemon.id, search)
-        }
+        onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.id })}
         onSetPokemon={(value) => {
           showSpinner();
           setTimeout(() => selectPokemon(value), 200);

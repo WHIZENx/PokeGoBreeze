@@ -326,7 +326,7 @@ export interface ISelectCustomPokemonComponent<T> {
   onSelect?: (pokemon: T) => string | undefined;
   customIconStart?: JSX.Element;
   onIsSelectedPokemon?: (pokemon: T) => boolean;
-  onFilter?: (pokemon: T, search: string | undefined) => boolean;
+  onFilter?: (pokemon: T) => { name: string | undefined; id: number };
   inputRef?: React.RefObject<HTMLInputElement>;
 }
 

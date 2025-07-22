@@ -8,10 +8,9 @@ import APIService from '../../../services/api.service';
 import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { getValueOrDefault, isEqual, isInclude } from '../../../utils/extension';
+import { getValueOrDefault, isEqual } from '../../../utils/extension';
 import usePokemon from '../../../composables/usePokemon';
 import SelectCustomPokemon from './SelectCustomPokemon';
-import { IncludeMode } from '../../../utils/enums/string.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
@@ -81,9 +80,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       onSetPokemon={(pokemon) => changePokemon(pokemon)}
       isFit
       onSelect={(pokemon) => splitAndCapitalize(pokemon.name.replaceAll('_', '-'), '-', ' ')}
-      onFilter={(pokemon, search) =>
-        isInclude(pokemon.name, search, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(pokemon.num, search)
-      }
+      onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.num })}
       label={props.labelPrepend}
       onRemove={() => removePokemon()}
       isShowRemove={!!pokemonIcon}

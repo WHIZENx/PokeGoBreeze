@@ -7,7 +7,7 @@ import Pokemon from '../../Pokemon/Pokemon';
 
 import { Action } from 'history';
 import { PokemonType } from '../../../enums/type.enum';
-import { isInclude, toNumber } from '../../../utils/extension';
+import { toNumber } from '../../../utils/extension';
 import { SearchOption } from './models/pokemon-search.model';
 import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context.helpers';
 import useRouter from '../../../composables/useRouter';
@@ -15,7 +15,6 @@ import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
 import SelectCustomPokemon from '../../../components/Commons/Select/SelectCustomPokemon';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { IncludeMode } from '../../../utils/enums/string.enum';
 
 const Search = () => {
   useTitle({
@@ -130,9 +129,7 @@ const Search = () => {
           onSetPokemon={(pokemon) => getInfoPoke(pokemon.num)}
           isFit
           label="Search"
-          onFilter={(pokemon, search) =>
-            isInclude(pokemon.name, search, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(pokemon.num, search)
-          }
+          onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.num })}
           onIsSelectedPokemon={(pokemon) => pokemon.num === selectId}
           maxHeight={570}
           cardElement={(pokemon) => (
