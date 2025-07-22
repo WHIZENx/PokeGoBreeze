@@ -51,7 +51,7 @@ export interface ICardSmallComponent {
 }
 
 export interface ICardPokemonComponent {
-  value: IPokemonData;
+  value: IPokemonData | undefined;
   score?: number;
   pokemonType?: PokemonType;
 }

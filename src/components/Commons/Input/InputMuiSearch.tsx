@@ -84,6 +84,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
     sx,
     isNoWrap,
     prependRef,
+    textRef,
     ...textFieldProps
   } = props;
 
@@ -96,6 +97,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
       )}
       <TextField
         {...textFieldProps}
+        ref={textRef}
         value={searchTerm}
         size={props.size || 'small'}
         onChange={props.onChange ? handleOnChangeSearch : undefined}

@@ -13,9 +13,9 @@ const CardPokemon = (props: ICardPokemonComponent) => {
           <img
             height={38}
             alt="Pokémon Logo"
-            title={splitAndCapitalize(props.value.name.replaceAll('_', '-'), '-', ' ')}
+            title={splitAndCapitalize(props.value?.name.replaceAll('_', '-'), '-', ' ')}
             className="me-2"
-            src={APIService.getPokeIconSprite(props.value.sprite, true)}
+            src={APIService.getPokeIconSprite(props.value?.sprite, true)}
             onError={(e) => {
               e.currentTarget.onerror = null;
               e.currentTarget.src = APIService.getPokeIconSprite();
@@ -23,7 +23,7 @@ const CardPokemon = (props: ICardPokemonComponent) => {
           />
         </PokemonIconType>
       </div>
-      {splitAndCapitalize(props.value.name.replaceAll('_', '-'), '-', ' ')}
+      <span className="text-truncate">{splitAndCapitalize(props.value?.name.replaceAll('_', '-'), '-', ' ')}</span>
       {!isNullOrUndefined(props.score) && <span className="type-icon-small ic elite-ic ms-2">{props.score}</span>}
     </div>
   );

@@ -929,6 +929,7 @@ const DpsTdo = () => {
                   <SelectPokemon
                     pokemon={dataTargetPokemon}
                     isSelected
+                    isFit
                     setCurrentPokemon={setDataTargetPokemon}
                     setFMovePokemon={setFMoveTargetPokemon}
                     setCMovePokemon={setCMoveTargetPokemon}

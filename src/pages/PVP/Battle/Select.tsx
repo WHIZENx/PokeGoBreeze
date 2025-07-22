@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/api.service';
 
 import { getKeyWithData, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
@@ -15,17 +15,14 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
-import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
+import SelectCustomPokemon from '../../../components/Commons/Select/SelectCustomPokemon';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const { findMoveByName } = useCombats();
   const { showSpinner, hideSpinner } = useSpinner();
-  const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
   const [showCMoveSec, setShowCMoveSec] = useState(false);
-
-  const [search, setSearch] = useState('');
 
   const [pokemon, setPokemon] = useState<IBattlePokemonData>();
   const [fMove, setFMove] = useState<ICombat>();
@@ -35,18 +32,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   const [pokemonIcon, setPokemonIcon] = useState('');
   const [score, setScore] = useState(0);
 
-  const [startIndex, setStartIndex] = useState(0);
-  const firstInit = useRef(20);
-  const eachCounter = useRef(10);
-
-  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = ele.currentTarget.scrollTop;
-    const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
-      setStartIndex(startIndex + 1);
-    }
-  };
-
   const selectPokemon = (value: IBattlePokemonData) => {
     if (!isNotEmpty(value.moveset) || !value.pokemon) {
       return;
@@ -54,7 +39,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     props.clearData(false);
     const [fMove] = getValueOrDefault(Array, value.moveset);
     let [, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
-    setSearch(splitAndCapitalize(value.pokemon.name, '-', ' '));
     setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);
 
@@ -150,7 +134,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     props.clearData(false);
     setPokemonIcon('');
     setPokemon(undefined);
-    setSearch('');
     setFMove(undefined);
     setCMovePri(undefined);
     setCMoveSec(undefined);
@@ -172,82 +155,58 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   return (
     <Fragment>
       <h5>Pokémon</h5>
-      <div className="position-relative">
-        <InputMuiSearch
-          value={search}
-          onChange={(value) => setSearch(value)}
-          placeholder="Enter Name"
-          onFocus={() => setShow(true)}
-          onBlur={() => setShow(false)}
-          customPrepend={
-            pokemonIcon && (
-              <img
-                className="me-2"
-                width={40}
-                height={40}
-                alt="Pokémon Image"
-                src={pokemonIcon}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeIconSprite();
-                }}
-              />
-            )
-          }
-          onRemove={() => removePokemon()}
-          isShowRemove={!!pokemonIcon}
-          customIconStart={
-            (score > 0 || isNotEmpty(pokemonIcon) || pokemon) && (
-              <>
-                {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
-                  <span
-                    className={combineClasses(
-                      'type-icon-small ic me-1 d-flex align-items-center h-3',
-                      `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
-                    )}
-                  >
-                    {getKeyWithData(MoveType, MoveType.Shadow)}
-                  </span>
-                )}
-                {score > 0 && (
-                  <span className="type-icon-small ic elite-ic me-1 d-flex align-items-center h-3">{score}</span>
-                )}
-              </>
-            )
-          }
-        />
-      </div>
-      {isNotEmpty(props.data) && (
-        <div
-          className={combineClasses('result-pokemon', show ? 'd-block' : 'd-none')}
-          style={{ maxHeight: 274 }}
-          onScroll={listenScrollEvent.bind(this)}
-        >
-          {props.data
-            .filter(
-              (pokemon) =>
-                pokemon &&
-                isInclude(
-                  splitAndCapitalize(pokemon.pokemon.name, '-', ' '),
-                  search,
-                  IncludeMode.IncludeIgnoreCaseSensitive
-                )
-            )
-            .slice(0, firstInit.current + eachCounter.current * startIndex)
-            .map((value, index) => (
-              <div
-                className="card-pokemon-select"
-                key={index}
-                onMouseDown={() => {
-                  showSpinner();
-                  setTimeout(() => selectPokemon(value), 200);
-                }}
-              >
-                <CardPokemon value={value.pokemon} score={value.score} pokemonType={getPokemonType(value.speciesId)} />
-              </div>
-            ))}
-        </div>
-      )}
+      <SelectCustomPokemon
+        pokemonList={props.data}
+        onSelect={(pokemon) => splitAndCapitalize(pokemon.name?.replaceAll('_', '-'), '-', ' ')}
+        onFilter={(pokemon, search) =>
+          isInclude(pokemon.name, search, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(pokemon.id, search)
+        }
+        onSetPokemon={(value) => {
+          showSpinner();
+          setTimeout(() => selectPokemon(value), 200);
+        }}
+        isFit
+        placeholder="Enter Name"
+        customPrepend={
+          pokemonIcon && (
+            <img
+              className="me-2"
+              width={40}
+              height={40}
+              alt="Pokémon Image"
+              src={pokemonIcon}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeIconSprite();
+              }}
+            />
+          )
+        }
+        customIconStart={
+          (score > 0 || isNotEmpty(pokemonIcon) || pokemon) && (
+            <>
+              {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
+                <span
+                  className={combineClasses(
+                    'type-icon-small ic me-1 d-flex align-items-center h-3',
+                    `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
+                  )}
+                >
+                  {getKeyWithData(MoveType, MoveType.Shadow)}
+                </span>
+              )}
+              {score > 0 && (
+                <span className="type-icon-small ic elite-ic me-1 d-flex align-items-center h-3">{score}</span>
+              )}
+            </>
+          )
+        }
+        cardElement={(pokemon) => (
+          <CardPokemon value={pokemon.pokemon} score={pokemon.score} pokemonType={getPokemonType(pokemon.speciesId)} />
+        )}
+        onRemove={() => removePokemon()}
+        isShowRemove={!!pokemonIcon}
+      />
       <h5>Fast Moves</h5>
       <div
         className={combineClasses(

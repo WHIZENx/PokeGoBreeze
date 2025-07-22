@@ -59,14 +59,17 @@ export const usePokemon = () => {
   const checkPokemonGO = (id: number, name: string | undefined) =>
     getFindPokemon((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
 
-  const mappingPokemonName = useCallback(
+  const getDefaultPokemons = useCallback(
     () =>
       getFilteredPokemons(
         (pokemon) =>
           pokemon.form === formNormal() || (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form))
-      )
-        .map((pokemon) => new PokemonSearching(pokemon))
-        .sort((a, b) => a.id - b.id),
+      ).sort((a, b) => a.num - b.num),
+    [pokemonsData]
+  );
+
+  const mappingPokemonName = useCallback(
+    () => getDefaultPokemons().map((pokemon) => new PokemonSearching(pokemon)),
     [pokemonsData]
   );
 
@@ -179,6 +182,7 @@ export const usePokemon = () => {
     findPokemonById,
     findPokemonBySlug,
     checkPokemonGO,
+    getDefaultPokemons,
     mappingPokemonName,
     getPokemonById,
     generatePokemonGoForms,

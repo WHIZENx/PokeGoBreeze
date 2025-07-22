@@ -1,6 +1,6 @@
 import CardPokemon from '../../Card/CardPokemon';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import './Select.scss';
 import { addSelectMovesByType, splitAndCapitalize } from '../../../utils/utils';
@@ -8,43 +8,24 @@ import APIService from '../../../services/api.service';
 import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isUndefined } from '../../../utils/extension';
-import { IncludeMode } from '../../../utils/enums/string.enum';
-import { SelectPosition } from './enums/select-type.enum';
+import { getValueOrDefault, isEqual, isInclude } from '../../../utils/extension';
 import usePokemon from '../../../composables/usePokemon';
-import InputMuiSearch from '../Input/InputMuiSearch';
+import SelectCustomPokemon from './SelectCustomPokemon';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
 
-  const [startIndex, setStartIndex] = useState(0);
-  const firstInit = useRef(20);
-  const eachCounter = useRef(10);
-
   const [pokemonIcon, setPokemonIcon] = useState(
     props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined
   );
-  const [showPokemon, setShowPokemon] = useState(false);
-  const [search, setSearch] = useState(props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : '');
-
-  const prependRef = useRef<HTMLDivElement | null>(null);
-
-  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = ele.currentTarget.scrollTop;
-    const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 0.8 >= fullHeight * (startIndex + 1)) {
-      setStartIndex(startIndex + 1);
-    }
-  };
 
   const changePokemon = (value: IPokemonData) => {
-    setShowPokemon(false);
     const name = splitAndCapitalize(value.name, '-', ' ');
     const icon = getValueOrDefault(String, pokemonIcon?.split('/').at(9));
     const iconName = splitAndCapitalize(icon.replace('.png', ''), '-', ' ');
     if (!isEqual(iconName, name)) {
       setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
-      setSearch(name);
       if (props.defaultSetting) {
         value.stats = props.defaultSetting;
       }
@@ -65,7 +46,6 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   const removePokemon = () => {
     setPokemonIcon(undefined);
-    setSearch('');
     if (props.setCurrentPokemon) {
       props.setCurrentPokemon(undefined);
     }
@@ -91,45 +71,23 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   useEffect(() => {
     if (props.pokemon) {
       setPokemonIcon(APIService.getPokeIconSprite(props.pokemon.sprite));
-      setSearch(splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' '));
     }
   }, [props.pokemon]);
 
-  const setPos = (position = SelectPosition.Down) => (
-    <div
-      className={combineClasses(
-        'result-pokemon',
-        position === SelectPosition.Up ? 'pos-up' : '',
-        showPokemon ? 'd-block' : 'd-none'
-      )}
-      onScroll={listenScrollEvent.bind(this)}
-      style={{ maxHeight: props.maxHeight ?? 274, left: prependRef.current?.clientWidth }}
-    >
-      <div>
-        {getFilteredPokemons()
-          .filter(
-            (item) =>
-              isInclude(splitAndCapitalize(item.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
-              isInclude(item.num, search)
-          )
-          .slice(0, firstInit.current + eachCounter.current * startIndex)
-          .map((value, index) => (
-            <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
-              <CardPokemon value={value} />
-            </div>
-          ))}
-      </div>
-    </div>
-  );
-
-  const inputPos = () => (
-    <InputMuiSearch
-      prependRef={prependRef}
-      value={search}
-      onChange={(value) => setSearch(value)}
-      placeholder="Enter Name or ID"
-      onFocus={() => setShowPokemon(true)}
-      onBlur={() => setShowPokemon(false)}
+  return (
+    <SelectCustomPokemon
+      pokemonList={getFilteredPokemons()}
+      value={props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : ''}
+      onSetPokemon={(pokemon) => changePokemon(pokemon)}
+      isFit
+      onSelect={(pokemon) => splitAndCapitalize(pokemon.name.replaceAll('_', '-'), '-', ' ')}
+      onFilter={(pokemon, search) =>
+        isInclude(pokemon.name, search, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(pokemon.num, search)
+      }
+      label={props.labelPrepend}
+      onRemove={() => removePokemon()}
+      isShowRemove={!!pokemonIcon}
+      cardElement={(pokemon) => <CardPokemon value={pokemon} />}
       customPrepend={
         pokemonIcon && (
           <img
@@ -145,34 +103,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
           />
         )
       }
-      onRemove={() => removePokemon()}
-      isShowRemove={!!pokemonIcon}
-      labelPrepend={props.labelPrepend}
-      isNoWrap={props.isNoWrap}
     />
-  );
-
-  return (
-    <div
-      className={combineClasses(
-        'position-relative d-flex align-items-center p-0 rounded-0',
-        props.isDisable ? 'card-select-disabled' : ''
-      )}
-    >
-      <div className="card-pokemon-input">
-        {isUndefined(props.position) || props.position === SelectPosition.Down ? (
-          <>
-            {inputPos()}
-            {setPos(props.position)}
-          </>
-        ) : (
-          <>
-            {setPos(props.position)}
-            {inputPos()}
-          </>
-        )}
-      </div>
-    </div>
   );
 };
 

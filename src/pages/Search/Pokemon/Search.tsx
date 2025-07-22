@@ -6,19 +6,16 @@ import APIService from '../../../services/api.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import { Action } from 'history';
-import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
-import { useTitle } from '../../../utils/hooks/useTitle';
 import { PokemonType } from '../../../enums/type.enum';
-import { combineClasses, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
-import { IncludeMode } from '../../../utils/enums/string.enum';
+import { isInclude, toNumber } from '../../../utils/extension';
 import { SearchOption } from './models/pokemon-search.model';
-import { debounce } from 'lodash';
 import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context.helpers';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
-import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
-import { MenuItem, MenuList } from '@mui/material';
+import SelectCustomPokemon from '../../../components/Commons/Select/SelectCustomPokemon';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 
 const Search = () => {
   useTitle({
@@ -28,12 +25,8 @@ const Search = () => {
     keywords: ['Pokémon search', 'find Pokémon', 'Pokémon filter', 'Pokémon GO search', 'Pokémon database'],
   });
   const { routerAction } = useRouter();
-  const { getPokemonById, mappingPokemonName } = usePokemon();
+  const { getPokemonById, getDefaultPokemons } = usePokemon();
   const { searchingMainData } = useSearch();
-
-  const [startIndex, setStartIndex] = useState(0);
-  const firstInit = useRef(20);
-  const eachCounter = useRef(10);
 
   const [searchOption, setSearchOption] = useState<SearchOption>({
     id: routerAction === Action.Pop && searchingMainData ? toNumber(searchingMainData.pokemon?.id, 1) : 1,
@@ -44,61 +37,16 @@ const Search = () => {
     routerAction === Action.Pop && searchingMainData ? toNumber(searchingMainData.pokemon?.id, 1) : 1
   );
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showResult, setShowResult] = useState(false);
-
-  const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
-  const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
-
   const resultsContainerRef = useRef<HTMLDivElement>(null);
-  const scrollDebounceRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const result = mappingPokemonName();
-    setPokemonList(result);
-  }, [mappingPokemonName]);
-
-  useEffect(() => {
-    if (isNotEmpty(pokemonList)) {
-      const debounced = debounce(() => {
-        const results = pokemonList.filter(
-          (item) =>
-            isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
-        );
-        setPokemonListFilter(results);
-      });
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
-    }
-  }, [pokemonList, searchTerm]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setSelectId(searchOption.id);
   }, [searchOption.id]);
 
-  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollingElement = ele.currentTarget;
-    const scrollTop = toNumber(scrollingElement.scrollTop);
-    const fullHeight = toNumber(scrollingElement.offsetHeight);
-    const scrollHeight = toNumber(scrollingElement.scrollHeight);
-
-    if (scrollTop + fullHeight >= scrollHeight * 0.8) {
-      if (scrollDebounceRef.current) {
-        clearTimeout(scrollDebounceRef.current);
-      }
-
-      scrollDebounceRef.current = setTimeout(() => {
-        setStartIndex((prevIndex) => prevIndex + 1);
-      }, 100);
-    }
-  };
-
-  const getInfoPoke = (value: IPokemonSearching) => {
-    setShowResult(false);
-    setSearchOption({ id: value.id });
-    setSelectId(value.id);
+  const getInfoPoke = (id: number) => {
+    setSearchOption({ id });
+    setSelectId(id);
   };
 
   const modifyId = (modify: number) => {
@@ -114,10 +62,8 @@ const Search = () => {
     if (currentPokemon) {
       const prev = getPokemonById(currentPokemon.id - 1);
       const next = getPokemonById(currentPokemon.id + 1);
-      if (isNotEmpty(pokemonListFilter) && event.keyCode === keyEnter()) {
-        const input = document.getElementById('input-search-pokemon');
-        input?.blur();
-        setShowResult(false);
+      if (event.keyCode === keyEnter()) {
+        inputRef.current?.blur();
         setSearchOption({ id: selectId });
       } else if (prev && event.keyCode === keyUp()) {
         event.preventDefault();
@@ -171,63 +117,42 @@ const Search = () => {
     });
   };
 
-  const pokemonListFilterSlice = pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex);
-
   return (
     <Fragment>
       <div className="container mt-2">
         <h1 id="main" className="text-center">
           Pokémon Info Search
         </h1>
-        <InputMuiSearch
-          id="input-search-pokemon"
-          isNoWrap
-          value={searchTerm}
-          onChange={(value) => setSearchTerm(value)}
-          placeholder="Enter Name or ID"
-          onKeyUp={(e) => onChangeSelect(e)}
-          onFocus={() => setShowResult(true)}
-          onBlur={() => setShowResult(false)}
-          labelPrepend="Search"
-          className="p-0"
-        />
-        <div
-          ref={resultsContainerRef}
-          className={combineClasses('result', showResult ? 'd-block' : 'd-none')}
-          onScroll={listenScrollEvent.bind(this)}
-        >
-          {isNotEmpty(pokemonListFilterSlice) && (
-            <MenuList>
-              {pokemonListFilterSlice.map((value, index) => (
-                <MenuItem
-                  id={`pokemon-card-${value.id}`}
-                  className={combineClasses(
-                    'container card-pokemon',
-                    value.id === searchOption.id ? 'highlight-select-pokemon' : '',
-                    value.id === selectId ? 'current-select-pokemon' : ''
-                  )}
-                  key={index}
-                  onMouseDown={() => getInfoPoke(value)}
-                  onMouseOver={() => setSelectId(value.id)}
-                >
-                  <b>#{value.id}</b>
-                  <img
-                    width={36}
-                    height={36}
-                    className="img-search"
-                    alt="Pokémon Image"
-                    src={value.sprites}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = APIService.getPokeSprite();
-                    }}
-                  />
-                  {value.name}
-                </MenuItem>
-              ))}
-            </MenuList>
+        <SelectCustomPokemon
+          inputRef={inputRef}
+          pokemonList={getDefaultPokemons()}
+          onChangeSelect={onChangeSelect}
+          onSetPokemon={(pokemon) => getInfoPoke(pokemon.num)}
+          isFit
+          label="Search"
+          onFilter={(pokemon, search) =>
+            isInclude(pokemon.name, search, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(pokemon.num, search)
+          }
+          onIsSelectedPokemon={(pokemon) => pokemon.num === selectId}
+          maxHeight={570}
+          cardElement={(pokemon) => (
+            <>
+              <b>#{pokemon.num}</b>
+              <img
+                width={36}
+                height={36}
+                className="img-search"
+                alt="Pokémon Image"
+                src={APIService.getPokeSprite(pokemon.num)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeSprite();
+                }}
+              />
+              {pokemon.name}
+            </>
           )}
-        </div>
+        />
         <Pokemon
           searchOption={searchOption}
           setSearchOption={setSearchOption}

@@ -130,6 +130,7 @@ export interface IInputMuiSearchComponent extends IInputMuiComponent {
   customIconEnd?: React.ReactNode;
   isNoWrap?: boolean;
   prependRef?: React.RefObject<HTMLDivElement>;
+  textRef?: React.RefObject<HTMLDivElement>;
 }
 
 export interface ISelectTierComponent {
@@ -250,6 +251,7 @@ export interface ISelectPokemonComponent {
   position?: SelectPosition;
   labelPrepend?: string;
   isNoWrap?: boolean;
+  isFit?: boolean;
 }
 
 export interface ISelectBadgeComponent {
@@ -302,6 +304,30 @@ export interface ISelectCustomMoveComponent {
   clearData?: (option?: boolean) => void;
   isHighlight?: boolean;
   pokemonType?: PokemonType;
+}
+
+export interface ISelectCustomPokemonComponent<T> {
+  pokemonList: T[];
+  value?: string;
+  placeholder?: string;
+  isShowPokemon?: boolean;
+  onChangeSelect?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  label?: string;
+  onSetSelectId?: (id: T) => void;
+  onSetPokemon?: (pokemon: T) => void;
+  position?: SelectPosition;
+  cardElement?: (pokemon: T) => React.ReactNode;
+  onSetSearch?: (value: string) => void;
+  maxHeight?: number | string;
+  isFit?: boolean;
+  customPrepend?: React.ReactNode;
+  onRemove?: () => void;
+  isShowRemove?: boolean;
+  onSelect?: (pokemon: T) => string | undefined;
+  customIconStart?: JSX.Element;
+  onIsSelectedPokemon?: (pokemon: T) => boolean;
+  onFilter?: (pokemon: T, search: string | undefined) => boolean;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
 export interface IStatsTableComponent {
