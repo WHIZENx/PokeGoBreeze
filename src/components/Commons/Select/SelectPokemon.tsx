@@ -88,6 +88,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       onRemove={() => removePokemon()}
       isShowRemove={!!pokemonIcon}
       cardElement={(pokemon) => <CardPokemon value={pokemon} />}
+      maxHeight={props.maxHeight}
       customPrepend={
         pokemonIcon && (
           <img
