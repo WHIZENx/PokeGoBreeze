@@ -91,7 +91,7 @@ const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
       customPrepend={
         pokemonIcon && (
           <img
-            className={combineClasses('me-2', props.isDisable ? 'filter-gray' : '')}
+            className={combineClasses('object-fit-contain', props.isDisable ? 'filter-gray' : '')}
             width={40}
             height={40}
             alt="Pokémon Image"

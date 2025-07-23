@@ -1335,30 +1335,15 @@ const Battle = () => {
                     </div>
                     <div className="d-flex justify-content-center column-gap-2">
                       <ButtonMui
-                        label={
-                          playState ? (
-                            <div className="d-flex align-items-center gap-1">
-                              <PauseIcon />
-                              <span>Stop</span>
-                            </div>
-                          ) : (
-                            <div className="d-flex align-items-center gap-1">
-                              <PlayArrowIcon />
-                              <span>Play</span>
-                            </div>
-                          )
-                        }
+                        startIcon={playState ? <PauseIcon /> : <PlayArrowIcon />}
+                        label={playState ? 'Stop' : 'Play'}
                         onMouseDown={() => (isMobile ? undefined : playState ? stopTimeline() : playingTimeline())}
                         onTouchEnd={() => (isMobile ? (playState ? stopTimeline() : playingTimeline()) : undefined)}
                       />
                       <ButtonMui
                         color="error"
-                        label={
-                          <div className="d-flex align-items-center gap-1">
-                            <RestartAltIcon />
-                            <span>Reset</span>
-                          </div>
-                        }
+                        startIcon={<RestartAltIcon />}
+                        label="Reset"
                         onClick={() => resetTimeline()}
                         disabled={playState}
                       />
@@ -1375,20 +1360,20 @@ const Battle = () => {
           <div className="text-center mt-2">
             <ButtonMui
               style={{ height: 50 }}
-              label={
+              startIcon={
                 isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
-                  <Fragment>
-                    <RestartAltIcon /> Reset Battle
-                  </Fragment>
+                  <RestartAltIcon />
                 ) : (
-                  <div className="d-flex align-items-center gap-1">
-                    <span className="position-relative">
-                      <img height={36} alt="ATK Left" src={ATK_LOGO} />
-                      <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
-                    </span>
-                    <span>Battle Simulator</span>
-                  </div>
+                  <span className="position-relative">
+                    <img height={36} alt="ATK Left" src={ATK_LOGO} />
+                    <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
+                  </span>
                 )
+              }
+              label={
+                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)
+                  ? 'Reset Battle'
+                  : 'Battle Simulator'
               }
               onClick={() => battleAnimation()}
             />

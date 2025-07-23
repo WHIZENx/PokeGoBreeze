@@ -66,8 +66,8 @@ import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
-import InputSearch from '../../../components/Commons/Input/InputSearch';
 import ToggleGroupMui from '../../../components/Commons/Button/ToggleGroupMui';
+import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
@@ -424,7 +424,7 @@ const RankingPVP = (props: IStyleSheetData) => {
               navigate(`/pvp/rankings/${params.serie}/${params.cp}?${Params.LeagueType}=${type.toLowerCase()}`),
           }))}
         />
-        <InputSearch value={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
+        <InputMuiSearch defaultValue={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
         <div className="ranking-container" onScroll={listenScrollEvent.bind(this)}>
           <div className="ranking-group w-100 ranking-header column-gap-3">
             <div />
