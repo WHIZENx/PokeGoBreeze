@@ -31,17 +31,23 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
           {props.value && move && (
             <div
               className={combineClasses(
-                'd-flex align-items-center w-100 h-100 p-1 overflow-x-hidden text-nowrap',
+                'd-flex align-items-center w-100 h-100 overflow-x-hidden text-nowrap',
                 props.isDisable && 'disable-card-move'
               )}
             >
-              <IconType width={18} height={18} alt="Pokémon GO Type Logo" className="me-2" type={move.type} />
+              <IconType
+                width={18}
+                height={18}
+                alt="Pokémon GO Type Logo"
+                className={combineClasses('me-2', props.isDisable && 'filter-gray')}
+                type={move.type}
+              />
               <span className="me-1">{splitAndCapitalize(move.name, '_', ' ')}</span>
               <span className="d-flex">
                 {props.value.moveType !== MoveType.None && (
                   <span
                     className={combineClasses(
-                      'type-icon-small ic',
+                      'type-icon-small ic d-flex align-items-center h-3',
                       `${getKeyWithData(MoveType, props.value.moveType)?.toLowerCase()}-ic`
                     )}
                   >

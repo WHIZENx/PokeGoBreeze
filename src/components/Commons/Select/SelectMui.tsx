@@ -29,16 +29,16 @@ const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
     return result;
   }, [insertItems, extendItems, menuItems]);
 
-  const renderItem = (item: IMenuItem, index: number) => {
-    const { isSubHeader, ...itemMenu } = item;
+  const renderItem = (item: IMenuItem<T>, index: number) => {
+    const { isSubHeader, label, ...subItem } = item;
 
     return isSubHeader ? (
-      <ListSubheader key={index} {...itemMenu}>
-        {itemMenu.label}
+      <ListSubheader key={index} {...subItem} component="div">
+        {label}
       </ListSubheader>
     ) : (
-      <MenuItem key={index} {...itemMenu}>
-        {itemMenu.label}
+      <MenuItem key={index} {...subItem} component="div">
+        {label}
       </MenuItem>
     );
   };
@@ -50,16 +50,15 @@ const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
         ...formSx,
         flex: '1 1 auto',
         ...(fullWidth ? { width: '100%' } : {}),
-        ...(fullWidth ? { width: '100%' } : {}),
       }}
       size="small"
     >
       {inputLabel && <InputLabel>{inputLabel}</InputLabel>}
       <Select
+        {...selectProps}
         onChange={(e) => onChangeSelect?.(e.target.value as T)}
         input={inputLabel ? <OutlinedInput label={inputLabel} /> : undefined}
-        sx={{ ...selectProps.sx, ...(isNoneBorder ? { borderRadius: 0 } : undefined) }}
-        {...selectProps}
+        sx={{ ...selectProps.sx, ...(isNoneBorder ? { borderRadius: 0 } : {}) }}
         value={isNullOrUndefined(selectProps.value) ? '' : selectProps.value}
       >
         {items?.map((item, index) => renderItem(item, index))}

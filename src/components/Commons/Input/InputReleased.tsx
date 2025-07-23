@@ -30,10 +30,10 @@ const InputReleased = (props: SwitchReleasedComponent) => {
         </>
       }
       label={
-        <span className="d-flex align-items-center">
-          Released in GO
+        <span className="d-flex align-items-center gap-2">
+          <span>Released in GO</span>
           <img
-            className={combineClasses('ms-1', props.isAvailable ? '' : 'filter-gray')}
+            className={combineClasses(props.isAvailable ? '' : 'filter-gray')}
             width={28}
             height={28}
             alt="Pokémon GO Icon"

@@ -194,9 +194,9 @@ export interface IGenderComponent {
   sprit?: IPokemonSprit;
 }
 
-export interface IMenuItem extends ButtonBaseOwnProps {
+export interface IMenuItem<T> extends ButtonBaseOwnProps {
   label: string | number | React.ReactNode;
-  value?: string | number;
+  value?: string | number | T;
   onClick?: () => void;
   disabled?: boolean;
   isClose?: boolean;

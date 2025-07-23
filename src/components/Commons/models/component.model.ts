@@ -43,7 +43,7 @@ export interface ICustomInputComponent {
   defaultValue?: string;
   setSearchTerm?: (searchTerm: string) => void;
   onOptionsClick?: React.MouseEventHandler<HTMLButtonElement>;
-  menuItems?: IMenuItem[];
+  menuItems?: IMenuItem<string | number>[];
 }
 
 export interface IDynamicInputCPComponent {
@@ -107,7 +107,7 @@ export interface IInputMuiComponent extends BaseTextFieldProps {
   labelPrepend?: string;
   labelAppend?: string;
   width?: number | string;
-  menuItems?: IMenuItem[];
+  menuItems?: IMenuItem<string | number>[];
   disableGrow?: boolean;
   inputAlign?: 'left' | 'center' | 'right';
   basis?: number | string;
@@ -209,9 +209,9 @@ export interface ISelectMuiComponent<T> extends BaseSelectProps<T> {
   inputLabel?: string;
   formClassName?: string;
   formSx?: SxProps<Theme>;
-  insertItems?: IMenuItem[];
-  extendItems?: IMenuItem[];
-  menuItems?: IMenuItem[];
+  insertItems?: IMenuItem<T>[];
+  extendItems?: IMenuItem<T>[];
+  menuItems?: IMenuItem<T>[];
   isNoneBorder?: boolean;
   onChangeSelect?: (value: T) => void;
 }
@@ -263,7 +263,7 @@ export interface ISelectBadgeComponent {
 
 export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
   isAutoSearch?: boolean;
-  menuItems?: IMenuItem[];
+  menuItems?: IMenuItem<T>[];
   customColumns?: TableColumnModify<T>[];
   customDataStyles?: TableStyles;
   isShowSearch?: boolean;
@@ -307,7 +307,25 @@ export interface ISelectCustomMoveComponent {
   pokemonType?: PokemonType;
 }
 
-export interface ISelectCustomPokemonComponent<T> {
+export interface ISelectCardMoveComponent<T> {
+  style?: React.CSSProperties;
+  move: T | undefined;
+  setMovePokemon: (value: T | undefined) => void;
+  clearData?: () => void;
+  pokemon: ISelectMovePokemonModel;
+  moveType?: TypeMove;
+  inputType?: InputType;
+  isSelected?: boolean;
+  isDisable?: boolean;
+  maxHeight?: number;
+  labelPrepend?: string;
+  isNoWrap?: boolean;
+  isHideEmpty?: boolean;
+  emptyText?: string;
+  moves?: T[];
+}
+
+export interface ISelectCardPokemonComponent<T> {
   pokemonList: T[];
   value?: string;
   placeholder?: string;

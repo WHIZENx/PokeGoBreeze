@@ -31,7 +31,6 @@ import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import './DpsTdo.scss';
 import SelectPokemon from '../../../components/Commons/Select/SelectPokemon';
-import SelectMove from '../../../components/Commons/Select/SelectMove';
 import { Action } from 'history';
 import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
@@ -56,7 +55,6 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
-import { InputType } from '../../../components/Commons/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
@@ -83,6 +81,7 @@ import InputReleased from '../../../components/Commons/Input/InputReleased';
 import SelectMui from '../../../components/Commons/Select/SelectMui';
 import ButtonMui from '../../../components/Commons/Button/ButtonMui';
 import ToggleType from '../../../components/Commons/Button/ToggleType';
+import SelectCardMove from '../../../components/Commons/Select/SelectCardMove';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -939,42 +938,38 @@ const DpsTdo = () => {
                   />
                 </Box>
                 <Box className="col-xl-4 p-0">
-                  <div className="input-group h-100">
-                    <span className="input-group-text">Fast Move</span>
-                    <SelectMove
-                      inputType={InputType.Small}
-                      pokemon={
-                        new SelectMovePokemonModel(
-                          dataTargetPokemon?.num,
-                          dataTargetPokemon?.form,
-                          dataTargetPokemon?.pokemonType
-                        )
-                      }
-                      move={fMoveTargetPokemon}
-                      setMovePokemon={setFMoveTargetPokemon}
-                      moveType={TypeMove.Fast}
-                      isDisable={isShowSpinner}
-                    />
-                  </div>
+                  <SelectCardMove
+                    isNoWrap
+                    labelPrepend="Fast Move"
+                    pokemon={
+                      new SelectMovePokemonModel(
+                        dataTargetPokemon?.num,
+                        dataTargetPokemon?.form,
+                        dataTargetPokemon?.pokemonType
+                      )
+                    }
+                    move={fMoveTargetPokemon}
+                    setMovePokemon={setFMoveTargetPokemon}
+                    moveType={TypeMove.Fast}
+                    isDisable={isShowSpinner}
+                  />
                 </Box>
                 <Box className="col-xl-4 p-0">
-                  <div className="input-group h-100">
-                    <span className="input-group-text">Charged Move</span>
-                    <SelectMove
-                      inputType={InputType.Small}
-                      pokemon={
-                        new SelectMovePokemonModel(
-                          dataTargetPokemon?.num,
-                          dataTargetPokemon?.form,
-                          dataTargetPokemon?.pokemonType
-                        )
-                      }
-                      move={cMoveTargetPokemon}
-                      setMovePokemon={setCMoveTargetPokemon}
-                      moveType={TypeMove.Charge}
-                      isDisable={isShowSpinner}
-                    />
-                  </div>
+                  <SelectCardMove
+                    isNoWrap
+                    labelPrepend="Charged Move"
+                    pokemon={
+                      new SelectMovePokemonModel(
+                        dataTargetPokemon?.num,
+                        dataTargetPokemon?.form,
+                        dataTargetPokemon?.pokemonType
+                      )
+                    }
+                    move={cMoveTargetPokemon}
+                    setMovePokemon={setCMoveTargetPokemon}
+                    moveType={TypeMove.Charge}
+                    isDisable={isShowSpinner}
+                  />
                 </Box>
               </div>
             </div>

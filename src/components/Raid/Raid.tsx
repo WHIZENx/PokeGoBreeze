@@ -62,7 +62,7 @@ const Raid = (props: IRaidComponent) => {
 
   return (
     <Fragment>
-      <div className="d-flex justify-content-center">
+      <div className="d-flex justify-content-center w-100">
         <SelectTierMui
           tier={tier}
           setTier={setTier}

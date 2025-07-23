@@ -1,6 +1,5 @@
 import { Badge } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import SelectMove from '../Commons/Select/SelectMove';
 import SelectPokemon from '../Commons/Select/SelectPokemon';
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -12,9 +11,8 @@ import { PokemonType, TypeMove } from '../../enums/type.enum';
 import APIService from '../../services/api.service';
 import { IPokemonRaidComponent } from '../models/component.model';
 import { combineClasses } from '../../utils/extension';
-import { InputType } from '../Commons/Input/enums/input-type.enum';
 import { SelectMovePokemonModel } from '../Commons/Input/models/select-move.model';
-import { SelectPosition } from '../Commons/Select/enums/select-type.enum';
+import SelectCardMove from '../Commons/Select/SelectCardMove';
 
 const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
@@ -115,52 +113,27 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       <span className="input-group-text justify-content-center">
         <b>Fast Move</b>
       </span>
-      {dataTargetPokemon ? (
-        <SelectMove
-          isSelected
-          inputType={InputType.Small}
-          clearData={props.clearData}
-          pokemon={
-            new SelectMovePokemonModel(dataTargetPokemon.num, dataTargetPokemon.form, dataTargetPokemon.pokemonType)
-          }
-          move={fMoveTargetPokemon}
-          setMovePokemon={setFMoveTargetPokemon}
-          moveType={TypeMove.Fast}
-          position={SelectPosition.Up}
-          maxHeight={90}
-        />
-      ) : (
-        <div
-          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1 overflow-x-hidden text-nowrap"
-          style={{ height: 36 }}
-        >
-          <span className="ps-2">- Please select Pokémon -</span>
-        </div>
-      )}
+      <SelectCardMove
+        pokemon={
+          new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.form, dataTargetPokemon?.pokemonType)
+        }
+        move={fMoveTargetPokemon}
+        setMovePokemon={setFMoveTargetPokemon}
+        moveType={TypeMove.Fast}
+        emptyText="- Please select Pokémon -"
+      />
       <span className="input-group-text justify-content-center">
         <b>Charged Move</b>
       </span>
-      {dataTargetPokemon ? (
-        <SelectMove
-          isSelected
-          inputType={InputType.Small}
-          clearData={props.clearData}
-          pokemon={
-            new SelectMovePokemonModel(dataTargetPokemon.num, dataTargetPokemon.form, dataTargetPokemon.pokemonType)
-          }
-          move={cMoveTargetPokemon}
-          setMovePokemon={setCMoveTargetPokemon}
-          moveType={TypeMove.Charge}
-          position={SelectPosition.Up}
-        />
-      ) : (
-        <div
-          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1 overflow-x-hidden text-nowrap"
-          style={{ height: 36 }}
-        >
-          <span className="ps-2">- Please select Pokémon -</span>
-        </div>
-      )}
+      <SelectCardMove
+        pokemon={
+          new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.form, dataTargetPokemon?.pokemonType)
+        }
+        move={cMoveTargetPokemon}
+        setMovePokemon={setCMoveTargetPokemon}
+        moveType={TypeMove.Charge}
+        emptyText="- Please select Pokémon -"
+      />
     </div>
   );
 };

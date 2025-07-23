@@ -13,7 +13,7 @@ import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
-import SelectCustomPokemon from '../../../components/Commons/Select/SelectCustomPokemon';
+import SelectCardPokemon from '../../../components/Commons/Select/SelectCardPokemon';
 import { useTitle } from '../../../utils/hooks/useTitle';
 
 const Search = () => {
@@ -122,7 +122,7 @@ const Search = () => {
         <h1 id="main" className="text-center">
           Pokémon Info Search
         </h1>
-        <SelectCustomPokemon
+        <SelectCardPokemon
           inputRef={inputRef}
           pokemonList={getDefaultPokemons()}
           onChangeSelect={onChangeSelect}

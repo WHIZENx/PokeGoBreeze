@@ -9,7 +9,7 @@ import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
 import usePokemon from '../../../composables/usePokemon';
-import SelectCustomPokemon from './SelectCustomPokemon';
+import SelectCardPokemon from './SelectCardPokemon';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
@@ -56,7 +56,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   };
 
   return (
-    <SelectCustomPokemon
+    <SelectCardPokemon
       pokemonList={getFilteredPokemons()}
       value={props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : ''}
       onSetPokemon={(pokemon) => changePokemon(pokemon)}

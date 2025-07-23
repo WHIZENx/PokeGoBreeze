@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { combineClasses, isInclude, isNotEmpty, isUndefined, toNumber } from '../../../utils/extension';
-import { ISelectCustomPokemonComponent } from '../models/component.model';
+import { ISelectCardPokemonComponent } from '../models/component.model';
 import InputMuiSearch from '../Input/InputMuiSearch';
 import { MenuList, MenuItem } from '@mui/material';
 import { SelectPosition } from './enums/select-type.enum';
@@ -9,7 +9,7 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { splitAndCapitalize } from '../../../utils/utils';
 import apiService from '../../../services/api.service';
 
-const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
+const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
   const [showPokemon, setShowPokemon] = useState(props.isShowPokemon);
   const [search, setSearch] = useState(props.value);
   const [startIndex, setStartIndex] = useState(0);
@@ -179,4 +179,4 @@ const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
   );
 };
 
-export default SelectCustomPokemon;
+export default SelectCardPokemon;
