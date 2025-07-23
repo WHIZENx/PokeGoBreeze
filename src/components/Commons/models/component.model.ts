@@ -110,6 +110,7 @@ export interface IInputMuiComponent extends BaseTextFieldProps {
   menuItems?: IMenuItem[];
   disableGrow?: boolean;
   inputAlign?: 'left' | 'center' | 'right';
+  basis?: number | string;
 }
 
 export interface IInputMuiSearchComponent extends IInputMuiComponent {
@@ -327,6 +328,7 @@ export interface ISelectCustomPokemonComponent<T> {
   onFilter?: (pokemon: T) => { name: string | undefined; id: number };
   inputRef?: React.RefObject<HTMLInputElement>;
   isShowPokemonIcon?: boolean;
+  sprite?: string;
   onSprite?: (pokemon: T) => string | undefined;
   isDisable?: boolean;
 }

@@ -14,7 +14,7 @@ const SelectCustomPokemon = <T,>(props: ISelectCustomPokemonComponent<T>) => {
   const [search, setSearch] = useState(props.value);
   const [startIndex, setStartIndex] = useState(0);
 
-  const [pokemonIcon, setPokemonIcon] = useState('');
+  const [pokemonIcon, setPokemonIcon] = useState(props.sprite);
 
   const prependRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLDivElement | null>(null);

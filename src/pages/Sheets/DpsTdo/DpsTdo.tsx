@@ -1127,14 +1127,15 @@ const DpsTdo = () => {
                       })
                     )
                   }
+                  sx={{ minWidth: 100 }}
                   inputProps={{
                     type: 'number',
                     min: 1,
                     required: true,
                     name: 'pokemonDefObj',
                   }}
-                  width={100}
-                  disableGrow
+                  fullWidth
+                  basis={'min-content'}
                 />
                 <InputMui
                   labelPrepend="Weather Boosts"
@@ -1152,11 +1153,12 @@ const DpsTdo = () => {
                     { value: 'extreme', label: 'Extreme' },
                     ...getWeatherTypes().map((value) => ({
                       value,
-                      label: splitAndCapitalize(value, '_', ' '),
+                      label: splitAndCapitalize(value, /(?=[A-Z])/, ' '),
                     })),
                   ]}
-                  width={150}
-                  disableGrow
+                  sx={{ minWidth: 150 }}
+                  fullWidth
+                  basis={'min-content'}
                 />
                 <FormControlMui
                   isNotGroup

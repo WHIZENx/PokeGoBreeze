@@ -1,6 +1,6 @@
 import CardPokemon from '../../Card/CardPokemon';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import './Select.scss';
 import { addSelectMovesByType, splitAndCapitalize } from '../../../utils/utils';
@@ -8,43 +8,31 @@ import APIService from '../../../services/api.service';
 import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { getValueOrDefault, isEqual } from '../../../utils/extension';
 import usePokemon from '../../../composables/usePokemon';
 import SelectCustomPokemon from './SelectCustomPokemon';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
 
-  const [pokemonIcon, setPokemonIcon] = useState(
-    props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined
-  );
-
   const changePokemon = (value: IPokemonData) => {
-    const name = splitAndCapitalize(value.name, '-', ' ');
-    const icon = getValueOrDefault(String, pokemonIcon?.split('/').at(9));
-    const iconName = splitAndCapitalize(icon.replace('.png', ''), '-', ' ');
-    if (!isEqual(iconName, name)) {
-      setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
-      if (props.defaultSetting) {
-        value.stats = props.defaultSetting;
-      }
-      if (props.setCurrentPokemon) {
-        props.setCurrentPokemon(value);
-      }
-      if (props.isSelected && props.setFMovePokemon) {
-        props.setFMovePokemon(findMove(value, TypeMove.Fast));
-      }
-      if (props.isSelected && props.setCMovePokemon) {
-        props.setCMovePokemon(findMove(value, TypeMove.Charge));
-      }
-      if (props.clearData) {
-        props.clearData();
-      }
+    if (props.defaultSetting) {
+      value.stats = props.defaultSetting;
+    }
+    if (props.setCurrentPokemon) {
+      props.setCurrentPokemon(value);
+    }
+    if (props.isSelected && props.setFMovePokemon) {
+      props.setFMovePokemon(findMove(value, TypeMove.Fast));
+    }
+    if (props.isSelected && props.setCMovePokemon) {
+      props.setCMovePokemon(findMove(value, TypeMove.Charge));
+    }
+    if (props.clearData) {
+      props.clearData();
     }
   };
 
   const removePokemon = () => {
-    setPokemonIcon(undefined);
     if (props.setCurrentPokemon) {
       props.setCurrentPokemon(undefined);
     }
@@ -67,12 +55,6 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
     }
   };
 
-  useEffect(() => {
-    if (props.pokemon) {
-      setPokemonIcon(APIService.getPokeIconSprite(props.pokemon.sprite));
-    }
-  }, [props.pokemon]);
-
   return (
     <SelectCustomPokemon
       pokemonList={getFilteredPokemons()}
@@ -81,11 +63,13 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       isFit
       onSelect={(pokemon) => splitAndCapitalize(pokemon.name.replaceAll('_', '-'), '-', ' ')}
       onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.num })}
+      onIsSelectedPokemon={(pokemon) => pokemon === props.pokemon}
       label={props.labelPrepend}
       onRemove={() => removePokemon()}
       cardElement={(pokemon) => <CardPokemon value={pokemon} />}
       maxHeight={props.maxHeight}
       isShowPokemonIcon
+      sprite={props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined}
       onSprite={(pokemon) => pokemon?.sprite}
       isDisable={props.isDisable}
     />

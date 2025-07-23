@@ -10,8 +10,8 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
-import { MoveType } from '../../../enums/type.enum';
+import { combineClasses, getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../../../utils/extension';
+import { PokemonType } from '../../../enums/type.enum';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import SelectCustomPokemon from '../../../components/Commons/Select/SelectCustomPokemon';
@@ -155,6 +155,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         pokemonList={props.data}
         onSelect={(pokemon) => splitAndCapitalize(pokemon.name?.replaceAll('_', '-'), '-', ' ')}
         onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.id })}
+        onIsSelectedPokemon={(result) => result === pokemon}
         onSetPokemon={(value) => {
           showSpinner();
           setTimeout(() => selectPokemon(value), 200);
@@ -166,14 +167,14 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         customIconStart={
           (score > 0 || pokemon) && (
             <>
-              {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
+              {isEqual(getPokemonType(pokemon?.speciesId), PokemonType.Shadow) && (
                 <span
                   className={combineClasses(
                     'type-icon-small ic me-1 d-flex align-items-center h-3',
-                    `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
+                    `${getKeyWithData(PokemonType, PokemonType.Shadow)?.toLowerCase()}-ic`
                   )}
                 >
-                  {getKeyWithData(MoveType, MoveType.Shadow)}
+                  {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
               )}
               {score > 0 && (

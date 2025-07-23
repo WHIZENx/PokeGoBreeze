@@ -65,7 +65,11 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
         onClick={searchTerm || isShowRemove ? handleClear : props.onSearch}
         edge={position.current}
       >
-        {searchTerm || isShowRemove ? <CloseIcon color="error" /> : <SearchIcon />}
+        {searchTerm || isShowRemove ? (
+          <CloseIcon color={textFieldProps.disabled ? 'disabled' : 'error'} />
+        ) : (
+          <SearchIcon />
+        )}
       </IconButton>
       {customIconEnd && customIconEnd}
     </InputAdornment>
