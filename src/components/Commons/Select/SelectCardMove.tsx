@@ -81,7 +81,6 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
           }
           return <CardMoveSmall isDisable={props.isDisable} value={value} />;
         }}
-        // sx={{ width: `calc(100% - ${props.clearData && props.move ? 40 : 0}px)` }}
         endAdornment={props.clearData && props.move && iconRemove()}
         value={props.move}
         onChangeSelect={(value) => changeMove(value)}
