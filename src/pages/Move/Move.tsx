@@ -165,7 +165,7 @@ const Move = (props: IMovePage) => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const menuItems = createDataRows<IMenuItem>(
+  const menuItems = createDataRows<IMenuItem<IPokemonTopMove>>(
     {
       label: (
         <InputReleased

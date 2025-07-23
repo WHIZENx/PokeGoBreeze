@@ -9,7 +9,7 @@ import { ICustomInputComponent } from '../models/component.model';
 import { Menu, MenuItem } from '@mui/material';
 import { isNotEmpty } from '../../../utils/extension';
 
-const CustomInput = (props: ICustomInputComponent) => {
+const CustomInput = <T,>(props: ICustomInputComponent<T>) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement>();
   const open = Boolean(anchorEl);
 

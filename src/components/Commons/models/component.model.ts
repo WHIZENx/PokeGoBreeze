@@ -35,7 +35,7 @@ export interface SwitchReleasedComponent {
   inputMode?: 'switch' | 'checkbox';
 }
 
-export interface ICustomInputComponent {
+export interface ICustomInputComponent<T> {
   isAutoSearch?: boolean;
   setSearchData?: () => void;
   optionsIcon?: React.ReactNode;
@@ -43,7 +43,7 @@ export interface ICustomInputComponent {
   defaultValue?: string;
   setSearchTerm?: (searchTerm: string) => void;
   onOptionsClick?: React.MouseEventHandler<HTMLButtonElement>;
-  menuItems?: IMenuItem<string | number>[];
+  menuItems?: IMenuItem<T>[];
 }
 
 export interface IDynamicInputCPComponent {

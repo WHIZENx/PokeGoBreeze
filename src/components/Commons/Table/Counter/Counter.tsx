@@ -129,7 +129,7 @@ const Counter = (props: ICounterComponent) => {
 
   const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
 
-  const menuItems = createDataRows<IMenuItem>(
+  const menuItems = createDataRows<IMenuItem<ICounterModel>>(
     {
       label: (
         <FormControlMui

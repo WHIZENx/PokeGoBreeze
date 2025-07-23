@@ -402,7 +402,7 @@ const StatsRanking = () => {
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
-  const menuItems = createDataRows<IMenuItem>(
+  const menuItems = createDataRows<IMenuItem<IPokemonStatsRanking>>(
     {
       label: (
         <FormControlMui
