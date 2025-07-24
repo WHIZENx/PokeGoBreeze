@@ -71,6 +71,7 @@ export enum MoveType {
   Exclusive,
   Dynamax,
   Unavailable,
+  Disable,
 }
 
 export enum PokemonType {

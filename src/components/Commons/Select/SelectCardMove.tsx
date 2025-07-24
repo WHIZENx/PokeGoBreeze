@@ -13,9 +13,9 @@ import CloseIcon from '@mui/icons-material/Close';
 
 const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCardMoveComponent<T>) => {
   const { retrieveMoves } = usePokemon();
-  const [resultMove, setResultMove] = useState<(T | undefined)[]>([]);
+  const [resultMove, setResultMove] = useState<T[]>([]);
 
-  const changeMove = (name: string | undefined) => {
+  const changeMove = (name: string) => {
     if (props.setMovePokemon) {
       const move = resultMove.find((move) => move?.name === name);
       props.setMovePokemon(move);
@@ -68,7 +68,7 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
   return (
     <Box className={combineClasses('input-control-group', props.isNoWrap ? 'flex-nowrap' : '')} style={props.style}>
       {props.labelPrepend && <div className="input-group-text">{props.labelPrepend}</div>}
-      <SelectMui<string | undefined>
+      <SelectMui
         displayEmpty={!props.isHideEmpty}
         menuItems={resultMove.map((value) => ({
           value: value?.name,

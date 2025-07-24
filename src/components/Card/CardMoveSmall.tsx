@@ -46,9 +46,13 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               <span className="d-flex">
                 {props.value.moveType !== MoveType.None && (
                   <span
+                    style={{ color: props.isDisable ? 'lightgray !important' : '' }}
                     className={combineClasses(
-                      'type-icon-small ic d-flex align-items-center h-3',
-                      `${getKeyWithData(MoveType, props.value.moveType)?.toLowerCase()}-ic`
+                      `${getKeyWithData(
+                        MoveType,
+                        props.isDisable ? MoveType.Disable : props.value.moveType
+                      )?.toLowerCase()}-ic`,
+                      'type-icon-small ic d-flex align-items-center h-3'
                     )}
                   >
                     {getKeyWithData(MoveType, props.value.moveType)}
