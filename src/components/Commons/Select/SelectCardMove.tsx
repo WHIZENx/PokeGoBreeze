@@ -15,9 +15,10 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
   const { retrieveMoves } = usePokemon();
   const [resultMove, setResultMove] = useState<(T | undefined)[]>([]);
 
-  const changeMove = (value: T | undefined) => {
+  const changeMove = (name: string | undefined) => {
     if (props.setMovePokemon) {
-      props.setMovePokemon(value);
+      const move = resultMove.find((move) => move?.name === name);
+      props.setMovePokemon(move);
     }
   };
 
@@ -67,22 +68,21 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
   return (
     <Box className={combineClasses('input-control-group', props.isNoWrap ? 'flex-nowrap' : '')} style={props.style}>
       {props.labelPrepend && <div className="input-group-text">{props.labelPrepend}</div>}
-      <SelectMui
+      <SelectMui<string | undefined>
         displayEmpty={!props.isHideEmpty}
-        menuItems={resultMove
-          .filter((move) => move?.name !== props.move?.name)
-          .map((value) => ({
-            value,
-            label: <CardMoveSmall isDisable={props.isDisable} value={value} />,
-          }))}
-        renderValue={(value) => {
+        menuItems={resultMove.map((value) => ({
+          value: value?.name,
+          label: <CardMoveSmall isDisable={props.isDisable} value={value} />,
+        }))}
+        renderValue={(name) => {
           if (props.pokemon && !isNotEmpty(resultMove)) {
             return getValueOrDefault(String, props.emptyText, 'Moves unavailable');
           }
-          return <CardMoveSmall isDisable={props.isDisable} value={value} />;
+          const move = resultMove.find((move) => move?.name === name);
+          return <CardMoveSmall isDisable={props.isDisable} value={move} />;
         }}
         endAdornment={props.clearData && props.move && iconRemove()}
-        value={props.move}
+        value={props.move?.name && resultMove.some((move) => move?.name === props.move?.name) ? props.move?.name : ''}
         onChangeSelect={(value) => changeMove(value)}
         disabled={props.isDisable || (props.pokemon && !isNotEmpty(resultMove))}
         isNoneBorder

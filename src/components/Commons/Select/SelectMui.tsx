@@ -59,7 +59,7 @@ const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
         onChange={(e) => onChangeSelect?.(e.target.value as T)}
         input={inputLabel ? <OutlinedInput label={inputLabel} /> : undefined}
         sx={{ ...selectProps.sx, ...(isNoneBorder ? { borderRadius: 0 } : {}) }}
-        value={isNullOrUndefined(selectProps.value) ? '' : selectProps.value}
+        value={typeof selectProps.value !== 'object' && isNullOrUndefined(selectProps.value) ? '' : selectProps.value}
       >
         {items?.map((item, index) => renderItem(item, index))}
       </Select>

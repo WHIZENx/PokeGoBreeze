@@ -194,7 +194,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         setMovePokemon={(value) => selectFMove(value)}
         moves={pokemon?.moves.fastMoves
           .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
-          .filter((value) => value.id > 0 && !isEqual(value.name, fMove?.name))}
+          .filter((value) => value.id > 0)}
       />
       <h5>Charged Moves Primary</h5>
       <div className="d-flex align-items-center column-gap-2">
@@ -225,9 +225,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           isDisable={props.pokemonBattle.disableCMovePri}
           moves={pokemon?.moves.chargedMoves
             .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
-            .filter(
-              (value) => value.id > 0 && !isEqual(value.name, cMovePri?.name) && !isEqual(value.name, cMoveSec?.name)
-            )}
+            .filter((value) => value.id > 0 && !isEqual(value.name, cMoveSec?.name))}
         />
       </div>
       <h5>Charged Moves Secondary</h5>
@@ -260,12 +258,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           clearData={props.pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
           moves={pokemon?.moves.chargedMoves
             .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
-            .filter(
-              (value) =>
-                value.id > 0 &&
-                (!cMoveSec || !isEqual(value.name, cMoveSec.name)) &&
-                !isEqual(value.name, cMovePri?.name)
-            )}
+            .filter((value) => value.id > 0 && !isEqual(value.name, cMovePri?.name))}
         />
       </div>
     </Fragment>
