@@ -51,7 +51,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   const smallCardInput = () => (
     <CardMoveSmall
-      value={props.move}
+      name={props.move?.name}
       isShow={Boolean(props.pokemon)}
       isDisable={props.isDisable}
       isSelect={resultMove.length > 1}
@@ -70,7 +70,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
               .filter((value) => !isEqual(value.name, props.move?.name))
               .map((value, index) => (
                 <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
-                  <CardMoveSmall value={value} />
+                  <CardMoveSmall name={value.name} />
                 </div>
               ))}
           </div>

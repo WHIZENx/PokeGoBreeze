@@ -5,7 +5,7 @@ import SelectMui from './SelectMui';
 import CardMoveSmall from '../../Card/CardMoveSmall';
 import usePokemon from '../../../composables/usePokemon';
 import { TypeMove } from '../../../enums/type.enum';
-import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
+import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { combineClasses, getValueOrDefault, isNotEmpty, toNumber } from '../../../utils/extension';
 import { Box, InputAdornment, IconButton } from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';
@@ -23,8 +23,8 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
   };
 
   const findMove = useCallback(
-    (selectPokemon: ISelectMovePokemonModel | undefined, type: TypeMove, selected = false) => {
-      const result = retrieveMoves(selectPokemon?.id, selectPokemon?.form, selectPokemon?.pokemonType);
+    (type: TypeMove, selected = false) => {
+      const result = retrieveMoves(props.pokemon?.id, props.pokemon?.form, props.pokemon?.pokemonType);
       if (result) {
         const simpleMove = addSelectMovesByType(result, type);
         if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
@@ -41,7 +41,7 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
       setResultMove(props.moves || []);
     } else {
       if (toNumber(props.pokemon?.id) > 0) {
-        findMove(props.pokemon, props.moveType || TypeMove.None, props.isSelected);
+        findMove(props.moveType || TypeMove.None, props.isSelected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }
@@ -72,19 +72,26 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
         displayEmpty={!props.isHideEmpty}
         menuItems={resultMove.map((value) => ({
           value: value?.name,
-          label: <CardMoveSmall isDisable={props.isDisable} value={value} />,
+          label: <CardMoveSmall isDisable={props.isDisable} name={value?.name} pokemonId={props.pokemon?.id} />,
         }))}
         renderValue={(name) => {
           if (props.pokemon && !isNotEmpty(resultMove)) {
             return getValueOrDefault(String, props.emptyText, 'Moves unavailable');
           }
-          const move = resultMove.find((move) => move?.name === name);
-          return <CardMoveSmall isDisable={props.isDisable} value={move} />;
+          return <CardMoveSmall isDisable={props.isDisable} name={name} pokemonId={props.pokemon?.id} />;
         }}
         endAdornment={props.clearData && props.move && iconRemove()}
         value={props.move?.name && resultMove.some((move) => move?.name === props.move?.name) ? props.move?.name : ''}
         onChangeSelect={(value) => changeMove(value)}
         disabled={props.isDisable || (props.pokemon && !isNotEmpty(resultMove))}
+        SelectDisplayProps={
+          props.clearData &&
+          props.move && {
+            style: {
+              paddingRight: 12,
+            },
+          }
+        }
         isNoneBorder
         fullWidth
       />

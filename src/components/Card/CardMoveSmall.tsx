@@ -16,11 +16,11 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
   const [move, setMove] = useState<ICombat>();
 
   useEffect(() => {
-    if (!props.isEmpty && props.value) {
-      const move = findMoveByName(props.value?.name);
+    if (!props.isEmpty && (props.value || props.name)) {
+      const move = findMoveByName(props.name || props.value?.name, props.pokemonId);
       setMove(move);
     }
-  }, [findMoveByName, props.value, props.isEmpty]);
+  }, [findMoveByName, props.value, props.isEmpty, props.name, props.pokemonId]);
 
   return (
     <Fragment>
@@ -28,7 +28,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
         <div className="h-100" />
       ) : (
         <Fragment>
-          {props.value && move && (
+          {(props.value || props.name) && move && (
             <div
               className={combineClasses(
                 'd-flex align-items-center w-100 h-100 overflow-x-hidden text-nowrap',
@@ -43,22 +43,20 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                 type={move.type}
               />
               <span className="me-1">{splitAndCapitalize(move.name, '_', ' ')}</span>
-              <span className="d-flex">
-                {props.value.moveType !== MoveType.None && (
-                  <span
-                    style={{ color: props.isDisable ? 'lightgray !important' : '' }}
-                    className={combineClasses(
-                      `${getKeyWithData(
-                        MoveType,
-                        props.isDisable ? MoveType.Disable : props.value.moveType
-                      )?.toLowerCase()}-ic`,
-                      'type-icon-small ic d-flex align-items-center h-3'
-                    )}
-                  >
-                    {getKeyWithData(MoveType, props.value.moveType)}
-                  </span>
-                )}
-              </span>
+              {!props.isHideType && (move.moveType || props.moveType) !== MoveType.None && (
+                <span
+                  style={{ color: props.isDisable ? 'lightgray !important' : '' }}
+                  className={combineClasses(
+                    `${getKeyWithData(
+                      MoveType,
+                      props.isDisable ? MoveType.Disable : move.moveType || props.moveType
+                    )?.toLowerCase()}-ic`,
+                    'd-flex type-icon-small ic d-flex align-items-center h-3'
+                  )}
+                >
+                  {getKeyWithData(MoveType, move.moveType || props.moveType)}
+                </span>
+              )}
               {props.isShow && !props.isDisable && (
                 <div className="select-down d-flex align-items-center">
                   {props.isSelect && <KeyboardArrowDownIcon fontSize="small" />}

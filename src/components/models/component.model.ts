@@ -42,11 +42,15 @@ export interface ICardMoveComponent {
 }
 
 export interface ICardSmallComponent {
-  value: ISelectMoveModel | ICombat | undefined;
+  value?: ISelectMoveModel | ICombat;
+  name?: string;
+  pokemonId?: number;
   isEmpty?: boolean;
   isDisable?: boolean;
   isShow?: boolean;
   isSelect?: boolean;
+  moveType?: MoveType;
+  isHideType?: boolean;
   clearData?: () => void;
 }
 
