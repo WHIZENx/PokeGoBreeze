@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, OutlinedInput, ListSubheader } from '@mui/material';
 import { ISelectMuiComponent } from '../models/component.model';
 import { isNotEmpty, isNullOrUndefined } from '../../../utils/extension';
-import { IMenuItem } from '../../models/component.model';
+import { IMenuItem } from '../models/menu.model';
 
 const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
   const {

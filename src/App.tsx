@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import './App.scss';
 
-import NavbarComponent from './components/Navbar';
+// import NavbarComponent from './components/Navbar';
 // import FooterComponent from './components/Footer'
 
 import News from './pages/News/News';
@@ -54,6 +54,7 @@ import useSpinner from './composables/useSpinner';
 import useDevice from './composables/useDevice';
 import { useTheme as useThemeStore } from './composables/useTheme';
 import useRouter from './composables/useRouter';
+import ResponsiveAppBar from './components/Commons/Navbar';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -161,7 +162,12 @@ function App() {
 
   return (
     <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
-      <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
+      {/* <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} version={currentVersion} /> */}
+      <ResponsiveAppBar
+        mode={theme.palette.mode}
+        toggleColorMode={colorMode.toggleColorMode}
+        version={currentVersion}
+      />
       <Routes>
         <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
         <Route path="/news" element={<News />} />

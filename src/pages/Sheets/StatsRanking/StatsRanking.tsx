@@ -59,7 +59,7 @@ import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
-import { IMenuItem } from '../../../components/models/component.model';
+import { IMenuItem } from '../../../components/Commons/models/menu.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import useStats from '../../../composables/useStats';
 import useRouter from '../../../composables/useRouter';

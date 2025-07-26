@@ -52,7 +52,7 @@ import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../components/Commons/Table/CustomDataTable/CustomDataTable';
-import { IMenuItem } from '../../components/models/component.model';
+import { IMenuItem } from '../../components/Commons/models/menu.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
 import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/options-context.helpers';

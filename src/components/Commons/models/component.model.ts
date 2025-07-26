@@ -3,6 +3,7 @@ import {
   BaseTextFieldProps,
   ButtonProps,
   FormControlLabelProps,
+  PaletteMode,
   SxProps,
   Theme,
   ToggleButtonGroupProps,
@@ -12,7 +13,6 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats } from '../../../core/models/pokemon.model';
 import { LabelType, PokemonType, PokemonClass, CardType, TypeMove } from '../../../enums/type.enum';
 import { BadgeType } from '../../enums/badge-type.enum';
-import { IMenuItem } from '../../models/component.model';
 import { InputSearchType, InputType } from '../Input/enums/input-type.enum';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { SelectPosition } from '../Select/enums/select-type.enum';
@@ -23,6 +23,13 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PVPInfo } from '../../../core/models/pvp.model';
 import React from 'react';
+import { IMenuItem } from './menu.model';
+
+export interface IResponsiveAppBarComponent {
+  mode: PaletteMode;
+  version?: string;
+  toggleColorMode: () => void;
+}
 
 export interface SwitchReleasedComponent {
   releasedGO: boolean;
@@ -389,4 +396,9 @@ export interface ITableComponent {
   rows: IRow[];
   headerRows?: IRow[];
   colGroups?: IColGroup[];
+}
+
+export interface IMenuItemComponent<T> {
+  item: IMenuItem<T>;
+  index: number;
 }
