@@ -39,7 +39,7 @@ import {
 } from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
-import PokemonTable from '../../components/Commons/Table/Pokemon/PokemonTable';
+import PokemonTable from '../../components/Commons/Tables/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';

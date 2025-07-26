@@ -9,8 +9,8 @@ import usePVP from '../../composables/usePVP';
 import useSpinner from '../../composables/useSpinner';
 import useTimestamp from '../../composables/useTimestamp';
 import useCombats from '../../composables/useCombats';
-import SelectMui from '../../components/Commons/Select/SelectMui';
-import ButtonGroupLeague from '../../components/Commons/Button/ButtonGroupLeague';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
+import ButtonGroupLeague from '../../components/Commons/Buttons/ButtonGroupLeague';
 
 interface IOptionsHome {
   rank?: PVPInfo;

@@ -28,12 +28,12 @@ import { SpinnerActions } from '../../store/actions';
 import useIcon from '../../composables/useIcon';
 import useAssets from '../../composables/useAssets';
 import usePokemon from '../../composables/usePokemon';
-import InputMuiSearch from '../../components/Commons/Input/InputMuiSearch';
-import InputReleased from '../../components/Commons/Input/InputReleased';
-import SelectMui from '../../components/Commons/Select/SelectMui';
-import ButtonMui from '../../components/Commons/Button/ButtonMui';
-import ToggleType from '../../components/Commons/Button/ToggleType';
-import FormControlMui from '../../components/Commons/Form/FormControlMui';
+import InputMuiSearch from '../../components/Commons/Inputs/InputMuiSearch';
+import InputReleased from '../../components/Commons/Inputs/InputReleased';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../components/Commons/Buttons/ButtonMui';
+import ToggleType from '../../components/Commons/Buttons/ToggleType';
+import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {

@@ -21,7 +21,7 @@ import {
   IStatsRankProd,
 } from '../../core/models/stats.model';
 import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
-import { ISelectMoveModel } from '../Commons/Input/models/select-move.model';
+import { ISelectMoveModel } from '../Commons/Inputs/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
 import { CardType, MoveType, PokemonType, TypeAction, TypeSex } from '../../enums/type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';

@@ -15,7 +15,7 @@ import { INavbarComponent } from './models/component.model';
 import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/local-storage';
 import { combineClasses, toNumber } from '../utils/extension';
-import CustomPopover from './Commons/Popover/CustomPopover';
+import CustomPopover from './Commons/Popovers/CustomPopover';
 import { LinkToTop } from './Link/LinkToTop';
 import useTheme from '../composables/useTheme';
 import useTimestamp from '../composables/useTimestamp';

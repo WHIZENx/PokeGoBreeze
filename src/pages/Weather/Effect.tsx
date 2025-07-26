@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { getPropertyName, isIncludeList, isNotEmpty, safeObjectEntries } from '../../utils/extension';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
-import SelectTypeComponent from '../../components/Commons/Select/SelectType';
+import SelectTypeComponent from '../../components/Commons/Selects/SelectType';
 import { camelCase } from '../../utils/utils';
 import Effective from '../../components/Effective/Effective';
 import Weather from '../../components/Sprites/Weather';

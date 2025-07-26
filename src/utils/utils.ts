@@ -33,7 +33,7 @@ import {
 } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
-import { ISelectMoveModel, SelectMoveModel } from '../components/Commons/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMoveModel } from '../components/Commons/Inputs/models/select-move.model';
 import { TypeEffectiveChart } from '../core/models/type-effective.model';
 import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';

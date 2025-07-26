@@ -41,8 +41,8 @@ import useAssets from '../../../../composables/useAssets';
 import useOptionStore from '../../../../composables/useOptions';
 import usePokemon from '../../../../composables/usePokemon';
 import useCalculate from '../../../../composables/useCalculate';
-import InputReleased from '../../Input/InputReleased';
-import FormControlMui from '../../Form/FormControlMui';
+import InputReleased from '../../Inputs/InputReleased';
+import FormControlMui from '../../Forms/FormControlMui';
 import { IMenuItem } from '../../models/menu.model';
 
 const customStyles: TableStyles = {

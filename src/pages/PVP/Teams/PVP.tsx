@@ -57,7 +57,7 @@ import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
-import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
+import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const { pvpData } = useDataStore();

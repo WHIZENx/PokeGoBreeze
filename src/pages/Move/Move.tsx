@@ -51,7 +51,7 @@ import { LinkToTop } from '../../components/Link/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../components/Commons/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../components/Commons/models/menu.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
@@ -59,9 +59,9 @@ import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/optio
 import usePokemon from '../../composables/usePokemon';
 import useCombats from '../../composables/useCombats';
 import useCalculate from '../../composables/useCalculate';
-import InputReleased from '../../components/Commons/Input/InputReleased';
-import FormControlMui from '../../components/Commons/Form/FormControlMui';
-import SelectMui from '../../components/Commons/Select/SelectMui';
+import InputReleased from '../../components/Commons/Inputs/InputReleased';
+import FormControlMui from '../../components/Commons/Forms/FormControlMui';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();

@@ -8,8 +8,8 @@ import { addSelectMovesByType } from '../../../utils/utils';
 import { ISelectMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../../utils/extension';
 import usePokemon from '../../../composables/usePokemon';
-import { InputType } from '../Input/enums/input-type.enum';
-import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
+import { InputType } from '../Inputs/enums/input-type.enum';
+import { ISelectMoveModel, ISelectMovePokemonModel } from '../Inputs/models/select-move.model';
 import { SelectPosition } from './enums/select-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {

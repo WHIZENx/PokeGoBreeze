@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { OptionDPSModel } from '../models/options.model';
-import { OptionFiltersCounter } from '../../components/Commons/Table/Counter/models/counter.model';
+import { OptionFiltersCounter } from '../../components/Commons/Tables/Counter/models/counter.model';
 
 export enum OptionsActionTypes {
   setDpsSheetOptions = '[Options] SetDPSSheetOptions',

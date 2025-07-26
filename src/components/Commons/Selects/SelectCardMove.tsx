@@ -5,7 +5,7 @@ import SelectMui from './SelectMui';
 import CardMoveSmall from '../../Card/CardMoveSmall';
 import usePokemon from '../../../composables/usePokemon';
 import { TypeMove } from '../../../enums/type.enum';
-import { ISelectMoveModel } from '../Input/models/select-move.model';
+import { ISelectMoveModel } from '../Inputs/models/select-move.model';
 import { combineClasses, getValueOrDefault, isNotEmpty, toNumber } from '../../../utils/extension';
 import { Box, InputAdornment, IconButton } from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';

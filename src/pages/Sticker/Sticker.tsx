@@ -8,14 +8,14 @@ import React, { Fragment, useEffect, useState } from 'react';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../components/Commons/Popover/CustomPopover';
+import CustomPopover from '../../components/Commons/Popovers/CustomPopover';
 import { ISticker } from '../../core/models/sticker.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
 import { GlobalType } from '../../enums/type.enum';
 import { ShopType } from './enums/sticker-type.enum';
 import useDataStore from '../../composables/useDataStore';
-import SelectMui from '../../components/Commons/Select/SelectMui';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
 
 interface PokemonStickerModel {
   id?: number;

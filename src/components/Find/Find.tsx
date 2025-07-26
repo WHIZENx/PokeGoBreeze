@@ -12,7 +12,7 @@ import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
-import InputMuiSearch from '../Commons/Input/InputMuiSearch';
+import InputMuiSearch from '../Commons/Inputs/InputMuiSearch';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);

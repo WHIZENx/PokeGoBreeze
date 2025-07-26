@@ -20,8 +20,8 @@ import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
 import { isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
 import useStats from '../../composables/useStats';
 import useSearch from '../../composables/useSearch';
-import SelectTier from '../Commons/Select/SelectTier';
-import StatsTable from '../Commons/Table/Stats/StatsTable';
+import SelectTier from '../Commons/Selects/SelectTier';
+import StatsTable from '../Commons/Tables/Stats/StatsTable';
 
 const Tools = (props: IToolsComponent) => {
   const { statsData } = useStats();

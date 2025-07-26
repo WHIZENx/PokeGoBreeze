@@ -29,7 +29,7 @@ import {
   IQueryStatesEvoChain,
   StatsCalculate,
 } from '../../../utils/models/calculate.model';
-import DynamicInputCP from '../../../components/Commons/Input/DynamicInputCP';
+import DynamicInputCP from '../../../components/Commons/Inputs/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import {
@@ -55,7 +55,7 @@ import useSpinner from '../../../composables/useSpinner';
 import useCalculate from '../../../composables/useCalculate';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
-import ButtonMui from '../../../components/Commons/Button/ButtonMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 const FindBattle = () => {
   useTitle({

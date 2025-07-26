@@ -13,7 +13,7 @@ import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
-import SelectCardPokemon from '../../../components/Commons/Select/SelectCardPokemon';
+import SelectCardPokemon from '../../../components/Commons/Selects/SelectCardPokemon';
 import { useTitle } from '../../../utils/hooks/useTitle';
 
 const Search = () => {

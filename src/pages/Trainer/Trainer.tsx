@@ -5,7 +5,7 @@ import { getItemSpritePath, splitAndCapitalize } from '../../utils/utils';
 import './Trainer.scss';
 import { AwardItem } from '../../core/models/trainer.model';
 import useDataStore from '../../composables/useDataStore';
-import SelectMui from '../../components/Commons/Select/SelectMui';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
 
 interface TrainerLevelUp {
   levelUps: AwardItem[];

@@ -45,7 +45,7 @@ import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
-import ToggleGroupMui from '../../../components/Commons/Button/ToggleGroupMui';
+import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();

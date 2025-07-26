@@ -21,12 +21,12 @@ import { Params } from '../../../utils/constants';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { PokemonTypeBadge } from '../../../core/enums/pokemon-type.enum';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
 import useCombats from '../../../composables/useCombats';
-import SelectMui from '../../../components/Commons/Select/SelectMui';
-import InputMui from '../../../components/Commons/Input/InputMui';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();

@@ -1,5 +1,5 @@
 import React from 'react';
-import FormControlMui from '../Form/FormControlMui';
+import FormControlMui from '../Forms/FormControlMui';
 import { Checkbox, Switch } from '@mui/material';
 import { combineClasses } from '../../../utils/extension';
 import APIService from '../../../services/api.service';

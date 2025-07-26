@@ -13,9 +13,9 @@ import { combineClasses, getValueOrDefault, isEqual, isNotEmpty, toNumber } from
 import { PokemonType } from '../../../enums/type.enum';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
-import SelectCardPokemon from '../../../components/Commons/Select/SelectCardPokemon';
-import { SelectMovePokemonModel } from '../../../components/Commons/Input/models/select-move.model';
-import SelectCardMove from '../../../components/Commons/Select/SelectCardMove';
+import SelectCardPokemon from '../../../components/Commons/Selects/SelectCardPokemon';
+import { SelectMovePokemonModel } from '../../../components/Commons/Inputs/models/select-move.model';
+import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const { findMoveByName } = useCombats();

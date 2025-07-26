@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { MoveSetComponent } from '../models/component.model';
 import { OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../../components/Commons/Popover/CustomPopover';
+import CustomPopover from '../../../components/Commons/Popovers/CustomPopover';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';

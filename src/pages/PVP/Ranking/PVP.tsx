@@ -66,8 +66,8 @@ import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
-import ToggleGroupMui from '../../../components/Commons/Button/ToggleGroupMui';
-import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
+import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
+import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();

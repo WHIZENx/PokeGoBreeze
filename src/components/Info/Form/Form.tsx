@@ -14,8 +14,8 @@ import './Form.scss';
 import Gender from '../Gender';
 import Stats from '../Stats/Stats';
 import Raid from '../../Raid/Raid';
-import Counter from '../../Commons/Table/Counter/Counter';
-import TableMove from '../../Commons/Table/Move/MoveTable';
+import Counter from '../../Commons/Tables/Counter/Counter';
+import TableMove from '../../Commons/Tables/Move/MoveTable';
 import Info from '../Info';
 import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
@@ -32,7 +32,7 @@ import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import { Action } from 'history';
 import { useSearch } from '../../../composables/useSearch';
-import ButtonGroupForm from '../../Commons/Button/ButtonGroupForm';
+import ButtonGroupForm from '../../Commons/Buttons/ButtonGroupForm';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 
 const FormComponent = (props: IFormInfoComponent) => {

@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel } from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import SelectBadge from '../../../components/Commons/Select/SelectBadge';
+import SelectBadge from '../../../components/Commons/Selects/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
 import APIService from '../../../services/api.service';
@@ -64,7 +64,7 @@ import {
   ultraBallIncChance,
 } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
-import SelectMui from '../../../components/Commons/Select/SelectMui';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
 
 const balls = createDataRows<PokeBallThreshold>(
   {

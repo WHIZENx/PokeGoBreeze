@@ -97,9 +97,9 @@ import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import { Params } from '../../../utils/constants';
 import useDevice from '../../../composables/useDevice';
-import InputMui from '../../../components/Commons/Input/InputMui';
-import SelectMui from '../../../components/Commons/Select/SelectMui';
-import ButtonMui from '../../../components/Commons/Button/ButtonMui';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 interface OptionsBattle {
   showTap: boolean;

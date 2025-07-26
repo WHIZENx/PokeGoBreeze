@@ -2,7 +2,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { VariantType } from '../../enums/type.enum';
-import ButtonMui from '../Commons/Button/ButtonMui';
+import ButtonMui from '../Commons/Buttons/ButtonMui';
 
 interface Props {
   children: ReactNode;

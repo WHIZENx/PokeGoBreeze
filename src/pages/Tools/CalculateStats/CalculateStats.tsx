@@ -30,7 +30,7 @@ import Find from '../../../components/Find/Find';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
-import DynamicInputCP from '../../../components/Commons/Input/DynamicInputCP';
+import DynamicInputCP from '../../../components/Commons/Inputs/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { isUndefined, toNumber } from '../../../utils/extension';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
@@ -39,7 +39,7 @@ import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
-import ButtonMui from '../../../components/Commons/Button/ButtonMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 const Calculate = () => {
   useTitle({

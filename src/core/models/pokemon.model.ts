@@ -9,7 +9,7 @@ import {
 import { ICombat } from './combat.model';
 import { genList, regionList, versionList } from '../../utils/constants';
 import { IStatsIV, IStatsPokemon, IStatsPokemonGO, StatsIV, StatsPokemon, StatsPokemonGO } from './stats.model';
-import { ISelectMoveModel } from '../../components/Commons/Input/models/select-move.model';
+import { ISelectMoveModel } from '../../components/Commons/Inputs/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
 import { getValueOrDefault, isUndefined, safeObjectEntries, toNumber, UniqValueInArray } from '../../utils/extension';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';

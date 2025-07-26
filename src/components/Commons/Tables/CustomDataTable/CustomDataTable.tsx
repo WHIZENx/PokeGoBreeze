@@ -8,10 +8,10 @@ import { convertColumnDataType, isIncludeList } from '../../../../utils/extensio
 import { getCustomThemeDataTable } from '../../../../utils/utils';
 import { isNotEmpty } from '../../../../utils/extension';
 import { debounce } from 'lodash';
-import CustomInput from '../../Input/CustomInput';
+import CustomInput from '../../Inputs/CustomInput';
 import { StyleSheetConfig } from '../../../../utils/configs/style-sheet.config';
 import { IncludeMode } from '../../../../utils/enums/string.enum';
-import ButtonMui from '../../Button/ButtonMui';
+import ButtonMui from '../../Buttons/ButtonMui';
 
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');

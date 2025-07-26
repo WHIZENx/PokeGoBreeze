@@ -15,7 +15,7 @@ import {
 } from '../../../utils/utils';
 import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import Stats from '../../../components/Info/Stats/Stats';
-import TableMove from '../../../components/Commons/Table/Move/MoveTable';
+import TableMove from '../../../components/Commons/Tables/Move/MoveTable';
 
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -33,7 +33,7 @@ import {
   StatsProd,
   StatsSta,
 } from '../../../core/models/stats.model';
-import PokemonTable from '../../../components/Commons/Table/Pokemon/PokemonTable';
+import PokemonTable from '../../../components/Commons/Tables/Pokemon/PokemonTable';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
@@ -58,14 +58,14 @@ import { Action } from 'history';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../../components/Commons/models/menu.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import useStats from '../../../composables/useStats';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
-import InputReleased from '../../../components/Commons/Input/InputReleased';
-import FormControlMui from '../../../components/Commons/Form/FormControlMui';
+import InputReleased from '../../../components/Commons/Inputs/InputReleased';
+import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {

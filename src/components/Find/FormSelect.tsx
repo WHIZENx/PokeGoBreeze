@@ -34,7 +34,7 @@ import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
-import ButtonGroupForm from '../Commons/Button/ButtonGroupForm';
+import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;

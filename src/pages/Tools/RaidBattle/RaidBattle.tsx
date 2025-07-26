@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import SelectMove from '../../../components/Commons/Select/SelectMove';
+import SelectMove from '../../../components/Commons/Selects/SelectMove';
 import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 
@@ -57,7 +57,7 @@ import {
   ISelectMoveModel,
   SelectMoveModel,
   SelectMovePokemonModel,
-} from '../../../components/Commons/Input/models/select-move.model';
+} from '../../../components/Commons/Inputs/models/select-move.model';
 import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { BattleCalculate } from '../../../utils/models/calculate.model';
@@ -88,7 +88,7 @@ import {
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
-import CustomPopover from '../../../components/Commons/Popover/CustomPopover';
+import CustomPopover from '../../../components/Commons/Popovers/CustomPopover';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { StatsIV } from '../../../core/models/stats.model';
@@ -99,10 +99,10 @@ import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
 import useSearch from '../../../composables/useSearch';
 import { levelList } from '../../../utils/compute';
-import InputMui from '../../../components/Commons/Input/InputMui';
-import FormControlMui from '../../../components/Commons/Form/FormControlMui';
-import InputReleased from '../../../components/Commons/Input/InputReleased';
-import ButtonMui from '../../../components/Commons/Button/ButtonMui';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
+import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
+import InputReleased from '../../../components/Commons/Inputs/InputReleased';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 const RaidBattle = () => {
   useTitle({

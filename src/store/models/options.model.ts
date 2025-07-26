@@ -1,4 +1,4 @@
-import { ISelectMoveModel } from '../../components/Commons/Input/models/select-move.model';
+import { ISelectMoveModel } from '../../components/Commons/Inputs/models/select-move.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ColumnType } from '../../enums/type.enum';
 import { BestOptionType, SortDirectionType } from '../../pages/Sheets/DpsTdo/enums/column-select-type.enum';

@@ -9,8 +9,8 @@ import { IRaidComponent } from '../models/component.model';
 import { toNumber } from '../../utils/extension';
 import { PokemonClass } from '../../enums/type.enum';
 import usePokemon from '../../composables/usePokemon';
-import StatsTable from '../Commons/Table/Stats/StatsTable';
-import SelectTierMui from '../Commons/Select/SelectTierMui';
+import StatsTable from '../Commons/Tables/Stats/StatsTable';
+import SelectTierMui from '../Commons/Selects/SelectTierMui';
 
 const Raid = (props: IRaidComponent) => {
   const { findPokemonById } = usePokemon();

@@ -16,7 +16,7 @@ import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Find from '../../../components/Find/Find';
 import StatsDamageTable from './StatsDamageTable';
 
-import SelectCustomMove from '../../../components/Commons/Select/SelectCustomMove';
+import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMove';
 import { findStabType } from '../../../utils/compute';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
@@ -32,8 +32,8 @@ import {
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
-import SelectMui from '../../../components/Commons/Select/SelectMui';
-import ButtonMui from '../../../components/Commons/Button/ButtonMui';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({

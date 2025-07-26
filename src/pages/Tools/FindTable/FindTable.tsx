@@ -22,11 +22,11 @@ import {
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
-import CustomDataTable from '../../../components/Commons/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
-import InputMui from '../../../components/Commons/Input/InputMui';
-import ButtonMui from '../../../components/Commons/Button/ButtonMui';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 interface IFindCP {
   level: number;

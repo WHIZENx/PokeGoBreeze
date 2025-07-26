@@ -26,7 +26,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import '../Navbar.scss';
 import { IResponsiveAppBarComponent } from './models/component.model';
 import { pages, POKEDEX } from './constants/app-bar';
-import ButtonMui from './Button/ButtonMui';
+import ButtonMui from './Buttons/ButtonMui';
 import { IAppMenuItem } from './models/menu.model';
 import { useNavigateToTop } from '../Link/LinkToTop';
 import { LinearProgress, ListSubheader } from '@mui/material';

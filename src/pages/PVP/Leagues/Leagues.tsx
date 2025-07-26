@@ -46,9 +46,9 @@ import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
-import SelectMui from '../../../components/Commons/Select/SelectMui';
-import ButtonMui from '../../../components/Commons/Button/ButtonMui';
-import InputMuiSearch from '../../../components/Commons/Input/InputMuiSearch';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
