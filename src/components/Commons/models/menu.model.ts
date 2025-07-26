@@ -2,7 +2,7 @@ import { ButtonBaseOwnProps } from '@mui/material';
 
 export interface IAppMenuItem<T> {
   label: string | number | React.ReactNode;
-  value?: T;
+  value?: number | string | T;
   subMenus?: IAppMenuItem<T>[];
   isHeader?: boolean;
   path?: string;
