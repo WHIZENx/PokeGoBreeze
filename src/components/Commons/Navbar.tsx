@@ -58,7 +58,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
       const value = pages.find(
         (page) => isEqual(page.path, pathName) || page.subMenus?.some((subMenu) => isEqual(subMenu.path, pathName))
       );
-      setCurrentPage(value?.value || POKEDEX);
+      setCurrentPage(value?.value?.toString() || POKEDEX);
     }
   }, [router.routerLocation]);
 
@@ -77,15 +77,15 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
     setShowMenu(false);
     setAnchorElNav(null);
     if (page && subPage) {
-      setCurrentPage(page.value || POKEDEX);
-      setCurrentPageSub(subPage.value || '');
+      setCurrentPage(page.value?.toString() || POKEDEX);
+      setCurrentPageSub(subPage.value?.toString() || '');
       setTimeout(() => navigateToTop(subPage.path || '/'), 100);
     }
   };
 
   const handleSetPage = (event: React.MouseEvent<HTMLElement>, page: IAppMenuItem<string>) => {
     setAnchorElNav(event.currentTarget);
-    setMenu(page.value || POKEDEX);
+    setMenu(page.value?.toString() || POKEDEX);
 
     if (isNotEmpty(page.subMenus)) {
       setShowMenu(true);
