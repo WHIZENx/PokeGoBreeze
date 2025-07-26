@@ -6,6 +6,7 @@ export interface IAppMenuItem<T> {
   subMenus?: IAppMenuItem<T>[];
   isHeader?: boolean;
   path?: string;
+  icon?: React.ReactNode;
 }
 
 export interface IMenuItem<T> extends ButtonBaseOwnProps, IAppMenuItem<T> {

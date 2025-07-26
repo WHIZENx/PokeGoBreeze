@@ -31,11 +31,13 @@ import { IAppMenuItem } from './models/menu.model';
 import { useNavigateToTop } from '../Link/LinkToTop';
 import { LinearProgress, ListSubheader } from '@mui/material';
 import useRouter from '../../composables/useRouter';
+import DrawerSideBar from './Drawers/DrawerSideBar';
 
 const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   const navigateToTop = useNavigateToTop();
   const router = useRouter();
 
+  const [open, setOpen] = useState(false);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [menu, setMenu] = useState<string>();
   const [showMenu, setShowMenu] = React.useState(false);
@@ -132,7 +134,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
     <AppBar position="static">
       <Toolbar sx={{ mx: 2, my: 0.5 }} disableGutters variant="dense">
         {/* width >= 900 */}
-        <Box sx={{ display: { sm: 'none', md: 'flex' }, alignItems: 'center' }}>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
           <img src={logo} width="30" height="30" alt="Home" />
           <Typography
             noWrap
@@ -147,31 +149,14 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         </Box>
 
         {/* width < 900 */}
-        <Box sx={{ flexGrow: 1, display: { sm: 'flex', md: 'none' } }}>
-          <IconButton
-            size="large"
-            aria-label="app menu"
-            aria-controls="menu-app-bar"
-            aria-haspopup="true"
-            // onClick={(e) => handleCloseMenu()}
-            color="inherit"
-          >
+        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <IconButton size="large" onClick={() => setOpen(true)} color="inherit">
             <MenuIcon />
           </IconButton>
-          {/* <Tabs id="menu-app-bar" value={0} sx={{ display: { xs: 'block', sm: 'none' } }}>
-            {pages.map((page, index) => (
-              <Tab key={page} onClick={handleCloseNavMenu} label={page} value={index} />
-            ))}
-          </Tabs> */}
         </Box>
 
         {/* width >= 900 */}
-        {/* <Tabs id="menu-app-bar" value={0} sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
-          {pages.map((page, index) => (
-            <Tab key={page} onClick={handleCloseNavMenu} label={page} value={index} />
-          ))}
-        </Tabs> */}
-        <Box sx={{ flexGrow: 1, display: { sm: 'none', md: 'flex' } }}>
+        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           {pages.map((page) => (
             <Fragment key={page.value}>
               <ButtonMui
@@ -235,6 +220,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
           <LinearProgress variant={VariantType.Determinate} value={spinnerPercent} />
         </Box>
       )}
+      <DrawerSideBar open={open} setOpen={setOpen} />
     </AppBar>
   );
 };

@@ -23,12 +23,23 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PVPInfo } from '../../../core/models/pvp.model';
 import React from 'react';
-import { IMenuItem } from './menu.model';
+import { IAppMenuItem, IMenuItem } from './menu.model';
 
 export interface IResponsiveAppBarComponent {
   mode: PaletteMode;
   version?: string;
   toggleColorMode: () => void;
+}
+
+export interface IDrawerSideBarComponent {
+  open: boolean;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface ICollapseComponent<T> {
+  page: IAppMenuItem<T>;
+  onClick?: (page: IAppMenuItem<T>) => void;
+  onHeaderClick?: () => void;
 }
 
 export interface SwitchReleasedComponent {
