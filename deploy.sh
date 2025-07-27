@@ -43,6 +43,24 @@ echo "=== Environment Information ==="
 echo "Deploy Time: $(date)"
 echo "Current Version: $VERSION"
 
+echo "=== Updating Vercel Edge Config ==="
+RESPONSE=$(curl -s -w "\n%{http_code}" -X 'PATCH' "https://api.vercel.com/v1/edge-config/${EDGE_ID}/items" \
+  -H "Authorization: Bearer $EDGE_TOKEN" \
+  -H "edgeConfigId: $EDGE_ID" \
+  -H 'Content-Type: application/json' \
+  -d '{ "items": [ { "operation": "update", "key": "'"$VERSION_VAR"'", "value": "'"$VERSION"'" } ] }')
+
+HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+RESPONSE_BODY=$(echo "$RESPONSE" | sed '$d')
+
+if [[ $HTTP_STATUS -ge 200 && $HTTP_STATUS -lt 300 ]]; then
+  echo "=== Edge Config Update Complete ==="
+else
+  echo "=== Edge Config Update Failed ==="
+  echo "Error response: $RESPONSE_BODY"
+  exit 1
+fi
+
 echo "=== Exporting version to Neon ==="
 NEW_TOKEN_RESPONSE=$(curl -s -X 'POST' "$NEON_AUTH_URL" \
   -H "Accept: application/json" \
@@ -75,23 +93,5 @@ if [[ $NEON_HTTP_STATUS -ge 200 && $NEON_HTTP_STATUS -lt 300 ]]; then
 else
   echo "=== Neon exported version failed ==="
   echo "Error response: $NEON_RESPONSE_BODY"
-  exit 1
-fi
-
-echo "=== Updating Vercel Edge Config ==="
-RESPONSE=$(curl -s -w "\n%{http_code}" -X 'PATCH' "https://api.vercel.com/v1/edge-config/${EDGE_ID}/items" \
-  -H "Authorization: Bearer $EDGE_TOKEN" \
-  -H "edgeConfigId: $EDGE_ID" \
-  -H 'Content-Type: application/json' \
-  -d '{ "items": [ { "operation": "update", "key": "'"$VERSION_VAR"'", "value": "'"$VERSION"'" } ] }')
-
-HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
-RESPONSE_BODY=$(echo "$RESPONSE" | sed '$d')
-
-if [[ $HTTP_STATUS -ge 200 && $HTTP_STATUS -lt 300 ]]; then
-  echo "=== Edge Config Update Complete ==="
-else
-  echo "=== Edge Config Update Failed ==="
-  echo "Error response: $RESPONSE_BODY"
   exit 1
 fi
