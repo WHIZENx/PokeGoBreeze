@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { getAllMoves, getKeyWithData, splitAndCapitalize } from '../../../../utils/utils';
 
 import './MoveTable.scss';
-import { Tab, Tabs } from 'react-bootstrap';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -30,6 +29,7 @@ import { IPokemonDetail } from '../../../../core/models/API/info.model';
 import IconType from '../../../Sprites/Icon/Type/Type';
 import useCombats from '../../../../composables/useCombats';
 import useCalculate from '../../../../composables/useCalculate';
+import TabsPanel from '../../Tabs/TabsPanel';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -353,52 +353,63 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   return (
-    <Tabs defaultActiveKey="movesList" className="lg-2">
-      <Tab eventKey="movesList" title="Moves List">
-        <div className="row w-100 theme-table-info-bg m-0">
-          <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
-            <table className="table-moves">
-              <colgroup className="main-move" />
-              <thead>
-                <tr className="text-center">
-                  <th className="table-sub-header">Fast Moves</th>
-                </tr>
-              </thead>
-              <tbody>{moveOrigin && renderMoveSetTable(moveOrigin.fastMoves.concat(moveOrigin.eliteFastMoves))}</tbody>
-            </table>
-          </div>
-          <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
-            <table className="table-moves">
-              <colgroup className="main-move" />
-              <thead>
-                <tr className="text-center">
-                  <th className="table-sub-header">Charged Moves</th>
-                </tr>
-              </thead>
-              <tbody>
-                {moveOrigin &&
-                  renderMoveSetTable(
-                    moveOrigin.chargedMoves.concat(
-                      moveOrigin.eliteChargedMoves,
-                      moveOrigin.purifiedMoves,
-                      moveOrigin.shadowMoves,
-                      moveOrigin.specialMoves,
-                      moveOrigin.exclusiveMoves,
-                      moveOrigin.dynamaxMoves
-                    )
-                  )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </Tab>
-      <Tab eventKey="bestEffList" title="Best Moves List">
-        <div className="row w-100 m-0">
-          {renderTable(TableType.Offensive)}
-          {renderTable(TableType.Defensive)}
-        </div>
-      </Tab>
-    </Tabs>
+    <TabsPanel
+      tabs={[
+        {
+          label: 'Moves List',
+          children: (
+            <div className="row w-100 theme-table-info-bg m-0">
+              <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
+                <table className="table-moves">
+                  <colgroup className="main-move" />
+                  <thead>
+                    <tr className="text-center">
+                      <th className="table-sub-header">Fast Moves</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {moveOrigin && renderMoveSetTable(moveOrigin.fastMoves.concat(moveOrigin.eliteFastMoves))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
+                <table className="table-moves">
+                  <colgroup className="main-move" />
+                  <thead>
+                    <tr className="text-center">
+                      <th className="table-sub-header">Charged Moves</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {moveOrigin &&
+                      renderMoveSetTable(
+                        moveOrigin.chargedMoves.concat(
+                          moveOrigin.eliteChargedMoves,
+                          moveOrigin.purifiedMoves,
+                          moveOrigin.shadowMoves,
+                          moveOrigin.specialMoves,
+                          moveOrigin.exclusiveMoves,
+                          moveOrigin.dynamaxMoves
+                        )
+                      )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ),
+        },
+        {
+          label: 'Best Moves List',
+          children: (
+            <div className="row w-100 m-0">
+              {renderTable(TableType.Offensive)}
+              {renderTable(TableType.Defensive)}
+            </div>
+          ),
+        },
+      ]}
+      className="lg-2"
+    />
   );
 };
 

@@ -422,3 +422,16 @@ export interface IMenuItemComponent<T> {
   item: IMenuItem<T>;
   index: number;
 }
+
+export interface ITab {
+  label?: string | React.ReactNode;
+  value?: number;
+  children?: React.ReactNode;
+  tabValue?: number;
+}
+
+export interface TabPanelComponent {
+  defaultValue?: number;
+  className?: string;
+  tabs: ITab[];
+}

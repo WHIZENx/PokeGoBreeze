@@ -1,8 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
-import { Tabs, Tab } from 'react-bootstrap';
-
 import './CalculatePoint.scss';
 import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMove';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
@@ -33,6 +31,7 @@ import { Color } from '../../../core/models/candy.model';
 import { minLevel, maxLevel, minIv, maxIv, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
 
 const CalculatePoint = () => {
   useTitle({
@@ -364,564 +363,575 @@ const CalculatePoint = () => {
       </div>
       <hr />
       <div className="container mb-3">
-        <Tabs defaultActiveKey="breakpointAtk" className="lg-2">
-          <Tab eventKey="breakpointAtk" title="Breakpoint Attacker">
-            <div className="tab-body">
-              <div className="row">
-                <div className="col-lg-4">
-                  <h2 className="text-center text-decoration-underline">Attacker move</h2>
-                  <SelectCustomMove
-                    text="Select Moves"
-                    id={searchingToolCurrentData?.pokemon?.id}
-                    isSelectDefault
-                    form={
-                      searchingToolCurrentData?.form
-                        ? searchingToolCurrentData?.form.form?.name
-                        : searchingToolCurrentData?.pokemon?.fullName
-                    }
-                    setMove={setMove}
-                    move={move}
-                    clearData={clearDataAtk}
-                    isHighlight
-                    pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={weatherBoosts}
-                        onChange={(_, check) => {
-                          setResultBreakPointAtk(undefined);
-                          setWeatherBoosts(check);
-                        }}
+        <TabsPanel
+          tabs={[
+            {
+              label: 'Breakpoint Attacker',
+              children: (
+                <div className="tab-body">
+                  <div className="row">
+                    <div className="col-lg-4">
+                      <h2 className="text-center text-decoration-underline">Attacker move</h2>
+                      <SelectCustomMove
+                        text="Select Moves"
+                        id={searchingToolCurrentData?.pokemon?.id}
+                        isSelectDefault
+                        form={
+                          searchingToolCurrentData?.form
+                            ? searchingToolCurrentData?.form.form?.name
+                            : searchingToolCurrentData?.pokemon?.fullName
+                        }
+                        setMove={setMove}
+                        move={move}
+                        clearData={clearDataAtk}
+                        isHighlight
+                        pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
                       />
-                    }
-                    label="Weather Boosts"
-                    disabled={pvpDmg && !isRaid}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={pvpDmg}
-                        onChange={(_, check) => {
-                          setResultBreakPointAtk(undefined);
-                          setPvpDmg(check);
-                        }}
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={weatherBoosts}
+                            onChange={(_, check) => {
+                              setResultBreakPointAtk(undefined);
+                              setWeatherBoosts(check);
+                            }}
+                          />
+                        }
+                        label="Weather Boosts"
+                        disabled={pvpDmg && !isRaid}
                       />
-                    }
-                    label="PVP stats"
-                    disabled={isRaid}
-                  />
-                  {move && (
-                    <div className="m-auto" style={{ width: 300 }}>
-                      <p>
-                        - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
-                      </p>
-                      <p>
-                        {'- Move Type: '}
-                        <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>
-                          {capitalize(move.type)}
-                        </span>
-                      </p>
-                      {findStabType(searchingToolCurrentData?.form?.form?.types, move.type)}
-                      <p>
-                        {'- Damage: '}
-                        <b>
-                          {move.pvePower}
-                          {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
-                            <span className="caption-small text-success"> (x1.2)</span>
-                          )}
-                        </b>
-                      </p>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={pvpDmg}
+                            onChange={(_, check) => {
+                              setResultBreakPointAtk(undefined);
+                              setPvpDmg(check);
+                            }}
+                          />
+                        }
+                        label="PVP stats"
+                        disabled={isRaid}
+                      />
+                      {move && (
+                        <div className="m-auto" style={{ width: 300 }}>
+                          <p>
+                            - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
+                          </p>
+                          <p>
+                            {'- Move Type: '}
+                            <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>
+                              {capitalize(move.type)}
+                            </span>
+                          </p>
+                          {findStabType(searchingToolCurrentData?.form?.form?.types, move.type)}
+                          <p>
+                            {'- Damage: '}
+                            <b>
+                              {move.pvePower}
+                              {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
+                                <span className="caption-small text-success"> (x1.2)</span>
+                              )}
+                            </b>
+                          </p>
+                        </div>
+                      )}
+                      <ButtonMui
+                        fullWidth
+                        className="mb-3"
+                        onClick={() => calculateBreakpointAtk()}
+                        disabled={!move}
+                        label="Calculate"
+                      />
                     </div>
-                  )}
-                  <ButtonMui
-                    fullWidth
-                    className="mb-3"
-                    onClick={() => calculateBreakpointAtk()}
-                    disabled={!move}
-                    label="Calculate"
-                  />
-                </div>
-                <div className="col-lg-8">
-                  <h3>Attacker Breakpoint</h3>
-                  {resultBreakPointAtk && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                  <div className="overflow-x-auto">
-                    <table className="table-info table-raid-cal sticky-left w-fit-content">
-                      <thead className="text-center">
-                        <tr className="table-header">
-                          <th />
-                          <th>IV</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-center">
-                        <tr>
-                          <td>Level</td>
-                          <td className="text-iv-bulk">Damage ATK stat to Attacker</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <table className="table-info table-raid-cal sticky-table-left">
-                      <thead className="text-center">
-                        <tr className="table-header">
-                          <th />
-                          {[...Array(maxIv() + 1).keys()].map((value, index) => (
-                            <th key={index}>{value}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="text-center">
-                        {levelList.map((level, i) => (
-                          <tr key={i}>
-                            <td>{level}</td>
-                            {[...Array(maxIv() + 1).keys()].map((_, index) => (
-                              <td
-                                className={combineClasses(
-                                  'text-iv',
-                                  showDiffBorder ? getBorderHighlight(i, index, resultBreakPointAtk?.data) : ''
-                                )}
-                                style={{
-                                  backgroundColor: resultBreakPointAtk
-                                    ? computeColor(
-                                        Object.values(resultBreakPointAtk.colorTone).find(
-                                          (item) => item.number === resultBreakPointAtk.data[i][index]
-                                        )?.color
-                                      )
-                                    : '',
-                                }}
-                                key={index}
-                              >
-                                {resultBreakPointAtk && `${resultBreakPointAtk.data[i][index]}`}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Tab>
-          <Tab eventKey="breakpointDef" title="Breakpoint Defender">
-            <div className="tab-body">
-              <div className="row">
-                <div className="col-lg-4">
-                  <h2 className="text-center text-decoration-underline">Defender move</h2>
-                  <SelectCustomMove
-                    text="Select Moves"
-                    id={searchingToolObjectData?.pokemon?.id}
-                    isSelectDefault
-                    form={
-                      searchingToolObjectData?.form
-                        ? searchingToolObjectData?.form.form?.name
-                        : searchingToolObjectData?.pokemon?.fullName
-                    }
-                    setMove={setMoveDef}
-                    move={moveDef}
-                    clearData={clearDataDef}
-                    isHighlight
-                    pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={weatherBoosts}
-                        onChange={(_, check) => {
-                          setResultBreakPointDef(undefined);
-                          setWeatherBoosts(check);
-                        }}
-                      />
-                    }
-                    label="Weather Boosts"
-                    disabled={pvpDmg}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={pvpDmg}
-                        onChange={(_, check) => {
-                          setResultBreakPointDef(undefined);
-                          setPvpDmg(check);
-                        }}
-                      />
-                    }
-                    label="PVP stats"
-                    disabled={isRaid}
-                  />
-                  {moveDef && (
-                    <div className="m-auto" style={{ width: 300 }}>
-                      <p>
-                        - Move Ability Type: <b>{getKeyWithData(TypeMove, moveDef.typeMove)}</b>
-                      </p>
-                      <p>
-                        {'- Move Type: '}
-                        <span className={combineClasses('type-icon-small', moveDef.type?.toLowerCase())}>
-                          {capitalize(moveDef.type)}
-                        </span>
-                      </p>
-                      {findStabType(searchingToolObjectData?.form?.form?.types, moveDef.type)}
-                      <p>
-                        {'- Damage: '}
-                        <b>
-                          {moveDef.pvePower}
-                          {findStabType(searchingToolObjectData?.form?.form?.types, moveDef.type) && (
-                            <span className="caption-small text-success"> (x1.2)</span>
-                          )}
-                        </b>
-                      </p>
-                    </div>
-                  )}
-                  <ButtonMui
-                    fullWidth
-                    className="mb-3"
-                    onClick={() => calculateBreakpointDef()}
-                    disabled={!moveDef}
-                    label="Calculate"
-                  />
-                </div>
-                <div className="col-lg-8">
-                  <h3>Defender Breakpoint</h3>
-                  {resultBreakPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                  <div className="overflow-x-auto">
-                    <table className="table-info table-raid-cal sticky-left w-fit-content">
-                      <thead className="text-center">
-                        <tr className="table-header">
-                          <th />
-                          <th>IV</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-center">
-                        <tr>
-                          <td>Level</td>
-                          <td className="text-iv-bulk">Damage ATK stat to Defender</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <table className="table-info table-raid-cal sticky-table-left">
-                      <thead className="text-center">
-                        <tr className="table-header">
-                          <th />
-                          {[...Array(maxIv() + 1).keys()].map((value, index) => (
-                            <th key={index}>{value}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="text-center">
-                        {levelList.map((level, i) => (
-                          <tr key={i}>
-                            <td>{level}</td>
-                            {[...Array(maxIv() + 1).keys()].map((_, index) => (
-                              <td
-                                className={combineClasses(
-                                  'text-iv',
-                                  showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataDef) : ''
-                                )}
-                                style={{
-                                  backgroundColor: resultBreakPointDef
-                                    ? computeColor(
-                                        Object.values(resultBreakPointDef.colorToneDef).find(
-                                          (item) => item.number === resultBreakPointDef.dataDef[i][index]
-                                        )?.color
-                                      )
-                                    : '',
-                                }}
-                                key={index}
-                              >
-                                {resultBreakPointDef && `${resultBreakPointDef.dataDef[i][index]}`}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <hr />
-                  <h3>Stamina Breakpoint</h3>
-                  <div className="overflow-x-auto">
-                    <table className="table-info table-raid-cal sticky-left w-max-content">
-                      <thead className="text-center">
-                        <tr className="table-header">
-                          <th />
-                          <th>IV</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-center">
-                        <tr>
-                          <td>Level</td>
-                          <td className="text-iv-bulk">HP remain of Defender</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <table className="table-info table-raid-cal sticky-table-left">
-                      <thead className="text-center">
-                        <tr className="table-header">
-                          <th />
-                          {[...Array(maxIv() + 1).keys()].map((value, index) => (
-                            <th key={index}>{value}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="text-center">
-                        {levelList.map((level, i) => (
-                          <tr key={i}>
-                            <td>{level}</td>
-                            {[...Array(maxIv() + 1).keys()].map((_, index) => (
-                              <td
-                                className={combineClasses(
-                                  'text-iv',
-                                  showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataSta) : ''
-                                )}
-                                style={{
-                                  backgroundColor: resultBreakPointDef
-                                    ? computeColor(
-                                        Object.values(resultBreakPointDef.colorToneSta).find(
-                                          (item) => item.number === resultBreakPointDef.dataSta[i][index]
-                                        )?.color
-                                      )
-                                    : '',
-                                }}
-                                key={index}
-                              >
-                                {resultBreakPointDef && `${resultBreakPointDef.dataSta[i][index]}`}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Tab>
-          <Tab eventKey="bulkpoint" title="BulkPoint Attacker">
-            <div className="tab-body">
-              <div className="row">
-                <div className="col-lg-4">
-                  <h2 className="text-center text-decoration-underline">Defender move</h2>
-                  <div className="mb-3">
-                    <SelectCustomMove
-                      text="Fast Moves"
-                      id={searchingToolObjectData?.pokemon?.id}
-                      isSelectDefault
-                      form={
-                        searchingToolObjectData?.form
-                          ? searchingToolObjectData?.form.form?.name
-                          : searchingToolObjectData?.pokemon?.fullName
-                      }
-                      setMove={setFMove}
-                      move={fMove}
-                      type={TypeMove.Fast}
-                      clearData={clearDataBulk}
-                      isHighlight
-                      pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
-                    />
-                    {fMove && (
-                      <div className="mt-2 m-auto" style={{ width: 300 }}>
-                        <p>
-                          - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
-                        </p>
-                        <p>
-                          {'- Move Type: '}
-                          <span className={combineClasses('type-icon-small', fMove.type?.toLowerCase())}>
-                            {capitalize(fMove.type)}
-                          </span>
-                        </p>
-                        {findStabType(searchingToolObjectData?.form?.form?.types, fMove.type)}
-                        <p>
-                          {'- Damage: '}
-                          <b>
-                            {fMove.pvePower}
-                            {findStabType(searchingToolObjectData?.form?.form?.types, fMove.type) && (
-                              <span className="caption-small text-success"> (x1.2)</span>
-                            )}
-                          </b>
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <SelectCustomMove
-                      text="Charged Moves"
-                      id={searchingToolObjectData?.pokemon?.id}
-                      isSelectDefault
-                      form={
-                        searchingToolObjectData?.form
-                          ? searchingToolObjectData?.form.form?.name
-                          : searchingToolObjectData?.pokemon?.fullName
-                      }
-                      setMove={setCMove}
-                      move={cMove}
-                      type={TypeMove.Charge}
-                      clearData={clearDataBulk}
-                      isHighlight
-                      pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
-                    />
-                    {cMove && (
-                      <div className="mt-2 m-auto" style={{ width: 300 }}>
-                        <p>
-                          - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
-                        </p>
-                        <p>
-                          {'- Move Type: '}
-                          <span className={combineClasses('type-icon-small', cMove.type?.toLowerCase())}>
-                            {capitalize(cMove.type)}
-                          </span>
-                        </p>
-                        {findStabType(searchingToolObjectData?.form?.form?.types, cMove.type)}
-                        <p>
-                          {'- Damage: '}
-                          <b>
-                            {cMove.pvePower}
-                            {findStabType(searchingToolObjectData?.form?.form?.types, cMove.type) && (
-                              <span className="caption-small text-success"> (x1.2)</span>
-                            )}
-                          </b>
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={weatherBoosts}
-                        onChange={(_, check) => {
-                          setResultBulkPointDef(undefined);
-                          setWeatherBoosts(check);
-                        }}
-                      />
-                    }
-                    label="Weather Boosts"
-                    disabled={pvpDmg}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={pvpDmg}
-                        onChange={(_, check) => {
-                          setResultBulkPointDef(undefined);
-                          setPvpDmg(check);
-                        }}
-                      />
-                    }
-                    label="PVP stats"
-                    disabled={isRaid}
-                  />
-                  <hr />
-                  <h2 className="text-center text-decoration-underline">Attacker stats</h2>
-                  <div>
-                    <div className="d-flex justify-content-between">
-                      <b>DEF</b>
-                      <b>{DEFIv}</b>
-                    </div>
-                    <PokeGoSlider
-                      value={DEFIv}
-                      aria-label="DEF marks"
-                      defaultValue={minIv()}
-                      min={minIv()}
-                      max={maxIv()}
-                      step={1}
-                      valueLabelDisplay="auto"
-                      marks={marks}
-                      onChange={(_, v) => setDEFIv(v as number)}
-                    />
-                    <div className="d-flex justify-content-between">
-                      <b>STA</b>
-                      <b>{STAIv}</b>
-                    </div>
-                    <PokeGoSlider
-                      value={STAIv}
-                      aria-label="STA marks"
-                      defaultValue={minIv()}
-                      min={minIv()}
-                      max={maxIv()}
-                      step={1}
-                      valueLabelDisplay="auto"
-                      marks={marks}
-                      onChange={(_, v) => setSTAIv(v as number)}
-                    />
-                  </div>
-                  <ButtonMui
-                    fullWidth
-                    className="mb-3"
-                    onClick={() => calculateBulkPointDef()}
-                    disabled={!(fMove && cMove)}
-                    label="Calculate"
-                  />
-                </div>
-                <div className="col-lg-8 overflow-x-auto">
-                  <h3>BulkPoint</h3>
-                  {resultBulkPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                  <div className="overflow-x-auto">
-                    <table className="table-info table-raid-cal sticky-left w-fit-content">
-                      <thead className="text-center">
-                        <tr className="table-header">
-                          <th />
-                          <th>Number of Charge attacks to defeat defender</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-center">
-                        <tr>
-                          <td>Level</td>
-                          <td className="text-iv-bulk">Number of Quick attacks to defeat defender</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <table className="table-info table-raid-cal sticky-table-left">
-                      <thead className="text-center">
-                        <tr className="table-header">
-                          <th />
-                          {resultBulkPointDef ? (
-                            <Fragment>
-                              {[...Array(resultBulkPointDef.maxLength).keys()].map((_, index) => (
-                                <th key={index}>{index}</th>
-                              ))}
-                            </Fragment>
-                          ) : (
-                            <Fragment>
-                              {[...Array(11).keys()].map((value, index) => (
+                    <div className="col-lg-8">
+                      <h3>Attacker Breakpoint</h3>
+                      {resultBreakPointAtk && setIconBattle(TypeAction.Atk, TypeAction.Def)}
+                      <div className="overflow-x-auto">
+                        <table className="table-info table-raid-cal sticky-left w-fit-content">
+                          <thead className="text-center">
+                            <tr className="table-header">
+                              <th />
+                              <th>IV</th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-center">
+                            <tr>
+                              <td>Level</td>
+                              <td className="text-iv-bulk">Damage ATK stat to Attacker</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <table className="table-info table-raid-cal sticky-table-left">
+                          <thead className="text-center">
+                            <tr className="table-header">
+                              <th />
+                              {[...Array(maxIv() + 1).keys()].map((value, index) => (
                                 <th key={index}>{value}</th>
                               ))}
-                              <th>...</th>
-                            </Fragment>
-                          )}
-                        </tr>
-                      </thead>
-                      <tbody className="text-center">
-                        {levelList.map((level, i) => (
-                          <tr key={i}>
-                            <td>{level}</td>
-                            {resultBulkPointDef ? (
-                              <Fragment>
-                                {resultBulkPointDef.data[i].map((value, index) => (
+                            </tr>
+                          </thead>
+                          <tbody className="text-center">
+                            {levelList.map((level, i) => (
+                              <tr key={i}>
+                                <td>{level}</td>
+                                {[...Array(maxIv() + 1).keys()].map((_, index) => (
                                   <td
                                     className={combineClasses(
-                                      'text-iv-bulk',
-                                      value === 0 && showDiffBorder ? getBorderSplit(i, index) : ''
+                                      'text-iv',
+                                      showDiffBorder ? getBorderHighlight(i, index, resultBreakPointAtk?.data) : ''
                                     )}
+                                    style={{
+                                      backgroundColor: resultBreakPointAtk
+                                        ? computeColor(
+                                            Object.values(resultBreakPointAtk.colorTone).find(
+                                              (item) => item.number === resultBreakPointAtk.data[i][index]
+                                            )?.color
+                                          )
+                                        : '',
+                                    }}
                                     key={index}
                                   >
-                                    {value}
+                                    {resultBreakPointAtk && `${resultBreakPointAtk.data[i][index]}`}
                                   </td>
                                 ))}
-                              </Fragment>
-                            ) : (
-                              <Fragment>
-                                {[...Array(12).keys()].map((_, index) => (
-                                  <td key={index} />
-                                ))}
-                              </Fragment>
-                            )}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </Tab>
-        </Tabs>
+              ),
+            },
+            {
+              label: 'Breakpoint Defender',
+              children: (
+                <div className="tab-body">
+                  <div className="row">
+                    <div className="col-lg-4">
+                      <h2 className="text-center text-decoration-underline">Defender move</h2>
+                      <SelectCustomMove
+                        text="Select Moves"
+                        id={searchingToolObjectData?.pokemon?.id}
+                        isSelectDefault
+                        form={
+                          searchingToolObjectData?.form
+                            ? searchingToolObjectData?.form.form?.name
+                            : searchingToolObjectData?.pokemon?.fullName
+                        }
+                        setMove={setMoveDef}
+                        move={moveDef}
+                        clearData={clearDataDef}
+                        isHighlight
+                        pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={weatherBoosts}
+                            onChange={(_, check) => {
+                              setResultBreakPointDef(undefined);
+                              setWeatherBoosts(check);
+                            }}
+                          />
+                        }
+                        label="Weather Boosts"
+                        disabled={pvpDmg}
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={pvpDmg}
+                            onChange={(_, check) => {
+                              setResultBreakPointDef(undefined);
+                              setPvpDmg(check);
+                            }}
+                          />
+                        }
+                        label="PVP stats"
+                        disabled={isRaid}
+                      />
+                      {moveDef && (
+                        <div className="m-auto" style={{ width: 300 }}>
+                          <p>
+                            - Move Ability Type: <b>{getKeyWithData(TypeMove, moveDef.typeMove)}</b>
+                          </p>
+                          <p>
+                            {'- Move Type: '}
+                            <span className={combineClasses('type-icon-small', moveDef.type?.toLowerCase())}>
+                              {capitalize(moveDef.type)}
+                            </span>
+                          </p>
+                          {findStabType(searchingToolObjectData?.form?.form?.types, moveDef.type)}
+                          <p>
+                            {'- Damage: '}
+                            <b>
+                              {moveDef.pvePower}
+                              {findStabType(searchingToolObjectData?.form?.form?.types, moveDef.type) && (
+                                <span className="caption-small text-success"> (x1.2)</span>
+                              )}
+                            </b>
+                          </p>
+                        </div>
+                      )}
+                      <ButtonMui
+                        fullWidth
+                        className="mb-3"
+                        onClick={() => calculateBreakpointDef()}
+                        disabled={!moveDef}
+                        label="Calculate"
+                      />
+                    </div>
+                    <div className="col-lg-8">
+                      <h3>Defender Breakpoint</h3>
+                      {resultBreakPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
+                      <div className="overflow-x-auto">
+                        <table className="table-info table-raid-cal sticky-left w-fit-content">
+                          <thead className="text-center">
+                            <tr className="table-header">
+                              <th />
+                              <th>IV</th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-center">
+                            <tr>
+                              <td>Level</td>
+                              <td className="text-iv-bulk">Damage ATK stat to Defender</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <table className="table-info table-raid-cal sticky-table-left">
+                          <thead className="text-center">
+                            <tr className="table-header">
+                              <th />
+                              {[...Array(maxIv() + 1).keys()].map((value, index) => (
+                                <th key={index}>{value}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="text-center">
+                            {levelList.map((level, i) => (
+                              <tr key={i}>
+                                <td>{level}</td>
+                                {[...Array(maxIv() + 1).keys()].map((_, index) => (
+                                  <td
+                                    className={combineClasses(
+                                      'text-iv',
+                                      showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataDef) : ''
+                                    )}
+                                    style={{
+                                      backgroundColor: resultBreakPointDef
+                                        ? computeColor(
+                                            Object.values(resultBreakPointDef.colorToneDef).find(
+                                              (item) => item.number === resultBreakPointDef.dataDef[i][index]
+                                            )?.color
+                                          )
+                                        : '',
+                                    }}
+                                    key={index}
+                                  >
+                                    {resultBreakPointDef && `${resultBreakPointDef.dataDef[i][index]}`}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <hr />
+                      <h3>Stamina Breakpoint</h3>
+                      <div className="overflow-x-auto">
+                        <table className="table-info table-raid-cal sticky-left w-max-content">
+                          <thead className="text-center">
+                            <tr className="table-header">
+                              <th />
+                              <th>IV</th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-center">
+                            <tr>
+                              <td>Level</td>
+                              <td className="text-iv-bulk">HP remain of Defender</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <table className="table-info table-raid-cal sticky-table-left">
+                          <thead className="text-center">
+                            <tr className="table-header">
+                              <th />
+                              {[...Array(maxIv() + 1).keys()].map((value, index) => (
+                                <th key={index}>{value}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="text-center">
+                            {levelList.map((level, i) => (
+                              <tr key={i}>
+                                <td>{level}</td>
+                                {[...Array(maxIv() + 1).keys()].map((_, index) => (
+                                  <td
+                                    className={combineClasses(
+                                      'text-iv',
+                                      showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataSta) : ''
+                                    )}
+                                    style={{
+                                      backgroundColor: resultBreakPointDef
+                                        ? computeColor(
+                                            Object.values(resultBreakPointDef.colorToneSta).find(
+                                              (item) => item.number === resultBreakPointDef.dataSta[i][index]
+                                            )?.color
+                                          )
+                                        : '',
+                                    }}
+                                    key={index}
+                                  >
+                                    {resultBreakPointDef && `${resultBreakPointDef.dataSta[i][index]}`}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              label: 'Breakpoint Attacker',
+              children: (
+                <div className="tab-body">
+                  <div className="row">
+                    <div className="col-lg-4">
+                      <h2 className="text-center text-decoration-underline">Defender move</h2>
+                      <div className="mb-3">
+                        <SelectCustomMove
+                          text="Fast Moves"
+                          id={searchingToolObjectData?.pokemon?.id}
+                          isSelectDefault
+                          form={
+                            searchingToolObjectData?.form
+                              ? searchingToolObjectData?.form.form?.name
+                              : searchingToolObjectData?.pokemon?.fullName
+                          }
+                          setMove={setFMove}
+                          move={fMove}
+                          type={TypeMove.Fast}
+                          clearData={clearDataBulk}
+                          isHighlight
+                          pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
+                        />
+                        {fMove && (
+                          <div className="mt-2 m-auto" style={{ width: 300 }}>
+                            <p>
+                              - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
+                            </p>
+                            <p>
+                              {'- Move Type: '}
+                              <span className={combineClasses('type-icon-small', fMove.type?.toLowerCase())}>
+                                {capitalize(fMove.type)}
+                              </span>
+                            </p>
+                            {findStabType(searchingToolObjectData?.form?.form?.types, fMove.type)}
+                            <p>
+                              {'- Damage: '}
+                              <b>
+                                {fMove.pvePower}
+                                {findStabType(searchingToolObjectData?.form?.form?.types, fMove.type) && (
+                                  <span className="caption-small text-success"> (x1.2)</span>
+                                )}
+                              </b>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <SelectCustomMove
+                          text="Charged Moves"
+                          id={searchingToolObjectData?.pokemon?.id}
+                          isSelectDefault
+                          form={
+                            searchingToolObjectData?.form
+                              ? searchingToolObjectData?.form.form?.name
+                              : searchingToolObjectData?.pokemon?.fullName
+                          }
+                          setMove={setCMove}
+                          move={cMove}
+                          type={TypeMove.Charge}
+                          clearData={clearDataBulk}
+                          isHighlight
+                          pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
+                        />
+                        {cMove && (
+                          <div className="mt-2 m-auto" style={{ width: 300 }}>
+                            <p>
+                              - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
+                            </p>
+                            <p>
+                              {'- Move Type: '}
+                              <span className={combineClasses('type-icon-small', cMove.type?.toLowerCase())}>
+                                {capitalize(cMove.type)}
+                              </span>
+                            </p>
+                            {findStabType(searchingToolObjectData?.form?.form?.types, cMove.type)}
+                            <p>
+                              {'- Damage: '}
+                              <b>
+                                {cMove.pvePower}
+                                {findStabType(searchingToolObjectData?.form?.form?.types, cMove.type) && (
+                                  <span className="caption-small text-success"> (x1.2)</span>
+                                )}
+                              </b>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={weatherBoosts}
+                            onChange={(_, check) => {
+                              setResultBulkPointDef(undefined);
+                              setWeatherBoosts(check);
+                            }}
+                          />
+                        }
+                        label="Weather Boosts"
+                        disabled={pvpDmg}
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={pvpDmg}
+                            onChange={(_, check) => {
+                              setResultBulkPointDef(undefined);
+                              setPvpDmg(check);
+                            }}
+                          />
+                        }
+                        label="PVP stats"
+                        disabled={isRaid}
+                      />
+                      <hr />
+                      <h2 className="text-center text-decoration-underline">Attacker stats</h2>
+                      <div>
+                        <div className="d-flex justify-content-between">
+                          <b>DEF</b>
+                          <b>{DEFIv}</b>
+                        </div>
+                        <PokeGoSlider
+                          value={DEFIv}
+                          aria-label="DEF marks"
+                          defaultValue={minIv()}
+                          min={minIv()}
+                          max={maxIv()}
+                          step={1}
+                          valueLabelDisplay="auto"
+                          marks={marks}
+                          onChange={(_, v) => setDEFIv(v as number)}
+                        />
+                        <div className="d-flex justify-content-between">
+                          <b>STA</b>
+                          <b>{STAIv}</b>
+                        </div>
+                        <PokeGoSlider
+                          value={STAIv}
+                          aria-label="STA marks"
+                          defaultValue={minIv()}
+                          min={minIv()}
+                          max={maxIv()}
+                          step={1}
+                          valueLabelDisplay="auto"
+                          marks={marks}
+                          onChange={(_, v) => setSTAIv(v as number)}
+                        />
+                      </div>
+                      <ButtonMui
+                        fullWidth
+                        className="mb-3"
+                        onClick={() => calculateBulkPointDef()}
+                        disabled={!(fMove && cMove)}
+                        label="Calculate"
+                      />
+                    </div>
+                    <div className="col-lg-8 overflow-x-auto">
+                      <h3>BulkPoint</h3>
+                      {resultBulkPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
+                      <div className="overflow-x-auto">
+                        <table className="table-info table-raid-cal sticky-left w-fit-content">
+                          <thead className="text-center">
+                            <tr className="table-header">
+                              <th />
+                              <th>Number of Charge attacks to defeat defender</th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-center">
+                            <tr>
+                              <td>Level</td>
+                              <td className="text-iv-bulk">Number of Quick attacks to defeat defender</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <table className="table-info table-raid-cal sticky-table-left">
+                          <thead className="text-center">
+                            <tr className="table-header">
+                              <th />
+                              {resultBulkPointDef ? (
+                                <Fragment>
+                                  {[...Array(resultBulkPointDef.maxLength).keys()].map((_, index) => (
+                                    <th key={index}>{index}</th>
+                                  ))}
+                                </Fragment>
+                              ) : (
+                                <Fragment>
+                                  {[...Array(11).keys()].map((value, index) => (
+                                    <th key={index}>{value}</th>
+                                  ))}
+                                  <th>...</th>
+                                </Fragment>
+                              )}
+                            </tr>
+                          </thead>
+                          <tbody className="text-center">
+                            {levelList.map((level, i) => (
+                              <tr key={i}>
+                                <td>{level}</td>
+                                {resultBulkPointDef ? (
+                                  <Fragment>
+                                    {resultBulkPointDef.data[i].map((value, index) => (
+                                      <td
+                                        className={combineClasses(
+                                          'text-iv-bulk',
+                                          value === 0 && showDiffBorder ? getBorderSplit(i, index) : ''
+                                        )}
+                                        key={index}
+                                      >
+                                        {value}
+                                      </td>
+                                    ))}
+                                  </Fragment>
+                                ) : (
+                                  <Fragment>
+                                    {[...Array(12).keys()].map((_, index) => (
+                                      <td key={index} />
+                                    ))}
+                                  </Fragment>
+                                )}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ),
+            },
+          ]}
+        />
       </div>
     </Fragment>
   );
