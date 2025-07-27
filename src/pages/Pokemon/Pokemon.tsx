@@ -601,7 +601,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   return (
     <Error isError={!isFound}>
-      <div className="w-100 row prev-next-block sticky-top">
+      <div className="w-100 row prev-next-block position-sticky" style={{ top: 56 }}>
         {params.id ? (
           <SearchBarMain data={dataStorePokemon} />
         ) : (

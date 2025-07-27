@@ -8,30 +8,30 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-import logo from '../../assets/pokedex.png';
-import { combineClasses, isEqual, isNotEmpty, toNumber } from '../../utils/extension';
-import { TypeTheme, VariantType } from '../../enums/type.enum';
+import logo from '../../../assets/pokedex.png';
+import { combineClasses, isEqual, isNotEmpty, toNumber } from '../../../utils/extension';
+import { TypeTheme, VariantType } from '../../../enums/type.enum';
 
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import useTimestamp from '../../composables/useTimestamp';
-import useSpinner from '../../composables/useSpinner';
-import useTheme from '../../composables/useTheme';
+import useTimestamp from '../../../composables/useTimestamp';
+import useSpinner from '../../../composables/useSpinner';
+import useTheme from '../../../composables/useTheme';
 import { useLocalStorage } from 'usehooks-ts';
-import { LocalStorageConfig } from '../../store/constants/local-storage';
-import { getTime } from '../../utils/utils';
+import { LocalStorageConfig } from '../../../store/constants/local-storage';
+import { getTime } from '../../../utils/utils';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-import '../Navbar.scss';
-import { IResponsiveAppBarComponent } from './models/component.model';
-import { pages, POKEDEX } from './constants/app-bar';
-import ButtonMui from './Buttons/ButtonMui';
-import { IAppMenuItem } from './models/menu.model';
-import { useNavigateToTop } from '../Link/LinkToTop';
+import '../../Navbar.scss';
+import { IResponsiveAppBarComponent } from '../models/component.model';
+import { pages, POKEDEX } from '../constants/app-bar';
+import ButtonMui from '../Buttons/ButtonMui';
+import { IAppMenuItem } from '../models/menu.model';
+import { useNavigateToTop } from '../../Link/LinkToTop';
 import { LinearProgress, ListSubheader } from '@mui/material';
-import useRouter from '../../composables/useRouter';
-import DrawerSideBar from './Drawers/DrawerSideBar';
+import useRouter from '../../../composables/useRouter';
+import DrawerSideBar from '../Drawers/DrawerSideBar';
 
 const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   const navigateToTop = useNavigateToTop();
