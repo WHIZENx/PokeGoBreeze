@@ -3,6 +3,7 @@ import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText, L
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { ICollapseComponent } from '../models/component.model';
 import { IAppMenuItem } from '../models/menu.model';
+import { isNullOrUndefined } from '../../../utils/extension';
 
 const CollapseMui = <T,>(props: ICollapseComponent<T>) => {
   const [open, setOpen] = useState(false);
@@ -25,19 +26,25 @@ const CollapseMui = <T,>(props: ICollapseComponent<T>) => {
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          {props.page.subMenus?.map((subMenu, index) => (
-            <ListItem key={index} sx={{ py: 0 }}>
-              {subMenu.value ? (
-                <ListItemButton onClick={() => handleSubMenuClick(subMenu)}>
+        <List component={props.component || 'div'} disablePadding sx={props.listSx} subheader={props.subheader}>
+          {props.page.subMenus?.map((subMenu, index) =>
+            subMenu.value ? (
+              <ListItem
+                key={index}
+                sx={{ py: 0 }}
+                selected={!isNullOrUndefined(subMenu.value) && props.isSelect?.(subMenu)}
+              >
+                <ListItemButton className="text-truncate" onClick={() => handleSubMenuClick(subMenu)}>
                   {subMenu.icon && <ListItemIcon>{subMenu.icon}</ListItemIcon>}
                   <ListItemText primary={subMenu.label} />
                 </ListItemButton>
-              ) : (
-                <ListSubheader>{subMenu.label}</ListSubheader>
-              )}
-            </ListItem>
-          ))}
+              </ListItem>
+            ) : (
+              <ListSubheader key={index} component="div">
+                {subMenu.label}
+              </ListSubheader>
+            )
+          )}
         </List>
       </Collapse>
     </>

@@ -693,7 +693,7 @@ const Leagues = () => {
         <InputMuiSearch
           isNoWrap
           labelPrepend="Find League"
-          defaultValue={search}
+          value={search}
           onChange={(value) => setSearch(value)}
           placeholder="Enter League Name"
         />

@@ -96,21 +96,21 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
 
   const infoVersion = useMemo(() => {
     return (
-      <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column' }}>
+      <>
         {toNumber(timestamp?.gamemaster) > 0 && (
-          <span className="text-white text-truncate">Updated: {getTime(timestamp.gamemaster, true)}</span>
+          <span className="text-truncate">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
         <span className="text-end text-warning u-fs-2">
           <b>{props.version}</b>
         </span>
-      </Box>
+      </>
     );
   }, [timestamp, props.version]);
 
   const navigateInfo = useMemo(() => {
     return (
       <Box sx={{ display: 'flex', gap: 1 }}>
-        {infoVersion}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column' }}>{infoVersion}</Box>
         <IconButton
           sx={{ p: 0 }}
           className={combineClasses(
@@ -131,10 +131,10 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   }, [infoVersion, stateTheme, isDelay, onChangeTheme]);
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky">
       <Toolbar sx={{ mx: 2, my: 0.5 }} disableGutters variant="dense">
         {/* width >= 900 */}
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+        <Box className="text-white" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
           <img src={logo} width="30" height="30" alt="Home" />
           <Typography
             noWrap
@@ -220,7 +220,27 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
           <LinearProgress variant={VariantType.Determinate} value={spinnerPercent} />
         </Box>
       )}
-      <DrawerSideBar open={open} setOpen={setOpen} />
+      <DrawerSideBar
+        currentPage={currentPage}
+        currentPageSub={currentPageSub}
+        setCurrentPage={setCurrentPage}
+        setCurrentPageSub={setCurrentPageSub}
+        open={open}
+        setOpen={setOpen}
+        footer={
+          <Box
+            className="theme-text-primary"
+            sx={{
+              display: { xs: 'flex', md: 'none' },
+              flexDirection: 'column',
+              p: 2,
+              alignItems: 'start',
+            }}
+          >
+            {infoVersion}
+          </Box>
+        }
+      />
     </AppBar>
   );
 };

@@ -32,14 +32,23 @@ export interface IResponsiveAppBarComponent {
 }
 
 export interface IDrawerSideBarComponent {
+  currentPage?: string;
+  setCurrentPage?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  currentPageSub?: string;
+  setCurrentPageSub?: React.Dispatch<React.SetStateAction<string | undefined>>;
   open: boolean;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  footer?: React.ReactNode;
 }
 
 export interface ICollapseComponent<T> {
   page: IAppMenuItem<T>;
   onClick?: (page: IAppMenuItem<T>) => void;
   onHeaderClick?: () => void;
+  component?: 'div' | 'ul';
+  listSx?: SxProps<Theme>;
+  subheader?: React.ReactNode;
+  isSelect?: (value: IAppMenuItem<T>) => boolean;
 }
 
 export interface SwitchReleasedComponent {

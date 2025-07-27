@@ -108,7 +108,6 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
         onChange={props.onChange ? handleOnChangeSearch : undefined}
         onKeyUp={props.onKeyUp ? handleOnKeyUpSearch : undefined}
         InputProps={{
-          value: searchTerm,
           startAdornment: isHideIcon
             ? undefined
             : position.current === 'start' || customPrepend
@@ -121,7 +120,6 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
             : undefined,
         }}
         SelectProps={{
-          value: searchTerm,
           MenuProps: {
             ref: elementRef,
             id: `select-${props.id}`,
