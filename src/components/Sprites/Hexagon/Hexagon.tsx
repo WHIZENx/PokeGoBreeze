@@ -38,7 +38,8 @@ const Hexagon = (props: IHexagonComponent) => {
     ctx: CanvasRenderingContext2D,
     center: IPointer,
     percentage: number,
-    color: string,
+    bgColor: string,
+    strokeColor: string,
     isFill: boolean
   ) => {
     const start = getHexConnerCord(center, percentage, 0);
@@ -50,23 +51,23 @@ const Hexagon = (props: IHexagonComponent) => {
     }
     ctx.setLineDash([20, 15]);
     if (isFill) {
-      ctx.fillStyle = 'gray';
+      ctx.fillStyle = bgColor;
       ctx.fill();
     }
     ctx.lineWidth = 3;
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = strokeColor;
     ctx.stroke();
     ctx.closePath();
   };
 
-  const drawStatsHex = (ctx: CanvasRenderingContext2D, center: IPointer, stat: IHexagonStats, hexSize: number) => {
+  const drawStatsHex = (ctx: CanvasRenderingContext2D, center: IPointer, stat: IHexagonStats) => {
     const stats: DynamicObj<number> = {
-      '0': (stat.switching * hexSize) / 100,
-      '1': (stat.charger * hexSize) / 100,
-      '2': (stat.closer * hexSize) / 100,
-      '3': (stat.cons * hexSize) / 100,
-      '4': (stat.atk * hexSize) / 100,
-      '5': (stat.lead * hexSize) / 100,
+      '0': getPercentageBySize(stat.switching),
+      '1': getPercentageBySize(stat.charger),
+      '2': getPercentageBySize(stat.closer),
+      '3': getPercentageBySize(stat.cons),
+      '4': getPercentageBySize(stat.atk),
+      '5': getPercentageBySize(stat.lead),
     };
     const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
     ctx.beginPath();
@@ -95,6 +96,21 @@ const Hexagon = (props: IHexagonComponent) => {
       : Math.max(startStat - endStat / 30, endStat);
   };
 
+  const getPercentageBySize = (size: number, fullSize = props.size / 2) => (fullSize * size) / 100;
+
+  const getColorVar = (color: string) => {
+    if (color.startsWith('var(')) {
+      const tempElement = document.createElement('div');
+      tempElement.style.color = color;
+      document.body.appendChild(tempElement);
+      const computedColor = getComputedStyle(tempElement).color;
+      document.body.removeChild(tempElement);
+      return computedColor;
+    } else {
+      return color;
+    }
+  };
+
   const drawHexagon = useCallback(
     (stats: IHexagonStats) => {
       const hexBorderSize = props.size;
@@ -102,15 +118,17 @@ const Hexagon = (props: IHexagonComponent) => {
 
       const ctx = canvasHex.current?.getContext('2d');
       if (ctx) {
+        const bgColor = getColorVar('var(--custom-gray)');
+        const strokeColor = getColorVar('var(--custom-table-border)');
         ctx.beginPath();
         ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
         ctx.closePath();
         const pointer = new Pointer(hexSize, (hexBorderSize + 4) / 2);
-        drawLineHex(ctx, pointer, hexSize, 'white', true);
-        drawLineHex(ctx, pointer, 25, 'var(--custom-table-border)', false);
-        drawLineHex(ctx, pointer, 50, 'var(--custom-table-border)', false);
-        drawLineHex(ctx, pointer, 75, 'var(--custom-table-border)', false);
-        drawStatsHex(ctx, pointer, stats, hexSize);
+        drawLineHex(ctx, pointer, hexSize, bgColor, strokeColor, true);
+        drawLineHex(ctx, pointer, getPercentageBySize(25), bgColor, strokeColor, false);
+        drawLineHex(ctx, pointer, getPercentageBySize(50), bgColor, strokeColor, false);
+        drawLineHex(ctx, pointer, getPercentageBySize(75), bgColor, strokeColor, false);
+        drawStatsHex(ctx, pointer, stats);
         setInitHex(true);
       }
     },

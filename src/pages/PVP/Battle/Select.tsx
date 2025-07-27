@@ -1,51 +1,36 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/api.service';
 
 import { getKeyWithData, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
-import CloseIcon from '@mui/icons-material/Close';
-import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateStatsByTag, calculateStatsTopRank } from '../../../utils/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
 import { Checkbox } from '@mui/material';
-import { ICombat } from '../../../core/models/combat.model';
+import { Combat, ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
-import { IncludeMode } from '../../../utils/enums/string.enum';
-import { MoveType } from '../../../enums/type.enum';
+import { combineClasses, getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../../../utils/extension';
+import { PokemonType } from '../../../enums/type.enum';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
+import SelectCardPokemon from '../../../components/Commons/Selects/SelectCardPokemon';
+import { SelectMovePokemonModel } from '../../../components/Commons/Inputs/models/select-move.model';
+import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const { findMoveByName } = useCombats();
   const { showSpinner, hideSpinner } = useSpinner();
-  const [show, setShow] = useState(false);
-  const [showFMove, setShowFMove] = useState(false);
-  const [showCMovePri, setShowCMovePri] = useState(false);
-  const [showCMoveSec, setShowCMoveSec] = useState(false);
-
-  const [search, setSearch] = useState('');
 
   const [pokemon, setPokemon] = useState<IBattlePokemonData>();
   const [fMove, setFMove] = useState<ICombat>();
   const [cMovePri, setCMovePri] = useState<ICombat>();
   const [cMoveSec, setCMoveSec] = useState<ICombat>();
 
-  const [pokemonIcon, setPokemonIcon] = useState('');
   const [score, setScore] = useState(0);
 
-  const [startIndex, setStartIndex] = useState(0);
-  const firstInit = useRef(20);
-  const eachCounter = useRef(10);
-
-  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = ele.currentTarget.scrollTop;
-    const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
-      setStartIndex(startIndex + 1);
-    }
-  };
+  useEffect(() => {
+    setPokemon(props.data.find((value) => isEqual(value.speciesId, pokemon?.speciesId)));
+  }, [props.data]);
 
   const selectPokemon = (value: IBattlePokemonData) => {
     if (!isNotEmpty(value.moveset) || !value.pokemon) {
@@ -54,8 +39,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     props.clearData(false);
     const [fMove] = getValueOrDefault(Array, value.moveset);
     let [, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
-    setSearch(splitAndCapitalize(value.pokemon.name, '-', ' '));
-    setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);
 
     const fMoveCombat = findMoveByName(fMove);
@@ -117,7 +100,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(value?.sound)) },
       })
     );
-    setShowFMove(false);
   };
 
   const selectCMovePri = (value: ICombat | undefined) => {
@@ -130,7 +112,6 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(value?.sound)) },
       })
     );
-    setShowCMovePri(false);
   };
 
   const selectCMoveSec = (value: ICombat | undefined) => {
@@ -143,25 +124,21 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(value?.sound)) },
       })
     );
-    setShowCMoveSec(false);
   };
 
   const removePokemon = useCallback(() => {
     props.clearData(false);
-    setPokemonIcon('');
     setPokemon(undefined);
-    setSearch('');
     setFMove(undefined);
     setCMovePri(undefined);
     setCMoveSec(undefined);
     setScore(0);
   }, [props.clearData]);
 
-  const removeChargeMoveSec = () => {
-    setTimeout(() => setShowCMoveSec(false));
+  const removeChargeMoveSec = useCallback(() => {
     props.clearData(true);
     setCMoveSec(undefined);
-  };
+  }, [props.clearData]);
 
   useEffect(() => {
     if (pokemon && !props.pokemonBattle.pokemonData) {
@@ -172,103 +149,53 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   return (
     <Fragment>
       <h5>Pokémon</h5>
-      <div className="border-box-battle position-relative">
-        {(score > 0 || isNotEmpty(pokemonIcon) || pokemon) && (
-          <span className="pokemon-select-right">
-            {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
-              <span
-                className={combineClasses(
-                  'type-icon-small ic me-1',
-                  `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
-                )}
-              >
-                {getKeyWithData(MoveType, MoveType.Shadow)}
-              </span>
-            )}
-            {score > 0 && <span className="type-icon-small ic elite-ic me-1">{score}</span>}
-            {isNotEmpty(pokemonIcon) && (
-              <span onClick={() => removePokemon()} className="remove-pokemon-select">
-                <CloseIcon sx={{ color: 'red' }} />
-              </span>
-            )}
-          </span>
+      <SelectCardPokemon
+        pokemonList={props.data}
+        onSelect={(pokemon) => splitAndCapitalize(pokemon.name?.replaceAll('_', '-'), '-', ' ')}
+        onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.id })}
+        onIsSelectedPokemon={(result) => result === pokemon}
+        onSetPokemon={(value) => {
+          showSpinner();
+          setTimeout(() => selectPokemon(value), 200);
+        }}
+        isFit
+        placeholder="Enter Name"
+        isShowPokemonIcon
+        onSprite={(pokemon) => pokemon?.pokemon?.sprite}
+        customIconStart={
+          (score > 0 || pokemon) && (
+            <>
+              {isEqual(getPokemonType(pokemon?.speciesId), PokemonType.Shadow) && (
+                <span
+                  className={combineClasses(
+                    'type-icon-small ic me-1 d-flex align-items-center h-3',
+                    `${getKeyWithData(PokemonType, PokemonType.Shadow)?.toLowerCase()}-ic`
+                  )}
+                >
+                  {getKeyWithData(PokemonType, PokemonType.Shadow)}
+                </span>
+              )}
+              {score > 0 && (
+                <span className="type-icon-small ic elite-ic me-1 d-flex align-items-center h-3">{score}</span>
+              )}
+            </>
+          )
+        }
+        cardElement={(pokemon) => (
+          <CardPokemon value={pokemon.pokemon} score={pokemon.score} pokemonType={getPokemonType(pokemon.speciesId)} />
         )}
-        <input
-          className="input-pokemon-select form-control shadow-none"
-          onClick={() => setShow(true)}
-          onBlur={() => setShow(false)}
-          type="text"
-          onInput={(e) => setSearch(e.currentTarget.value)}
-          placeholder="Enter Name"
-          style={{
-            background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
-            paddingLeft: pokemonIcon ? 56 : '',
-          }}
-          value={search}
-        />
-      </div>
-      {isNotEmpty(props.data) && (
-        <div
-          className={combineClasses('result-pokemon', show ? 'd-block' : 'd-none')}
-          style={{ maxHeight: 274 }}
-          onScroll={listenScrollEvent.bind(this)}
-        >
-          {props.data
-            .filter(
-              (pokemon) =>
-                pokemon &&
-                isInclude(
-                  splitAndCapitalize(pokemon.pokemon.name, '-', ' '),
-                  search,
-                  IncludeMode.IncludeIgnoreCaseSensitive
-                )
-            )
-            .slice(0, firstInit.current + eachCounter.current * startIndex)
-            .map((value, index) => (
-              <div
-                className="card-pokemon-select"
-                key={index}
-                onMouseDown={() => {
-                  showSpinner();
-                  setTimeout(() => selectPokemon(value), 200);
-                }}
-              >
-                <CardPokemon value={value.pokemon} score={value.score} pokemonType={getPokemonType(value.speciesId)} />
-              </div>
-            ))}
-        </div>
-      )}
+        onRemove={() => removePokemon()}
+      />
       <h5>Fast Moves</h5>
-      <div
-        className={combineClasses(
-          'position-relative d-flex align-items-center form-control p-0 rounded-0',
-          pokemon ? 'card-select-enabled' : 'card-select-disabled'
-        )}
-      >
-        <div
-          className="card-move-input"
-          tabIndex={0}
-          onClick={() => setShowFMove(true)}
-          onBlur={() => setShowFMove(false)}
-        >
-          <CardMoveSmall value={fMove} isShow={Boolean(pokemon)} isSelect={props.data.length > 1} />
-          {showFMove && isNotEmpty(props.data) && pokemon && (
-            <div className="result-move-select">
-              <div>
-                {props.data
-                  .find((value) => isEqual(value.speciesId, pokemon.speciesId))
-                  ?.moves.fastMoves.map((value) => findMoveByName(value.moveId))
-                  .filter((value) => value && !isEqual(value.name, fMove?.name))
-                  .map((value, index) => (
-                    <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
-                      <CardMoveSmall value={value} />
-                    </div>
-                  ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      <SelectCardMove
+        isHideEmpty
+        pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}
+        move={fMove}
+        setMovePokemon={(value) => selectFMove(value)}
+        moves={pokemon?.moves.fastMoves
+          .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
+          .filter((value) => value.id > 0)}
+      />
       <h5>Charged Moves Primary</h5>
       <div className="d-flex align-items-center column-gap-2">
         <Checkbox
@@ -289,68 +216,17 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             );
           }}
         />
-        <div
-          className={combineClasses(
-            'position-relative d-flex align-items-center form-control p-0 rounded-0',
-            pokemon ? 'card-select-enabled' : 'card-select-disabled'
-          )}
-        >
-          <div
-            className={combineClasses(
-              'card-move-input',
-              !pokemon ? '' : props.pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer'
-            )}
-            tabIndex={0}
-            onClick={() => {
-              if (!props.pokemonBattle.disableCMovePri) {
-                setShowCMovePri(true);
-              }
-            }}
-            onBlur={() => {
-              if (!props.pokemonBattle.disableCMovePri) {
-                setShowCMovePri(false);
-              }
-            }}
-          >
-            <CardMoveSmall
-              value={cMovePri}
-              isShow={Boolean(pokemon)}
-              isDisable={props.pokemonBattle.disableCMovePri}
-              isSelect={props.data.length > 1}
-            />
-            {showCMovePri && isNotEmpty(props.data) && pokemon && (
-              <div className="result-move-select">
-                <div>
-                  {props.data
-                    .find((value) => isEqual(value.speciesId, pokemon.speciesId))
-                    ?.moves.chargedMoves.map((value) => {
-                      const move = replaceTempMovePvpName(value.moveId);
-                      return findMoveByName(move);
-                    })
-                    .filter(
-                      (value) => value && !isEqual(value.name, cMovePri?.name) && !isEqual(value.name, cMoveSec?.name)
-                    )
-                    .map((value, index) => (
-                      <div
-                        className={combineClasses(
-                          'card-move',
-                          props.pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer'
-                        )}
-                        key={index}
-                        onMouseDown={() => {
-                          if (!props.pokemonBattle.disableCMovePri) {
-                            selectCMovePri(value);
-                          }
-                        }}
-                      >
-                        <CardMoveSmall value={value} />
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <SelectCardMove
+          isHideEmpty
+          style={{ width: 'calc(100% - 50px)' }}
+          pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}
+          move={cMovePri}
+          setMovePokemon={(value) => selectCMovePri(value)}
+          isDisable={props.pokemonBattle.disableCMovePri}
+          moves={pokemon?.moves.chargedMoves
+            .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
+            .filter((value) => value.id > 0 && !isEqual(value.name, cMoveSec?.name))}
+        />
       </div>
       <h5>Charged Moves Secondary</h5>
       <div className="d-flex align-items-center column-gap-2">
@@ -372,70 +248,18 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             );
           }}
         />
-        <div
-          className={combineClasses(
-            'position-relative d-flex align-items-center form-control p-0 rounded-0',
-            pokemon ? 'card-select-enabled' : 'card-select-disabled'
-          )}
-        >
-          <div
-            className={combineClasses(
-              'card-move-input',
-              !pokemon ? '' : props.pokemonBattle.disableCMoveSec ? 'cursor-not-allowed' : 'cursor-pointer'
-            )}
-            tabIndex={0}
-            onClick={() => {
-              if (!props.pokemonBattle.disableCMoveSec) {
-                setShowCMoveSec(true);
-              }
-            }}
-            onBlur={() => {
-              if (!props.pokemonBattle.disableCMoveSec) {
-                setShowCMoveSec(false);
-              }
-            }}
-          >
-            <CardMoveSmall
-              value={cMoveSec}
-              isEmpty={!cMoveSec}
-              isShow={Boolean(pokemon)}
-              clearData={props.pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
-              isDisable={props.pokemonBattle.disableCMoveSec}
-              isSelect={props.data.length > 1}
-            />
-            {showCMoveSec && isNotEmpty(props.data) && pokemon && (
-              <div className="result-move-select">
-                <div>
-                  {props.data
-                    .find((value) => isEqual(value.speciesId, pokemon.speciesId))
-                    ?.moves.chargedMoves.map((value) => {
-                      const move = replaceTempMovePvpName(value.moveId);
-                      return findMoveByName(move);
-                    })
-                    .filter(
-                      (value) =>
-                        value &&
-                        (!cMoveSec || !isEqual(value.name, cMoveSec.name)) &&
-                        !isEqual(value.name, cMovePri?.name)
-                    )
-                    .map((value, index) => (
-                      <div
-                        className="card-move"
-                        key={index}
-                        onMouseDown={() => {
-                          if (!props.pokemonBattle.disableCMoveSec) {
-                            selectCMoveSec(value);
-                          }
-                        }}
-                      >
-                        <CardMoveSmall value={value} />
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <SelectCardMove
+          isHideEmpty
+          style={{ width: 'calc(100% - 50px)' }}
+          pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}
+          move={cMoveSec}
+          setMovePokemon={(value) => selectCMoveSec(value)}
+          isDisable={props.pokemonBattle.disableCMoveSec}
+          clearData={props.pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
+          moves={pokemon?.moves.chargedMoves
+            .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
+            .filter((value) => value.id > 0 && !isEqual(value.name, cMovePri?.name))}
+        />
       </div>
     </Fragment>
   );

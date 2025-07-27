@@ -1,6 +1,6 @@
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
-import { Accordion, Form, useAccordionButton } from 'react-bootstrap';
+import { Accordion, useAccordionButton, Modal } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import APIService from '../../../services/api.service';
@@ -19,7 +19,6 @@ import {
 import { rankIconCenterName, rankIconName, rankName } from '../../../utils/compute';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import {
   ILeague,
@@ -41,12 +40,15 @@ import {
 import { LeagueRewardType, LeagueBattleType, RewardType, LeagueType } from '../../../core/enums/league.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
-import { PokemonType, VariantType } from '../../../enums/type.enum';
+import { PokemonType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -177,7 +179,7 @@ const Leagues = () => {
           </div>
           {isEqual(league.leagueType, LeagueType.Premier) && (
             <div className="d-flex align-items-center flex-end">
-              <div className="info-event-future p-1 rounded-1" style={{ fontSize: 14 }}>
+              <div className="info-event-future p-1 rounded-1 u-fs-3">
                 <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
               </div>
             </div>
@@ -375,21 +377,20 @@ const Leagues = () => {
           </span>
         </div>
         <div className="col-md-4 d-flex justify-content-end p-0">
-          <Form.Select
-            onChange={(e) => {
-              setRank(toNumber(e.target.value));
-              if (toNumber(e.target.value) < 24) {
-                setSetting(leaguesData.season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1));
+          <SelectMui
+            formSx={{ width: 200 }}
+            value={rank}
+            onChangeSelect={(value) => {
+              setRank(value);
+              if (value < 24) {
+                setSetting(leaguesData.season.settings.find((data) => data.rankLevel === value + 1));
               }
             }}
-            defaultValue={rank}
-          >
-            {Object.keys(leaguesData.season.rewards.rank).map((value, index) => (
-              <option key={index} value={value}>
-                Rank {value} {toNumber(value) > 20 && `( ${rankName(toNumber(value))} )`}
-              </option>
-            ))}
-          </Form.Select>
+            menuItems={Object.keys(leaguesData.season.rewards.rank).map((value) => ({
+              value: value,
+              label: `Rank ${value} ${toNumber(value) > 20 ? `(${rankName(toNumber(value))})` : ''}`,
+            }))}
+          />
         </div>
       </div>
       {isNotEmpty(leaguesData.data) ? (
@@ -688,14 +689,13 @@ const Leagues = () => {
       </div>
       <Accordion alwaysOpen>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
 
-      <div className="w-25 input-group border-input mt-2" style={{ minWidth: 300 }}>
-        <span className="input-group-text">Find League</span>
-        <input
-          type="text"
-          className="form-control input-search"
+      <div className="w-50 mt-2" style={{ minWidth: 300 }}>
+        <InputMuiSearch
+          isNoWrap
+          labelPrepend="Find League"
+          value={search}
+          onChange={(value) => setSearch(value)}
           placeholder="Enter League Name"
-          defaultValue={search}
-          onKeyUp={(e) => setSearch(e.currentTarget.value)}
         />
       </div>
       <Accordion className="accordion-league" alwaysOpen>
@@ -824,9 +824,7 @@ const Leagues = () => {
             )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant={VariantType.Secondary} onClick={handleClose}>
-              Close
-            </Button>
+            <ButtonMui color="tertiary" label="Close" onClick={handleClose} />
           </Modal.Footer>
         </Modal>
       )}

@@ -1,4 +1,4 @@
-import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
@@ -14,9 +14,9 @@ import DamageTable from './DamageTable';
 import ATK_LOGO from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Find from '../../../components/Find/Find';
-import StatsTable from './StatsDamageTable';
+import StatsDamageTable from './StatsDamageTable';
 
-import Move from '../../../components/Table/Move';
+import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMove';
 import { findStabType } from '../../../utils/compute';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
@@ -32,6 +32,8 @@ import {
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -220,7 +222,7 @@ const Damage = () => {
       <div className="row battle-game">
         <div className="col-lg border-window">
           <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
-          <StatsTable
+          <StatsDamageTable
             setStatLvATK={setStatLvATK}
             setStatLevel={setStatLevel}
             setStatType={setStatType}
@@ -232,7 +234,7 @@ const Damage = () => {
         </div>
         <div className="col-lg border-window">
           <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
-          <StatsTable
+          <StatsDamageTable
             setStatLvDEF={setStatLvDEFObj}
             setStatLvSTA={setStatLvSTAObj}
             setStatLevel={setStatLevelObj}
@@ -263,7 +265,7 @@ const Damage = () => {
                   </div>
                 </div>
               </div>
-              <Move
+              <SelectCustomMove
                 text="Select Moves"
                 id={searchingToolCurrentData?.form?.defaultId}
                 isSelectDefault
@@ -351,40 +353,40 @@ const Damage = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                    <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
+                    <Box className="u-fs-2-75" sx={{ ml: 2, color: 'green' }}>
                       x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
-                    <FormControl sx={{ width: 200 }}>
-                      <InputLabel id="demo-simple-select-label">Charge ability</InputLabel>
-                      <Select
-                        name="throwLevel"
-                        value={battleState.throwLevel}
-                        label="Charge ability"
-                        onChange={(event) => {
-                          setBattleState(
-                            Filter.create({
-                              ...battleState,
-                              throwLevel: toNumber(event.target.value),
-                            })
-                          );
-                        }}
-                      >
-                        {safeObjectEntries(getThrowCharge()).map(([type, value], index) => (
-                          <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
+                    <SelectMui
+                      formSx={{ width: 200 }}
+                      inputLabel="Charge ability"
+                      value={battleState.throwLevel}
+                      onChangeSelect={(throwLevel) => setBattleState({ ...battleState, throwLevel })}
+                      menuItems={safeObjectEntries(getThrowCharge()).map(([type, value], index) => ({
+                        value: index,
+                        label: (
+                          <>
                             {capitalize(type)}
                             <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>
                               x{value}
                             </span>
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                          </>
+                        ),
+                        sx: { color: labels[index].color },
+                      }))}
+                    />
                   </Box>
-                  <button type="submit" className="btn btn-primary mt-2">
-                    <img alt="ATK" width={20} height={20} src={ATK_LOGO} /> Battle
-                  </button>
+                  <ButtonMui
+                    label={
+                      <div className="d-flex align-items-center gap-1">
+                        <img alt="ATK" width={20} height={20} src={ATK_LOGO} />
+                        <span>Battle</span>
+                      </div>
+                    }
+                    type="submit"
+                    className="mt-2"
+                  />
                 </div>
               </div>
             </form>

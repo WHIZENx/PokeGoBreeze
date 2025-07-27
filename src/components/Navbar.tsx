@@ -15,8 +15,8 @@ import { INavbarComponent } from './models/component.model';
 import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/local-storage';
 import { combineClasses, toNumber } from '../utils/extension';
-import CustomPopover from './Popover/CustomPopover';
-import { LinkToTop } from './LinkToTop';
+import CustomPopover from './Commons/Popovers/CustomPopover';
+import { LinkToTop } from './Link/LinkToTop';
 import useTheme from '../composables/useTheme';
 import useTimestamp from '../composables/useTimestamp';
 import useSpinner from '../composables/useSpinner';
@@ -60,7 +60,7 @@ const NavbarComponent = (props: INavbarComponent) => {
         {toNumber(timestamp?.gamemaster) > 0 && (
           <span className="text-white">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
-        <span className="text-end text-warning" style={{ fontSize: 10 }}>
+        <span className="text-end text-warning u-fs-2">
           <b>{props.version}</b>
         </span>
       </>

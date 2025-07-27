@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
+import { capitalize, createDataRows, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './SearchMoves.scss';
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { ColumnType, TypeMove, VariantType } from '../../../enums/type.enum';
+import { ColumnType, TypeMove } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
@@ -19,13 +18,15 @@ import {
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { Params } from '../../../utils/constants';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { PokemonTypeBadge } from '../../../core/enums/pokemon-type.enum';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
 import useCombats from '../../../composables/useCombats';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -45,7 +46,7 @@ const numSortDps = (rowA: ICombat, rowB: ICombat) => {
   return a - b;
 };
 
-const columns: TableColumnModify<ICombat>[] = [
+const columns = createDataRows<TableColumnModify<ICombat>>(
   {
     id: ColumnType.Id,
     name: 'id',
@@ -88,8 +89,8 @@ const columns: TableColumnModify<ICombat>[] = [
     selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
     sortFunction: numSortDps,
     sortable: true,
-  },
-];
+  }
+);
 
 interface IFilter {
   fMoveType: SelectType;
@@ -197,39 +198,34 @@ const Search = () => {
                     category
                   )} Moves List`}</div>
                   <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                    <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
-                      <InputLabel>Type</InputLabel>
-                      <Select
-                        value={type}
-                        label="Type"
-                        onChange={(e) => setMoveByType(category, toNumber(e.target.value))}
-                      >
-                        <MenuItem value={SelectType.All} defaultChecked>
-                          {getKeyWithData(SelectType, SelectType.All)}
-                        </MenuItem>
-                        {getTypes().map((value, index) => (
-                          <MenuItem
-                            key={index}
-                            value={getDataWithKey<PokemonTypeBadge>(
-                              PokemonTypeBadge,
-                              value,
-                              EqualMode.IgnoreCaseSensitive
-                            )}
-                          >
-                            {capitalize(value)}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                    <SelectMui
+                      formClassName="mt-2"
+                      formSx={{ m: 1, minWidth: 150 }}
+                      onChangeSelect={(value) => setMoveByType(category, toNumber(value))}
+                      value={type}
+                      inputLabel="Type"
+                      menuItems={[
+                        {
+                          value: SelectType.All,
+                          label: getKeyWithData(SelectType, SelectType.All),
+                          defaultChecked: true,
+                        },
+                        ...getTypes().map((value) => ({
+                          value: getDataWithKey<PokemonTypeBadge>(
+                            PokemonTypeBadge,
+                            value,
+                            EqualMode.IgnoreCaseSensitive
+                          ),
+                          label: capitalize(value),
+                        })),
+                      ]}
+                    />
                   </div>
                   <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                    <TextField
-                      type="text"
-                      variant={VariantType.Outlined}
+                    <InputMui
                       placeholder="Enter Name or ID"
                       defaultValue={name}
-                      onChange={(e) => setMoveNameByType(category, e.target.value)}
-                      size="small"
+                      onChange={(value) => setMoveNameByType(category, value)}
                     />
                   </div>
                 </div>

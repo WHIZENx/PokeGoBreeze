@@ -41,7 +41,7 @@ const LoadGroup = (props: ILoadGroupComponent) => {
         alt="Pokémon Loading"
         src={loadingImg}
       />
-      <span className="caption theme-text-primary" style={{ fontSize: props.fontSize ?? 18 }}>
+      <span className="caption theme-text-primary u-fs-3">
         <b>
           Loading<span id="p1">.</span>
           <span id="p2">.</span>

@@ -15,12 +15,12 @@ import APIService from '../../../services/api.service';
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
-import { IStatsTableComponent } from '../../models/page.model';
+import { IStatsDamageTableComponent } from '../../models/page.model';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
 import { maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 
-const StatsTable = (props: IStatsTableComponent) => {
+const StatsDamageTable = (props: IStatsDamageTableComponent) => {
   const [currStatLevel, setCurrStatLevel] = useState(1);
   const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
 
@@ -201,4 +201,4 @@ const StatsTable = (props: IStatsTableComponent) => {
   );
 };
 
-export default StatsTable;
+export default StatsDamageTable;

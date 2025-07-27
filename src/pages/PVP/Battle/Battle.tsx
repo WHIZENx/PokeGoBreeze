@@ -13,22 +13,13 @@ import {
 } from '../../../utils/utils';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
-import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
+import { Accordion, Card, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
 import TimelineVertical from './Timeline/TimelineVertical';
 
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-} from '@mui/material';
+import { Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -65,6 +56,7 @@ import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../util
 import { AttackType } from './enums/attack-type.enum';
 import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import {
+  combineClasses,
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
@@ -78,7 +70,7 @@ import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { TimelineEvent } from '../../../utils/models/overrides/dom.model';
-import { LinkToTop, useNavigateToTop } from '../../../components/LinkToTop';
+import { LinkToTop, useNavigateToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';
@@ -105,6 +97,9 @@ import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import { Params } from '../../../utils/constants';
 import useDevice from '../../../composables/useDevice';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -677,11 +672,11 @@ const Battle = () => {
               {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
               {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
               {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
-              <span className={value.power < 0 ? 'text-danger' : 'text-success'} style={{ fontSize: 12 }}>
+              <span className={combineClasses('u-fs-2-75', value.power < 0 ? 'text-danger' : 'text-success')}>
                 {value.power}
               </span>
             </div>
-            <b style={{ fontSize: 12 }}>{toNumber(value.buffChance) * 100}%</b>
+            <b className="u-fs-2-75">{toNumber(value.buffChance) * 100}%</b>
           </div>
         ))}
       </div>
@@ -893,73 +888,83 @@ const Battle = () => {
             </b>
             <br />
             <form
+              className="mt-2"
               onSubmit={(e) => {
                 calculateStatPokemon(e, type, pokemon, setPokemon);
               }}
             >
-              <div className="mt-2 input-group">
-                <span className="input-group-text">Level</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.level}
-                  id={`level${battleType}`}
-                  type="number"
-                  step={stepLevel()}
-                  min={minLevel()}
-                  max={maxLevel()}
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-group-text">Attack IV</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.atkIV}
-                  id={`atkIV${battleType}`}
-                  type="number"
-                  step={1}
-                  min={minIv()}
-                  max={maxIv()}
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-group-text">Defense IV</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.defIV}
-                  id={`defIV${battleType}`}
-                  type="number"
-                  step={1}
-                  min={minIv()}
-                  max={maxIv()}
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-group-text">HP IV</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.staIV}
-                  id={`hpIV${battleType}`}
-                  type="number"
-                  step={1}
-                  min={minIv()}
-                  max={maxIv()}
-                />
-              </div>
+              <InputMui
+                labelPrepend="Level"
+                defaultValue={pokemon.pokemonData?.currentStats?.level}
+                inputProps={{
+                  type: 'number',
+                  min: minLevel(),
+                  max: maxLevel(),
+                  step: stepLevel(),
+                  required: true,
+                }}
+                placeholder="Enter Level"
+                id={`level${battleType}`}
+                fullWidth
+              />
+              <InputMui
+                labelPrepend="Attack IV"
+                defaultValue={pokemon.pokemonData?.currentStats?.IV?.atkIV}
+                inputProps={{
+                  type: 'number',
+                  min: minIv(),
+                  max: maxIv(),
+                  required: true,
+                }}
+                placeholder="Enter Attack IV"
+                id={`atkIV${battleType}`}
+                fullWidth
+              />
+              <InputMui
+                labelPrepend="Defense IV"
+                defaultValue={pokemon.pokemonData?.currentStats?.IV?.defIV}
+                inputProps={{
+                  type: 'number',
+                  min: minIv(),
+                  max: maxIv(),
+                  required: true,
+                }}
+                placeholder="Enter Defense IV"
+                id={`defIV${battleType}`}
+                fullWidth
+              />
+              <InputMui
+                labelPrepend="HP IV"
+                defaultValue={pokemon.pokemonData?.currentStats?.IV?.staIV}
+                inputProps={{
+                  type: 'number',
+                  min: minIv(),
+                  max: maxIv(),
+                  required: true,
+                }}
+                placeholder="Enter HP IV"
+                id={`hpIV${battleType}`}
+                fullWidth
+              />
               <div className="w-100 mt-2">
-                <Button type="submit" className="w-100" color="primary">
-                  Calculate Stats
-                </Button>
+                <ButtonMui type="submit" color="success" fullWidth label="Calculate Stats" />
               </div>
             </form>
             <div className="w-100 mt-2">
-              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
-                Set Random Stats
-              </Button>
+              <ButtonMui
+                fullWidth
+                color="primary"
+                onClick={() => onSetStats(type, pokemon, setPokemon, true)}
+                label="Set Random Stats"
+              />
             </div>
             <div className="w-100 mt-2">
-              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon)}>
-                Set Best Stats
-              </Button>
+              <ButtonMui
+                fullWidth
+                color="primary"
+                onClick={() => onSetStats(type, pokemon, setPokemon)}
+                label="Set Best Stats"
+              />
             </div>
             <hr />
             <TypeBadge
@@ -1014,46 +1019,71 @@ const Battle = () => {
         />
         {pokemon.pokemonData && (
           <Fragment>
-            <div className="input-group">
-              <span className="input-group-text">Energy</span>
-              <input
-                className="form-control shadow-none"
-                defaultValue={pokemon.energy}
-                type="number"
-                min={0}
-                max={battleMaxEnergy()}
-                onInput={(e) => {
-                  const value = toNumber(e.currentTarget.value);
-                  if (isNaN(value)) {
-                    return;
-                  }
-                  if (type === BattleType.Current) {
-                    setPlayTimeline({
-                      ...playTimeline,
-                      pokemonCurr: PokemonBattleData.create({
-                        ...playTimeline.pokemonCurr,
-                        energy: value,
-                      }),
-                    });
-                  } else if (type === BattleType.Object) {
-                    setPlayTimeline({
-                      ...playTimeline,
-                      pokemonObj: PokemonBattleData.create({
-                        ...playTimeline.pokemonObj,
-                        energy: value,
-                      }),
-                    });
-                  }
-                  setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: value }));
-                }}
-              />
-            </div>
-            <div className="input-group">
-              <span className="input-group-text">Block</span>
-              <Form.Select
-                className="form-control rounded-0"
-                defaultValue={pokemon.block}
-                onChange={(e) => {
+            <InputMui
+              labelPrepend="Energy"
+              defaultValue={pokemon.energy}
+              inputProps={{
+                type: 'number',
+                min: 0,
+                max: battleMaxEnergy(),
+                step: 1,
+                required: true,
+              }}
+              id={`energy${type}`}
+              fullWidth
+              onChange={(value) => {
+                const energy = toNumber(value);
+                if (type === BattleType.Current) {
+                  setPlayTimeline({
+                    ...playTimeline,
+                    pokemonCurr: PokemonBattleData.create({
+                      ...playTimeline.pokemonCurr,
+                      energy,
+                    }),
+                  });
+                } else if (type === BattleType.Object) {
+                  setPlayTimeline({
+                    ...playTimeline,
+                    pokemonObj: PokemonBattleData.create({
+                      ...playTimeline.pokemonObj,
+                      energy,
+                    }),
+                  });
+                }
+                setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy }));
+              }}
+            />
+            <InputMui
+              labelPrepend="Block"
+              defaultValue={pokemon.block}
+              fullWidth
+              onChange={(value) => {
+                const block = toNumber(value);
+                setPlayTimeline({
+                  ...playTimeline,
+                  pokemonCurr: PokemonBattleData.create({
+                    ...playTimeline.pokemonCurr,
+                    energy: 0,
+                  }),
+                  pokemonObj: PokemonBattleData.create({
+                    ...playTimeline.pokemonObj,
+                    energy: 0,
+                  }),
+                });
+                setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block }));
+              }}
+              select
+              menuItems={getArrayBySeq(defaultBlock() + 1).map((value) => ({
+                label: value,
+                value,
+              }))}
+            />
+            {(!pokemon.disableCMovePri || !pokemon.disableCMoveSec) && (pokemon.cMovePri || pokemon.cMoveSec) && (
+              <InputMui
+                labelPrepend="Charge Slot"
+                value={pokemon.chargeSlot}
+                fullWidth
+                onChange={(value) => {
                   setPlayTimeline({
                     ...playTimeline,
                     pokemonCurr: PokemonBattleData.create({
@@ -1066,61 +1096,29 @@ const Battle = () => {
                     }),
                   });
                   setPokemon(
-                    PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block: toNumber(e.target.value) })
+                    PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, chargeSlot: toNumber(value) })
                   );
                 }}
-              >
-                {getArrayBySeq(defaultBlock() + 1).map((value, index) => (
-                  <option key={index} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </Form.Select>
-            </div>
-            {(!pokemon.disableCMovePri || !pokemon.disableCMoveSec) && (pokemon.cMovePri || pokemon.cMoveSec) && (
-              <div className="input-group">
-                <span className="input-group-text">Charge Slot</span>
-                <Form.Select
-                  className="form-control rounded-0"
-                  value={pokemon.chargeSlot}
-                  onChange={(e) => {
-                    setPlayTimeline({
-                      ...playTimeline,
-                      pokemonCurr: PokemonBattleData.create({
-                        ...playTimeline.pokemonCurr,
-                        energy: 0,
-                      }),
-                      pokemonObj: PokemonBattleData.create({
-                        ...playTimeline.pokemonObj,
-                        energy: 0,
-                      }),
-                    });
-                    setPokemon(
-                      PokemonBattle.create({
-                        ...pokemon,
-                        timeline: [],
-                        energy: 0,
-                        chargeSlot: toNumber(e.target.value),
-                      })
-                    );
-                  }}
-                >
-                  <option value={ChargeType.Primary} disabled={pokemon.disableCMovePri || !pokemon.cMovePri}>
-                    {ChargeType.Primary}
-                  </option>
-                  <option value={ChargeType.Secondary} disabled={pokemon.disableCMoveSec || !pokemon.cMoveSec}>
-                    {ChargeType.Secondary}
-                  </option>
-                  <option
-                    value={ChargeType.Random}
-                    disabled={
-                      pokemon.disableCMovePri || pokemon.disableCMoveSec || !pokemon.cMovePri || !pokemon.cMoveSec
-                    }
-                  >
-                    Random
-                  </option>
-                </Form.Select>
-              </div>
+                select
+                menuItems={[
+                  {
+                    label: ChargeType.Primary,
+                    value: ChargeType.Primary,
+                    disabled: pokemon.disableCMovePri || !pokemon.cMovePri,
+                  },
+                  {
+                    label: ChargeType.Secondary,
+                    value: ChargeType.Secondary,
+                    disabled: pokemon.disableCMoveSec || !pokemon.cMoveSec,
+                  },
+                  {
+                    label: 'Random',
+                    value: ChargeType.Random,
+                    disabled:
+                      pokemon.disableCMovePri || pokemon.disableCMoveSec || !pokemon.cMovePri || !pokemon.cMoveSec,
+                  },
+                ]}
+              />
             )}
             {pokemon && (
               <div className="w-100 bg-ref-pokemon">
@@ -1188,18 +1186,20 @@ const Battle = () => {
   return (
     <Error isError={!isFound}>
       <div className="container mt-2 battle-body-container">
-        <Form.Select
-          onChange={(e) => {
-            navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
-            setOptions({ ...options, league: toNumber(e.target.value) });
+        <SelectMui
+          fullWidth
+          value={league}
+          onChangeSelect={(value) => {
+            navigateToTop(`/pvp/battle/${value}`);
+            setOptions({ ...options, league: value });
           }}
-          defaultValue={league}
-        >
-          <option value={BattleLeagueCPType.Little}>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</option>
-          <option value={BattleLeagueCPType.Great}>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</option>
-          <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
-          <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
-        </Form.Select>
+          menuItems={[
+            { value: BattleLeagueCPType.Little, label: getPokemonBattleLeagueName(BattleLeagueCPType.Little) },
+            { value: BattleLeagueCPType.Great, label: getPokemonBattleLeagueName(BattleLeagueCPType.Great) },
+            { value: BattleLeagueCPType.Ultra, label: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra) },
+            { value: BattleLeagueCPType.InsMaster, label: getPokemonBattleLeagueName(BattleLeagueCPType.InsMaster) },
+          ]}
+        />
         <div className="row mt-2 m-0">
           <div className="col-lg-3">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
@@ -1318,40 +1318,35 @@ const Battle = () => {
                         <FormControlLabel value={TimelineType.Fit} control={<Radio />} label="Fit Timeline" />
                         <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
                       </RadioGroup>
-                      <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
-                        <InputLabel>Speed</InputLabel>
-                        <Select
-                          value={duration}
-                          onChange={(e) => setOptions({ ...options, duration: toFloat(e.target.value) })}
-                          label="Speed"
-                        >
-                          <MenuItem value={0.5}>x0.5</MenuItem>
-                          <MenuItem value={1}>Normal</MenuItem>
-                          <MenuItem value={2}>x2</MenuItem>
-                          <MenuItem value={5}>x5</MenuItem>
-                          <MenuItem value={10}>x10</MenuItem>
-                        </Select>
-                      </FormControl>
+                      <SelectMui
+                        formClassName="mt-2"
+                        formSx={{ m: 1, minWidth: 120 }}
+                        onChangeSelect={(value) => setOptions({ ...options, duration: toFloat(value) })}
+                        value={duration}
+                        inputLabel="Speed"
+                        menuItems={[
+                          { value: 0.5, label: 'x0.5' },
+                          { value: 1, label: 'Normal' },
+                          { value: 2, label: 'x2' },
+                          { value: 5, label: 'x5' },
+                          { value: 10, label: 'x10' },
+                        ]}
+                      />
                     </div>
                     <div className="d-flex justify-content-center column-gap-2">
-                      <button
-                        className="btn btn-primary"
+                      <ButtonMui
+                        startIcon={playState ? <PauseIcon /> : <PlayArrowIcon />}
+                        label={playState ? 'Stop' : 'Play'}
                         onMouseDown={() => (isMobile ? undefined : playState ? stopTimeline() : playingTimeline())}
                         onTouchEnd={() => (isMobile ? (playState ? stopTimeline() : playingTimeline()) : undefined)}
-                      >
-                        {playState ? (
-                          <Fragment>
-                            <PauseIcon /> Stop
-                          </Fragment>
-                        ) : (
-                          <Fragment>
-                            <PlayArrowIcon /> Play
-                          </Fragment>
-                        )}
-                      </button>
-                      <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeline()}>
-                        <RestartAltIcon /> Reset
-                      </button>
+                      />
+                      <ButtonMui
+                        color="error"
+                        startIcon={<RestartAltIcon />}
+                        label="Reset"
+                        onClick={() => resetTimeline()}
+                        disabled={playState}
+                      />
                     </div>
                   </div>
                 </Fragment>
@@ -1363,21 +1358,25 @@ const Battle = () => {
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
           <div className="text-center mt-2">
-            <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
-              {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
-                <Fragment>
-                  <RestartAltIcon /> Reset Battle
-                </Fragment>
-              ) : (
-                <Fragment>
+            <ButtonMui
+              style={{ height: 50 }}
+              startIcon={
+                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
+                  <RestartAltIcon />
+                ) : (
                   <span className="position-relative">
                     <img height={36} alt="ATK Left" src={ATK_LOGO} />
                     <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
                   </span>
-                  {' Battle Simulator'}
-                </Fragment>
-              )}
-            </button>
+                )
+              }
+              label={
+                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)
+                  ? 'Reset Battle'
+                  : 'Battle Simulator'
+              }
+              onClick={() => battleAnimation()}
+            />
           </div>
         )}
       </div>

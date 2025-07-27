@@ -21,8 +21,8 @@ import {
 import dataCPM from '../data/cp_multiplier.json';
 import { PokemonType, TypeAction } from '../enums/type.enum';
 import { IOptionOtherDPS, Specific } from '../store/models/options.model';
-import { findStabType } from './compute';
-import { RAID_BOSS_TIER, typeCostPowerUp } from './constants';
+import { findStabType, typeCostPowerUp } from './compute';
+import { RAID_BOSS_TIER } from './constants';
 import { getDmgMultiplyBonus, camelCase, splitAndCamelCase } from './utils';
 import {
   BattleLeagueCalculate,

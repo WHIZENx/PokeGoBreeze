@@ -3,9 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 
 import './App.scss';
 
-import NavbarComponent from './components/Navbar';
-// import FooterComponent from './components/Footer'
-
 import News from './pages/News/News';
 import Pokedex from './pages/Pokedex/Pokedex';
 import SearchPokemon from './pages/Search/Pokemon/Search';
@@ -21,7 +18,7 @@ import Move from './pages/Move/Move';
 import Error from './pages/Error/Error';
 import Leagues from './pages/PVP/Leagues/Leagues';
 import SearchBattle from './pages/Tools/SearchBattle/SearchBattle';
-import StatsTable from './pages/Tools/StatsTable/Stats';
+import StatsInfo from './pages/Tools/StatsInfo/StatsInfo';
 import Sticker from './pages/Sticker/Sticker';
 import RaidBattle from './pages/Tools/RaidBattle/RaidBattle';
 import CalculatePoint from './pages/Tools/CalculatePoint/CalculatePoint';
@@ -54,6 +51,7 @@ import useSpinner from './composables/useSpinner';
 import useDevice from './composables/useDevice';
 import { useTheme as useThemeStore } from './composables/useTheme';
 import useRouter from './composables/useRouter';
+import ResponsiveAppBar from './components/Commons/Navbars/ResponsiveAppBar';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -161,7 +159,11 @@ function App() {
 
   return (
     <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
-      <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
+      <ResponsiveAppBar
+        mode={theme.palette.mode}
+        toggleColorMode={colorMode.toggleColorMode}
+        version={currentVersion}
+      />
       <Routes>
         <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
         <Route path="/news" element={<News />} />
@@ -175,7 +177,7 @@ function App() {
         <Route path="/find-cp-iv" element={<FindTable />} />
         <Route path="/calculate-stats" element={<CalculateStats />} />
         <Route path="/search-battle-stats" element={<SearchBattle />} />
-        <Route path="/stats-table" element={<StatsTable />} />
+        <Route path="/stats-table" element={<StatsInfo />} />
         <Route path="/damage-calculate" element={<Damage />} />
         <Route path="/raid-battle" element={<RaidBattle />} />
         <Route path="/calculate-point" element={<CalculatePoint />} />
@@ -192,7 +194,6 @@ function App() {
         <Route path="/stickers" element={<Sticker />} />
         <Route path="*" element={<Error />} />
       </Routes>
-      {/* <FooterComponent /> */}
       <Spinner />
     </Box>
   );

@@ -43,7 +43,7 @@ import {
   splitAndCapitalize,
 } from '../utils/utils';
 import useDataStore from './useDataStore';
-import { CounterModel } from '../components/Table/Counter/models/counter.model';
+import { CounterModel } from '../components/Commons/Tables/Counter/models/counter.model';
 import { isEqual, isInclude, toNumber } from '../utils/extension';
 import usePokemon from './usePokemon';
 import useCombats from './useCombats';

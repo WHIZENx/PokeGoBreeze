@@ -15,7 +15,7 @@
     "@vercel/edge-config": "^1.2.0",
     "@vercel/postgres": "^0.4.1",
     "@vercel/speed-insights": "^1.0.8",
-    "axios": "^1.8.2",
+    "axios": "^1.11.0",
     "bootstrap": "^5.3.2",
     "crypto-js": "^4.2.0",
     "history": "^5.3.0",
@@ -140,6 +140,7 @@
     "semver-regex": "3.1.4",
     "ws": "8.17.1",
     "webpack-dev-server": "5.2.1",
-    "on-headers": "1.1.0"
+    "on-headers": "1.1.0",
+    "form-data": "4.0.4"
   }
 }

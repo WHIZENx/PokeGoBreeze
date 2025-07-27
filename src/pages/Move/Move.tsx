@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import {
   capitalize,
   convertPokemonDataName,
+  createDataRows,
   generateParamForm,
   getItemSpritePath,
   getKeyWithData,
@@ -24,10 +25,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { FormControlLabel, Checkbox } from '@mui/material';
-import { Accordion, Form } from 'react-bootstrap';
+import { Checkbox } from '@mui/material';
+import { Accordion } from 'react-bootstrap';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
-import { useIcon } from '../../composables/useIcon';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
@@ -47,18 +47,21 @@ import {
 } from '../../utils/extension';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
-import { LinkToTop } from '../../components/LinkToTop';
+import { LinkToTop } from '../../components/Link/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTable';
-import { IMenuItem } from '../../components/models/component.model';
+import CustomDataTable from '../../components/Commons/Tables/CustomDataTable/CustomDataTable';
+import { IMenuItem } from '../../components/Commons/models/menu.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
 import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/options-context.helpers';
 import usePokemon from '../../composables/usePokemon';
 import useCombats from '../../composables/useCombats';
 import useCalculate from '../../composables/useCalculate';
+import InputReleased from '../../components/Commons/Inputs/InputReleased';
+import FormControlMui from '../../components/Commons/Forms/FormControlMui';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -78,7 +81,7 @@ const numSortTdo = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   return a - b;
 };
 
-const columns: TableColumnModify<IPokemonTopMove>[] = [
+const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
   {
     id: ColumnType.Id,
     name: 'Id',
@@ -142,11 +145,10 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     sortable: true,
     sortFunction: numSortTdo,
     minWidth: '90px',
-  },
-];
+  }
+);
 
 const Move = (props: IMovePage) => {
-  const { iconData } = useIcon();
   const { checkPokemonGO } = usePokemon();
   const { findMoveByName, findMoveById, getCombatsById } = useCombats();
   const { queryTopMove } = useCalculate();
@@ -163,35 +165,26 @@ const Move = (props: IMovePage) => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const menuItems: IMenuItem[] = [
+  const menuItems = createDataRows<IMenuItem<IPokemonTopMove>>(
     {
       label: (
-        <FormControlLabel
-          control={<Checkbox checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                width={28}
-                height={28}
-                alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(iconData)}
-              />
-            </span>
-          }
+        <InputReleased
+          releasedGO={releasedGO}
+          setReleaseGO={(check) => setReleaseGO(check)}
+          isAvailable={releasedGO}
+          inputMode={'checkbox'}
         />
       ),
     },
     {
       label: (
-        <FormControlLabel
+        <FormControlMui
           control={<Checkbox checked={isMatch} onChange={(_, check) => setIsMatch(check)} />}
           label="Match Pokémon"
         />
       ),
-    },
-  ];
+    }
+  );
 
   const getWeatherEffective = (type: string | undefined) => {
     const result = safeObjectEntries(getWeatherBoost())?.find(([, value]) => {
@@ -332,6 +325,23 @@ const Move = (props: IMovePage) => {
     }
   }, [move?.isMultipleWithType, searchParams, findMoveById]);
 
+  const renderBonus = (bonusType: BonusType | undefined, value: string | number | string[]) => {
+    if (
+      isEqual(bonusType, BonusType.SpaceBonus) ||
+      isEqual(bonusType, BonusType.SlowFreezeBonus) ||
+      isEqual(bonusType, BonusType.AttackDefenseBonus)
+    ) {
+      return value;
+    } else if (isEqual(bonusType, BonusType.TimeBonus)) {
+      return (
+        <div className="d-flex flex-wrap gap-2">
+          {getValueOrDefault<string[]>(Array, value as string[]).map((item) => renderReward(item))}
+        </div>
+      );
+    }
+    return renderReward(value as string);
+  };
+
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">
       <div style={{ width: 35 }}>
@@ -352,16 +362,15 @@ const Move = (props: IMovePage) => {
             <TypeBar type={move.type} />
           </div>
           {move.isMultipleWithType && (
-            <Form.Select
-              style={{ maxWidth: 250 }}
-              className="mt-2 w-50"
-              onChange={(e) => {
-                searchParams.set(Params.MoveType, e.target.value.toLowerCase());
+            <SelectMui
+              formClassName="mt-2"
+              formSx={{ width: 250 }}
+              onChangeSelect={(value) => {
+                searchParams.set(Params.MoveType, value.toLowerCase());
                 setSearchParams(searchParams);
               }}
               value={moveType}
-            >
-              {getTypes()
+              menuItems={getTypes()
                 .filter(
                   (type) =>
                     !isEqual(
@@ -370,12 +379,11 @@ const Move = (props: IMovePage) => {
                       EqualMode.IgnoreCaseSensitive
                     )
                 )
-                .map((value, index) => (
-                  <option key={index} value={value}>
-                    {splitAndCapitalize(value, /(?=[A-Z])/, ' ')}
-                  </option>
-                ))}
-            </Form.Select>
+                .map((value) => ({
+                  value,
+                  label: splitAndCapitalize(value, /(?=[A-Z])/, ' '),
+                }))}
+            />
           )}
         </>
       ) : (
@@ -459,9 +467,8 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <>
                       <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
-                      <span className="text-success d-inline-block caption">
-                        {' +'}
-                        {toFloatWithPadding(move.pvePower * 0.2, 2)}
+                      <span className="text-success d-inline-block caption ms-1">
+                        {`+${toFloatWithPadding(move.pvePower * 0.2, 2)}`}
                       </span>
                     </>
                   )}
@@ -500,9 +507,8 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <>
                       <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
-                      <span className="text-success d-inline-block caption">
-                        {' +'}
-                        {toFloatWithPadding(move.pvpPower * 0.2, 2)}
+                      <span className="text-success d-inline-block caption ms-1">
+                        {`+${toFloatWithPadding(move.pvpPower * 0.2, 2)}`}
                       </span>
                     </>
                   )}
@@ -533,7 +539,7 @@ const Move = (props: IMovePage) => {
                   {move?.buffs.map((value, index) => (
                     <tr key={index}>
                       <td className="target-buff">
-                        <CircleIcon sx={{ fontSize: '5px' }} /> {getKeyWithData(BuffType, value.target)}
+                        <CircleIcon className="u-fs-1" /> {getKeyWithData(BuffType, value.target)}
                       </td>
                       <td>
                         {value.power > 0 ? (
@@ -744,23 +750,34 @@ const Move = (props: IMovePage) => {
                                     </td>
                                   </tr>
                                   {safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
-                                    <tr key={j}>
-                                      <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
-                                      <td colSpan={2} key={j}>
-                                        {isEqual(move.bonus?.bonusType, BonusType.SpaceBonus) ||
-                                        isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
-                                          value
-                                        ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
-                                          <div className="d-flex flex-wrap gap-2">
-                                            {getValueOrDefault<string[]>(Array, value as string[]).map((item) =>
-                                              renderReward(item)
-                                            )}
-                                          </div>
-                                        ) : (
-                                          renderReward(value as string)
-                                        )}
-                                      </td>
-                                    </tr>
+                                    <Fragment key={j}>
+                                      {move?.bonus?.bonusEffect?.attackDefenseBonus ? (
+                                        move?.bonus?.bonusEffect?.attackDefenseBonus.attributes.map((attr, k) => (
+                                          <tr key={k}>
+                                            <td>
+                                              {splitAndCapitalize(key, /(?=[A-Z])/, ' ')}
+                                              <span className="caption">
+                                                (
+                                                {attr.combatTypes
+                                                  .map((type) => capitalize(type.replace('COMBAT_TYPE_', '')))
+                                                  .join(', ')}
+                                                )
+                                              </span>
+                                            </td>
+                                            <td colSpan={2} key={j}>
+                                              {renderBonus(move.bonus?.bonusType, `x${attr.attackMultiplier}`)}
+                                            </td>
+                                          </tr>
+                                        ))
+                                      ) : (
+                                        <tr key={j}>
+                                          <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
+                                          <td colSpan={2} key={j}>
+                                            {renderBonus(move.bonus?.bonusType, value)}
+                                          </td>
+                                        </tr>
+                                      )}
+                                    </Fragment>
                                   ))}
                                 </Fragment>
                               ))}

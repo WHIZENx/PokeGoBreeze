@@ -1,0 +1,424 @@
+import { Checkbox } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import APIService from '../../../../services/api.service';
+import {
+  convertPokemonDataName,
+  createDataRows,
+  generateParamForm,
+  getKeyWithData,
+  getValidPokemonImgPath,
+  isSpecialMegaFormType,
+  splitAndCapitalize,
+} from '../../../../utils/utils';
+
+import './Counter.scss';
+import { TableStyles } from 'react-data-table-component';
+import { ICounterModel } from './models/counter.model';
+import { ICounterComponent } from '../../../models/component.model';
+import { ColumnType, MoveType, PokemonType } from '../../../../enums/type.enum';
+import { TableColumnModify } from '../../../../utils/models/overrides/data-table.model';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isNotEmpty,
+  isNullOrUndefined,
+  toFloat,
+  toFloatWithPadding,
+  toNumber,
+} from '../../../../utils/extension';
+import { LinkToTop } from '../../../Link/LinkToTop';
+import PokemonIconType from '../../../Sprites/PokemonIconType/PokemonIconType';
+import { FloatPaddingOption } from '../../../../utils/models/extension.model';
+import IconType from '../../../Sprites/Icon/Type/Type';
+import { debounce } from 'lodash';
+import CustomDataTable from '../CustomDataTable/CustomDataTable';
+import { IncludeMode } from '../../../../utils/enums/string.enum';
+import { counterDelay } from '../../../../utils/helpers/options-context.helpers';
+import useAssets from '../../../../composables/useAssets';
+import useOptionStore from '../../../../composables/useOptions';
+import usePokemon from '../../../../composables/usePokemon';
+import useCalculate from '../../../../composables/useCalculate';
+import InputReleased from '../../Inputs/InputReleased';
+import FormControlMui from '../../Forms/FormControlMui';
+import { IMenuItem } from '../../models/menu.model';
+
+const customStyles: TableStyles = {
+  head: {
+    style: {
+      height: '2.25rem',
+    },
+  },
+  header: {
+    style: {
+      justifyContent: 'center',
+      textAlign: 'center',
+      padding: 0,
+    },
+  },
+  headRow: {
+    style: {
+      backgroundColor: 'var(--custom-table-background-info) !important',
+      color: 'var(--text-primary) !important',
+      fontSize: '1rem',
+      fontWeight: 'bolder',
+      justifyContent: 'center',
+      minHeight: '2.25rem',
+    },
+  },
+  headCells: {
+    style: {
+      height: '2.25rem',
+      justifyContent: 'center',
+      padding: '5px 10px',
+      borderBottomWidth: 1,
+      borderBottomStyle: 'solid',
+      borderBottomColor: 'var(--custom-table-background-sub-head-border)',
+      '&:not(:last-of-type)': {
+        borderRightWidth: 1,
+        borderRightStyle: 'solid',
+        borderRightColor: 'var(--custom-table-background-sub-head-border)',
+      },
+    },
+  },
+  cells: {
+    style: {
+      '&:not(:last-of-type)': {
+        borderRightWidth: 1,
+        borderRightStyle: 'solid',
+        borderRightColor: 'var(--custom-table-background-sub-head-border)',
+      },
+      borderBottomWidth: 1,
+      borderBottomStyle: 'solid',
+      borderBottomColor: 'var(--custom-table-background-sub-head-border)',
+      justifyContent: 'center',
+      textAlign: 'center',
+      padding: '0.25rem 0.5rem',
+      fontWeight: 'lighter',
+      '&:first-of-type': {
+        fontSize: '0.75rem',
+      },
+      '&:last-of-type': {
+        fontWeight: 'bold',
+        color: 'var(--custom-table-background-sub-head-text)',
+        fontSize: '1rem',
+      },
+    },
+  },
+};
+
+const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
+  const a = toFloat(rowA.ratio);
+  const b = toFloat(rowB.ratio);
+  return a - b;
+};
+
+const Counter = (props: ICounterComponent) => {
+  const { findAssetForm } = useAssets();
+  const { optionsCounter, setCounterOptions } = useOptionStore();
+  const { checkPokemonGO } = usePokemon();
+  const { counterPokemon } = useCalculate();
+
+  const [counterList, setCounterList] = useState<ICounterModel[]>([]);
+  const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
+  const [showFrame, setShowFrame] = useState(true);
+
+  const [options, setOptions] = useState(optionsCounter);
+
+  const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
+
+  const menuItems = createDataRows<IMenuItem<ICounterModel>>(
+    {
+      label: (
+        <FormControlMui
+          control={
+            <Checkbox checked={isSearchId} onChange={(_, check) => setOptions({ ...options, isSearchId: check })} />
+          }
+          label="Search Pokémon Id"
+        />
+      ),
+    },
+    {
+      label: (
+        <FormControlMui
+          control={
+            <Checkbox
+              checked={isMatch}
+              onChange={(_, check) => setOptions({ ...options, isMatch: check })}
+              disabled={!isSearchId}
+            />
+          }
+          label="Match Pokémon"
+        />
+      ),
+    }
+  );
+
+  const columns = createDataRows<TableColumnModify<ICounterModel>>(
+    {
+      id: ColumnType.Pokemon,
+      name: 'Pokémon',
+      selector: (row) => {
+        const assets = findAssetForm(row.pokemonId, row.pokemonForm);
+        return (
+          <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForm, row.pokemonType)}`}>
+            <div className="d-flex justify-content-center">
+              <div className="filter-shadow-hover position-relative group-pokemon-sprite">
+                <PokemonIconType pokemonType={row.pokemonType} size={30}>
+                  <img
+                    className="pokemon-sprite-counter"
+                    alt="Pokémon Image"
+                    src={APIService.getPokemonModel(assets, row.pokemonId)}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, row.pokemonId, assets);
+                    }}
+                  />
+                </PokemonIconType>
+              </div>
+            </div>
+            <span className="caption text-overflow theme-text-primary">
+              #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
+            </span>
+          </LinkToTop>
+        );
+      },
+      width: '30%',
+    },
+    {
+      id: ColumnType.FastMove,
+      name: 'Fast',
+      selector: (row) => (
+        <LinkToTop to={`../move/${row.fMove.id}`} className="d-grid">
+          <div className="me-1 v-align-text-bottom">
+            <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
+          </div>
+          <span className="me-1 pt-1 text-wrap u-fs-3">
+            {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
+          </span>
+          <span className="w-100">
+            {row.fMove.moveType !== MoveType.None && (
+              <span
+                className={combineClasses(
+                  'type-icon-small ic',
+                  `${getKeyWithData(MoveType, row.fMove.moveType)?.toLowerCase()}-ic`
+                )}
+              >
+                {getKeyWithData(MoveType, row.fMove.moveType)}
+              </span>
+            )}
+          </span>
+        </LinkToTop>
+      ),
+      width: '25%',
+    },
+    {
+      id: ColumnType.ChargedMove,
+      name: 'Charged',
+      selector: (row) => (
+        <LinkToTop to={`../move/${row.cMove.id}`} className="d-grid">
+          <div className="me-1 v-align-text-bottom">
+            <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
+          </div>
+          <span className="me-1 pt-1 text-wrap u-fs-3">
+            {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
+          </span>
+          <span className="w-100">
+            {row.cMove.moveType !== MoveType.None && (
+              <span
+                className={combineClasses(
+                  'type-icon-small ic',
+                  `${getKeyWithData(MoveType, row.cMove.moveType)?.toLowerCase()}-ic`
+                )}
+              >
+                {getKeyWithData(MoveType, row.cMove.moveType)}
+              </span>
+            )}
+          </span>
+        </LinkToTop>
+      ),
+      width: '25%',
+    },
+    {
+      id: ColumnType.Percent,
+      name: '%',
+      selector: (row) =>
+        toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })),
+      sortable: true,
+      sortFunction: numSortRatio,
+      width: '20%',
+    }
+  );
+
+  const CounterLoader = () => (
+    <div className="w-100 counter-none v-align-top">
+      <div className="text-origin text-center theme-table-primary">
+        <div className="ph-item">
+          <div className="ph-col-12 theme-table-primary m-0 p-2 gap-2">
+            {[...Array(5).keys()].map((_, index) => (
+              <div key={index} className="ph-row d-flex gap-pct-5">
+                <div className="ph-picture w-pct-25" style={{ height: 100 }} />
+                <div className="ph-picture w-pct-70" style={{ height: 100 }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  useEffect(() => {
+    const controller = new AbortController();
+    if (isNotEmpty(counterList)) {
+      setCounterFilter([]);
+      setShowFrame(true);
+    }
+    if (!isNullOrUndefined(props.pokemonData) && isNotEmpty(props.pokemonData.types)) {
+      calculateCounter(controller.signal)
+        .then((data) => {
+          setCounterList(data);
+        })
+        .catch(() => setShowFrame(true));
+    }
+    return () => controller.abort();
+  }, [props.pokemonData, props.pokemonData?.pokemonType]);
+
+  const calculateCounter = (signal: AbortSignal, delay = counterDelay()) => {
+    return new Promise<ICounterModel[]>((resolve, reject) => {
+      let result: ICounterModel[] = [];
+
+      const resolveHandler = () => {
+        if (props.pokemonData) {
+          result = counterPokemon(toNumber(props.pokemonData.statsGO?.def), props.pokemonData.types);
+        }
+
+        if (signal instanceof AbortSignal) {
+          signal.removeEventListener('abort', abortHandler);
+        }
+        resolve(result);
+      };
+
+      const debouncedResolve = debounce(resolveHandler, delay);
+
+      const abortHandler = () => {
+        debouncedResolve.cancel();
+        reject();
+      };
+      if (signal instanceof AbortSignal) {
+        signal.addEventListener('abort', abortHandler, { once: true });
+      }
+      debouncedResolve();
+    });
+  };
+
+  useEffect(() => {
+    setCounterOptions(options);
+    if (isNotEmpty(counterList)) {
+      const result = enableBest ? filterBestOptions(counterList) : counterList;
+      setCounterFilter(
+        result
+          .filter((pokemon) => {
+            if (showMegaPrimal) {
+              return true;
+            }
+            return !isSpecialMegaFormType(pokemon.pokemonType);
+          })
+          .filter((pokemon) => {
+            if (!releasedGO) {
+              return true;
+            }
+            if (!pokemon.releasedGO) {
+              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName));
+            }
+            return pokemon.releasedGO;
+          })
+      );
+      setShowFrame(false);
+    }
+  }, [counterList, showMegaPrimal, releasedGO, enableBest]);
+
+  const filterBestOptions = (result: ICounterModel[]) => {
+    const group = result.reduce((res, obj) => {
+      (res[obj.pokemonName] = getValueOrDefault(Array, res[obj.pokemonName])).push(obj);
+      return res;
+    }, new Object() as DynamicObj<ICounterModel[]>);
+    return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p.ratio > c.ratio ? p : c)));
+  };
+
+  const modalOptions = () => (
+    <form>
+      <InputReleased
+        releasedGO={releasedGO}
+        setReleaseGO={(check) => setOptions({ ...options, releasedGO: check })}
+        isDisabled={!isNotEmpty(counterList)}
+        isAvailable={releasedGO && !showFrame}
+        isBlock={showFrame}
+      />
+      <FormControlMui
+        control={
+          <Checkbox
+            disabled={!isNotEmpty(counterList)}
+            checked={showMegaPrimal}
+            onChange={(_, check) => setOptions({ ...options, showMegaPrimal: check })}
+          />
+        }
+        label={`${getKeyWithData(PokemonType, PokemonType.Mega)}/${getKeyWithData(PokemonType, PokemonType.Primal)}`}
+      />
+      <FormControlMui
+        control={
+          <Checkbox
+            disabled={!isNotEmpty(counterList)}
+            checked={enableBest}
+            onChange={(_, check) => setOptions({ ...options, enableBest: check })}
+          />
+        }
+        label={'Filter best move sets'}
+      />
+    </form>
+  );
+
+  return (
+    <div className="table-info">
+      <div className="sub-header input-group align-items-center justify-content-center">
+        <span className="sub-title">Best Pokémon Counter</span>
+      </div>
+      <CustomDataTable
+        className="table-counter-container"
+        customColumns={columns}
+        defaultSortFieldId={ColumnType.Percent}
+        defaultSortAsc={false}
+        isShowSearch
+        isAutoSearch
+        menuItems={menuItems}
+        searchFunction={(item, searchTerm) =>
+          isInclude(
+            splitAndCapitalize(item.pokemonName, '-', ' '),
+            searchTerm,
+            IncludeMode.IncludeIgnoreCaseSensitive
+          ) ||
+          (isSearchId && (isMatch ? isEqual(item.pokemonId, searchTerm) : isInclude(item.pokemonId, searchTerm)))
+        }
+        pagination
+        customDataStyles={customStyles}
+        inputPlaceholder="Search Pokémon"
+        fixedHeader
+        paginationComponentOptions={{
+          noRowsPerPage: true,
+        }}
+        noDataComponent={null}
+        paginationPerPage={100}
+        progressPending={showFrame}
+        progressComponent={<CounterLoader />}
+        data={counterFilter}
+        isXFixed
+        isShowModalOptions
+        titleModalOptions="Pokémon counter options"
+        customOptionsModal={modalOptions}
+      />
+    </div>
+  );
+};
+
+export default Counter;

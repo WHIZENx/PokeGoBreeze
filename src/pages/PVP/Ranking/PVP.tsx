@@ -11,7 +11,7 @@ import {
   getKeyWithData,
 } from '../../../utils/utils';
 import { calculateStatsByTag } from '../../../utils/calculate';
-import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
+import { Accordion, useAccordionButton } from 'react-bootstrap';
 
 import APIService from '../../../services/api.service';
 import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
@@ -49,7 +49,7 @@ import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
 import Error from '../../Error/Error';
@@ -66,6 +66,8 @@ import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
+import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
+import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
@@ -405,40 +407,24 @@ const RankingPVP = (props: IStyleSheetData) => {
       <div className="container pvp-container pb-3">
         {renderLeague()}
         <hr />
-        <div className="mt-2 ranking-link-group">
-          {getKeysObj(ScoreType).map((type, index) => (
-            <Button
-              key={index}
-              className={
-                isEqual(
-                  getValueOrDefault(
-                    String,
-                    searchParams.get(Params.LeagueType),
-                    getKeyWithData(ScoreType, ScoreType.Overall)
-                  ),
-                  type,
-                  EqualMode.IgnoreCaseSensitive
-                )
-                  ? 'active'
-                  : ''
-              }
-              onClick={() =>
-                navigate(`/pvp/rankings/${params.serie}/${params.cp}?${Params.LeagueType}=${type.toLowerCase()}`)
-              }
-            >
-              {type}
-            </Button>
-          ))}
-        </div>
-        <div className="input-group border-input">
-          <input
-            type="text"
-            className="form-control input-search"
-            placeholder="Enter Name or ID"
-            defaultValue={search}
-            onKeyUp={(e) => setSearch(e.currentTarget.value)}
-          />
-        </div>
+        <ToggleGroupMui
+          className="d-flex overflow-x-auto mt-2"
+          isNoneBorder
+          color="primary"
+          exclusive
+          value={getValueOrDefault(
+            String,
+            searchParams.get(Params.LeagueType),
+            getKeyWithData(ScoreType, ScoreType.Overall)
+          )}
+          toggles={getKeysObj(ScoreType).map((type) => ({
+            label: type,
+            value: type,
+            onClick: () =>
+              navigate(`/pvp/rankings/${params.serie}/${params.cp}?${Params.LeagueType}=${type.toLowerCase()}`),
+          }))}
+        />
+        <InputMuiSearch defaultValue={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
         <div className="ranking-container" onScroll={listenScrollEvent.bind(this)}>
           <div className="ranking-group w-100 ranking-header column-gap-3">
             <div />

@@ -1,38 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import APIService from '../../../services/api.service';
-import { capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../utils/utils';
+import {
+  camelCase,
+  capitalize,
+  createDataRows,
+  generateParamForm,
+  getItemSpritePath,
+  splitAndCapitalize,
+} from '../../../utils/utils';
 import './Types.scss';
-import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../utils/compute';
 import { Tabs, Tab } from 'react-bootstrap';
 import { calculateStatsByTag } from '../../../utils/calculate';
-import { FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
+  getPropertyName,
   getValueOrDefault,
-  isEqual,
   isInclude,
   isIncludeList,
   isNotEmpty,
   toNumber,
 } from '../../../utils/extension';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { IStyleSheetData } from '../../models/page.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { getTypes } from '../../../utils/helpers/options-context.helpers';
-import useIcon from '../../../composables/useIcon';
+import { getTypeEffective } from '../../../utils/helpers/options-context.helpers';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
+import SelectTypeComponent from '../../../components/Commons/Selects/SelectType';
+import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -40,7 +46,7 @@ const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) =>
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const columnPokemon: TableColumnModify<IPokemonData>[] = [
+const columnPokemon = createDataRows<TableColumnModify<IPokemonData>>(
   {
     id: ColumnType.Id,
     name: 'ID',
@@ -110,10 +116,10 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).sta,
     sortable: true,
     width: '100px',
-  },
-];
+  }
+);
 
-const columnMove: TableColumnModify<ICombat>[] = [
+const columnMove = createDataRows<TableColumnModify<ICombat>>(
   {
     id: ColumnType.Type,
     name: 'ID',
@@ -164,8 +170,8 @@ const columnMove: TableColumnModify<ICombat>[] = [
     selector: (row) => `${row.pvpEnergy > 0 ? '+' : ''}${row.pvpEnergy}`,
     sortable: true,
     width: '120px',
-  },
-];
+  }
+);
 
 interface IPokemonTypeMove {
   pokemonList: IPokemonData[];
@@ -204,17 +210,15 @@ class PokemonTypeData implements IPokemonTypeData {
 }
 
 const SearchTypes = (props: IStyleSheetData) => {
-  const { iconData } = useIcon();
+  const typesEffective = getTypeEffective();
   const { getFilteredPokemons } = usePokemon();
   const { getCombatsByTypeMove, getCombatsByTypeAndTypeMove } = useCombats();
 
   const [releasedGO, setReleaseGO] = useState(true);
 
-  const [currentType, setCurrentType] = useState('');
+  const [currentType, setCurrentType] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [result, setResult] = useState(new PokemonTypeMove());
   const [allData, setAllData] = useState<IPokemonTypeData>();
-
-  const [showType, setShowType] = useState(false);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PokéGO Breeze - Type',
@@ -256,12 +260,6 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [releasedGO, getCombatsByTypeMove, getFilteredPokemons]);
 
   useEffect(() => {
-    if (isNotEmpty(getTypes()) && !currentType) {
-      setCurrentType(getTypes()[0]);
-    }
-  }, [currentType]);
-
-  useEffect(() => {
     if (isNotEmpty(getFilteredPokemons())) {
       setResult(
         PokemonTypeMove.create({
@@ -277,58 +275,22 @@ const SearchTypes = (props: IStyleSheetData) => {
     }
   }, [currentType, releasedGO, getFilteredPokemons, getCombatsByTypeAndTypeMove]);
 
-  const changeType = (value: string) => {
-    setShowType(false);
-    setCurrentType(value);
-  };
-
   return (
     <div className="container mt-2">
       <div className="d-flex justify-content-end">
-        <div>
-          <h6 className="text-center">
-            <b>Select Type</b>
-          </h6>
-          <div
-            className="card-input mb-3"
-            tabIndex={0}
-            onClick={() => setShowType(true)}
-            onBlur={() => setShowType(false)}
-          >
-            <div className="card-select">
-              <CardType value={capitalize(currentType)} />
-            </div>
-            {showType && (
-              <div className="result-type">
-                <ul>
-                  {getTypes()
-                    .filter((value) => !isEqual(value, currentType))
-                    .map((value, index) => (
-                      <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
-                        <CardType value={capitalize(value)} />
-                      </li>
-                    ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
+        <SelectTypeComponent
+          title="Select Type"
+          data={typesEffective}
+          currentType={currentType}
+          setCurrentType={setCurrentType}
+          filterType={[currentType]}
+        />
       </div>
-      <FormControlLabel
-        control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
-        label={
-          <span className="d-flex align-items-center">
-            Released in GO
-            <img
-              className={combineClasses('mx-1', releasedGO ? '' : 'filter-gray')}
-              width={28}
-              height={28}
-              alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(iconData)}
-            />
-            <b>{`Filter from ${allData?.pokemon} Pokémon`}</b>
-          </span>
-        }
+      <InputReleased
+        releasedGO={releasedGO}
+        setReleaseGO={(check) => setReleaseGO(check)}
+        isAvailable={releasedGO}
+        label={<b>{`Filter from ${allData?.pokemon} Pokémon`}</b>}
       />
       <div className="row">
         <div className="col-xl-4 mt-2">

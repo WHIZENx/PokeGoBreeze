@@ -33,7 +33,7 @@ import {
 } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
-import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMoveModel } from '../components/Commons/Inputs/models/select-move.model';
 import { TypeEffectiveChart } from '../core/models/type-effective.model';
 import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
@@ -367,7 +367,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     .replace('-hero', '')
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
-    .replace('-shaymin', '');
+    .replace('-shaymin', '')
+    .replace('-altered', '');
   if (isInclude(text, formStandard(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     form = `-${formStandard().toLowerCase()}`;
   }
@@ -1298,16 +1299,18 @@ export const getValidPokemonImgPath = (src: string | undefined | null, id?: numb
   return APIService.getPokeFullSprite();
 };
 
-export const getBonusType = (bonusType: string | number) => {
-  if (bonusType === BonusType.SlowFreezeBonus || bonusType === 6) {
+export const getBonusType = (bonusType: string | number | BonusType | undefined) => {
+  if (bonusType === BonusType.AttackDefenseBonus || bonusType === BonusType.AttackDefenseBonus2) {
+    return BonusType.AttackDefenseBonus;
+  } else if (bonusType === BonusType.SlowFreezeBonus || bonusType === BonusType.SlowFreezeBonus2) {
     return BonusType.SlowFreezeBonus;
-  } else if (isEqual(bonusType, 'SPACE_BONUS')) {
+  } else if (isEqual(bonusType, 'SPACE_BONUS') || bonusType === BonusType.SpaceBonus) {
     return BonusType.SpaceBonus;
-  } else if (isEqual(bonusType, 'TIME_BONUS')) {
+  } else if (isEqual(bonusType, 'TIME_BONUS') || bonusType === BonusType.TimeBonus) {
     return BonusType.TimeBonus;
-  } else if (isEqual(bonusType, 'DAY_BONUS')) {
+  } else if (isEqual(bonusType, 'DAY_BONUS') || bonusType === BonusType.DayBonus) {
     return BonusType.DayBonus;
-  } else if (isEqual(bonusType, 'NIGHT_BONUS')) {
+  } else if (isEqual(bonusType, 'NIGHT_BONUS') || bonusType === BonusType.NightBonus) {
     return BonusType.NightBonus;
   }
   return BonusType.None;
@@ -1359,3 +1362,7 @@ export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
 
 export const isSpecialMegaFormType = (pokemonType: PokemonType | undefined) =>
   pokemonType === PokemonType.Mega || pokemonType === PokemonType.Primal;
+
+export const createDataRows = <T>(...rows: T[]) => {
+  return [...rows];
+};

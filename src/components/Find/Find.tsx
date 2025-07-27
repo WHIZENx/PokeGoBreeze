@@ -12,6 +12,7 @@ import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
+import InputMuiSearch from '../Commons/Inputs/InputMuiSearch';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -139,15 +140,12 @@ const Find = (props: IFindComponent) => {
         maxHeight: eachCounter.current * cardHeight.current,
       }}
     >
-      <div className="btn-group-search">
-        <input
-          type="text"
-          className="form-control input-search"
-          placeholder="Enter Name or ID"
-          defaultValue={searchTerm}
-          onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
-        />
-      </div>
+      <InputMuiSearch
+        value={searchTerm}
+        onChange={(value) => setSearchTerm(value)}
+        placeholder="Enter Name or ID"
+        width={300}
+      />
       <div className="result tools" ref={resultRef} onScroll={listenScrollEvent.bind(this)}>
         <Fragment>
           {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (

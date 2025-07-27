@@ -11,16 +11,17 @@ import {
   isSpecialFormType,
   getKeyWithData,
   getCustomThemeDataTable,
+  createDataRows,
 } from '../../../utils/utils';
 import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import Stats from '../../../components/Info/Stats/Stats';
-import TableMove from '../../../components/Table/Move/MoveTable';
+import TableMove from '../../../components/Commons/Tables/Move/MoveTable';
 
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
 import './StatsRanking.scss';
-import { FormControlLabel, Checkbox } from '@mui/material';
+import { Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
@@ -32,13 +33,12 @@ import {
   StatsProd,
   StatsSta,
 } from '../../../core/models/stats.model';
-import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
+import PokemonTable from '../../../components/Commons/Tables/Pokemon/PokemonTable';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
-  combineClasses,
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
@@ -51,22 +51,23 @@ import {
   toNumber,
 } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
 import { Action } from 'history';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { IMenuItem } from '../../../components/models/component.model';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
+import { IMenuItem } from '../../../components/Commons/models/menu.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
-import useIcon from '../../../composables/useIcon';
 import useStats from '../../../composables/useStats';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
+import InputReleased from '../../../components/Commons/Inputs/InputReleased';
+import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 
-const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
+const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
     id: ColumnType.None,
     name: '',
@@ -162,8 +163,8 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     selector: (row) => toNumber(row.prod.product),
     sortable: true,
     width: '150px',
-  },
-];
+  }
+);
 
 const customStyles: TableStyles = {
   rows: {
@@ -193,7 +194,6 @@ const defaultPerPages = 25;
 
 const StatsRanking = () => {
   const { routerAction } = useRouter();
-  const { iconData } = useIcon();
   const { getPokemonDetails } = usePokemon();
   useTitle({
     title: 'PokéGO Breeze - Stats Ranking',
@@ -210,7 +210,7 @@ const StatsRanking = () => {
   });
   const [searchParams, setSearchParams] = useSearchParams();
   const [select, setSelect] = useState<IPokemonStatsRanking>();
-  const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
+  const conditionalRowStyles = createDataRows<ConditionalStyles<IPokemonStatsRanking>>(
     {
       when: () => true,
       style: { backgroundColor: 'var(--background-table-primary)' },
@@ -219,8 +219,8 @@ const StatsRanking = () => {
       when: (row) =>
         !isNullOrUndefined(select) && row.fullName === select.fullName && row.pokemonType === select.pokemonType,
       style: { backgroundColor: 'var(--table-highlight-row)', fontWeight: 'bold' },
-    },
-  ];
+    }
+  );
 
   const { statsData } = useStats();
   const { getFilteredPokemons, getFindPokemon } = usePokemon();
@@ -402,10 +402,10 @@ const StatsRanking = () => {
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
-  const menuItems: IMenuItem[] = [
+  const menuItems = createDataRows<IMenuItem<IPokemonStatsRanking>>(
     {
       label: (
-        <FormControlLabel
+        <FormControlMui
           control={
             <Checkbox
               checked={isMatch}
@@ -418,29 +418,15 @@ const StatsRanking = () => {
     },
     {
       label: (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={releasedGO}
-              onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
-            />
-          }
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                width={28}
-                height={28}
-                alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(iconData)}
-              />
-            </span>
-          }
+        <InputReleased
+          releasedGO={releasedGO}
+          setReleaseGO={(check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
+          isAvailable={releasedGO}
+          inputMode={'checkbox'}
         />
       ),
-    },
-  ];
+    }
+  );
 
   useEffect(() => {
     if (

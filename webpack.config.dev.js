@@ -121,7 +121,10 @@ module.exports = {
     },
   },
   devServer: {
-    static: [{ directory: path.resolve(__dirname, 'dist') }, { directory: path.resolve(__dirname, 'public') }],
+    static: {
+      directory: path.resolve(__dirname, 'dist'),
+      publicPath: '/',
+    },
     historyApiFallback: true,
     open: true,
     compress: true,

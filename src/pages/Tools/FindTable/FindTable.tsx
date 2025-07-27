@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
+import { createDataRows, HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../utils/calculate';
 
 import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
@@ -22,9 +22,11 @@ import {
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 interface IFindCP {
   level: number;
@@ -42,7 +44,7 @@ class FindCP implements IFindCP {
   }
 }
 
-const columnsIV: TableColumn<IPredictStatsModel>[] = [
+const columnsIV = createDataRows<TableColumn<IPredictStatsModel>>(
   {
     id: ColumnType.Level,
     name: 'Level',
@@ -78,10 +80,10 @@ const columnsIV: TableColumn<IPredictStatsModel>[] = [
     name: 'Percent',
     selector: (row) => row.percent,
     sortable: true,
-  },
-];
+  }
+);
 
-const columnsCP: TableColumn<IPredictCPModel>[] = [
+const columnsCP = createDataRows<TableColumn<IPredictCPModel>>(
   {
     id: ColumnType.Level,
     name: 'Level',
@@ -99,8 +101,8 @@ const columnsCP: TableColumn<IPredictCPModel>[] = [
     name: 'HP',
     selector: (row) => row.hp,
     sortable: true,
-  },
-];
+  }
+);
 
 const customStyles: TableStyles = {
   rows: {
@@ -115,7 +117,7 @@ const customStyles: TableStyles = {
   },
 };
 
-const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
+const conditionalRowStyles = createDataRows<ConditionalStyles<IPredictStatsModel>>(
   {
     when: (row) => row.percent === 100,
     style: {
@@ -145,10 +147,10 @@ const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
     style: {
       backgroundColor: '#d7d7d7',
     },
-  },
-];
+  }
+);
 
-const columns: TableColumn<IFindCP>[] = [
+const columns = createDataRows<TableColumn<IFindCP>>(
   {
     id: ColumnType.Level,
     name: 'Level',
@@ -166,8 +168,8 @@ const columns: TableColumn<IFindCP>[] = [
     name: 'MAX CP',
     selector: (row) => row.maxCP,
     sortable: true,
-  },
-];
+  }
+);
 
 const FindTable = () => {
   useTitle({
@@ -388,27 +390,21 @@ const FindTable = () => {
           Find IV
         </h1>
         <form className="d-flex justify-content-center mt-2" onSubmit={onFindStats.bind(this)}>
-          <Box className="w-50" sx={{ minWidth: 350 }}>
-            <div className="input-group mb-3">
-              <div className="input-group-prepend">
-                <span className="input-group-text">CP</span>
-              </div>
-              <input
-                required
-                value={searchCP}
-                type="number"
-                min={minCp()}
-                className="form-control"
-                aria-label="cp"
-                aria-describedby="input-cp"
-                placeholder="Enter CP"
-                onInput={(e) => setSearchCP(e.currentTarget.value)}
-              />
-            </div>
+          <Box className="w-50">
+            <InputMui
+              labelPrepend="CP"
+              className="mb-3 justify-content-center"
+              placeholder="Enter CP"
+              value={searchCP}
+              onChange={(value) => setSearchCP(value)}
+              inputProps={{
+                type: 'number',
+                min: minCp(),
+                required: true,
+              }}
+            />
             <div className="btn-search d-flex justify-content-center text-center">
-              <button type="submit" className="btn btn-primary">
-                Search
-              </button>
+              <ButtonMui type="submit" label="Search" />
             </div>
           </Box>
         </form>
@@ -468,9 +464,7 @@ const FindTable = () => {
             </Box>
           </div>
           <div className="form-group d-flex justify-content-center text-center mt-2">
-            <button type="submit" className="btn btn-primary">
-              Search
-            </button>
+            <ButtonMui type="submit" label="Search" />
           </div>
         </form>
         {preCpArr && <Fragment>{showResultTableCP()}</Fragment>}

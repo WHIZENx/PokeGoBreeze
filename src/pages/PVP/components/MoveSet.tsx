@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { MoveSetComponent } from '../models/component.model';
 import { OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../../components/Popover/CustomPopover';
+import CustomPopover from '../../../components/Commons/Popovers/CustomPopover';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
@@ -23,7 +23,7 @@ import { ArcheType } from '../enums/arche-type.enum';
 import { MoveType } from '../../../enums/type.enum';
 import { PokemonRankingMove } from '../../../core/models/pvp.model';
 import { IMoveSet, MoveSetModel } from '../models/move-set.model';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import useCombats from '../../../composables/useCombats';
 

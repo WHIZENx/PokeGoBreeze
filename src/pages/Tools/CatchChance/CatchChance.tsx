@@ -1,19 +1,12 @@
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import SelectBadge from '../../../components/Input/SelectBadge';
+import SelectBadge from '../../../components/Commons/Selects/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
 import APIService from '../../../services/api.service';
 import { calculateCatchChance, calculateCP } from '../../../utils/calculate';
 import {
+  createDataRows,
   getItemSpritePath,
   getKeyWithData,
   getPokemonFormWithNoneSpecialForm,
@@ -43,7 +36,7 @@ import {
 } from './models/catch-chance.model';
 import { PokeBallType } from './enums/poke-ball.enum';
 import { PokemonType, ThrowType } from '../../../enums/type.enum';
-import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
+import { BadgeType } from '../../../components/enums/badge-type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
@@ -71,8 +64,9 @@ import {
   ultraBallIncChance,
 } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
 
-const balls: PokeBallThreshold[] = [
+const balls = createDataRows<PokeBallThreshold>(
   {
     name: 'Poké Ball',
     itemName: ItemName.PokeBall,
@@ -90,14 +84,14 @@ const balls: PokeBallThreshold[] = [
     itemName: ItemName.UltraBall,
     threshold: ultraBallIncChance(),
     pokeBallType: PokeBallType.UltraBall,
-  },
-];
-const throws: ThrowThreshold[] = [
+  }
+);
+const throws = createDataRows<ThrowThreshold>(
   { name: 'Normal Throw', threshold: normalThrowIncChance(), throwType: ThrowType.Normal },
   { name: 'Nice Throw', threshold: niceThrowIncChance(), throwType: ThrowType.Nice },
   { name: 'Great Throw', threshold: greatThrowIncChance(), throwType: ThrowType.Great },
-  { name: 'Excellent Throw', threshold: excellentThrowIncChance(), throwType: ThrowType.Excellent },
-];
+  { name: 'Excellent Throw', threshold: excellentThrowIncChance(), throwType: ThrowType.Excellent }
+);
 
 const CatchChance = () => {
   const { searchingToolCurrentDetails } = useSearch();
@@ -299,10 +293,6 @@ const CatchChance = () => {
     if (data) {
       setRadius(v);
     }
-  };
-
-  const handleChangeBallType = (event: SelectChangeEvent) => {
-    setAdvanceOption({ ...advanceOption, ballType: toNumber(event.target.value) });
   };
 
   const renderRingColor = () => {
@@ -620,16 +610,21 @@ const CatchChance = () => {
           {isAdvance && (
             <Fragment>
               <div className="d-flex flex-wrap justify-content-center gap-2">
-                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                  <InputLabel id="demo-select-small">Ball</InputLabel>
-                  <Select value={ballType.toString()} label="Ball" onChange={handleChangeBallType}>
-                    {balls.map((value, index) => (
-                      <MenuItem key={index} value={value.pokeBallType} className="d-flex gap-1">
+                <SelectMui
+                  formSx={{ m: 1, minWidth: 120 }}
+                  inputLabel="Ball"
+                  value={ballType}
+                  onChangeSelect={(value) => setAdvanceOption({ ...advanceOption, ballType: value })}
+                  menuItems={balls.map((value) => ({
+                    className: 'd-flex gap-1',
+                    value: value.pokeBallType,
+                    label: (
+                      <>
                         <img alt="Icon Item" height={16} src={getItemSpritePath(value.itemName)} /> {value.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                      </>
+                    ),
+                  }))}
+                />
                 <FormControlLabel
                   control={
                     <Checkbox

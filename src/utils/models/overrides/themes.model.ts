@@ -17,6 +17,23 @@ export const getDesignThemes = (mode: TypeTheme) =>
           },
         },
       },
+      MuiButton: {
+        styleOverrides: {
+          containedSuccess: {
+            color: '#ffffff',
+          },
+          containedTertiary: {
+            color: '#ffffff',
+          },
+          containedDefault: {
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              backgroundColor: mode === TypeTheme.Light ? '#969696' : '#4f4f5c',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            },
+          },
+        },
+      },
       MuiFormLabel: {
         styleOverrides: {
           root: {

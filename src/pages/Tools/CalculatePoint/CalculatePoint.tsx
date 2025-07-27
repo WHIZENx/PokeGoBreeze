@@ -4,11 +4,11 @@ import Find from '../../../components/Find/Find';
 import { Tabs, Tab } from 'react-bootstrap';
 
 import './CalculatePoint.scss';
-import Move from '../../../components/Table/Move';
+import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMove';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { findStabType } from '../../../utils/compute';
-import { levelList } from '../../../utils/constants';
+import { levelList } from '../../../utils/compute';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { useSnackbar } from 'notistack';
 
@@ -32,6 +32,7 @@ import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/
 import { Color } from '../../../core/models/candy.model';
 import { minLevel, maxLevel, minIv, maxIv, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 const CalculatePoint = () => {
   useTitle({
@@ -369,7 +370,7 @@ const CalculatePoint = () => {
               <div className="row">
                 <div className="col-lg-4">
                   <h2 className="text-center text-decoration-underline">Attacker move</h2>
-                  <Move
+                  <SelectCustomMove
                     text="Select Moves"
                     id={searchingToolCurrentData?.pokemon?.id}
                     isSelectDefault
@@ -433,13 +434,13 @@ const CalculatePoint = () => {
                       </p>
                     </div>
                   )}
-                  <button
-                    className="text-center btn btn-primary w-100 mb-3"
+                  <ButtonMui
+                    fullWidth
+                    className="mb-3"
                     onClick={() => calculateBreakpointAtk()}
                     disabled={!move}
-                  >
-                    Calculate
-                  </button>
+                    label="Calculate"
+                  />
                 </div>
                 <div className="col-lg-8">
                   <h3>Attacker Breakpoint</h3>
@@ -506,7 +507,7 @@ const CalculatePoint = () => {
               <div className="row">
                 <div className="col-lg-4">
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
-                  <Move
+                  <SelectCustomMove
                     text="Select Moves"
                     id={searchingToolObjectData?.pokemon?.id}
                     isSelectDefault
@@ -570,13 +571,13 @@ const CalculatePoint = () => {
                       </p>
                     </div>
                   )}
-                  <button
-                    className="text-center btn btn-primary w-100 mb-3"
+                  <ButtonMui
+                    fullWidth
+                    className="mb-3"
                     onClick={() => calculateBreakpointDef()}
                     disabled={!moveDef}
-                  >
-                    Calculate
-                  </button>
+                    label="Calculate"
+                  />
                 </div>
                 <div className="col-lg-8">
                   <h3>Defender Breakpoint</h3>
@@ -699,7 +700,7 @@ const CalculatePoint = () => {
                 <div className="col-lg-4">
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
                   <div className="mb-3">
-                    <Move
+                    <SelectCustomMove
                       text="Fast Moves"
                       id={searchingToolObjectData?.pokemon?.id}
                       isSelectDefault
@@ -740,7 +741,7 @@ const CalculatePoint = () => {
                     )}
                   </div>
                   <div>
-                    <Move
+                    <SelectCustomMove
                       text="Charged Moves"
                       id={searchingToolObjectData?.pokemon?.id}
                       isSelectDefault
@@ -840,13 +841,13 @@ const CalculatePoint = () => {
                       onChange={(_, v) => setSTAIv(v as number)}
                     />
                   </div>
-                  <button
-                    className="text-center btn btn-primary w-100 mb-3"
+                  <ButtonMui
+                    fullWidth
+                    className="mb-3"
                     onClick={() => calculateBulkPointDef()}
                     disabled={!(fMove && cMove)}
-                  >
-                    Calculate
-                  </button>
+                    label="Calculate"
+                  />
                 </div>
                 <div className="col-lg-8 overflow-x-auto">
                   <h3>BulkPoint</h3>

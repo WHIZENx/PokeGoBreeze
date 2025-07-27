@@ -4,7 +4,7 @@ import { Location, useLocation } from 'react-router-dom';
 import './Error.scss';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { LocationState } from '../../core/models/router.model';
-import { LinkToTop } from '../../components/LinkToTop';
+import { LinkToTop } from '../../components/Link/LinkToTop';
 import { IErrorPage } from '../models/page.model';
 import { isUndefined } from '../../utils/extension';
 import useSpinner from '../../composables/useSpinner';

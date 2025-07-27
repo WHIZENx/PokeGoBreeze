@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { OptionsSheetState } from '../store/models/state.model';
 import { OptionDPSModel } from '../store/models/options.model';
-import { OptionFiltersCounter } from '../components/Table/Counter/models/counter.model';
+import { OptionFiltersCounter } from '../components/Commons/Tables/Counter/models/counter.model';
 import { SetDpsSheetOptions, SetCounterOptions } from '../store/actions/options.action';
 
 /**

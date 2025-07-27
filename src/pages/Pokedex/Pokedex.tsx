@@ -3,23 +3,10 @@ import { useDispatch } from 'react-redux';
 
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
-import TypeInfo from '../../components/Sprites/Type/Type';
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  MenuProps,
-  OutlinedInput,
-  Select,
-  SelectChangeEvent,
-  Switch,
-} from '@mui/material';
+import { Checkbox, FormControlLabel, ListItemText, MenuProps, Switch } from '@mui/material';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
@@ -38,10 +25,15 @@ import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
 import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
-import { getTypes, transitionTime } from '../../utils/helpers/options-context.helpers';
 import useIcon from '../../composables/useIcon';
 import useAssets from '../../composables/useAssets';
 import usePokemon from '../../composables/usePokemon';
+import InputMuiSearch from '../../components/Commons/Inputs/InputMuiSearch';
+import InputReleased from '../../components/Commons/Inputs/InputReleased';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../components/Commons/Buttons/ButtonMui';
+import ToggleType from '../../components/Commons/Buttons/ToggleType';
+import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -284,8 +276,8 @@ const Pokedex = (props: IStyleSheetData) => {
     }
   }, [listOfPokemon, result]);
 
-  const handleChangeGen = (event: SelectChangeEvent<number[]>) => {
-    const isSelect = isIncludeList(event.target.value as number[], -1);
+  const handleChangeGen = (value: number[]) => {
+    const isSelect = isIncludeList(value, -1);
     if (isSelect) {
       setBtnSelected({
         ...btnSelected,
@@ -293,7 +285,7 @@ const Pokedex = (props: IStyleSheetData) => {
       });
     }
     const gen = !isSelect
-      ? (event.target.value as number[]).sort((a, b) => a - b)
+      ? value.sort((a, b) => a - b)
       : btnSelected.isSelectGen
       ? []
       : Object.values(genList).map((_, index) => index);
@@ -304,8 +296,8 @@ const Pokedex = (props: IStyleSheetData) => {
     });
   };
 
-  const handleChangeVersion = (event: SelectChangeEvent<number[]>) => {
-    const isSelect = isIncludeList(event.target.value as number[], -1);
+  const handleChangeVersion = (value: number[]) => {
+    const isSelect = isIncludeList(value, -1);
     if (isSelect) {
       setBtnSelected({
         ...btnSelected,
@@ -313,7 +305,7 @@ const Pokedex = (props: IStyleSheetData) => {
       });
     }
     const version = !isSelect
-      ? (event.target.value as number[]).sort((a, b) => a - b)
+      ? value.sort((a, b) => a - b)
       : btnSelected.isSelectVersion
       ? []
       : versionList.map((_, index) => index);
@@ -333,71 +325,36 @@ const Pokedex = (props: IStyleSheetData) => {
       )}
       <div className="text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
-        <div className="row w-100 m-0 types-select-btn">
-          {getTypes().map((item, index) => (
-            <div key={index} className="col img-group m-0 p-0">
-              <button
-                value={item}
-                onClick={() => addTypeArr(item)}
-                className={combineClasses(
-                  'btn-select-type w-100 p-2',
-                  isIncludeList(selectTypes, item) ? 'select-type' : ''
-                )}
-                style={{ transition: transitionTime() }}
-              >
-                <TypeInfo isBlock arr={[item]} />
-              </button>
-            </div>
-          ))}
-        </div>
+        <ToggleType fullWidth value={selectTypes} onSelectType={(type) => addTypeArr(type)} />
         <div className="w-100">
           <div className="border-input">
             <div className="head-types">Options</div>
             <div className="row m-0">
               <div className="col-xl-4 p-0">
-                <div className="d-flex">
-                  <span className="input-group-text">Search name or ID</span>
-                  <input
-                    type="text"
-                    className="form-control input-search"
-                    placeholder="Enter Name or ID"
-                    defaultValue={searchTerm}
-                    onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
+                <InputMuiSearch
+                  isNoWrap
+                  value={searchTerm}
+                  onChange={(value) => setSearchTerm(value)}
+                  placeholder="Enter Name or ID"
+                  labelPrepend="Search name or ID"
+                />
+                <FormControlMui
+                  control={
+                    <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
+                  }
+                  label="Match Pokémon"
+                >
+                  <InputReleased
+                    releasedGO={releasedGO}
+                    setReleaseGO={(check) => setFilters({ ...filters, releasedGO: check })}
+                    isAvailable={releasedGO}
                   />
-                </div>
-                <div className="d-flex flex-wrap px-2">
-                  <FormControlLabel
-                    control={
-                      <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
-                    }
-                    label="Match Pokémon"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={releasedGO}
-                        onChange={(_, check) => setFilters({ ...filters, releasedGO: check })}
-                      />
-                    }
-                    label={
-                      <span className="d-flex align-items-center">
-                        Released in GO
-                        <img
-                          className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                          width={28}
-                          height={28}
-                          alt="Pokémon GO Icon"
-                          src={APIService.getPokemonGoIcon(iconData)}
-                        />
-                      </span>
-                    }
-                  />
-                </div>
-                <div className="d-flex px-2">
-                  <FormControlLabel
+                  <FormControlMui
+                    isNotGroup
                     control={
                       <Switch checked={isShiny} onChange={(_, check) => setFilters({ ...filters, isShiny: check })} />
                     }
+                    className="h-100"
                     label={
                       <span className="d-flex align-items-center">
                         Show All Shiny Pokémon (Only Possible)
@@ -411,66 +368,80 @@ const Pokedex = (props: IStyleSheetData) => {
                       </span>
                     }
                   />
-                </div>
+                </FormControlMui>
               </div>
               <div className="col-xl-8 border-input p-2 gap-2">
                 <div className="d-flex">
-                  <FormControl className="w-50" sx={{ m: 1 }} size="small">
-                    <InputLabel>Generation(s)</InputLabel>
-                    <Select
-                      multiple
-                      value={gen}
-                      onChange={handleChangeGen}
-                      input={<OutlinedInput label="Generation(s)" />}
-                      renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
-                    >
-                      <MenuItem disableRipple disableTouchRipple value={-1}>
-                        <ListItemText
-                          primary={
-                            <button
-                              className={combineClasses('btn', btnSelected.isSelectGen ? 'btn-danger' : 'btn-success')}
-                            >{`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}</button>
-                          }
-                        />
-                      </MenuItem>
-                      {Object.values(genList).map((_, index) => (
-                        <MenuItem key={index} value={index}>
+                  <SelectMui<number[]>
+                    multiple
+                    formClassName="w-50"
+                    formSx={{ m: 1 }}
+                    inputLabel="Generation(s)"
+                    value={gen}
+                    onChangeSelect={handleChangeGen}
+                    renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
+                    insertItems={[
+                      {
+                        value: -1,
+                        label: (
+                          <ListItemText
+                            primary={
+                              <ButtonMui
+                                fullWidth
+                                color={btnSelected.isSelectGen ? 'error' : 'success'}
+                                label={`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}
+                              />
+                            }
+                          />
+                        ),
+                        disabled: false,
+                      },
+                    ]}
+                    menuItems={Object.values(genList).map((_, index) => ({
+                      value: index,
+                      label: (
+                        <>
                           <Checkbox checked={isIncludeList(gen, index)} />
                           <ListItemText primary={`Generation ${index + 1} (${regionList[index + 1]})`} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl className="w-50" sx={{ m: 1 }} size="small">
-                    <InputLabel>Version(s)</InputLabel>
-                    <Select
-                      multiple
-                      value={version}
-                      onChange={handleChangeVersion}
-                      input={<OutlinedInput label="Version(s)" />}
-                      renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
-                      MenuProps={versionProps}
-                    >
-                      <MenuItem disableRipple disableTouchRipple value={-1}>
-                        <ListItemText
-                          primary={
-                            <button
-                              className={combineClasses(
-                                'btn',
-                                btnSelected.isSelectVersion ? 'btn-danger' : 'btn-success'
-                              )}
-                            >{`${btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'}`}</button>
-                          }
-                        />
-                      </MenuItem>
-                      {versionList.map((value, index) => (
-                        <MenuItem key={index} value={index}>
+                        </>
+                      ),
+                    }))}
+                  />
+                  <SelectMui<number[]>
+                    multiple
+                    formClassName="w-50"
+                    formSx={{ m: 1 }}
+                    inputLabel="Version(s)"
+                    value={version}
+                    onChangeSelect={handleChangeVersion}
+                    renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
+                    MenuProps={versionProps}
+                    insertItems={[
+                      {
+                        value: -1,
+                        label: (
+                          <ListItemText
+                            primary={
+                              <ButtonMui
+                                fullWidth
+                                color={btnSelected.isSelectVersion ? 'error' : 'success'}
+                                label={`${btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'}`}
+                              />
+                            }
+                          />
+                        ),
+                      },
+                    ]}
+                    menuItems={Object.values(versionList).map((value, index) => ({
+                      value: index,
+                      label: (
+                        <>
                           <Checkbox checked={isIncludeList(version, index)} />
                           <ListItemText primary={value} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                        </>
+                      ),
+                    }))}
+                  />
                 </div>
                 <div className="input-group border-input">
                   <span className="input-group-text">Filter only by</span>

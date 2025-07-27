@@ -1,5 +1,5 @@
 import { Asset, CryPath, IAsset, ImageModel } from './models/asset.model';
-import { Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
+import { Bonus, Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
 import {
   EvoList,
   EvolutionQuest,
@@ -27,6 +27,7 @@ import {
   capitalize,
   checkMoveSetAvailable,
   convertPokemonDataName,
+  getBonusType,
   getDataWithKey,
   getItemEvolutionType,
   getKeyWithData,
@@ -1073,6 +1074,8 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel):
           setMoveStats(result, move);
         }
 
+        setNonMoveSetting(result, data);
+
         return result;
       });
   }
@@ -1142,6 +1145,24 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel):
     result.accuracyChance = move.accuracyChance;
     result.criticalChance = move.criticalChance;
     result.staminaLossScalar = move.staminaLossScalar;
+  }
+
+  function setNonMoveSetting(result: Combat, data: PokemonDataGM[]) {
+    const item = data.find((item) =>
+      item.templateId.startsWith(`NON_COMBAT_V${result.id.toString().padStart(4, '0')}_MOVE`)
+    );
+    const dataNonCombat = item?.data.nonCombatMoveSettings;
+    if (dataNonCombat) {
+      result.bonus = Bonus.create({
+        cost: dataNonCombat.cost,
+        bonusEffect: dataNonCombat.bonusEffect,
+        durationMs: toNumber(dataNonCombat.durationMs),
+        bonusType: getBonusType(dataNonCombat.bonusType),
+        enableMultiUse: dataNonCombat.enableMultiUse,
+        extraDurationMs: toNumber(dataNonCombat.extraDurationMs),
+        enableNonCombatMove: dataNonCombat.enableNonCombatMove,
+      });
+    }
   }
 
   function processSpecialMoves(data: PokemonDataGM[], moveSet: Combat[], types: ITypeEffectiveModel) {

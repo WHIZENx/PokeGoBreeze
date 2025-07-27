@@ -1,21 +1,16 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
-import APIService from '../../services/api.service';
+import React, { useEffect, useState } from 'react';
 import { leaguesTeamBattle } from '../../utils/constants';
-import { Link } from 'react-router-dom';
 import { PVPInfo } from '../../core/models/pvp.model';
-import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../utils/compute';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { getTime } from '../../utils/utils';
-import { isEqual, isInclude, isNotEmpty } from '../../utils/extension';
-import { EqualMode } from '../../utils/enums/string.enum';
-import { LeagueBattleType } from '../../core/enums/league.enum';
-import { BattleLeagueIconType } from '../../utils/enums/compute.enum';
+import { isEqual, isNotEmpty } from '../../utils/extension';
 import useDataStore from '../../composables/useDataStore';
 import usePVP from '../../composables/usePVP';
 import useSpinner from '../../composables/useSpinner';
 import useTimestamp from '../../composables/useTimestamp';
 import useCombats from '../../composables/useCombats';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
+import ButtonGroupLeague from '../../components/Commons/Buttons/ButtonGroupLeague';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -74,26 +69,6 @@ const PVPHome = () => {
     }
   }, [rank, team, pvpData.rankings, pvpData.trains]);
 
-  const renderLeagueLogo = (logo: string | undefined, cp: number) => {
-    if (
-      !logo ||
-      (logo && isInclude(logo, BattleLeagueIconType.Little)) ||
-      isInclude(logo, BattleLeagueIconType.Great) ||
-      isInclude(logo, BattleLeagueIconType.Ultra) ||
-      isInclude(logo, BattleLeagueIconType.Master)
-    ) {
-      return getPokemonBattleLeagueIcon(cp);
-    }
-    return APIService.getAssetPokeGo(logo);
-  };
-
-  const renderLeagueName = (name: string, cp: number) => {
-    if (isEqual(name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
-      return getPokemonBattleLeagueName(cp);
-    }
-    return name;
-  };
-
   const renderLoading = () => {
     return (
       <div className="overflow-x-hidden">
@@ -127,120 +102,70 @@ const PVPHome = () => {
       </p>
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Rank Pokémon Leagues</h1>
-        <Form.Select
-          className="w-25 form-control h-fit-content"
+        <SelectMui
+          formClassName="w-25"
           value={rank?.id}
-          onChange={(e) =>
+          onChangeSelect={(value) =>
             setOptions(
               OptionsHome.create({
                 ...options,
-                rank: pvpData.rankings.find((item) => isEqual(item.id, e.target.value)),
+                rank: pvpData.rankings.find((item) => isEqual(item.id, value)),
               })
             )
           }
-        >
-          {pvpData.rankings.map((value, index) => (
-            <option key={index} value={value.id}>
-              {value.name}
-            </option>
-          ))}
-        </Form.Select>
+          menuItems={pvpData.rankings.map((value) => ({
+            value: value.id,
+            label: value.name,
+          }))}
+        />
       </div>
-      {rank ? (
-        <div className="group-selected">
-          {rank.cp.map((value, index) => (
-            <Link key={index} to={`/pvp/rankings/${rank.id}/${value}`}>
-              <Button className="btn btn-form" style={{ height: 200 }}>
-                <img
-                  alt="Image League"
-                  title={renderLeagueName(rank.name, value)}
-                  width={128}
-                  height={128}
-                  src={renderLeagueLogo(rank.logo, value)}
-                />
-                <div>
-                  <b>{renderLeagueName(rank.name, value)}</b>
-                </div>
-                <span className="text-danger">CP below {value}</span>
-              </Button>
-            </Link>
-          ))}
-        </div>
-      ) : (
-        renderLoading()
-      )}
+      <ButtonGroupLeague
+        height={200}
+        leagues={rank?.cp}
+        isLoaded={!!rank}
+        loading={renderLoading()}
+        data={rank}
+        path="rankings"
+      />
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Teams Pokémon Leagues</h1>
-        <Form.Select
-          className="w-25 form-control h-fit-content"
+        <SelectMui
+          formClassName="w-25"
           value={team?.id}
-          onChange={(e) =>
+          onChangeSelect={(value) =>
             setOptions(
               OptionsHome.create({
                 ...options,
-                team: pvpData.trains.find((item) => isEqual(item.id, e.target.value)),
+                team: pvpData.trains.find((item) => isEqual(item.id, value)),
               })
             )
           }
-        >
-          {pvpData.trains.map((value, index) => (
-            <option key={index} value={value.id}>
-              {value.name}
-            </option>
-          ))}
-        </Form.Select>
+          menuItems={pvpData.trains.map((value) => ({
+            value: value.id,
+            label: value.name,
+          }))}
+        />
       </div>
-      {team ? (
-        <div className="group-selected">
-          {team.cp.map((value, index) => (
-            <Link key={index} to={`/pvp/teams/${team.id}/${value}`}>
-              <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                <img
-                  alt="Image League"
-                  title={renderLeagueName(team.name, value)}
-                  width={128}
-                  height={128}
-                  src={renderLeagueLogo(team.logo, value)}
-                />
-                <div>
-                  <b>{renderLeagueName(team.name, value)}</b>
-                </div>
-                <span className="text-danger">CP below {value}</span>
-              </Button>
-            </Link>
-          ))}
-        </div>
-      ) : (
-        renderLoading()
-      )}
+      <ButtonGroupLeague
+        height={200}
+        leagues={team?.cp}
+        isLoaded={!!team}
+        loading={renderLoading()}
+        data={team}
+        path="teams"
+      />
       <h1>
         Battle League Simulator <span className="d-inline-block caption text-danger">(Beta Test)</span>
       </h1>
-      <div className="group-selected">
-        {leaguesTeamBattle
+      <ButtonGroupLeague
+        height={200}
+        leagues={leaguesTeamBattle
           .filter((value) => value.cp.length > 0)
-          .map((value, i) => (
-            <Fragment key={i}>
-              {value.cp.map((cp, index) => (
-                <Link key={index} to={`/pvp/battle/${cp}`}>
-                  <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                    <img
-                      alt="Image League"
-                      title={value.name}
-                      width={128}
-                      height={128}
-                      src={value.logo ?? getPokemonBattleLeagueIcon(cp)}
-                    />
-                    <div>
-                      <b>{value.name}</b>
-                    </div>
-                    <span className="text-danger">CP below {cp}</span>
-                  </Button>
-                </Link>
-              ))}
-            </Fragment>
-          ))}
-      </div>
+          .map((value) => value.cp)
+          .flat()}
+        isLoaded={true}
+        path="battle"
+      />
     </div>
   );
 };

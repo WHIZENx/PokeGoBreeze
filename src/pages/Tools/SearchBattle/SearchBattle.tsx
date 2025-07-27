@@ -29,7 +29,7 @@ import {
   IQueryStatesEvoChain,
   StatsCalculate,
 } from '../../../utils/models/calculate.model';
-import DynamicInputCP from '../../../components/Input/DynamicInputCP';
+import DynamicInputCP from '../../../components/Commons/Inputs/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import {
@@ -48,13 +48,14 @@ import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import useCalculate from '../../../composables/useCalculate';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 const FindBattle = () => {
   useTitle({
@@ -471,9 +472,7 @@ const FindBattle = () => {
           </Box>
         </div>
         <div className="form-group d-flex justify-content-center text-center mt-2">
-          <button type="submit" className="btn btn-primary">
-            Search
-          </button>
+          <ButtonMui type="submit" label="Search" />
         </div>
       </form>
       <Fragment>

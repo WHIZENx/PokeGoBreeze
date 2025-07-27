@@ -27,7 +27,7 @@ import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/informa
 import { PokemonModelComponent } from '../../components/Info/Assets/models/pokemon-model.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
-import { LinkToTop } from '../../components/LinkToTop';
+import { LinkToTop } from '../../components/Link/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import { useDataStore } from '../../composables/useDataStore';
@@ -263,14 +263,13 @@ const News = () => {
                           <div className="d-flex align-items-center flex-end">
                             <div
                               className={combineClasses(
-                                'p-1 rounded-1',
+                                'p-1 rounded-1 u-fs-3',
                                 value.eventType === DateEvent.End
                                   ? 'info-event-ending'
                                   : DateEvent.Progressing
                                   ? 'info-event-progress'
                                   : 'info-event-future'
                               )}
-                              style={{ fontSize: 14 }}
                             >
                               <b>{getKeyWithData(DateEvent, value.eventType)}</b>
                             </div>

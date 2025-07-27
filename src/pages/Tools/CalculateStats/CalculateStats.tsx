@@ -30,7 +30,7 @@ import Find from '../../../components/Find/Find';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
-import DynamicInputCP from '../../../components/Input/DynamicInputCP';
+import DynamicInputCP from '../../../components/Commons/Inputs/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { isUndefined, toNumber } from '../../../utils/extension';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
@@ -39,6 +39,7 @@ import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 
 const Calculate = () => {
   useTitle({
@@ -347,9 +348,7 @@ const Calculate = () => {
             </TypeRadioGroup>
           </div>
           <div className="form-group d-flex justify-content-center text-center mt-2">
-            <button type="submit" className="btn btn-primary">
-              Calculate
-            </button>
+            <ButtonMui type="submit" label="Calculate" />
           </div>
         </form>
         <div>

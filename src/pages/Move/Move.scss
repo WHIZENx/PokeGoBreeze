@@ -59,6 +59,8 @@ h1.text-move {
   box-shadow: none;
   padding: 5px 10px;
   font-size: 1rem;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 
   span {
     width: 100%;

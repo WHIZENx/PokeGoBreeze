@@ -21,7 +21,7 @@ const Spinner = () => {
                 alt="Pokémon Image"
                 src={loading}
               />
-              <span className="caption text-white text-shadow-black" style={{ fontSize: 18 }}>
+              <span className="caption text-white text-shadow-black u-fs-3">
                 <b>
                   {spinnerIsError ? (
                     <Fragment>

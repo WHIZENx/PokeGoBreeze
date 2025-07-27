@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
-import { getValueOrDefault, isNotEmpty, toNumber } from '../../utils/extension';
+import { getValueOrDefault, isNotEmpty } from '../../utils/extension';
 import { getItemSpritePath, splitAndCapitalize } from '../../utils/utils';
 
 import './Trainer.scss';
 import { AwardItem } from '../../core/models/trainer.model';
 import useDataStore from '../../composables/useDataStore';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
 
 interface TrainerLevelUp {
   levelUps: AwardItem[];
@@ -33,13 +33,15 @@ const Trainer = () => {
       <h2 className="title-leagues mb-3">Trainer</h2>
       <hr />
       <div>
-        <Form.Select onChange={(e) => setLevel(toNumber(e.target.value))} defaultValue={level}>
-          {trainersData.map((value, index) => (
-            <option key={index} value={value.level}>
-              Level {value.level}
-            </option>
-          ))}
-        </Form.Select>
+        <SelectMui
+          formSx={{ width: 200 }}
+          value={level}
+          onChangeSelect={(value) => setLevel(value)}
+          menuItems={trainersData.map((value) => ({
+            value: value.level,
+            label: `Level ${value.level}`,
+          }))}
+        />
       </div>
       {data && (
         <>
