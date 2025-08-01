@@ -692,6 +692,7 @@ const Leagues = () => {
       </div>
       <AccordionMui
         isShowAction
+        alwaysOpen
         items={leagueFilter.map((value) => {
           return {
             label: renderHeader(value),
