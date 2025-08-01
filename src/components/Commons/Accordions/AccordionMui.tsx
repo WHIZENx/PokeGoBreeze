@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AccordionActions, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
@@ -9,6 +9,7 @@ import { AccordionMuiComponent } from '../models/component.model';
 import { combineClasses } from '../../../utils/extension';
 import ButtonMui from '../Buttons/ButtonMui';
 import CloseIcon from '@mui/icons-material/Close';
+import update from 'immutability-helper';
 
 interface IAccordionSummaryProps extends AccordionSummaryProps {
   hideIcon?: boolean;
@@ -47,15 +48,23 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
-  const [expanded, setExpanded] = React.useState<T>();
+  const [expanded, setExpanded] = useState<T>();
+  const [storeStats, setStoreStats] = useState<boolean[]>();
 
   useEffect(() => {
     setExpanded(props.defaultValue);
   }, [props.defaultValue]);
 
+  useEffect(() => {
+    setStoreStats([...Array(props.items?.length || 0).keys()].map(() => false));
+  }, [props.items]);
+
   const handleChange = (panel: T | undefined, index: number) => (_: React.SyntheticEvent, isExpanded: boolean) => {
     const result = isExpanded ? panel : undefined;
     setExpanded(result);
+    if (storeStats && !storeStats[index]) {
+      setStoreStats(update(storeStats, { [index]: { $set: true } }));
+    }
     props.onChange?.(result, index);
   };
 
@@ -71,17 +80,21 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
           <AccordionSummary sx={item.sxSummary} aria-controls={`panel-bh-content-${index}`} id={`panel-bh-header-${index}`} hideIcon={item.hideIcon}>
             {item.label}
           </AccordionSummary>
-          <AccordionDetails sx={{ bgcolor: 'background.default', ...(item.noPadding ? { p: 0 } : {}), ...(item.sxDetails ? item.sxDetails : {}) }}>
-            {item.children}
-          </AccordionDetails>
-          {(item.footer || props.isShowAction) && (
-            <AccordionActions sx={item.sxFooter}>
-              {item.footer ? (
-                item.footer
-              ) : props.isShowAction ? (
-                <ButtonMui variant="outlined" label="Close" endIcon={<CloseIcon color="error" />} onClick={() => setExpanded(undefined)} />
-              ) : null}
-            </AccordionActions>
+          {storeStats && storeStats[index] && (
+            <>
+              <AccordionDetails sx={{ bgcolor: 'background.default', ...(item.noPadding ? { p: 0 } : {}), ...(item.sxDetails ? item.sxDetails : {}) }}>
+                {item.children}
+              </AccordionDetails>
+              {(item.footer || props.isShowAction) && (
+                <AccordionActions sx={item.sxFooter}>
+                  {item.footer ? (
+                    item.footer
+                  ) : props.isShowAction ? (
+                    <ButtonMui variant="outlined" label="Close" endIcon={<CloseIcon color="error" />} onClick={() => setExpanded(undefined)} />
+                  ) : null}
+                </AccordionActions>
+              )}
+            </>
           )}
         </Accordion>
       ))}

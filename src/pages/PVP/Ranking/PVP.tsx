@@ -15,7 +15,6 @@ import { calculateStatsByTag } from '../../../utils/calculate';
 import APIService from '../../../services/api.service';
 import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 
-import update from 'immutability-helper';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -83,7 +82,6 @@ const RankingPVP = (props: IStyleSheetData) => {
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<IPokemonBattleRanking[]>([]);
-  const [storeStats, setStoreStats] = useState<boolean[]>();
   const sortedBy = useRef(SortType.Score);
   const [sorted, setSorted] = useState(SortDirectionType.DESC);
 
@@ -224,7 +222,6 @@ const RankingPVP = (props: IStyleSheetData) => {
           });
         });
         setRankingData(filePVP);
-        setStoreStats([...Array(filePVP.length).keys()].map(() => false));
         hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
@@ -415,11 +412,6 @@ const RankingPVP = (props: IStyleSheetData) => {
           </div>
           <AccordionMui
             isShowAction
-            onChange={(_, index) => {
-              if (storeStats && !storeStats[index]) {
-                setStoreStats(update(storeStats, { [index]: { $set: true } }));
-              }
-            }}
             items={rankingData
               .filter(
                 (pokemon) =>
@@ -436,7 +428,7 @@ const RankingPVP = (props: IStyleSheetData) => {
               .map((item, index) => ({
                 value: index,
                 label: renderHeader(item),
-                children: storeStats && storeStats[index] && renderBody(item),
+                children: renderBody(item),
                 sxDetails: {
                   backgroundImage: computeBgType(item.pokemon?.types, item.pokemonType, props.styleSheet, 0.3),
                 },

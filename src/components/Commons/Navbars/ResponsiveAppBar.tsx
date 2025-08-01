@@ -59,6 +59,10 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         (page) => isEqual(page.path, pathName) || page.subMenus?.some((subMenu) => isEqual(subMenu.path, pathName))
       );
       setCurrentPage(value?.value?.toString() || POKEDEX);
+      if (isNotEmpty(value?.subMenus)) {
+        const subValue = value?.subMenus?.find((subMenu) => isEqual(subMenu.path, pathName));
+        setCurrentPageSub(subValue?.value?.toString() || '');
+      }
     }
   }, [router.routerLocation]);
 
@@ -91,6 +95,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
       setShowMenu(true);
     } else {
       setTimeout(() => navigateToTop(page.path || '/'), 100);
+      setCurrentPageSub('');
     }
   };
 
