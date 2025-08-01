@@ -423,10 +423,14 @@ export interface IMenuItemComponent<T> {
   index: number;
 }
 
-export interface ITab {
+interface IDefaultOption<T> {
   label?: string | React.ReactNode;
-  value?: number;
+  value?: T;
   children?: React.ReactNode;
+  noPadding?: boolean;
+}
+
+export interface ITab extends IDefaultOption<number> {
   tabValue?: number;
 }
 
@@ -434,4 +438,22 @@ export interface TabPanelComponent {
   defaultValue?: number;
   className?: string;
   tabs: ITab[];
+}
+
+interface IIDefaultOptionAccordion<T> extends IDefaultOption<T> {
+  hideIcon?: boolean;
+  footer?: React.ReactNode;
+  sxHeader?: SxProps<Theme>;
+  sxSummary?: SxProps<Theme>;
+  sxDetails?: SxProps<Theme>;
+  sxFooter?: SxProps<Theme>;
+}
+
+export interface AccordionMuiComponent<T> {
+  defaultValue?: T;
+  className?: string;
+  isShowAction?: boolean;
+  alwaysOpen?: 'always' | 'reset';
+  onChange?: (value: T | undefined, index: number) => void;
+  items: IIDefaultOptionAccordion<T>[] | undefined;
 }

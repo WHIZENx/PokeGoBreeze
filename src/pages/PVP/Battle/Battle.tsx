@@ -13,7 +13,6 @@ import {
 } from '../../../utils/utils';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
-import { Accordion, Card, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
@@ -42,7 +41,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
-import { BattlePokemonData, IBattlePokemonData, RankingsPVP, Toggle } from '../../../core/models/pvp.model';
+import { BattlePokemonData, IBattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
 import { ICombat } from '../../../core/models/combat.model';
 import {
   IPokemonBattleData,
@@ -100,6 +99,7 @@ import useDevice from '../../../composables/useDevice';
 import InputMui from '../../../components/Commons/Inputs/InputMui';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -810,192 +810,197 @@ const Battle = () => {
   ) => {
     const battleType = getKeyWithData(BattleType, type);
     return (
-      <Accordion defaultActiveKey={[]} alwaysOpen>
-        <Accordion.Item eventKey="0">
-          <Accordion.Header>Information</Accordion.Header>
-          <Accordion.Body>
-            <div className="w-100 d-flex justify-content-center">
-              <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
-                  <img
-                    alt="Image League"
-                    className="pokemon-sprite-raid"
-                    src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = getValidPokemonImgPath(
-                        e.currentTarget.src,
-                        pokemon.pokemonData?.id,
-                        pokemon.pokemonData?.form
-                      );
+      <AccordionMui
+        items={[
+          {
+            value: 0,
+            label: 'Information',
+            children: (
+              <>
+                <div className="w-100 d-flex justify-content-center">
+                  <div className="position-relative filter-shadow" style={{ width: 128 }}>
+                    <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
+                      <img
+                        alt="Image League"
+                        className="pokemon-sprite-raid"
+                        src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = getValidPokemonImgPath(
+                            e.currentTarget.src,
+                            pokemon.pokemonData?.id,
+                            pokemon.pokemonData?.form
+                          );
+                        }}
+                      />
+                    </PokemonIconType>
+                  </div>
+                </div>
+                <div className="w-100 d-flex justify-content-center align-items-center gap-1">
+                  <LinkToTop
+                    to={`/pvp/${params.cp}/all/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}?${
+                      Params.LeagueType
+                    }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
+                  >
+                    <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
+                  </LinkToTop>
+                  <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
+                </div>
+                <h6>
+                  <b>Stats</b>
+                </h6>
+                CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | {'Level: '}
+                <b>{pokemon.pokemonData?.currentStats?.level ?? minLevel()}</b>
+                <br />
+                {'IV: '}
+                <b>
+                  {toNumber(pokemon.pokemonData?.currentStats?.IV?.atkIV)}/
+                  {toNumber(pokemon.pokemonData?.currentStats?.IV?.defIV)}/
+                  {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
+                </b>
+                <br />
+                <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
+                {'Attack: '}
+                <b>
+                  {Math.floor(
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
+                      getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk)
+                  )}
+                </b>
+                <br />
+                <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
+                {'Defense: '}
+                <b>
+                  {Math.floor(
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
+                      getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Def)
+                  )}
+                </b>
+                <br />
+                <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
+                HP: <b>{toNumber(Math.round(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
+                <br />
+                {'Stats Prod: '}
+                <b>
+                  {Math.round(
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
+                      toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
+                      toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA) *
+                      getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Prod)
+                  )}
+                </b>
+                <br />
+                <form
+                  className="mt-2"
+                  onSubmit={(e) => {
+                    calculateStatPokemon(e, type, pokemon, setPokemon);
+                  }}
+                >
+                  <InputMui
+                    labelPrepend="Level"
+                    defaultValue={pokemon.pokemonData?.currentStats?.level}
+                    inputProps={{
+                      type: 'number',
+                      min: minLevel(),
+                      max: maxLevel(),
+                      step: stepLevel(),
+                      required: true,
                     }}
+                    placeholder="Enter Level"
+                    id={`level${battleType}`}
+                    fullWidth
                   />
-                </PokemonIconType>
-              </div>
-            </div>
-            <div className="w-100 d-flex justify-content-center align-items-center gap-1">
-              <LinkToTop
-                to={`/pvp/${params.cp}/all/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}?${
-                  Params.LeagueType
-                }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
-              >
-                <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
-              </LinkToTop>
-              <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
-            </div>
-            <h6>
-              <b>Stats</b>
-            </h6>
-            CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | {'Level: '}
-            <b>{pokemon.pokemonData?.currentStats?.level ?? minLevel()}</b>
-            <br />
-            {'IV: '}
-            <b>
-              {toNumber(pokemon.pokemonData?.currentStats?.IV?.atkIV)}/
-              {toNumber(pokemon.pokemonData?.currentStats?.IV?.defIV)}/
-              {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
-            </b>
-            <br />
-            <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
-            {'Attack: '}
-            <b>
-              {Math.floor(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
-                  getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk)
-              )}
-            </b>
-            <br />
-            <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
-            {'Defense: '}
-            <b>
-              {Math.floor(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
-                  getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Def)
-              )}
-            </b>
-            <br />
-            <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
-            HP: <b>{toNumber(Math.round(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
-            <br />
-            {'Stats Prod: '}
-            <b>
-              {Math.round(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
-                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
-                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA) *
-                  getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Prod)
-              )}
-            </b>
-            <br />
-            <form
-              className="mt-2"
-              onSubmit={(e) => {
-                calculateStatPokemon(e, type, pokemon, setPokemon);
-              }}
-            >
-              <InputMui
-                labelPrepend="Level"
-                defaultValue={pokemon.pokemonData?.currentStats?.level}
-                inputProps={{
-                  type: 'number',
-                  min: minLevel(),
-                  max: maxLevel(),
-                  step: stepLevel(),
-                  required: true,
-                }}
-                placeholder="Enter Level"
-                id={`level${battleType}`}
-                fullWidth
-              />
-              <InputMui
-                labelPrepend="Attack IV"
-                defaultValue={pokemon.pokemonData?.currentStats?.IV?.atkIV}
-                inputProps={{
-                  type: 'number',
-                  min: minIv(),
-                  max: maxIv(),
-                  required: true,
-                }}
-                placeholder="Enter Attack IV"
-                id={`atkIV${battleType}`}
-                fullWidth
-              />
-              <InputMui
-                labelPrepend="Defense IV"
-                defaultValue={pokemon.pokemonData?.currentStats?.IV?.defIV}
-                inputProps={{
-                  type: 'number',
-                  min: minIv(),
-                  max: maxIv(),
-                  required: true,
-                }}
-                placeholder="Enter Defense IV"
-                id={`defIV${battleType}`}
-                fullWidth
-              />
-              <InputMui
-                labelPrepend="HP IV"
-                defaultValue={pokemon.pokemonData?.currentStats?.IV?.staIV}
-                inputProps={{
-                  type: 'number',
-                  min: minIv(),
-                  max: maxIv(),
-                  required: true,
-                }}
-                placeholder="Enter HP IV"
-                id={`hpIV${battleType}`}
-                fullWidth
-              />
-              <div className="w-100 mt-2">
-                <ButtonMui type="submit" color="success" fullWidth label="Calculate Stats" />
-              </div>
-            </form>
-            <div className="w-100 mt-2">
-              <ButtonMui
-                fullWidth
-                color="primary"
-                onClick={() => onSetStats(type, pokemon, setPokemon, true)}
-                label="Set Random Stats"
-              />
-            </div>
-            <div className="w-100 mt-2">
-              <ButtonMui
-                fullWidth
-                color="primary"
-                onClick={() => onSetStats(type, pokemon, setPokemon)}
-                label="Set Best Stats"
-              />
-            </div>
-            <hr />
-            <TypeBadge
-              isFind
-              title="Fast Move"
-              move={pokemon.fMove}
-              moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
-            />
-            <div className="d-flex w-100 position-relative column-gap-2">
-              <TypeBadge
-                isFind
-                title="Primary Charged Move"
-                move={pokemon.cMovePri}
-                moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMovePri?.name)}
-              />
-              {findBuff(pokemon.cMovePri)}
-            </div>
-            {pokemon.cMoveSec && (
-              <div className="d-flex w-100 position-relative column-gap-2">
+                  <InputMui
+                    labelPrepend="Attack IV"
+                    defaultValue={pokemon.pokemonData?.currentStats?.IV?.atkIV}
+                    inputProps={{
+                      type: 'number',
+                      min: minIv(),
+                      max: maxIv(),
+                      required: true,
+                    }}
+                    placeholder="Enter Attack IV"
+                    id={`atkIV${battleType}`}
+                    fullWidth
+                  />
+                  <InputMui
+                    labelPrepend="Defense IV"
+                    defaultValue={pokemon.pokemonData?.currentStats?.IV?.defIV}
+                    inputProps={{
+                      type: 'number',
+                      min: minIv(),
+                      max: maxIv(),
+                      required: true,
+                    }}
+                    placeholder="Enter Defense IV"
+                    id={`defIV${battleType}`}
+                    fullWidth
+                  />
+                  <InputMui
+                    labelPrepend="HP IV"
+                    defaultValue={pokemon.pokemonData?.currentStats?.IV?.staIV}
+                    inputProps={{
+                      type: 'number',
+                      min: minIv(),
+                      max: maxIv(),
+                      required: true,
+                    }}
+                    placeholder="Enter HP IV"
+                    id={`hpIV${battleType}`}
+                    fullWidth
+                  />
+                  <div className="w-100 mt-2">
+                    <ButtonMui type="submit" color="success" fullWidth label="Calculate Stats" />
+                  </div>
+                </form>
+                <div className="w-100 mt-2">
+                  <ButtonMui
+                    fullWidth
+                    color="primary"
+                    onClick={() => onSetStats(type, pokemon, setPokemon, true)}
+                    label="Set Random Stats"
+                  />
+                </div>
+                <div className="w-100 mt-2">
+                  <ButtonMui
+                    fullWidth
+                    color="primary"
+                    onClick={() => onSetStats(type, pokemon, setPokemon)}
+                    label="Set Best Stats"
+                  />
+                </div>
+                <hr />
                 <TypeBadge
                   isFind
-                  title="Secondary Charged Move"
-                  move={pokemon.cMoveSec}
-                  moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMoveSec.name)}
+                  title="Fast Move"
+                  move={pokemon.fMove}
+                  moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
                 />
-                {findBuff(pokemon.cMoveSec)}
-              </div>
-            )}
-          </Accordion.Body>
-        </Accordion.Item>
-      </Accordion>
+                <div className="d-flex w-100 position-relative column-gap-2">
+                  <TypeBadge
+                    isFind
+                    title="Primary Charged Move"
+                    move={pokemon.cMovePri}
+                    moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMovePri?.name)}
+                  />
+                  {findBuff(pokemon.cMovePri)}
+                </div>
+                {pokemon.cMoveSec && (
+                  <div className="d-flex w-100 position-relative column-gap-2">
+                    <TypeBadge
+                      isFind
+                      title="Secondary Charged Move"
+                      move={pokemon.cMoveSec}
+                      moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMoveSec.name)}
+                    />
+                    {findBuff(pokemon.cMoveSec)}
+                  </div>
+                )}
+              </>
+            ),
+          },
+        ]}
+      />
     );
   };
 
@@ -1169,19 +1174,67 @@ const Battle = () => {
     );
   };
 
-  const CustomToggle = (props: Toggle) => {
-    const decoratedOnClick = useAccordionButton(props.eventKey);
+  const CustomToggle = () => (
+    <div className="btn-collapse-battle">
+      {openBattle ? (
+        <RemoveCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="error" />
+      ) : (
+        <AddCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="primary" />
+      )}
+    </div>
+  );
 
-    return (
-      <div className="btn-collapse-battle" onClick={decoratedOnClick}>
-        {openBattle ? (
-          <RemoveCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="error" />
-        ) : (
-          <AddCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="primary" />
-        )}
+  const renderHeader = (pokemonCurr: PokemonBattle, pokemonObj: PokemonBattle) => (
+    <div className="position-relative w-100">
+      <div className="d-flex timeline-vertical">
+        <div className="w-50">
+          <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start gap-2">
+            <div className="position-relative filter-shadow" style={{ width: 35 }}>
+              <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
+                <img
+                  alt="Image League"
+                  className="sprite-type"
+                  src={APIService.getPokemonModel(pokemonCurr.pokemonData?.form, pokemonCurr.pokemonData?.id)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getValidPokemonImgPath(
+                      e.currentTarget.src,
+                      pokemonCurr.pokemonData?.id,
+                      pokemonCurr.pokemonData?.form
+                    );
+                  }}
+                />
+              </PokemonIconType>
+            </div>
+            <b>{splitAndCapitalize(pokemonCurr.pokemonData?.name, '-', ' ')}</b>
+          </div>
+        </div>
+        <div className="w-50">
+          <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end gap-2">
+            <div className="position-relative filter-shadow" style={{ width: 35 }}>
+              <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
+                <img
+                  alt="Image League"
+                  className="sprite-type"
+                  src={APIService.getPokemonModel(pokemonObj.pokemonData?.form, pokemonObj.pokemonData?.id)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getValidPokemonImgPath(
+                      e.currentTarget.src,
+                      pokemonObj.pokemonData?.id,
+                      pokemonObj.pokemonData?.form
+                    );
+                  }}
+                />
+              </PokemonIconType>
+            </div>
+            <b>{splitAndCapitalize(pokemonObj.pokemonData?.name, '-', ' ')}</b>
+          </div>
+        </div>
       </div>
-    );
-  };
+      <CustomToggle />
+    </div>
+  );
 
   return (
     <Error isError={!isFound}>
@@ -1200,7 +1253,7 @@ const Battle = () => {
             { value: BattleLeagueCPType.InsMaster, label: getPokemonBattleLeagueName(BattleLeagueCPType.InsMaster) },
           ]}
         />
-        <div className="row mt-2 m-0">
+        <div className="row mt-4 m-0">
           <div className="col-lg-3">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
           </div>
@@ -1210,68 +1263,21 @@ const Battle = () => {
               isNotEmpty(pokemonCurr.timeline) &&
               isNotEmpty(pokemonObj.timeline) && (
                 <Fragment>
-                  <Accordion defaultActiveKey={[]}>
-                    <Card className="position-relative">
-                      <Card.Header className="p-0">
-                        <div className="d-flex timeline-vertical">
-                          <div className="w-50">
-                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start gap-2">
-                              <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                                <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
-                                  <img
-                                    alt="Image League"
-                                    className="sprite-type"
-                                    src={APIService.getPokemonModel(
-                                      pokemonCurr.pokemonData.form,
-                                      pokemonCurr.pokemonData.id
-                                    )}
-                                    onError={(e) => {
-                                      e.currentTarget.onerror = null;
-                                      e.currentTarget.src = getValidPokemonImgPath(
-                                        e.currentTarget.src,
-                                        pokemonCurr.pokemonData?.id,
-                                        pokemonCurr.pokemonData?.form
-                                      );
-                                    }}
-                                  />
-                                </PokemonIconType>
-                              </div>
-                              <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
-                            </div>
-                          </div>
-                          <div className="w-50">
-                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end gap-2">
-                              <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                                <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
-                                  <img
-                                    alt="Image League"
-                                    className="sprite-type"
-                                    src={APIService.getPokemonModel(
-                                      pokemonObj.pokemonData.form,
-                                      pokemonObj.pokemonData.id
-                                    )}
-                                    onError={(e) => {
-                                      e.currentTarget.onerror = null;
-                                      e.currentTarget.src = getValidPokemonImgPath(
-                                        e.currentTarget.src,
-                                        pokemonObj.pokemonData?.id,
-                                        pokemonObj.pokemonData?.form
-                                      );
-                                    }}
-                                  />
-                                </PokemonIconType>
-                              </div>
-                              <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>
-                            </div>
-                          </div>
-                        </div>
-                        <CustomToggle eventKey="0" />
-                      </Card.Header>
-                      <Accordion.Collapse eventKey="0">
-                        <Card.Body className="p-0">{TimelineVertical(pokemonCurr, pokemonObj)}</Card.Body>
-                      </Accordion.Collapse>
-                    </Card>
-                  </Accordion>
+                  <AccordionMui
+                    onChange={(value) => {
+                      setOpenBattle(value === 0);
+                    }}
+                    items={[
+                      {
+                        sxSummary: { p: 0, '& .MuiAccordionSummary-content': { m: 0 } },
+                        noPadding: true,
+                        hideIcon: true,
+                        value: 0,
+                        label: renderHeader(pokemonCurr, pokemonObj),
+                        children: TimelineVertical(pokemonCurr, pokemonObj),
+                      },
+                    ]}
+                  />
                   <div>
                     {timelineType === TimelineType.Normal ? (
                       <Fragment>

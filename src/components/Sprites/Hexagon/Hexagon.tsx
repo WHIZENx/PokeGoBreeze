@@ -146,45 +146,47 @@ const Hexagon = (props: IHexagonComponent) => {
     );
   };
 
+  const animationStatsRef = useRef({ ...defaultStats });
+  const animateId = useRef<number>();
+
   useEffect(() => {
-    if (props.name && props.animation === AnimationType.On) {
-      setDefaultStats(new HexagonStats());
-    } else {
+    if (!props.animation) {
       setDefaultStats(props.defaultStats ?? props.stats ?? new HexagonStats());
     }
-  }, [props.name, props.animation, props.defaultStats, props.stats]);
+  }, [props.defaultStats, props.stats, props.animation]);
 
   useEffect(() => {
+    animationStatsRef.current = { ...defaultStats };
+
     if (props.animation === AnimationType.On) {
       animateId.current = requestAnimationFrame(function animate() {
-        setDefaultStats(
-          HexagonStats.render({
-            lead: loop(props.animation, defaultStats.lead, props.stats?.lead),
-            charger: loop(props.animation, defaultStats.charger, props.stats?.charger),
-            closer: loop(props.animation, defaultStats.closer, props.stats?.closer),
-            cons: loop(props.animation, defaultStats.cons, props.stats?.cons),
-            atk: loop(props.animation, defaultStats.atk, props.stats?.atk),
-            switching: loop(props.animation, defaultStats.switching, props.stats?.switching),
-          })
-        );
-        animateId.current = requestAnimationFrame(animate);
+        animationStatsRef.current = HexagonStats.render({
+          lead: loop(props.animation, animationStatsRef.current.lead, props.stats?.lead),
+          charger: loop(props.animation, animationStatsRef.current.charger, props.stats?.charger),
+          closer: loop(props.animation, animationStatsRef.current.closer, props.stats?.closer),
+          cons: loop(props.animation, animationStatsRef.current.cons, props.stats?.cons),
+          atk: loop(props.animation, animationStatsRef.current.atk, props.stats?.atk),
+          switching: loop(props.animation, animationStatsRef.current.switching, props.stats?.switching),
+        });
+
+        drawHexagon(animationStatsRef.current);
+
+        if (!equalStats(animationStatsRef.current)) {
+          animateId.current = requestAnimationFrame(animate);
+        }
       });
+    } else {
+      drawHexagon(props.stats ?? defaultStats ?? new HexagonStats());
     }
 
-    if (!equalStats(defaultStats)) {
-      drawHexagon(defaultStats);
-    } else {
-      drawHexagon(props.stats ?? new HexagonStats());
-    }
     return () => {
-      if (props.animation === AnimationType.On && animateId.current) {
+      if (animateId.current) {
         cancelAnimationFrame(animateId.current);
         animateId.current = undefined;
       }
     };
-  }, [drawHexagon, defaultStats, props.animation, props.stats]);
+  }, [drawHexagon, props.animation, props.stats]);
 
-  const animateId = useRef<number>();
   const onPlayAnimation = () => {
     if (animateId.current) {
       cancelAnimationFrame(animateId.current);

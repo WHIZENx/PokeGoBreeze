@@ -14,7 +14,6 @@ import {
 } from '../../../utils/utils';
 import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateStatsByTag } from '../../../utils/calculate';
-import { Accordion } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
@@ -58,6 +57,7 @@ import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
+import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const { pvpData } = useDataStore();
@@ -317,13 +317,125 @@ const TeamPVP = (props: IStyleSheetData) => {
       : a[sortedColumn] - b[sortedColumn];
   };
 
+  const renderHeader = (value: Teams) => (
+    <div className="d-flex align-items-center w-100 justify-content-between gap-3">
+      <div className="d-flex gap-3">
+        {value.teamsData.map((value, index) => (
+          <div className="text-center" key={index}>
+            <div className="d-flex justify-content-center">
+              <div className="position-relative filter-shadow" style={{ width: 96 }}>
+                <PokemonIconType pokemonType={value.pokemonType} size={48}>
+                  <img
+                    alt="Image League"
+                    className="pokemon-sprite"
+                    src={APIService.getPokemonModel(value.form, value.id)}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                    }}
+                  />
+                </PokemonIconType>
+              </div>
+            </div>
+            <b className="theme-text-primary">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
+          </div>
+        ))}
+      </div>
+      <div className="d-flex align-items-center me-3" style={{ columnGap: 30 }}>
+        <div className="text-center" style={{ width: 200 }}>
+          <span className="ranking-score score-ic text-black">{value.teamScore}</span>
+        </div>
+        <div className="text-center ranking-score score-ic text-black w-fit-content">
+          {toFloatWithPadding((value.games * 100) / value.teamsTotalGames, 2)}
+          <span className="caption text-black">
+            {value.games}/{value.teamsTotalGames}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderBody = (value: Teams) => (
+    <Fragment>
+      {value.teamsData.map((value, index) => (
+        <div
+          className="d-flex align-items-center p-3 gap-3"
+          key={index}
+          style={{
+            backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, props.styleSheet, 0.3),
+          }}
+        >
+          <LinkToTop
+            to={`/pvp/${params.cp}/${LeagueBattleType.All}/${value.speciesId.replaceAll('_', '-')}?${
+              Params.LeagueType
+            }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
+          >
+            <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
+          </LinkToTop>
+          <div className="d-flex justify-content-center">
+            <div className="position-relative filter-shadow" style={{ width: 96 }}>
+              <PokemonIconType pokemonType={value.pokemonType} size={48}>
+                <img
+                  alt="Image League"
+                  className="pokemon-sprite"
+                  src={APIService.getPokemonModel(value.form, value.id)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                  }}
+                />
+              </PokemonIconType>
+            </div>
+          </div>
+          <div className="ranking-group">
+            <div>
+              <div className="d-flex align-items-center column-gap-2">
+                <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
+                  value.name,
+                  '-',
+                  ' '
+                )}`}</b>
+                <TypeInfo isHideText isBlock isShowShadow height={20} color="white" arr={value.pokemonData?.types} />
+              </div>
+              <div className="d-flex gap-2">
+                <TypeBadge
+                  isGrow
+                  isFind
+                  title="Fast Move"
+                  move={value.fMove}
+                  moveType={getMoveType(value.pokemonData, value.fMove?.name)}
+                />
+                <TypeBadge
+                  isGrow
+                  isFind
+                  title="Primary Charged Move"
+                  move={value.cMovePri}
+                  moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
+                />
+                {value.cMoveSec && (
+                  <TypeBadge
+                    isGrow
+                    isFind
+                    title="Secondary Charged Move"
+                    move={value.cMoveSec}
+                    moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </Fragment>
+  );
+
   return (
     <Error isError={!isFound}>
       <div className="container pvp-container pb-3">
         {renderLeague()}
         <hr />
         <h2>Top Performer Pokémon</h2>
-        <InputMuiSearch defaultValue={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
+        <InputMuiSearch value={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
         <div className="ranking-container card-container">
           <div className="ranking-group w-100 ranking-header column-gap-3">
             <div className="ranking-score">Pokémon</div>
@@ -528,148 +640,18 @@ const TeamPVP = (props: IStyleSheetData) => {
               </div>
             </div>
           </div>
-          <Accordion alwaysOpen>
-            {rankingData?.teams
+          <AccordionMui
+            items={rankingData?.teams
               .sort((a, b) => setSortedPokemonTeam(a, b))
-              .map((value, index) => (
-                <Accordion.Item key={index} eventKey={index.toString()}>
-                  <Accordion.Header>
-                    <div className="d-flex align-items-center w-100 justify-content-between gap-3">
-                      <div className="d-flex gap-3">
-                        {value.teamsData.map((value, index) => (
-                          <div className="text-center" key={index}>
-                            <div className="d-flex justify-content-center">
-                              <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                                <PokemonIconType pokemonType={value.pokemonType} size={48}>
-                                  <img
-                                    alt="Image League"
-                                    className="pokemon-sprite"
-                                    src={APIService.getPokemonModel(value.form, value.id)}
-                                    onError={(e) => {
-                                      e.currentTarget.onerror = null;
-                                      e.currentTarget.src = getValidPokemonImgPath(
-                                        e.currentTarget.src,
-                                        value.id,
-                                        value.form
-                                      );
-                                    }}
-                                  />
-                                </PokemonIconType>
-                              </div>
-                            </div>
-                            <b className="theme-text-primary">{`#${value.id} ${splitAndCapitalize(
-                              value.name,
-                              '-',
-                              ' '
-                            )}`}</b>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="d-flex align-items-center me-3" style={{ columnGap: 30 }}>
-                        <div className="text-center" style={{ width: 200 }}>
-                          <span className="ranking-score score-ic text-black">{value.teamScore}</span>
-                        </div>
-                        <div className="text-center ranking-score score-ic text-black w-fit-content">
-                          {toFloatWithPadding((value.games * 100) / value.teamsTotalGames, 2)}
-                          <span className="caption text-black">
-                            {value.games}/{value.teamsTotalGames}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </Accordion.Header>
-                  <Accordion.Body className="p-0">
-                    <Fragment>
-                      {value.teamsData.map((value, index) => (
-                        <div
-                          className="d-flex align-items-center p-3 gap-3"
-                          key={index}
-                          style={{
-                            backgroundImage: computeBgType(
-                              value.pokemonData?.types,
-                              value.pokemonType,
-                              props.styleSheet,
-                              0.3
-                            ),
-                          }}
-                        >
-                          <LinkToTop
-                            to={`/pvp/${params.cp}/${LeagueBattleType.All}/${value.speciesId.replaceAll('_', '-')}?${
-                              Params.LeagueType
-                            }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
-                          >
-                            <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
-                          </LinkToTop>
-                          <div className="d-flex justify-content-center">
-                            <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                              <PokemonIconType pokemonType={value.pokemonType} size={48}>
-                                <img
-                                  alt="Image League"
-                                  className="pokemon-sprite"
-                                  src={APIService.getPokemonModel(value.form, value.id)}
-                                  onError={(e) => {
-                                    e.currentTarget.onerror = null;
-                                    e.currentTarget.src = getValidPokemonImgPath(
-                                      e.currentTarget.src,
-                                      value.id,
-                                      value.form
-                                    );
-                                  }}
-                                />
-                              </PokemonIconType>
-                            </div>
-                          </div>
-                          <div className="ranking-group">
-                            <div>
-                              <div className="d-flex align-items-center column-gap-2">
-                                <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
-                                  value.name,
-                                  '-',
-                                  ' '
-                                )}`}</b>
-                                <TypeInfo
-                                  isHideText
-                                  isBlock
-                                  isShowShadow
-                                  height={20}
-                                  color="white"
-                                  arr={value.pokemonData?.types}
-                                />
-                              </div>
-                              <div className="d-flex gap-2">
-                                <TypeBadge
-                                  isGrow
-                                  isFind
-                                  title="Fast Move"
-                                  move={value.fMove}
-                                  moveType={getMoveType(value.pokemonData, value.fMove?.name)}
-                                />
-                                <TypeBadge
-                                  isGrow
-                                  isFind
-                                  title="Primary Charged Move"
-                                  move={value.cMovePri}
-                                  moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
-                                />
-                                {value.cMoveSec && (
-                                  <TypeBadge
-                                    isGrow
-                                    isFind
-                                    title="Secondary Charged Move"
-                                    move={value.cMoveSec}
-                                    moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
-                                  />
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </Fragment>
-                  </Accordion.Body>
-                </Accordion.Item>
-              ))}
-          </Accordion>
+              .map((value: Teams, index: number) => {
+                return {
+                  value: index,
+                  noPadding: true,
+                  label: renderHeader(value),
+                  children: renderBody(value),
+                };
+              })}
+          />
         </div>
       </div>
     </Error>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import './News.scss';
-import { Accordion } from 'react-bootstrap';
 import {
   generateParamForm,
   getItemSpritePath,
@@ -32,6 +31,8 @@ import Candy from '../../components/Sprites/Candy/Candy';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import { useDataStore } from '../../composables/useDataStore';
 import useAssets from '../../composables/useAssets';
+import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
+import { Divider } from '@mui/material';
 
 const News = () => {
   useTitle({
@@ -252,66 +253,72 @@ const News = () => {
                     <img alt="Info Background" className="info-background" src={value.backgroundImgUrl} />
                     <img alt="Info Banner" className="info-banner-img" src={value.bannerUrl} />
                   </div>
-                  <Accordion>
-                    <Accordion.Item key={index} eventKey={index.toString()}>
-                      <Accordion.Header>
-                        <div className="w-100 d-flex justify-content-between me-3 column-gap-3">
-                          <div className="d-flex align-items-center flex-start column-gap-2">
-                            {value.titleImgUrl && <img alt="Image League" height={50} src={value.titleImgUrl} />}
-                            <b>{value.title}</b>
-                          </div>
-                          <div className="d-flex align-items-center flex-end">
-                            <div
-                              className={combineClasses(
-                                'p-1 rounded-1 u-fs-3',
-                                value.eventType === DateEvent.End
-                                  ? 'info-event-ending'
-                                  : DateEvent.Progressing
-                                  ? 'info-event-progress'
-                                  : 'info-event-future'
-                              )}
-                            >
-                              <b>{getKeyWithData(DateEvent, value.eventType)}</b>
+                  <AccordionMui
+                    items={[
+                      {
+                        label: (
+                          <div className="w-100 d-flex justify-content-between me-3 column-gap-3">
+                            <div className="d-flex align-items-center flex-start column-gap-2">
+                              {value.titleImgUrl && <img alt="Image League" height={50} src={value.titleImgUrl} />}
+                              <b>{value.title}</b>
+                            </div>
+                            <div className="d-flex align-items-center flex-end">
+                              <div
+                                className={combineClasses(
+                                  'p-1 rounded-1 u-fs-3',
+                                  value.eventType === DateEvent.End
+                                    ? 'info-event-ending'
+                                    : DateEvent.Progressing
+                                    ? 'info-event-progress'
+                                    : 'info-event-future'
+                                )}
+                              >
+                                <b>{getKeyWithData(DateEvent, value.eventType)}</b>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        <div className="sub-body">
-                          {value.desc && <p>{value.desc}</p>}
-                          <div className="d-flex justify-content-center">
-                            <h5>
-                              Start time: {value.startTime} | End time: {value.endTime}
-                            </h5>
+                        ),
+                        value: value.id,
+                        children: (
+                          <div className="sub-body">
+                            {value.desc && <p>{value.desc}</p>}
+                            <div className="d-flex justify-content-center">
+                              <h5>
+                                Start time: {value.startTime} | End time: {value.endTime}
+                              </h5>
+                            </div>
+                            {isNotEmpty(value.rewardNews) && (
+                              <>
+                                <h6 className="text-decoration-underline">Rewards</h6>
+                                <div className="w-100 text-center d-inline-block align-middle">
+                                  {value.rewardNews.map((value, i) => (
+                                    <div key={i} className="d-inline-block mx-2">
+                                      {value.type === TicketRewardType.Pokemon && value.pokemon ? (
+                                        <LinkToTop
+                                          className="select-evo"
+                                          to={`/pokemon/${value.pokemon.id}${generateParamForm(value.pokemon.form)}`}
+                                        >
+                                          {renderReward(value)}
+                                        </LinkToTop>
+                                      ) : (
+                                        renderReward(value)
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                            {value.detailsLink && (
+                              <>
+                                <Divider sx={{ my: 1 }} />
+                                <p className="mt-3" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />
+                              </>
+                            )}
                           </div>
-                          {isNotEmpty(value.rewardNews) && (
-                            <>
-                              <h6 className="text-decoration-underline">Rewards</h6>
-                              <div className="w-100 text-center d-inline-block align-middle">
-                                {value.rewardNews.map((value, i) => (
-                                  <div key={i} className="d-inline-block mx-2">
-                                    {value.type === TicketRewardType.Pokemon && value.pokemon ? (
-                                      <LinkToTop
-                                        className="select-evo"
-                                        to={`/pokemon/${value.pokemon.id}${generateParamForm(value.pokemon.form)}`}
-                                      >
-                                        {renderReward(value)}
-                                      </LinkToTop>
-                                    ) : (
-                                      renderReward(value)
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            </>
-                          )}
-                          {value.detailsLink && (
-                            <p className="mt-2" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />
-                          )}
-                        </div>
-                      </Accordion.Body>
-                    </Accordion.Item>
-                  </Accordion>
+                        ),
+                      },
+                    ]}
+                  />
                 </div>
               ))}
           </div>

@@ -26,7 +26,6 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Checkbox } from '@mui/material';
-import { Accordion } from 'react-bootstrap';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
@@ -62,6 +61,7 @@ import useCalculate from '../../composables/useCalculate';
 import InputReleased from '../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
+import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -676,116 +676,119 @@ const Move = (props: IMovePage) => {
               {move?.bonus && (
                 <tr>
                   <td className="table-sub-header p-0" colSpan={2}>
-                    <Accordion defaultActiveKey="0">
-                      <Accordion.Item key={0} eventKey="0" className="table-sub-bonus">
-                        <Accordion.Header className="table-sub-bonus">
-                          <span>Bonus Combat</span>
-                        </Accordion.Header>
-                        <Accordion.Body>
-                          <table>
-                            <tbody>
-                              <tr>
-                                <td>Bonus Type</td>
-                                <td colSpan={2}>
-                                  {splitAndCapitalize(
-                                    getKeyWithData(BonusType, move.bonus.bonusType),
-                                    /(?=[A-Z])/,
-                                    ' '
-                                  )}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Duration</td>
-                                <td colSpan={2}>{`${move.bonus.durationMs} ms (${
-                                  move.bonus.durationMs / 1000
-                                } sec)`}</td>
-                              </tr>
-                              <tr>
-                                <td>Extra Duration</td>
-                                <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${
-                                  move.bonus.extraDurationMs / 1000
-                                } sec)`}</td>
-                              </tr>
-                              <tr>
-                                <td>Multi Use</td>
-                                <td colSpan={2}>
-                                  {move.bonus.enableMultiUse ? (
-                                    <DoneIcon sx={{ color: 'green' }} />
-                                  ) : (
-                                    <CloseIcon sx={{ color: 'red' }} />
-                                  )}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>None Combat</td>
-                                <td colSpan={2}>
-                                  {move.bonus.enableNonCombatMove ? (
-                                    <DoneIcon sx={{ color: 'green' }} />
-                                  ) : (
-                                    <CloseIcon sx={{ color: 'red' }} />
-                                  )}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Cost</td>
-                                <td className="table-bonus-cost">
-                                  <Candy id={0} /> {move.bonus.cost.candyCost}
-                                </td>
-                                <td className="table-bonus-cost">
-                                  <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
-                                    <img
-                                      alt="Image Stardust"
-                                      height={20}
-                                      src={APIService.getItemSprite('stardust_painted')}
-                                    />
-                                  </div>
-                                  {move.bonus.cost.stardustCost}
-                                </td>
-                              </tr>
-                              {safeObjectEntries<BonusEffectType>(move.bonus.bonusEffect).map(([k, v], i) => (
-                                <Fragment key={i}>
-                                  <tr>
-                                    <td colSpan={3} className="text-center">
-                                      {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
-                                    </td>
-                                  </tr>
-                                  {safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
-                                    <Fragment key={j}>
-                                      {move?.bonus?.bonusEffect?.attackDefenseBonus ? (
-                                        move?.bonus?.bonusEffect?.attackDefenseBonus.attributes.map((attr, k) => (
-                                          <tr key={k}>
-                                            <td>
-                                              {splitAndCapitalize(key, /(?=[A-Z])/, ' ')}
-                                              <span className="caption">
-                                                (
-                                                {attr.combatTypes
-                                                  .map((type) => capitalize(type.replace('COMBAT_TYPE_', '')))
-                                                  .join(', ')}
-                                                )
-                                              </span>
-                                            </td>
+                    <AccordionMui
+                      defaultValue={0}
+                      items={[
+                        {
+                          value: 0,
+                          noPadding: true,
+                          label: 'Bonus Combat',
+                          children: (
+                            <table>
+                              <tbody>
+                                <tr>
+                                  <td>Bonus Type</td>
+                                  <td colSpan={2}>
+                                    {splitAndCapitalize(
+                                      getKeyWithData(BonusType, move.bonus.bonusType),
+                                      /(?=[A-Z])/,
+                                      ' '
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Duration</td>
+                                  <td colSpan={2}>{`${move.bonus.durationMs} ms (${
+                                    move.bonus.durationMs / 1000
+                                  } sec)`}</td>
+                                </tr>
+                                <tr>
+                                  <td>Extra Duration</td>
+                                  <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${
+                                    move.bonus.extraDurationMs / 1000
+                                  } sec)`}</td>
+                                </tr>
+                                <tr>
+                                  <td>Multi Use</td>
+                                  <td colSpan={2}>
+                                    {move.bonus.enableMultiUse ? (
+                                      <DoneIcon sx={{ color: 'green' }} />
+                                    ) : (
+                                      <CloseIcon sx={{ color: 'red' }} />
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>None Combat</td>
+                                  <td colSpan={2}>
+                                    {move.bonus.enableNonCombatMove ? (
+                                      <DoneIcon sx={{ color: 'green' }} />
+                                    ) : (
+                                      <CloseIcon sx={{ color: 'red' }} />
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Cost</td>
+                                  <td className="table-bonus-cost">
+                                    <Candy id={0} /> {move.bonus.cost.candyCost}
+                                  </td>
+                                  <td className="table-bonus-cost">
+                                    <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
+                                      <img
+                                        alt="Image Stardust"
+                                        height={20}
+                                        src={APIService.getItemSprite('stardust_painted')}
+                                      />
+                                    </div>
+                                    {move.bonus.cost.stardustCost}
+                                  </td>
+                                </tr>
+                                {safeObjectEntries<BonusEffectType>(move.bonus.bonusEffect).map(([k, v], i) => (
+                                  <Fragment key={i}>
+                                    <tr>
+                                      <td colSpan={3} className="text-center">
+                                        {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
+                                      </td>
+                                    </tr>
+                                    {safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
+                                      <Fragment key={j}>
+                                        {move?.bonus?.bonusEffect?.attackDefenseBonus ? (
+                                          move?.bonus?.bonusEffect?.attackDefenseBonus.attributes.map((attr, k) => (
+                                            <tr key={k}>
+                                              <td>
+                                                {splitAndCapitalize(key, /(?=[A-Z])/, ' ')}
+                                                <span className="caption">
+                                                  (
+                                                  {attr.combatTypes
+                                                    .map((type) => capitalize(type.replace('COMBAT_TYPE_', '')))
+                                                    .join(', ')}
+                                                  )
+                                                </span>
+                                              </td>
+                                              <td colSpan={2} key={j}>
+                                                {renderBonus(move.bonus?.bonusType, `x${attr.attackMultiplier}`)}
+                                              </td>
+                                            </tr>
+                                          ))
+                                        ) : (
+                                          <tr key={j}>
+                                            <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
                                             <td colSpan={2} key={j}>
-                                              {renderBonus(move.bonus?.bonusType, `x${attr.attackMultiplier}`)}
+                                              {renderBonus(move.bonus?.bonusType, value)}
                                             </td>
                                           </tr>
-                                        ))
-                                      ) : (
-                                        <tr key={j}>
-                                          <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
-                                          <td colSpan={2} key={j}>
-                                            {renderBonus(move.bonus?.bonusType, value)}
-                                          </td>
-                                        </tr>
-                                      )}
-                                    </Fragment>
-                                  ))}
-                                </Fragment>
-                              ))}
-                            </tbody>
-                          </table>
-                        </Accordion.Body>
-                      </Accordion.Item>
-                    </Accordion>
+                                        )}
+                                      </Fragment>
+                                    ))}
+                                  </Fragment>
+                                ))}
+                              </tbody>
+                            </table>
+                          ),
+                        },
+                      ]}
+                    />
                   </td>
                 </tr>
               )}

@@ -1,6 +1,6 @@
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
-import { Accordion, useAccordionButton, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import APIService from '../../../services/api.service';
@@ -27,7 +27,6 @@ import {
   SettingLeague,
 } from '../../../core/models/league.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { Toggle } from '../../../core/models/pvp.model';
 import {
   combineClasses,
   isEmpty,
@@ -49,6 +48,7 @@ import useAssets from '../../../composables/useAssets';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
+import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -74,18 +74,6 @@ const Leagues = () => {
   const [rank, setRank] = useState(1);
   const [setting, setSetting] = useState<SettingLeague>();
   const [showData, setShowData] = useState<LeagueData>();
-
-  const LeaveToggle = (props: Toggle) => {
-    const decoratedOnClick = useAccordionButton(props.eventKey);
-
-    return (
-      <div className="accordion-footer" onClick={decoratedOnClick}>
-        <span className="text-danger">
-          Close <CloseIcon sx={{ color: 'red' }} />
-        </span>
-      </div>
-    );
-  };
 
   useEffect(() => {
     const leagues = leaguesData;
@@ -162,204 +150,198 @@ const Leagues = () => {
     setShowData(undefined);
   };
 
-  const showAccording = (league: ILeague, index: number, isOpened = false) => (
-    <Accordion.Item key={index} eventKey={index.toString()}>
-      <Accordion.Header className={isOpened ? 'league-opened' : ''}>
-        <div className="d-flex justify-content-between w-100 me-3 column-gap-2">
-          <div className="d-flex align-items-center flex-start column-gap-2">
+  const renderHeader = (league: ILeague) => (
+    <div className="d-flex justify-content-between w-100 me-3 column-gap-2">
+      <div className="d-flex align-items-center flex-start column-gap-2">
+        <img
+          alt="Image League"
+          title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
+          height={50}
+          src={APIService.getAssetPokeGo(league.iconUrl)}
+        />
+        <b className={league.enabled ? '' : 'text-danger'}>{splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}</b>
+      </div>
+      {isEqual(league.leagueType, LeagueType.Premier) && (
+        <div className="d-flex align-items-center flex-end">
+          <div className="info-event-future p-1 rounded-1 u-fs-3">
+            <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderBody = (league: ILeague) => (
+    <div className="sub-body">
+      <h4 className="title-leagues">{league.title}</h4>
+      <div className="text-center">
+        {!isEqual(league.leagueBattleType, LeagueBattleType.None) &&
+        !isEqual(league.leagueBattleType, LeagueBattleType.Little) &&
+        !isInclude(league.title, LeagueBattleType.Remix, IncludeMode.IncludeIgnoreCaseSensitive) &&
+        !isInclude(league.iconUrl, 'pogo') ? (
+          <div className="league">
             <img
               alt="Image League"
-              title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
-              height={50}
-              src={APIService.getAssetPokeGo(league.iconUrl)}
+              height={140}
+              src={APIService.getAssetPokeGo(
+                leaguesData.data.find((item) =>
+                  isEqual(item.id, league.leagueBattleType, EqualMode.IgnoreCaseSensitive)
+                )?.iconUrl
+              )}
             />
-            <b className={league.enabled ? '' : 'text-danger'}>
-              {splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
-            </b>
-          </div>
-          {isEqual(league.leagueType, LeagueType.Premier) && (
-            <div className="d-flex align-items-center flex-end">
-              <div className="info-event-future p-1 rounded-1 u-fs-3">
-                <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
-              </div>
-            </div>
-          )}
-        </div>
-      </Accordion.Header>
-      <Accordion.Body className="league-body">
-        <div className="sub-body">
-          <h4 className="title-leagues">{league.title}</h4>
-          <div className="text-center">
-            {!isEqual(league.leagueBattleType, LeagueBattleType.None) &&
-            !isEqual(league.leagueBattleType, LeagueBattleType.Little) &&
-            !isInclude(league.title, LeagueBattleType.Remix, IncludeMode.IncludeIgnoreCaseSensitive) &&
-            !isInclude(league.iconUrl, 'pogo') ? (
-              <div className="league">
-                <img
-                  alt="Image League"
-                  height={140}
-                  src={APIService.getAssetPokeGo(
-                    leaguesData.data.find((item) =>
-                      isEqual(item.id, league.leagueBattleType, EqualMode.IgnoreCaseSensitive)
-                    )?.iconUrl
-                  )}
-                />
-                <span className={combineClasses('badge-league', league.league?.toLowerCase()?.replaceAll('_', '-'))}>
-                  <div className="sub-badge">
-                    <img
-                      alt="Image League"
-                      title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
-                      height={50}
-                      src={APIService.getAssetPokeGo(league.iconUrl)}
-                    />
-                  </div>
-                </span>
-              </div>
-            ) : (
-              <div>
+            <span className={combineClasses('badge-league', league.league?.toLowerCase()?.replaceAll('_', '-'))}>
+              <div className="sub-badge">
                 <img
                   alt="Image League"
                   title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
-                  height={140}
+                  height={50}
                   src={APIService.getAssetPokeGo(league.iconUrl)}
                 />
               </div>
-            )}
+            </span>
           </div>
-          <h5 className="title-leagues mt-2">Conditions</h5>
-          <ul className="list-style-inherit">
-            <li className="fw-medium">
-              <h6>
-                <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
-              </h6>
-            </li>
-            {league.conditions.maxLevel && (
-              <li className="fw-medium">
-                <h6>
-                  <b>Max Level:</b> <span>{league.conditions.maxLevel}</span>
-                </h6>
-              </li>
+        ) : (
+          <div>
+            <img
+              alt="Image League"
+              title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
+              height={140}
+              src={APIService.getAssetPokeGo(league.iconUrl)}
+            />
+          </div>
+        )}
+      </div>
+      <h5 className="title-leagues mt-2">Conditions</h5>
+      <ul className="list-style-inherit">
+        <li className="fw-medium">
+          <h6>
+            <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
+          </h6>
+        </li>
+        {league.conditions.maxLevel && (
+          <li className="fw-medium">
+            <h6>
+              <b>Max Level:</b> <span>{league.conditions.maxLevel}</span>
+            </h6>
+          </li>
+        )}
+        {league.pokemonCount > 0 && (
+          <li className="fw-medium">
+            <h6>
+              <b>Pokémon count:</b> <span>{league.pokemonCount}</span>
+            </h6>
+          </li>
+        )}
+        {league.conditions.timestamp && (
+          <li>
+            <h6 className="title-leagues">Event time</h6>
+            <span className="fw-medium">Start Date: {getTime(league.conditions.timestamp.start)}</span>
+            {league.conditions.timestamp.end && (
+              <span className="fw-medium">
+                <br />
+                End Date: {getTime(league.conditions.timestamp.end)}
+              </span>
             )}
-            {league.pokemonCount > 0 && (
-              <li className="fw-medium">
-                <h6>
-                  <b>Pokémon count:</b> <span>{league.pokemonCount}</span>
-                </h6>
-              </li>
-            )}
-            {league.conditions.timestamp && (
-              <li>
-                <h6 className="title-leagues">Event time</h6>
-                <span className="fw-medium">Start Date: {getTime(league.conditions.timestamp.start)}</span>
-                {league.conditions.timestamp.end && (
-                  <span className="fw-medium">
-                    <br />
-                    End Date: {getTime(league.conditions.timestamp.end)}
+          </li>
+        )}
+        <li className="fw-medium">
+          <h6 className="title-leagues">Allow Forms Evolution</h6>
+          {league.allowEvolutions ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
+        </li>
+        <li className="fw-medium">
+          <h6 className="title-leagues">Unique Selected</h6>
+          {league.conditions.uniqueSelected ? (
+            <DoneIcon sx={{ color: 'green' }} />
+          ) : (
+            <CloseIcon sx={{ color: 'red' }} />
+          )}
+        </li>
+        {isNotEmpty(league.conditions.uniqueType) && (
+          <li className="fw-medium unique-type">
+            <h6 className="title-leagues">Unique Type</h6>
+            <TypeInfo arr={league.conditions.uniqueType} className="ms-3" />
+          </li>
+        )}
+        {isNotEmpty(league.conditions.whiteList) && (
+          <li className="fw-medium">
+            <h6 className="title-leagues text-success">White List</h6>
+            {league.conditions.whiteList.map((item, index) => (
+              <LinkToTop
+                className="img-link text-center"
+                key={index}
+                to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
+              >
+                <div className="d-flex justify-content-center">
+                  <span className="w-9">
+                    <img
+                      className="pokemon-sprite-medium filter-shadow-hover"
+                      alt="Pokémon Image"
+                      title={splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}
+                      src={APIService.getPokemonModel(findAssetForm(item.id, item.form), item.id)}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = getValidPokemonImgPath(
+                          e.currentTarget.src,
+                          item.id,
+                          findAssetForm(item.id, item.form)
+                        );
+                      }}
+                    />
                   </span>
-                )}
-              </li>
-            )}
-            <li className="fw-medium">
-              <h6 className="title-leagues">Allow Forms Evolution</h6>
-              {league.allowEvolutions ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
-            </li>
-            <li className="fw-medium">
-              <h6 className="title-leagues">Unique Selected</h6>
-              {league.conditions.uniqueSelected ? (
-                <DoneIcon sx={{ color: 'green' }} />
-              ) : (
-                <CloseIcon sx={{ color: 'red' }} />
-              )}
-            </li>
-            {isNotEmpty(league.conditions.uniqueType) && (
-              <li className="fw-medium unique-type">
-                <h6 className="title-leagues">Unique Type</h6>
-                <TypeInfo arr={league.conditions.uniqueType} className="ms-3" />
-              </li>
-            )}
-            {isNotEmpty(league.conditions.whiteList) && (
-              <li className="fw-medium">
-                <h6 className="title-leagues text-success">White List</h6>
-                {league.conditions.whiteList.map((item, index) => (
-                  <LinkToTop
-                    className="img-link text-center"
-                    key={index}
-                    to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
-                    title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
-                  >
-                    <div className="d-flex justify-content-center">
-                      <span className="w-9">
-                        <img
-                          className="pokemon-sprite-medium filter-shadow-hover"
-                          alt="Pokémon Image"
-                          title={splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}
-                          src={APIService.getPokemonModel(findAssetForm(item.id, item.form), item.id)}
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = getValidPokemonImgPath(
-                              e.currentTarget.src,
-                              item.id,
-                              findAssetForm(item.id, item.form)
-                            );
-                          }}
-                        />
-                      </span>
-                    </div>
-                    <span className="caption">
-                      {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                        item.pokemonType === PokemonType.Normal
-                          ? ''
-                          : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
-                      }`}
-                    </span>
-                  </LinkToTop>
-                ))}
-              </li>
-            )}
-            {isNotEmpty(league.conditions.banned) && (
-              <li className="fw-medium">
-                <h6 className="title-leagues text-danger">Ban List</h6>
-                {league.conditions.banned.map((item, index) => (
-                  <LinkToTop
-                    className="img-link text-center"
-                    key={index}
-                    to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
-                    title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
-                  >
-                    <div className="d-flex justify-content-center">
-                      <span className="w-9">
-                        <img
-                          className="pokemon-sprite-medium filter-shadow-hover"
-                          alt="Pokémon Image"
-                          title={splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}
-                          src={APIService.getPokemonModel(findAssetForm(item.id, item.form), item.id)}
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = getValidPokemonImgPath(
-                              e.currentTarget.src,
-                              item.id,
-                              findAssetForm(item.id, item.form)
-                            );
-                          }}
-                        />
-                      </span>
-                    </div>
-                    <span className="caption">
-                      {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                        item.pokemonType === PokemonType.Normal
-                          ? ''
-                          : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
-                      }`}
-                    </span>
-                  </LinkToTop>
-                ))}
-              </li>
-            )}
-          </ul>
-        </div>
-        <LeaveToggle eventKey={index.toString()} />
-      </Accordion.Body>
-    </Accordion.Item>
+                </div>
+                <span className="caption">
+                  {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
+                    item.pokemonType === PokemonType.Normal
+                      ? ''
+                      : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
+                  }`}
+                </span>
+              </LinkToTop>
+            ))}
+          </li>
+        )}
+        {isNotEmpty(league.conditions.banned) && (
+          <li className="fw-medium">
+            <h6 className="title-leagues text-danger">Ban List</h6>
+            {league.conditions.banned.map((item, index) => (
+              <LinkToTop
+                className="img-link text-center"
+                key={index}
+                to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
+              >
+                <div className="d-flex justify-content-center">
+                  <span className="w-9">
+                    <img
+                      className="pokemon-sprite-medium filter-shadow-hover"
+                      alt="Pokémon Image"
+                      title={splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}
+                      src={APIService.getPokemonModel(findAssetForm(item.id, item.form), item.id)}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = getValidPokemonImgPath(
+                          e.currentTarget.src,
+                          item.id,
+                          findAssetForm(item.id, item.form)
+                        );
+                      }}
+                    />
+                  </span>
+                </div>
+                <span className="caption">
+                  {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
+                    item.pokemonType === PokemonType.Normal
+                      ? ''
+                      : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
+                  }`}
+                </span>
+              </LinkToTop>
+            ))}
+          </li>
+        )}
+      </ul>
+    </div>
   );
 
   return (
@@ -687,7 +669,17 @@ const Leagues = () => {
       <div className="input-group border-input w-fit-content">
         <span className="input-group-text text-success bg-transparent fw-medium">Opened Leagues</span>
       </div>
-      <Accordion alwaysOpen>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
+      <AccordionMui
+        isShowAction
+        items={openedLeague.map((value) => {
+          return {
+            sxHeader: { backgroundColor: 'success.main' },
+            label: renderHeader(value),
+            value: value.id,
+            children: renderBody(value),
+          };
+        })}
+      />
 
       <div className="w-50 mt-2" style={{ minWidth: 300 }}>
         <InputMuiSearch
@@ -698,9 +690,16 @@ const Leagues = () => {
           placeholder="Enter League Name"
         />
       </div>
-      <Accordion className="accordion-league" alwaysOpen>
-        {leagueFilter.map((value, index) => showAccording(value, index))}
-      </Accordion>
+      <AccordionMui
+        isShowAction
+        items={leagueFilter.map((value) => {
+          return {
+            label: renderHeader(value),
+            value: value.id,
+            children: renderBody(value),
+          };
+        })}
+      />
 
       {showData && (
         <Modal size="lg" show={show} onHide={handleClose} centered>
