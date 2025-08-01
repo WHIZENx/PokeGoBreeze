@@ -58,10 +58,12 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
       const value = pages.find(
         (page) => isEqual(page.path, pathName) || page.subMenus?.some((subMenu) => isEqual(subMenu.path, pathName))
       );
-      setCurrentPage(value?.value?.toString() || POKEDEX);
+      setCurrentPage(value?.value?.toString());
       if (isNotEmpty(value?.subMenus)) {
         const subValue = value?.subMenus?.find((subMenu) => isEqual(subMenu.path, pathName));
-        setCurrentPageSub(subValue?.value?.toString() || '');
+        setCurrentPageSub(subValue?.value?.toString());
+      } else if (!value?.value) {
+        setCurrentPageSub('');
       }
     }
   }, [router.routerLocation]);

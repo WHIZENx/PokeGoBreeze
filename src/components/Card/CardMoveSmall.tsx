@@ -22,6 +22,15 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
     }
   }, [findMoveByName, props.value, props.isEmpty, props.name, props.pokemonId]);
 
+  const isHaveMoveType = () => {
+    if (move && move.moveType !== undefined) {
+      return move.moveType !== MoveType.None;
+    } else if (props.moveType !== undefined) {
+      return props.moveType !== MoveType.None;
+    }
+    return false;
+  };
+
   return (
     <Fragment>
       {props.isEmpty ? (
@@ -43,7 +52,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                 type={move.type}
               />
               <span className="me-1">{splitAndCapitalize(move.name, '_', ' ')}</span>
-              {!props.isHideType && (move.moveType || props.moveType) !== MoveType.None && (
+              {!props.isHideType && isHaveMoveType() && (
                 <span
                   style={{ color: props.isDisable ? 'lightgray !important' : '' }}
                   className={combineClasses(

@@ -454,6 +454,7 @@ export interface AccordionMuiComponent<T> {
   className?: string;
   isShowAction?: boolean;
   alwaysOpen?: boolean;
+  resetItemOnChange?: boolean;
   onChange?: (value: (T | T[]) | undefined, index: number) => void;
   items: IIDefaultOptionAccordion<T>[] | undefined;
 }

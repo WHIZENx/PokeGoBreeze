@@ -412,6 +412,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           </div>
           <AccordionMui
             isShowAction
+            resetItemOnChange
             items={rankingData
               .filter(
                 (pokemon) =>

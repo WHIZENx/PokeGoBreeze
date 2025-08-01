@@ -64,7 +64,9 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
   }, [props.defaultValue, props.alwaysOpen]);
 
   useEffect(() => {
-    if (isNotEmpty(storeAccordions)) {
+    if (!isNotEmpty(storeAccordions) || props.resetItemOnChange) {
+      setStoreAccordions(Array(props.items?.length || 0).fill(false));
+    } else if (isNotEmpty(storeAccordions)) {
       setStoreAccordions((prev) => {
         const itemsLength = props.items?.length || 0;
         if (itemsLength > prev.length) {
@@ -74,10 +76,8 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
         }
         return prev;
       });
-    } else {
-      setStoreAccordions(Array(props.items?.length || 0).fill(false));
     }
-  }, [props.items]);
+  }, [props.items, props.resetItemOnChange]);
 
   const closeItem = (panel: T | undefined, index: number) => {
     if (props.alwaysOpen && panel) {
