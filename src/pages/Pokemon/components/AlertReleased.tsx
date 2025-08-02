@@ -1,19 +1,17 @@
 import React from 'react';
-import { Alert } from 'react-bootstrap';
 import APIService from '../../../services/api.service';
 import { splitAndCapitalize, getPokemonFormWithNoneSpecialForm } from '../../../utils/utils';
 import { IAlertReleasedComponent } from '../../models/page.model';
-import { VariantType } from '../../../enums/type.enum';
 import useSearch from '../../../composables/useSearch';
+import { Alert } from '@mui/material';
 
 const AlertReleased = (props: IAlertReleasedComponent) => {
   const { searchingMainDetails } = useSearch();
   return (
     <>
       {searchingMainDetails && !searchingMainDetails.releasedGO && (
-        <Alert variant={VariantType.Danger}>
-          <h5 className="text-danger m-0">
-            {'* '}
+        <Alert sx={{ alignItems: 'center', justifyContent: 'center', mb: 1 }} severity="error">
+          <div className="d-flex align-items-center u-fs-4 gap-2">
             <b>
               {splitAndCapitalize(
                 getPokemonFormWithNoneSpecialForm(props.formName?.replaceAll(' ', '-'), props.pokemonType),
@@ -29,7 +27,7 @@ const AlertReleased = (props: IAlertReleasedComponent) => {
               alt="Pokémon GO Icon"
               src={APIService.getPokemonGoIcon(props.icon)}
             />
-          </h5>
+          </div>
         </Alert>
       )}
     </>
