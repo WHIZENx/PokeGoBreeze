@@ -64,6 +64,7 @@ const Raid = (props: IRaidComponent) => {
     <Fragment>
       <div className="d-flex justify-content-center w-100">
         <SelectTierMui
+          boxClassName="w-50"
           tier={tier}
           setTier={setTier}
           clearData={() => props.clearData?.(false)}

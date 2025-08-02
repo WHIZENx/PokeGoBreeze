@@ -732,7 +732,7 @@ const Leagues = () => {
               </div>
               <div className="reward-info">
                 {showData.track === LeagueRewardType.Free ? (
-                  <div className="d-flex column-gap-2">
+                  <div className="d-flex column-gap-2 align-items-center">
                     <img
                       className="pokemon-sprite-small filter-shadow w-fit-content"
                       alt="Pokémon Image"
@@ -742,7 +742,7 @@ const Leagues = () => {
                     <span>Free</span> (Win stack {showData.step})
                   </div>
                 ) : (
-                  <div className="d-flex column-gap-2">
+                  <div className="d-flex column-gap-2 align-items-center">
                     <img
                       className="pokemon-sprite-small filter-shadow w-fit-content"
                       alt="Pokémon Image"

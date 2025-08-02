@@ -164,6 +164,7 @@ export interface ISelectTierComponent {
   pokemonType: PokemonType | undefined;
   pokemonClass?: PokemonClass;
   tier: number;
+  boxClassName?: string;
   className?: string;
   setCurrTier?: (tier: number) => void;
   setTier?: (tier: number) => void;

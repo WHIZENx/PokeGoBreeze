@@ -12,21 +12,17 @@ const AlertReleased = (props: IAlertReleasedComponent) => {
       {searchingMainDetails && !searchingMainDetails.releasedGO && (
         <Alert sx={{ alignItems: 'center', justifyContent: 'center', mb: 1 }} severity="error">
           <div className="d-flex align-items-center u-fs-4 gap-2">
-            <b>
-              {splitAndCapitalize(
-                getPokemonFormWithNoneSpecialForm(props.formName?.replaceAll(' ', '-'), props.pokemonType),
-                '_',
-                ' '
-              )}
-            </b>
-            {' not released in Pokémon GO'}
-            <img
-              width={50}
-              height={50}
-              className="ms-2"
-              alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(props.icon)}
-            />
+            <span>
+              <b>
+                {splitAndCapitalize(
+                  getPokemonFormWithNoneSpecialForm(props.formName?.replaceAll(' ', '-'), props.pokemonType),
+                  '_',
+                  ' '
+                )}
+              </b>
+              {' not released in Pokémon GO'}
+            </span>
+            <img width={50} height={50} alt="Pokémon GO Icon" src={APIService.getPokemonGoIcon(props.icon)} />
           </div>
         </Alert>
       )}
