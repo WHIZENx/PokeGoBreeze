@@ -475,3 +475,11 @@ export interface IDialogMuiComponent {
   actions?: IDialogAction[];
   onClose?: () => void;
 }
+
+export interface IBackdropMuiComponent {
+  open?: boolean;
+  children?: React.ReactNode;
+  isShowOnAbove?: boolean;
+  noneCircular?: boolean;
+  backgroundColor?: string;
+}

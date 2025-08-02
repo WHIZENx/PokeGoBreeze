@@ -34,6 +34,7 @@ import SelectMui from '../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../components/Commons/Buttons/ToggleType';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
+import BackdropMui from '../../components/Commons/Backdrops/BackdropMui';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -547,9 +548,10 @@ const Pokedex = (props: IStyleSheetData) => {
           </div>
         </div>
       </div>
-      <LoadGroup className={'position-fixed text-center'} isShow={isLoading} isVertical={false} isHideAttr={false} />
+      <BackdropMui open={isLoading}>
+        <LoadGroup isShow={isLoading} isVertical={false} isHideAttr={false} />
+      </BackdropMui>
       <div className="text-center bg-white">
-        <div className={combineClasses('loading-group-spin-table', isLoading ? 'd-block' : 'd-none')} />
         <ul className="d-grid pokemon-content">
           {listOfPokemon.map((row, index) => (
             <CardPokemonInfo

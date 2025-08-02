@@ -20,7 +20,7 @@ const DialogMui = (props: IDialogMuiComponent) => {
       onClose={props.onClose}
       keepMounted={props.keepMounted || false}
       fullWidth
-      maxWidth={props.width || 'md'}
+      maxWidth={props.width}
     >
       <DialogTitle>{props.title}</DialogTitle>
       <DialogContent dividers>

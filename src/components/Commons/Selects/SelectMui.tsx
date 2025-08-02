@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, OutlinedInput, ListSubheader } from '@mui/material';
 import { ISelectMuiComponent } from '../models/component.model';
-import { isNotEmpty, isNullOrUndefined } from '../../../utils/extension';
+import { isNotEmpty, isNullOrUndefined, toNumber } from '../../../utils/extension';
 import { IMenuItem } from '../models/menu.model';
 
 const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
@@ -56,7 +56,11 @@ const SelectMui = <T,>(props: ISelectMuiComponent<T>) => {
       {inputLabel && <InputLabel>{inputLabel}</InputLabel>}
       <Select
         {...selectProps}
-        onChange={(e) => onChangeSelect?.(e.target.value as T)}
+        onChange={(e) =>
+          onChangeSelect?.(
+            (typeof selectProps.value === 'number' ? toNumber(String(e.target.value)) : e.target.value) as T
+          )
+        }
         input={inputLabel ? <OutlinedInput label={inputLabel} /> : undefined}
         sx={{
           ...selectProps.sx,

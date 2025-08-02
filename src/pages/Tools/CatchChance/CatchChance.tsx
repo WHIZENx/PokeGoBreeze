@@ -65,6 +65,7 @@ import {
 } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 
 const balls = createDataRows<PokeBallThreshold>(
   {
@@ -387,8 +388,8 @@ const CatchChance = () => {
           </div>
         </div>
         <div className="col-md-6 position-relative p-0">
-          {!isEncounter && (
-            <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
+          <BackdropMui open={!isEncounter} isShowOnAbove={false} backgroundColor="var(--custom-background-unavailable)">
+            <div className="d-flex justify-content-center align-items-center text-center">
               <h5 className="text-not-encounter">
                 <b>
                   {splitAndCapitalize(
@@ -400,7 +401,7 @@ const CatchChance = () => {
                 cannot be encountered in wild.
               </h5>
             </div>
-          )}
+          </BackdropMui>
           <div className="d-flex justify-content-center m-0">
             <div>
               {medal && (
@@ -639,9 +640,7 @@ const CatchChance = () => {
                 </div>
               </div>
               <div className="row mt-2 position-relative m-0">
-                {isNormalThrow && (
-                  <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter" />
-                )}
+                <BackdropMui open={isNormalThrow} isShowOnAbove={false} noneCircular />
                 <div className="col-md-6">
                   <div className="d-flex flex-wrap h-100 justify-content-center align-items-center">
                     <div className="w-100 text-center">
@@ -687,7 +686,7 @@ const CatchChance = () => {
       </div>
       <hr />
       <div className="position-relative">
-        {isLoading && <div className="position-absolute w-100 h-100 impossible-encounter" />}
+        <BackdropMui open={isLoading} isShowOnAbove={false} noneCircular />
         {!isAdvance && isEncounter && data?.result && (
           <div className="d-flex flex-column flex-wrap justify-content-center align-items-center">
             <div className="container table-container">

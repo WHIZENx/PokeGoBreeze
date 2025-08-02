@@ -56,7 +56,6 @@ import {
   toNumber,
 } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
-import Loading from '../../../components/Sprites/Loading/Loading';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
@@ -82,6 +81,7 @@ import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../../components/Commons/Buttons/ToggleType';
 import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
+import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -1197,7 +1197,7 @@ const DpsTdo = () => {
         </div>
       </div>
       <div className="position-relative">
-        <Loading isShow={isShowSpinner} />
+        <BackdropMui open={isShowSpinner && isNotEmpty(dpsTable)} isShowOnAbove={false} />
         <CustomDataTable
           customColumns={columns}
           data={dataFilter}
