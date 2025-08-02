@@ -40,7 +40,7 @@ import TimerIcon from '@mui/icons-material/Timer';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { Modal, OverlayTrigger } from 'react-bootstrap';
+import { OverlayTrigger } from 'react-bootstrap';
 
 import update from 'immutability-helper';
 import {
@@ -103,6 +103,7 @@ import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
+import DialogMui from '../../../components/Commons/Dialogs/Dialogs';
 
 const RaidBattle = () => {
   useTitle({
@@ -1780,95 +1781,122 @@ const RaidBattle = () => {
           </div>
         </div>
       </div>
-      <Modal show={show && !showSettingPokemon.isShow} onHide={handleClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Trainer #{trainerBattleId + 1}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
-            {pokemonBattle.map((pokemon, index) => (
-              <div className={index === 0 ? '' : 'mt-2'} key={index}>
-                <PokemonRaid
-                  isControls
-                  id={index}
-                  pokemon={pokemon}
-                  data={pokemonBattle}
-                  setData={setPokemonBattle}
-                  defaultSetting={initPokemonStats}
-                  onCopyPokemon={onCopyPokemon}
-                  onRemovePokemon={onRemovePokemon}
-                  onOptionsPokemon={onOptionsPokemon}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="d-flex flex-wrap justify-content-center align-items-center mt-2">
-            <RemoveCircleIcon
-              className={combineClasses('cursor-pointer link-danger', pokemonBattle.length > 1 ? '' : 'click-none')}
-              fontSize="large"
-              onClick={() => {
-                if (pokemonBattle.length > 1) {
-                  setPokemonBattle(update(pokemonBattle, { $splice: [[pokemonBattle.length - 1]] }));
-                }
-              }}
-            />
-            <div className="count-pokemon">{pokemonBattle.length}</div>
-            <AddCircleIcon
-              className="cursor-pointer link-success"
-              fontSize="large"
-              onClick={() => setPokemonBattle(update(pokemonBattle, { $push: [new PokemonRaidModel()] }))}
-            />
-          </div>
-        </Modal.Body>
-        <Modal.Footer className="gap-2">
-          <ButtonMui color="tertiary" onClick={handleClose} label="Close" />
-          <ButtonMui onClick={handleSave} label="Save changes" />
-        </Modal.Footer>
-      </Modal>
+      <DialogMui
+        open={show && !showSettingPokemon.isShow}
+        onClose={handleClose}
+        title={`Trainer #${trainerBattleId + 1}`}
+        content={
+          <>
+            <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
+              {pokemonBattle.map((pokemon, index) => (
+                <div className={index === 0 ? '' : 'mt-2'} key={index}>
+                  <PokemonRaid
+                    isControls
+                    id={index}
+                    pokemon={pokemon}
+                    data={pokemonBattle}
+                    setData={setPokemonBattle}
+                    defaultSetting={initPokemonStats}
+                    onCopyPokemon={onCopyPokemon}
+                    onRemovePokemon={onRemovePokemon}
+                    onOptionsPokemon={onOptionsPokemon}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="d-flex flex-wrap justify-content-center align-items-center mt-2">
+              <RemoveCircleIcon
+                className={combineClasses('cursor-pointer link-danger', pokemonBattle.length > 1 ? '' : 'click-none')}
+                fontSize="large"
+                onClick={() => {
+                  if (pokemonBattle.length > 1) {
+                    setPokemonBattle(update(pokemonBattle, { $splice: [[pokemonBattle.length - 1]] }));
+                  }
+                }}
+              />
+              <div className="count-pokemon">{pokemonBattle.length}</div>
+              <AddCircleIcon
+                className="cursor-pointer link-success"
+                fontSize="large"
+                onClick={() => setPokemonBattle(update(pokemonBattle, { $push: [new PokemonRaidModel()] }))}
+              />
+            </div>
+          </>
+        }
+        actions={[
+          {
+            label: 'Cancel',
+            color: 'tertiary',
+            isClose: true,
+          },
+          {
+            label: 'Save',
+            onClick: handleSave,
+          },
+        ]}
+      />
 
-      <Modal show={showOption} onHide={handleCloseOption} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Search Options</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <DialogMui
+        open={showOption}
+        onClose={handleCloseOption}
+        title="Search Options"
+        content={
           <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
             {modalFormFilters()}
           </div>
-        </Modal.Body>
-        <Modal.Footer className="gap-2">
-          <ButtonMui color="tertiary" onClick={handleCloseOption} label="Close" />
-          <ButtonMui onClick={handleSaveOption} label="Save changes" />
-        </Modal.Footer>
-      </Modal>
+        }
+        actions={[
+          {
+            label: 'Cancel',
+            color: 'tertiary',
+            isClose: true,
+          },
+          {
+            label: 'Save',
+            onClick: handleSaveOption,
+          },
+        ]}
+      />
 
-      <Modal show={showSettingPokemon.isShow} onHide={handleCloseSettingPokemon} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Pokémon Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <DialogMui
+        open={showSettingPokemon.isShow}
+        onClose={handleCloseSettingPokemon}
+        title="Pokémon Settings"
+        content={
           <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
             {modalFormSetting()}
           </div>
-        </Modal.Body>
-        <Modal.Footer className="gap-2">
-          <ButtonMui color="tertiary" onClick={handleCloseSettingPokemon} label="Close" />
-          <ButtonMui onClick={handleSaveSettingPokemon} label="Save" />
-        </Modal.Footer>
-      </Modal>
+        }
+        actions={[
+          {
+            label: 'Cancel',
+            color: 'tertiary',
+            isClose: true,
+          },
+          {
+            label: 'Save',
+            onClick: handleSaveSettingPokemon,
+          },
+        ]}
+      />
 
-      <Modal show={showMovePokemon.isShow} onHide={handleCloseMovePokemon} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Move Pokémon</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <DialogMui
+        open={showMovePokemon.isShow}
+        onClose={handleCloseMovePokemon}
+        title="Move Pokémon"
+        content={
           <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
             {modalMovePokemon()}
           </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <ButtonMui color="tertiary" onClick={handleCloseMovePokemon} label="Close" />
-        </Modal.Footer>
-      </Modal>
+        }
+        actions={[
+          {
+            label: 'Cancel',
+            color: 'tertiary',
+            isClose: true,
+          },
+        ]}
+      />
     </Fragment>
   );
 };

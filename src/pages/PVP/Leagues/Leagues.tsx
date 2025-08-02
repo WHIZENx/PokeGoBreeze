@@ -1,6 +1,5 @@
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
-import { Modal } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import APIService from '../../../services/api.service';
@@ -46,9 +45,9 @@ import { debounce } from 'lodash';
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
-import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
+import DialogMui from '../../../components/Commons/Dialogs/Dialogs';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -703,9 +702,11 @@ const Leagues = () => {
       />
 
       {showData && (
-        <Modal size="lg" show={show} onHide={handleClose} centered>
-          <Modal.Header closeButton>
-            <Modal.Title className="d-flex flex-column row-gap-2">
+        <DialogMui
+          open={show}
+          onClose={handleClose}
+          title={
+            <div className="d-flex flex-column row-gap-2">
               <div>
                 <span>
                   {rank > 20 && (
@@ -733,7 +734,7 @@ const Leagues = () => {
                 {showData.track === LeagueRewardType.Free ? (
                   <div className="d-flex column-gap-2">
                     <img
-                      className="pokemon-sprite-small filter-shadow w-1"
+                      className="pokemon-sprite-small filter-shadow w-fit-content"
                       alt="Pokémon Image"
                       title="Battle Icon"
                       src={APIService.getPokeOtherLeague('BattleIconColor')}
@@ -743,7 +744,7 @@ const Leagues = () => {
                 ) : (
                   <div className="d-flex column-gap-2">
                     <img
-                      className="pokemon-sprite-small filter-shadow w-1"
+                      className="pokemon-sprite-small filter-shadow w-fit-content"
                       alt="Pokémon Image"
                       title="Paid Raid Ticket"
                       src={getItemSpritePath(ItemName.PaidRaidTicket)}
@@ -752,81 +753,87 @@ const Leagues = () => {
                   </div>
                 )}
               </div>
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body className="text-center">
-            <h5 className="text-decoration-underline">Random Pokémon</h5>
-            {showData.data
-              .filter((item) => !item.guaranteedLimited)
-              .map((item, index) => (
-                <LinkToTop
-                  className="img-link text-center"
-                  key={index}
-                  to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
-                  title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
-                >
-                  <div className="d-flex justify-content-center">
-                    <span className="w-9">
-                      <img
-                        className="pokemon-sprite-medium filter-shadow-hover"
-                        alt="Pokémon Image"
-                        title={splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
-                        src={APIService.getPokemonModel(findAssetForm(item.id, item.form))}
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = getValidPokemonImgPath(
-                            e.currentTarget.src,
-                            item.id,
-                            findAssetForm(item.id, item.form)
-                          );
-                        }}
-                      />
-                    </span>
-                  </div>
-                  <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
-                </LinkToTop>
-              ))}
-            {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)) && (
-              <Fragment>
-                <hr />
-                <h5 className="text-decoration-underline">Guaranteed Pokémon in first time</h5>
-                {showData.data
-                  .filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)
-                  .map((item, index) => (
-                    <LinkToTop
-                      className="img-link text-center"
-                      key={index}
-                      to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
-                      title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
-                    >
-                      <div className="d-flex justify-content-center">
-                        <span className="w-9">
-                          <img
-                            className="pokemon-sprite-medium filter-shadow-hover"
-                            alt="Pokémon Image"
-                            title={splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
-                            src={APIService.getPokemonModel(findAssetForm(item.id, item.form))}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = getValidPokemonImgPath(
-                                e.currentTarget.src,
-                                item.id,
-                                findAssetForm(item.id, item.form)
-                              );
-                            }}
-                          />
-                        </span>
-                      </div>
-                      <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
-                    </LinkToTop>
-                  ))}
-              </Fragment>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <ButtonMui color="tertiary" label="Close" onClick={handleClose} />
-          </Modal.Footer>
-        </Modal>
+            </div>
+          }
+          content={
+            <div className="text-center">
+              <h5 className="text-decoration-underline">Random Pokémon</h5>
+              {showData.data
+                .filter((item) => !item.guaranteedLimited)
+                .map((item, index) => (
+                  <LinkToTop
+                    className="img-link text-center"
+                    key={index}
+                    to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                    title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
+                  >
+                    <div className="d-flex justify-content-center">
+                      <span className="w-9">
+                        <img
+                          className="pokemon-sprite-medium filter-shadow-hover"
+                          alt="Pokémon Image"
+                          title={splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
+                          src={APIService.getPokemonModel(findAssetForm(item.id, item.form))}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = getValidPokemonImgPath(
+                              e.currentTarget.src,
+                              item.id,
+                              findAssetForm(item.id, item.form)
+                            );
+                          }}
+                        />
+                      </span>
+                    </div>
+                    <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
+                  </LinkToTop>
+                ))}
+              {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)) && (
+                <Fragment>
+                  <hr />
+                  <h5 className="text-decoration-underline">Guaranteed Pokémon in first time</h5>
+                  {showData.data
+                    .filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)
+                    .map((item, index) => (
+                      <LinkToTop
+                        className="img-link text-center"
+                        key={index}
+                        to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                        title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
+                      >
+                        <div className="d-flex justify-content-center">
+                          <span className="w-9">
+                            <img
+                              className="pokemon-sprite-medium filter-shadow-hover"
+                              alt="Pokémon Image"
+                              title={splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
+                              src={APIService.getPokemonModel(findAssetForm(item.id, item.form))}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getValidPokemonImgPath(
+                                  e.currentTarget.src,
+                                  item.id,
+                                  findAssetForm(item.id, item.form)
+                                );
+                              }}
+                            />
+                          </span>
+                        </div>
+                        <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
+                      </LinkToTop>
+                    ))}
+                </Fragment>
+              )}
+            </div>
+          }
+          actions={[
+            {
+              label: 'Close',
+              color: 'tertiary',
+              isClose: true,
+            },
+          ]}
+        />
       )}
     </div>
   );

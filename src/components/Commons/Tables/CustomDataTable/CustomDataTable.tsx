@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Modal } from 'react-bootstrap';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { StyleSheetManager } from 'styled-components';
 import { ICustomDataTableProps } from '../../models/component.model';
@@ -11,7 +10,7 @@ import { debounce } from 'lodash';
 import CustomInput from '../../Inputs/CustomInput';
 import { StyleSheetConfig } from '../../../../utils/configs/style-sheet.config';
 import { IncludeMode } from '../../../../utils/enums/string.enum';
-import ButtonMui from '../../Buttons/ButtonMui';
+import DialogMui from '../../Dialogs/Dialogs';
 
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -43,10 +42,6 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
 
   const handleShowOption = () => {
     setShowOption(true);
-  };
-
-  const handleCloseOption = () => {
-    setShowOption(false);
   };
 
   const setCustomStyle = () => {
@@ -121,19 +116,19 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
       </StyleSheetManager>
 
       {props.isShowModalOptions && (
-        <Modal show={showOption} onHide={handleCloseOption} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>{props.titleModalOptions}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="overflow-y-auto" style={{ maxHeight: '60vh', maxWidth: 400 }}>
-              {props.customOptionsModal?.()}
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <ButtonMui color="tertiary" label="Close" onClick={handleCloseOption} />
-          </Modal.Footer>
-        </Modal>
+        <DialogMui
+          open={showOption}
+          onClose={() => setShowOption(false)}
+          title={props.titleModalOptions}
+          content={props.customOptionsModal?.()}
+          actions={[
+            {
+              label: 'Close',
+              color: 'tertiary',
+              isClose: true,
+            },
+          ]}
+        />
       )}
     </>
   );

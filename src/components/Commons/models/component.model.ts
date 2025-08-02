@@ -1,6 +1,7 @@
 import {
   BaseSelectProps,
   BaseTextFieldProps,
+  Breakpoint,
   ButtonProps,
   FormControlLabelProps,
   SxProps,
@@ -455,4 +456,22 @@ export interface AccordionMuiComponent<T> {
   resetItemOnChange?: boolean;
   onChange?: (value: (T | T[]) | undefined, index: number) => void;
   items: IIDefaultOptionAccordion<T>[] | undefined;
+}
+
+export interface IDialogAction {
+  label: string;
+  isClose?: boolean;
+  variant?: 'contained' | 'outlined' | 'text';
+  color?: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success' | 'tertiary';
+  onClick?: () => void;
+}
+
+export interface IDialogMuiComponent {
+  open?: boolean;
+  keepMounted?: boolean;
+  width?: Breakpoint;
+  title?: React.ReactNode;
+  content?: React.ReactNode;
+  actions?: IDialogAction[];
+  onClose?: () => void;
 }
