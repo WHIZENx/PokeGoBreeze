@@ -32,8 +32,17 @@ import { useNavigateToTop } from '../../Link/LinkToTop';
 import { LinearProgress, ListSubheader } from '@mui/material';
 import useRouter from '../../../composables/useRouter';
 import DrawerSideBar from '../Drawers/DrawerSideBar';
+import { useTheme as useThemeMui } from '@mui/material/styles';
+import { useLocation } from 'react-router-dom';
 
 const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
+  try {
+    useLocation();
+  } catch (e) {
+    return;
+  }
+
+  const theme = useThemeMui();
   const navigateToTop = useNavigateToTop();
   const router = useRouter();
 
@@ -71,10 +80,10 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   const onChangeTheme = () => {
     if (!isDelay) {
       setIsDelay(true);
-      loadTheme(props.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light, setStateTheme);
+      loadTheme(theme.palette.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light, setStateTheme);
       setTimeout(() => {
         setIsDelay(false);
-        props.toggleColorMode();
+        props.toggleColorMode?.();
       }, 500);
     }
   };
@@ -127,7 +136,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
           onClick={onChangeTheme}
           color="inherit"
         >
-          {props.mode === TypeTheme.Light ? (
+          {theme.palette.mode === TypeTheme.Light ? (
             <LightModeIcon fontSize="large" style={{ color: 'white' }} />
           ) : (
             <DarkModeIcon fontSize="large" style={{ color: 'white' }} />

@@ -33,7 +33,7 @@ import CatchChance from './pages/Tools/CatchChance/CatchChance';
 import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
-import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './utils/models/overrides/themes.model';
 import { TypeTheme } from './enums/type.enum';
@@ -66,7 +66,6 @@ function App() {
   const { loadTheme } = useThemeStore();
   const { routerData, routerAction } = useRouter();
 
-  const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
@@ -160,11 +159,7 @@ function App() {
 
   return (
     <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
-      <ResponsiveAppBar
-        mode={theme.palette.mode}
-        toggleColorMode={colorMode.toggleColorMode}
-        version={currentVersion}
-      />
+      <ResponsiveAppBar toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
       <Routes>
         <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
         <Route path="/news" element={<News />} />

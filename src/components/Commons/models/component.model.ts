@@ -3,7 +3,6 @@ import {
   BaseTextFieldProps,
   ButtonProps,
   FormControlLabelProps,
-  PaletteMode,
   SxProps,
   Theme,
   ToggleButtonGroupProps,
@@ -26,9 +25,8 @@ import React from 'react';
 import { IAppMenuItem, IMenuItem } from './menu.model';
 
 export interface IResponsiveAppBarComponent {
-  mode: PaletteMode;
   version?: string;
-  toggleColorMode: () => void;
+  toggleColorMode?: () => void;
 }
 
 export interface IDrawerSideBarComponent {
