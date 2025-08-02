@@ -40,7 +40,6 @@ import TimerIcon from '@mui/icons-material/Timer';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { useSnackbar } from 'notistack';
 import { Modal, OverlayTrigger } from 'react-bootstrap';
 
 import update from 'immutability-helper';
@@ -58,7 +57,7 @@ import {
   SelectMoveModel,
   SelectMovePokemonModel,
 } from '../../../components/Commons/Inputs/models/select-move.model';
-import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { BattleCalculate } from '../../../utils/models/calculate.model';
 import {
@@ -103,6 +102,7 @@ import InputMui from '../../../components/Commons/Inputs/InputMui';
 import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 const RaidBattle = () => {
   useTitle({
@@ -302,7 +302,7 @@ const RaidBattle = () => {
   const [countTrainer, setCountTrainer] = useState(1);
   const [isLoadedForms, setIsLoadedForms] = useState(false);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const clearDataBoss = () => {
     setResult([]);
@@ -384,7 +384,7 @@ const RaidBattle = () => {
           }
 
           if (!statsAttacker || !statsDefender) {
-            enqueueSnackbar('Something went wrong!', { variant: VariantType.Error });
+            showSnackbar('Something went wrong!', 'error');
             return;
           }
 
@@ -564,10 +564,10 @@ const RaidBattle = () => {
     const trainer = trainerBattle.map((trainer) => trainer.pokemons);
     const trainerNoPokemon = trainer.filter((pokemon) => isNotEmpty(pokemon.filter((item) => !item.dataTargetPokemon)));
     if (isNotEmpty(trainerNoPokemon)) {
-      enqueueSnackbar('Please select Pokémon to raid battle!', { variant: VariantType.Error });
+      showSnackbar('Please select Pokémon to raid battle!', 'error');
       return;
     }
-    enqueueSnackbar('Simulator battle raid successfully!', { variant: VariantType.Success });
+    showSnackbar('Simulator battle raid successfully!', 'success');
 
     const turn: IPokemonRaidModel[][] = [];
     trainer.forEach((pokemons, trainerId) => {

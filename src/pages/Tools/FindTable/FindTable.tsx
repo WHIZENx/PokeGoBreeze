@@ -7,7 +7,6 @@ import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-co
 import dataCPM from '../../../data/cp_multiplier.json';
 
 import '../../../components/Find/FormSelect.scss';
-import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
 import './FindTable.scss';
@@ -21,12 +20,13 @@ import {
 } from '../../../utils/models/calculate.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
-import { ColumnType, VariantType } from '../../../enums/type.enum';
+import { ColumnType } from '../../../enums/type.enum';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import InputMui from '../../../components/Commons/Inputs/InputMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 interface IFindCP {
   level: number;
@@ -189,14 +189,14 @@ const FindTable = () => {
   const [preIvArr, setPreIvArr] = useState<IPredictStatsCalculate>();
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
     if (!searchingToolCurrentDetails) {
       return;
     }
     if (toNumber(searchCP) < minCp()) {
-      return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
+      return showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
     }
     const result = predictStat(
       toNumber(searchingToolCurrentDetails.statsGO?.atk),
@@ -207,10 +207,10 @@ const FindTable = () => {
     if (!isNotEmpty(result.result)) {
       setPreIvArr(undefined);
       const name = splitAndCapitalize(searchingToolCurrentDetails.fullName, '_', ' ');
-      return enqueueSnackbar(`At CP: ${result.CP} impossible found in ${name}`, { variant: VariantType.Error });
+      return showSnackbar(`At CP: ${result.CP} impossible found in ${name}`, 'error');
     }
     setPreIvArr(result);
-  }, [enqueueSnackbar, searchingToolCurrentDetails, searchCP]);
+  }, [searchingToolCurrentDetails, searchCP]);
 
   const onFindStats = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -234,7 +234,7 @@ const FindTable = () => {
       return;
     }
     if (isInvalidIV(searchATKIv) || isInvalidIV(searchDEFIv) || isInvalidIV(searchSTAIv)) {
-      enqueueSnackbar(`Please input IV between ${minIv()} - ${maxIv()}.`, { variant: VariantType.Error });
+      showSnackbar(`Please input IV between ${minIv()} - ${maxIv()}.`, 'error');
       return;
     }
     const result = predictCPList(
@@ -246,7 +246,7 @@ const FindTable = () => {
       searchSTAIv
     );
     setPreCpArr(result);
-  }, [enqueueSnackbar, searchingToolCurrentDetails, searchATKIv, searchDEFIv, searchSTAIv]);
+  }, [searchingToolCurrentDetails, searchATKIv, searchDEFIv, searchSTAIv]);
 
   const onFindCP = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {

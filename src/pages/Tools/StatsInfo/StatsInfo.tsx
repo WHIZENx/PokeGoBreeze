@@ -12,8 +12,7 @@ import DynamicInputCP from '../../../components/Commons/Inputs/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
-import { ColumnType, VariantType } from '../../../enums/type.enum';
-import { useSnackbar } from 'notistack';
+import { ColumnType } from '../../../enums/type.enum';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
@@ -22,6 +21,7 @@ import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/options-
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import ButtonGroupLeague from '../../../components/Commons/Buttons/ButtonGroupLeague';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -110,7 +110,7 @@ const StatsInfo = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -200,7 +200,7 @@ const StatsInfo = () => {
         return;
       }
       if (toNumber(searchCP) < minCp()) {
-        enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
+        showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
         return;
       }
       if (isNotEmpty(statsBattle)) {

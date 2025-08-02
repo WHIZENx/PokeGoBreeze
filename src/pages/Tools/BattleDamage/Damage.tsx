@@ -1,6 +1,5 @@
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
@@ -29,11 +28,12 @@ import {
   safeObjectEntries,
   toNumber,
 } from '../../../utils/extension';
-import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
+import { PokemonType, ThrowType, TypeAction, TypeMove } from '../../../enums/type.enum';
 import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -110,7 +110,7 @@ const Damage = () => {
   const { isWeather, isDodge, isTrainer } = battleState;
   const [result, setResult] = useState(new PokemonDmgOption());
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (searchingToolCurrentData?.pokemon?.statsGO?.atk !== 0) {
@@ -190,11 +190,10 @@ const Damage = () => {
           })
         );
       } else {
-        enqueueSnackbar('Please select move for pokémon!', { variant: VariantType.Error });
+        showSnackbar('Please select move for pokémon!', 'error');
       }
     },
     [
-      enqueueSnackbar,
       enableFriend,
       battleState,
       move,

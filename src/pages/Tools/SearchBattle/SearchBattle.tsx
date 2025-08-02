@@ -16,8 +16,6 @@ import {
 } from '../../../utils/utils';
 import { calculateStats } from '../../../utils/calculate';
 
-import { useSnackbar } from 'notistack';
-
 import { marks, PokeGoSlider } from '../../../utils/utils';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
@@ -45,7 +43,6 @@ import {
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
-import { VariantType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
@@ -55,6 +52,7 @@ import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 const FindBattle = () => {
   useTitle({
@@ -87,7 +85,7 @@ const FindBattle = () => {
   const [evoChain, setEvoChain] = useState<IQueryStatesEvoChain[][]>([]);
   const [bestInLeague, setBestInLeague] = useState<IBattleBaseStats[]>([]);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const clearArrStats = () => {
     setSearchCP('');
@@ -271,13 +269,7 @@ const FindBattle = () => {
         }
         setBestInLeague(bestLeague.sort((a, b) => toNumber(a.maxCP) - toNumber(b.maxCP)));
       } else {
-        setTimeout(
-          () =>
-            enqueueSnackbar(`Error! Something went wrong.`, {
-              variant: VariantType.Error,
-            }),
-          300
-        );
+        setTimeout(() => showSnackbar(`Error! Something went wrong.`, 'error'), 300);
       }
       hideSpinner();
     },
@@ -288,7 +280,7 @@ const FindBattle = () => {
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (toNumber(searchCP) < minCp()) {
-        return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
+        return showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
       }
       showSpinner();
       const statATK = toNumber(searchingToolCurrentData?.pokemon?.statsGO?.atk);
@@ -304,7 +296,6 @@ const FindBattle = () => {
       ATKIv,
       DEFIv,
       STAIv,
-      enqueueSnackbar,
       searchCP,
       searchingToolCurrentData?.pokemon?.statsGO?.atk,
       searchingToolCurrentData?.pokemon?.statsGO?.def,
@@ -317,20 +308,16 @@ const FindBattle = () => {
     const name = splitAndCapitalize(searchingToolCurrentData?.pokemon?.fullName, '_', ' ');
     if (result.level === 0) {
       hideSpinner();
-      return enqueueSnackbar(
+      return showSnackbar(
         `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} impossible found in ${name}`,
-        {
-          variant: VariantType.Error,
-        }
+        'error'
       );
     }
     setTimeout(() => {
       searchStatsPoke(result.level);
-      enqueueSnackbar(
+      showSnackbar(
         `Search success at CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} found in ${name}`,
-        {
-          variant: VariantType.Success,
-        }
+        'success'
       );
     }, 500);
   };

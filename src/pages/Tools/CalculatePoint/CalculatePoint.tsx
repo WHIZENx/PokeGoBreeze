@@ -8,12 +8,11 @@ import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } f
 import { findStabType } from '../../../utils/compute';
 import { levelList } from '../../../utils/compute';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
-import { useSnackbar } from 'notistack';
 
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import APIService from '../../../services/api.service';
-import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
+import { TypeAction, TypeMove } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -32,6 +31,7 @@ import { minLevel, maxLevel, minIv, maxIv, stepLevel } from '../../../utils/help
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 const CalculatePoint = () => {
   useTitle({
@@ -70,7 +70,7 @@ const CalculatePoint = () => {
   const [resultBreakPointDef, setResultBreakPointDef] = useState<BreakPointDef>();
   const [resultBulkPointDef, setResultBulkPointDef] = useState<BulkPointDef>();
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const clearData = (reset = true) => {
     clearDataAtk(reset);
@@ -123,7 +123,7 @@ const CalculatePoint = () => {
     }
     const colorTone = computeColorTone(UniqValueInArray(group).sort((a, b) => a - b));
     setResultBreakPointAtk({ data: dataList, colorTone });
-    enqueueSnackbar('Calculate breakpoint attacker successfully!', { variant: VariantType.Success });
+    showSnackbar('Calculate breakpoint attacker successfully!', 'success');
   };
 
   const calculateBreakpointDef = () => {
@@ -162,7 +162,7 @@ const CalculatePoint = () => {
       colorToneDef,
       colorToneSta,
     });
-    enqueueSnackbar('Calculate breakpoint defender successfully!', { variant: VariantType.Success });
+    showSnackbar('Calculate breakpoint defender successfully!', 'success');
   };
 
   const computeColorTone = (data: number[]) => {
@@ -254,7 +254,7 @@ const CalculatePoint = () => {
     const maxLength = Math.max(...dataList.map((item) => item.length));
     dataList = dataList.map((item) => item.concat(Array(maxLength - item.length).fill(0)));
     setResultBulkPointDef({ data: dataList, maxLength });
-    enqueueSnackbar('Calculate bulkpoint defender successfully!', { variant: VariantType.Success });
+    showSnackbar('Calculate bulkpoint defender successfully!', 'success');
   };
 
   const getIconBattle = (action: TypeAction, form: Partial<IPokemonFormModify> | undefined) => (

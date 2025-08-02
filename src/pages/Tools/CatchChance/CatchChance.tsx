@@ -609,31 +609,34 @@ const CatchChance = () => {
           </div>
           {isAdvance && (
             <Fragment>
-              <div className="d-flex flex-wrap justify-content-center gap-2">
-                <SelectMui
-                  formSx={{ m: 1, minWidth: 120 }}
-                  inputLabel="Ball"
-                  value={ballType}
-                  onChangeSelect={(value) => setAdvanceOption({ ...advanceOption, ballType: value })}
-                  menuItems={balls.map((value) => ({
-                    className: 'd-flex gap-1',
-                    value: value.pokeBallType,
-                    label: (
-                      <>
-                        <img alt="Icon Item" height={16} src={getItemSpritePath(value.itemName)} /> {value.name}
-                      </>
-                    ),
-                  }))}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isNormalThrow}
-                      onChange={(_, check) => setAdvanceOption({ ...advanceOption, isNormalThrow: check })}
-                    />
-                  }
-                  label="Normal Throw "
-                />
+              <div className="d-flex justify-content-center w-100">
+                <div className="d-flex flex-wrap justify-content-center gap-2 w-fit-content">
+                  <SelectMui
+                    formSx={{ m: 1, width: 150 }}
+                    inputLabel="Ball"
+                    value={ballType}
+                    onChangeSelect={(value) => setAdvanceOption({ ...advanceOption, ballType: value })}
+                    menuItems={balls.map((value) => ({
+                      className: 'd-flex gap-1',
+                      value: value.pokeBallType,
+                      label: (
+                        <div className="d-flex align-items-center gap-1">
+                          <img alt="Icon Item" height={16} src={getItemSpritePath(value.itemName)} />
+                          <span>{value.name}</span>
+                        </div>
+                      ),
+                    }))}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={isNormalThrow}
+                        onChange={(_, check) => setAdvanceOption({ ...advanceOption, isNormalThrow: check })}
+                      />
+                    }
+                    label="Normal Throw "
+                  />
+                </div>
               </div>
               <div className="row mt-2 position-relative m-0">
                 {isNormalThrow && (

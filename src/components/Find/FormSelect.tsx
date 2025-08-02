@@ -1,4 +1,3 @@
-import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../services/api.service';
 import Tools from './Tools';
@@ -27,7 +26,7 @@ import {
 import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
 import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
-import { PokemonType, TypeRaid, VariantType } from '../../enums/type.enum';
+import { PokemonType, TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
@@ -35,6 +34,7 @@ import { ItemName } from '../../pages/News/enums/item-type.enum';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
+import { useSnackbar } from '../../contexts/snackbar.context';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -60,7 +60,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [currentForm, setCurrentForm] = useState<IPokemonFormModify>();
 
   const axiosSource = useRef(APIService.getCancelToken());
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const fetchMap = useCallback(
     async (specie: IPokemonSpecie) => {
@@ -164,10 +164,10 @@ const FormSelect = (props: IFormSelectComponent) => {
           if (APIService.isCancel(e)) {
             return;
           }
-          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: VariantType.Error });
+          showSnackbar(`Pokémon ID or name: ${id} Not found!`, 'error');
         });
     },
-    [enqueueSnackbar, fetchMap]
+    [fetchMap]
   );
 
   useEffect(() => {

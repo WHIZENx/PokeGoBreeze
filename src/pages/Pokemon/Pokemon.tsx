@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
 import { Location, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -61,7 +60,7 @@ import {
 } from '../../utils/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
-import { PokemonType, TypeAction, VariantType } from '../../enums/type.enum';
+import { PokemonType, TypeAction } from '../../enums/type.enum';
 import { useNavigateToTop } from '../../components/Link/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
@@ -73,6 +72,7 @@ import useSpinner from '../../composables/useSpinner';
 import useRouter from '../../composables/useRouter';
 import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
+import { useSnackbar } from '../../contexts/snackbar.context';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -129,7 +129,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [progress, setProgress] = useState(new PokemonProgress());
 
   const axiosSource = useRef(APIService.getCancelToken());
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const getPokemonIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
@@ -341,7 +341,7 @@ const Pokemon = (props: IPokemonPage) => {
           if (APIService.isCancel(e)) {
             return;
           }
-          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: VariantType.Error });
+          showSnackbar(`Pokémon ID or name: ${id} Not found!`, 'error');
           if (params.id) {
             setIsFound(false);
           } else {
@@ -352,7 +352,7 @@ const Pokemon = (props: IPokemonPage) => {
           }
         });
     },
-    [enqueueSnackbar, fetchMap]
+    [fetchMap]
   );
 
   const clearData = (isForceClear = false) => {
@@ -400,7 +400,7 @@ const Pokemon = (props: IPokemonPage) => {
       if (id <= 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemons)) {
         id = getPokemonIdByParam();
         if (id <= 0) {
-          enqueueSnackbar(`Pokémon ID or name: ${params.id} Not found!`, { variant: VariantType.Error });
+          showSnackbar(`Pokémon ID or name: ${params.id} Not found!`, 'error');
           setIsFound(false);
           return;
         }

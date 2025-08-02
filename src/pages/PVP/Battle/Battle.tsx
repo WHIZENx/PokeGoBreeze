@@ -40,7 +40,6 @@ import { useParams } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { useSnackbar } from 'notistack';
 import { BattlePokemonData, IBattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
 import { ICombat } from '../../../core/models/combat.model';
 import {
@@ -53,7 +52,7 @@ import {
 } from '../models/battle.model';
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
-import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
+import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import {
   combineClasses,
   DynamicObj,
@@ -100,6 +99,7 @@ import InputMui from '../../../components/Commons/Inputs/InputMui';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -127,7 +127,7 @@ const Battle = () => {
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
   const [data, setData] = useState<IBattlePokemonData[]>([]);
   const [options, setOptions] = useState<OptionsBattle>({
@@ -153,9 +153,7 @@ const Battle = () => {
 
   const battleAnimation = () => {
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
-      enqueueSnackbar('Something went wrong! Please try again.', {
-        variant: VariantType.Error,
-      });
+      showSnackbar('Something went wrong! Please try again.', 'error');
       return;
     }
 
@@ -165,9 +163,7 @@ const Battle = () => {
       (!pokemonCurr.disableCMovePri && !pokemonCurr.cMovePri) ||
       (!pokemonObj.disableCMovePri && !pokemonObj.cMovePri)
     ) {
-      enqueueSnackbar('Required charge move', {
-        variant: VariantType.Error,
-      });
+      showSnackbar('Required charge move', 'error');
       return;
     }
     arrBound.current = [];
@@ -691,9 +687,7 @@ const Battle = () => {
   ) => {
     e.preventDefault();
     if (!pokemon.pokemonData) {
-      enqueueSnackbar('Pokémon not found.', {
-        variant: VariantType.Error,
-      });
+      showSnackbar('Pokémon not found.', 'error');
       return;
     }
     const battleType = getKeyWithData(BattleType, type);
@@ -708,9 +702,7 @@ const Battle = () => {
 
     const paramCP = toNumber(params?.cp);
     if (cp > paramCP) {
-      enqueueSnackbar(`This stats Pokémon CP is greater than ${paramCP}, which is not permitted by the league.`, {
-        variant: VariantType.Error,
-      });
+      showSnackbar(`This stats Pokémon CP is greater than ${paramCP}, which is not permitted by the league.`, 'error');
       return;
     }
 

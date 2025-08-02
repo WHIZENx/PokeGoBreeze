@@ -17,7 +17,6 @@ import {
 } from '../../../utils/calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
-import { useSnackbar } from 'notistack';
 
 import APIService from '../../../services/api.service';
 
@@ -35,11 +34,12 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { isUndefined, toNumber } from '../../../utils/extension';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
-import { PokemonType, VariantType } from '../../../enums/type.enum';
+import { PokemonType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 const Calculate = () => {
   useTitle({
@@ -74,7 +74,7 @@ const Calculate = () => {
   const [dataUltraLeague, setDataUltraLeague] = useState<IBattleLeagueCalculate>();
   const [dataMasterLeague, setDataMasterLeague] = useState<IBattleLeagueCalculate>();
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const clearArrStats = () => {
     setSearchCP('');
@@ -92,7 +92,7 @@ const Calculate = () => {
 
   const calculateStatsPoke = useCallback(() => {
     if (toNumber(searchCP) < minCp()) {
-      enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
+      showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
       return;
     }
     const statATK = toNumber(searchingToolCurrentDetails?.statsGO?.atk);
@@ -101,19 +101,15 @@ const Calculate = () => {
     const name = splitAndCapitalize(searchingToolCurrentDetails?.fullName, '_', ' ');
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
     if (!result.level) {
-      enqueueSnackbar(
+      showSnackbar(
         `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} impossible found in ${name}`,
-        {
-          variant: VariantType.Error,
-        }
+        'error'
       );
       return;
     }
-    enqueueSnackbar(
+    showSnackbar(
       `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} found in ${typePoke} ${name}`,
-      {
-        variant: VariantType.Success,
-      }
+      'success'
     );
     setPokeStats(result);
     setStatLevel(result.level);
@@ -166,7 +162,6 @@ const Calculate = () => {
       calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke)
     );
   }, [
-    enqueueSnackbar,
     searchingToolCurrentDetails?.statsGO?.atk,
     searchingToolCurrentDetails?.statsGO?.def,
     searchingToolCurrentDetails?.statsGO?.sta,

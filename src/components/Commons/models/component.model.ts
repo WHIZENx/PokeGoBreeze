@@ -440,7 +440,7 @@ export interface TabPanelComponent {
   tabs: ITab[];
 }
 
-interface IIDefaultOptionAccordion<T> extends IDefaultOption<T> {
+export interface IIDefaultOptionAccordion<T> extends IDefaultOption<T> {
   hideIcon?: boolean;
   footer?: React.ReactNode;
   sxHeader?: SxProps<Theme>;

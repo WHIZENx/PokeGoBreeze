@@ -1,4 +1,3 @@
-import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
@@ -26,7 +25,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Checkbox } from '@mui/material';
-import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
+import { BuffType, ColumnType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
@@ -62,6 +61,7 @@ import InputReleased from '../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
 import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
+import { useSnackbar } from '../../contexts/snackbar.context';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -163,7 +163,7 @@ const Move = (props: IMovePage) => {
   const [moveType, setMoveType] = useState<string>();
   const [progress, setProgress] = useState(false);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const menuItems = createDataRows<IMenuItem<IPokemonTopMove>>(
     {
@@ -259,7 +259,7 @@ const Move = (props: IMovePage) => {
             image: APIService.getTypeHqSprite(move.type),
           });
         } else {
-          enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: VariantType.Error });
+          showSnackbar(`Move ID: ${id} Not found!`, 'error');
           if (id) {
             setTitleProps({
               title: `#${id} - Not Found`,
@@ -270,7 +270,7 @@ const Move = (props: IMovePage) => {
         }
       }
     },
-    [enqueueSnackbar, getCombatsById]
+    [getCombatsById]
   );
 
   const getMoveIdByParam = () => {

@@ -6,8 +6,6 @@ import './index.scss';
 
 import { Provider } from 'react-redux';
 
-import { SnackbarProvider } from 'notistack';
-
 import reportWebVitals from './reportWebVitals';
 
 import configureStore from './store/configure';
@@ -43,20 +41,12 @@ document.body.style.background = theme === TypeTheme.Dark ? darkThemeBg() : ligh
 root.render(
   <>
     <Provider store={store}>
-      <SnackbarProvider
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        maxSnack={1}
-      >
-        <PersistGate loading={<LoadingPersist />} persistor={persistor}>
-          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <RouterSync />
-            <Main />
-          </BrowserRouter>
-        </PersistGate>
-      </SnackbarProvider>
+      <PersistGate loading={<LoadingPersist />} persistor={persistor}>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <RouterSync />
+          <Main />
+        </BrowserRouter>
+      </PersistGate>
     </Provider>
     <Analytics />
     <SpeedInsights />

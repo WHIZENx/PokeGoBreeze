@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { AccordionActions, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, { AccordionSummaryProps, accordionSummaryClasses } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import { styled } from '@mui/material/styles';
-import { AccordionMuiComponent } from '../models/component.model';
+import { AccordionMuiComponent, IIDefaultOptionAccordion } from '../models/component.model';
 import { combineClasses, isIncludeList, isNotEmpty, toNumber } from '../../../utils/extension';
 import ButtonMui from '../Buttons/ButtonMui';
 import CloseIcon from '@mui/icons-material/Close';
@@ -48,12 +48,62 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
+const MemoizedAccordionContent = memo(
+  <T,>({
+    item,
+    isShowAction,
+    isHiding,
+    handleClose,
+    index,
+  }: {
+    item: IIDefaultOptionAccordion<T>;
+    isShowAction: boolean | undefined;
+    isHiding: boolean;
+    handleClose: (value: T | undefined, index: number) => void;
+    index: number;
+  }) => (
+    <>
+      <AccordionDetails
+        sx={{
+          bgcolor: 'background.default',
+          ...(item.noPadding ? { p: 0 } : {}),
+          ...(item.sxDetails ? item.sxDetails : {}),
+        }}
+      >
+        {item.children}
+      </AccordionDetails>
+      {(item.footer || isShowAction) && (
+        <AccordionActions sx={{ backgroundColor: 'background.paper', ...(item.sxFooter ? item.sxFooter : {}) }}>
+          {item.footer ? (
+            item.footer
+          ) : isShowAction ? (
+            <ButtonMui
+              variant="outlined"
+              label="Close"
+              endIcon={<CloseIcon color="error" />}
+              onClick={() => (!isHiding ? handleClose(item.value, index) : undefined)}
+            />
+          ) : null}
+        </AccordionActions>
+      )}
+    </>
+  )
+);
+
+MemoizedAccordionContent.displayName = 'MemoizedAccordionContent';
+
 const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
   const [expanded, setExpanded] = useState<T>();
   const [multiExpanded, setMultiExpanded] = useState<T[]>([]);
   const [storeAccordions, setStoreAccordions] = useState<boolean[]>([]);
   const [isHiding, setIsHiding] = useState<boolean>(false);
   const accordionsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  const clearItems = () => {
+    setExpanded(undefined);
+    setMultiExpanded([]);
+    setStoreAccordions(Array(props.items?.length || 0).fill(false));
+  };
 
   useEffect(() => {
     if (props.alwaysOpen) {
@@ -64,9 +114,9 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
   }, [props.defaultValue, props.alwaysOpen]);
 
   useEffect(() => {
-    if (!isNotEmpty(storeAccordions) || props.resetItemOnChange) {
-      setStoreAccordions(Array(props.items?.length || 0).fill(false));
-    } else if (isNotEmpty(storeAccordions)) {
+    if (!isNotEmpty(storeAccordions)) {
+      clearItems();
+    } else {
       setStoreAccordions((prev) => {
         const itemsLength = props.items?.length || 0;
         if (itemsLength > prev.length) {
@@ -77,7 +127,13 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
         return prev;
       });
     }
-  }, [props.items, props.resetItemOnChange]);
+  }, [props.items]);
+
+  useEffect(() => {
+    if (props.resetItemOnChange) {
+      clearItems();
+    }
+  }, [props.resetItemOnChange]);
 
   const closeItem = (panel: T | undefined, index: number) => {
     if (props.alwaysOpen && panel) {
@@ -168,31 +224,13 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
             {item.label}
           </AccordionSummary>
           {storeAccordions[index] && (
-            <>
-              <AccordionDetails
-                sx={{
-                  bgcolor: 'background.default',
-                  ...(item.noPadding ? { p: 0 } : {}),
-                  ...(item.sxDetails ? item.sxDetails : {}),
-                }}
-              >
-                {item.children}
-              </AccordionDetails>
-              {(item.footer || props.isShowAction) && (
-                <AccordionActions sx={{ backgroundColor: 'background.paper', ...(item.sxFooter ? item.sxFooter : {}) }}>
-                  {item.footer ? (
-                    item.footer
-                  ) : props.isShowAction ? (
-                    <ButtonMui
-                      variant="outlined"
-                      label="Close"
-                      endIcon={<CloseIcon color="error" />}
-                      onClick={() => (!isHiding ? handleClose(item.value, index) : undefined)}
-                    />
-                  ) : null}
-                </AccordionActions>
-              )}
-            </>
+            <MemoizedAccordionContent
+              item={item}
+              isShowAction={props.isShowAction}
+              isHiding={isHiding}
+              handleClose={() => handleClose(item.value, index)}
+              index={index}
+            />
           )}
         </Accordion>
       ))}

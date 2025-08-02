@@ -33,6 +33,7 @@ import { useDataStore } from '../../composables/useDataStore';
 import useAssets from '../../composables/useAssets';
 import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
 import { Divider } from '@mui/material';
+import DOMPurify from 'dompurify';
 
 const News = () => {
   useTitle({
@@ -311,7 +312,10 @@ const News = () => {
                             {value.detailsLink && (
                               <>
                                 <Divider sx={{ my: 1 }} />
-                                <p className="mt-3" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />
+                                <p
+                                  className="mt-3"
+                                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value.detailsLink) }}
+                                />
                               </>
                             )}
                           </div>

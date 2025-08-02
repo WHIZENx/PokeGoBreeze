@@ -52,6 +52,7 @@ import useDevice from './composables/useDevice';
 import { useTheme as useThemeStore } from './composables/useTheme';
 import useRouter from './composables/useRouter';
 import ResponsiveAppBar from './components/Commons/Navbars/ResponsiveAppBar';
+import { SnackbarProvider } from './contexts/snackbar.context';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -228,7 +229,9 @@ export default function Main() {
       <ThemeProvider theme={theme}>
         <ErrorBoundary>
           <OptionsContext.Provider value={defaultOptions}>
-            <App />
+            <SnackbarProvider>
+              <App />
+            </SnackbarProvider>
           </OptionsContext.Provider>
         </ErrorBoundary>
       </ThemeProvider>

@@ -88,6 +88,8 @@ const RankingPVP = (props: IStyleSheetData) => {
   const [search, setSearch] = useState('');
   const [isFound, setIsFound] = useState(true);
 
+  const [resetItem, setResetItem] = useState(false);
+
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
   const eachCounter = useRef(10);
@@ -383,8 +385,13 @@ const RankingPVP = (props: IStyleSheetData) => {
           toggles={getKeysObj(ScoreType).map((type) => ({
             label: type,
             value: type,
-            onClick: () =>
-              navigate(`/pvp/rankings/${params.serie}/${params.cp}?${Params.LeagueType}=${type.toLowerCase()}`),
+            onClick: () => {
+              navigate(`/pvp/rankings/${params.serie}/${params.cp}?${Params.LeagueType}=${type.toLowerCase()}`);
+              setResetItem(true);
+              setTimeout(() => {
+                setResetItem(false);
+              }, 100);
+            },
           }))}
         />
         <InputMuiSearch value={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
@@ -412,7 +419,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           </div>
           <AccordionMui
             isShowAction
-            resetItemOnChange
+            resetItemOnChange={resetItem}
             items={rankingData
               .filter(
                 (pokemon) =>
