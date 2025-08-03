@@ -1,7 +1,6 @@
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
 const manifest = require('./public/manifest.json');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -192,7 +191,7 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: ['postcss-preset-env', autoprefixer, 'postcss-flexbugs-fixes'],
+                config: path.resolve(__dirname, 'postcss.config.js'),
               },
             },
           },

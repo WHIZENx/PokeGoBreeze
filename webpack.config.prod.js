@@ -1,7 +1,6 @@
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
 const manifest = require('./public/manifest.json');
 const { merge } = require('webpack-merge');
 
@@ -274,15 +273,7 @@ module.exports = merge(common, {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [
-                  require('postcss-preset-env')({
-                    autoprefixer: {
-                      flexbox: 'no-2009',
-                    },
-                    stage: 3,
-                  }),
-                  autoprefixer,
-                ],
+                config: path.resolve(__dirname, 'postcss.config.js'),
               },
               sourceMap: false,
             },
