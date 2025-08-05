@@ -148,19 +148,19 @@ const TableMove = (props: ITableMoveComponent) => {
     );
     const max = table === TableType.Offensive ? move.maxOff : move.maxDef;
     return (
-      <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
+      <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
         <table className="table-moves">
           <colgroup className="main-move" />
           <colgroup className="main-move" />
           <thead>
-            <tr className="text-center">
+            <tr className="tw-text-center">
               <th className="table-sub-header" colSpan={3}>
                 {`Best Moves ${getKeyWithData(TableType, table)}`}
               </th>
             </tr>
-            <tr className="text-center">
+            <tr className="tw-text-center">
               <th
-                className="table-column-head main-move cursor-pointer"
+                className="table-column-head main-move tw-cursor-pointer"
                 onClick={() => arrowSort(table, TypeSorted.Fast)}
               >
                 Fast
@@ -175,7 +175,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 )}
               </th>
               <th
-                className="table-column-head main-move cursor-pointer"
+                className="table-column-head main-move tw-cursor-pointer"
                 onClick={() => arrowSort(table, TypeSorted.Charge)}
               >
                 Charged
@@ -189,7 +189,10 @@ const TableMove = (props: ITableMoveComponent) => {
                   </span>
                 )}
               </th>
-              <th className="table-column-head cursor-pointer" onClick={() => arrowSort(table, TypeSorted.Effective)}>
+              <th
+                className="table-column-head tw-cursor-pointer"
+                onClick={() => arrowSort(table, TypeSorted.Effective)}
+              >
                 %
                 <span className={stateSorted[tableType].sortBy === TypeSorted.Effective ? 'opacity-100' : 'opacity-30'}>
                   {stateSorted[tableType].effective ? (
@@ -224,13 +227,13 @@ const TableMove = (props: ITableMoveComponent) => {
     );
     return (
       <tr>
-        <td className="text-origin theme-table-primary">
-          <LinkToTop to={`../move/${value.fMove.id}`} className="d-block">
-            <div className="d-inline-block me-1 v-align-text-bottom">
+        <td className="text-origin tw-bg-table-primary">
+          <LinkToTop to={`../move/${value.fMove.id}`} className="tw-block">
+            <div className="tw-inline-block tw-mr-1 v-align-text-bottom">
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.fMove.type} />
             </div>
-            <span className="me-1">{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
-            <span className="w-max-content v-align-text-bottom">
+            <span className="tw-mr-1">{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
+            <span className="tw-w-max v-align-text-bottom">
               {value.fMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -244,13 +247,13 @@ const TableMove = (props: ITableMoveComponent) => {
             </span>
           </LinkToTop>
         </td>
-        <td className="text-origin theme-table-primary">
-          <LinkToTop to={`../move/${value.cMove.id}`} className="d-block">
-            <div className="d-inline-block me-1 v-align-text-bottom">
+        <td className="text-origin tw-bg-table-primary">
+          <LinkToTop to={`../move/${value.cMove.id}`} className="tw-block">
+            <div className="tw-inline-block tw-mr-1 v-align-text-bottom">
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.cMove.type} />
             </div>
-            <span className="me-1">{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
-            <span className="w-max-content v-align-text-bottom">
+            <span className="tw-mr-1">{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
+            <span className="tw-w-max v-align-text-bottom">
               {value.cMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -264,7 +267,7 @@ const TableMove = (props: ITableMoveComponent) => {
             </span>
           </LinkToTop>
         </td>
-        <td className="text-center theme-table-primary">{ratio}</td>
+        <td className="tw-text-center tw-bg-table-primary">{ratio}</td>
       </tr>
     );
   };
@@ -273,13 +276,13 @@ const TableMove = (props: ITableMoveComponent) => {
     <Fragment>
       {data.map((value, index) => (
         <tr key={index}>
-          <td className="text-origin theme-table-primary">
-            <LinkToTop to={`../move/${value.id}`} className="d-block">
-              <div className="d-inline-block me-1 v-align-text-bottom">
+          <td className="text-origin tw-bg-table-primary">
+            <LinkToTop to={`../move/${value.id}`} className="tw-block">
+              <div className="tw-inline-block tw-mr-1 v-align-text-bottom">
                 <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.type} />
               </div>
-              <span className="me-1">{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
-              <span className="w-max-content v-align-text-bottom">
+              <span className="tw-mr-1">{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
+              <span className="tw-w-max v-align-text-bottom">
                 {value.moveType !== MoveType.None && (
                   <span
                     className={combineClasses(
@@ -358,12 +361,12 @@ const TableMove = (props: ITableMoveComponent) => {
         {
           label: 'Moves List',
           children: (
-            <div className="row w-100 theme-table-info-bg m-0">
-              <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
+            <div className="row tw-w-full tw-bg-table-info !tw-m-0">
+              <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
                 <table className="table-moves">
                   <colgroup className="main-move" />
                   <thead>
-                    <tr className="text-center">
+                    <tr className="tw-text-center">
                       <th className="table-sub-header">Fast Moves</th>
                     </tr>
                   </thead>
@@ -372,11 +375,11 @@ const TableMove = (props: ITableMoveComponent) => {
                   </tbody>
                 </table>
               </div>
-              <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
+              <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
                 <table className="table-moves">
                   <colgroup className="main-move" />
                   <thead>
-                    <tr className="text-center">
+                    <tr className="tw-text-center">
                       <th className="table-sub-header">Charged Moves</th>
                     </tr>
                   </thead>
@@ -401,7 +404,7 @@ const TableMove = (props: ITableMoveComponent) => {
         {
           label: 'Best Moves List',
           children: (
-            <div className="row w-100 m-0">
+            <div className="row tw-w-full !tw-m-0">
               {renderTable(TableType.Offensive)}
               {renderTable(TableType.Defensive)}
             </div>

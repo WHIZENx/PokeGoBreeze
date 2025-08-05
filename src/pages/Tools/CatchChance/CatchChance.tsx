@@ -372,10 +372,10 @@ const CatchChance = () => {
   };
 
   return (
-    <div className="container mt-2 pb-3">
-      <div className="row m-0">
-        <div className="col-md-6 p-0">
-          <div className="d-flex justify-content-center">
+    <div className="tw-container tw-mt-2 tw-pb-3">
+      <div className="row !tw-m-0">
+        <div className="md:tw-w-1/2 !tw-p-0">
+          <div className="tw-flex tw-justify-center">
             <Find
               isHide
               clearStats={clearStats}
@@ -387,9 +387,9 @@ const CatchChance = () => {
             />
           </div>
         </div>
-        <div className="col-md-6 position-relative p-0">
+        <div className="md:tw-w-1/2 tw-relative !tw-p-0">
           <BackdropMui open={!isEncounter} isShowOnAbove={false} backgroundColor="var(--custom-background-unavailable)">
-            <div className="d-flex justify-content-center align-items-center text-center">
+            <div className="tw-flex tw-justify-center tw-items-center tw-text-center">
               <h5 className="text-not-encounter">
                 <b>
                   {splitAndCapitalize(
@@ -402,7 +402,7 @@ const CatchChance = () => {
               </h5>
             </div>
           </BackdropMui>
-          <div className="d-flex justify-content-center m-0">
+          <div className="tw-flex tw-justify-center !tw-m-0">
             <div>
               {medal && (
                 <SelectBadge
@@ -418,7 +418,7 @@ const CatchChance = () => {
                   setPriority={onSetPrioritySec}
                 />
               )}
-              <div className="d-flex flex-wrap justify-content-center w-100 mt-2 gap-2">
+              <div className="tw-flex tw-flex-wrap tw-justify-center tw-w-full tw-mt-2 tw-gap-2">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -496,10 +496,10 @@ const CatchChance = () => {
                   }
                 />
               </div>
-              <div className="d-flex w-100 justify-content-center mt-2 px-3">
+              <div className="tw-flex tw-w-full tw-justify-center tw-mt-2 tw-px-3">
                 <LevelSlider
                   aria-label="Level"
-                  className="w-75"
+                  className="tw-w-3/4"
                   style={{ maxWidth: 400 }}
                   value={level}
                   defaultValue={minLevel()}
@@ -507,11 +507,11 @@ const CatchChance = () => {
                   marks={[
                     {
                       value: maxQuestEncounterPlayerLevel(),
-                      label: <span className="position-absolute -top-1">Max LV encounter in quest</span>,
+                      label: <span className="tw-absolute -top-1">Max LV encounter in quest</span>,
                     },
                     {
                       value: maxEncounterPlayerLevel(),
-                      label: <span className="position-absolute bottom-4">Max LV encounter in wild</span>,
+                      label: <span className="tw-absolute bottom-4">Max LV encounter in wild</span>,
                     },
                   ]}
                   step={stepLevel()}
@@ -521,30 +521,30 @@ const CatchChance = () => {
                   onChange={(_, v) => onHandleLevel(v as number)}
                 />
               </div>
-              <div className="d-flex w-100 mt-2 justify-content-center gap-3">
+              <div className="tw-flex tw-w-full tw-mt-2 tw-justify-center tw-gap-3">
                 {data?.baseFleeRate && (
-                  <div className="w-25 text-center d-inline-block">
+                  <div className="tw-w-1/4 tw-text-center tw-inline-block">
                     <h1>FLEE</h1>
-                    <hr className="w-100" />
+                    <hr className="tw-w-full" />
                     <h5>{Math.round(data.baseFleeRate * 100)}%</h5>
                   </div>
                 )}
-                <div className="w-25 text-center d-inline-block">
+                <div className="tw-w-1/4 tw-text-center tw-inline-block">
                   <h1>CP</h1>
-                  <hr className="w-100" />
+                  <hr className="tw-w-full" />
                   <h5>{calculateCP(statATK, statDEF, statSTA, level)}</h5>
                 </div>
-                <div className="w-25 text-center d-inline-block">
+                <div className="tw-w-1/4 tw-text-center tw-inline-block">
                   <h1>LEVEL</h1>
-                  <hr className="w-100" />
+                  <hr className="tw-w-full" />
                   <h5>{level}</h5>
                 </div>
               </div>
-              <div className="d-flex w-100 mt-2 justify-content-center gap-3">
+              <div className="tw-flex tw-w-full tw-mt-2 tw-justify-center tw-gap-3">
                 {data?.baseFleeRate && (
-                  <div className="w-25 text-center d-inline-block">
+                  <div className="tw-w-1/4 tw-text-center tw-inline-block">
                     <h1>Attack</h1>
-                    <hr className="w-100" />
+                    <hr className="tw-w-full" />
                     <h5>
                       {data &&
                         `${
@@ -556,9 +556,9 @@ const CatchChance = () => {
                     <p>{data && `Time: ${toFloatWithPadding(toNumber(data.attackTimerS) / 10, 2)} sec`}</p>
                   </div>
                 )}
-                <div className="w-25 text-center d-inline-block">
+                <div className="tw-w-1/4 tw-text-center tw-inline-block">
                   <h1>Dodge</h1>
-                  <hr className="w-100" />
+                  <hr className="tw-w-full" />
                   <h5>
                     {data &&
                       `${
@@ -573,7 +573,7 @@ const CatchChance = () => {
             </div>
           </div>
           {data?.shadowBaseCaptureRate && (
-            <div className="d-flex justify-content-center">
+            <div className="tw-flex tw-justify-center">
               <FormControlLabel
                 control={
                   <Checkbox
@@ -592,7 +592,7 @@ const CatchChance = () => {
               />
             </div>
           )}
-          <div className="d-flex justify-content-center">
+          <div className="tw-flex tw-justify-center">
             <FormControlLabel
               control={
                 <Checkbox
@@ -610,18 +610,18 @@ const CatchChance = () => {
           </div>
           {isAdvance && (
             <Fragment>
-              <div className="d-flex justify-content-center w-100">
-                <div className="d-flex flex-wrap justify-content-center gap-2 w-fit-content">
+              <div className="tw-flex tw-justify-center tw-w-full">
+                <div className="tw-flex tw-flex-wrap tw-justify-center tw-gap-2 w-fit-content">
                   <SelectMui
                     formSx={{ m: 1, width: 150 }}
                     inputLabel="Ball"
                     value={ballType}
                     onChangeSelect={(value) => setAdvanceOption({ ...advanceOption, ballType: value })}
                     menuItems={balls.map((value) => ({
-                      className: 'd-flex gap-1',
+                      className: 'tw-flex tw-gap-1',
                       value: value.pokeBallType,
                       label: (
-                        <div className="d-flex align-items-center gap-1">
+                        <div className="tw-flex tw-items-center tw-gap-1">
                           <img alt="Icon Item" height={16} src={getItemSpritePath(value.itemName)} />
                           <span>{value.name}</span>
                         </div>
@@ -639,14 +639,14 @@ const CatchChance = () => {
                   />
                 </div>
               </div>
-              <div className="row mt-2 position-relative m-0">
+              <div className="row tw-mt-2 tw-relative !tw-m-0">
                 <BackdropMui open={isNormalThrow} isShowOnAbove={false} noneCircular />
-                <div className="col-md-6">
-                  <div className="d-flex flex-wrap h-100 justify-content-center align-items-center">
-                    <div className="w-100 text-center">
+                <div className="md:tw-w-1/2">
+                  <div className="tw-flex tw-flex-wrap tw-h-full tw-justify-center tw-items-center">
+                    <div className="tw-w-full tw-text-center">
                       <LevelSlider
                         aria-label="Radius"
-                        className="w-100"
+                        className="tw-w-full"
                         style={{ maxWidth: 300 }}
                         value={radius}
                         defaultValue={100}
@@ -659,18 +659,18 @@ const CatchChance = () => {
                         onChange={(_, v) => onHandleRadius(v as number)}
                       />
                     </div>
-                    <div className="w-50 text-center d-inline-block mb-3">
+                    <div className="tw-w-1/2 tw-text-center tw-inline-block tw-mb-3">
                       <h1>Radius</h1>
-                      <hr className="w-100" />
+                      <hr className="tw-w-full" />
                       <h5>{radius}</h5>
                     </div>
                   </div>
                 </div>
-                <div className="col-md-6 d-flex flex-column justify-content-center align-items-center p-0">
-                  {advThrow && <h5 className="text-center">{getKeyWithData(ThrowType, advThrow.throwType)}!</h5>}
-                  <div className="d-flex justify-content-center position-relative">
+                <div className="md:tw-w-1/2 tw-flex tw-flex-col tw-justify-center tw-items-center !tw-p-0">
+                  {advThrow && <h5 className="tw-text-center">{getKeyWithData(ThrowType, advThrow.throwType)}!</h5>}
+                  <div className="tw-flex tw-justify-center tw-relative">
                     <Circle line={2} color="lightgray" size={circleDistance.current} />
-                    <div className="position-absolute circle-ring">
+                    <div className="tw-absolute circle-ring">
                       <Circle
                         line={2}
                         color={colorCircle}
@@ -685,12 +685,12 @@ const CatchChance = () => {
         </div>
       </div>
       <hr />
-      <div className="position-relative">
+      <div className="tw-relative">
         <BackdropMui open={isLoading} isShowOnAbove={false} noneCircular />
         {!isAdvance && isEncounter && data?.result && (
-          <div className="d-flex flex-column flex-wrap justify-content-center align-items-center">
-            <div className="container table-container">
-              <table className="table-catch-chance w-100">
+          <div className="tw-flex tw-flex-col tw-flex-wrap tw-justify-center tw-items-center">
+            <div className="tw-container table-container">
+              <table className="table-catch-chance tw-w-full">
                 <thead>
                   <tr>
                     <th>Throwing</th>
@@ -703,7 +703,7 @@ const CatchChance = () => {
                 </thead>
                 <tbody>
                   {throws.map((value, index) => (
-                    <tr key={index} className="text-center">
+                    <tr key={index} className="tw-text-center">
                       <td>{value.name}</td>
                       {safeObjectEntries(data.result)
                         .reduce(
@@ -723,15 +723,15 @@ const CatchChance = () => {
                 </tbody>
               </table>
             </div>
-            <div className="container mt-2">
+            <div className="tw-container tw-mt-2">
               <table>
                 <thead />
                 <tbody>
                   <tr>
-                    <td className="text-center w-25 theme-table-info-bg">
+                    <td className="tw-text-center tw-w-1/4 tw-bg-table-info">
                       <b>The Throw</b>
                     </td>
-                    <td className="w-75">
+                    <td className="tw-w-3/4">
                       Throwing inside the circle gives you an increased chance to catch, with the multiplier ranging
                       between 1 - 2 times. We&apos;ve taken the averages of the circles, where the nice throw gives you
                       a 1.15 times multiplier, the great throw gives you a 1.5 times multiplier and excellent throw
@@ -744,9 +744,9 @@ const CatchChance = () => {
           </div>
         )}
         {isAdvance && isEncounter && (
-          <div className="d-flex flex-wrap justify-content-center">
-            <div className="container table-container">
-              <table className="table-catch-chance w-100">
+          <div className="tw-flex tw-flex-wrap tw-justify-center">
+            <div className="tw-container table-container">
+              <table className="table-catch-chance tw-w-full">
                 <thead>
                   <tr>
                     <th>Throwing</th>
@@ -757,7 +757,7 @@ const CatchChance = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="text-center">
+                  <tr className="tw-text-center">
                     <td>{dataAdv.throwText}</td>
                     <td style={{ color: checkValueColor(dataAdv.result) }}>{Math.round(dataAdv.result)} %</td>
                   </tr>

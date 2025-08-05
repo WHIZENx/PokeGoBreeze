@@ -6,7 +6,7 @@ import { isNullOrUndefined } from '../../../utils/extension';
 const BackdropMui = (props: IBackdropMuiComponent) => {
   return (
     <Backdrop
-      className={isNullOrUndefined(props.isShowOnAbove) || props.isShowOnAbove ? '' : 'position-absolute'}
+      className={isNullOrUndefined(props.isShowOnAbove) || props.isShowOnAbove ? '' : '!tw-absolute'}
       sx={{
         zIndex: (theme) =>
           isNullOrUndefined(props.isShowOnAbove) || props.isShowOnAbove ? theme.zIndex.drawer + 1 : 2,

@@ -17,6 +17,7 @@
     "color-hex-length": "long",
     "color-named": "always-where-possible",
     "property-no-unknown": true,
-    "property-no-vendor-prefix": null
+    "property-no-vendor-prefix": null,
+    "scss/operator-no-unspaced": null
   }
 }

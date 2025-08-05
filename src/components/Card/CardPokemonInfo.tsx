@@ -51,7 +51,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
 
   return (
     <li
-      className="position-relative border-types h-100"
+      className="tw-relative border-types tw-h-full"
       style={{ backgroundImage: computeBgType(props.types, PokemonType.Normal, props.styleList, 0.3) }}
     >
       {!props.releasedGO && (
@@ -78,10 +78,13 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           alt="Icon Shiny"
         />
       )}
-      <LinkToTop className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.form)}`}>
-        <div className="h-100 d-flex flex-column justify-content-between gap-2">
+      <LinkToTop
+        className="tw-block tw-h-full pokemon-link"
+        to={`/pokemon/${props.id}${generateParamForm(props.form)}`}
+      >
+        <div className="tw-h-full tw-flex tw-flex-col tw-justify-between tw-gap-2">
           <div>
-            <div className="d-flex justify-content-center p-2">
+            <div className="tw-flex tw-justify-center tw-p-2">
               <span style={{ width: 96 }}>
                 <img
                   ref={imageRef}
@@ -105,7 +108,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
             </div>
             <TypeInfo arr={props.types} isHideText height={24} />
             <b>
-              <span className="u-fs-3 text-center theme-text-primary">{`#${props.id} ${splitAndCapitalize(
+              <span className="tw-text-sm tw-text-center tw-text-default">{`#${props.id} ${splitAndCapitalize(
                 props.name.replaceAll('_', '-'),
                 '-',
                 ' '
@@ -113,19 +116,19 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
             </b>
           </div>
           <div>
-            <div className="d-flex align-items-center justify-content-center w-100">
+            <div className="tw-flex tw-items-center tw-justify-center tw-w-full">
               <b>
-                <span className="caption text-danger">{`ATK ${props.pokemonStat.atk}`}</span>
+                <span className="caption !tw-text-red-600">{`ATK ${props.pokemonStat.atk}`}</span>
               </b>
             </div>
-            <div className="d-flex align-items-center justify-content-center w-100">
+            <div className="tw-flex tw-items-center tw-justify-center tw-w-full">
               <b>
-                <span className="caption text-success">{`DEF ${props.pokemonStat.def}`}</span>
+                <span className="caption !tw-text-green-600">{`DEF ${props.pokemonStat.def}`}</span>
               </b>
             </div>
-            <div className="d-flex align-items-center justify-content-center w-100">
+            <div className="tw-flex tw-items-center tw-justify-center tw-w-full">
               <b>
-                <span className="caption text-info">{`STA ${props.pokemonStat.sta}`}</span>
+                <span className="caption !tw-text-cyan-600">{`STA ${props.pokemonStat.sta}`}</span>
               </b>
             </div>
           </div>

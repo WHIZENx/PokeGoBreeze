@@ -65,7 +65,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonData>>(
         <img
           height={48}
           alt="Pokémon Image"
-          className="me-2"
+          className="tw-mr-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -88,7 +88,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonData>>(
           key={index}
           width={25}
           height={25}
-          className="me-2"
+          className="tw-mr-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
@@ -132,7 +132,7 @@ const columnMove = createDataRows<TableColumnModify<ICombat>>(
     name: 'Move Name',
     selector: (row) => (
       <LinkToTop
-        className="d-flex align-items-center"
+        className="tw-flex tw-items-center"
         to={`/move/${row.id}`}
         title={`${splitAndCapitalize(row.name, '_', ' ')}`}
       >
@@ -276,8 +276,8 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType, releasedGO, getFilteredPokemons, getCombatsByTypeAndTypeMove]);
 
   return (
-    <div className="container mt-2">
-      <div className="d-flex justify-content-end">
+    <div className="tw-container tw-mt-2">
+      <div className="tw-flex tw-justify-end">
         <SelectTypeComponent
           title="Select Type"
           data={typesEffective}
@@ -293,17 +293,17 @@ const SearchTypes = (props: IStyleSheetData) => {
         label={<b>{`Filter from ${allData?.pokemon} Pokémon`}</b>}
       />
       <div className="row">
-        <div className="col-xl-4 mt-2">
+        <div className="xl:tw-w-1/3 tw-mt-2">
           <div
             className={combineClasses(
-              'd-flex flex-column align-items-center type-info-container',
+              'tw-flex tw-flex-col tw-items-center type-info-container',
               `${currentType.toLowerCase()}-border`
             )}
             style={{ background: computeBgType(currentType, PokemonType.Normal, props.styleSheet) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img
-                className="sprite-type-large p-3 rounded-circle bg-black"
+                className="sprite-type-large tw-p-3 tw-rounded-full tw-bg-black"
                 alt="Pokémon GO Type Logo"
                 src={APIService.getTypeHqSprite(currentType)}
               />
@@ -311,10 +311,10 @@ const SearchTypes = (props: IStyleSheetData) => {
             <span
               className={combineClasses(
                 currentType.toLowerCase(),
-                'type-select-bg d-flex align-items-center filter-shadow mt-2 w-max-content'
+                'type-select-bg tw-flex tw-items-center filter-shadow tw-mt-2 tw-w-max'
               )}
             >
-              <div className="w-3 d-contents">
+              <div className="tw-w-3 tw-contents">
                 <img
                   className="pokemon-sprite-small sprite-type-select filter-shadow"
                   alt="Pokémon GO Type Logo"
@@ -323,7 +323,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               </div>
               <span className="filter-shadow">{capitalize(currentType)}</span>
             </span>
-            <span className="mt-2 text-white text-shadow-black">
+            <span className="tw-mt-2 tw-text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={getItemSpritePath(ItemName.PokeBall)} />
               <b>{` Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
@@ -353,13 +353,13 @@ const SearchTypes = (props: IStyleSheetData) => {
                 </li>
               </ul>
             </span>
-            <span className="mt-2 text-white text-shadow-black">
+            <span className="tw-mt-2 tw-text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1201')} />
               <b>{` Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
                 (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
-            <span className="mt-2 text-white text-shadow-black">
+            <span className="tw-mt-2 tw-text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1202')} />
               <b>{` Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
                 (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)
@@ -367,7 +367,7 @@ const SearchTypes = (props: IStyleSheetData) => {
             </span>
           </div>
         </div>
-        <div className="col-xl-8 mt-2">
+        <div className="xl:tw-w-2/3 tw-mt-2">
           <TabsPanel
             tabs={[
               {

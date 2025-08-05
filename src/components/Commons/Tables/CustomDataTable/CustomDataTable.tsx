@@ -105,7 +105,7 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
                 defaultValue={searchTerm}
                 setSearchTerm={setSearchTerm}
                 onOptionsClick={handleShowOption}
-                optionsIcon={props.isShowModalOptions ? <SettingsIcon className="u-fs-5" /> : undefined}
+                optionsIcon={props.isShowModalOptions ? <SettingsIcon className="tw-text-xl" /> : undefined}
               />
             )
           }

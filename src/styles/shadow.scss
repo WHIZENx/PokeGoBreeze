@@ -38,9 +38,7 @@
   @include filter(1px 1px 1px #00000099);
 }
 
-.remove-close {
-  @include filter-base(19%, 82%, 7008%, 357deg, 102%, 114%);
-}
+
 
 .info-container img.info-background {
   @include filter-blue(5px);

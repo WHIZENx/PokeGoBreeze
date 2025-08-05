@@ -30,7 +30,7 @@ const InputReleased = (props: SwitchReleasedComponent) => {
         </>
       }
       label={
-        <span className="d-flex align-items-center gap-2">
+        <span className="tw-flex tw-items-center tw-gap-2">
           <span>Released in GO</span>
           <img
             className={combineClasses(props.isAvailable ? '' : 'filter-gray')}

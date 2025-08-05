@@ -46,11 +46,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   }, [searchingMainDetails]);
 
   return (
-    <div className="mt-2 position-relative">
+    <div className="tw-mt-2 tw-relative">
       <h4 className="title-evo">
         <b>{`Assets of ${splitAndCapitalize(searchingMainDetails?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
         <img
-          className="ms-1"
+          className="tw-ml-1"
           width={36}
           height={36}
           alt="Pokémon GO Icon"
@@ -58,22 +58,22 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         />
       </h4>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0" style={{ height: 176 }}>
+        <div className="ph-item tw-w-full !tw-m-0 !tw-p-0" style={{ height: 176 }}>
           <div
-            className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
-            style={{ background: 'var(--background-default)' }}
+            className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0"
+            style={{ background: 'var(--custom-default)' }}
           />
         </div>
       ) : (
         <div>
           {pokeAssets.map((assets, index) => (
-            <div key={index} className="d-inline-block group-model text-center">
+            <div key={index} className="tw-inline-block group-model tw-text-center">
               {assets.image.map((value, index) => (
                 <div
                   key={index}
                   className={combineClasses(
-                    'd-inline-block',
-                    value.gender === GenderType.GenderLess ? 'w-100' : 'w-auto'
+                    'tw-inline-block',
+                    value.gender === GenderType.GenderLess ? 'tw-w-full' : 'tw-w-auto'
                   )}
                 >
                   <div className="sub-group-model">
@@ -95,8 +95,8 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                         )}
                       </div>
                     )}
-                    <div className={combineClasses('model text-center', value.shiny ? 'w-pct-50' : 'w-pct-100')}>
-                      <div className="d-flex w-100 justify-content-center">
+                    <div className={combineClasses('model text-center', value.shiny ? 'tw-w-1/2' : 'tw-w-full')}>
+                      <div className="tw-flex tw-w-full tw-justify-center">
                         <div style={{ width: 80 }}>
                           <img
                             className="pokemon-sprite-model"
@@ -116,8 +116,8 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                       <span className="caption">Default</span>
                     </div>
                     {value.shiny && (
-                      <div className="model text-center">
-                        <div className="d-flex w-100 justify-content-center">
+                      <div className="model tw-text-center">
+                        <div className="tw-flex tw-w-full tw-justify-center">
                           <div style={{ width: 80 }}>
                             <img
                               className="pokemon-sprite-model"
@@ -140,10 +140,12 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                   </div>
                 </div>
               ))}
-              <div className="desc text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
+              <div className="desc tw-text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
             </div>
           ))}
-          {!isNotEmpty(pokeAssets) && <div className="text-danger mb-3">&emsp;Assets in Pokémon GO unavailable</div>}
+          {!isNotEmpty(pokeAssets) && (
+            <div className="tw-text-red-600 tw-mb-3">&emsp;Assets in Pokémon GO unavailable</div>
+          )}
         </div>
       )}
       <h4 className="title-evo">
@@ -151,29 +153,29 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0 h-9">
+        <div className="ph-item tw-w-full !tw-m-0 !tw-p-0 tw-h-9">
           <div
-            className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
-            style={{ background: 'var(--background-default)' }}
+            className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0"
+            style={{ background: 'var(--custom-default)' }}
           />
         </div>
       ) : (
         <Fragment>
           {!isNotEmpty(props.originSoundCry) ? (
-            <div className="text-danger">&emsp;Sound in Pokémon unavailable.</div>
+            <div className="tw-text-red-600">&emsp;Sound in Pokémon unavailable.</div>
           ) : (
-            <ul className="m-0">
+            <ul className="!tw-m-0">
               {props.originSoundCry.map((value, index) => (
-                <li key={index} className="list-style-disc">
+                <li key={index} className="tw-list-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
-                  <ul className="m-0">
+                  <ul className="!tw-m-0">
                     {value.cries &&
                       safeObjectEntries(value.cries).map(([k, v], i) => (
                         <Fragment key={i}>
                           {v && (
-                            <li className="list-style-circle">
+                            <li className="tw-list-circle">
                               <h6>Type: {capitalize(k)}</h6>
-                              <audio src={v} className="w-100 h-5" controls>
+                              <audio src={v} className="tw-w-full tw-h-8" controls>
                                 <source type="audio/ogg" />
                                 Your browser does not support the audio element.
                               </audio>
@@ -190,22 +192,22 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       )}
       <h6>Pokémon GO:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0 h-9">
+        <div className="ph-item tw-w-full !tw-m-0 !tw-p-0 tw-h-9">
           <div
-            className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
-            style={{ background: 'var(--background-default)' }}
+            className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0"
+            style={{ background: 'var(--custom-default)' }}
           />
         </div>
       ) : (
         <Fragment>
           {!isNotEmpty(asset?.sound.cry) ? (
-            <div className="text-danger">&emsp;Sound in Pokémon GO unavailable.</div>
+            <div className="tw-text-red-600">&emsp;Sound in Pokémon GO unavailable.</div>
           ) : (
-            <ul className="m-0">
+            <ul className="!tw-m-0">
               {asset?.sound.cry.map((value, index) => (
-                <li key={index} className="list-style-disc">
+                <li key={index} className="tw-list-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
-                  <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100 h-5" controls>
+                  <audio src={APIService.getSoundPokemonGO(value.path)} className="tw-w-full tw-h-8" controls>
                     <source type="audio/wav" />
                     Your browser does not support the audio element.
                   </audio>

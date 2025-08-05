@@ -206,7 +206,7 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
   };
 
   return (
-    <Box className={combineClasses('w-100', props.className)}>
+    <Box className={combineClasses('tw-w-full', props.className)}>
       {props.items?.map((item, index) => (
         <Accordion
           key={index}

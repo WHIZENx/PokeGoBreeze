@@ -3,26 +3,6 @@
   flex-direction: column;
   row-gap: 20px;
   max-height: 90vh;
-
-  .accordion-button,
-  .accordion-item,
-  .accordion-header {
-    border-top-left-radius: 0 !important;
-    border-top-right-radius: 0 !important;
-  }
-
-  .info-news:not(:last-child) .accordion-item {
-    border-bottom-left-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-  }
-
-  .accordion-button {
-    box-shadow: none;
-  }
-
-  .accordion-item {
-    border-top: none;
-  }
 }
 
 .info-container {

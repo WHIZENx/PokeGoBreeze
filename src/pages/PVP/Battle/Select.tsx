@@ -168,7 +168,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               {isEqual(getPokemonType(pokemon?.speciesId), PokemonType.Shadow) && (
                 <span
                   className={combineClasses(
-                    'type-icon-small ic me-1 d-flex align-items-center h-3',
+                    'type-icon-small ic tw-mr-1 tw-flex tw-items-center tw-h-3',
                     `${getKeyWithData(PokemonType, PokemonType.Shadow)?.toLowerCase()}-ic`
                   )}
                 >
@@ -176,7 +176,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                 </span>
               )}
               {score > 0 && (
-                <span className="type-icon-small ic elite-ic me-1 d-flex align-items-center h-3">{score}</span>
+                <span className="type-icon-small ic elite-ic tw-mr-1 tw-flex tw-items-center tw-h-3">{score}</span>
               )}
             </>
           )
@@ -197,7 +197,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           .filter((value) => value.id > 0)}
       />
       <h5>Charged Moves Primary</h5>
-      <div className="d-flex align-items-center column-gap-2">
+      <div className="tw-flex tw-items-center tw-gap-x-2">
         <Checkbox
           checked={!props.pokemonBattle.disableCMovePri}
           onChange={(_, check) => {
@@ -229,7 +229,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         />
       </div>
       <h5>Charged Moves Secondary</h5>
-      <div className="d-flex align-items-center column-gap-2">
+      <div className="tw-flex tw-items-center tw-gap-x-2">
         <Checkbox
           checked={!props.pokemonBattle.disableCMoveSec}
           onChange={(_, check) => {

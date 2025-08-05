@@ -71,10 +71,10 @@ const PVPHome = () => {
 
   const renderLoading = () => {
     return (
-      <div className="overflow-x-hidden">
-        <div className="ph-item flex-nowrap w-fit-content">
+      <div className="tw-overflow-x-hidden">
+        <div className="ph-item tw-flex-nowrap tw-w-fit">
           {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
-            <div key={index} className="ph-col-3 m-0 p-2">
+            <div key={index} className="ph-col-3 !tw-m-0 tw-p-2">
               <div className="ph-row">
                 <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
               </div>
@@ -86,13 +86,13 @@ const PVPHome = () => {
   };
 
   return (
-    <div className="container mt-2 pb-3">
+    <div className="tw-container tw-mt-2 tw-pb-3">
       {timestampPVP > 0 && (
         <h4>
           <b>Updated: {getTime(timestampPVP, true)}</b>
         </h4>
       )}
-      <p className="text-danger">
+      <p className="tw-text-red-600">
         <b>
           {'* Pokémon data source references from '}
           <a href="https://pvpoke.com/" target="_">
@@ -100,10 +100,10 @@ const PVPHome = () => {
           </a>
         </b>
       </p>
-      <div className="d-flex align-items-center justify-content-between">
-        <h1 className="w-75 d-block">Top Rank Pokémon Leagues</h1>
+      <div className="tw-flex tw-items-center tw-justify-between">
+        <h1 className="tw-w-3/4 tw-block">Top Rank Pokémon Leagues</h1>
         <SelectMui
-          formClassName="w-25"
+          formClassName="tw-w-1/4"
           value={rank?.id}
           onChangeSelect={(value) =>
             setOptions(
@@ -127,10 +127,10 @@ const PVPHome = () => {
         data={rank}
         path="rankings"
       />
-      <div className="d-flex align-items-center justify-content-between">
-        <h1 className="w-75 d-block">Top Teams Pokémon Leagues</h1>
+      <div className="tw-flex tw-items-center tw-justify-between">
+        <h1 className="tw-w-3/4 tw-block">Top Teams Pokémon Leagues</h1>
         <SelectMui
-          formClassName="w-25"
+          formClassName="tw-w-1/4"
           value={team?.id}
           onChangeSelect={(value) =>
             setOptions(
@@ -154,8 +154,9 @@ const PVPHome = () => {
         data={team}
         path="teams"
       />
-      <h1>
-        Battle League Simulator <span className="d-inline-block caption text-danger">(Beta Test)</span>
+      <h1 className="tw-flex tw-gap-2 tw-items-end">
+        <span>Battle League Simulator</span>
+        <span className="tw-mb-1 caption !tw-text-red-600">(Beta Test)</span>
       </h1>
       <ButtonGroupLeague
         height={200}

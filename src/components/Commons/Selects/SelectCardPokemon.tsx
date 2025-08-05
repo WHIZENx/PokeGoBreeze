@@ -117,7 +117,7 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
       }}
       isShowRemove={props.isShowPokemonIcon && !!pokemonIcon}
       customIconStart={props.customIconStart}
-      className="p-0"
+      className="!tw-p-0"
     />
   );
 
@@ -126,8 +126,8 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
       ref={resultsContainerRef}
       className={combineClasses(
         'result',
-        position === SelectPosition.Up ? 'pos-up mb-1' : 'mt-1',
-        showPokemon && !props.isDisable ? 'd-block' : 'd-none'
+        position === SelectPosition.Up ? 'pos-up tw-mb-1' : 'tw-mt-1',
+        showPokemon && !props.isDisable ? 'tw-block' : 'tw-hidden'
       )}
       onScroll={listenScrollEvent.bind(this)}
       style={{
@@ -163,7 +163,7 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
     </div>
   );
   return (
-    <div className="position-relative">
+    <div className="tw-relative">
       {isUndefined(props.position) || props.position === SelectPosition.Down ? (
         <>
           {renderInput()}

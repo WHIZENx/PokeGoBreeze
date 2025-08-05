@@ -218,7 +218,7 @@ $text-colors: (
   "text-disabled": var(--text-disabled),
   "white": var(--custom-white),
   "black": var(--custom-black),
-  "lightgray": var(--custom-lightgray),
+  "lightgray": var(--custom-light-gray),
   "gray": var(--custom-gray),
   "caption": var(--text-caption),
   "custom": var(--custom-text),
@@ -237,15 +237,15 @@ $bg-colors: (
   "secondary": var(--secondary-main),
   "secondary-light": var(--secondary-light),
   "secondary-dark": var(--secondary-dark),
-  "default": var(--background-default),
+  "default": var(--custom-default),
   "paper": var(--background-paper),
-  "table-primary": var(--background-table-primary),
+  "table-primary": var(--table-primary),
   "table-strip": var(--background-table-strip),
   "table-hover": var(--background-table-hover),
   "input": var(--background-input),
   "table-odd": var(--custom-table-background-odd),
   "table-even": var(--custom-table-background-even),
-  "table-head": var(--custom-table-background-head),
+  "table-head": var(--table-head),
 );
 
 @each $color-name, $color-value in $bg-colors {
@@ -259,7 +259,7 @@ $border-colors: (
   "secondary": var(--secondary-main),
   "divider": var(--divider),
   "gray": var(--custom-gray),
-  "lightgray": var(--custom-lightgray),
+  "lightgray": var(--custom-light-gray),
   "table": var(--custom-table-border),
 );
 

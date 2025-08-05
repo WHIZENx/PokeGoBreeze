@@ -257,16 +257,16 @@ const FindTable = () => {
   );
 
   const renderStar = (star: number | undefined, starAmount: number, style: string) => (
-    <div className="d-inline-block text-center">
+    <div className="tw-inline-block tw-text-center">
       <div className={`${style}-star`}>
         {isEqual(style, 'four') ? (
           <HundoRate name="hundo-rate" value={starAmount} max={3} readOnly />
         ) : (
           <Rating name={`${style}-rate`} value={starAmount} max={3} readOnly />
         )}
-        <hr className="m-0" />
+        <hr className="!tw-m-0" />
         <div>
-          <b className="text-black text-shadow">{star}</b>
+          <b className="tw-text-black text-shadow">{star}</b>
         </div>
       </div>
       <p>{toFloatWithPadding((toNumber(star) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
@@ -289,13 +289,13 @@ const FindTable = () => {
       <Fragment>
         {isNotEmpty(preIvArr?.result) && (
           <Fragment>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               All of result: <b>{preIvArr?.result.length}</b>
             </p>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               Average of percent: <b>{toFloatWithPadding(avgPercent, 2)}</b>
             </p>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             {renderStar(fourStar, 3, 'four')}
@@ -331,10 +331,10 @@ const FindTable = () => {
       <Fragment>
         {isNotEmpty(preCpArr?.result) && (
           <Fragment>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               Average of CP: <b>{Math.round(avgCp)}</b>
             </p>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <CustomDataTable
@@ -384,16 +384,16 @@ const FindTable = () => {
 
   return (
     <Fragment>
-      <div className="container mt-2">
+      <div className="tw-container tw-mt-2">
         <Find isHide clearStats={clearArrStats} />
-        <h1 id="main" className="text-center">
+        <h1 id="main" className="tw-text-center">
           Find IV
         </h1>
-        <form className="d-flex justify-content-center mt-2" onSubmit={onFindStats.bind(this)}>
-          <Box className="w-50">
+        <form className="tw-flex tw-justify-center tw-mt-2" onSubmit={onFindStats.bind(this)}>
+          <Box className="tw-w-1/2">
             <InputMui
               labelPrepend="CP"
-              className="mb-3 justify-content-center"
+              className="tw-mb-3 tw-justify-center"
               placeholder="Enter CP"
               value={searchCP}
               onChange={(value) => setSearchCP(value)}
@@ -403,20 +403,20 @@ const FindTable = () => {
                 required: true,
               }}
             />
-            <div className="btn-search d-flex justify-content-center text-center">
+            <div className="btn-search tw-flex tw-justify-center tw-text-center">
               <ButtonMui type="submit" label="Search" />
             </div>
           </Box>
         </form>
         {preIvArr && <Fragment>{showResultTableIV()}</Fragment>}
         <hr />
-        <h1 id="main" className="text-center">
+        <h1 id="main" className="tw-text-center">
           Find CP
         </h1>
-        <form id="formCP" className="mt-2" onSubmit={onFindCP.bind(this)}>
-          <div className="form-group d-flex justify-content-center text-center">
-            <Box className="w-50" sx={{ minWidth: 300 }}>
-              <div className="d-flex justify-content-between">
+        <form id="formCP" className="tw-mt-2" onSubmit={onFindCP.bind(this)}>
+          <div className="form-group tw-flex tw-justify-center tw-text-center">
+            <Box className="tw-w-1/2" sx={{ minWidth: 300 }}>
+              <div className="tw-flex tw-justify-between">
                 <b>ATK</b>
                 <b>{searchATKIv}</b>
               </div>
@@ -431,7 +431,7 @@ const FindTable = () => {
                 marks={marks}
                 onChange={(_, v) => setSearchATKIv(v as number)}
               />
-              <div className="d-flex justify-content-between">
+              <div className="tw-flex tw-justify-between">
                 <b>DEF</b>
                 <b>{searchDEFIv}</b>
               </div>
@@ -446,7 +446,7 @@ const FindTable = () => {
                 marks={marks}
                 onChange={(_, v) => setSearchDEFIv(v as number)}
               />
-              <div className="d-flex justify-content-between">
+              <div className="tw-flex tw-justify-between">
                 <b>STA</b>
                 <b>{searchSTAIv}</b>
               </div>
@@ -463,13 +463,13 @@ const FindTable = () => {
               />
             </Box>
           </div>
-          <div className="form-group d-flex justify-content-center text-center mt-2">
+          <div className="form-group tw-flex tw-justify-center tw-text-center tw-mt-2">
             <ButtonMui type="submit" label="Search" />
           </div>
         </form>
         {preCpArr && <Fragment>{showResultTableCP()}</Fragment>}
         <hr />
-        <div className="mt-2">{findMinMax()}</div>
+        <div className="tw-mt-2">{findMinMax()}</div>
       </div>
     </Fragment>
   );

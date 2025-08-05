@@ -5,8 +5,8 @@ const Effective = (props: IEffectiveComponent) => {
   return (
     <Fragment>
       {props.children && (
-        <div className="mt-2">
-          <h5 className="mt-2">
+        <div className="tw-mt-2">
+          <h5 className="tw-mt-2">
             <li>{props.title}</li>
           </h5>
           {props.children}

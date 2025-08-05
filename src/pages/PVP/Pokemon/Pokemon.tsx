@@ -229,7 +229,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league && (
-          <div className="d-flex flex-wrap align-items-center filter-shadow text-shadow-black text-white column-gap-2">
+          <div className="tw-flex tw-flex-wrap tw-items-center filter-shadow text-shadow-black tw-text-white tw-gap-x-2">
             <img
               alt="Image League"
               width={64}
@@ -252,7 +252,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   return (
     <Error isError={!isFound}>
       <div
-        className="py-3"
+        className="tw-py-3"
         style={{
           backgroundImage: computeBgType(
             rankingPoke?.pokemon?.types,
@@ -263,11 +263,11 @@ const PokemonPVP = (props: IStyleSheetData) => {
           ),
         }}
       >
-        <div className="pokemon-ranking-body container pvp-container">
+        <div className="pokemon-ranking-body tw-container pvp-container">
           {renderLeague()}
           <hr />
           <ToggleGroupMui
-            className="d-flex justify-content-center overflow-x-auto mt-2"
+            className="tw-flex tw-justify-center tw-overflow-x-auto tw-mt-2"
             isNoneBorder
             color="primary"
             exclusive
@@ -286,9 +286,9 @@ const PokemonPVP = (props: IStyleSheetData) => {
                 ),
             }))}
           />
-          <div className="w-100 ranking-info mt-2">
-            <div className="d-flex flex-wrap align-items-center justify-content-center gap-4">
-              <div className="position-relative filter-shadow" style={{ width: 128 }}>
+          <div className="tw-w-full ranking-info tw-mt-2">
+            <div className="tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-4">
+              <div className="tw-relative filter-shadow" style={{ width: 128 }}>
                 <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>
                   <img
                     alt="Image League"
@@ -318,17 +318,17 @@ const PokemonPVP = (props: IStyleSheetData) => {
               styleList={props.styleSheet}
             />
           </div>
-          <div className="container">
+          <div className="tw-container">
             <hr />
           </div>
           <div className="stats-container">
             <OverAllStats data={rankingPoke} cp={params.cp} type={searchParams.get(Params.LeagueType)} />
           </div>
-          <div className="container">
+          <div className="tw-container">
             <hr />
             <TypeEffectivePVP types={rankingPoke?.pokemon?.types} />
           </div>
-          <div className="container">
+          <div className="tw-container">
             <MoveSet moves={rankingPoke?.data?.moves} pokemon={rankingPoke?.pokemon} />
           </div>
         </div>

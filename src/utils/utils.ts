@@ -611,20 +611,20 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
   const defaultData: TableStyles = {
     header: {
       style: {
-        backgroundColor: 'var(--background-default)',
+        backgroundColor: 'var(--custom-default)',
         color: 'var(--text-primary)',
       },
     },
     subHeader: {
       style: {
-        backgroundColor: 'var(--background-default)',
+        backgroundColor: 'var(--custom-default)',
         color: 'var(--text-primary)',
       },
     },
     rows: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         '&:not(:last-of-type)': {
           borderBottomColor: 'var(--background-table-divided)',
         },
@@ -639,7 +639,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     },
     headCells: {
       style: {
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         color: 'var(--text-primary)',
       },
     },
@@ -651,7 +651,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     pagination: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         borderTopColor: 'var(--background-table-divided)',
       },
       pageButtonsStyle: {
@@ -672,7 +672,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     noData: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
       },
     },
   };

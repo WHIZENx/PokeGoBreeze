@@ -42,7 +42,7 @@ const DrawerSideBar = (props: IDrawerSideBarComponent) => {
   };
 
   const DrawerList = (
-    <Box className="h-100" sx={{ width: 250 }} role="presentation">
+    <Box className="tw-h-full" sx={{ width: 250 }} role="presentation">
       <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
         <img src={logo} width="30" height="30" alt="Home" />
         <Typography
@@ -57,7 +57,7 @@ const DrawerSideBar = (props: IDrawerSideBarComponent) => {
         </Typography>
       </Box>
       <Divider />
-      <Box className="h-100" sx={{ width: 250, position: 'relative' }}>
+      <Box className="tw-h-full" sx={{ width: 250, position: 'relative' }}>
         {pages.map((page) => (
           <Fragment key={page.value}>
             {!page.value ? (
@@ -87,7 +87,7 @@ const DrawerSideBar = (props: IDrawerSideBarComponent) => {
           </Fragment>
         ))}
         {props.footer && (
-          <Box className="w-100">
+          <Box className="tw-w-full">
             <Divider />
             {props.footer}
           </Box>

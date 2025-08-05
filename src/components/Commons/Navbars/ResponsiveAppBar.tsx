@@ -114,9 +114,9 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
     return (
       <>
         {toNumber(timestamp?.gamemaster) > 0 && (
-          <span className="text-truncate">Updated: {getTime(timestamp.gamemaster, true)}</span>
+          <span className="tw-truncate">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
-        <span className="text-end text-warning u-fs-2">
+        <span className="tw-text-right tw-text-yellow-600 tw-text-xs">
           <b>{props.version}</b>
         </span>
       </>
@@ -126,12 +126,14 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   const navigateInfo = useMemo(() => {
     return (
       <Box sx={{ display: 'flex', gap: 1 }}>
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column' }}>{infoVersion}</Box>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column' }} className="tw-w-full">
+          {infoVersion}
+        </Box>
         <IconButton
           sx={{ p: 0 }}
           className={combineClasses(
             stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
-            isDelay ? 'cursor-default' : 'cursor-pointer'
+            isDelay ? 'cursor-default' : 'tw-cursor-pointer'
           )}
           onClick={onChangeTheme}
           color="inherit"
@@ -150,7 +152,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
     <AppBar position="sticky">
       <Toolbar sx={{ mx: 2, my: 0.5 }} disableGutters variant="dense">
         {/* width >= 900 */}
-        <Box className="text-white" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+        <Box className="tw-text-white" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
           <img src={logo} width="30" height="30" alt="Home" />
           <Typography
             noWrap
@@ -195,7 +197,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
                 }}
                 endIcon={isNotEmpty(page.subMenus) && <ArrowDropDownIcon />}
                 value={page.value}
-                label={<span className="text-truncate">{page.label}</span>}
+                label={<span className="tw-truncate">{page.label}</span>}
               />
               {isNotEmpty(page.subMenus) && (
                 <Menu
@@ -232,7 +234,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         {navigateInfo}
       </Toolbar>
       {spinnerBarIsShow && (
-        <Box className="w-100 position-absolute z-7">
+        <Box className="tw-w-full tw-absolute tw-z-7">
           <LinearProgress variant={VariantType.Determinate} value={spinnerPercent} />
         </Box>
       )}
@@ -245,7 +247,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         setOpen={setOpen}
         footer={
           <Box
-            className="theme-text-primary"
+            className="tw-text-default"
             sx={{
               display: { xs: 'flex', md: 'none' },
               flexDirection: 'column',

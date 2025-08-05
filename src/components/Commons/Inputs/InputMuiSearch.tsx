@@ -94,7 +94,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
   } = props;
 
   return (
-    <Box className={combineClasses('input-control-group', isNoWrap ? 'flex-nowrap' : '')}>
+    <Box className={combineClasses('input-control-group', isNoWrap ? '!tw-flex-nowrap' : '')}>
       {labelPrepend && (
         <div ref={prependRef} className="input-group-text">
           {labelPrepend}

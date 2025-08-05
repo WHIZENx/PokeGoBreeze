@@ -3,7 +3,6 @@ import { IToggleTypeComponent } from '../models/component.model';
 import ToggleGroupMui from './ToggleGroupMui';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
 import TypeInfo from '../../Sprites/Type/Type';
-import { combineClasses } from '../../../utils/extension';
 
 const ToggleType = (props: IToggleTypeComponent) => {
   const { onSelectType, ...toggleProps } = props;
@@ -11,9 +10,9 @@ const ToggleType = (props: IToggleTypeComponent) => {
   return (
     <ToggleGroupMui
       {...toggleProps}
-      className={combineClasses('row', props.fullWidth ? 'w-100' : '')}
+      className="row"
       isDivContain
-      isDivClassName="col img-group m-0 p-0"
+      isDivClassName="col tw-inline-block tw-vertical-align-top !tw-m-0 !tw-p-0"
       isNoneBorder
       toggles={getTypes()?.map((item) => ({
         label: <TypeInfo isBlock arr={[item]} />,

@@ -30,7 +30,7 @@ const TabsPanel = (props: TabPanelComponent) => {
   };
 
   return (
-    <Box className={combineClasses('w-100', props.className)}>
+    <Box className={combineClasses('tw-w-full', props.className)}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
         <Tabs variant="fullWidth" value={value} onChange={handleChange}>
           {props.tabs.map((tab, index) => (

@@ -219,7 +219,7 @@ const Damage = () => {
   return (
     <Fragment>
       <div className="row battle-game">
-        <div className="col-lg border-window">
+        <div className="lg:tw-flex-1 border-window">
           <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
           <StatsDamageTable
             setStatLvATK={setStatLvATK}
@@ -231,7 +231,7 @@ const Damage = () => {
             pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
           />
         </div>
-        <div className="col-lg border-window">
+        <div className="lg:tw-flex-1 border-window">
           <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
           <StatsDamageTable
             setStatLvDEF={setStatLvDEFObj}
@@ -245,21 +245,21 @@ const Damage = () => {
           />
         </div>
       </div>
-      <h1 id="main" className="text-center">
+      <h1 id="main" className="tw-text-center">
         Battle Damage Calculate
       </h1>
-      <div className="d-flex justify-content-center">
-        <div className="mt-2 container row mb-3">
-          <div className="col mb-3">
+      <div className="tw-flex tw-justify-center">
+        <div className="tw-mt-2 tw-container row tw-mb-3">
+          <div className="col tw-mb-3">
             <form onSubmit={onCalculateDamagePoke.bind(this)}>
-              <div className="d-flex justify-content-center">
-                <div className="row text-center" style={{ width: 520 }}>
+              <div className="tw-flex tw-justify-center">
+                <div className="row tw-text-center" style={{ width: 520 }}>
                   <div className="col">
-                    <h5 className="text-success">- Current Pokémon Type -</h5>
+                    <h5 className="tw-text-green-600">- Current Pokémon Type -</h5>
                     {searchingToolCurrentData?.form && <TypeInfo arr={searchingToolCurrentData?.form.form?.types} />}
                   </div>
                   <div className="col">
-                    <h5 className="text-danger">- Object Pokémon Type -</h5>
+                    <h5 className="tw-text-red-600">- Object Pokémon Type -</h5>
                     {searchingToolObjectData?.form && <TypeInfo arr={searchingToolObjectData?.form.form?.types} />}
                   </div>
                 </div>
@@ -279,7 +279,7 @@ const Damage = () => {
                 isHighlight
                 pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
               />
-              <div className="mt-2">
+              <div className="tw-mt-2">
                 {move && (
                   <div className="m-auto" style={{ width: 300 }}>
                     <p>
@@ -297,13 +297,13 @@ const Damage = () => {
                       <b>
                         {move.pvePower}
                         {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
-                          <span className="caption-small text-success"> (x1.2)</span>
+                          <span className="caption-small tw-text-green-600"> (x1.2)</span>
                         )}
                       </b>
                     </p>
                   </div>
                 )}
-                <div className="text-center">
+                <div className="tw-text-center">
                   <FormGroup>
                     <FormControlLabel
                       control={<Checkbox checked={isWeather} onChange={handleCheckbox} name="isWeather" />}
@@ -318,7 +318,7 @@ const Damage = () => {
                       label="Trainer"
                     />
                   </FormGroup>
-                  <Box className="d-flex align-items-center justify-content-center">
+                  <Box className="tw-flex tw-items-center tw-justify-center">
                     <FormControlLabel
                       control={
                         <Switch
@@ -352,7 +352,7 @@ const Damage = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                    <Box className="u-fs-2-75" sx={{ ml: 2, color: 'green' }}>
+                    <Box className="tw-text-sm" sx={{ ml: 2, color: 'green' }}>
                       x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>
@@ -378,13 +378,13 @@ const Damage = () => {
                   </Box>
                   <ButtonMui
                     label={
-                      <div className="d-flex align-items-center gap-1">
+                      <div className="tw-flex tw-items-center tw-gap-1">
                         <img alt="ATK" width={20} height={20} src={ATK_LOGO} />
                         <span>Battle</span>
                       </div>
                     }
                     type="submit"
-                    className="mt-2"
+                    className="tw-mt-2"
                   />
                 </div>
               </div>

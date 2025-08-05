@@ -593,15 +593,15 @@ const Pokemon = (props: IPokemonPage) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 m-0 p-0 h-4">
-        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
+      <div className="ph-item !tw-w-3/4 !tw-m-0 !tw-p-0 !tw-h-6">
+        <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
       </div>
     );
   };
 
   return (
     <Error isError={!isFound}>
-      <div className="w-100 row prev-next-block position-sticky" style={{ top: 56 }}>
+      <div className="tw-w-full row prev-next-block tw-sticky" style={{ top: 56 }}>
         {params.id ? (
           <SearchBarMain data={dataStorePokemon} />
         ) : (
@@ -610,13 +610,13 @@ const Pokemon = (props: IPokemonPage) => {
       </div>
       <div
         className={combineClasses(
-          'pb-3 position-relative poke-container theme-text-primary',
-          props.isSearch ? '' : 'container'
+          'tw-pb-3 tw-relative poke-container tw-text-default',
+          props.isSearch ? '' : 'tw-container'
         )}
       >
-        <div className="w-100 text-center d-inline-block align-middle my-3">
+        <div className="tw-w-full tw-text-center tw-inline-block align-middle tw-my-3">
           <AlertReleased formName={formName} pokemonType={searchingMainForm?.form?.pokemonType} icon={iconData} />
-          <div className="d-inline-block img-desc">
+          <div className="tw-inline-block img-desc">
             <img
               className="pokemon-main-sprite v-align-baseline"
               alt="Image Pokemon"
@@ -634,7 +634,7 @@ const Pokemon = (props: IPokemonPage) => {
               }}
             />
           </div>
-          <div className="d-inline-block">
+          <div className="tw-inline-block">
             <PokemonTable
               id={dataStorePokemon?.current?.id}
               gen={generation}
@@ -646,11 +646,11 @@ const Pokemon = (props: IPokemonPage) => {
               isLoadedForms={progress.isLoadedForms}
             />
           </div>
-          <div className="d-inline-block p-0">
+          <div className="tw-inline-block !tw-p-0">
             <table className="table-info table-main">
               <thead />
               <tbody>
-                <tr className="text-center">
+                <tr className="tw-text-center">
                   <td className="table-sub-header">Unlock third move</td>
                   <td className="table-sub-header">Costs</td>
                 </tr>
@@ -658,9 +658,9 @@ const Pokemon = (props: IPokemonPage) => {
                   <td>
                     <img alt="Image Cost Info" width={100} src={APIService.getItemSprite('Item_1202')} />
                   </td>
-                  <td className="p-0">
-                    <div className="d-flex align-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} className="me-1" />
+                  <td className="!tw-p-0">
+                    <div className="tw-flex tw-items-center row-extra td-costs">
+                      <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
                       {reload(
                         <span>
                           {!isUndefined(costModifier?.thirdMove.candy)
@@ -669,8 +669,8 @@ const Pokemon = (props: IPokemonPage) => {
                         </span>
                       )}
                     </div>
-                    <div className="row-extra d-flex">
-                      <div className="d-inline-flex justify-content-center me-1" style={{ width: 20 }}>
+                    <div className="row-extra tw-flex">
+                      <div className="tw-inline-flex tw-justify-center tw-mr-1" style={{ width: 20 }}>
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(
@@ -683,7 +683,7 @@ const Pokemon = (props: IPokemonPage) => {
                     </div>
                   </td>
                 </tr>
-                <tr className="text-center">
+                <tr className="tw-text-center">
                   <td className="table-sub-header">Purified</td>
                   <td className="table-sub-header">Costs</td>
                 </tr>
@@ -691,9 +691,9 @@ const Pokemon = (props: IPokemonPage) => {
                   <td>
                     <img alt="Image Cost Info" width={60} height={60} src={APIService.getPokePurified()} />
                   </td>
-                  <td className="p-0">
-                    <div className="d-flex align-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} className="me-1" />
+                  <td className="!tw-p-0">
+                    <div className="tw-flex tw-items-center row-extra td-costs">
+                      <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
                       {reload(
                         <span>
                           {!isUndefined(costModifier?.purified.candy)
@@ -702,8 +702,8 @@ const Pokemon = (props: IPokemonPage) => {
                         </span>
                       )}
                     </div>
-                    <div className="row-extra d-flex">
-                      <div className="d-inline-flex justify-content-center me-1" style={{ width: 20 }}>
+                    <div className="row-extra tw-flex">
+                      <div className="tw-inline-flex tw-justify-center tw-mr-1" style={{ width: 20 }}>
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(

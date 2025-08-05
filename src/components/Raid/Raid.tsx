@@ -62,9 +62,9 @@ const Raid = (props: IRaidComponent) => {
 
   return (
     <Fragment>
-      <div className="d-flex justify-content-center w-100">
+      <div className="tw-flex tw-justify-center tw-w-full">
         <SelectTierMui
-          boxClassName="w-50"
+          boxClassName="tw-w-1/2"
           tier={tier}
           setTier={setTier}
           clearData={() => props.clearData?.(false)}
@@ -72,32 +72,32 @@ const Raid = (props: IRaidComponent) => {
           pokemonClass={pokemonClass}
         />
       </div>
-      <div className="row w-100 mt-2 m-0">
-        <div className="col-4 text-center d-inline-block">
+      <div className="row tw-w-full tw-mt-2 !tw-m-0">
+        <div className="!tw-w-1/3 tw-flex-none tw-text-center tw-inline-block">
           <h1>CP</h1>
-          <hr className="w-100" />
+          <hr className="tw-w-full" />
           <h5>{calculateRaidCP(toNumber(props.statATK), toNumber(props.statDEF), tier)}</h5>
         </div>
-        <div className="col-4 text-center d-inline-block">
+        <div className="!tw-w-1/3 tw-flex-none tw-text-center tw-inline-block">
           <h1>HP</h1>
-          <hr className="w-100" />
+          <hr className="tw-w-full" />
           <h5>{RAID_BOSS_TIER[tier].sta}</h5>
         </div>
-        <div className="col-4 text-center d-inline-block">
+        <div className="!tw-w-1/3 tw-flex-none tw-text-center tw-inline-block">
           <h1>LEVEL</h1>
-          <hr className="w-100" />
+          <hr className="tw-w-full" />
           <h5>{RAID_BOSS_TIER[tier].level}</h5>
         </div>
       </div>
-      <div className="row mt-2 container m-0">
-        <div className="col d-flex justify-content-center align-items-center mb-3">
+      <div className="row tw-mt-2 tw-container !tw-m-0">
+        <div className="tw-flex-1 tw-flex tw-justify-center tw-items-center tw-mb-3">
           <img
             className={tier === 2 ? 'img-type-icon' : ''}
             alt="Image Raid Egg"
             src={raidEgg(tier, props.pokemonType, pokemonClass)}
           />
         </div>
-        <div className="col d-flex justify-content-center mb-3">
+        <div className="col tw-flex tw-justify-center tw-mb-3">
           <StatsTable
             isLoadedForms={props.isLoadedForms}
             tier={tier}

@@ -215,35 +215,35 @@ const Hexagon = (props: IHexagonComponent) => {
   };
 
   return (
-    <div className="position-relative stats-border" style={{ width: props.borderSize, height: props.borderSize }}>
+    <div className="tw-relative stats-border" style={{ width: props.borderSize, height: props.borderSize }}>
       {initHex && (
         <Fragment>
-          <div className="position-absolute text-center leader-text">
+          <div className="tw-absolute tw-text-center leader-text">
             {toFloatWithPadding(props.stats?.lead, 1)}
             <br />
             <b>Leader</b>
           </div>
-          <div className="position-absolute text-center attacker-text">
+          <div className="tw-absolute tw-text-center attacker-text">
             {toFloatWithPadding(props.stats?.atk, 1)}
             <br />
             <b>Attacker</b>
           </div>
-          <div className="position-absolute text-center consistence-text">
+          <div className="tw-absolute tw-text-center consistence-text">
             {toFloatWithPadding(props.stats?.cons, 1)}
             <br />
             <b>Consistence</b>
           </div>
-          <div className="position-absolute text-center closer-text">
+          <div className="tw-absolute tw-text-center closer-text">
             {toFloatWithPadding(props.stats?.closer, 1)}
             <br />
             <b>Closer</b>
           </div>
-          <div className="position-absolute text-center charger-text">
+          <div className="tw-absolute tw-text-center charger-text">
             {toFloatWithPadding(props.stats?.charger, 1)}
             <br />
             <b>Charger</b>
           </div>
-          <div className="position-absolute text-center switch-text">
+          <div className="tw-absolute tw-text-center switch-text">
             {toFloatWithPadding(props.stats?.switching, 1)}
             <br />
             <b>Switch</b>

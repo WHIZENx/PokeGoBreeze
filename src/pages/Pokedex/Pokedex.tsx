@@ -318,20 +318,20 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   return (
-    <div className="position-relative">
-      {!isNotEmpty(dataList) && (
-        <div className="ph-item w-100 h-100 position-absolute z-2 bg-transparent">
-          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
-        </div>
-      )}
-      <div className="text-center w-100">
+    <div className="tw-relative">
+      <div className="tw-relative tw-text-center tw-w-full">
+        {!isNotEmpty(dataList) && (
+          <div className="ph-item tw-w-full tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
+            <div className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0 !tw-bg-transparent" />
+          </div>
+        )}
         <div className="head-types">Filter By Types (Maximum 2)</div>
         <ToggleType fullWidth value={selectTypes} onSelectType={(type) => addTypeArr(type)} />
-        <div className="w-100">
+        <div className="tw-w-full">
           <div className="border-input">
             <div className="head-types">Options</div>
-            <div className="row m-0">
-              <div className="col-xl-4 p-0">
+            <div className="row !tw-m-0">
+              <div className="xl:tw-w-1/3 xl:tw-flex-initial !tw-p-0">
                 <InputMuiSearch
                   isNoWrap
                   value={searchTerm}
@@ -355,12 +355,12 @@ const Pokedex = (props: IStyleSheetData) => {
                     control={
                       <Switch checked={isShiny} onChange={(_, check) => setFilters({ ...filters, isShiny: check })} />
                     }
-                    className="h-100"
+                    className="tw-h-full"
                     label={
-                      <span className="d-flex align-items-center">
+                      <span className="tw-flex tw-items-center">
                         Show All Shiny Pokémon (Only Possible)
                         <img
-                          className={combineClasses('ms-1', isShiny ? 'filter-shiny' : 'filter-gray')}
+                          className={combineClasses('tw-ml-1', isShiny ? 'filter-shiny' : 'filter-gray')}
                           width={28}
                           height={28}
                           alt="Pokémon GO Icon"
@@ -371,11 +371,11 @@ const Pokedex = (props: IStyleSheetData) => {
                   />
                 </FormControlMui>
               </div>
-              <div className="col-xl-8 border-input p-2 gap-2">
-                <div className="d-flex">
+              <div className="xl:tw-w-2/3 xl:tw-flex-initial border-input tw-p-2 tw-gap-2">
+                <div className="tw-flex">
                   <SelectMui<number[]>
                     multiple
-                    formClassName="w-50"
+                    formClassName="tw-w-1/2"
                     formSx={{ m: 1 }}
                     inputLabel="Generation(s)"
                     value={gen}
@@ -410,7 +410,7 @@ const Pokedex = (props: IStyleSheetData) => {
                   />
                   <SelectMui<number[]>
                     multiple
-                    formClassName="w-50"
+                    formClassName="tw-w-1/2"
                     formSx={{ m: 1 }}
                     inputLabel="Version(s)"
                     value={version}
@@ -551,8 +551,8 @@ const Pokedex = (props: IStyleSheetData) => {
       <BackdropMui open={isLoading}>
         <LoadGroup isShow={isLoading} isVertical={false} isHideAttr={false} />
       </BackdropMui>
-      <div className="text-center bg-white">
-        <ul className="d-grid pokemon-content">
+      <div className="tw-text-center tw-bg-custom-default">
+        <ul className="tw-grid pokemon-content">
           {listOfPokemon.map((row, index) => (
             <CardPokemonInfo
               key={index}

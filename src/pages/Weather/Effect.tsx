@@ -33,12 +33,12 @@ const Effect = () => {
   }, [currentTypePri, currentTypeSec, getWeatherEffective, typesEffective]);
 
   return (
-    <div className="mt-2">
-      <h5 className="text-center">
+    <div className="tw-mt-2">
+      <h5 className="tw-text-center">
         <b>As Pokémon Types</b>
       </h5>
       <div className="row">
-        <div className="col d-flex justify-content-center">
+        <div className="col tw-flex tw-justify-center">
           <SelectTypeComponent
             title="Type 1"
             data={typesEffective}
@@ -47,7 +47,7 @@ const Effect = () => {
             filterType={[currentTypePri, currentTypeSec]}
           />
         </div>
-        <div className="col d-flex justify-content-center">
+        <div className="col tw-flex tw-justify-center">
           <SelectTypeComponent
             title="Type 2"
             data={typesEffective}
@@ -59,7 +59,7 @@ const Effect = () => {
         </div>
       </div>
       <Effective title="Weather Boosts">
-        <Weather arr={weatherEffective} className="ms-3" />
+        <Weather arr={weatherEffective} className="tw-ml-3" />
       </Effective>
     </div>
   );

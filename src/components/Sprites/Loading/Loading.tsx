@@ -16,7 +16,7 @@ const Background = styled.div<Element>`
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: ${(props) => getValueOrDefault(String, props.$bgColor, 'var(--background-default)')};
+  background-color: ${(props) => getValueOrDefault(String, props.$bgColor, 'var(--custom-default)')};
   opacity: ${(props) => props.$opacity};
   z-index: 2;
   display: ${(props) => (props.$isShow ? 'block' : 'none')};

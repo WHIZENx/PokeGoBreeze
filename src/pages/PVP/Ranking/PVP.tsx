@@ -265,7 +265,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains, routerAction]);
 
   const renderHeader = (data: IPokemonBattleRanking) => (
-    <div className="d-flex align-items-center w-100 gap-3">
+    <div className="tw-flex tw-items-center tw-w-full tw-gap-3">
       <LinkToTop
         to={`/pvp/${params.cp}/${params.serie?.toLowerCase()}/${data.data?.speciesId?.replaceAll('_', '-')}?${
           Params.LeagueType
@@ -275,10 +275,10 @@ const RankingPVP = (props: IStyleSheetData) => {
           getKeyWithData(ScoreType, ScoreType.Overall)
         ).toLowerCase()}`}
       >
-        <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
+        <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
       </LinkToTop>
-      <div className="d-flex justify-content-center">
-        <span className="position-relative" style={{ width: 50 }}>
+      <div className="tw-flex tw-justify-center">
+        <span className="tw-relative" style={{ width: 50 }}>
           <PokemonIconType pokemonType={data.pokemonType} size={28}>
             <img
               alt="Image League"
@@ -292,10 +292,10 @@ const RankingPVP = (props: IStyleSheetData) => {
           </PokemonIconType>
         </span>
       </div>
-      <div className="ranking-group w-100">
+      <div className="ranking-group tw-w-full">
         <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
-        <div className="ms-3">
-          <span className="ranking-score score-ic text-black">{data.data?.score}</span>
+        <div className="tw-ml-3">
+          <span className="ranking-score score-ic tw-text-black">{data.data?.score}</span>
         </div>
       </div>
     </div>
@@ -303,7 +303,7 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   const renderBody = (data: IPokemonBattleRanking) => (
     <div className="pokemon-ranking-body ranking-body">
-      <div className="w-100 ranking-info mt-2">
+      <div className="tw-w-full ranking-info tw-mt-2">
         <HeaderPVP data={data} />
         <hr />
         <BodyPVP
@@ -314,17 +314,17 @@ const RankingPVP = (props: IStyleSheetData) => {
           styleList={props.styleSheet}
         />
       </div>
-      <div className="container">
+      <div className="tw-container">
         <hr />
       </div>
       <div className="stats-container">
         <OverAllStats data={data} cp={params.cp} type={searchParams.get(Params.LeagueType)} />
       </div>
-      <div className="container">
+      <div className="tw-container">
         <hr />
         <TypeEffectivePVP types={data.pokemon?.types} />
       </div>
-      <div className="container">
+      <div className="tw-container">
         <MoveSet moves={data.data?.moves} pokemon={data.pokemon} />
       </div>
     </div>
@@ -343,7 +343,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league ? (
-          <div className="d-flex flex-wrap align-items-center mt-2 column-gap-2">
+          <div className="tw-flex tw-flex-wrap tw-items-center tw-mt-2 tw-gap-x-2">
             <img
               alt="Image League"
               width={64}
@@ -359,8 +359,8 @@ const RankingPVP = (props: IStyleSheetData) => {
             </h2>
           </div>
         ) : (
-          <div className="ph-item mt-2">
-            <div className="ph-picture mb-0 px-0 h-9 w-pct-40" />
+          <div className="ph-item tw-mt-2">
+            <div className="ph-picture tw-mb-0 tw-px-0 tw-h-9 tw-w-2/5" />
           </div>
         )}
       </Fragment>
@@ -369,11 +369,11 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   return (
     <Error isError={!isFound}>
-      <div className="container pvp-container pb-3">
+      <div className="tw-container pvp-container tw-pb-3">
         {renderLeague()}
         <hr />
         <ToggleGroupMui
-          className="d-flex overflow-x-auto mt-2"
+          className="tw-flex tw-overflow-x-auto tw-mt-2"
           isNoneBorder
           color="primary"
           exclusive
@@ -396,11 +396,11 @@ const RankingPVP = (props: IStyleSheetData) => {
         />
         <InputMuiSearch value={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
         <div className="ranking-container" onScroll={listenScrollEvent.bind(this)}>
-          <div className="ranking-group w-100 ranking-header column-gap-3">
+          <div className="ranking-group tw-w-full ranking-header tw-gap-y-3">
             <div />
-            <div className="d-flex me-3">
+            <div className="tw-flex tw-mr-3">
               <div
-                className="text-center w-max-content"
+                className="tw-text-center tw-w-max"
                 onClick={() =>
                   setSorted(sorted === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC)
                 }

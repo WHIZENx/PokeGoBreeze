@@ -19,7 +19,7 @@ const Table = (props: ITableComponent) => {
       ))}
       <thead>
         {props.headerRows?.map((row, index) => (
-          <tr key={index} className={combineClasses(row.className, row.align && `text-${row.align}`)}>
+          <tr key={index} className={combineClasses(row.className, row.align && `tw-text-${row.align}`)}>
             {row.subRows?.map((subRow, subIndex) => (
               <td
                 key={subIndex}
@@ -34,7 +34,7 @@ const Table = (props: ITableComponent) => {
       </thead>
       <tbody>
         {props.rows?.map((row, index) => (
-          <tr key={index} className={combineClasses(row.className, row.align && `text-${row.align}`)}>
+          <tr key={index} className={combineClasses(row.className, row.align && `tw-text-${row.align}`)}>
             {row.subRows?.map((subRow, subIndex) => (
               <td
                 key={subIndex}

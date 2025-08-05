@@ -136,9 +136,9 @@ const Tools = (props: IToolsComponent) => {
   return (
     <Fragment>
       {props.isRaid ? (
-        <div className="mt-2 mb-3">
+        <div className="tw-mt-2 tw-mb-3">
           <SelectTierMui
-            className="text-start"
+            className="tw-text-left"
             tier={currTier}
             setTier={props.setTier}
             setCurrTier={setCurrTier}

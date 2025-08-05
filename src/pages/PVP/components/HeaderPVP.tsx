@@ -7,9 +7,9 @@ import { splitAndCapitalize, getMoveType } from '../../../utils/utils';
 const HeaderPVP = (props: HeaderComponent) => {
   return (
     <>
-      <div className="d-flex flex-wrap align-items-center column-gap-3">
+      <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-y-3">
         {props.data && (
-          <h3 className="text-white text-shadow-black">
+          <h3 className="tw-text-white text-shadow-black">
             <b>
               #{props.data.id} {splitAndCapitalize(props.data.name, '-', ' ')}
             </b>
@@ -17,8 +17,8 @@ const HeaderPVP = (props: HeaderComponent) => {
         )}
         <TypeInfo isShowShadow isBlock color="white" arr={props.data?.pokemon?.types} />
       </div>
-      <h6 className="text-white text-shadow-black text-decoration-underline">Recommend Moveset in PVP</h6>
-      <div className="d-flex flex-wrap mt-2 column-gap-2">
+      <h6 className="tw-text-white text-shadow-black tw-underline">Recommend Moveset in PVP</h6>
+      <div className="tw-flex tw-flex-wrap tw-mt-2 tw-gap-x-2">
         <TypeBadge
           isGrow
           isFind

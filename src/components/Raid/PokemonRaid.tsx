@@ -34,10 +34,10 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
   }, [props.data, dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, props.id, props.setData]);
 
   return (
-    <div className="position-relative">
-      <span className="input-group-text justify-content-center position-relative h-6">
+    <div className="tw-relative">
+      <span className="input-group-text tw-justify-center tw-relative tw-h-6">
         {dataTargetPokemon && (
-          <div className="d-flex text-group-small">
+          <div className="tw-flex text-group-small">
             <span>
               LV: {dataTargetPokemon.stats?.level} {dataTargetPokemon.stats?.iv.atkIV}/
               {dataTargetPokemon.stats?.iv.defIV}/{`${dataTargetPokemon.stats?.iv.staIV} `}
@@ -49,10 +49,10 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         )}
         <Badge color="primary" overlap="circular" badgeContent={props.id + 1} />
         {props.isControls && (
-          <div className="d-flex ic-group-small">
+          <div className="tw-flex ic-group-small">
             <span
               className={combineClasses(
-                'ic-copy-small text-white me-1',
+                'ic-copy-small tw-text-white tw-mr-1',
                 dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
               )}
               title="Options"
@@ -62,11 +62,11 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 }
               }}
             >
-              <SettingsIcon className="u-fs-3" />
+              <SettingsIcon className="tw-text-sm" />
             </span>
             <span
               className={combineClasses(
-                'ic-copy-small text-white me-1',
+                'ic-copy-small tw-text-white tw-mr-1',
                 dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
               )}
               title="Copy"
@@ -76,11 +76,11 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 }
               }}
             >
-              <ContentCopyIcon className="u-fs-3" />
+              <ContentCopyIcon className="tw-text-sm" />
             </span>
             <span
               className={combineClasses(
-                'ic-remove-small text-white',
+                'ic-remove-small tw-text-white',
                 props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon)
                   ? 'bg-danger'
                   : 'click-none bg-secondary'
@@ -95,7 +95,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 }
               }}
             >
-              <DeleteIcon className="u-fs-3" />
+              <DeleteIcon className="tw-text-sm" />
             </span>
           </div>
         )}
@@ -110,7 +110,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         setCMovePokemon={setCMoveTargetPokemon}
         maxHeight={120}
       />
-      <span className="input-group-text justify-content-center">
+      <span className="input-group-text tw-justify-center">
         <b>Fast Move</b>
       </span>
       <SelectCardMove
@@ -122,7 +122,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         moveType={TypeMove.Fast}
         emptyText="- Please select Pokémon -"
       />
-      <span className="input-group-text justify-content-center">
+      <span className="input-group-text tw-justify-center">
         <b>Charged Move</b>
       </span>
       <SelectCardMove

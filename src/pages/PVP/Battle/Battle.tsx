@@ -659,20 +659,20 @@ const Battle = () => {
       return <></>;
     }
     return (
-      <div className="bufs-container d-flex flex-row column-gap-1">
+      <div className="bufs-container tw-flex tw-flex-row tw-gap-y-1">
         {move?.buffs.map((value, index) => (
-          <div key={index} className="d-flex position-relative column-gap-1">
+          <div key={index} className="tw-flex tw-relative tw-gap-y-1">
             <img width={15} height={15} alt="Image ATK" src={value.type === TypeAction.Atk ? ATK_LOGO : DEF_LOGO} />
-            <div className="position-absolute icon-buff">
+            <div className="tw-absolute icon-buff">
               {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
               {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
               {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
               {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
-              <span className={combineClasses('u-fs-2-75', value.power < 0 ? 'text-danger' : 'text-success')}>
+              <span className={combineClasses('tw-text-sm', value.power < 0 ? 'text-danger' : 'text-success')}>
                 {value.power}
               </span>
             </div>
-            <b className="u-fs-2-75">{toNumber(value.buffChance) * 100}%</b>
+            <b className="tw-text-sm">{toNumber(value.buffChance) * 100}%</b>
           </div>
         ))}
       </div>
@@ -809,8 +809,8 @@ const Battle = () => {
             label: 'Information',
             children: (
               <>
-                <div className="w-100 d-flex justify-content-center">
-                  <div className="position-relative filter-shadow" style={{ width: 128 }}>
+                <div className="tw-w-full tw-flex tw-justify-center">
+                  <div className="tw-relative filter-shadow" style={{ width: 128 }}>
                     <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
                       <img
                         alt="Image League"
@@ -828,13 +828,13 @@ const Battle = () => {
                     </PokemonIconType>
                   </div>
                 </div>
-                <div className="w-100 d-flex justify-content-center align-items-center gap-1">
+                <div className="tw-w-full tw-flex tw-justify-center tw-items-center tw-gap-1">
                   <LinkToTop
                     to={`/pvp/${params.cp}/all/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}?${
                       Params.LeagueType
                     }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
                   >
-                    <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
+                    <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
                   </LinkToTop>
                   <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
                 </div>
@@ -851,7 +851,7 @@ const Battle = () => {
                   {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
                 </b>
                 <br />
-                <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
+                <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
                 {'Attack: '}
                 <b>
                   {Math.floor(
@@ -860,7 +860,7 @@ const Battle = () => {
                   )}
                 </b>
                 <br />
-                <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
+                <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
                 {'Defense: '}
                 <b>
                   {Math.floor(
@@ -869,7 +869,7 @@ const Battle = () => {
                   )}
                 </b>
                 <br />
-                <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
+                <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
                 HP: <b>{toNumber(Math.round(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
                 <br />
                 {'Stats Prod: '}
@@ -883,7 +883,7 @@ const Battle = () => {
                 </b>
                 <br />
                 <form
-                  className="mt-2"
+                  className="tw-mt-2"
                   onSubmit={(e) => {
                     calculateStatPokemon(e, type, pokemon, setPokemon);
                   }}
@@ -941,11 +941,11 @@ const Battle = () => {
                     id={`hpIV${battleType}`}
                     fullWidth
                   />
-                  <div className="w-100 mt-2">
+                  <div className="tw-w-full tw-mt-2">
                     <ButtonMui type="submit" color="success" fullWidth label="Calculate Stats" />
                   </div>
                 </form>
-                <div className="w-100 mt-2">
+                <div className="tw-w-full tw-mt-2">
                   <ButtonMui
                     fullWidth
                     color="primary"
@@ -953,7 +953,7 @@ const Battle = () => {
                     label="Set Random Stats"
                   />
                 </div>
-                <div className="w-100 mt-2">
+                <div className="tw-w-full tw-mt-2">
                   <ButtonMui
                     fullWidth
                     color="primary"
@@ -968,7 +968,7 @@ const Battle = () => {
                   move={pokemon.fMove}
                   moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
                 />
-                <div className="d-flex w-100 position-relative column-gap-2">
+                <div className="tw-flex tw-w-full tw-relative tw-gap-x-2">
                   <TypeBadge
                     isFind
                     title="Primary Charged Move"
@@ -978,7 +978,7 @@ const Battle = () => {
                   {findBuff(pokemon.cMovePri)}
                 </div>
                 {pokemon.cMoveSec && (
-                  <div className="d-flex w-100 position-relative column-gap-2">
+                  <div className="tw-flex tw-w-full tw-relative tw-gap-x-2">
                     <TypeBadge
                       isFind
                       title="Secondary Charged Move"
@@ -1118,8 +1118,8 @@ const Battle = () => {
               />
             )}
             {pokemon && (
-              <div className="w-100 bg-ref-pokemon">
-                <div className="w-100 bg-type-moves">
+              <div className="tw-w-full bg-ref-pokemon">
+                <div className="tw-w-full bg-type-moves">
                   <CircleBar
                     text={splitAndCapitalize(pokemon.cMovePri?.name, '_', ' ')}
                     type={pokemon.cMovePri?.type}
@@ -1177,11 +1177,11 @@ const Battle = () => {
   );
 
   const renderHeader = (pokemonCurr: PokemonBattle, pokemonObj: PokemonBattle) => (
-    <div className="position-relative w-100">
-      <div className="d-flex timeline-vertical">
-        <div className="w-50">
-          <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start gap-2">
-            <div className="position-relative filter-shadow" style={{ width: 35 }}>
+    <div className="tw-relative tw-w-full">
+      <div className="tw-flex timeline-vertical">
+        <div className="tw-w-1/2">
+          <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-start tw-gap-2">
+            <div className="tw-relative filter-shadow" style={{ width: 35 }}>
               <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
                 <img
                   alt="Image League"
@@ -1201,9 +1201,9 @@ const Battle = () => {
             <b>{splitAndCapitalize(pokemonCurr.pokemonData?.name, '-', ' ')}</b>
           </div>
         </div>
-        <div className="w-50">
-          <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end gap-2">
-            <div className="position-relative filter-shadow" style={{ width: 35 }}>
+        <div className="tw-w-1/2">
+          <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-end tw-gap-2">
+            <div className="tw-relative filter-shadow" style={{ width: 35 }}>
               <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
                 <img
                   alt="Image League"
@@ -1230,7 +1230,7 @@ const Battle = () => {
 
   return (
     <Error isError={!isFound}>
-      <div className="container mt-2 battle-body-container">
+      <div className="tw-container tw-mt-2 battle-body-container">
         <SelectMui
           fullWidth
           value={league}
@@ -1245,11 +1245,11 @@ const Battle = () => {
             { value: BattleLeagueCPType.InsMaster, label: getPokemonBattleLeagueName(BattleLeagueCPType.InsMaster) },
           ]}
         />
-        <div className="row mt-4 m-0">
-          <div className="col-lg-3">
+        <div className="row tw-mt-4 !tw-m-0">
+          <div className="lg:tw-w-1/4">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
           </div>
-          <div className="col-lg-6">
+          <div className="lg:tw-w-1/2">
             {pokemonCurr.pokemonData &&
               pokemonObj.pokemonData &&
               isNotEmpty(pokemonCurr.timeline) &&
@@ -1296,7 +1296,7 @@ const Battle = () => {
                         )}
                       </Fragment>
                     )}
-                    <div className="d-flex justify-content-center">
+                    <div className="tw-flex tw-justify-center">
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -1317,7 +1317,7 @@ const Battle = () => {
                         <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
                       </RadioGroup>
                       <SelectMui
-                        formClassName="mt-2"
+                        formClassName="tw-mt-2"
                         formSx={{ m: 1, minWidth: 120 }}
                         onChangeSelect={(value) => setOptions({ ...options, duration: toFloat(value) })}
                         value={duration}
@@ -1331,7 +1331,7 @@ const Battle = () => {
                         ]}
                       />
                     </div>
-                    <div className="d-flex justify-content-center column-gap-2">
+                    <div className="tw-flex tw-justify-center tw-gap-x-2">
                       <ButtonMui
                         startIcon={playState ? <PauseIcon /> : <PlayArrowIcon />}
                         label={playState ? 'Stop' : 'Play'}
@@ -1350,19 +1350,19 @@ const Battle = () => {
                 </Fragment>
               )}
           </div>
-          <div className="col-lg-3">
+          <div className="lg:tw-w-1/4">
             {renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}
           </div>
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
-          <div className="text-center mt-2">
+          <div className="tw-text-center tw-mt-2">
             <ButtonMui
               style={{ height: 50 }}
               startIcon={
                 isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
                   <RestartAltIcon />
                 ) : (
-                  <span className="position-relative">
+                  <span className="tw-relative">
                     <img height={36} alt="ATK Left" src={ATK_LOGO} />
                     <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
                   </span>

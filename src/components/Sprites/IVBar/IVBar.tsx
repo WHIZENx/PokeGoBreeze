@@ -23,38 +23,38 @@ const IVBar = (props: IIVBarComponent) => {
   }, [props.iv]);
 
   return (
-    <div className="iv-container mt-2" style={props.style}>
-      <div className="d-flex justify-content-between w-pct-99">
+    <div className="iv-container tw-mt-2" style={props.style}>
+      <div className="tw-flex tw-justify-between tw-w-[99%]">
         <b>{props.title}</b>
         <b>{props.iv}</b>
       </div>
       <div className="iv-bg-group">
-        <div className="iv iv-first-child position-relative">
+        <div className="iv iv-first-child tw-relative">
           <div
             className={combineClasses(
-              `position-absolute iv-bar w-pct-${ivWidthFirst}`,
+              `tw-absolute iv-bar tw-w-[${ivWidthFirst}%]`,
               props.iv <= 5 ? 'border-right-iv' : ''
             )}
           />
-          <div className="iv-bg-bar w-100" />
+          <div className="iv-bg-bar tw-w-full" />
         </div>
-        <div className="iv position-relative">
+        <div className="iv tw-relative">
           <div
             className={combineClasses(
-              `position-absolute iv-bar w-pct-${ivWidthSec}`,
+              `tw-absolute iv-bar tw-w-[${ivWidthSec}%]`,
               props.iv > 5 && props.iv <= 10 ? 'border-right-iv' : ''
             )}
           />
-          <div className="iv-bg-bar w-100" />
+          <div className="iv-bg-bar tw-w-full" />
         </div>
-        <div className="iv iv-last-child position-relative">
+        <div className="iv iv-last-child tw-relative">
           <div
             className={combineClasses(
-              `position-absolute iv-bar w-pct-${ivWidthThird}`,
+              `tw-absolute iv-bar tw-w-[${ivWidthThird}%]`,
               props.iv > 10 ? 'border-right-iv' : ''
             )}
           />
-          <div className="iv-bg-bar w-100" />
+          <div className="iv-bg-bar tw-w-full" />
         </div>
       </div>
     </div>

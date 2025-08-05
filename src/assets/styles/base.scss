@@ -1,0 +1,57 @@
+*,
+::after,
+::before {
+  @apply tw-box-border;
+}
+
+hr {
+  @apply tw-border-0 tw-border-t tw-text-inherit tw-opacity-25 tw-my-4 tw-mx-0;
+}
+
+dl, ol, ul {
+  @apply tw-mb-4 tw-mt-0;
+}
+
+ol, ul {
+  @apply tw-pl-8;
+}
+
+p {
+  @apply tw-mb-4 tw-mt-0;
+}
+
+.h1, h1 {
+  @apply tw-text-[calc(1.375rem+1.5vw)] xl:tw-text-[2.5rem];
+}
+
+.h2, h2 {
+  @apply tw-text-[calc(1.325rem+.9vw)] xl:tw-text-[2rem];
+}
+
+.h3, h3 {
+  @apply tw-text-[calc(1.3rem+.6vw)] xl:tw-text-[1.75rem];
+}
+
+.h4, h4 {
+  @apply tw-text-[calc(1.275rem+.3vw)] xl:tw-text-2xl;
+}
+
+.h5, h5 {
+  @apply tw-text-xl;
+}
+
+.h6, h6 {
+  @apply tw-text-base;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+  @apply tw-font-medium tw-leading-[1.2] tw-mb-2 tw-mt-0 tw-text-default;
+}
+
+table {
+  @apply tw-border-collapse tw-caption-bottom;
+}
+
+a {
+  @apply tw-text-link;
+}

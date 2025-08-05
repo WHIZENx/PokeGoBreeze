@@ -1,47 +1,5 @@
 @use "./common.scss" as *;
 
-// Text color classes
-.tw-text-default {
-  @include theme-text(var(--text-primary), true);
-}
-
-.theme-text-secondary {
-  @include theme-text(var(--text-secondary));
-}
-
-// Background color classes
-.theme-bg-default {
-  @include theme-background(var(--custom-default));
-}
-
-.theme-table-primary {
-  @include theme-background(var(--table-primary), true);
-}
-
-// Theme spinner classes
-.theme-spinner {
-  background: var(--loading-spinner) !important;
-}
-
-.theme-spinner-bg {
-  background: var(--loading-spinner-bg) !important;
-}
-
-// Selection and highlighting classes
-.theme-custom-selected-bg {
-  @include theme-background(var(--custom-selected-bg));
-}
-
-// Table-related theme classes
-.theme-table-info-bg {
-  @include theme-background(var(--table-info));
-}
-
-.theme-table-info-bg,
-.theme-table-info-bg-border {
-  @include theme-border(1px);
-}
-
 // Text shadow
 .text-shadow {
   text-shadow: 1px 1px var(--shadow-default-revert);
@@ -142,7 +100,7 @@
 // Table head classes
 .head-types {
   @include table-head-style;
-  @apply tw-p-2.5 tw-font-bold;
+  @apply tw-p-[10px] tw-font-bold;
 }
 
 .table-head {
@@ -294,12 +252,12 @@ a.pokemon-link:hover {
 
 .card-select-disabled {
   @include theme-background(var(--bs-secondary-bg), true);
-  @include theme-text(var(--bs-body-color), true);
+  @include theme-text(var(--body-color), true);
 }
 
 .pokemon-select-right,
 .select-down {
-  @include theme-background(var(--bs-body-bg));
+  @include theme-background(var(--body-color));
 }
 
 .stats-container {
@@ -317,7 +275,6 @@ th,
 td,
 .table-info,
 .table-counter-container,
-.table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs,
 .list-item-ranking,
 .season-league,
 .group-rank-league,
@@ -329,6 +286,10 @@ td,
 .pokemon-battle,
 .trainer-levelup {
   @include theme-border(1px, all, var(--custom-table-background-sub-head-border), true);
+}
+
+.table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs {
+  @include theme-border(1px, bottom, var(--custom-table-background-sub-head-border), true);
 }
 
 .custom-border-right {

@@ -58,9 +58,9 @@ const NavbarComponent = (props: INavbarComponent) => {
     return (
       <>
         {toNumber(timestamp?.gamemaster) > 0 && (
-          <span className="text-white">Updated: {getTime(timestamp.gamemaster, true)}</span>
+          <span className="tw-text-white">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
-        <span className="text-end text-warning u-fs-2">
+        <span className="tw-text-right tw-text-yellow-600 tw-text-xs">
           <b>{props.version}</b>
         </span>
       </>
@@ -70,24 +70,26 @@ const NavbarComponent = (props: INavbarComponent) => {
   const navigateInfo = useMemo(() => {
     return (
       <>
-        <Navbar.Text className="text-version flex-column justify-content-between mw-max-content h-6 p-0">
+        <Navbar.Text className="text-version tw-flex-col tw-justify-between tw-max-w-max tw-h-6 !tw-p-0">
           {infoVersion}
         </Navbar.Text>
         <OverlayTrigger
           placement="bottom"
           overlay={
-            <CustomPopover className="bg-dark">
-              <div className="d-flex flex-column justify-content-between mw-max-content h-6 p-0">{infoVersion}</div>
+            <CustomPopover className="tw-bg-gray-800">
+              <div className="tw-flex tw-flex-col tw-justify-between tw-w-max-content tw-h-6 !tw-p-0">
+                {infoVersion}
+              </div>
             </CustomPopover>
           }
         >
-          <InfoOutlinedIcon className="nav-info-icon cursor-pointer p-0" color="info" />
+          <InfoOutlinedIcon className="nav-info-icon tw-cursor-pointer !tw-p-0" color="info" />
         </OverlayTrigger>
         <IconButton
           className={combineClasses(
-            'me-2 p-0',
+            'tw-mr-2 !tw-p-0',
             stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
-            isDelay ? 'cursor-default' : 'cursor-pointer'
+            isDelay ? 'cursor-default' : 'tw-cursor-pointer'
           )}
           onClick={onChangeTheme}
           color="inherit"
@@ -130,16 +132,16 @@ const NavbarComponent = (props: INavbarComponent) => {
           'navbar-brand',
           '/',
           <>
-            <img src={logo} width="30" height="30" className="d-inline-block align-top mx-2" alt="Home" />
+            <img src={logo} width="30" height="30" className="tw-inline-block align-top tw-mx-2" alt="Home" />
             PokéGoBreeze
           </>
         )}
-        <div className="d-flex align-items-center justify-content-center">
-          <div className="nav-info column-gap-2">{navigateInfo}</div>
-          <Navbar.Toggle id="navbar-toggle" className="me-2" aria-controls="responsive-navbar-nav" />
+        <div className="tw-flex tw-items-center tw-justify-center">
+          <div className="nav-info tw-gap-x-2">{navigateInfo}</div>
+          <Navbar.Toggle id="navbar-toggle" className="tw-mr-2" aria-controls="responsive-navbar-nav" />
         </div>
-        <Navbar.Collapse id="responsive-navbar-nav" className="flex-wrap">
-          <Nav className="me-auto">
+        <Navbar.Collapse id="responsive-navbar-nav" className="tw-flex-wrap">
+          <Nav className="tw-mr-auto">
             {navItemLink('nav-link', '/', 'Pokédex')}
             {navItemLink('nav-link', '/news', 'News')}
             <NavDropdown
@@ -202,10 +204,10 @@ const NavbarComponent = (props: INavbarComponent) => {
             {navItemLink('nav-link', '/stickers', 'Stickers')}
           </Nav>
         </Navbar.Collapse>
-        <div className="nav-info-top column-gap-2">{navigateInfo}</div>
+        <div className="nav-info-top tw-gap-x-2">{navigateInfo}</div>
       </Navbar>
       {spinnerBarIsShow && (
-        <Box className="w-100 position-absolute z-7">
+        <Box className="tw-w-full tw-absolute tw-z-7">
           <LinearProgress variant={VariantType.Determinate} value={spinnerPercent} />
         </Box>
       )}

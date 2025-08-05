@@ -46,7 +46,7 @@ const CandyXL = (props: ICandyComponent) => {
   }, [props.id]);
 
   return (
-    <div className={combineClasses('position-relative d-inline-block', props.className)} style={props.style}>
+    <div className={combineClasses('tw-relative tw-inline-block', props.className)} style={props.style}>
       <Background $candyBgColor={bgColor} $size={props.size} />
       <Fill $candyColor={color} $size={props.size} />
     </div>

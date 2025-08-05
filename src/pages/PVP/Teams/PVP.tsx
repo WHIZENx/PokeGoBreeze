@@ -277,7 +277,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league && (
-          <div className="d-flex flex-wrap align-items-center mt-2 column-gap-2">
+          <div className="tw-flex tw-flex-wrap tw-items-center tw-mt-2 tw-gap-x-2">
             <img
               alt="Image League"
               width={64}
@@ -318,12 +318,12 @@ const TeamPVP = (props: IStyleSheetData) => {
   };
 
   const renderHeader = (value: Teams) => (
-    <div className="d-flex align-items-center w-100 justify-content-between gap-3">
-      <div className="d-flex gap-3">
+    <div className="tw-flex tw-items-center tw-w-full tw-justify-between tw-gap-3">
+      <div className="tw-flex tw-gap-3">
         {value.teamsData.map((value, index) => (
-          <div className="text-center" key={index}>
-            <div className="d-flex justify-content-center">
-              <div className="position-relative filter-shadow" style={{ width: 96 }}>
+          <div className="tw-text-center" key={index}>
+            <div className="tw-flex tw-justify-center">
+              <div className="tw-relative filter-shadow" style={{ width: 96 }}>
                 <PokemonIconType pokemonType={value.pokemonType} size={48}>
                   <img
                     alt="Image League"
@@ -337,17 +337,17 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </PokemonIconType>
               </div>
             </div>
-            <b className="theme-text-primary">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
+            <b className="tw-text-default">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
           </div>
         ))}
       </div>
-      <div className="d-flex align-items-center me-3" style={{ columnGap: 30 }}>
-        <div className="text-center" style={{ width: 200 }}>
-          <span className="ranking-score score-ic text-black">{value.teamScore}</span>
+      <div className="tw-flex tw-items-center tw-mr-3" style={{ columnGap: 30 }}>
+        <div className="tw-text-center" style={{ width: 200 }}>
+          <span className="ranking-score score-ic tw-text-black">{value.teamScore}</span>
         </div>
-        <div className="text-center ranking-score score-ic text-black w-fit-content">
+        <div className="tw-text-center ranking-score score-ic tw-text-black tw-w-fit">
           {toFloatWithPadding((value.games * 100) / value.teamsTotalGames, 2)}
-          <span className="caption text-black">
+          <span className="caption tw-text-black">
             {value.games}/{value.teamsTotalGames}
           </span>
         </div>
@@ -359,7 +359,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     <Fragment>
       {value.teamsData.map((value, index) => (
         <div
-          className="d-flex align-items-center p-3 gap-3"
+          className="tw-flex tw-items-center tw-p-3 tw-gap-3"
           key={index}
           style={{
             backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, props.styleSheet, 0.3),
@@ -370,10 +370,10 @@ const TeamPVP = (props: IStyleSheetData) => {
               Params.LeagueType
             }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
           >
-            <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
+            <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
           </LinkToTop>
-          <div className="d-flex justify-content-center">
-            <div className="position-relative filter-shadow" style={{ width: 96 }}>
+          <div className="tw-flex tw-justify-center">
+            <div className="tw-relative filter-shadow" style={{ width: 96 }}>
               <PokemonIconType pokemonType={value.pokemonType} size={48}>
                 <img
                   alt="Image League"
@@ -389,15 +389,15 @@ const TeamPVP = (props: IStyleSheetData) => {
           </div>
           <div className="ranking-group">
             <div>
-              <div className="d-flex align-items-center column-gap-2">
-                <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
+              <div className="tw-flex tw-items-center tw-gap-x-2">
+                <b className="tw-text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
                   value.name,
                   '-',
                   ' '
                 )}`}</b>
                 <TypeInfo isHideText isBlock isShowShadow height={20} color="white" arr={value.pokemonData?.types} />
               </div>
-              <div className="d-flex gap-2">
+              <div className="tw-flex tw-gap-2">
                 <TypeBadge
                   isGrow
                   isFind
@@ -431,17 +431,17 @@ const TeamPVP = (props: IStyleSheetData) => {
 
   return (
     <Error isError={!isFound}>
-      <div className="container pvp-container pb-3">
+      <div className="tw-container pvp-container tw-pb-3">
         {renderLeague()}
         <hr />
         <h2>Top Performer Pokémon</h2>
         <InputMuiSearch value={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
         <div className="ranking-container card-container">
-          <div className="ranking-group w-100 ranking-header column-gap-3">
+          <div className="ranking-group tw-w-full ranking-header tw-gap-y-3">
             <div className="ranking-score">Pokémon</div>
-            <div className="d-flex me-3" style={{ columnGap: 30 }}>
+            <div className="tw-flex tw-mr-3" style={{ columnGap: 30 }}>
               <div
-                className="text-center w-max-content"
+                className="tw-text-center tw-w-max"
                 onClick={() => {
                   setSortedBy(SortType.TeamScore);
                   if (sortedBy === SortType.TeamScore) {
@@ -460,7 +460,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
               <div
-                className="text-center w-max-content"
+                className="tw-text-center tw-w-max"
                 onClick={() => {
                   setSortedBy(SortType.IndividualScore);
                   if (sortedBy === SortType.IndividualScore) {
@@ -479,7 +479,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
               <div
-                className="text-center w-max-content"
+                className="tw-text-center tw-w-max"
                 onClick={() => {
                   setSortedBy(SortType.Games);
                   if (sortedBy === SortType.Games) {
@@ -508,7 +508,7 @@ const TeamPVP = (props: IStyleSheetData) => {
             .sort((a, b) => setSortedPokemonPerformers(a, b))
             .map((value, index) => (
               <div
-                className="d-flex align-items-center card-ranking column-gap-3"
+                className="tw-flex tw-items-center card-ranking tw-gap-y-3"
                 key={index}
                 style={{
                   backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, props.styleSheet, 0.3),
@@ -519,10 +519,10 @@ const TeamPVP = (props: IStyleSheetData) => {
                     Params.LeagueType
                   }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
                 >
-                  <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
+                  <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
                 </LinkToTop>
-                <div className="d-flex justify-content-center">
-                  <span className="position-relative filter-shadow" style={{ width: 96 }}>
+                <div className="tw-flex tw-justify-center">
+                  <span className="tw-relative filter-shadow" style={{ width: 96 }}>
                     <PokemonIconType pokemonType={value.pokemonType} size={48}>
                       <img
                         alt="Image League"
@@ -536,17 +536,17 @@ const TeamPVP = (props: IStyleSheetData) => {
                     </PokemonIconType>
                   </span>
                 </div>
-                <div className="ranking-group w-100 column-gap-3">
+                <div className="ranking-group tw-w-full tw-gap-y-3">
                   <div>
-                    <div className="d-flex align-items-center column-gap-2">
-                      <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
+                    <div className="tw-flex tw-items-center tw-gap-x-2">
+                      <b className="tw-text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
                         value.name,
                         '-',
                         ' '
                       )}`}</b>
                       <TypeInfo isHideText isBlock isShowShadow height={20} arr={value.pokemonData?.types} />
                     </div>
-                    <div className="d-flex column-gap-2">
+                    <div className="tw-flex tw-gap-x-2">
                       <TypeBadge
                         isGrow
                         isFind
@@ -572,16 +572,16 @@ const TeamPVP = (props: IStyleSheetData) => {
                       )}
                     </div>
                   </div>
-                  <div className="d-flex filter-shadow align-items-center me-3" style={{ columnGap: 30 }}>
-                    <div className="text-center" style={{ width: 120 }}>
-                      <span className="ranking-score score-ic text-black">{value.teamScore}</span>
+                  <div className="tw-flex filter-shadow tw-items-center tw-mr-3" style={{ columnGap: 30 }}>
+                    <div className="tw-text-center" style={{ width: 120 }}>
+                      <span className="ranking-score score-ic tw-text-black">{value.teamScore}</span>
                     </div>
-                    <div className="text-center" style={{ width: 160 }}>
-                      <span className="ranking-score score-ic text-black">{value.individualScore}</span>
+                    <div className="tw-text-center" style={{ width: 160 }}>
+                      <span className="ranking-score score-ic tw-text-black">{value.individualScore}</span>
                     </div>
-                    <div className="text-center ranking-score score-ic text-black w-fit-content">
+                    <div className="tw-text-center ranking-score score-ic tw-text-black tw-w-fit">
                       {toFloatWithPadding((value.games * 100) / value.performersTotalGames, 2)}
-                      <span className="caption text-black">
+                      <span className="caption tw-text-black">
                         {value.games}/{value.performersTotalGames}
                       </span>
                     </div>
@@ -592,12 +592,12 @@ const TeamPVP = (props: IStyleSheetData) => {
         </div>
         <hr />
         <h2>Top Team Pokémon</h2>
-        <div className="d-grid ranking-container">
-          <div className="ranking-group w-100 ranking-header column-gap-3">
+        <div className="tw-grid ranking-container">
+          <div className="ranking-group tw-w-full ranking-header tw-gap-y-3">
             <div className="ranking-score">Team</div>
-            <div className="d-flex" style={{ marginRight: 20, columnGap: 60 }}>
+            <div className="tw-flex" style={{ marginRight: 20, columnGap: 60 }}>
               <div
-                className="text-center w-max-content"
+                className="tw-text-center tw-w-max"
                 onClick={() => {
                   setSortedTeamBy(SortType.TeamScore);
                   if (sortedTeamBy === SortType.TeamScore) {
@@ -618,7 +618,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
               <div
-                className="text-center w-max-content"
+                className="tw-text-center tw-w-max"
                 onClick={() => {
                   setSortedTeamBy(SortType.Games);
                   if (sortedTeamBy === SortType.Games) {

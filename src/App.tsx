@@ -158,7 +158,7 @@ function App() {
   };
 
   return (
-    <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
+    <Box className="tw-min-h-full" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
       <ResponsiveAppBar toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
       <Routes>
         <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />

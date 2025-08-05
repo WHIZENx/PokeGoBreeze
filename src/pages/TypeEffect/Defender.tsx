@@ -30,12 +30,12 @@ const Defender = () => {
   }, [currentTypePri, currentTypeSec, getTypeEffective, typesEffective]);
 
   return (
-    <div className="mt-2">
-      <h5 className="text-center">
+    <div className="tw-mt-2">
+      <h5 className="tw-text-center">
         <b>As Defender</b>
       </h5>
       <div className="row">
-        <div className="col d-flex justify-content-center">
+        <div className="col tw-flex tw-justify-center">
           <SelectTypeComponent
             title="Type 1"
             data={typesEffective}
@@ -44,7 +44,7 @@ const Defender = () => {
             filterType={[currentTypePri, currentTypeSec]}
           />
         </div>
-        <div className="col d-flex justify-content-center">
+        <div className="col tw-flex tw-justify-center">
           <SelectTypeComponent
             title="Type 2"
             data={typesEffective}

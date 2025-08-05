@@ -3,15 +3,6 @@
   overflow: hidden;
 }
 
-.poke-parent {
-  margin-bottom: 15px;
-}
-
-.group-desc {
-  margin: 15px 5px;
-  overflow-y: hidden;
-}
-
 .img-desc {
   width: 210px;
   height: 210px;
@@ -26,12 +17,8 @@
   width: 350px;
 }
 
-.img-group {
-  vertical-align: top;
-  display: inline-block;
-  text-align: center;
-  margin-right: 10px;
-  margin-bottom: 10px;
+.title-evo {
+  @apply tw-flex tw-items-center tw-gap-2;
 }
 
 a b.link-title,
@@ -71,7 +58,7 @@ td h6 {
   text-align: start;
 }
 
-.table-desc tbody tr td div.h-100 {
+.table-desc tbody tr td div.tw-h-full {
   padding: 5px 10px;
 }
 
@@ -83,7 +70,7 @@ td h6 {
   text-align: start !important;
 }
 
-.table-info tbody tr.text-center td.table-sub-header:nth-child(2) {
+.table-info tbody tr.tw-text-center td.table-sub-header:nth-child(2) {
   font-weight: bolder;
 }
 

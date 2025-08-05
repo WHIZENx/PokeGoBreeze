@@ -26,12 +26,12 @@ const Attacker = () => {
   }, [currentType, getTypeEffective, typesEffective]);
 
   return (
-    <div className="mt-2">
-      <h5 className="text-center">
+    <div className="tw-mt-2">
+      <h5 className="tw-text-center">
         <b>As Attacker</b>
       </h5>
       <div className="row">
-        <div className="col d-flex justify-content-center">
+        <div className="col tw-flex tw-justify-center">
           <SelectTypeComponent
             title="Select Type"
             data={typesEffective}

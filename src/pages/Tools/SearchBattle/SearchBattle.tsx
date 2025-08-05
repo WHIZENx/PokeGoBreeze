@@ -362,15 +362,15 @@ const FindBattle = () => {
   };
 
   return (
-    <div className="container">
+    <div className="tw-container">
       <Find isHide clearStats={clearArrStats} />
-      <h1 id="main" className="text-center">
+      <h1 id="main" className="tw-text-center">
         Search Battle Leagues Stats
       </h1>
-      <form className="mt-2 pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
-        <div className="form-group d-flex justify-content-center text-center">
-          <Box className="w-50" sx={{ minWidth: 350 }}>
-            <div className="justify-content-center input-group mb-3">
+      <form className="tw-mt-2 tw-pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
+        <div className="form-group tw-flex tw-justify-center tw-text-center">
+          <Box className="tw-w-1/2" sx={{ minWidth: 350 }}>
+            <div className="tw-justify-center input-group tw-mb-3">
               <DynamicInputCP
                 statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
                 statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
@@ -387,9 +387,9 @@ const FindBattle = () => {
             </div>
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center">
-          <Box className="w-50" sx={{ minWidth: 300 }}>
-            <div className="d-flex justify-content-between">
+        <div className="form-group tw-flex tw-justify-center tw-text-center">
+          <Box className="tw-w-1/2" sx={{ minWidth: 300 }}>
+            <div className="tw-flex tw-justify-between">
               <b>ATK</b>
               <b>{ATKIv}</b>
             </div>
@@ -407,7 +407,7 @@ const FindBattle = () => {
                 setATKIv(v as number);
               }}
             />
-            <div className="d-flex justify-content-between">
+            <div className="tw-flex tw-justify-between">
               <b>DEF</b>
               <b>{DEFIv}</b>
             </div>
@@ -425,7 +425,7 @@ const FindBattle = () => {
                 setDEFIv(v as number);
               }}
             />
-            <div className="d-flex justify-content-between">
+            <div className="tw-flex tw-justify-between">
               <b>STA</b>
               <b>{STAIv}</b>
             </div>
@@ -445,24 +445,24 @@ const FindBattle = () => {
             />
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center mt-2">
+        <div className="form-group tw-flex tw-justify-center tw-text-center tw-mt-2">
           <ButtonMui type="submit" label="Search" />
         </div>
       </form>
       <Fragment>
         {isNotEmpty(evoChain) && isNotEmpty(bestInLeague) && (
-          <div className="text-center pb-3">
-            <div className="mb-3">
-              <h4 className="text-decoration-underline">Recommend Battle League</h4>
+          <div className="tw-text-center tw-pb-3">
+            <div className="tw-mb-3">
+              <h4 className="tw-underline">Recommend Battle League</h4>
               {bestInLeague.map((value, index) => (
                 <LinkToTop
                   to={`/pokemon/${value.id}${generateParamForm(value.form)}`}
-                  className="d-inline-block contain-poke-best-league border-best-poke"
+                  className="tw-inline-block contain-poke-best-league border-best-poke"
                   key={index}
                   title={`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}
                 >
-                  <div className="d-flex align-items-center h-100">
-                    <div className="border-best-poke h-100">
+                  <div className="tw-flex tw-items-center tw-h-full">
+                    <div className="border-best-poke tw-h-full">
                       {renderPokemon(value, 'poke-best-league', 102)}
                       <span className="caption border-best-poke best-name">
                         <b>
@@ -491,7 +491,7 @@ const FindBattle = () => {
                         </div>
                         <span className="caption caption-constant text-shadow">CP: {value.CP}</span>
                       </div>
-                      <span className="caption text-black border-best-poke">
+                      <span className="caption tw-text-black border-best-poke">
                         <b>#{value.rank}</b>
                       </span>
                     </div>
@@ -508,7 +508,7 @@ const FindBattle = () => {
                 <AccordionMui
                   key={index}
                   defaultValue={0}
-                  className="mb-3"
+                  className="tw-mb-3"
                   isShowAction
                   items={[
                     {
@@ -516,9 +516,9 @@ const FindBattle = () => {
                       label: <b>More information</b>,
                       children: (
                         <div className="sub-body">
-                          <div className="row justify-content-center league-info-content m-0">
+                          <div className="row tw-justify-center league-info-content !tw-m-0">
                             {value.map((item, index) => (
-                              <div className="col d-inline-block evo-item-desc justify-content-center p-0" key={index}>
+                              <div className="col tw-inline-block evo-item-desc tw-justify-center !tw-p-0" key={index}>
                                 <div className="pokemon-best-league">
                                   <LinkToTop
                                     to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -536,7 +536,7 @@ const FindBattle = () => {
                                   </LinkToTop>
                                 </div>
                                 {toNumber(item.maxCP) < maxCP ? (
-                                  <div className="text-danger">
+                                  <div className="tw-text-red-600">
                                     <b>
                                       <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                     </b>
@@ -544,7 +544,7 @@ const FindBattle = () => {
                                 ) : (
                                   <Fragment>
                                     <hr />
-                                    <div className="mt-2 d-flex justify-content-center text-start">
+                                    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
                                       {item.battleLeague.little.rank ? (
                                         <ul className="list-best-league">
                                           <h6>
@@ -572,12 +572,12 @@ const FindBattle = () => {
                                             </span>
                                           </li>
                                           <li>
-                                            <span className="d-flex align-items-center">
-                                              <Candy id={item.id} className="me-1" />
-                                              <span className="d-flex align-items-center me-1">
+                                            <span className="tw-flex tw-items-center">
+                                              <Candy id={item.id} className="tw-mr-1" />
+                                              <span className="tw-flex tw-items-center tw-mr-1">
                                                 {toNumber(item.battleLeague.little.resultBetweenCandy) +
                                                   getCandyEvo(value, item.id)}
-                                                <span className="d-inline-block caption text-success">
+                                                <span className="tw-inline-block caption tw-text-green-600">
                                                   (+{getCandyEvo(value, item.id)})
                                                 </span>
                                               </span>
@@ -587,7 +587,7 @@ const FindBattle = () => {
                                           </li>
                                           <li>
                                             <img
-                                              className="me-1"
+                                              className="tw-mr-1"
                                               alt="Image Stardust"
                                               height={20}
                                               src={APIService.getItemSprite('stardust_painted')}
@@ -605,13 +605,13 @@ const FindBattle = () => {
                                             />
                                             <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
                                           </h6>
-                                          <b className="text-danger p-3">
+                                          <b className="tw-text-red-600 tw-p-3">
                                             <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                           </b>
                                         </div>
                                       )}
                                     </div>
-                                    <div className="mt-2 d-flex justify-content-center text-start">
+                                    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
                                       {item.battleLeague.great.rank ? (
                                         <ul className="list-best-league">
                                           <h6>
@@ -639,12 +639,12 @@ const FindBattle = () => {
                                             </span>
                                           </li>
                                           <li>
-                                            <span className="d-flex align-items-center">
-                                              <Candy id={item.id} className="me-1" />
-                                              <span className="d-flex align-items-center">
+                                            <span className="tw-flex tw-items-center">
+                                              <Candy id={item.id} className="tw-mr-1" />
+                                              <span className="tw-flex tw-items-center">
                                                 {toNumber(item.battleLeague.great.resultBetweenCandy) +
                                                   getCandyEvo(value, item.id)}
-                                                <span className="d-inline-block caption text-success">
+                                                <span className="tw-inline-block caption tw-text-green-600">
                                                   (+{getCandyEvo(value, item.id)})
                                                 </span>
                                               </span>
@@ -654,7 +654,7 @@ const FindBattle = () => {
                                           </li>
                                           <li>
                                             <img
-                                              className="me-1"
+                                              className="tw-mr-1"
                                               alt="Image Stardust"
                                               height={20}
                                               src={APIService.getItemSprite('stardust_painted')}
@@ -672,13 +672,13 @@ const FindBattle = () => {
                                             />
                                             <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
                                           </h6>
-                                          <b className="text-danger p-3">
+                                          <b className="tw-text-red-600 tw-p-3">
                                             <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                           </b>
                                         </div>
                                       )}
                                     </div>
-                                    <div className="mt-2 d-flex justify-content-center text-start">
+                                    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
                                       {item.battleLeague.ultra.rank ? (
                                         <ul className="list-best-league">
                                           <h6>
@@ -706,12 +706,12 @@ const FindBattle = () => {
                                             </span>
                                           </li>
                                           <li>
-                                            <span className="d-flex align-items-center">
-                                              <Candy id={item.id} className="me-1" />
-                                              <span className="d-flex align-items-center">
+                                            <span className="tw-flex tw-items-center">
+                                              <Candy id={item.id} className="tw-mr-1" />
+                                              <span className="tw-flex tw-items-center">
                                                 {toNumber(item.battleLeague.ultra.resultBetweenCandy) +
                                                   getCandyEvo(value, item.id)}
-                                                <span className="d-inline-block caption text-success">
+                                                <span className="tw-inline-block caption tw-text-green-600">
                                                   (+{getCandyEvo(value, item.id)})
                                                 </span>
                                               </span>
@@ -721,7 +721,7 @@ const FindBattle = () => {
                                           </li>
                                           <li>
                                             <img
-                                              className="me-1"
+                                              className="tw-mr-1"
                                               alt="Image Stardust"
                                               height={20}
                                               src={APIService.getItemSprite('stardust_painted')}
@@ -739,13 +739,13 @@ const FindBattle = () => {
                                             />
                                             <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
                                           </h6>
-                                          <b className="text-danger p-3">
+                                          <b className="tw-text-red-600 tw-p-3">
                                             <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                           </b>
                                         </div>
                                       )}
                                     </div>
-                                    <div className="mt-2 d-flex justify-content-center text-start">
+                                    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
                                       {item.battleLeague.master.rank ? (
                                         <ul className="list-best-league">
                                           <h6>
@@ -769,12 +769,12 @@ const FindBattle = () => {
                                             </span>
                                           </li>
                                           <li>
-                                            <span className="d-flex align-items-center">
-                                              <Candy id={item.id} className="me-1" />
-                                              <span className="d-flex align-items-center">
+                                            <span className="tw-flex tw-items-center">
+                                              <Candy id={item.id} className="tw-mr-1" />
+                                              <span className="tw-flex tw-items-center">
                                                 {toNumber(item.battleLeague.master.resultBetweenCandy) +
                                                   getCandyEvo(value, item.id)}
-                                                <span className="d-inline-block caption text-success">
+                                                <span className="tw-inline-block caption tw-text-green-600">
                                                   (+{getCandyEvo(value, item.id)})
                                                 </span>
                                               </span>
@@ -784,7 +784,7 @@ const FindBattle = () => {
                                           </li>
                                           <li>
                                             <img
-                                              className="me-1"
+                                              className="tw-mr-1"
                                               alt="Image Stardust"
                                               height={20}
                                               src={APIService.getItemSprite('stardust_painted')}
@@ -798,7 +798,7 @@ const FindBattle = () => {
                                             <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
                                             <b>{` ${getPokemonBattleLeagueName()}`}</b>
                                           </h6>
-                                          <b className="text-danger p-3">
+                                          <b className="tw-text-red-600 tw-p-3">
                                             <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                           </b>
                                         </div>

@@ -94,8 +94,8 @@
 }
 
 @mixin bs-border-sides {
-  @include theme-border(1px, left, var(--bs-border-color));
-  @include theme-border(1px, right, var(--bs-border-color));
+  @include theme-border(1px, left, var(--border-color));
+  @include theme-border(1px, right, var(--border-color));
 }
 
 @mixin thick-standard-border {
@@ -182,7 +182,7 @@
 }
 
 @mixin border-with-side($side) {
-  @include theme-border(1px, $side, var(--bs-border-color));
+  @include theme-border(1px, $side, var(--border-color));
 }
 
 @mixin black-hover-border {

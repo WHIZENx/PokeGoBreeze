@@ -1,7 +1,5 @@
 @use "./assets/styles/tailwind.css";
-@use "./styles/theme.scss";
-@use "./styles/custom.scss";
-@use "../node_modules/bootstrap/dist/css/bootstrap.min.css" as *;
+@use "./assets/styles/global.scss";
 @use "../node_modules/placeholder-loading/src/scss/variables.scss" as * with (
   $ph-bg: var(--loading-placeholder-bg),
   $ph-color: var(--loading-placeholder),
@@ -9,28 +7,23 @@
   $ph-border-radius: 0
 );
 @use "../node_modules/placeholder-loading/src/scss/placeholder-loading.scss" as *;
-@use "./styles/constant.scss";
 @use "./styles/popover.scss";
 @use "./styles/shadow.scss";
-@use "./styles/utility.scss";
-
 html {
-  height: 100%;
+  @apply tw-h-full;
 }
 
 body {
-  height: 100%;
-  background: var(--background-default);
-  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans",
     "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: 0.1s;
   touch-action: manipulation;
+
+  @apply tw-h-full tw-m-0 tw-text-default tw-bg-custom-default;
 }
 
 #root {
-  position: relative;
-  height: 100%;
+  @apply tw-h-full tw-relative;
 }

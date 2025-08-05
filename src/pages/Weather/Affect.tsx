@@ -26,12 +26,12 @@ const Affect = () => {
   }, [currentWeather, getWeatherEffective, weathersBoost]);
 
   return (
-    <div className="mt-2">
-      <h5 className="text-center">
+    <div className="tw-mt-2">
+      <h5 className="tw-text-center">
         <b>As Weather</b>
       </h5>
       <div className="row">
-        <div className="col d-flex justify-content-center">
+        <div className="col tw-flex tw-justify-center">
           <SelectTypeComponent
             title="Select Weather"
             data={weathersBoost}
@@ -43,7 +43,7 @@ const Affect = () => {
         </div>
       </div>
       <Effective title="Types Pokémon for Boosts">
-        <TypeInfo arr={weatherEffective} className="ms-3" isShow />
+        <TypeInfo arr={weatherEffective} className="tw-ml-3" isShow />
       </Effective>
     </div>
   );

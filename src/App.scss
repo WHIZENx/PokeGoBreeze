@@ -1,13 +1,8 @@
 @use "styles/type.scss";
 
-.navbar {
-  z-index: 8;
-}
 
-.container-fluid {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
+
+
 
 .caption {
   font-size: 12px;
@@ -205,9 +200,7 @@ ul {
   width: fit-content !important;
 }
 
-.accordion-button {
-  gap: 1rem;
-}
+
 
 .type-border,
 .text-shadow-black {

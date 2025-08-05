@@ -150,8 +150,8 @@ const Leagues = () => {
   };
 
   const renderHeader = (league: ILeague) => (
-    <div className="d-flex justify-content-between w-100 me-3 column-gap-2">
-      <div className="d-flex align-items-center flex-start column-gap-2">
+    <div className="tw-flex tw-justify-between tw-w-full tw-mr-3 tw-gap-x-2">
+      <div className="tw-flex tw-items-center tw-justify-start tw-gap-x-2">
         <img
           alt="Image League"
           title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
@@ -161,8 +161,8 @@ const Leagues = () => {
         <b className={league.enabled ? '' : 'text-danger'}>{splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}</b>
       </div>
       {isEqual(league.leagueType, LeagueType.Premier) && (
-        <div className="d-flex align-items-center flex-end">
-          <div className="info-event-future p-1 rounded-1 u-fs-3">
+        <div className="tw-flex tw-items-center tw-justify-end">
+          <div className="info-event-future tw-p-1 tw-rounded-sm tw-text-sm">
             <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
           </div>
         </div>
@@ -173,7 +173,7 @@ const Leagues = () => {
   const renderBody = (league: ILeague) => (
     <div className="sub-body">
       <h4 className="title-leagues">{league.title}</h4>
-      <div className="text-center">
+      <div className="tw-text-center">
         {!isEqual(league.leagueBattleType, LeagueBattleType.None) &&
         !isEqual(league.leagueBattleType, LeagueBattleType.Little) &&
         !isInclude(league.title, LeagueBattleType.Remix, IncludeMode.IncludeIgnoreCaseSensitive) &&
@@ -210,22 +210,22 @@ const Leagues = () => {
           </div>
         )}
       </div>
-      <h5 className="title-leagues mt-2">Conditions</h5>
+      <h5 className="title-leagues tw-mt-2">Conditions</h5>
       <ul className="list-style-inherit">
-        <li className="fw-medium">
+        <li className="tw-font-medium">
           <h6>
             <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
           </h6>
         </li>
         {league.conditions.maxLevel && (
-          <li className="fw-medium">
+          <li className="tw-font-medium">
             <h6>
               <b>Max Level:</b> <span>{league.conditions.maxLevel}</span>
             </h6>
           </li>
         )}
         {league.pokemonCount > 0 && (
-          <li className="fw-medium">
+          <li className="tw-font-medium">
             <h6>
               <b>Pokémon count:</b> <span>{league.pokemonCount}</span>
             </h6>
@@ -234,20 +234,20 @@ const Leagues = () => {
         {league.conditions.timestamp && (
           <li>
             <h6 className="title-leagues">Event time</h6>
-            <span className="fw-medium">Start Date: {getTime(league.conditions.timestamp.start)}</span>
+            <span className="tw-font-medium">Start Date: {getTime(league.conditions.timestamp.start)}</span>
             {league.conditions.timestamp.end && (
-              <span className="fw-medium">
+              <span className="tw-font-medium">
                 <br />
                 End Date: {getTime(league.conditions.timestamp.end)}
               </span>
             )}
           </li>
         )}
-        <li className="fw-medium">
+        <li className="tw-font-medium">
           <h6 className="title-leagues">Allow Forms Evolution</h6>
           {league.allowEvolutions ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
         </li>
-        <li className="fw-medium">
+        <li className="tw-font-medium">
           <h6 className="title-leagues">Unique Selected</h6>
           {league.conditions.uniqueSelected ? (
             <DoneIcon sx={{ color: 'green' }} />
@@ -256,23 +256,23 @@ const Leagues = () => {
           )}
         </li>
         {isNotEmpty(league.conditions.uniqueType) && (
-          <li className="fw-medium unique-type">
+          <li className="tw-font-medium unique-type">
             <h6 className="title-leagues">Unique Type</h6>
-            <TypeInfo arr={league.conditions.uniqueType} className="ms-3" />
+            <TypeInfo arr={league.conditions.uniqueType} className="tw-ml-3" />
           </li>
         )}
         {isNotEmpty(league.conditions.whiteList) && (
-          <li className="fw-medium">
-            <h6 className="title-leagues text-success">White List</h6>
+          <li className="tw-font-medium">
+            <h6 className="title-leagues tw-text-green-600">White List</h6>
             {league.conditions.whiteList.map((item, index) => (
               <LinkToTop
-                className="img-link text-center"
+                className="img-link tw-text-center"
                 key={index}
                 to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                 title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
               >
-                <div className="d-flex justify-content-center">
-                  <span className="w-9">
+                <div className="tw-flex tw-justify-center">
+                  <span className="tw-w-16">
                     <img
                       className="pokemon-sprite-medium filter-shadow-hover"
                       alt="Pokémon Image"
@@ -301,17 +301,17 @@ const Leagues = () => {
           </li>
         )}
         {isNotEmpty(league.conditions.banned) && (
-          <li className="fw-medium">
-            <h6 className="title-leagues text-danger">Ban List</h6>
+          <li className="tw-font-medium">
+            <h6 className="title-leagues tw-text-red-600">Ban List</h6>
             {league.conditions.banned.map((item, index) => (
               <LinkToTop
-                className="img-link text-center"
+                className="img-link tw-text-center"
                 key={index}
                 to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                 title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
               >
-                <div className="d-flex justify-content-center">
-                  <span className="w-9">
+                <div className="tw-flex tw-justify-center">
+                  <span className="tw-w-16">
                     <img
                       className="pokemon-sprite-medium filter-shadow-hover"
                       alt="Pokémon Image"
@@ -344,12 +344,12 @@ const Leagues = () => {
   );
 
   return (
-    <div className="container p-3">
-      <h2 className="title-leagues mb-3">Battle Leagues List</h2>
+    <div className="tw-container tw-p-3">
+      <h2 className="title-leagues tw-mb-3">Battle Leagues List</h2>
       <hr />
-      <div className="row m-0 row-gap-2">
-        <div className="col-md-8 d-flex justify-content-start align-items-center p-0">
-          <span className="fw-medium">
+      <div className="row !tw-m-0 tw-gap-y-2">
+        <div className="md:tw-w-2/3 tw-flex tw-justify-start tw-items-center !tw-p-0">
+          <span className="tw-font-medium">
             <span>Season Date: {getTime(leaguesData.season.timestamp.start)}</span>
             <span>
               {' - '}
@@ -357,7 +357,7 @@ const Leagues = () => {
             </span>
           </span>
         </div>
-        <div className="col-md-4 d-flex justify-content-end p-0">
+        <div className="md:tw-w-1/3 tw-flex tw-justify-end !tw-p-0">
           <SelectMui
             formSx={{ width: 200 }}
             value={rank}
@@ -376,27 +376,27 @@ const Leagues = () => {
       </div>
       {isNotEmpty(leaguesData.data) ? (
         <Fragment>
-          <div className="d-flex justify-content-center mt-2">
+          <div className="tw-flex tw-justify-center tw-mt-2">
             <div className="season-league">
-              <div className="group-rank-league reward-league text-center">
+              <div className="group-rank-league reward-league tw-text-center">
                 <div className="rank-header">Season {leaguesData.season.season}</div>
                 <Badge
                   color="primary"
-                  className="position-relative d-inline-block img-link pt-4 pb-2 mw-9"
+                  className="tw-relative tw-inline-block img-link tw-pt-4 tw-pb-2 tw-max-w-9"
                   overlap="circular"
                   badgeContent={null}
                 >
                   <img
-                    className="pokemon-sprite-medium w-9"
+                    className="pokemon-sprite-medium tw-w-16"
                     alt="Pokémon Image"
                     src={APIService.getPokeOtherLeague('BattleIconColor')}
                   />
-                  <span className="caption theme-text-primary">Free</span>
+                  <span className="caption tw-text-default">Free</span>
                 </Badge>
                 <hr />
                 <Badge
                   color="primary"
-                  className="position-relative d-inline-block img-link pb-4 mw-9"
+                  className="tw-relative tw-inline-block img-link tw-pb-4 tw-max-w-9"
                   overlap="circular"
                   badgeContent={null}
                 >
@@ -405,18 +405,18 @@ const Leagues = () => {
                     alt="Pokémon Image"
                     src={getItemSpritePath(ItemName.PaidRaidTicket)}
                   />
-                  <span className="caption theme-text-primary">Premium</span>
+                  <span className="caption tw-text-default">Premium</span>
                 </Badge>
               </div>
               {leaguesData.season.rewards.rank[rank].free.map((value, index) => (
                 <Fragment key={index}>
-                  <div className="group-rank-league text-center">
+                  <div className="group-rank-league tw-text-center">
                     <div className="rank-header">Win Stack {value.step}</div>
                     <Badge
                       color="primary"
                       className={combineClasses(
-                        'position-relative d-inline-block img-link pt-4 mnw-9',
-                        value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? 'pb-0' : 'pb-4'
+                        'tw-relative tw-inline-block img-link tw-pt-4 mnw-9',
+                        value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? 'tw-pb-0' : 'tw-pb-4'
                       )}
                       overlap="circular"
                       badgeContent={value.count}
@@ -430,14 +430,14 @@ const Leagues = () => {
                       {value.type === RewardType.Pokemon && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="Random Pokémon"
                             src={APIService.getIconSprite('ic_grass')}
                           />
-                          <span className="caption theme-text-primary">Random Pokémon</span>
+                          <span className="caption tw-text-default">Random Pokémon</span>
                           <VisibilityIcon
-                            className="view-pokemon theme-text-primary u-fs-3"
+                            className="view-pokemon tw-text-default tw-text-sm"
                             onClick={() => handleShow(value.type, LeagueRewardType.Free, value.step)}
                           />
                         </Fragment>
@@ -445,58 +445,58 @@ const Leagues = () => {
                       {value.type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="Random Item"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                           />
-                          <span className="caption theme-text-primary">Random Item</span>
-                          <VisibilityIcon className="view-pokemon theme-text-primary u-fs-3" />
+                          <span className="caption tw-text-default">Random Item</span>
+                          <VisibilityIcon className="view-pokemon tw-text-default tw-text-sm" />
                         </Fragment>
                       )}
                       {value.type === RewardType.RareCandy && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="Rare Candy"
                             src={getItemSpritePath(ItemName.RareCandy)}
                           />
-                          <span className="caption theme-text-primary">Rare Candy</span>
+                          <span className="caption tw-text-default">Rare Candy</span>
                         </Fragment>
                       )}
                       {value.type === RewardType.Stardust && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="Stardust"
                             src={APIService.getItemSprite('stardust_painted')}
                           />
-                          <span className="caption theme-text-primary">Stardust</span>
+                          <span className="caption tw-text-default">Stardust</span>
                         </Fragment>
                       )}
                       {value.type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="TM Charged Move"
                             src={APIService.getItemSprite('Item_1202')}
                           />
-                          <span className="caption theme-text-primary">TM Charged Move</span>
+                          <span className="caption tw-text-default">TM Charged Move</span>
                         </Fragment>
                       )}
                     </Badge>
-                    <hr className="mt-0" />
+                    <hr className="tw-mt-0" />
                     <Badge
                       color="primary"
                       className={combineClasses(
-                        'position-relative d-inline-block img-link mnw-9',
+                        'tw-relative tw-inline-block img-link mnw-9',
                         leaguesData.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon ||
                           leaguesData.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot
-                          ? 'pb-0'
-                          : 'pb-4'
+                          ? 'tw-pb-0'
+                          : 'tw-pb-4'
                       )}
                       overlap="circular"
                       badgeContent={leaguesData.season.rewards.rank[rank].premium[index].count}
@@ -510,14 +510,14 @@ const Leagues = () => {
                       {leaguesData.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="Random Pokémon"
                             src={APIService.getIconSprite('ic_grass')}
                           />
-                          <span className="caption theme-text-primary">Random Pokémon</span>
+                          <span className="caption tw-text-default">Random Pokémon</span>
                           <VisibilityIcon
-                            className="view-pokemon theme-text-primary u-fs-3"
+                            className="view-pokemon tw-text-default tw-text-sm"
                             onClick={() =>
                               handleShow(
                                 leaguesData.season.rewards.rank[rank].premium[index].type,
@@ -531,14 +531,14 @@ const Leagues = () => {
                       {leaguesData.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="Random Item"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                           />
-                          <span className="caption theme-text-primary">Random Item</span>
+                          <span className="caption tw-text-default">Random Item</span>
                           <VisibilityIcon
-                            className="view-pokemon theme-text-primary u-fs-3"
+                            className="view-pokemon tw-text-default tw-text-sm"
                             onClick={() =>
                               handleShow(
                                 leaguesData.season.rewards.rank[rank].premium[index].type,
@@ -552,34 +552,34 @@ const Leagues = () => {
                       {leaguesData.season.rewards.rank[rank].premium[index].type === RewardType.RareCandy && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="Rare Candy"
                             src={getItemSpritePath(ItemName.RareCandy)}
                           />
-                          <span className="caption theme-text-primary">Rare Candy</span>
+                          <span className="caption tw-text-default">Rare Candy</span>
                         </Fragment>
                       )}
                       {leaguesData.season.rewards.rank[rank].premium[index].type === RewardType.Stardust && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="Stardust"
                             src={APIService.getItemSprite('stardust_painted')}
                           />
-                          <span className="caption theme-text-primary">Stardust</span>
+                          <span className="caption tw-text-default">Stardust</span>
                         </Fragment>
                       )}
                       {leaguesData.season.rewards.rank[rank].premium[index].type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title="TM Charged Move"
                             src={APIService.getItemSprite('Item_1202')}
                           />
-                          <span className="caption theme-text-primary">TM Charged Move</span>
+                          <span className="caption tw-text-default">TM Charged Move</span>
                         </Fragment>
                       )}
                     </Badge>
@@ -588,8 +588,8 @@ const Leagues = () => {
               ))}
             </div>
           </div>
-          <div className="w-100 text-center my-3">
-            <div className="d-flex justify-content-center mb-2" style={{ columnGap: '10%' }}>
+          <div className="tw-w-full tw-text-center tw-my-3">
+            <div className="tw-flex tw-justify-center tw-mb-2" style={{ columnGap: '10%' }}>
               <div id="currRank" className="combat-league-info">
                 <img
                   className="main-combat-league-info"
@@ -661,12 +661,12 @@ const Leagues = () => {
           </div>
         </Fragment>
       ) : (
-        <div className="ph-item mt-2">
-          <div className="ph-picture px-0" style={{ height: 450 }} />
+        <div className="ph-item tw-mt-2">
+          <div className="ph-picture tw-px-0" style={{ height: 450 }} />
         </div>
       )}
-      <div className="input-group border-input w-fit-content">
-        <span className="input-group-text text-success bg-transparent fw-medium">Opened Leagues</span>
+      <div className="input-group border-input tw-w-fit">
+        <span className="input-group-text tw-text-green-600 tw-bg-transparent tw-font-medium">Opened Leagues</span>
       </div>
       <AccordionMui
         isShowAction
@@ -680,7 +680,7 @@ const Leagues = () => {
         })}
       />
 
-      <div className="w-50 mt-2" style={{ minWidth: 300 }}>
+      <div className="tw-w-1/2 tw-mt-2" style={{ minWidth: 300 }}>
         <InputMuiSearch
           isNoWrap
           labelPrepend="Find League"
@@ -706,7 +706,7 @@ const Leagues = () => {
           open={show}
           onClose={handleClose}
           title={
-            <div className="d-flex flex-column row-gap-2">
+            <div className="tw-flex tw-flex-col tw-gap-y-2">
               <div>
                 <span>
                   {rank > 20 && (
@@ -732,7 +732,7 @@ const Leagues = () => {
               </div>
               <div className="reward-info">
                 {showData.track === LeagueRewardType.Free ? (
-                  <div className="d-flex column-gap-2 align-items-center">
+                  <div className="tw-flex tw-gap-x-2 tw-items-center">
                     <img
                       className="pokemon-sprite-small filter-shadow w-fit-content"
                       alt="Pokémon Image"
@@ -742,7 +742,7 @@ const Leagues = () => {
                     <span>Free</span> (Win stack {showData.step})
                   </div>
                 ) : (
-                  <div className="d-flex column-gap-2 align-items-center">
+                  <div className="tw-flex tw-gap-x-2 tw-items-center">
                     <img
                       className="pokemon-sprite-small filter-shadow w-fit-content"
                       alt="Pokémon Image"
@@ -756,19 +756,19 @@ const Leagues = () => {
             </div>
           }
           content={
-            <div className="text-center">
-              <h5 className="text-decoration-underline">Random Pokémon</h5>
+            <div className="tw-text-center">
+              <h5 className="tw-underline">Random Pokémon</h5>
               {showData.data
                 .filter((item) => !item.guaranteedLimited)
                 .map((item, index) => (
                   <LinkToTop
-                    className="img-link text-center"
+                    className="img-link tw-text-center"
                     key={index}
                     to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                     title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                   >
-                    <div className="d-flex justify-content-center">
-                      <span className="w-9">
+                    <div className="tw-flex tw-justify-center">
+                      <span className="tw-w-16">
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="Pokémon Image"
@@ -791,18 +791,18 @@ const Leagues = () => {
               {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)) && (
                 <Fragment>
                   <hr />
-                  <h5 className="text-decoration-underline">Guaranteed Pokémon in first time</h5>
+                  <h5 className="tw-underline">Guaranteed Pokémon in first time</h5>
                   {showData.data
                     .filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)
                     .map((item, index) => (
                       <LinkToTop
-                        className="img-link text-center"
+                        className="img-link tw-text-center"
                         key={index}
                         to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                         title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                       >
-                        <div className="d-flex justify-content-center">
-                          <span className="w-9">
+                        <div className="tw-flex tw-justify-center">
+                          <span className="tw-w-16">
                             <img
                               className="pokemon-sprite-medium filter-shadow-hover"
                               alt="Pokémon Image"

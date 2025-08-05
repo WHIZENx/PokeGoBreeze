@@ -82,7 +82,7 @@ const Stats = (props: IStatsComponent) => {
     Math.round(stats * getDmgMultiplyBonus(props.pokemonType, type));
 
   return (
-    <div className="mt-2 text-black">
+    <div className="tw-mt-2 tw-text-black">
       <StatsBar
         tag="ATK"
         class="bg-danger"

@@ -36,7 +36,7 @@ const InputSearch = (props: IInputSearchComponent) => {
   };
 
   const iconSearch = () => ({
-    className: 'cursor-pointer',
+    className: 'tw-cursor-pointer',
     value: searchTerm || props.isShowRemove ? <CloseIcon color="error" /> : <SearchIcon />,
     onClick: searchTerm || props.isShowRemove ? handleClear : props.onSearch,
   });

@@ -29,20 +29,20 @@ const SelectTypeComponent = <T extends object>(props: ISelectTypeComponent<T>) =
   };
   return (
     <div>
-      <h6 className="text-center">
+      <h6 className="tw-text-center">
         <b>{props.title}</b>
       </h6>
-      <div className=" d-flex justify-content-center">
+      <div className="tw-flex tw-justify-center">
         <div
-          className="card-input mb-3"
+          className="card-input tw-mb-3"
           tabIndex={0}
           onClick={() => setShowType(true)}
           onBlur={() => setShowType(false)}
         >
-          <div className="card-select d-flex justify-content-between align-items-center">
+          <div className="card-select tw-h-full tw-flex tw-justify-between tw-items-center">
             <Card value={splitAndCapitalize(props.currentType, /(?=[A-Z])/, ' ')} cardType={props.cardType} />
             {props.isShowRemove && props.currentType && (
-              <IconButton className="h-fit-content" sx={{ color: 'red' }} onMouseDown={closeType}>
+              <IconButton className="tw-h-fit" sx={{ color: 'red' }} onMouseDown={closeType}>
                 <CloseIcon />
               </IconButton>
             )}
@@ -51,7 +51,7 @@ const SelectTypeComponent = <T extends object>(props: ISelectTypeComponent<T>) =
             <div className="result-type">
               <ul>
                 {types.map((value, index) => (
-                  <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
+                  <li className="tw-container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                     <Card value={splitAndCapitalize(value, /(?=[A-Z])/, ' ')} cardType={props.cardType} />
                   </li>
                 ))}

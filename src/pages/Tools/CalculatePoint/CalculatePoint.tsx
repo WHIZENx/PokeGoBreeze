@@ -258,15 +258,15 @@ const CalculatePoint = () => {
   };
 
   const getIconBattle = (action: TypeAction, form: Partial<IPokemonFormModify> | undefined) => (
-    <div className="border-type-stat text-center">
+    <div className="border-type-stat tw-text-center">
       <Badge
         color="primary"
         overlap="circular"
         badgeContent={isRaid && action === TypeAction.Def ? `Tier ${tier}` : undefined}
       >
-        <span className="position-relative" style={{ width: 96 }}>
+        <span className="tw-relative" style={{ width: 96 }}>
           <img
-            className="position-absolute"
+            className="tw-absolute"
             alt="Image Logo"
             height={36}
             src={action === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`}
@@ -291,7 +291,7 @@ const CalculatePoint = () => {
 
   const setIconBattle = (atk: TypeAction, def: TypeAction) => (
     <>
-      <div className="d-flex">
+      <div className="tw-flex">
         {getIconBattle(atk, searchingToolCurrentData?.form)}
         {getIconBattle(def, searchingToolObjectData?.form)}
       </div>
@@ -344,11 +344,11 @@ const CalculatePoint = () => {
 
   return (
     <Fragment>
-      <div className="row m-0 overflow-x-hidden">
-        <div className="col-lg p-0">
+      <div className="row !tw-m-0 tw-overflow-x-hidden">
+        <div className="lg:tw-flex-1 !tw-p-0">
           <Find isHide title="Attacker Pokémon" clearStats={clearData} />
         </div>
-        <div className="col-lg d-flex justify-content-center p-0">
+        <div className="lg:tw-flex-1 tw-flex tw-justify-center !tw-p-0">
           <Find
             isSwap
             isRaid={isRaid}
@@ -362,7 +362,7 @@ const CalculatePoint = () => {
         </div>
       </div>
       <hr />
-      <div className="container mb-3">
+      <div className="tw-container tw-mb-3">
         <TabsPanel
           tabs={[
             {
@@ -370,8 +370,8 @@ const CalculatePoint = () => {
               children: (
                 <div className="tab-body">
                   <div className="row">
-                    <div className="col-lg-4">
-                      <h2 className="text-center text-decoration-underline">Attacker move</h2>
+                    <div className="lg:tw-w-1/3">
+                      <h2 className="tw-text-center tw-underline">Attacker move</h2>
                       <SelectCustomMove
                         text="Select Moves"
                         id={searchingToolCurrentData?.pokemon?.id}
@@ -414,7 +414,7 @@ const CalculatePoint = () => {
                         disabled={isRaid}
                       />
                       {move && (
-                        <div className="m-auto" style={{ width: 300 }}>
+                        <div className="tw-m-auto" style={{ width: 300 }}>
                           <p>
                             - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                           </p>
@@ -430,7 +430,7 @@ const CalculatePoint = () => {
                             <b>
                               {move.pvePower}
                               {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
-                                <span className="caption-small text-success"> (x1.2)</span>
+                                <span className="caption-small tw-text-green-600"> (x1.2)</span>
                               )}
                             </b>
                           </p>
@@ -438,24 +438,24 @@ const CalculatePoint = () => {
                       )}
                       <ButtonMui
                         fullWidth
-                        className="mb-3"
+                        className="tw-mb-3"
                         onClick={() => calculateBreakpointAtk()}
                         disabled={!move}
                         label="Calculate"
                       />
                     </div>
-                    <div className="col-lg-8">
+                    <div className="lg:tw-w-2/3">
                       <h3>Attacker Breakpoint</h3>
                       {resultBreakPointAtk && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                      <div className="overflow-x-auto">
-                        <table className="table-info table-raid-cal sticky-left w-fit-content">
-                          <thead className="text-center">
+                      <div className="tw-overflow-x-auto">
+                        <table className="table-info table-raid-cal sticky-left tw-w-fit">
+                          <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
                               <th>IV</th>
                             </tr>
                           </thead>
-                          <tbody className="text-center">
+                          <tbody className="tw-text-center">
                             <tr>
                               <td>Level</td>
                               <td className="text-iv-bulk">Damage ATK stat to Attacker</td>
@@ -463,7 +463,7 @@ const CalculatePoint = () => {
                           </tbody>
                         </table>
                         <table className="table-info table-raid-cal sticky-table-left">
-                          <thead className="text-center">
+                          <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
                               {[...Array(maxIv() + 1).keys()].map((value, index) => (
@@ -471,7 +471,7 @@ const CalculatePoint = () => {
                               ))}
                             </tr>
                           </thead>
-                          <tbody className="text-center">
+                          <tbody className="tw-text-center">
                             {levelList.map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
@@ -510,8 +510,8 @@ const CalculatePoint = () => {
               children: (
                 <div className="tab-body">
                   <div className="row">
-                    <div className="col-lg-4">
-                      <h2 className="text-center text-decoration-underline">Defender move</h2>
+                    <div className="lg:tw-w-1/3">
+                      <h2 className="tw-text-center tw-underline">Defender move</h2>
                       <SelectCustomMove
                         text="Select Moves"
                         id={searchingToolObjectData?.pokemon?.id}
@@ -554,7 +554,7 @@ const CalculatePoint = () => {
                         disabled={isRaid}
                       />
                       {moveDef && (
-                        <div className="m-auto" style={{ width: 300 }}>
+                        <div className="tw-m-auto" style={{ width: 300 }}>
                           <p>
                             - Move Ability Type: <b>{getKeyWithData(TypeMove, moveDef.typeMove)}</b>
                           </p>
@@ -570,7 +570,7 @@ const CalculatePoint = () => {
                             <b>
                               {moveDef.pvePower}
                               {findStabType(searchingToolObjectData?.form?.form?.types, moveDef.type) && (
-                                <span className="caption-small text-success"> (x1.2)</span>
+                                <span className="caption-small tw-text-green-600"> (x1.2)</span>
                               )}
                             </b>
                           </p>
@@ -578,24 +578,24 @@ const CalculatePoint = () => {
                       )}
                       <ButtonMui
                         fullWidth
-                        className="mb-3"
+                        className="tw-mb-3"
                         onClick={() => calculateBreakpointDef()}
                         disabled={!moveDef}
                         label="Calculate"
                       />
                     </div>
-                    <div className="col-lg-8">
+                    <div className="lg:tw-w-2/3">
                       <h3>Defender Breakpoint</h3>
                       {resultBreakPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                      <div className="overflow-x-auto">
-                        <table className="table-info table-raid-cal sticky-left w-fit-content">
-                          <thead className="text-center">
+                      <div className="tw-overflow-x-auto">
+                        <table className="table-info table-raid-cal sticky-left tw-w-fit">
+                          <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
                               <th>IV</th>
                             </tr>
                           </thead>
-                          <tbody className="text-center">
+                          <tbody className="tw-text-center">
                             <tr>
                               <td>Level</td>
                               <td className="text-iv-bulk">Damage ATK stat to Defender</td>
@@ -603,7 +603,7 @@ const CalculatePoint = () => {
                           </tbody>
                         </table>
                         <table className="table-info table-raid-cal sticky-table-left">
-                          <thead className="text-center">
+                          <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
                               {[...Array(maxIv() + 1).keys()].map((value, index) => (
@@ -611,7 +611,7 @@ const CalculatePoint = () => {
                               ))}
                             </tr>
                           </thead>
-                          <tbody className="text-center">
+                          <tbody className="tw-text-center">
                             {levelList.map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
@@ -642,15 +642,15 @@ const CalculatePoint = () => {
                       </div>
                       <hr />
                       <h3>Stamina Breakpoint</h3>
-                      <div className="overflow-x-auto">
-                        <table className="table-info table-raid-cal sticky-left w-max-content">
-                          <thead className="text-center">
+                      <div className="tw-overflow-x-auto">
+                        <table className="table-info table-raid-cal sticky-left tw-w-max">
+                          <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
                               <th>IV</th>
                             </tr>
                           </thead>
-                          <tbody className="text-center">
+                          <tbody className="tw-text-center">
                             <tr>
                               <td>Level</td>
                               <td className="text-iv-bulk">HP remain of Defender</td>
@@ -658,7 +658,7 @@ const CalculatePoint = () => {
                           </tbody>
                         </table>
                         <table className="table-info table-raid-cal sticky-table-left">
-                          <thead className="text-center">
+                          <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
                               {[...Array(maxIv() + 1).keys()].map((value, index) => (
@@ -666,7 +666,7 @@ const CalculatePoint = () => {
                               ))}
                             </tr>
                           </thead>
-                          <tbody className="text-center">
+                          <tbody className="tw-text-center">
                             {levelList.map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
@@ -705,9 +705,9 @@ const CalculatePoint = () => {
               children: (
                 <div className="tab-body">
                   <div className="row">
-                    <div className="col-lg-4">
-                      <h2 className="text-center text-decoration-underline">Defender move</h2>
-                      <div className="mb-3">
+                    <div className="lg:tw-w-1/3">
+                      <h2 className="tw-text-center tw-underline">Defender move</h2>
+                      <div className="tw-mb-3">
                         <SelectCustomMove
                           text="Fast Moves"
                           id={searchingToolObjectData?.pokemon?.id}
@@ -725,7 +725,7 @@ const CalculatePoint = () => {
                           pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
                         />
                         {fMove && (
-                          <div className="mt-2 m-auto" style={{ width: 300 }}>
+                          <div className="tw-mt-2 tw-m-auto" style={{ width: 300 }}>
                             <p>
                               - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
                             </p>
@@ -741,7 +741,7 @@ const CalculatePoint = () => {
                               <b>
                                 {fMove.pvePower}
                                 {findStabType(searchingToolObjectData?.form?.form?.types, fMove.type) && (
-                                  <span className="caption-small text-success"> (x1.2)</span>
+                                  <span className="caption-small tw-text-green-600"> (x1.2)</span>
                                 )}
                               </b>
                             </p>
@@ -766,7 +766,7 @@ const CalculatePoint = () => {
                           pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
                         />
                         {cMove && (
-                          <div className="mt-2 m-auto" style={{ width: 300 }}>
+                          <div className="tw-mt-2 tw-m-auto" style={{ width: 300 }}>
                             <p>
                               - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
                             </p>
@@ -782,7 +782,7 @@ const CalculatePoint = () => {
                               <b>
                                 {cMove.pvePower}
                                 {findStabType(searchingToolObjectData?.form?.form?.types, cMove.type) && (
-                                  <span className="caption-small text-success"> (x1.2)</span>
+                                  <span className="caption-small tw-text-green-600"> (x1.2)</span>
                                 )}
                               </b>
                             </p>
@@ -816,9 +816,9 @@ const CalculatePoint = () => {
                         disabled={isRaid}
                       />
                       <hr />
-                      <h2 className="text-center text-decoration-underline">Attacker stats</h2>
+                      <h2 className="tw-text-center tw-underline">Attacker stats</h2>
                       <div>
-                        <div className="d-flex justify-content-between">
+                        <div className="tw-flex tw-justify-between">
                           <b>DEF</b>
                           <b>{DEFIv}</b>
                         </div>
@@ -833,7 +833,7 @@ const CalculatePoint = () => {
                           marks={marks}
                           onChange={(_, v) => setDEFIv(v as number)}
                         />
-                        <div className="d-flex justify-content-between">
+                        <div className="tw-flex tw-justify-between">
                           <b>STA</b>
                           <b>{STAIv}</b>
                         </div>
@@ -851,24 +851,24 @@ const CalculatePoint = () => {
                       </div>
                       <ButtonMui
                         fullWidth
-                        className="mb-3"
+                        className="tw-mb-3"
                         onClick={() => calculateBulkPointDef()}
                         disabled={!(fMove && cMove)}
                         label="Calculate"
                       />
                     </div>
-                    <div className="col-lg-8 overflow-x-auto">
+                    <div className="lg:tw-w-2/3 tw-overflow-x-auto">
                       <h3>BulkPoint</h3>
                       {resultBulkPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                      <div className="overflow-x-auto">
-                        <table className="table-info table-raid-cal sticky-left w-fit-content">
-                          <thead className="text-center">
+                      <div className="tw-overflow-x-auto">
+                        <table className="table-info table-raid-cal sticky-left tw-w-fit">
+                          <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
                               <th>Number of Charge attacks to defeat defender</th>
                             </tr>
                           </thead>
-                          <tbody className="text-center">
+                          <tbody className="tw-text-center">
                             <tr>
                               <td>Level</td>
                               <td className="text-iv-bulk">Number of Quick attacks to defeat defender</td>
@@ -876,7 +876,7 @@ const CalculatePoint = () => {
                           </tbody>
                         </table>
                         <table className="table-info table-raid-cal sticky-table-left">
-                          <thead className="text-center">
+                          <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
                               {resultBulkPointDef ? (
@@ -895,7 +895,7 @@ const CalculatePoint = () => {
                               )}
                             </tr>
                           </thead>
-                          <tbody className="text-center">
+                          <tbody className="tw-text-center">
                             {levelList.map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>

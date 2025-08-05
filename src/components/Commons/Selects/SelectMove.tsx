@@ -82,13 +82,13 @@ const SelectMove = (props: ISelectMoveComponent) => {
   const smallInput = () => (
     <div
       className={combineClasses(
-        'position-relative d-flex align-items-center form-control p-0 rounded-0',
+        'tw-relative tw-flex tw-items-center !tw-p-0 tw-rounded-none',
         !props.isDisable && toNumber(props.pokemon.id) > 0 ? 'card-select-enabled' : 'card-select-disabled'
       )}
     >
       {props.pokemon && !isNotEmpty(resultMove) && (
-        <div className="text-truncate">
-          <span className="px-2">Moves unavailable</span>
+        <div className="tw-truncate">
+          <span className="tw-px-2">Moves unavailable</span>
         </div>
       )}
       {isNotEmpty(resultMove) && (
@@ -131,7 +131,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
             {resultMove
               .filter((value) => !isEqual(value.name, props.move?.name))
               .map((value, index) => (
-                <div className="container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
+                <div className="tw-container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
                   <Card value={value.name} moveType={value.moveType} cardType={CardType.Move} />
                 </div>
               ))}
@@ -143,7 +143,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   const defaultInput = () => (
     <div
-      className="position-relative card-input mb-3"
+      className="tw-relative card-input tw-mb-3"
       tabIndex={0}
       onClick={() => setShowMove(true)}
       onBlur={() => setShowMove(false)}

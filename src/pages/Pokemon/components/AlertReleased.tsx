@@ -11,7 +11,7 @@ const AlertReleased = (props: IAlertReleasedComponent) => {
     <>
       {searchingMainDetails && !searchingMainDetails.releasedGO && (
         <Alert sx={{ alignItems: 'center', justifyContent: 'center', mb: 1 }} severity="error">
-          <div className="d-flex align-items-center u-fs-4 gap-2">
+          <div className="tw-flex tw-items-center tw-text-base tw-gap-2">
             <span>
               <b>
                 {splitAndCapitalize(

@@ -10,30 +10,13 @@
   box-shadow: 0 4px 8px 0 black;
 }
 
-.select-pokemon {
-  height: 650px;
-}
 
 .search-container {
   margin-bottom: 15px;
 }
 
-.scroll-card {
-  position: relative;
-  height: 180px !important;
-  width: 350px;
-  white-space: nowrap;
-  overflow-x: auto;
-}
 
 .scroll-card .MuiButtonBase-root:not(:first-child) {
   margin-left: 10px;
 }
 
-.vertical-center {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}

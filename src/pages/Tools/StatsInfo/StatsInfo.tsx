@@ -219,16 +219,16 @@ const StatsInfo = () => {
   );
 
   return (
-    <div className="container" style={{ minHeight: 1650 }}>
+    <div className="tw-container" style={{ minHeight: 1650 }}>
       <Find isHide clearStats={clearStats} />
-      <h1 id="main" className="text-center">
+      <h1 id="main" className="tw-text-center">
         Stats Battle Table
       </h1>
-      <div className="d-flex justify-content-center w-100">
-        <div className="w-100 overflow-x-auto">
+      <div className="tw-flex tw-justify-center tw-w-full">
+        <div className="tw-w-full tw-overflow-x-auto">
           <div className="w-fit-content" style={{ margin: '0 auto' }}>
             <ButtonGroupLeague
-              className="my-3"
+              className="tw-my-3"
               isFullWidth
               isLoaded={true}
               leagues={leaguesTeamBattle
@@ -241,10 +241,10 @@ const StatsInfo = () => {
           </div>
         </div>
       </div>
-      <form className="mt-2" onSubmit={onSearchStatsPoke.bind(this)}>
-        <div className="form-group d-flex justify-content-center text-center">
-          <Box className="w-50" sx={{ minWidth: 350 }}>
-            <div className="input-group mb-3 justify-content-center">
+      <form className="tw-mt-2" onSubmit={onSearchStatsPoke.bind(this)}>
+        <div className="form-group tw-flex tw-justify-center tw-text-center">
+          <Box className="tw-w-1/2" sx={{ minWidth: 350 }}>
+            <div className="input-group tw-mb-3 tw-justify-center">
               <DynamicInputCP
                 statATK={searchingToolCurrentDetails?.statsGO?.atk}
                 statDEF={searchingToolCurrentDetails?.statsGO?.def}
@@ -261,9 +261,9 @@ const StatsInfo = () => {
             </div>
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center">
-          <Box className="w-50" sx={{ minWidth: 300 }}>
-            <div className="d-flex justify-content-between">
+        <div className="form-group tw-flex tw-justify-center tw-text-center">
+          <Box className="tw-w-1/2" sx={{ minWidth: 300 }}>
+            <div className="tw-flex tw-justify-between">
               <b>ATK</b>
               <b>{ATKIv}</b>
             </div>
@@ -281,7 +281,7 @@ const StatsInfo = () => {
                 setATKIv(v as number);
               }}
             />
-            <div className="d-flex justify-content-between">
+            <div className="tw-flex tw-justify-between">
               <b>DEF</b>
               <b>{DEFIv}</b>
             </div>
@@ -299,7 +299,7 @@ const StatsInfo = () => {
                 setDEFIv(v as number);
               }}
             />
-            <div className="d-flex justify-content-between">
+            <div className="tw-flex tw-justify-between">
               <b>STA</b>
               <b>{STAIv}</b>
             </div>
@@ -319,7 +319,7 @@ const StatsInfo = () => {
             />
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center mt-2">
+        <div className="form-group tw-flex tw-justify-center tw-text-center tw-mt-2">
           <ButtonMui type="submit" label="Search" />
         </div>
       </form>

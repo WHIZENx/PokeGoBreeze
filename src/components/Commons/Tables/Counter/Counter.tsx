@@ -60,7 +60,7 @@ const customStyles: TableStyles = {
   },
   headRow: {
     style: {
-      backgroundColor: 'var(--custom-table-background-info) !important',
+      backgroundColor: 'var(--table-info) !important',
       color: 'var(--text-primary) !important',
       fontSize: '1rem',
       fontWeight: 'bolder',
@@ -164,8 +164,8 @@ const Counter = (props: ICounterComponent) => {
         const assets = findAssetForm(row.pokemonId, row.pokemonForm);
         return (
           <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForm, row.pokemonType)}`}>
-            <div className="d-flex justify-content-center">
-              <div className="filter-shadow-hover position-relative group-pokemon-sprite">
+            <div className="tw-flex tw-justify-center">
+              <div className="filter-shadow-hover tw-relative group-pokemon-sprite">
                 <PokemonIconType pokemonType={row.pokemonType} size={30}>
                   <img
                     className="pokemon-sprite-counter"
@@ -179,7 +179,7 @@ const Counter = (props: ICounterComponent) => {
                 </PokemonIconType>
               </div>
             </div>
-            <span className="caption text-overflow theme-text-primary">
+            <span className="caption text-overflow tw-text-default">
               #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
             </span>
           </LinkToTop>
@@ -191,14 +191,14 @@ const Counter = (props: ICounterComponent) => {
       id: ColumnType.FastMove,
       name: 'Fast',
       selector: (row) => (
-        <LinkToTop to={`../move/${row.fMove.id}`} className="d-grid">
-          <div className="me-1 v-align-text-bottom">
+        <LinkToTop to={`../move/${row.fMove.id}`} className="tw-grid">
+          <div className="tw-mr-1 v-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
-          <span className="me-1 pt-1 text-wrap u-fs-3">
+          <span className="tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
-          <span className="w-100">
+          <span className="tw-w-full">
             {row.fMove.moveType !== MoveType.None && (
               <span
                 className={combineClasses(
@@ -218,14 +218,14 @@ const Counter = (props: ICounterComponent) => {
       id: ColumnType.ChargedMove,
       name: 'Charged',
       selector: (row) => (
-        <LinkToTop to={`../move/${row.cMove.id}`} className="d-grid">
-          <div className="me-1 v-align-text-bottom">
+        <LinkToTop to={`../move/${row.cMove.id}`} className="tw-grid">
+          <div className="tw-mr-1 v-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
-          <span className="me-1 pt-1 text-wrap u-fs-3">
+          <span className="tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
-          <span className="w-100">
+          <span className="tw-w-full">
             {row.cMove.moveType !== MoveType.None && (
               <span
                 className={combineClasses(
@@ -253,14 +253,14 @@ const Counter = (props: ICounterComponent) => {
   );
 
   const CounterLoader = () => (
-    <div className="w-100 counter-none v-align-top">
-      <div className="text-origin text-center theme-table-primary">
+    <div className="tw-w-full counter-none v-align-top">
+      <div className="text-origin tw-text-center tw-bg-table-primary">
         <div className="ph-item">
-          <div className="ph-col-12 theme-table-primary m-0 p-2 gap-2">
+          <div className="ph-col-12 tw-bg-table-primary !tw-m-0 !tw-p-0 tw-gap-2">
             {[...Array(5).keys()].map((_, index) => (
-              <div key={index} className="ph-row d-flex gap-pct-5">
-                <div className="ph-picture w-pct-25" style={{ height: 100 }} />
-                <div className="ph-picture w-pct-70" style={{ height: 100 }} />
+              <div key={index} className="ph-row tw-flex tw-gap-[5%]">
+                <div className="ph-picture !tw-w-1/4" style={{ height: 100 }} />
+                <div className="ph-picture !tw-w-[70%]" style={{ height: 100 }} />
               </div>
             ))}
           </div>
@@ -381,7 +381,7 @@ const Counter = (props: ICounterComponent) => {
 
   return (
     <div className="table-info">
-      <div className="sub-header input-group align-items-center justify-content-center">
+      <div className="sub-header input-group tw-items-center tw-justify-center">
         <span className="sub-title">Best Pokémon Counter</span>
       </div>
       <CustomDataTable

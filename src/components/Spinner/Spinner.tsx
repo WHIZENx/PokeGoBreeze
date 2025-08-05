@@ -10,9 +10,9 @@ const Spinner = () => {
 
   return (
     <BackdropMui open={spinnerIsLoading}>
-      <div className="d-flex flex-column align-items-center justify-content-center">
+      <div className="tw-flex tw-flex-col tw-items-center tw-justify-center">
         <img className={spinnerIsError ? '' : 'loading'} width={64} height={64} alt="Pokémon Image" src={loading} />
-        <span className="caption text-white text-shadow-black u-fs-3">
+        <span className="caption tw-text-white text-shadow-black tw-text-sm">
           <b>
             {spinnerIsError ? (
               <Fragment>
@@ -29,7 +29,7 @@ const Spinner = () => {
                   Retry Again
                 </p>
                 {spinnerMessage && process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
-                  <p className="text-danger">{spinnerMessage}</p>
+                  <p className="tw-text-red-600">{spinnerMessage}</p>
                 )}
               </Fragment>
             ) : (

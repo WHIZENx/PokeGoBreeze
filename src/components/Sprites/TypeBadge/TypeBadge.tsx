@@ -30,8 +30,8 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
       >
         {props.title}
       </span>
-      <LinkToTop to={`/move/${move?.id}`} className="d-flex align-items-center position-relative w-fit-content">
-        <span className={combineClasses(move?.type?.toLowerCase(), 'type-border position-relative')}>
+      <LinkToTop to={`/move/${move?.id}`} className="tw-flex tw-items-center tw-relative tw-w-fit">
+        <span className={combineClasses(move?.type?.toLowerCase(), 'type-border tw-relative')}>
           {move && props.moveType !== MoveType.None && (
             <span className="type-badge-border">
               <span
@@ -49,7 +49,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
         <span className={combineClasses(move?.type?.toLowerCase(), 'type-icon-border')}>
           <div style={{ width: 35 }}>
             <img
-              className="sprite-type p-1 bg-black"
+              className="sprite-type tw-p-1 bg-black"
               alt="Pokémon GO Type Logo"
               src={APIService.getTypeHqSprite(move?.type)}
             />

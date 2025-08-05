@@ -118,8 +118,8 @@ const Search = () => {
 
   return (
     <Fragment>
-      <div className="container mt-2">
-        <h1 id="main" className="text-center">
+      <div className="tw-container tw-mt-2">
+        <h1 id="main" className="tw-text-center">
           Pokémon Info Search
         </h1>
         <SelectCardPokemon

@@ -8,7 +8,7 @@ import { combineClasses } from '../../../utils/extension';
 
 const SelectTierMui = (props: ISelectTierComponent) => {
   return (
-    <Box className={combineClasses('d-flex justify-content-center', props.boxClassName)}>
+    <Box className={combineClasses('tw-flex tw-justify-center', props.boxClassName)}>
       <SelectMui
         className={props.className}
         isNoneBorder
