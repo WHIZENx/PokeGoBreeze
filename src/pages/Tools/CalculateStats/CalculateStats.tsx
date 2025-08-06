@@ -193,6 +193,125 @@ const Calculate = () => {
     }
   };
 
+  const renderLeague = (cp: BattleLeagueCPType, dataLeague: IBattleLeagueCalculate | undefined) => (
+    <>
+      <tr className="tw-text-center">
+        <td className="table-sub-header" colSpan={4}>
+          <div className="tw-flex tw-items-center tw-justify-center tw-gap-2">
+            <img alt="Image League" width={30} height={30} src={getPokemonBattleLeagueIcon(cp)} />
+            <span className={dataLeague ? (dataLeague.isElidge ? '' : 'text-danger') : ''}>
+              {getPokemonBattleLeagueName(cp)}
+              {dataLeague ? dataLeague.isElidge ? '' : <span> (Not Elidge)</span> : ''}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Level</td>
+        <td colSpan={3}>{dataLeague?.isElidge ? dataLeague.level : '-'}</td>
+      </tr>
+      <tr>
+        <td>CP</td>
+        <td colSpan={3}>{dataLeague?.isElidge ? dataLeague.CP : '-'}</td>
+      </tr>
+      <tr>
+        <td>
+          <div className="tw-flex tw-items-center tw-gap-2">
+            <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+            <span>Stardust Required</span>
+          </div>
+        </td>
+        <td colSpan={3}>
+          {dataLeague?.isElidge ? (
+            <span className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
+              {dataLeague.rangeValue?.resultBetweenStardust}
+            </span>
+          ) : (
+            '-'
+          )}
+        </td>
+      </tr>
+      <tr>
+        <td>Candy Required</td>
+        <td colSpan={3} className="!tw-p-0">
+          <div className="tw-flex tw-items-center td-style custom-border-right tw-float-left tw-w-1/2">
+            {dataLeague?.isElidge ? (
+              <Candy id={searchingToolCurrentDetails?.id} className="tw-mr-2" />
+            ) : (
+              <img className="tw-mr-2" alt="Image Stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
+            )}
+            {dataLeague?.isElidge ? (
+              <span
+                className={
+                  statData?.pokemonType !== PokemonType.Lucky
+                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                    : ''
+                }
+              >
+                {dataLeague.rangeValue?.resultBetweenCandy}
+              </span>
+            ) : (
+              '-'
+            )}
+          </div>
+          <div className="tw-flex tw-items-center td-style tw-float-right tw-w-1/2">
+            {dataLeague?.isElidge ? (
+              <CandyXL id={searchingToolCurrentDetails?.id} />
+            ) : (
+              <img className="tw-mr-2" alt="Image Stardust" height={20} src={getItemSpritePath(ItemName.XlRareCandy)} />
+            )}
+            {dataLeague?.isElidge ? (
+              <span
+                className={
+                  statData?.pokemonType !== PokemonType.Lucky
+                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                    : ''
+                }
+              >
+                {dataLeague.rangeValue?.resultBetweenXLCandy}
+              </span>
+            ) : (
+              '-'
+            )}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Stats</td>
+        <td className="tw-text-center">
+          <div className="tw-flex tw-items-center tw-gap-2">
+            <img alt="Image League" width={20} height={20} src={ATK_LOGO} />
+            {dataLeague?.isElidge ? (
+              <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
+                {dataLeague.stats?.atk}
+              </span>
+            ) : (
+              '-'
+            )}
+          </div>
+        </td>
+        <td className="tw-text-center">
+          <div className="tw-flex tw-items-center tw-gap-2">
+            <img alt="Image League" width={20} height={20} src={DEF_LOGO} />
+            {dataLeague?.isElidge ? (
+              <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
+                {dataLeague.stats?.def}
+              </span>
+            ) : (
+              '-'
+            )}
+          </div>
+        </td>
+        <td className="tw-text-center">
+          <div className="tw-flex tw-items-center tw-gap-2">
+            <img alt="Image League" width={20} height={20} src={HP_LOGO} />
+            <span>{dataLeague?.isElidge ? dataLeague.stats?.sta : '-'}</span>
+          </div>
+        </td>
+      </tr>
+    </>
+  );
+
   return (
     <Fragment>
       <div className="tw-container tw-mt-2">
@@ -304,40 +423,40 @@ const Calculate = () => {
                 value={PokemonType.Buddy}
                 control={<Radio />}
                 label={
-                  <span>
-                    <img height={28} alt="Image Buddy" src={APIService.getPokeBuddy()} />{' '}
-                    {getKeyWithData(PokemonType, PokemonType.Buddy)}
-                  </span>
+                  <div className="tw-flex tw-items-center tw-gap-2">
+                    <img height={28} alt="Image Buddy" src={APIService.getPokeBuddy()} />
+                    <span>{getKeyWithData(PokemonType, PokemonType.Buddy)}</span>
+                  </div>
                 }
               />
               <FormControlLabel
                 value={PokemonType.Lucky}
                 control={<Radio />}
                 label={
-                  <span>
-                    <img height={28} alt="Image Lucky" src={APIService.getPokeLucky()} />{' '}
-                    {getKeyWithData(PokemonType, PokemonType.Lucky)}
-                  </span>
+                  <div className="tw-flex tw-items-center tw-gap-2">
+                    <img height={28} alt="Image Lucky" src={APIService.getPokeLucky()} />
+                    <span>{getKeyWithData(PokemonType, PokemonType.Lucky)}</span>
+                  </div>
                 }
               />
               <FormControlLabel
                 value={PokemonType.Shadow}
                 control={<Radio />}
                 label={
-                  <span>
-                    <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />{' '}
-                    {getKeyWithData(PokemonType, PokemonType.Shadow)}
-                  </span>
+                  <div className="tw-flex tw-items-center tw-gap-2">
+                    <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />
+                    <span>{getKeyWithData(PokemonType, PokemonType.Shadow)}</span>
+                  </div>
                 }
               />
               <FormControlLabel
                 value={PokemonType.Purified}
                 control={<Radio />}
                 label={
-                  <span>
+                  <div className="tw-flex tw-items-center tw-gap-2">
                     <img height={32} alt="Image Purified" src={APIService.getPokePurified()} />
-                    {` ${getKeyWithData(PokemonType, PokemonType.Purified)}`}
-                  </span>
+                    <span>{getKeyWithData(PokemonType, PokemonType.Purified)}</span>
+                  </div>
                 }
               />
             </TypeRadioGroup>
@@ -398,13 +517,10 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img
-                            className="tw-mr-2"
-                            alt="Image Stardust"
-                            height={20}
-                            src={APIService.getItemSprite('stardust_painted')}
-                          />
-                          Stardust Required
+                          <div className="tw-flex tw-items-center tw-gap-2">
+                            <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                            <span>Stardust Required</span>
+                          </div>
                         </td>
                         <td>
                           {statData ? (
@@ -435,17 +551,14 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          {statData ? (
-                            <Candy id={searchingToolCurrentDetails?.id} className="tw-mr-2" />
-                          ) : (
-                            <img
-                              className="tw-mr-2"
-                              alt="Image Stardust"
-                              height={20}
-                              src={getItemSpritePath(ItemName.RareCandy)}
-                            />
-                          )}
-                          Candy Required
+                          <div className="tw-flex tw-items-center tw-gap-2">
+                            {statData ? (
+                              <Candy id={searchingToolCurrentDetails?.id} />
+                            ) : (
+                              <img alt="Image Stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
+                            )}
+                            <span>Candy Required</span>
+                          </div>
                         </td>
                         <td>
                           {statData ? (
@@ -476,17 +589,14 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          {statData ? (
-                            <CandyXL id={searchingToolCurrentDetails?.id} />
-                          ) : (
-                            <img
-                              className="tw-mr-2"
-                              alt="Image Stardust"
-                              height={20}
-                              src={getItemSpritePath(ItemName.XlRareCandy)}
-                            />
-                          )}
-                          XL Candy Required
+                          <div className="tw-flex tw-items-center tw-gap-2">
+                            {statData ? (
+                              <CandyXL id={searchingToolCurrentDetails?.id} />
+                            ) : (
+                              <img alt="Image Stardust" height={20} src={getItemSpritePath(ItemName.XlRareCandy)} />
+                            )}
+                            <span>XL Candy Required</span>
+                          </div>
                         </td>
                         <td>
                           {statData ? (
@@ -522,8 +632,10 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
-                          ATK
+                          <div className="tw-flex tw-items-center tw-gap-2">
+                            <img alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                            <span>ATK</span>
+                          </div>
                         </td>
                         <td>
                           {statData ? (
@@ -549,8 +661,10 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
-                          DEF
+                          <div className="tw-flex tw-items-center tw-gap-2">
+                            <img alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                            <span>DEF</span>
+                          </div>
                         </td>
                         <td>
                           {statData ? (
@@ -576,8 +690,10 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
-                          HP
+                          <div className="tw-flex tw-items-center tw-gap-2">
+                            <img alt="Image League" width={20} height={20} src={HP_LOGO} />
+                            <span>HP</span>
+                          </div>
                         </td>
                         <td>
                           {statData
@@ -601,513 +717,10 @@ const Calculate = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="tw-text-center">
-                        <td className="table-sub-header" colSpan={4}>
-                          <img
-                            className="tw-mr-2"
-                            alt="Image League"
-                            width={30}
-                            height={30}
-                            src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
-                          />
-                          <span className={dataLittleLeague ? (dataLittleLeague.isElidge ? '' : 'text-danger') : ''}>
-                            {getPokemonBattleLeagueName(BattleLeagueCPType.Little)}
-                            {dataLittleLeague ? dataLittleLeague.isElidge ? '' : <span> (Not Elidge)</span> : ''}
-                          </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Level</td>
-                        <td colSpan={3}>
-                          {dataLittleLeague && dataLittleLeague.isElidge ? dataLittleLeague.level : '-'}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>CP</td>
-                        <td colSpan={3}>{dataLittleLeague && dataLittleLeague.isElidge ? dataLittleLeague.CP : '-'}</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <img
-                            className="tw-mr-2"
-                            alt="Image Stardust"
-                            height={20}
-                            src={APIService.getItemSprite('stardust_painted')}
-                          />
-                          Stardust Required
-                        </td>
-                        <td colSpan={3}>
-                          {dataLittleLeague && dataLittleLeague.isElidge ? (
-                            <span
-                              className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}
-                            >
-                              {dataLittleLeague.rangeValue?.resultBetweenStardust}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Candy Required</td>
-                        <td colSpan={3} className="!tw-p-0">
-                          <div className="tw-flex tw-items-center td-style custom-border-right tw-float-left tw-w-1/2">
-                            {dataLittleLeague && dataLittleLeague.isElidge ? (
-                              <Candy id={searchingToolCurrentDetails?.id} className="tw-mr-2" />
-                            ) : (
-                              <img
-                                className="tw-mr-2"
-                                alt="Image Stardust"
-                                height={20}
-                                src={getItemSpritePath(ItemName.RareCandy)}
-                              />
-                            )}
-                            {dataLittleLeague && dataLittleLeague.isElidge ? (
-                              <span
-                                className={
-                                  statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
-                                    : ''
-                                }
-                              >
-                                {dataLittleLeague.rangeValue?.resultBetweenCandy}
-                              </span>
-                            ) : (
-                              '-'
-                            )}
-                          </div>
-                          <div className="tw-flex tw-items-center td-style tw-float-right tw-w-1/2">
-                            {dataLittleLeague && dataLittleLeague.isElidge ? (
-                              <CandyXL id={searchingToolCurrentDetails?.id} />
-                            ) : (
-                              <img
-                                className="tw-mr-2"
-                                alt="Image Stardust"
-                                height={20}
-                                src={getItemSpritePath(ItemName.XlRareCandy)}
-                              />
-                            )}
-                            {dataLittleLeague && dataLittleLeague.isElidge ? (
-                              <span
-                                className={
-                                  statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
-                                    : ''
-                                }
-                              >
-                                {dataLittleLeague.rangeValue?.resultBetweenXLCandy}
-                              </span>
-                            ) : (
-                              '-'
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Stats</td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
-                          {dataLittleLeague && dataLittleLeague.isElidge ? (
-                            <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
-                              {dataLittleLeague.stats?.atk}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
-                          {dataLittleLeague && dataLittleLeague.isElidge ? (
-                            <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
-                              {dataLittleLeague.stats?.def}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
-                          {dataLittleLeague && dataLittleLeague.isElidge ? dataLittleLeague.stats?.sta : '-'}
-                        </td>
-                      </tr>
-                      <tr className="tw-text-center">
-                        <td className="table-sub-header" colSpan={4}>
-                          <img
-                            className="tw-mr-2"
-                            alt="Image League"
-                            width={30}
-                            height={30}
-                            src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
-                          />
-                          <span className={dataGreatLeague ? (dataGreatLeague.isElidge ? '' : 'text-danger') : ''}>
-                            {getPokemonBattleLeagueName(BattleLeagueCPType.Great)}
-                            {dataGreatLeague ? dataGreatLeague.isElidge ? '' : <span> (Not Elidge)</span> : ''}
-                          </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Level</td>
-                        <td colSpan={3}>{dataGreatLeague && dataGreatLeague.isElidge ? dataGreatLeague.level : '-'}</td>
-                      </tr>
-                      <tr>
-                        <td>CP</td>
-                        <td colSpan={3}>{dataGreatLeague && dataGreatLeague.isElidge ? dataGreatLeague.CP : '-'}</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <img
-                            className="tw-mr-2"
-                            alt="Image Stardust"
-                            height={20}
-                            src={APIService.getItemSprite('stardust_painted')}
-                          />
-                          Stardust Required
-                        </td>
-                        <td colSpan={3}>
-                          {dataGreatLeague && dataGreatLeague.isElidge ? (
-                            <span
-                              className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}
-                            >
-                              {dataGreatLeague.rangeValue?.resultBetweenStardust}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Candy Required</td>
-                        <td colSpan={3} className="!tw-p-0">
-                          <div className="tw-flex tw-items-center td-style custom-border-right tw-float-left tw-w-1/2">
-                            {dataGreatLeague && dataGreatLeague.isElidge ? (
-                              <Candy id={searchingToolCurrentDetails?.id} className="tw-mr-2" />
-                            ) : (
-                              <img
-                                className="tw-mr-2"
-                                alt="Image Stardust"
-                                height={20}
-                                src={getItemSpritePath(ItemName.RareCandy)}
-                              />
-                            )}
-                            {dataGreatLeague && dataGreatLeague.isElidge ? (
-                              <span
-                                className={
-                                  statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
-                                    : ''
-                                }
-                              >
-                                {dataGreatLeague.rangeValue?.resultBetweenCandy}
-                              </span>
-                            ) : (
-                              '-'
-                            )}
-                          </div>
-                          <div className="tw-flex tw-items-center td-style tw-float-right tw-w-1/2">
-                            {dataGreatLeague && dataGreatLeague.isElidge ? (
-                              <CandyXL id={searchingToolCurrentDetails?.id} />
-                            ) : (
-                              <img
-                                className="tw-mr-2"
-                                alt="Image Stardust"
-                                height={20}
-                                src={getItemSpritePath(ItemName.XlRareCandy)}
-                              />
-                            )}
-                            {dataGreatLeague && dataGreatLeague.isElidge ? (
-                              <span
-                                className={
-                                  statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
-                                    : ''
-                                }
-                              >
-                                {dataGreatLeague.rangeValue?.resultBetweenXLCandy}
-                              </span>
-                            ) : (
-                              '-'
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Stats</td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
-                          {dataGreatLeague && dataGreatLeague.isElidge ? (
-                            <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
-                              {dataGreatLeague.stats?.atk}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
-                          {dataGreatLeague && dataGreatLeague.isElidge ? (
-                            <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
-                              {dataGreatLeague.stats?.def}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
-                          {dataGreatLeague && dataGreatLeague.isElidge ? dataGreatLeague.stats?.sta : '-'}
-                        </td>
-                      </tr>
-                      <tr className="tw-text-center">
-                        <td className="table-sub-header" colSpan={4}>
-                          <img
-                            className="tw-mr-2"
-                            alt="Image League"
-                            width={30}
-                            height={30}
-                            src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
-                          />
-                          <span className={dataUltraLeague ? (dataUltraLeague.isElidge ? '' : 'text-danger') : ''}>
-                            {getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}
-                            {dataUltraLeague ? dataUltraLeague.isElidge ? '' : <span> (Not Elidge)</span> : ''}
-                          </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Level</td>
-                        <td colSpan={3}>{dataUltraLeague && dataUltraLeague.isElidge ? dataUltraLeague.level : '-'}</td>
-                      </tr>
-                      <tr>
-                        <td>CP</td>
-                        <td colSpan={3}>{dataUltraLeague && dataUltraLeague.isElidge ? dataUltraLeague.CP : '-'}</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <img
-                            className="tw-mr-2"
-                            alt="Image Stardust"
-                            height={20}
-                            src={APIService.getItemSprite('stardust_painted')}
-                          />
-                          Stardust Required
-                        </td>
-                        <td colSpan={3}>
-                          {dataUltraLeague && dataUltraLeague.isElidge ? (
-                            <span
-                              className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}
-                            >
-                              {dataUltraLeague.rangeValue?.resultBetweenStardust}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Candy Required</td>
-                        <td colSpan={3} className="!tw-p-0">
-                          <div className="tw-flex tw-items-center td-style custom-border-right tw-float-left tw-w-1/2">
-                            {dataUltraLeague && dataUltraLeague.isElidge ? (
-                              <Candy id={searchingToolCurrentDetails?.id} className="tw-mr-2" />
-                            ) : (
-                              <img
-                                className="tw-mr-2"
-                                alt="Image Stardust"
-                                height={20}
-                                src={getItemSpritePath(ItemName.RareCandy)}
-                              />
-                            )}
-                            {dataUltraLeague && dataUltraLeague.isElidge ? (
-                              <span
-                                className={
-                                  statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
-                                    : ''
-                                }
-                              >
-                                {dataUltraLeague.rangeValue?.resultBetweenCandy}
-                              </span>
-                            ) : (
-                              '-'
-                            )}
-                          </div>
-                          <div className="tw-flex tw-items-center td-style tw-float-right tw-w-1/2">
-                            {dataUltraLeague && dataUltraLeague.isElidge ? (
-                              <CandyXL id={searchingToolCurrentDetails?.id} />
-                            ) : (
-                              <img
-                                className="tw-mr-2"
-                                alt="Image Stardust"
-                                height={20}
-                                src={getItemSpritePath(ItemName.XlRareCandy)}
-                              />
-                            )}
-                            {dataUltraLeague && dataUltraLeague.isElidge ? (
-                              <span
-                                className={
-                                  statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
-                                    : ''
-                                }
-                              >
-                                {dataUltraLeague.rangeValue?.resultBetweenXLCandy}
-                              </span>
-                            ) : (
-                              '-'
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Stats</td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
-                          {dataUltraLeague && dataUltraLeague.isElidge ? (
-                            <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
-                              {dataUltraLeague.stats?.atk}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
-                          {dataUltraLeague && dataUltraLeague.isElidge ? (
-                            <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
-                              {dataUltraLeague.stats?.def}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
-                          {dataUltraLeague && dataUltraLeague.isElidge ? dataUltraLeague.stats?.sta : '-'}
-                        </td>
-                      </tr>
-                      <tr className="tw-text-center">
-                        <td className="table-sub-header" colSpan={4}>
-                          <img
-                            className="tw-mr-2"
-                            alt="Image League"
-                            width={30}
-                            height={30}
-                            src={getPokemonBattleLeagueIcon()}
-                          />
-                          {getPokemonBattleLeagueName()}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Level</td>
-                        <td colSpan={3}>{dataMasterLeague ? dataMasterLeague.level : '-'}</td>
-                      </tr>
-                      <tr>
-                        <td>CP</td>
-                        <td colSpan={3}>{dataMasterLeague ? dataMasterLeague.CP : '-'}</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <img
-                            className="tw-mr-2"
-                            alt="Image Stardust"
-                            height={20}
-                            src={APIService.getItemSprite('stardust_painted')}
-                          />
-                          Stardust Required
-                        </td>
-                        <td colSpan={3}>
-                          {dataMasterLeague ? (
-                            <span
-                              className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}
-                            >
-                              {dataMasterLeague.rangeValue?.resultBetweenStardust}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Candy Required</td>
-                        <td colSpan={3} className="!tw-p-0">
-                          <div className="tw-flex tw-items-center td-style custom-border-right tw-float-left tw-w-1/2">
-                            {dataMasterLeague ? (
-                              <Candy id={searchingToolCurrentDetails?.id} className="tw-mr-2" />
-                            ) : (
-                              <img
-                                className="tw-mr-2"
-                                alt="Image Stardust"
-                                height={20}
-                                src={getItemSpritePath(ItemName.RareCandy)}
-                              />
-                            )}
-                            {dataMasterLeague ? (
-                              <span
-                                className={
-                                  statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
-                                    : ''
-                                }
-                              >
-                                {dataMasterLeague.rangeValue?.resultBetweenCandy}
-                              </span>
-                            ) : (
-                              '-'
-                            )}
-                          </div>
-                          <div className="tw-flex tw-items-center td-style tw-float-right tw-w-1/2">
-                            {dataMasterLeague ? (
-                              <CandyXL id={searchingToolCurrentDetails?.id} />
-                            ) : (
-                              <img
-                                className="tw-mr-2"
-                                alt="Image Stardust"
-                                height={20}
-                                src={getItemSpritePath(ItemName.XlRareCandy)}
-                              />
-                            )}
-                            {dataMasterLeague ? (
-                              <span
-                                className={
-                                  statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
-                                    : ''
-                                }
-                              >
-                                {dataMasterLeague.rangeValue?.resultBetweenXLCandy}
-                              </span>
-                            ) : (
-                              '-'
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Stats</td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
-                          {dataMasterLeague ? (
-                            <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
-                              {dataMasterLeague.stats?.atk}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
-                          {dataMasterLeague ? (
-                            <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
-                              {dataMasterLeague.stats?.def}
-                            </span>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="tw-text-center">
-                          <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
-                          {dataMasterLeague ? dataMasterLeague.stats?.sta : '-'}
-                        </td>
-                      </tr>
+                      {renderLeague(BattleLeagueCPType.Little, dataLittleLeague)}
+                      {renderLeague(BattleLeagueCPType.Great, dataGreatLeague)}
+                      {renderLeague(BattleLeagueCPType.Ultra, dataUltraLeague)}
+                      {renderLeague(BattleLeagueCPType.Master, dataMasterLeague)}
                     </tbody>
                   </table>
                 </div>

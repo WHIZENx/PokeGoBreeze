@@ -614,11 +614,11 @@ const Pokemon = (props: IPokemonPage) => {
           props.isSearch ? '' : 'tw-container'
         )}
       >
-        <div className="tw-w-full tw-text-center tw-inline-block align-middle tw-my-3">
+        <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
           <AlertReleased formName={formName} pokemonType={searchingMainForm?.form?.pokemonType} icon={iconData} />
           <div className="tw-inline-block img-desc">
             <img
-              className="pokemon-main-sprite v-align-baseline"
+              className="pokemon-main-sprite !tw-align-baseline"
               alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 dataStorePokemon?.current?.id,

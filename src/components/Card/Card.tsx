@@ -65,7 +65,7 @@ const Card = (props: ICardTypeComponent) => {
           </span>
         </div>
       ) : (
-        <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-9">
+        <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-16">
           {!props.isHideDefaultTitle && <b>- Select -</b>}
         </div>
       )}

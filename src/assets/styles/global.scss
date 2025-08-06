@@ -31,7 +31,7 @@
 .row > * {
   flex-shrink: 0 !important;
 
-  @apply tw-w-full tw-max-w-full tw-mt-0 tw-px-[calc(1.5rem*.5)];
+  @apply tw-w-full tw-max-w-full tw-mt-0 tw-px-6;
 }
 
 .col {

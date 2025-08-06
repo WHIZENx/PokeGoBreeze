@@ -444,7 +444,7 @@ const CalculatePoint = () => {
                         label="Calculate"
                       />
                     </div>
-                    <div className="lg:tw-w-2/3">
+                    <div className="xl:tw-w-2/3">
                       <h3>Attacker Breakpoint</h3>
                       {resultBreakPointAtk && setIconBattle(TypeAction.Atk, TypeAction.Def)}
                       <div className="tw-overflow-x-auto">
@@ -584,7 +584,7 @@ const CalculatePoint = () => {
                         label="Calculate"
                       />
                     </div>
-                    <div className="lg:tw-w-2/3">
+                    <div className="xl:tw-w-2/3">
                       <h3>Defender Breakpoint</h3>
                       {resultBreakPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
                       <div className="tw-overflow-x-auto">
@@ -857,7 +857,7 @@ const CalculatePoint = () => {
                         label="Calculate"
                       />
                     </div>
-                    <div className="lg:tw-w-2/3 tw-overflow-x-auto">
+                    <div className="xl:tw-w-2/3 tw-overflow-x-auto">
                       <h3>BulkPoint</h3>
                       {resultBulkPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
                       <div className="tw-overflow-x-auto">

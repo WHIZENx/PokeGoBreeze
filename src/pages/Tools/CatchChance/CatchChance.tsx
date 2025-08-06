@@ -445,9 +445,10 @@ const CatchChance = () => {
                     />
                   }
                   label={
-                    <span>
-                      <img alt="Icon Item" height={32} src={getItemSpritePath(ItemName.RazzBerry)} /> Razz Berry
-                    </span>
+                    <div className="tw-flex tw-items-center tw-gap-2">
+                      <img alt="Icon Item" height={32} src={getItemSpritePath(ItemName.RazzBerry)} />
+                      <span>Razz Berry</span>
+                    </div>
                   }
                 />
                 <FormControlLabel
@@ -467,9 +468,10 @@ const CatchChance = () => {
                     />
                   }
                   label={
-                    <span>
-                      <img alt="Icon Item" height={32} src={APIService.getItemSprite('Item_0706')} /> Golden Razz Berry
-                    </span>
+                    <div className="tw-flex tw-items-center tw-gap-2">
+                      <img alt="Icon Item" height={32} src={APIService.getItemSprite('Item_0706')} />
+                      <span>Golden Razz Berry</span>
+                    </div>
                   }
                 />
                 <FormControlLabel
@@ -489,10 +491,10 @@ const CatchChance = () => {
                     />
                   }
                   label={
-                    <span>
-                      <img alt="Icon Item" height={32} src={getItemSpritePath(ItemName.GoldenPinapBerry)} /> Silver
-                      Pinaps
-                    </span>
+                    <div className="tw-flex tw-items-center tw-gap-2">
+                      <img alt="Icon Item" height={32} src={getItemSpritePath(ItemName.GoldenPinapBerry)} />
+                      <span>Silver Pinaps</span>
+                    </div>
                   }
                 />
               </div>
@@ -507,11 +509,11 @@ const CatchChance = () => {
                   marks={[
                     {
                       value: maxQuestEncounterPlayerLevel(),
-                      label: <span className="tw-absolute -top-1">Max LV encounter in quest</span>,
+                      label: <span className="tw-absolute -tw-top-px">Max LV encounter in quest</span>,
                     },
                     {
                       value: maxEncounterPlayerLevel(),
-                      label: <span className="tw-absolute bottom-4">Max LV encounter in wild</span>,
+                      label: <span className="tw-absolute tw-bottom-5">Max LV encounter in wild</span>,
                     },
                   ]}
                   step={stepLevel()}
@@ -584,10 +586,10 @@ const CatchChance = () => {
                   />
                 }
                 label={
-                  <span>
+                  <div className="tw-flex tw-gap-2 tw-items-center">
                     <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />{' '}
-                    {getKeyWithData(PokemonType, PokemonType.Shadow)}
-                  </span>
+                    <span>{getKeyWithData(PokemonType, PokemonType.Shadow)}</span>
+                  </div>
                 }
               />
             </div>
@@ -611,7 +613,7 @@ const CatchChance = () => {
           {isAdvance && (
             <Fragment>
               <div className="tw-flex tw-justify-center tw-w-full">
-                <div className="tw-flex tw-flex-wrap tw-justify-center tw-gap-2 w-fit-content">
+                <div className="tw-flex tw-flex-wrap tw-justify-center tw-gap-2 !tw-w-fit">
                   <SelectMui
                     formSx={{ m: 1, width: 150 }}
                     inputLabel="Ball"
@@ -696,7 +698,10 @@ const CatchChance = () => {
                     <th>Throwing</th>
                     {balls.map((value, index) => (
                       <th key={index}>
-                        <img alt="Icon Item" height={48} src={getItemSpritePath(value.itemName)} /> {value.name}
+                        <div className="tw-flex tw-items-center tw-gap-2">
+                          <img alt="Icon Item" height={48} src={getItemSpritePath(value.itemName)} />
+                          <span>{value.name}</span>
+                        </div>
                       </th>
                     ))}
                   </tr>
@@ -751,8 +756,10 @@ const CatchChance = () => {
                   <tr>
                     <th>Throwing</th>
                     <th>
-                      <img alt="Icon Item" height={48} src={getItemSpritePath(dataAdv.ballItemName)} />{' '}
-                      {dataAdv.ballName}
+                      <div className="tw-flex tw-items-center tw-gap-2">
+                        <img alt="Icon Item" height={48} src={getItemSpritePath(dataAdv.ballItemName)} />
+                        <span>{dataAdv.ballName}</span>
+                      </div>
                     </th>
                   </tr>
                 </thead>

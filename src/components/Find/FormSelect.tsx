@@ -379,24 +379,25 @@ const FormSelect = (props: IFormSelectComponent) => {
               value={TypeRaid.Pokemon}
               control={<Radio />}
               label={
-                <span>
-                  <img height={32} alt="Pokémon Image" src={getItemSpritePath(ItemName.PokeBall)} /> Pokémon Stats
-                </span>
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img height={32} alt="Pokémon Image" src={getItemSpritePath(ItemName.PokeBall)} />
+                  <span>Pokémon Stats</span>
+                </div>
               }
             />
             <FormControlLabel
               value={TypeRaid.Boss}
               control={<Radio />}
               label={
-                <span>
+                <div className="tw-flex tw-items-center tw-gap-2">
                   <img
                     className="img-type-icon"
                     height={32}
                     alt="img-boss"
                     src={APIService.getRaidSprite('ic_raid_small')}
                   />{' '}
-                  Boss Stats
-                </span>
+                  <span>Boss Stats</span>
+                </div>
               }
             />
           </TypeRadioGroup>

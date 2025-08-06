@@ -734,7 +734,7 @@ const Leagues = () => {
                 {showData.track === LeagueRewardType.Free ? (
                   <div className="tw-flex tw-gap-x-2 tw-items-center">
                     <img
-                      className="pokemon-sprite-small filter-shadow w-fit-content"
+                      className="pokemon-sprite-small filter-shadow !tw-w-fit"
                       alt="Pokémon Image"
                       title="Battle Icon"
                       src={APIService.getPokeOtherLeague('BattleIconColor')}
@@ -744,7 +744,7 @@ const Leagues = () => {
                 ) : (
                   <div className="tw-flex tw-gap-x-2 tw-items-center">
                     <img
-                      className="pokemon-sprite-small filter-shadow w-fit-content"
+                      className="pokemon-sprite-small filter-shadow !tw-w-fit"
                       alt="Pokémon Image"
                       title="Paid Raid Ticket"
                       src={getItemSpritePath(ItemName.PaidRaidTicket)}

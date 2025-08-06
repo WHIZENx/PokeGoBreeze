@@ -184,6 +184,7 @@ export interface FormControlMuiComponent extends Omit<FormControlLabelProps, 'co
 export interface IButtonMuiStyle {
   textTransform?: 'capitalize' | 'uppercase' | 'lowercase' | 'none';
   isNoneBorder?: boolean;
+  isRound?: boolean;
   active?: boolean;
 }
 

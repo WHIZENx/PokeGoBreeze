@@ -23,7 +23,7 @@ import {
   TimeToKill,
 } from '../../../utils/calculate';
 
-import { Badge, Checkbox, FormControlLabel, Switch } from '@mui/material';
+import { Badge, Checkbox, FormControlLabel, IconButton, Switch } from '@mui/material';
 
 import './RaidBattle.scss';
 import APIService from '../../../services/api.service';
@@ -319,7 +319,7 @@ const RaidBattle = () => {
     setPokemonBattle(update(pokemonBattle, { $splice: [[index, 1]] }));
   };
 
-  const onOptionsPokemon = (index: number, pokemon: IPokemonData) => {
+  const onOptionsPokemon = (index: number, pokemon: IPokemonData | undefined) => {
     setShowSettingPokemon(
       RaidSetting.create({
         isShow: true,
@@ -725,7 +725,7 @@ const RaidBattle = () => {
 
   const modalFormFilters = () => (
     <form>
-      <label className="form-label">Pokémon level</label>
+      <label className="tw-mb-2">Pokémon level</label>
       <InputMui
         labelPrepend="Level"
         className="tw-mb-3"
@@ -735,7 +735,7 @@ const RaidBattle = () => {
         menuItems={levelList.map((value) => ({ value, label: value }))}
         onChange={(value) => setFilters({ ...filters, selected: { ...selected, level: toFloat(value) } })}
       />
-      <label className="form-label">Pokémon IV</label>
+      <label className="tw-mb-2">Pokémon IV</label>
       <div className="input-control-group tw-mb-3">
         <InputMui
           labelPrepend="ATK"
@@ -789,7 +789,7 @@ const RaidBattle = () => {
           }}
         />
       </div>
-      <div className="input-group tw-mb-3 border-input">
+      <div className="input-group tw-mb-3">
         <span className="input-group-text">Search filter only by</span>
         <FormControlLabel
           control={
@@ -907,7 +907,7 @@ const RaidBattle = () => {
               />
             }
             label={
-              <span className="tw-flex tw-items-center">
+              <div className="tw-flex tw-items-center tw-gap-2">
                 <img
                   className={showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? '' : 'filter-gray'}
                   width={28}
@@ -925,11 +925,11 @@ const RaidBattle = () => {
                 >
                   {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
-              </span>
+              </div>
             }
           />
           <div>
-            <label className="form-label">Pokémon level</label>
+            <label className="tw-mb-2">Pokémon level</label>
           </div>
           <InputMui
             labelPrepend="Level"
@@ -952,7 +952,7 @@ const RaidBattle = () => {
               }
             }}
           />
-          <label className="form-label">Pokémon IV</label>
+          <label className="tw-mb-2">Pokémon IV</label>
           <div className="input-control-group tw-mb-3">
             <InputMui
               labelPrepend="ATK"
@@ -1045,7 +1045,7 @@ const RaidBattle = () => {
   };
 
   const renderMove = (value: Partial<ICombat> | undefined) => (
-    <span
+    <div
       className={combineClasses(
         value?.type?.toLowerCase(),
         'tw-relative type-select-bg tw-flex tw-items-center filter-shadow'
@@ -1070,8 +1070,8 @@ const RaidBattle = () => {
           src={APIService.getTypeHqSprite(value?.type)}
         />
       </div>
-      <span className="filter-shadow">{splitAndCapitalize(value?.name, '_', ' ')}</span>
-    </span>
+      <span className="filter-shadow tw-leading-[1.5]">{splitAndCapitalize(value?.name, '_', ' ')}</span>
+    </div>
   );
 
   const onHoverSlot = (id: string) => {
@@ -1108,7 +1108,7 @@ const RaidBattle = () => {
     }
     return (
       <Fragment>
-        <div className="tw-flex tw-flex-wrap tw-items-center tw-pl-2 tw-gap-y-1">
+        <div className="tw-flex tw-flex-wrap tw-items-center tw-pl-2 tw-gap-x-1">
           <div className="pokemon-battle">
             <span className="tw-relative">
               <PokemonIconType pokemonType={pokemon.pokemonType} size={18}>
@@ -1434,36 +1434,43 @@ const RaidBattle = () => {
               .map((value, index) => (
                 <div className="tw-relative top-raid-pokemon" key={index}>
                   <div>
-                    <AddCircleIcon
-                      className="tw-absolute tw-cursor-pointer link-success"
-                      fontSize="large"
+                    <IconButton
+                      color="success"
+                      className="tw-absolute !tw-p-0"
                       onClick={() => handleShowMovePokemon(value)}
-                    />
+                    >
+                      <AddCircleIcon fontSize="large" />
+                    </IconButton>
                   </div>
-                  <div className="tw-flex tw-justify-center tw-w-full">{renderPokemon(value)}</div>
-                  <span className="tw-flex tw-justify-center tw-w-full">
-                    <b>
-                      #{value.pokemon?.num} {splitAndCapitalize(value.pokemon?.name, '-', ' ')}
-                    </b>
-                  </span>
-                  <span className="tw-block tw-mt-2">
-                    DPS: <b>{toFloatWithPadding(value.dpsAtk, 2)}</b>
-                  </span>
-                  <span className="tw-block">
-                    Total Damage Output: <b>{toFloatWithPadding(value.tdoAtk, 2)}</b>
-                  </span>
-                  <span className="tw-block">
-                    Death: <b className={value.death === 0 ? 'text-success' : 'text-danger'}>{value.death}</b>
-                  </span>
-                  <span className="tw-block">
-                    Time to Kill <span className="tw-inline-block caption">(Boss)</span>:{' '}
-                    <b>{toFloatWithPadding(value.ttkAtk, 2)} sec</b>
-                  </span>
-                  <span className="tw-block">
-                    Time is Killed: <b>{toFloatWithPadding(value.ttkDef, 2)} sec</b>
-                  </span>
+                  <div className="tw-flex tw-flex-col tw-gap-2">
+                    <div className="tw-flex tw-justify-center tw-w-full">{renderPokemon(value)}</div>
+                    <span className="tw-flex tw-justify-center tw-gap-2 tw-font-bold tw-w-full">
+                      <span>#{value.pokemon?.num}</span>
+                      <span>{splitAndCapitalize(value.pokemon?.name, '-', ' ')}</span>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>DPS:</span>
+                      <b>{toFloatWithPadding(value.dpsAtk, 2)}</b>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Total Damage Output:</span>
+                      <b>{toFloatWithPadding(value.tdoAtk, 2)}</b>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Death:</span>
+                      <b className={value.death === 0 ? 'text-success' : 'text-danger'}>{value.death}</b>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Time to Kill (Boss):</span>
+                      <b>{toFloatWithPadding(value.ttkAtk, 2)} sec</b>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Time is Killed:</span>
+                      <b>{toFloatWithPadding(value.ttkDef, 2)} sec</b>
+                    </span>
+                  </div>
                   <hr />
-                  <div className="tw-container tw-mb-3">
+                  <div className="tw-mb-3">
                     <TypeBadge title="Fast Move" move={value.fMove} moveType={value.fMoveType ?? MoveType.None} />
                     <TypeBadge title="Charged Move" move={value.cMove} moveType={value.cMoveType ?? MoveType.None} />
                   </div>
@@ -1492,7 +1499,7 @@ const RaidBattle = () => {
                   />
                 </Badge>
                 <ButtonMui
-                  className="tw-mr-2"
+                  className="!tw-mr-2"
                   onClick={() => handleShow(trainer.pokemons, index)}
                   label={<EditIcon fontSize="small" />}
                 />
@@ -1521,40 +1528,31 @@ const RaidBattle = () => {
                     </div>
                   ))}
                 </div>
-                <span className="tw-flex ic-group">
-                  <span
-                    className={combineClasses(
-                      'ic-copy text-white tw-mr-1',
-                      trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
-                    )}
+                <span className="tw-flex tw-items-center ic-group tw-gap-2">
+                  <ButtonMui
+                    isRound
+                    className="ic-copy !tw-p-0 !tw-min-w-8 !tw-h-8"
+                    disabled={!trainer.pokemons.at(0)?.dataTargetPokemon}
                     title="Copy"
+                    label={<ContentCopyIcon color="inherit" className="!tw-text-[1rem]" />}
                     onClick={() => {
-                      if (trainer.pokemons.at(0)?.dataTargetPokemon) {
-                        setCountTrainer(countTrainer + 1);
-                        setTrainerBattle(
-                          update(trainerBattle, {
-                            $push: [{ ...trainerBattle[index], trainerId: countTrainer + 1 }],
-                          })
-                        );
-                      }
+                      setCountTrainer(countTrainer + 1);
+                      setTrainerBattle(
+                        update(trainerBattle, {
+                          $push: [{ ...trainerBattle[index], trainerId: countTrainer + 1 }],
+                        })
+                      );
                     }}
-                  >
-                    <ContentCopyIcon className="tw-text-sm" />
-                  </span>
-                  <span
-                    className={combineClasses(
-                      'ic-remove tw-text-white',
-                      index > 0 ? 'bg-danger' : 'click-none bg-secondary'
-                    )}
+                  />
+                  <ButtonMui
+                    isRound
+                    className="ic-remove !tw-p-0 !tw-min-w-8 !tw-h-8"
+                    disabled={index === 0}
+                    color="error"
                     title="Remove"
-                    onClick={() => {
-                      if (index > 0) {
-                        setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }));
-                      }
-                    }}
-                  >
-                    <DeleteIcon className="tw-text-sm" />
-                  </span>
+                    label={<DeleteIcon color="inherit" className="!tw-text-[1rem]" />}
+                    onClick={() => setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }))}
+                  />
                 </span>
               </div>
             ))}
@@ -1566,22 +1564,16 @@ const RaidBattle = () => {
               />
             </div>
             <div className="tw-flex tw-flex-wrap tw-justify-center tw-items-center tw-mt-2">
-              <RemoveCircleIcon
-                className={combineClasses(
-                  'tw-cursor-pointer link-danger',
-                  trainerBattle.length > 1 ? '' : 'click-none'
-                )}
-                fontSize="large"
-                onClick={() => {
-                  if (trainerBattle.length > 1) {
-                    setTrainerBattle(update(trainerBattle, { $splice: [[trainerBattle.length - 1]] }));
-                  }
-                }}
-              />
+              <IconButton
+                disabled={trainerBattle.length <= 1}
+                color="error"
+                onClick={() => setTrainerBattle(update(trainerBattle, { $splice: [[trainerBattle.length - 1]] }))}
+              >
+                <RemoveCircleIcon fontSize="large" />
+              </IconButton>
               <div className="count-pokemon">{trainerBattle.length}</div>
-              <AddCircleIcon
-                className="tw-cursor-pointer link-success"
-                fontSize="large"
+              <IconButton
+                color="success"
                 onClick={() => {
                   setCountTrainer(countTrainer + 1);
                   setTrainerBattle(
@@ -1590,11 +1582,13 @@ const RaidBattle = () => {
                     })
                   );
                 }}
-              />
+              >
+                <AddCircleIcon fontSize="large" />
+              </IconButton>
             </div>
           </div>
           <div className="lg:tw-w-7/12 stats-boss tw-h-full">
-            <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-y-3">
+            <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-x-3">
               <h3>
                 <b>
                   {searchingToolCurrentData?.form ? `#${searchingToolCurrentData?.form?.defaultId}` : ''}{' '}
@@ -1606,7 +1600,7 @@ const RaidBattle = () => {
               </h3>
               <TypeInfo arr={searchingToolCurrentData?.form?.form?.types} />
             </div>
-            <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-y-3">
+            <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-x-3">
               <TypeBadge title="Fast Move" move={fMove} moveType={fMove?.moveType ?? MoveType.None} />
               <TypeBadge title="Charged Move" move={cMove} moveType={cMove?.moveType ?? MoveType.None} />
             </div>
@@ -1614,34 +1608,36 @@ const RaidBattle = () => {
               <Fragment>
                 <hr />
                 <div className="row !tw-m-0">
-                  <div className="lg:tw-w-1/2 tw-mb-3">
-                    <span className="tw-block tw-mt-2">
-                      {`DPS: `}
+                  <div className="lg:tw-w-1/2 tw-flex tw-flex-col tw-gap-2 tw-mb-3">
+                    <span className="tw-flex tw-gap-2">
+                      <span>DPS:</span>
                       <b>
                         {toFloatWithPadding(resultBoss.minDPS, 2)} - {toFloatWithPadding(resultBoss.maxDPS, 2)}
                       </b>
                     </span>
-                    <span className="tw-block">
-                      Average DPS: <b>{toFloatWithPadding((resultBoss.minDPS + resultBoss.maxDPS) / 2, 2)}</b>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Average DPS:</span>
+                      <b>{toFloatWithPadding((resultBoss.minDPS + resultBoss.maxDPS) / 2, 2)}</b>
                     </span>
-                    <span className="tw-block">
-                      {'Total Damage Output: '}
+                    <span className="tw-flex tw-gap-2 tw-flex-col">
+                      <span>Total Damage Output:</span>
                       <b>
                         {toFloatWithPadding(resultBoss.minTDO, 2)} - {toFloatWithPadding(resultBoss.maxTDO, 2)}
                       </b>
                     </span>
-                    <span className="tw-block">
-                      Average Total Damage Output:{' '}
+                    <span className="tw-flex tw-gap-2">
+                      <span>Average Total Damage Output:</span>
                       <b>{toFloatWithPadding((resultBoss.minTDO + resultBoss.maxTDO) / 2, 2)}</b>
                     </span>
-                    <span className="tw-block">
-                      {'Boss HP Remaining: '}
+                    <span className="tw-flex tw-gap-2">
+                      <span>Boss HP Remaining:</span>
                       <b>
                         {Math.round(resultBoss.minHP)} - {Math.round(resultBoss.maxHP)}
                       </b>
                     </span>
-                    <span className="tw-block">
-                      Boss Average HP Remaining: <b>{Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)}</b>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Boss Average HP Remaining:</span>
+                      <b>{Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)}</b>
                     </span>
                   </div>
                   <div className="lg:tw-w-1/2 tw-flex tw-flex-wrap tw-justify-center tw-items-center tw-mb-3">
@@ -1764,8 +1760,13 @@ const RaidBattle = () => {
                               (!enableTimeAllow && result.summary.timer <= timeAllow)) && (
                               <tr className="text-summary">
                                 <td colSpan={3}>
-                                  <TimerIcon /> Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}
-                                  {enableTimeAllow && ` / ${timeAllow}`}
+                                  <div className="tw-flex tw-items-center tw-gap-2">
+                                    <TimerIcon />
+                                    <span className="tw-mb-2">
+                                      Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}
+                                      {enableTimeAllow && ` / ${timeAllow}`}
+                                    </span>
+                                  </div>
                                 </td>
                                 {resultBattle(
                                   Math.floor(result.summary.bossHp - result.summary.tdoAtk),
@@ -1808,24 +1809,20 @@ const RaidBattle = () => {
               ))}
             </div>
             <div className="tw-flex tw-flex-wrap tw-justify-center tw-items-center tw-mt-2">
-              <RemoveCircleIcon
-                className={combineClasses(
-                  'tw-cursor-pointer link-danger',
-                  pokemonBattle.length > 1 ? '' : 'click-none'
-                )}
-                fontSize="large"
-                onClick={() => {
-                  if (pokemonBattle.length > 1) {
-                    setPokemonBattle(update(pokemonBattle, { $splice: [[pokemonBattle.length - 1]] }));
-                  }
-                }}
-              />
+              <IconButton
+                disabled={pokemonBattle.length <= 1}
+                color="error"
+                onClick={() => setPokemonBattle(update(pokemonBattle, { $splice: [[pokemonBattle.length - 1]] }))}
+              >
+                <RemoveCircleIcon fontSize="large" />
+              </IconButton>
               <div className="count-pokemon">{pokemonBattle.length}</div>
-              <AddCircleIcon
-                className="tw-cursor-pointer link-success"
-                fontSize="large"
+              <IconButton
+                color="success"
                 onClick={() => setPokemonBattle(update(pokemonBattle, { $push: [new PokemonRaidModel()] }))}
-              />
+              >
+                <AddCircleIcon fontSize="large" />
+              </IconButton>
             </div>
           </>
         }
@@ -1891,7 +1888,7 @@ const RaidBattle = () => {
         onClose={handleCloseMovePokemon}
         title="Move Pokémon"
         content={
-          <div className="tw-overflow-y-auto" style={{ maxHeight: '60vh' }}>
+          <div className="tw-overflow-y-auto tw-py-2" style={{ maxHeight: '60vh' }}>
             {modalMovePokemon()}
           </div>
         }

@@ -5,6 +5,7 @@ import { IButtonMuiComponent } from '../models/component.model';
 const ButtonMui = (props: IButtonMuiComponent) => {
   const {
     isNoneBorder,
+    isRound,
     active,
     className,
     variant = 'contained',
@@ -22,7 +23,7 @@ const ButtonMui = (props: IButtonMuiComponent) => {
       sx={{
         ...sx,
         textTransform,
-        ...(isNoneBorder ? { borderRadius: 0 } : {}),
+        ...(isNoneBorder || isRound ? { borderRadius: isRound ? '50%' : 0 } : {}),
         ...(active
           ? {
               backgroundColor: `${color}.select`,

@@ -72,7 +72,7 @@ const Raid = (props: IRaidComponent) => {
           pokemonClass={pokemonClass}
         />
       </div>
-      <div className="row tw-w-full tw-mt-2 !tw-m-0">
+      <div className="row tw-w-full !tw-mt-2 !tw-m-0">
         <div className="!tw-w-1/3 tw-flex-none tw-text-center tw-inline-block">
           <h1>CP</h1>
           <hr className="tw-w-full" />

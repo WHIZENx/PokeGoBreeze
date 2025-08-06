@@ -296,7 +296,7 @@ const News = () => {
                             {isNotEmpty(value.rewardNews) && (
                               <>
                                 <h6 className="tw-underline">Rewards</h6>
-                                <div className="tw-w-full tw-text-center tw-inline-block align-middle">
+                                <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle">
                                   {value.rewardNews.map((value, i) => (
                                     <div key={i} className="tw-inline-block tw-mx-2">
                                       {value.type === TicketRewardType.Pokemon && value.pokemon ? (

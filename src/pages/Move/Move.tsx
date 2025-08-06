@@ -435,17 +435,15 @@ const Move = (props: IMovePage) => {
                 <td>Weather Boosts</td>
                 <td colSpan={2}>
                   {move && (
-                    <>
+                    <div className="tw-flex tw-items-center tw-gap-2">
                       <img
-                        className="img-type-icon tw-mr-3"
+                        className="img-type-icon"
                         height={25}
                         alt="Image Weather"
                         src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
                       />
-                      <span className="tw-inline-block caption">
-                        {splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}
-                      </span>
-                    </>
+                      <span className="caption">{splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}</span>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -465,12 +463,12 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td colSpan={2}>
                   {move && (
-                    <>
+                    <div className="tw-flex tw-items-center tw-gap-1">
                       <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
                       <span className="tw-text-green-600 tw-inline-block caption tw-ml-1">
                         {`+${toFloatWithPadding(move.pvePower * 0.2, 2)}`}
                       </span>
-                    </>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -505,12 +503,12 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td colSpan={2}>
                   {move && (
-                    <>
+                    <div className="tw-flex tw-items-center tw-gap-1">
                       <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
                       <span className="tw-text-green-600 tw-inline-block caption tw-ml-1">
                         {`+${toFloatWithPadding(move.pvpPower * 0.2, 2)}`}
                       </span>
-                    </>
+                    </div>
                   )}
                 </td>
               </tr>

@@ -110,10 +110,10 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
               value={PokemonType.Buddy}
               control={<Radio />}
               label={
-                <span>
+                <div className="tw-flex tw-items-center tw-gap-2">
                   <img height={28} alt="Image Buddy" src={APIService.getPokeBuddy()} />{' '}
-                  {getKeyWithData(PokemonType, PokemonType.Buddy)}
-                </span>
+                  <span>{getKeyWithData(PokemonType, PokemonType.Buddy)}</span>
+                </div>
               }
             />
             <FormControlLabel
@@ -121,10 +121,10 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
               disabled={isSpecialMegaFormType(props.pokemonType)}
               control={<Radio />}
               label={
-                <span>
+                <div className="tw-flex tw-items-center tw-gap-2">
                   <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />{' '}
-                  {getKeyWithData(PokemonType, PokemonType.Shadow)}
-                </span>
+                  <span>{getKeyWithData(PokemonType, PokemonType.Shadow)}</span>
+                </div>
               }
             />
           </TypeRadioGroup>
@@ -148,7 +148,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
           </Box>
         </div>
         <div className="tw-flex tw-justify-center tw-text-center">
-          <table className="table-info tw-w-2/5" style={{ minWidth: 270 }}>
+          <table className="table-info !tw-w-2/5" style={{ minWidth: 270 }}>
             <thead />
             <tbody>
               <tr className="tw-text-center">
@@ -158,10 +158,12 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
-                  ATK
+                  <div className="tw-flex tw-items-center tw-gap-2">
+                    <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                    <span>ATK</span>
+                  </div>
                 </td>
-                <td className="tw-text-center">
+                <td className="!tw-text-center">
                   {calculateStatsBattle(
                     props.statATK,
                     maxIv(),
@@ -173,10 +175,12 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
-                  DEF
+                  <div className="tw-flex tw-items-center tw-gap-2">
+                    <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                    <span>DEF</span>
+                  </div>
                 </td>
-                <td className="tw-text-center">
+                <td className="!tw-text-center">
                   {calculateStatsBattle(
                     props.statDEF,
                     maxIv(),
@@ -188,10 +192,12 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
-                  HP
+                  <div className="tw-flex tw-items-center tw-gap-2">
+                    <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
+                    <span>HP</span>
+                  </div>
                 </td>
-                <td className="tw-text-center">{calculateStatsBattle(props.statSTA, maxIv(), currStatLevel, true)}</td>
+                <td className="!tw-text-center">{calculateStatsBattle(props.statSTA, maxIv(), currStatLevel, true)}</td>
               </tr>
             </tbody>
           </table>

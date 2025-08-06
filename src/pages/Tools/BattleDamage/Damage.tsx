@@ -281,7 +281,7 @@ const Damage = () => {
               />
               <div className="tw-mt-2">
                 {move && (
-                  <div className="m-auto" style={{ width: 300 }}>
+                  <div className="tw-m-auto" style={{ width: 300 }}>
                     <p>
                       - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                     </p>
@@ -384,7 +384,7 @@ const Damage = () => {
                       </div>
                     }
                     type="submit"
-                    className="tw-mt-2"
+                    className="!tw-mt-2"
                   />
                 </div>
               </div>

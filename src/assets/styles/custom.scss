@@ -358,8 +358,7 @@ td,
 .table-info thead tr,
 .table-moves thead tr {
   @include table-head-style;
-
-  font-weight: bold;
+  @apply tw-font-bold;
 }
 
 // Icon shadow

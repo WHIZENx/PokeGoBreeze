@@ -181,15 +181,19 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>
-                <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
-                Damage Taken
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                  <span>Damage Taken</span>
+                </div>
               </td>
               <td>{props.result.damage ? <b>{props.result.damage}</b> : '-'}</td>
             </tr>
             <tr>
               <td>
-                <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
-                Damage Reduced
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                  <span>Damage Reduced</span>
+                </div>
               </td>
               <td>
                 {props.result.damage ? (
@@ -214,8 +218,10 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>
-                <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
-                HP Object remaining
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
+                  <span>HP Object remaining</span>
+                </div>
               </td>
               <td>
                 {props.result.hp ? (

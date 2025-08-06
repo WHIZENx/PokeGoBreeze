@@ -226,7 +226,7 @@ const StatsInfo = () => {
       </h1>
       <div className="tw-flex tw-justify-center tw-w-full">
         <div className="tw-w-full tw-overflow-x-auto">
-          <div className="w-fit-content" style={{ margin: '0 auto' }}>
+          <div className="tw-w-fit tw-mx-auto tw-my-0">
             <ButtonGroupLeague
               className="tw-my-3"
               isFullWidth

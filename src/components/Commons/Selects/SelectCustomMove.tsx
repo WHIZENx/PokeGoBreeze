@@ -83,7 +83,7 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
             />
           </div>
           {showMove && (
-            <div className="result-type result-move">
+            <div className="result-type result-move tw-w-[300px]">
               <ul>
                 {resultMove && (
                   <Fragment>

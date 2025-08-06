@@ -293,7 +293,7 @@ const SearchTypes = (props: IStyleSheetData) => {
         label={<b>{`Filter from ${allData?.pokemon} Pokémon`}</b>}
       />
       <div className="row">
-        <div className="xl:tw-w-1/3 tw-mt-2">
+        <div className="xl:tw-w-1/3 !tw-mt-2">
           <div
             className={combineClasses(
               'tw-flex tw-flex-col tw-items-center type-info-container',
@@ -367,7 +367,7 @@ const SearchTypes = (props: IStyleSheetData) => {
             </span>
           </div>
         </div>
-        <div className="xl:tw-w-2/3 tw-mt-2">
+        <div className="xl:tw-w-2/3 !tw-mt-2">
           <TabsPanel
             tabs={[
               {

@@ -537,11 +537,11 @@ const StatsRanking = () => {
 
   return (
     <div className="tw-pb-3 tw-relative poke-container tw-container">
-      <div className="tw-w-full tw-inline-block align-middle tw-my-3">
+      <div className="tw-w-full tw-inline-block tw-align-middle tw-my-3">
         <div className="tw-flex tw-justify-center tw-w-full">
           <div className="tw-inline-block img-desc">
             <img
-              className="pokemon-main-sprite v-align-baseline"
+              className="pokemon-main-sprite !tw-align-baseline"
               alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 select?.num,
@@ -554,7 +554,7 @@ const StatsRanking = () => {
             />
           </div>
         </div>
-        <div className="row tw-w-full tw-mt-2 !tw-m-0">
+        <div className="row tw-w-full !tw-mt-2 !tw-m-0">
           <div className="xl:tw-w-5/12 !tw-p-0">
             <PokemonTable
               id={select?.num}

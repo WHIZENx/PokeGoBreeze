@@ -48,10 +48,30 @@ p {
   @apply tw-font-medium tw-leading-[1.2] tw-mb-2 tw-mt-0 tw-text-default;
 }
 
+a {
+  @apply tw-text-link;
+}
+
+label {
+  @apply tw-inline-block
+}
+
 table {
   @apply tw-border-collapse tw-caption-bottom;
 }
 
-a {
-  @apply tw-text-link;
+tbody, td, tfoot, th, thead, tr {
+  @apply tw-border-0 tw-border-solid tw-border-inherit;
+}
+
+th {
+  @apply tw-py-4 tw-px-0 tw-text-[18px];
+}
+
+td {
+  @apply tw-py-1 tw-px-2 tw-h-9;
+}
+
+img, svg {
+  @apply tw-align-middle;
 }

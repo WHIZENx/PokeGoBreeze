@@ -83,7 +83,6 @@ img.pokemon-sprite-battle {
 .count-pokemon {
   border-radius: 5px;
   padding: 8px 15px;
-  margin: 0 15px;
 }
 
 .click-none {
@@ -113,9 +112,7 @@ img.pokemon-sprite-battle {
 }
 
 .ic-group {
-  position: absolute;
-  top: -10px;
-  right: -10px;
+  @apply tw-absolute -tw-top-4 tw-right-2;
 }
 
 .ic-copy,
@@ -160,8 +157,7 @@ img.pokemon-sprite-battle {
 }
 
 .move-badge {
-  position: absolute;
-  top: -20px;
-  right: -5px;
   transform: translate(5px, 5px);
+
+  @apply tw-absolute -tw-top-4 -tw-right-2;
 }

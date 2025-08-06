@@ -207,7 +207,7 @@ export interface IPokemonRaidComponent {
   isControls: boolean;
   onCopyPokemon: (index: number) => void;
   onRemovePokemon: (index: number) => void;
-  onOptionsPokemon: (index: number, pokemon: IPokemonData) => void;
+  onOptionsPokemon: (index: number, pokemon: IPokemonData | undefined) => void;
   clearData?: (isForceClear?: boolean) => void;
 }
 

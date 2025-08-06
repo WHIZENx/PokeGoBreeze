@@ -21,7 +21,7 @@ body {
   transition: 0.1s;
   touch-action: manipulation;
 
-  @apply tw-h-full tw-m-0 tw-text-default tw-bg-custom-default;
+  @apply tw-h-full tw-m-0 tw-text-default tw-bg-custom-default tw-leading-[1.5];
 }
 
 #root {
