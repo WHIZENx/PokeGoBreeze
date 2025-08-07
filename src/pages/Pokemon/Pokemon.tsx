@@ -634,7 +634,7 @@ const Pokemon = (props: IPokemonPage) => {
               }}
             />
           </div>
-          <div className="tw-inline-block">
+          <div className="tw-inline-block tw-align-bottom">
             <PokemonTable
               id={dataStorePokemon?.current?.id}
               gen={generation}
@@ -646,7 +646,7 @@ const Pokemon = (props: IPokemonPage) => {
               isLoadedForms={progress.isLoadedForms}
             />
           </div>
-          <div className="tw-inline-block !tw-p-0">
+          <div className="tw-inline-block !tw-p-0 tw-align-bottom">
             <table className="table-info table-main">
               <thead />
               <tbody>

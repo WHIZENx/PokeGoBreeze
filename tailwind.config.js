@@ -43,6 +43,7 @@ module.exports = {
       spacing: {
         ...defaultTheme.spacing,
         unit: 'var(--spacing-unit)',
+        7.5: '30px',
       },
       screens: {
         ...defaultTheme.screens,
