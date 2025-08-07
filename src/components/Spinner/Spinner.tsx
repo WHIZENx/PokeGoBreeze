@@ -12,7 +12,7 @@ const Spinner = () => {
     <BackdropMui open={spinnerIsLoading}>
       <div className="tw-flex tw-flex-col tw-items-center tw-justify-center">
         <img className={spinnerIsError ? '' : 'loading'} width={64} height={64} alt="Pokémon Image" src={loading} />
-        <span className="caption tw-text-white text-shadow-black tw-text-sm">
+        <span className="caption tw-text-center tw-text-white text-shadow-black !tw-text-lg">
           <b>
             {spinnerIsError ? (
               <Fragment>

@@ -36,6 +36,7 @@ module.exports = {
       },
       colors: {
         ...defaultTheme.colors,
+        lightgray: 'lightgray',
         primary: 'var(--primary-main)',
         secondary: 'var(--secondary-main)',
         default: 'var(--default)',

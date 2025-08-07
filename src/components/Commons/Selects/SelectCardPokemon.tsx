@@ -91,7 +91,7 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
       customPrepend={
         pokemonIcon && (
           <img
-            className={combineClasses('object-fit-contain', props.isDisable ? 'filter-gray' : '')}
+            className={combineClasses('tw-object-contain', props.isDisable ? 'filter-gray' : '')}
             width={40}
             height={40}
             alt="Pokémon Image"
@@ -121,13 +121,12 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
     />
   );
 
-  const renderResult = (position = SelectPosition.Down) => (
+  const renderResult = (position = SelectPosition.Down) => (showPokemon && !props.isDisable &&
     <div
       ref={resultsContainerRef}
       className={combineClasses(
         'result',
         position === SelectPosition.Up ? 'pos-up tw-mb-1' : 'tw-mt-1',
-        showPokemon && !props.isDisable ? 'tw-block' : 'tw-hidden'
       )}
       onScroll={listenScrollEvent.bind(this)}
       style={{
@@ -162,6 +161,7 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
       )}
     </div>
   );
+
   return (
     <div className="tw-relative">
       {isUndefined(props.position) || props.position === SelectPosition.Down ? (

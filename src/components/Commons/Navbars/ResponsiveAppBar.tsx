@@ -116,9 +116,9 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         {toNumber(timestamp?.gamemaster) > 0 && (
           <span className="tw-truncate">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
-        <span className="tw-text-right tw-text-yellow-600 tw-text-xs">
+        <Typography variant="caption" sx={{ color: 'warning.light' }} fontSize={8} className="tw-text-right">
           <b>{props.version}</b>
-        </span>
+        </Typography>
       </>
     );
   }, [timestamp, props.version]);
@@ -138,11 +138,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
           onClick={onChangeTheme}
           color="inherit"
         >
-          {theme.palette.mode === TypeTheme.Light ? (
-            <LightModeIcon fontSize="large" style={{ color: 'white' }} />
-          ) : (
-            <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
-          )}
+          {theme.palette.mode === TypeTheme.Light ? <LightModeIcon fontSize="large" color="inherit" /> : <DarkModeIcon fontSize="large" color="inherit" />}
         </IconButton>
       </Box>
     );

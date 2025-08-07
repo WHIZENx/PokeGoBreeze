@@ -72,9 +72,9 @@ const PVPHome = () => {
   const renderLoading = () => {
     return (
       <div className="tw-overflow-x-hidden">
-        <div className="ph-item tw-flex-nowrap tw-w-fit">
+        <div className="ph-item !tw-flex-nowrap !tw-w-fit !tw-p-0">
           {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
-            <div key={index} className="ph-col-3 !tw-m-0 tw-p-2">
+            <div key={index} className="ph-col-3 !tw-m-0 !tw-p-2">
               <div className="ph-row">
                 <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
               </div>

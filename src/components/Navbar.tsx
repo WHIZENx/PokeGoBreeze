@@ -9,7 +9,7 @@ import logo from '../assets/pokedex.png';
 import { getTime } from '../utils/utils';
 
 import './Navbar.scss';
-import { Box, IconButton, LinearProgress } from '@mui/material';
+import { Box, IconButton, LinearProgress, Typography } from '@mui/material';
 import { TypeTheme, VariantType } from '../enums/type.enum';
 import { INavbarComponent } from './models/component.model';
 import { useLocalStorage } from 'usehooks-ts';
@@ -60,9 +60,9 @@ const NavbarComponent = (props: INavbarComponent) => {
         {toNumber(timestamp?.gamemaster) > 0 && (
           <span className="tw-text-white">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
-        <span className="tw-text-right tw-text-yellow-600 tw-text-xs">
+        <Typography variant="caption" sx={{ color: 'warning.light' }} fontSize={8} className="tw-text-right">
           <b>{props.version}</b>
-        </span>
+        </Typography>
       </>
     );
   }, [timestamp, props.version]);
@@ -94,11 +94,7 @@ const NavbarComponent = (props: INavbarComponent) => {
           onClick={onChangeTheme}
           color="inherit"
         >
-          {props.mode === TypeTheme.Light ? (
-            <LightModeIcon fontSize="large" style={{ color: 'white' }} />
-          ) : (
-            <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
-          )}
+          {props.mode === TypeTheme.Light ? <LightModeIcon fontSize="large" color="inherit" /> : <DarkModeIcon fontSize="large" color="inherit" />}
         </IconButton>
       </>
     );

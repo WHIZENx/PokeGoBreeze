@@ -54,12 +54,12 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               <span className="tw-mr-1">{splitAndCapitalize(move.name, '_', ' ')}</span>
               {!props.isHideType && isHaveMoveType() && (
                 <span
-                  style={{ color: props.isDisable ? 'lightgray !important' : '' }}
                   className={combineClasses(
                     `${getKeyWithData(
                       MoveType,
                       props.isDisable ? MoveType.Disable : move.moveType || props.moveType
                     )?.toLowerCase()}-ic`,
+                    props.isDisable && '!tw-text-lightgray',
                     'type-icon-small ic tw-flex tw-items-center tw-h-3'
                   )}
                 >

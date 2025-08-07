@@ -32,9 +32,9 @@ const TimelineFit = (
         <div className="tw-relative timeline-fit-container">
           {poke.timeline.map((value, index) => (
             <Fragment key={index}>
-              {value.isTap && (
+              {value.isTap && showTap && (
                 <div
-                  className={combineClasses('charge-attack opacity-50', showTap ? 'tw-block' : 'tw-hidden')}
+                  className="charge-attack opacity-50"
                   style={{
                     width: value.size,
                     left: calculateWidthBasedPosition(poke.timeline, index),
@@ -74,13 +74,7 @@ const TimelineFit = (
                           ))}
                         </div>
                       ) : (
-                        <div
-                          className={combineClasses('wait-attack', showTap ? 'tw-block' : 'tw-hidden')}
-                          style={{
-                            width: value.size,
-                            left: calculateWidthBasedPosition(poke.timeline, index),
-                          }}
-                        />
+                        showTap && <div className="wait-attack" style={{ width: value.size, left: calculateWidthBasedPosition(poke.timeline, index) }} />
                       )}
                     </Fragment>
                   )}
