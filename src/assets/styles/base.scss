@@ -45,7 +45,7 @@ p {
 }
 
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
-  @apply tw-font-medium tw-leading-[1.2] tw-mb-2 tw-mt-0 tw-text-default;
+  @apply tw-font-medium tw-leading-small tw-mb-2 tw-mt-0 tw-text-default;
 }
 
 a {
@@ -65,7 +65,7 @@ tbody, td, tfoot, th, thead, tr {
 }
 
 th {
-  @apply tw-py-4 tw-px-0 tw-text-[18px];
+  @apply tw-py-4 tw-px-0 tw-text-medium;
 }
 
 td {

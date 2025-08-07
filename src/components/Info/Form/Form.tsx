@@ -173,7 +173,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         />
       </div>
       {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
-        <div className="tw-flex tw-flex-wrap tw-gap-y-3 tw-gap-x-[50px]">
+        <div className="tw-flex tw-flex-wrap tw-gap-y-3 tw-gap-x-12.5">
           {genderRatio.M !== 0 && (
             <Gender ratio={genderRatio} sex={TypeSex.Male} sprit={searchingMainForm?.form?.sprites} />
           )}

@@ -1070,7 +1070,7 @@ const RaidBattle = () => {
           src={APIService.getTypeHqSprite(value?.type)}
         />
       </div>
-      <span className="filter-shadow tw-leading-[1.5]">{splitAndCapitalize(value?.name, '_', ' ')}</span>
+      <span className="filter-shadow">{splitAndCapitalize(value?.name, '_', ' ')}</span>
     </div>
   );
 
@@ -1534,7 +1534,7 @@ const RaidBattle = () => {
                     className="ic-copy !tw-p-0 !tw-min-w-8 !tw-h-8"
                     disabled={!trainer.pokemons.at(0)?.dataTargetPokemon}
                     title="Copy"
-                    label={<ContentCopyIcon color="inherit" className="!tw-text-[1rem]" />}
+                    label={<ContentCopyIcon color="inherit" className="!tw-text-small" />}
                     onClick={() => {
                       setCountTrainer(countTrainer + 1);
                       setTrainerBattle(
@@ -1550,7 +1550,7 @@ const RaidBattle = () => {
                     disabled={index === 0}
                     color="error"
                     title="Remove"
-                    label={<DeleteIcon color="inherit" className="!tw-text-[1rem]" />}
+                    label={<DeleteIcon color="inherit" className="!tw-text-small" />}
                     onClick={() => setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }))}
                   />
                 </span>

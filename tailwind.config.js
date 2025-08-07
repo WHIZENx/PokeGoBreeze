@@ -2,6 +2,13 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import plugin from 'tailwindcss/plugin';
 
+const utilities = {
+  '.title-medium': {
+    fontSize: '18px',
+    lineHeight: '27px',
+  },
+};
+
 module.exports = {
   prefix: 'tw-',
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
@@ -15,6 +22,17 @@ module.exports = {
       listStyleType: {
         ...defaultTheme.listStyleType,
         circle: 'circle',
+      },
+      lineHeight: {
+        ...defaultTheme.lineHeight,
+        default: '1.5',
+        small: '1.2',
+      },
+      fontSize: {
+        ...defaultTheme.fontSize,
+        'extra-small': '12px',
+        small: '16px',
+        medium: '18px',
       },
       colors: {
         ...defaultTheme.colors,
@@ -44,6 +62,7 @@ module.exports = {
         ...defaultTheme.spacing,
         unit: 'var(--spacing-unit)',
         7.5: '30px',
+        12.5: '50px',
       },
       screens: {
         ...defaultTheme.screens,
@@ -69,6 +88,9 @@ module.exports = {
     },
   },
   plugins: [
+    plugin(function ({ addUtilities }) {
+      addUtilities(utilities);
+    }),
     plugin(function ({ addBase }) {
       addBase({
         '@import "src/assets/styles/variables.scss"': {},

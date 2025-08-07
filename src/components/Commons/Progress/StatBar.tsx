@@ -44,13 +44,13 @@ const StatBar = (props: IStatBarComponent) => {
       }
     >
       <div className="tw-absolute box-text stats-text tw-z-2 tw-flex tw-justify-start tw-w-full">
-        <span className="tw-text-[0.75rem]">
+        <span className="tw-text-extra-small">
           {tag} {pokemonStatsRank && getValueOrDefault(String, optionalStats, currentStats.toString())}
         </span>
       </div>
       {pokemonStatsRank && !isUndefined(rank) && (
         <div className="tw-absolute tw-z-2 tw-flex tw-w-full box-text rank-text tw-justify-end">
-          <span className="tw-text-[0.75rem]">
+          <span className="tw-text-extra-small">
             Rank: {rank} / {pokemonStatsRank.maxRank}
           </span>
         </div>

@@ -100,7 +100,7 @@
 // Table head classes
 .head-types {
   @include table-head-style;
-  @apply tw-p-[10px] tw-font-bold;
+  @apply tw-p-2.5 tw-font-bold;
 }
 
 .table-head {
