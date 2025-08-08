@@ -1,4 +1,4 @@
-import { RouterChange, RouterModify } from '../../core/models/router.model';
+import { RouterChange, RouterModify } from "../../core/models/router.model";
 
 export enum RouterActionTypes {
   LOCATION_CHANGE = '@@router/LOCATION_CHANGE',
