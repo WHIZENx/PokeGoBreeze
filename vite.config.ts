@@ -7,13 +7,6 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const isDev = mode === 'development'
   
-  // More robust base path handling
-  let basePath = env.REACT_APP_BASE_URL || '/'
-  // Ensure the base path ends with a trailing slash
-  if (basePath !== '/' && !basePath.endsWith('/')) {
-    basePath += '/'
-  }
-  
   return {
     plugins: [
       react({
@@ -141,7 +134,5 @@ export default defineConfig(({ mode }) => {
       exclude: ['@vercel/analytics', '@vercel/speed-insights'],
     },
     envPrefix: 'REACT_APP_',
-    base: basePath,
-    root: './',
   }
 })
