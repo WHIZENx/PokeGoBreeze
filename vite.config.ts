@@ -89,6 +89,10 @@ export default defineConfig(({ mode }) => {
       preprocessorOptions: {
         scss: {
           additionalData: `@use "${resolve(__dirname, 'src/assets/styles/variables.scss')}";`,
+          sassOptions: {
+            outputStyle: 'compressed',
+            quietDeps: true,
+          }
         },
       },
       devSourcemap: isDev,
