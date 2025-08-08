@@ -6,7 +6,13 @@ import { resolve } from 'path'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const isDev = mode === 'development'
-  const basePath = env.REACT_APP_BASE_URL || '/'
+  
+  // More robust base path handling
+  let basePath = env.REACT_APP_BASE_URL || '/'
+  // Ensure the base path ends with a trailing slash
+  if (basePath !== '/' && !basePath.endsWith('/')) {
+    basePath += '/'
+  }
   
   return {
     plugins: [
