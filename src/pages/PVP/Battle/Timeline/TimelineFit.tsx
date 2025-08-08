@@ -74,7 +74,12 @@ const TimelineFit = (
                           ))}
                         </div>
                       ) : (
-                        showTap && <div className="wait-attack" style={{ width: value.size, left: calculateWidthBasedPosition(poke.timeline, index) }} />
+                        showTap && (
+                          <div
+                            className="wait-attack"
+                            style={{ width: value.size, left: calculateWidthBasedPosition(poke.timeline, index) }}
+                          />
+                        )
                       )}
                     </Fragment>
                   )}

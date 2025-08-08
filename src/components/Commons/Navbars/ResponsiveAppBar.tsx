@@ -138,7 +138,11 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
           onClick={onChangeTheme}
           color="inherit"
         >
-          {theme.palette.mode === TypeTheme.Light ? <LightModeIcon fontSize="large" color="inherit" /> : <DarkModeIcon fontSize="large" color="inherit" />}
+          {theme.palette.mode === TypeTheme.Light ? (
+            <LightModeIcon fontSize="large" color="inherit" />
+          ) : (
+            <DarkModeIcon fontSize="large" color="inherit" />
+          )}
         </IconButton>
       </Box>
     );

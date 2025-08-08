@@ -94,7 +94,11 @@ const NavbarComponent = (props: INavbarComponent) => {
           onClick={onChangeTheme}
           color="inherit"
         >
-          {props.mode === TypeTheme.Light ? <LightModeIcon fontSize="large" color="inherit" /> : <DarkModeIcon fontSize="large" color="inherit" />}
+          {props.mode === TypeTheme.Light ? (
+            <LightModeIcon fontSize="large" color="inherit" />
+          ) : (
+            <DarkModeIcon fontSize="large" color="inherit" />
+          )}
         </IconButton>
       </>
     );
