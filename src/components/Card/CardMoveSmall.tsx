@@ -70,11 +70,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                 <div className="select-down tw-flex tw-items-center">
                   {props.isSelect && <KeyboardArrowDownIcon fontSize="small" />}
                   {props.clearData && (
-                    <CloseIcon
-                      className="remove-pokemon-select"
-                      sx={{ color: 'red' }}
-                      onClick={() => props.clearData?.()}
-                    />
+                    <CloseIcon className="remove-pokemon-select" color="error" onClick={() => props.clearData?.()} />
                   )}
                 </div>
               )}

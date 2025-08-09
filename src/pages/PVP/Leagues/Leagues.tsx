@@ -245,15 +245,11 @@ const Leagues = () => {
         )}
         <li className="tw-font-medium">
           <h6 className="title-leagues">Allow Forms Evolution</h6>
-          {league.allowEvolutions ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
+          {league.allowEvolutions ? <DoneIcon color="success" /> : <CloseIcon color="error" />}
         </li>
         <li className="tw-font-medium">
           <h6 className="title-leagues">Unique Selected</h6>
-          {league.conditions.uniqueSelected ? (
-            <DoneIcon sx={{ color: 'green' }} />
-          ) : (
-            <CloseIcon sx={{ color: 'red' }} />
-          )}
+          {league.conditions.uniqueSelected ? <DoneIcon color="success" /> : <CloseIcon color="error" />}
         </li>
         {isNotEmpty(league.conditions.uniqueType) && (
           <li className="tw-font-medium unique-type">

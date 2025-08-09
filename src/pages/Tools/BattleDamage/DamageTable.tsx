@@ -104,9 +104,9 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.battleState ? (
                   props.result.battleState.isStab ? (
-                    <DoneIcon sx={{ color: 'green' }} />
+                    <DoneIcon color="success" />
                   ) : (
-                    <CloseIcon sx={{ color: 'red' }} />
+                    <CloseIcon color="error" />
                   )
                 ) : (
                   '-'
@@ -118,9 +118,9 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.battleState ? (
                   props.result.battleState.isWb ? (
-                    <DoneIcon sx={{ color: 'green' }} />
+                    <DoneIcon color="success" />
                   ) : (
-                    <CloseIcon sx={{ color: 'red' }} />
+                    <CloseIcon color="error" />
                   )
                 ) : (
                   '-'
@@ -132,9 +132,9 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.battleState ? (
                   props.result.battleState.isDodge ? (
-                    <DoneIcon sx={{ color: 'green' }} />
+                    <DoneIcon color="success" />
                   ) : (
-                    <CloseIcon sx={{ color: 'red' }} />
+                    <CloseIcon color="error" />
                   )
                 ) : (
                   '-'
@@ -146,9 +146,9 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.battleState ? (
                   props.result.battleState.isTrainer ? (
-                    <DoneIcon sx={{ color: 'green' }} />
+                    <DoneIcon color="success" />
                   ) : (
-                    <CloseIcon sx={{ color: 'red' }} />
+                    <CloseIcon color="error" />
                   )
                 ) : (
                   '-'

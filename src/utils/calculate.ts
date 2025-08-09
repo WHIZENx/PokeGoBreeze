@@ -322,63 +322,36 @@ export const calculateCatchChance = (baseCaptureRate: number | undefined, level:
 export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
   const maxCP = toNumber(cp);
   let minLV = minLevel();
-  for (let level = minLevel(); level <= maxLevel(); level += stepLevel()) {
+  let maxLV = minLV + 1;
+  for (let level = minLV; level <= maxLevel(); level += stepLevel()) {
     if (maxCP <= calculateCP(atk + maxIv(), def + maxIv(), sta + maxIv(), level)) {
       minLV = level;
       break;
     }
   }
-  let maxLV = minLV + 1;
   for (let level = minLV; level <= maxLevel(); level += stepLevel()) {
     if (calculateCP(atk, def, sta, level) >= maxCP) {
       maxLV = level;
       break;
     }
   }
-  const cpCache = new Map<string, number>();
-  const getCachedCP = (baseAtk: number, baseDef: number, baseSta: number, level: number) => {
-    const key = `${baseAtk}-${baseDef}-${baseSta}-${level}`;
-    if (!cpCache.has(key)) {
-      cpCache.set(key, calculateCP(baseAtk, baseDef, baseSta, level));
-    }
-    return cpCache.get(key);
-  };
 
   const predictArr: IPredictStatsModel[] = [];
   for (let level = minLV; level <= maxLV; level += stepLevel()) {
-    const ivCombinations = new Set<string>();
     for (let atkIV = minIv(); atkIV <= maxIv(); atkIV++) {
       for (let defIV = minIv(); defIV <= maxIv(); defIV++) {
-        const minPossibleCP = getCachedCP(atk + atkIV, def + defIV, sta + minIv(), level);
-        const maxPossibleCP = getCachedCP(atk + atkIV, def + defIV, sta + maxIv(), level);
-
-        if (!minPossibleCP || !maxPossibleCP || minPossibleCP > maxCP || maxPossibleCP < maxCP) {
-          continue;
-        }
-
         for (let staIV = minIv(); staIV <= maxIv(); staIV++) {
-          const currentCP = getCachedCP(atk + atkIV, def + defIV, sta + staIV, level);
-
-          if (currentCP === maxCP) {
-            const ivKey = `${atkIV}-${defIV}-${staIV}-${level}`;
-
-            if (!ivCombinations.has(ivKey)) {
-              ivCombinations.add(ivKey);
-
-              const hp = Math.max(1, calculateStatsBattle(sta, staIV, level, true));
-              const percent = toFloat(((atkIV + defIV + staIV) * 100) / (maxIv() * 3), 2);
-
-              predictArr.push(
-                PredictStatsModel.create({
-                  atk: atkIV,
-                  def: defIV,
-                  sta: staIV,
-                  level,
-                  percent,
-                  hp,
-                })
-              );
-            }
+          if (calculateCP(atk + atkIV, def + defIV, sta + staIV, level) === maxCP) {
+            predictArr.push(
+              PredictStatsModel.create({
+                atk: atkIV,
+                def: defIV,
+                sta: staIV,
+                level,
+                percent: toFloat(((atkIV + defIV + staIV) * 100) / (maxIv() * 3), 2),
+                hp: Math.max(1, calculateStatsBattle(sta, staIV, level, true)),
+              })
+            );
           }
         }
       }
@@ -632,70 +605,15 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCp: numbe
   if (atk === 0 || def === 0 || sta === 0) {
     return dataList;
   }
-  const cpCache = new Map<string, number>();
-  const getCachedCP = (baseAtk: number, baseDef: number, baseSta: number, level: number) => {
-    const key = `${baseAtk}-${baseDef}-${baseSta}-${level}`;
-    if (!cpCache.has(key)) {
-      cpCache.set(key, calculateCP(baseAtk, baseDef, baseSta, level));
-    }
-    return cpCache.get(key);
-  };
-
   let seqId = 0;
-  let minLV = minLevel();
-  let maxLV = maxLevel();
-
-  if (maxCP > 0) {
-    for (let level = minLV; level <= maxLV; level += stepLevel()) {
-      const maxPossibleCP = getCachedCP(atk + maxIv(), def + maxIv(), sta + maxIv(), level);
-      if (!isUndefined(maxPossibleCP) && maxPossibleCP > maxCP) {
-        maxLV = level - stepLevel();
-        break;
-      }
-    }
-  }
-
-  if (minCp > 0) {
-    for (let level = minLV; level <= maxLV; level += stepLevel()) {
-      const minPossibleCP = getCachedCP(atk + minIv(), def + minIv(), sta + minIv(), level);
-      if (!isUndefined(minPossibleCP) && minPossibleCP >= minCp) {
-        minLV = level;
-        break;
-      }
-    }
-  }
-
-  for (let level = minLV; level <= maxLV; level += stepLevel()) {
-    const minLevelCP = getCachedCP(atk + minIv(), def + minIv(), sta + minIv(), level);
-    const maxLevelCP = getCachedCP(atk + maxIv(), def + maxIv(), sta + maxIv(), level);
-
-    if (
-      (maxCP > 0 && !isUndefined(minLevelCP) && minLevelCP > maxCP) ||
-      (minCp > 0 && !isUndefined(maxLevelCP) && maxLevelCP < minCp)
-    ) {
-      continue;
-    }
-
+  for (let level = minLevel(); level <= maxLevel(); level += stepLevel()) {
     for (let atkIV = minIv(); atkIV <= maxIv(); ++atkIV) {
       for (let defIV = minIv(); defIV <= maxIv(); ++defIV) {
-        const minAtkDefCP = getCachedCP(atk + atkIV, def + defIV, sta + minIv(), level);
-        const maxAtkDefCP = getCachedCP(atk + atkIV, def + defIV, sta + maxIv(), level);
-
-        if (
-          (maxCP > 0 && !isUndefined(minAtkDefCP) && minAtkDefCP > maxCP) ||
-          (minCp > 0 && !isUndefined(maxAtkDefCP) && maxAtkDefCP < minCp)
-        ) {
-          continue;
-        }
-
         for (let staIV = minIv(); staIV <= maxIv(); ++staIV) {
-          const cp = getCachedCP(atk + atkIV, def + defIV, sta + staIV, level);
-
-          if (!isUndefined(cp) && (minCp === 0 || minCp <= cp) && (maxCP === 0 || cp <= maxCP)) {
+          const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
+          if ((minCp === 0 || minCp <= cp) && (maxCP === 0 || cp <= maxCP)) {
             dataList.push(getBaseStatsByIVandLevel(atk, def, sta, cp, seqId, level, atkIV, defIV, staIV));
             seqId++;
-          } else if (maxCP > 0 && !isUndefined(cp) && cp > maxCP) {
-            break;
           }
         }
       }

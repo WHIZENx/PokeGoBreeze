@@ -664,10 +664,10 @@ const Battle = () => {
           <div key={index} className="tw-flex tw-relative tw-gap-y-1">
             <img width={15} height={15} alt="Image ATK" src={value.type === TypeAction.Atk ? ATK_LOGO : DEF_LOGO} />
             <div className="tw-absolute icon-buff">
-              {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
-              {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
-              {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
-              {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
+              {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" color="success" />}
+              {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" color="success" />}
+              {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" color="error" />}
+              {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" color="error" />}
               <span className={combineClasses('tw-text-sm', value.power < 0 ? 'text-danger' : 'text-success')}>
                 {value.power}
               </span>

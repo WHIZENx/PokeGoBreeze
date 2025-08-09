@@ -540,11 +540,7 @@ const Move = (props: IMovePage) => {
                         <CircleIcon className="tw-text-xs" /> {getKeyWithData(BuffType, value.target)}
                       </td>
                       <td>
-                        {value.power > 0 ? (
-                          <ArrowUpwardIcon sx={{ color: 'green' }} />
-                        ) : (
-                          <ArrowDownwardIcon sx={{ color: 'red' }} />
-                        )}
+                        {value.power > 0 ? <ArrowUpwardIcon color="success" /> : <ArrowDownwardIcon color="error" />}
                         <span className="tw-inline-block caption">
                           {value.type === TypeAction.Atk ? 'Attack ' : 'Defense '}
                           <span
@@ -710,9 +706,9 @@ const Move = (props: IMovePage) => {
                                   <td>Multi Use</td>
                                   <td colSpan={2}>
                                     {move.bonus.enableMultiUse ? (
-                                      <DoneIcon sx={{ color: 'green' }} />
+                                      <DoneIcon color="success" />
                                     ) : (
-                                      <CloseIcon sx={{ color: 'red' }} />
+                                      <CloseIcon color="error" />
                                     )}
                                   </td>
                                 </tr>
@@ -720,9 +716,9 @@ const Move = (props: IMovePage) => {
                                   <td>None Combat</td>
                                   <td colSpan={2}>
                                     {move.bonus.enableNonCombatMove ? (
-                                      <DoneIcon sx={{ color: 'green' }} />
+                                      <DoneIcon color="success" />
                                     ) : (
-                                      <CloseIcon sx={{ color: 'red' }} />
+                                      <CloseIcon color="error" />
                                     )}
                                   </td>
                                 </tr>

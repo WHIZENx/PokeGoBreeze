@@ -361,6 +361,65 @@ const FindBattle = () => {
     );
   };
 
+  const renderPokemonBattleLeague = (
+    value: IQueryStatesEvoChain[],
+    item: IQueryStatesEvoChain,
+    battleStats: IBattleBaseStats,
+    cp: BattleLeagueCPType
+  ) => (
+    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
+      {battleStats.rank ? (
+        <ul className="list-best-league">
+          <h6>
+            <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon(cp)} />
+            <b>{` ${getPokemonBattleLeagueName(cp)}`}</b>
+          </h6>
+          <li>
+            Rank: <b>#{battleStats.rank}</b>
+          </li>
+          <li>CP: {battleStats.CP}</li>
+          <li>Level: {battleStats.level}</li>
+          <li>
+            {'Stats Prod (%): '}
+            <span className={combineClasses('!tw-bg-transparent', getTextColorRatio(battleStats.ratio))}>
+              <b>{toFloatWithPadding(battleStats.ratio, 2)}</b>
+            </span>
+          </li>
+          <li>
+            <span className="tw-flex tw-items-center">
+              <Candy id={item.id} className="tw-mr-1" />
+              <span className="tw-flex tw-items-center tw-mr-1">
+                {toNumber(battleStats.resultBetweenCandy) + getCandyEvo(value, item.id)}
+                <span className="tw-inline-block caption tw-text-green-600">(+{getCandyEvo(value, item.id)})</span>
+              </span>
+              <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
+              {battleStats.resultBetweenXLCandy}
+            </span>
+          </li>
+          <li>
+            <img
+              className="tw-mr-1"
+              alt="Image Stardust"
+              height={20}
+              src={APIService.getItemSprite('stardust_painted')}
+            />
+            {` ${battleStats.resultBetweenStardust}`}
+          </li>
+        </ul>
+      ) : (
+        <div>
+          <h6>
+            <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon(cp)} />
+            <b>{` ${getPokemonBattleLeagueName(cp)}`}</b>
+          </h6>
+          <b className="tw-text-red-600 tw-p-3">
+            <CloseIcon color="error" /> Not Elidge
+          </b>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="tw-container">
       <Find isHide clearStats={clearArrStats} />
@@ -538,272 +597,36 @@ const FindBattle = () => {
                                 {toNumber(item.maxCP) < maxCP ? (
                                   <div className="tw-text-red-600">
                                     <b>
-                                      <CloseIcon sx={{ color: 'red' }} /> Not Elidge
+                                      <CloseIcon color="error" /> Not Elidge
                                     </b>
                                   </div>
                                 ) : (
                                   <Fragment>
                                     <hr />
-                                    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
-                                      {item.battleLeague.little.rank ? (
-                                        <ul className="list-best-league">
-                                          <h6>
-                                            <img
-                                              alt="Pokémon Model"
-                                              height={32}
-                                              src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
-                                            />
-                                            <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
-                                          </h6>
-                                          <li>
-                                            Rank: <b>#{item.battleLeague.little.rank}</b>
-                                          </li>
-                                          <li>CP: {item.battleLeague.little.CP}</li>
-                                          <li>Level: {item.battleLeague.little.level}</li>
-                                          <li>
-                                            {'Stats Prod (%): '}
-                                            <span
-                                              className={combineClasses(
-                                                'bg-transparent',
-                                                getTextColorRatio(item.battleLeague.little.ratio)
-                                              )}
-                                            >
-                                              <b>{toFloatWithPadding(item.battleLeague.little.ratio, 2)}</b>
-                                            </span>
-                                          </li>
-                                          <li>
-                                            <span className="tw-flex tw-items-center">
-                                              <Candy id={item.id} className="tw-mr-1" />
-                                              <span className="tw-flex tw-items-center tw-mr-1">
-                                                {toNumber(item.battleLeague.little.resultBetweenCandy) +
-                                                  getCandyEvo(value, item.id)}
-                                                <span className="tw-inline-block caption tw-text-green-600">
-                                                  (+{getCandyEvo(value, item.id)})
-                                                </span>
-                                              </span>
-                                              <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
-                                              {item.battleLeague.little.resultBetweenXLCandy}
-                                            </span>
-                                          </li>
-                                          <li>
-                                            <img
-                                              className="tw-mr-1"
-                                              alt="Image Stardust"
-                                              height={20}
-                                              src={APIService.getItemSprite('stardust_painted')}
-                                            />
-                                            {` ${item.battleLeague.little.resultBetweenStardust}`}
-                                          </li>
-                                        </ul>
-                                      ) : (
-                                        <div>
-                                          <h6>
-                                            <img
-                                              alt="Pokémon Model"
-                                              height={32}
-                                              src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
-                                            />
-                                            <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
-                                          </h6>
-                                          <b className="tw-text-red-600 tw-p-3">
-                                            <CloseIcon sx={{ color: 'red' }} /> Not Elidge
-                                          </b>
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
-                                      {item.battleLeague.great.rank ? (
-                                        <ul className="list-best-league">
-                                          <h6>
-                                            <img
-                                              alt="Pokémon Model"
-                                              height={32}
-                                              src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
-                                            />
-                                            <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
-                                          </h6>
-                                          <li>
-                                            Rank: <b>#{item.battleLeague.great.rank}</b>
-                                          </li>
-                                          <li>CP: {item.battleLeague.great.CP}</li>
-                                          <li>Level: {item.battleLeague.great.level}</li>
-                                          <li>
-                                            {'Stats Prod (%): '}
-                                            <span
-                                              className={combineClasses(
-                                                'bg-transparent',
-                                                getTextColorRatio(item.battleLeague.great.ratio)
-                                              )}
-                                            >
-                                              <b>{toFloatWithPadding(item.battleLeague.great.ratio, 2)}</b>
-                                            </span>
-                                          </li>
-                                          <li>
-                                            <span className="tw-flex tw-items-center">
-                                              <Candy id={item.id} className="tw-mr-1" />
-                                              <span className="tw-flex tw-items-center">
-                                                {toNumber(item.battleLeague.great.resultBetweenCandy) +
-                                                  getCandyEvo(value, item.id)}
-                                                <span className="tw-inline-block caption tw-text-green-600">
-                                                  (+{getCandyEvo(value, item.id)})
-                                                </span>
-                                              </span>
-                                              <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
-                                              {item.battleLeague.great.resultBetweenXLCandy}
-                                            </span>
-                                          </li>
-                                          <li>
-                                            <img
-                                              className="tw-mr-1"
-                                              alt="Image Stardust"
-                                              height={20}
-                                              src={APIService.getItemSprite('stardust_painted')}
-                                            />
-                                            {` ${item.battleLeague.great.resultBetweenStardust}`}
-                                          </li>
-                                        </ul>
-                                      ) : (
-                                        <div>
-                                          <h6>
-                                            <img
-                                              alt="Pokémon Model"
-                                              height={32}
-                                              src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
-                                            />
-                                            <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
-                                          </h6>
-                                          <b className="tw-text-red-600 tw-p-3">
-                                            <CloseIcon sx={{ color: 'red' }} /> Not Elidge
-                                          </b>
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
-                                      {item.battleLeague.ultra.rank ? (
-                                        <ul className="list-best-league">
-                                          <h6>
-                                            <img
-                                              alt="Pokémon Model"
-                                              height={32}
-                                              src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
-                                            />
-                                            <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
-                                          </h6>
-                                          <li>
-                                            Rank: <b>#{item.battleLeague.ultra.rank}</b>
-                                          </li>
-                                          <li>CP: {item.battleLeague.ultra.CP}</li>
-                                          <li>Level: {item.battleLeague.ultra.level}</li>
-                                          <li>
-                                            {'Stats Prod (%): '}
-                                            <span
-                                              className={combineClasses(
-                                                'bg-transparent',
-                                                getTextColorRatio(item.battleLeague.ultra.ratio)
-                                              )}
-                                            >
-                                              <b>{toFloatWithPadding(item.battleLeague.ultra.ratio, 2)}</b>
-                                            </span>
-                                          </li>
-                                          <li>
-                                            <span className="tw-flex tw-items-center">
-                                              <Candy id={item.id} className="tw-mr-1" />
-                                              <span className="tw-flex tw-items-center">
-                                                {toNumber(item.battleLeague.ultra.resultBetweenCandy) +
-                                                  getCandyEvo(value, item.id)}
-                                                <span className="tw-inline-block caption tw-text-green-600">
-                                                  (+{getCandyEvo(value, item.id)})
-                                                </span>
-                                              </span>
-                                              <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
-                                              {item.battleLeague.ultra.resultBetweenXLCandy}
-                                            </span>
-                                          </li>
-                                          <li>
-                                            <img
-                                              className="tw-mr-1"
-                                              alt="Image Stardust"
-                                              height={20}
-                                              src={APIService.getItemSprite('stardust_painted')}
-                                            />
-                                            {` ${item.battleLeague.ultra.resultBetweenStardust}`}
-                                          </li>
-                                        </ul>
-                                      ) : (
-                                        <div>
-                                          <h6>
-                                            <img
-                                              alt="Pokémon Model"
-                                              height={32}
-                                              src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
-                                            />
-                                            <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
-                                          </h6>
-                                          <b className="tw-text-red-600 tw-p-3">
-                                            <CloseIcon sx={{ color: 'red' }} /> Not Elidge
-                                          </b>
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
-                                      {item.battleLeague.master.rank ? (
-                                        <ul className="list-best-league">
-                                          <h6>
-                                            <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
-                                            <b>{` ${getPokemonBattleLeagueName()}`}</b>
-                                          </h6>
-                                          <li>
-                                            Rank: <b>#{item.battleLeague.master.rank}</b>
-                                          </li>
-                                          <li>CP: {item.battleLeague.master.CP}</li>
-                                          <li>Level: {item.battleLeague.master.level}</li>
-                                          <li>
-                                            {'Stats Prod (%): '}
-                                            <span
-                                              className={combineClasses(
-                                                'bg-transparent',
-                                                getTextColorRatio(item.battleLeague.master.ratio)
-                                              )}
-                                            >
-                                              <b>{toFloatWithPadding(item.battleLeague.master.ratio, 2)}</b>
-                                            </span>
-                                          </li>
-                                          <li>
-                                            <span className="tw-flex tw-items-center">
-                                              <Candy id={item.id} className="tw-mr-1" />
-                                              <span className="tw-flex tw-items-center">
-                                                {toNumber(item.battleLeague.master.resultBetweenCandy) +
-                                                  getCandyEvo(value, item.id)}
-                                                <span className="tw-inline-block caption tw-text-green-600">
-                                                  (+{getCandyEvo(value, item.id)})
-                                                </span>
-                                              </span>
-                                              <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
-                                              {item.battleLeague.master.resultBetweenXLCandy}
-                                            </span>
-                                          </li>
-                                          <li>
-                                            <img
-                                              className="tw-mr-1"
-                                              alt="Image Stardust"
-                                              height={20}
-                                              src={APIService.getItemSprite('stardust_painted')}
-                                            />
-                                            {` ${item.battleLeague.master.resultBetweenStardust}`}
-                                          </li>
-                                        </ul>
-                                      ) : (
-                                        <div>
-                                          <h6>
-                                            <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
-                                            <b>{` ${getPokemonBattleLeagueName()}`}</b>
-                                          </h6>
-                                          <b className="tw-text-red-600 tw-p-3">
-                                            <CloseIcon sx={{ color: 'red' }} /> Not Elidge
-                                          </b>
-                                        </div>
-                                      )}
-                                    </div>
+                                    {renderPokemonBattleLeague(
+                                      value,
+                                      item,
+                                      item.battleLeague.little,
+                                      BattleLeagueCPType.Little
+                                    )}
+                                    {renderPokemonBattleLeague(
+                                      value,
+                                      item,
+                                      item.battleLeague.great,
+                                      BattleLeagueCPType.Great
+                                    )}
+                                    {renderPokemonBattleLeague(
+                                      value,
+                                      item,
+                                      item.battleLeague.ultra,
+                                      BattleLeagueCPType.Ultra
+                                    )}
+                                    {renderPokemonBattleLeague(
+                                      value,
+                                      item,
+                                      item.battleLeague.master,
+                                      BattleLeagueCPType.Master
+                                    )}
                                   </Fragment>
                                 )}
                               </div>
