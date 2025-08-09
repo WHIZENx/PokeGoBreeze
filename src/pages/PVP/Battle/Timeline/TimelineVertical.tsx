@@ -92,8 +92,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
                   ? 'fast-attack-container'
                   : 'wait-attack-container',
                 end ? 'tw-justify-end' : '',
-                'turn-battle',
-                value.isTap ? `${value.color}-border` : ''
+                'turn-battle'
               )}
               anchorOrigin={{
                 vertical: 'top',

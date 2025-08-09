@@ -60,7 +60,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                       props.isDisable ? MoveType.Disable : move.moveType || props.moveType
                     )?.toLowerCase()}-ic`,
                     props.isDisable && '!tw-text-lightgray',
-                    'type-icon-small ic tw-flex tw-items-center tw-h-3'
+                    'type-icon-small ic !tw-flex tw-items-center tw-h-3'
                   )}
                 >
                   {getKeyWithData(MoveType, move.moveType || props.moveType)}
