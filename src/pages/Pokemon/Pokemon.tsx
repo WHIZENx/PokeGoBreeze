@@ -601,7 +601,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   return (
     <Error isError={!isFound}>
-      <div className="tw-w-full row prev-next-block tw-sticky" style={{ top: 56 }}>
+      <div className="tw-w-full row prev-next-block tw-sticky tw-top-14">
         {params.id ? (
           <SearchBarMain data={dataStorePokemon} />
         ) : (
@@ -670,7 +670,7 @@ const Pokemon = (props: IPokemonPage) => {
                       )}
                     </div>
                     <div className="row-extra tw-flex">
-                      <div className="tw-inline-flex tw-justify-center tw-mr-1" style={{ width: 20 }}>
+                      <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(
@@ -703,7 +703,7 @@ const Pokemon = (props: IPokemonPage) => {
                       )}
                     </div>
                     <div className="row-extra tw-flex">
-                      <div className="tw-inline-flex tw-justify-center tw-mr-1" style={{ width: 20 }}>
+                      <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(

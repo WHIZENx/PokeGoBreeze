@@ -84,7 +84,7 @@ const FromChange = (props: IFromChangeComponent) => {
               <div className="tw-mt-2 tw-flex">
                 <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-w-1/2">
                   <div className="tw-flex tw-flex-col tw-items-center tw-justify-center" id="form-origin">
-                    <div style={{ width: 96 }}>
+                    <div className="tw-w-24">
                       <img
                         className="pokemon-sprite-large"
                         alt="Pokémon Model"
@@ -113,7 +113,7 @@ const FromChange = (props: IFromChangeComponent) => {
                           className="tw-flex tw-flex-col tw-items-center tw-justify-center"
                           id={`form-${key}-${index}`}
                         >
-                          <div style={{ width: 96 }}>
+                          <div className="tw-w-24">
                             <img
                               className="pokemon-sprite-large"
                               alt="Pokémon Model"
@@ -161,7 +161,7 @@ const FromChange = (props: IFromChangeComponent) => {
                               )}
                               {value.stardustCost && (
                                 <span className="tw-flex tw-items-center caption tw-mt-1 w-max-content">
-                                  <div className="tw-inline-flex tw-justify-center" style={{ width: 20 }}>
+                                  <div className="tw-inline-flex tw-justify-center tw-w-5">
                                     <img
                                       alt="Image Stardust"
                                       height={20}

@@ -28,7 +28,7 @@ const TimelineFit = (
 
   const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle) => (
     <Fragment>
-      <div className="tw-mt-2" style={{ height: 12 }}>
+      <div className="tw-mt-2 tw-h-3">
         <div className="tw-relative timeline-fit-container">
           {poke.timeline.map((value, index) => (
             <Fragment key={index}>
@@ -46,8 +46,8 @@ const TimelineFit = (
                 <Fragment>
                   {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                     <div
-                      className="tw-absolute icon-buff-timeline"
-                      style={{ left: calculateWidthBasedPosition(poke.timeline, index), top: 10 }}
+                      className="tw-absolute icon-buff-timeline tw-top-[10px]"
+                      style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}
                     >
                       {value.buff?.map((b, i) => (
                         <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
@@ -61,11 +61,8 @@ const TimelineFit = (
                       pokeObj.timeline.at(index)?.type === AttackType.Charge &&
                       isNotEmpty(value.buff) ? (
                         <div
-                          className="tw-absolute icon-buff-timeline"
-                          style={{
-                            left: calculateWidthBasedPosition(poke.timeline, index),
-                            top: 10,
-                          }}
+                          className="tw-absolute icon-buff-timeline tw-top-[10px]"
+                          style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}
                         >
                           {value.buff?.map((b, i) => (
                             <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
@@ -89,7 +86,7 @@ const TimelineFit = (
           ))}
         </div>
       </div>
-      <div className="tw-relative timeline-fit-container" style={{ height: 30 }}>
+      <div className="tw-relative timeline-fit-container tw-h-7.5">
         {poke.timeline.map((value, index) => (
           <Fragment key={index}>
             {value.type === AttackType.Block && (

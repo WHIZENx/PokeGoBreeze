@@ -63,12 +63,7 @@ class ErrorBoundary extends Component<Props, IState> {
       }
 
       return (
-        <div
-          className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-p-4"
-          style={{
-            minHeight: '50vh',
-          }}
-        >
+        <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-p-4 tw-min-h-[50vh]">
           <Typography variant="h5" component="h2" gutterBottom>
             Something went wrong
           </Typography>

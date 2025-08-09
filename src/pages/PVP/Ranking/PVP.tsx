@@ -278,7 +278,7 @@ const RankingPVP = (props: IStyleSheetData) => {
         <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
       </LinkToTop>
       <div className="tw-flex tw-justify-center">
-        <span className="tw-relative" style={{ width: 50 }}>
+        <span className="tw-relative tw-w-12.5">
           <PokemonIconType pokemonType={data.pokemonType} size={28}>
             <img
               alt="Image League"

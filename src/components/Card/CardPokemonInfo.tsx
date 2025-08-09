@@ -85,7 +85,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
         <div className="tw-h-full tw-flex tw-flex-col tw-justify-between tw-gap-2">
           <div>
             <div className="tw-flex tw-justify-center tw-p-2">
-              <span style={{ width: 96 }}>
+              <span className="tw-w-24">
                 <img
                   ref={imageRef}
                   className="pokemon-sprite-large"

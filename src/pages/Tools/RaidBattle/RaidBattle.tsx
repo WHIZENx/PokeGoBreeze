@@ -862,7 +862,7 @@ const RaidBattle = () => {
     return (
       <Fragment>
         <div className="tw-w-full tw-flex tw-flex-col tw-items-center">
-          <div className="tw-relative" style={{ width: 96 }}>
+          <div className="tw-relative tw-w-24">
             <PokemonIconType pokemonType={showSettingPokemon.pokemon?.stats?.pokemonType} size={36}>
               <img
                 alt="Pokémon Image"
@@ -1791,7 +1791,7 @@ const RaidBattle = () => {
         title={`Trainer #${trainerBattleId + 1}`}
         content={
           <>
-            <div className="tw-overflow-y-auto" style={{ maxHeight: '60vh' }}>
+            <div className="tw-overflow-y-auto tw-max-h-[60vh]">
               {pokemonBattle.map((pokemon, index) => (
                 <div className={index === 0 ? '' : 'tw-mt-2'} key={index}>
                   <PokemonRaid
@@ -1843,11 +1843,7 @@ const RaidBattle = () => {
         open={showOption}
         onClose={handleCloseOption}
         title="Search Options"
-        content={
-          <div className="tw-overflow-y-auto" style={{ maxHeight: '60vh' }}>
-            {modalFormFilters()}
-          </div>
-        }
+        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalFormFilters()}</div>}
         actions={[
           {
             label: 'Cancel',
@@ -1865,11 +1861,7 @@ const RaidBattle = () => {
         open={showSettingPokemon.isShow}
         onClose={handleCloseSettingPokemon}
         title="Pokémon Settings"
-        content={
-          <div className="tw-overflow-y-auto" style={{ maxHeight: '60vh' }}>
-            {modalFormSetting()}
-          </div>
-        }
+        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalFormSetting()}</div>}
         actions={[
           {
             label: 'Cancel',
@@ -1887,11 +1879,7 @@ const RaidBattle = () => {
         open={showMovePokemon.isShow}
         onClose={handleCloseMovePokemon}
         title="Move Pokémon"
-        content={
-          <div className="tw-overflow-y-auto tw-py-2" style={{ maxHeight: '60vh' }}>
-            {modalMovePokemon()}
-          </div>
-        }
+        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalMovePokemon()}</div>}
         actions={[
           {
             label: 'Cancel',

@@ -25,6 +25,7 @@ module.exports = {
       },
       lineHeight: {
         ...defaultTheme.lineHeight,
+        1: '1',
         default: '1.5',
         small: '1.2',
       },
@@ -64,6 +65,12 @@ module.exports = {
         unit: 'var(--spacing-unit)',
         7.5: '30px',
         12.5: '50px',
+        15: '60px',
+        18: '72px',
+        20: '80px',
+        22.5: '90px',
+        30: '120px',
+        36.5: '146px',
       },
       screens: {
         ...defaultTheme.screens,

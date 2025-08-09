@@ -288,7 +288,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
           />
           <div className="tw-w-full ranking-info tw-mt-2">
             <div className="tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-4">
-              <div className="tw-relative filter-shadow" style={{ width: 128 }}>
+              <div className="tw-relative filter-shadow tw-w-32">
                 <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>
                   <img
                     alt="Image League"

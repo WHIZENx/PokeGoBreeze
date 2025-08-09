@@ -810,7 +810,7 @@ const Battle = () => {
             children: (
               <>
                 <div className="tw-w-full tw-flex tw-justify-center">
-                  <div className="tw-relative filter-shadow" style={{ width: 128 }}>
+                  <div className="tw-relative filter-shadow tw-w-32">
                     <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
                       <img
                         alt="Image League"
@@ -1181,7 +1181,7 @@ const Battle = () => {
       <div className="tw-flex timeline-vertical">
         <div className="tw-w-1/2">
           <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-start tw-gap-2">
-            <div className="tw-relative filter-shadow" style={{ width: 35 }}>
+            <div className="tw-relative filter-shadow tw-w-[35px]">
               <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
                 <img
                   alt="Image League"
@@ -1203,7 +1203,7 @@ const Battle = () => {
         </div>
         <div className="tw-w-1/2">
           <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-end tw-gap-2">
-            <div className="tw-relative filter-shadow" style={{ width: 35 }}>
+            <div className="tw-relative filter-shadow tw-w-[35px]">
               <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
                 <img
                   alt="Image League"
@@ -1357,7 +1357,7 @@ const Battle = () => {
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
           <div className="tw-text-center tw-mt-2">
             <ButtonMui
-              style={{ height: 50 }}
+              className="tw-h-12.5"
               startIcon={
                 isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
                   <RestartAltIcon />

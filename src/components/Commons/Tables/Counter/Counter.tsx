@@ -259,8 +259,8 @@ const Counter = (props: ICounterComponent) => {
           <div className="ph-col-12 tw-bg-table-primary !tw-m-0 !tw-p-0 tw-gap-2">
             {[...Array(5).keys()].map((_, index) => (
               <div key={index} className="ph-row tw-flex tw-gap-[5%]">
-                <div className="ph-picture !tw-w-1/4" style={{ height: 100 }} />
-                <div className="ph-picture !tw-w-[70%]" style={{ height: 100 }} />
+                <div className="ph-picture !tw-w-1/4 !tw-h-full" />
+                <div className="ph-picture !tw-w-[70%] !tw-h-full" />
               </div>
             ))}
           </div>

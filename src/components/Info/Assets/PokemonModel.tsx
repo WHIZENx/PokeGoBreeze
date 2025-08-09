@@ -97,7 +97,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                     )}
                     <div className={combineClasses('model text-center', value.shiny ? 'tw-w-1/2' : 'tw-w-full')}>
                       <div className="tw-flex tw-w-full tw-justify-center">
-                        <div style={{ width: 80 }}>
+                        <div className="tw-w-20">
                           <img
                             className="pokemon-sprite-model"
                             alt="Pokémon Model"
@@ -118,7 +118,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                     {value.shiny && (
                       <div className="model tw-text-center">
                         <div className="tw-flex tw-w-full tw-justify-center">
-                          <div style={{ width: 80 }}>
+                          <div className="tw-w-20">
                             <img
                               className="pokemon-sprite-model"
                               alt="Pokémon Model"

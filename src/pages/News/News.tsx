@@ -230,7 +230,7 @@ const News = () => {
             <div className="ph-col-12 !tw-m-0 !tw-p-0 tw-gap-3">
               {[...Array(3).keys()].map((_, index) => (
                 <div key={index} className="ph-row">
-                  <div className="ph-picture tw-w-full" style={{ height: 256 }} />
+                  <div className="ph-picture tw-w-full tw-h-[256px]" />
                 </div>
               ))}
             </div>

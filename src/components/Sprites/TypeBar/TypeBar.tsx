@@ -8,7 +8,7 @@ import { combineClasses } from '../../../utils/extension';
 const TypeBar = (props: ITypeBarComponent) => {
   return (
     <div className={combineClasses('tw-flex tw-align-items-center border-type', props.type?.toLowerCase())}>
-      <span style={{ width: 35 }}>
+      <span className="tw-w-[35px]">
         <img
           className="sprite-type tw-p-1 tw-bg-black"
           alt="Pokémon GO Type Logo"

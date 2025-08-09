@@ -164,7 +164,7 @@ const FormComponent = (props: IFormInfoComponent) => {
               {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
                 <div key={index} className="ph-col-3 !tw-p-0 tw-my-1">
                   <div className="ph-row">
-                    <div className="ph-picture ph-col-3 !tw-m-0" style={{ height: 146, width: 90 }} />
+                    <div className="ph-picture ph-col-3 !tw-m-0 tw-h-36.5 tw-w-22.5" />
                   </div>
                 </div>
               ))}

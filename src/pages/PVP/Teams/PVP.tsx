@@ -323,7 +323,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         {value.teamsData.map((value, index) => (
           <div className="tw-text-center" key={index}>
             <div className="tw-flex tw-justify-center">
-              <div className="tw-relative filter-shadow" style={{ width: 96 }}>
+              <div className="tw-relative filter-shadow tw-w-24">
                 <PokemonIconType pokemonType={value.pokemonType} size={48}>
                   <img
                     alt="Image League"
@@ -341,7 +341,7 @@ const TeamPVP = (props: IStyleSheetData) => {
           </div>
         ))}
       </div>
-      <div className="tw-flex tw-items-center tw-mr-3" style={{ columnGap: 30 }}>
+      <div className="tw-flex tw-items-center tw-mr-3 tw-gap-x-12.5">
         <div className="tw-text-center" style={{ width: 200 }}>
           <span className="ranking-score score-ic tw-text-black">{value.teamScore}</span>
         </div>
@@ -373,7 +373,7 @@ const TeamPVP = (props: IStyleSheetData) => {
             <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
           </LinkToTop>
           <div className="tw-flex tw-justify-center">
-            <div className="tw-relative filter-shadow" style={{ width: 96 }}>
+            <div className="tw-relative filter-shadow tw-w-24">
               <PokemonIconType pokemonType={value.pokemonType} size={48}>
                 <img
                   alt="Image League"
@@ -439,7 +439,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         <div className="ranking-container card-container">
           <div className="ranking-group tw-w-full ranking-header tw-gap-y-3">
             <div className="ranking-score">Pokémon</div>
-            <div className="tw-flex tw-mr-3" style={{ columnGap: 30 }}>
+            <div className="tw-flex tw-mr-3 tw-gap-x-7.5">
               <div
                 className="tw-text-center tw-w-max"
                 onClick={() => {
@@ -522,7 +522,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                   <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
                 </LinkToTop>
                 <div className="tw-flex tw-justify-center">
-                  <span className="tw-relative filter-shadow" style={{ width: 96 }}>
+                  <span className="tw-relative filter-shadow tw-w-24">
                     <PokemonIconType pokemonType={value.pokemonType} size={48}>
                       <img
                         alt="Image League"
@@ -572,7 +572,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                       )}
                     </div>
                   </div>
-                  <div className="tw-flex filter-shadow tw-items-center tw-mr-3" style={{ columnGap: 30 }}>
+                  <div className="tw-flex filter-shadow tw-items-center tw-mr-3 tw-gap-x-7.5">
                     <div className="tw-text-center" style={{ width: 120 }}>
                       <span className="ranking-score score-ic tw-text-black">{value.teamScore}</span>
                     </div>
@@ -595,7 +595,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         <div className="tw-grid ranking-container">
           <div className="ranking-group tw-w-full ranking-header tw-gap-y-3">
             <div className="ranking-score">Team</div>
-            <div className="tw-flex" style={{ marginRight: 20, columnGap: 60 }}>
+            <div className="tw-flex tw-mr-5 tw-gap-x-15">
               <div
                 className="tw-text-center tw-w-max"
                 onClick={() => {

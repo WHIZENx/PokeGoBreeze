@@ -264,7 +264,7 @@ const CalculatePoint = () => {
         overlap="circular"
         badgeContent={isRaid && action === TypeAction.Def ? `Tier ${tier}` : undefined}
       >
-        <span className="tw-relative" style={{ width: 96 }}>
+        <span className="tw-relative tw-w-24">
           <img
             className="tw-absolute"
             alt="Image Logo"
