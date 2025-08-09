@@ -224,7 +224,7 @@ const News = () => {
       return element;
     }
     return (
-      <div className="tw-w-full tw-h-full counter-none v-align-top">
+      <div className="tw-w-full tw-h-full counter-none tw-align-top">
         <div className="text-origin tw-text-center">
           <div className="ph-item tw-bg-transparent">
             <div className="ph-col-12 !tw-m-0 !tw-p-0 tw-gap-3">
