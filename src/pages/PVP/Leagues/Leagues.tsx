@@ -676,7 +676,7 @@ const Leagues = () => {
         })}
       />
 
-      <div className="tw-w-1/2 tw-mt-2" style={{ minWidth: 300 }}>
+      <div className="tw-w-1/2 tw-mt-2 tw-min-w-75">
         <InputMuiSearch
           isNoWrap
           labelPrepend="Find League"

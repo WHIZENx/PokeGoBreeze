@@ -414,7 +414,7 @@ const CalculatePoint = () => {
                         disabled={isRaid}
                       />
                       {move && (
-                        <div className="tw-m-auto" style={{ width: 300 }}>
+                        <div className="tw-m-auto tw-w-75">
                           <p>
                             - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                           </p>
@@ -554,7 +554,7 @@ const CalculatePoint = () => {
                         disabled={isRaid}
                       />
                       {moveDef && (
-                        <div className="tw-m-auto" style={{ width: 300 }}>
+                        <div className="tw-m-auto tw-w-75">
                           <p>
                             - Move Ability Type: <b>{getKeyWithData(TypeMove, moveDef.typeMove)}</b>
                           </p>
@@ -725,7 +725,7 @@ const CalculatePoint = () => {
                           pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
                         />
                         {fMove && (
-                          <div className="tw-mt-2 tw-m-auto" style={{ width: 300 }}>
+                          <div className="tw-mt-2 tw-m-auto tw-w-75">
                             <p>
                               - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
                             </p>
@@ -766,7 +766,7 @@ const CalculatePoint = () => {
                           pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
                         />
                         {cMove && (
-                          <div className="tw-mt-2 tw-m-auto" style={{ width: 300 }}>
+                          <div className="tw-mt-2 tw-m-auto tw-w-75">
                             <p>
                               - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
                             </p>
