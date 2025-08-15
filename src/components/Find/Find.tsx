@@ -222,9 +222,9 @@ const Find = (props: IFindComponent) => {
           )}
         </div>
       ) : (
-        <div className="ph-item tw-flex tw-justify-center tw-w-full">
+        <div className="ph-item tw-flex tw-justify-center !tw-w-full">
           <div
-            className="ph-picture tw-flex align-item-center tw-justify-center tw-relative tw-w-1/2 !tw-bg-spinner-overlay"
+            className="ph-picture tw-flex align-item-center tw-justify-center tw-relative !tw-w-1/2 !tw-bg-spinner-overlay"
             style={{ height: 600 }}
           >
             <LoadGroup isShow isVertical isHideAttr size={40} />

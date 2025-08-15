@@ -321,8 +321,8 @@ const Pokedex = (props: IStyleSheetData) => {
     <div className="tw-relative">
       <div className="tw-relative tw-text-center tw-w-full">
         {!isNotEmpty(dataList) && (
-          <div className="ph-item tw-w-full tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
-            <div className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0 !tw-bg-transparent" />
+          <div className="ph-item !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
+            <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0 !tw-bg-transparent" />
           </div>
         )}
         <div className="head-types">Filter By Types (Maximum 2)</div>

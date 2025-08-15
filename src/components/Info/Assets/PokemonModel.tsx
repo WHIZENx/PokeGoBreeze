@@ -58,9 +58,9 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         />
       </h4>
       {!props.isLoadedForms ? (
-        <div className="ph-item tw-w-full !tw-m-0 !tw-p-0" style={{ height: 176 }}>
+        <div className="ph-item !tw-w-full !tw-m-0 !tw-p-0" style={{ height: 176 }}>
           <div
-            className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0"
+            className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
             style={{ background: 'var(--custom-default)' }}
           />
         </div>
@@ -153,9 +153,9 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item tw-w-full !tw-m-0 !tw-p-0 tw-h-9">
+        <div className="ph-item !tw-w-full !tw-m-0 !tw-p-0 tw-h-9">
           <div
-            className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0"
+            className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
             style={{ background: 'var(--custom-default)' }}
           />
         </div>
@@ -192,9 +192,9 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       )}
       <h6>Pokémon GO:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item tw-w-full !tw-m-0 !tw-p-0 tw-h-9">
+        <div className="ph-item !tw-w-full !tw-m-0 !tw-p-0 !tw-h-9">
           <div
-            className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0"
+            className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
             style={{ background: 'var(--custom-default)' }}
           />
         </div>

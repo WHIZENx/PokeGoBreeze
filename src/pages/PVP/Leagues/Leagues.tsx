@@ -657,8 +657,8 @@ const Leagues = () => {
           </div>
         </Fragment>
       ) : (
-        <div className="ph-item tw-mt-2">
-          <div className="ph-picture tw-px-0" style={{ height: 450 }} />
+        <div className="ph-item !tw-mt-2">
+          <div className="ph-picture !tw-px-0" style={{ height: 450 }} />
         </div>
       )}
       <div className="input-group border-input tw-w-fit">
