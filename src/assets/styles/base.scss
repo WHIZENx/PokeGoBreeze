@@ -75,3 +75,34 @@ td {
 img, svg {
   @apply tw-align-middle;
 }
+
+audio {
+  color-scheme: var(--mode);
+}
+
+input[type="number"] {
+  color-scheme: var(--mode);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--background-default);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: var(--background-paper);
+  
+  &:hover {
+    background-color: var(--divider);
+  }
+}
+
+* {
+  scrollbar-color: var(--background-paper) var(--background-default);
+  scrollbar-width: thin;
+}

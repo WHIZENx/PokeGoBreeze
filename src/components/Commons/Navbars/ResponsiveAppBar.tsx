@@ -149,7 +149,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   }, [infoVersion, stateTheme, isDelay, onChangeTheme]);
 
   return (
-    <AppBar position="sticky">
+    <AppBar className="tw-overflow-x-auto" position="sticky">
       <Toolbar sx={{ mx: 2, my: 0.5 }} disableGutters variant="dense">
         {/* width >= 900 */}
         <Box className="tw-text-white" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
