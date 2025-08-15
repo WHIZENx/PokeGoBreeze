@@ -23,7 +23,7 @@ import { getTime } from '../../../utils/utils';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-import '../../Navbar.scss';
+import './Navbar.scss';
 import { IResponsiveAppBarComponent } from '../models/component.model';
 import { pages, POKEDEX } from '../constants/app-bar';
 import ButtonMui from '../Buttons/ButtonMui';
