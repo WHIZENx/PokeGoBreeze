@@ -568,7 +568,7 @@ const Leagues = () => {
         isShowAction
         items={openedLeague.map((value) => {
           return {
-            sxHeader: { backgroundColor: 'success.main' },
+            bgHeadColor: 'openLeague',
             label: renderHeader(value),
             value: value.id,
             children: renderBody(value),
