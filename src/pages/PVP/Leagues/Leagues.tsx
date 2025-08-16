@@ -446,7 +446,7 @@ const Leagues = () => {
                 <div className="rank-header">Season {leaguesData.season.season}</div>
                 <Badge
                   color="primary"
-                  className="tw-relative tw-inline-block img-link tw-pt-6 tw-pb-2 !tw-min-w-16"
+                  className="tw-relative tw-inline-block img-link tw-py-6 !tw-min-w-16"
                   overlap="circular"
                   badgeContent={null}
                 >
@@ -457,7 +457,7 @@ const Leagues = () => {
                   />
                   <span className="caption tw-text-default">Free</span>
                 </Badge>
-                <hr />
+                <hr className="tw-my-0" />
                 <Badge
                   color="primary"
                   className="tw-relative tw-inline-block img-link tw-py-6 !tw-min-w-16"
@@ -477,7 +477,7 @@ const Leagues = () => {
                   <div className="group-rank-league tw-text-center">
                     <div className="rank-header">Win Stack {value.step}</div>
                     {renderItem(value)}
-                    <hr className="tw-mt-0" />
+                    <hr className="tw-my-0" />
                     {renderItem(leaguesData.season.rewards.rank[rank].premium[index])}
                   </div>
                 </Fragment>
