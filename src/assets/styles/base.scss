@@ -1,6 +1,8 @@
 *,
 ::after,
 ::before {
+  scrollbar-color: var(--background-paper) var(--background-default);
+  scrollbar-width: thin;
   @apply tw-box-border;
 }
 
@@ -100,9 +102,4 @@ input[type="number"] {
   &:hover {
     background-color: var(--divider);
   }
-}
-
-* {
-  scrollbar-color: var(--background-paper) var(--background-default);
-  scrollbar-width: thin;
 }

@@ -460,6 +460,7 @@ export interface AccordionMuiComponent<T> {
   resetItemOnChange?: boolean;
   onChange?: (value: (T | T[]) | undefined, index: number) => void;
   items: IIDefaultOptionAccordion<T>[] | undefined;
+  maxHeight?: number;
 }
 
 export interface IDialogAction {

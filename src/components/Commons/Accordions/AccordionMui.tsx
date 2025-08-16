@@ -206,7 +206,10 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
   };
 
   return (
-    <Box className={combineClasses('tw-w-full', props.className)}>
+    <Box
+      className={combineClasses('tw-w-full tw-overflow-y-auto', props.className)}
+      sx={{ maxHeight: props.maxHeight }}
+    >
       {props.items?.map((item, index) => (
         <Accordion
           key={index}
