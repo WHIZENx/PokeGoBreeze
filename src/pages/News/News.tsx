@@ -275,8 +275,8 @@ const News = () => {
                                   value.eventType === DateEvent.End
                                     ? 'info-event-ending'
                                     : DateEvent.Progressing
-                                    ? 'info-event-progress'
-                                    : 'info-event-future'
+                                      ? 'info-event-progress'
+                                      : 'info-event-future'
                                 )}
                               >
                                 <b>{getKeyWithData(DateEvent, value.eventType)}</b>

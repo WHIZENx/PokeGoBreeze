@@ -136,8 +136,8 @@ const Stats = (props: IStatsComponent) => {
           availableRankGO.statProdRank
             ? availableRankGO.statProdRank
             : props.statProd
-            ? props.statProd.rank
-            : 'Unavailable'
+              ? props.statProd.rank
+              : 'Unavailable'
         }
         pokemonStatsRank={statsData?.statProd}
         currentStats={currentStats.stats.prod}

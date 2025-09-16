@@ -340,10 +340,13 @@ const Counter = (props: ICounterComponent) => {
   }, [counterList, showMegaPrimal, releasedGO, enableBest]);
 
   const filterBestOptions = (result: ICounterModel[]) => {
-    const group = result.reduce((res, obj) => {
-      (res[obj.pokemonName] = getValueOrDefault(Array, res[obj.pokemonName])).push(obj);
-      return res;
-    }, new Object() as DynamicObj<ICounterModel[]>);
+    const group = result.reduce(
+      (res, obj) => {
+        (res[obj.pokemonName] = getValueOrDefault(Array, res[obj.pokemonName])).push(obj);
+        return res;
+      },
+      new Object() as DynamicObj<ICounterModel[]>
+    );
     return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p.ratio > c.ratio ? p : c)));
   };
 

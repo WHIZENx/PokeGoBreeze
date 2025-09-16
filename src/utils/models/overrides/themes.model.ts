@@ -95,4 +95,4 @@ export const getDesignThemes = (mode: TypeTheme) =>
       fontWeightBold: 700,
     },
     spacing: 8,
-  } as unknown as ThemeOptions);
+  }) as unknown as ThemeOptions;

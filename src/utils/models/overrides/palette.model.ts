@@ -23,4 +23,4 @@ export const PaletteData = (mode: TypeTheme) =>
       main: mode === TypeTheme.Light ? '#e6ffe6' : '#193319',
       select: mode === TypeTheme.Light ? '#e6ffe6' : '#193319',
     },
-  } as unknown as Palette);
+  }) as unknown as Palette;

@@ -225,10 +225,10 @@ const RaidBattle = () => {
       filters.selected.sortBy === SortType.TDO
         ? r.tdoAtk
         : filters.selected.sortBy === SortType.TTK
-        ? r.ttkAtk
-        : filters.selected.sortBy === SortType.TANK
-        ? r.ttkDef
-        : r.dpsAtk
+          ? r.ttkAtk
+          : filters.selected.sortBy === SortType.TANK
+            ? r.ttkDef
+            : r.dpsAtk
     );
     const a = primary as unknown as DynamicObj<SortType>;
     const b = secondary as unknown as DynamicObj<SortType>;
@@ -477,11 +477,14 @@ const RaidBattle = () => {
       };
       setResultBoss(result);
     } else {
-      const group = dataList.reduce((result, obj) => {
-        const name = getValueOrDefault(String, obj.pokemon?.name);
-        (result[name] = getValueOrDefault(Array, result[name])).push(obj);
-        return result;
-      }, new Object() as DynamicObj<IPokemonMoveData[]>);
+      const group = dataList.reduce(
+        (result, obj) => {
+          const name = getValueOrDefault(String, obj.pokemon?.name);
+          (result[name] = getValueOrDefault(Array, result[name])).push(obj);
+          return result;
+        },
+        new Object() as DynamicObj<IPokemonMoveData[]>
+      );
       dataList = Object.values(group)
         .map((pokemon) => pokemon.reduce((p, c) => (p.dpsAtk > c.dpsAtk ? p : c)))
         .sort((a, b) => b.dpsAtk - a.dpsAtk);
@@ -1387,10 +1390,10 @@ const RaidBattle = () => {
                   used.sortBy === SortType.DPS
                     ? 'Damage Per Seconds (DPS)'
                     : used.sortBy === SortType.TDO
-                    ? 'Total Damage Output (TDO)'
-                    : used.sortBy === SortType.TTK
-                    ? 'Time To Kill'
-                    : 'Tankiness'
+                      ? 'Total Damage Output (TDO)'
+                      : used.sortBy === SortType.TTK
+                        ? 'Time To Kill'
+                        : 'Tankiness'
                 } `}
                 <span className="tw-text-red-600">{`${used.onlyShadow ? '*Only Shadow' : ''}${
                   used.onlyMega ? '*Only Mega' : ''

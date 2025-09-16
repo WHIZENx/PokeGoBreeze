@@ -217,11 +217,11 @@ const FindBattle = () => {
                   !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]
                     ? b
                     : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
-                    ? a
-                    : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
-                      toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
-                    ? a
-                    : b
+                      ? a
+                      : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
+                          toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
+                        ? a
+                        : b
                 ),
               })
             );
@@ -238,11 +238,11 @@ const FindBattle = () => {
                 !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]
                   ? b
                   : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
-                  ? a
-                  : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
-                    toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
-                  ? a
-                  : b
+                    ? a
+                    : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
+                        toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
+                      ? a
+                      : b
               ),
             });
           }
@@ -539,10 +539,10 @@ const FindBattle = () => {
                             value.league === LeagueBattleType.Little
                               ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)
                               : value.league === LeagueBattleType.Great
-                              ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)
-                              : value.league === LeagueBattleType.Ultra
-                              ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)
-                              : getPokemonBattleLeagueIcon()
+                                ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)
+                                : value.league === LeagueBattleType.Ultra
+                                  ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)
+                                  : getPokemonBattleLeagueIcon()
                           }
                         />
                         <div>

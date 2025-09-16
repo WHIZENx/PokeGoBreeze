@@ -345,14 +345,14 @@ const Leagues = () => {
       value.type === RewardType.Pokemon
         ? 'Random Pokémon'
         : value.type === RewardType.ItemLoot
-        ? 'Random Item'
-        : value.type === RewardType.RareCandy
-        ? 'Rare Candy'
-        : value.type === RewardType.Stardust
-        ? ' Stardust'
-        : value.type === RewardType.MoveReRoll
-        ? 'TM Charged Move'
-        : '';
+          ? 'Random Item'
+          : value.type === RewardType.RareCandy
+            ? 'Rare Candy'
+            : value.type === RewardType.Stardust
+              ? ' Stardust'
+              : value.type === RewardType.MoveReRoll
+                ? 'TM Charged Move'
+                : '';
     return (
       <>
         {!value.type ? (
@@ -369,14 +369,14 @@ const Leagues = () => {
                 value.type === RewardType.Pokemon
                   ? APIService.getIconSprite('ic_grass')
                   : value.type === RewardType.ItemLoot
-                  ? APIService.getIconSprite('btn_question_02_normal_white_shadow')
-                  : value.type === RewardType.RareCandy
-                  ? getItemSpritePath(ItemName.RareCandy)
-                  : value.type === RewardType.Stardust
-                  ? APIService.getItemSprite('stardust_painted')
-                  : value.type === RewardType.MoveReRoll
-                  ? APIService.getItemSprite('Item_1202')
-                  : ''
+                    ? APIService.getIconSprite('btn_question_02_normal_white_shadow')
+                    : value.type === RewardType.RareCandy
+                      ? getItemSpritePath(ItemName.RareCandy)
+                      : value.type === RewardType.Stardust
+                        ? APIService.getItemSprite('stardust_painted')
+                        : value.type === RewardType.MoveReRoll
+                          ? APIService.getItemSprite('Item_1202')
+                          : ''
               }
             />
             <span className="caption tw-text-default">{title}</span>

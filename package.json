@@ -56,7 +56,7 @@
     "test-vite": "vite",
     "debug-vite": "vite --debug --force",
     "prebuild": "rimraf dist",
-    "deploy": "sh -c '. ./config.sh && vite build' && node sitemap/buildSitemap.js",
+    "deploy": "sh -c '. ./config.sh && npm run lint && vite build' && node sitemap/buildSitemap.js",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
   "browserslist": {
@@ -113,6 +113,7 @@
     "stylelint": "^15.11.0",
     "stylelint-config-standard": "^34.0.0",
     "stylelint-config-standard-scss": "^11.1.0",
+    "stylelint-stylistic": "^0.4.5",
     "tailwindcss": "^3.4.17",
     "typescript": "5.5.3",
     "util": "^0.12.5",

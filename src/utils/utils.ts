@@ -274,8 +274,8 @@ export const convertModelSpritName = (text: string | undefined) =>
       (isInclude(text, 'meowstic', IncludeMode.IncludeIgnoreCaseSensitive)
         ? '-'
         : isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
-        ? ''
-        : '_') + isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
+          ? ''
+          : '_') + isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
         ? ''
         : 'm'
     )
@@ -1032,22 +1032,22 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction
       return form === PokemonType.Shadow
         ? combatShadowBonusAtk()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusAtk()
-        : 1;
+          ? combatPurifiedBonusAtk()
+          : 1;
     }
     case TypeAction.Def: {
       return form === PokemonType.Shadow
         ? combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusDef()
-        : 1;
+          ? combatPurifiedBonusDef()
+          : 1;
     }
     case TypeAction.Prod: {
       return form === PokemonType.Shadow
         ? combatShadowBonusAtk() * combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusAtk() * combatPurifiedBonusDef()
-        : 1;
+          ? combatPurifiedBonusAtk() * combatPurifiedBonusDef()
+          : 1;
     }
     default:
       return 1;

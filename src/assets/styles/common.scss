@@ -186,5 +186,5 @@
 }
 
 @mixin black-hover-border {
-  @include theme-border(1px, all, var(--custom-black), true);
+  @include theme-border(1px, all, var(--default), true);
 }

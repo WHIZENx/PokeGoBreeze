@@ -474,7 +474,7 @@ const StatsRanking = () => {
         const result = pokemonFilter[index];
 
         const details = getPokemonDetails(id, result.fullName, result.pokemonType, true);
-        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
+        details.pokemonType = formType ? pokemonType : (result.pokemonType ?? PokemonType.Normal);
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
 
@@ -527,7 +527,7 @@ const StatsRanking = () => {
       );
       if (result) {
         const details = getPokemonDetails(paramId, result.fullName, result.pokemonType, true);
-        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
+        details.pokemonType = formType ? pokemonType : (result.pokemonType ?? PokemonType.Normal);
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
         setSelect(result);

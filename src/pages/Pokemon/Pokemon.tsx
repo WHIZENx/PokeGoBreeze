@@ -494,10 +494,10 @@ const Pokemon = (props: IPokemonPage) => {
         routerAction === Action.Pop && searchingMainData && !params.id
           ? searchingMainForm?.form?.name
           : searchingMainForm.form?.isDefault
-          ? searchingMainForm.form.name
-          : formParams || toNumber(searchingMainForm.form?.id) < 0
-          ? searchingMainForm.form?.name
-          : data.name;
+            ? searchingMainForm.form.name
+            : formParams || toNumber(searchingMainForm.form?.id) < 0
+              ? searchingMainForm.form?.name
+              : data.name;
       setFormName(convertSexName(nameInfo));
       const originForm = splitAndCapitalize(searchingMainForm.form?.formName, '-', '-');
       setOriginForm(originForm);
