@@ -45,6 +45,23 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
     }
   }, [searchingMainDetails]);
 
+  const renderGender = (asset: string, id: number | undefined, tag: string) => (
+    <div className="tw-flex tw-flex-col tw-w-full tw-justify-center tw-items-center">
+      <div className="!tw-w-20">
+        <img
+          className="pokemon-sprite-model"
+          alt="Pokémon Model"
+          src={APIService.getPokemonModel(asset, id)}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, id, asset);
+          }}
+        />
+      </div>
+      <span className="caption">{tag}</span>
+    </div>
+  );
+
   return (
     <div className="tw-mt-2 tw-relative">
       <h4 className="title-evo">
@@ -65,81 +82,49 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           />
         </div>
       ) : (
-        <div>
+        <div className="tw-flex tw-flex-wrap">
           {pokeAssets.map((assets, index) => (
-            <div key={index} className="tw-inline-block group-model tw-text-center">
-              {assets.image.map((value, index) => (
-                <div
-                  key={index}
-                  className={combineClasses(
-                    'tw-inline-block',
-                    value.gender === GenderType.GenderLess ? 'tw-w-full' : 'tw-w-auto'
-                  )}
-                >
-                  <div className="sub-group-model">
-                    {gender && !gender.genderlessPercent && (
-                      <div className="gender">
-                        {value.gender === GenderType.GenderLess ? (
-                          <Fragment>
-                            {gender.malePercent !== 0 && <MaleIcon sx={{ color: 'blue' }} />}
-                            {gender.femalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }} />}
-                          </Fragment>
-                        ) : (
-                          <Fragment>
-                            {value.gender === GenderType.Male ? (
-                              <MaleIcon sx={{ color: 'blue' }} />
-                            ) : (
-                              <FemaleIcon sx={{ color: 'red' }} />
-                            )}
-                          </Fragment>
-                        )}
-                      </div>
+            <div key={index} className="group-model tw-flex tw-w-fit tw-justify-center tw-flex-col tw-items-center">
+              <div className="tw-flex tw-flex-wrap tw-w-full tw-items-center">
+                {assets.image.map((value, index) => (
+                  <div
+                    key={index}
+                    className={combineClasses(
+                      'tw-inline-block',
+                      value.gender === GenderType.GenderLess ? 'tw-w-full' : 'tw-w-auto'
                     )}
-                    <div className={combineClasses('model text-center', value.shiny ? 'tw-w-1/2' : 'tw-w-full')}>
-                      <div className="tw-flex tw-w-full tw-justify-center">
-                        <div className="tw-w-20">
-                          <img
-                            className="pokemon-sprite-model"
-                            alt="Pokémon Model"
-                            src={APIService.getPokemonModel(value.default, value.pokemonId)}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = getValidPokemonImgPath(
-                                e.currentTarget.src,
-                                value.pokemonId,
-                                value.default
-                              );
-                            }}
-                          />
+                  >
+                    <div className="sub-group-model">
+                      {gender && !gender.genderlessPercent && (
+                        <div className="gender">
+                          {value.gender === GenderType.GenderLess ? (
+                            <Fragment>
+                              {gender.malePercent !== 0 && <MaleIcon sx={{ color: 'blue' }} />}
+                              {gender.femalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }} />}
+                            </Fragment>
+                          ) : (
+                            <Fragment>
+                              {value.gender === GenderType.Male ? (
+                                <MaleIcon sx={{ color: 'blue' }} />
+                              ) : (
+                                <FemaleIcon sx={{ color: 'red' }} />
+                              )}
+                            </Fragment>
+                          )}
                         </div>
+                      )}
+                      <div className={combineClasses('model text-center', value.shiny ? 'tw-w-1/2' : 'tw-w-full')}>
+                        {renderGender(value.default, value.pokemonId, 'Default')}
                       </div>
-                      <span className="caption">Default</span>
+                      {value.shiny && (
+                        <div className="model tw-text-center">
+                          {renderGender(value.shiny, value.pokemonId, 'Shiny')}
+                        </div>
+                      )}
                     </div>
-                    {value.shiny && (
-                      <div className="model tw-text-center">
-                        <div className="tw-flex tw-w-full tw-justify-center">
-                          <div className="tw-w-20">
-                            <img
-                              className="pokemon-sprite-model"
-                              alt="Pokémon Model"
-                              src={APIService.getPokemonModel(value.shiny, value.pokemonId)}
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = getValidPokemonImgPath(
-                                  e.currentTarget.src,
-                                  value.pokemonId,
-                                  value.shiny
-                                );
-                              }}
-                            />
-                          </div>
-                        </div>
-                        <span className="caption">Shiny</span>
-                      </div>
-                    )}
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
               <div className="desc tw-text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
             </div>
           ))}
