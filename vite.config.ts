@@ -1,12 +1,12 @@
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
-  const isDev = mode === 'development'
-  
+  const env = loadEnv(mode, process.cwd(), '');
+  const isDev = mode === 'development';
+
   return {
     plugins: [
       react({
@@ -47,6 +47,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: isDev,
       minify: isDev ? false : 'terser',
       target: 'es2015',
+      cssMinify: !isDev,
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),
@@ -64,12 +65,12 @@ export default defineConfig(({ mode }) => {
           entryFileNames: 'static/js/[name].[hash].js',
           assetFileNames: (assetInfo) => {
             if (/\.(css)$/.test(assetInfo.name || '')) {
-              return 'static/css/[name].[hash].[ext]'
+              return 'static/css/[name].[hash].[ext]';
             }
             if (/\.(png|jpe?g|gif|svg|ico|webp)$/.test(assetInfo.name || '')) {
-              return 'static/media/[name].[hash].[ext]'
+              return 'static/media/[name].[hash].[ext]';
             }
-            return 'static/[ext]/[name].[hash].[ext]'
+            return 'static/[ext]/[name].[hash].[ext]';
           },
         },
       },
@@ -87,11 +88,18 @@ export default defineConfig(({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use "${resolve(__dirname, 'src/assets/styles/variables.scss')}";`,
-          sassOptions: {
-            outputStyle: 'compressed',
-            quietDeps: true,
-          }
+          additionalData: `@use "${resolve(__dirname, 'src/assets/styles/variables.scss')}" as *;`,
+          // Modern Sass API
+          sourceMap: isDev,
+          quietDeps: true,
+          logger: {
+            warn: (message: string | string[]) => {
+              // Suppress specific Sass deprecation warnings
+              if (message.includes('Deprecation Warning: The legacy JS API')) {
+                return;
+              }
+            },
+          },
         },
       },
       devSourcemap: isDev,
@@ -134,5 +142,5 @@ export default defineConfig(({ mode }) => {
       exclude: ['@vercel/analytics', '@vercel/speed-insights'],
     },
     envPrefix: 'REACT_APP_',
-  }
-})
+  };
+});

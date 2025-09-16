@@ -33,9 +33,18 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['src/**/*.ts', 'src/**/*.tsx'],
       parserOptions: {
         project: './tsconfig.app.json',
+      },
+    },
+    {
+      files: ['vite.config.ts'],
+      parserOptions: {
+        project: './tsconfig.node.json',
+      },
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
       },
     },
     {

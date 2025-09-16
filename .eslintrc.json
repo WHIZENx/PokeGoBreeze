@@ -8,14 +8,26 @@
 		"prettier"
 	],
 	"parser": "@typescript-eslint/parser",
-	"overrides": [],
+	"overrides": [
+		{
+			"files": ["src/**/*.ts", "src/**/*.tsx"],
+			"parserOptions": {
+				"project": "./tsconfig.app.json"
+			}
+		},
+		{
+			"files": ["vite.config.ts"],
+			"parserOptions": {
+				"project": "./tsconfig.node.json"
+			}
+		}
+	],
 	"parserOptions": {
 		"ecmaFeatures": {
 			"jsx": true
 		},
 		"ecmaVersion": "latest",
-		"sourceType": "module",
-		"project": "./tsconfig.json"
+		"sourceType": "module"
 	},
 	"plugins": ["react", "@typescript-eslint"],
 	"rules": {
