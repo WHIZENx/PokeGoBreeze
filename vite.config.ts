@@ -56,10 +56,16 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             'react-vendor': ['react', 'react-dom'],
             'utility-vendor': ['lodash', 'moment'],
-            'bootstrap-vendor': ['react-bootstrap'],
-            'router-vendor': ['react-router-dom'],
-            'redux-vendor': ['react-redux', 'redux', 'redux-persist', 'redux-thunk'],
+            'bootstrap-vendor': ['react-bootstrap', 'bootstrap'],
+            'router-vendor': ['react-router-dom', 'history'],
+            'redux-vendor': ['react-redux', 'redux', 'redux-persist', 'redux-thunk', '@redux-devtools/extension'],
             'mui-vendor': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+            'data-vendor': ['react-data-table-component', 'styled-components', 'react-xarrows'],
+            'storage-vendor': ['localforage', 'immutability-helper'],
+            'api-vendor': ['axios'],
+            'crypto-vendor': ['crypto-js', 'dompurify'],
+            'vercel-vendor': ['@vercel/analytics', '@vercel/edge-config', '@vercel/postgres', '@vercel/speed-insights'],
+            'hooks-vendor': ['usehooks-ts', 'react-device-detect']
           },
           chunkFileNames: 'static/js/[name].[hash].js',
           entryFileNames: 'static/js/[name].[hash].js',
@@ -83,7 +89,7 @@ export default defineConfig(({ mode }) => {
           safari10: true,
         },
       },
-      chunkSizeWarningLimit: 1000,
+      chunkSizeWarningLimit: 5000,
     },
     css: {
       preprocessorOptions: {
