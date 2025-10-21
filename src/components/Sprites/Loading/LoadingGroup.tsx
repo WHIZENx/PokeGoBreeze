@@ -24,7 +24,7 @@ const Load = styled.div<Element>`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
-  background-color: ${(props) => getValueOrDefault(String, props.$bgColor, 'var(--background-default)')};
+  background-color: ${(props) => getValueOrDefault(String, props.$bgColor, 'var(--custom-default)')};
   padding: 15px;
   border-radius: 5px;
   box-shadow: 0 8px 8px 0 #00000033;
@@ -35,13 +35,13 @@ const LoadGroup = (props: ILoadGroupComponent) => {
   const ref = (
     <>
       <img
-        className="loading"
+        className="loading tw-vertical-center"
         width={props.size ?? 64}
         height={props.size ?? 64}
         alt="Pokémon Loading"
         src={loadingImg}
       />
-      <span className="caption theme-text-primary" style={{ fontSize: props.fontSize ?? 18 }}>
+      <span className="caption tw-text-default tw-text-sm">
         <b>
           Loading<span id="p1">.</span>
           <span id="p2">.</span>
@@ -51,7 +51,7 @@ const LoadGroup = (props: ILoadGroupComponent) => {
     </>
   );
 
-  const className = combineClasses('text-center', props.className, props.isVertical ? 'vertical-center' : '');
+  const className = combineClasses('tw-text-center', props.className, props.isVertical ? 'vertical-center' : '');
 
   return (
     <Fragment>

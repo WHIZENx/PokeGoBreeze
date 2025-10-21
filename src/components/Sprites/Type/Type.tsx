@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
-import APIService from '../../../services/API.service';
-import { capitalize } from '../../../utils/utils';
+import APIService from '../../../services/api.service';
+import { splitAndCapitalize } from '../../../utils/utils';
 
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
@@ -11,15 +11,15 @@ const TypeInfo = (props: ITypeComponent) => {
   return (
     <Fragment>
       {!isNotEmpty(props.arr) && props.isShow ? (
-        <div className="mt-2 d-flex ms-3">
-          <div className="text-center" key={0}>
+        <div className="tw-mt-2 tw-flex tw-ml-3">
+          <div className="tw-text-center" key={0}>
             <img
               width={toNumber(props.height, 36)}
               height={toNumber(props.height, 36)}
               alt="Pokémon Image"
               src={APIService.getPokeSprite()}
             />
-            <span className="caption theme-text-primary">None</span>
+            <span className="caption tw-text-default">None</span>
           </div>
         </div>
       ) : (
@@ -28,15 +28,15 @@ const TypeInfo = (props: ITypeComponent) => {
             <div
               className={combineClasses(
                 props.className,
-                props.isBlock ? '' : 'mt-2',
+                props.isBlock ? '' : 'tw-mt-2',
                 props.isShowShadow ? 'filter-shadow' : ''
               )}
               style={props.style}
             >
               {props.text && <p>{props.text}</p>}
-              <div className="d-inline-flex flex-wrap type-list align-items-center">
+              <div className="tw-inline-flex tw-flex-wrap type-list tw-items-center">
                 {props.arr?.map((value, index) => (
-                  <div className="text-center d-flex" key={index}>
+                  <div className="tw-text-center tw-flex" key={index}>
                     {props.isHideText ? (
                       <IconType
                         className={props.isShowShadow ? 'filter-shadow' : ''}
@@ -57,11 +57,11 @@ const TypeInfo = (props: ITypeComponent) => {
                         <span
                           className={combineClasses(
                             'caption',
-                            props.isShowShadow ? `text-white text-shadow-black` : ''
+                            props.isShowShadow ? `tw-text-white text-shadow-black` : ''
                           )}
                           style={{ color: `${props.color} !important` }}
                         >
-                          {capitalize(value)}
+                          {splitAndCapitalize(value, /(?=[A-Z])/, ' ')}
                         </span>
                       </div>
                     )}

@@ -11,24 +11,14 @@ import {
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { calculateStatsByTag } from '../../../utils/calculate';
-import {
-  computeBgType,
-  findAssetForm,
-  getPokemonBattleLeagueIcon,
-  getPokemonBattleLeagueName,
-} from '../../../utils/compute';
+import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 
 import Error from '../../Error/Error';
-import { useDispatch, useSelector } from 'react-redux';
-import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { Button } from 'react-bootstrap';
 import { Params } from '../../../utils/constants';
-import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
-import { SpinnerActions } from '../../../store/actions';
 import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
@@ -46,26 +36,37 @@ import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { formShadow } from '../../../utils/helpers/context.helpers';
+import { formShadow } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
+import usePVP from '../../../composables/usePVP';
+import useAssets from '../../../composables/useAssets';
+import useRouter from '../../../composables/useRouter';
+import useStats from '../../../composables/useStats';
+import useSpinner from '../../../composables/useSpinner';
+import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
+import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
 
 const PokemonPVP = (props: IStyleSheetData) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
-  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
-  const router = useSelector((state: RouterState) => state.router);
+  const { pvpData } = useDataStore();
+  const { isCombatsNoneArchetype, findMoveByName } = useCombats();
+  const { getAssetNameById } = useAssets();
+  const { loadPVP, loadPVPMoves } = usePVP();
+  const { findPokemonBySlug } = usePokemon();
+  const { routerAction } = useRouter();
+  const { statsData } = useStats();
+  const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
   const [searchParams] = useSearchParams();
 
   const params = useParams();
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
-  const statsRanking = useSelector((state: StatsState) => state.stats);
   const [isFound, setIsFound] = useState(true);
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvp);
+    loadPVP();
   }, []);
 
   const setPokemonPVPTitle = (isNotFound = false) => {
@@ -96,19 +97,18 @@ const PokemonPVP = (props: IStyleSheetData) => {
 
   const fetchPokemonInfo = useCallback(async () => {
     if (
-      statsRanking?.attack?.ranking &&
-      statsRanking?.defense?.ranking &&
-      statsRanking?.stamina?.ranking &&
-      statsRanking?.statProd?.ranking
+      statsData?.attack?.ranking &&
+      statsData?.defense?.ranking &&
+      statsData?.stamina?.ranking &&
+      statsData?.statProd?.ranking
     ) {
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       try {
         const cp = toNumber(params.cp);
         const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase().replace('clodsiresb', 'clodsire');
         const overall = getValueOrDefault(String, getKeyWithData(ScoreType, ScoreType.Overall));
         const type = getValueOrDefault(String, searchParams.get(Params.LeagueType), overall);
-        const data = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, type)))
-          .data;
+        const { data } = await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, type));
 
         if (!data) {
           setTitleProps(setPokemonPVPTitle(true));
@@ -122,9 +122,9 @@ const PokemonPVP = (props: IStyleSheetData) => {
         }
 
         const name = convertNameRankingToOri(pokemonData.speciesId, pokemonData.speciesName);
-        const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+        const pokemon = findPokemonBySlug(name);
         const id = pokemon?.num;
-        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
+        const form = getAssetNameById(id, name, pokemon?.form);
         setTitleProps({
           title: `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
             cp
@@ -156,11 +156,11 @@ const PokemonPVP = (props: IStyleSheetData) => {
         cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
         cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
 
-        const fMove = dataStore.combats.find((item) => isEqual(item.name, fMoveData));
-        const cMovePri = dataStore.combats.find((item) => isEqual(item.name, cMoveDataPri));
+        const fMove = findMoveByName(fMoveData);
+        const cMovePri = findMoveByName(cMoveDataPri);
         let cMoveSec;
         if (cMoveDataSec) {
-          cMoveSec = dataStore.combats.find((item) => isEqual(item.name, cMoveDataSec));
+          cMoveSec = findMoveByName(cMoveDataSec);
         }
 
         let pokemonType = PokemonType.Normal;
@@ -183,73 +183,53 @@ const PokemonPVP = (props: IStyleSheetData) => {
             pokemon,
             form,
             stats,
-            atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
-            def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
-            sta: statsRanking.stamina.ranking.find((i) => i.stamina === stats.sta),
-            prod: statsRanking.statProd.ranking.find((i) => i.product === stats.atk * stats.def * stats.sta),
+            atk: statsData.attack.ranking.find((i) => i.attack === stats.atk),
+            def: statsData.defense.ranking.find((i) => i.defense === stats.def),
+            sta: statsData.stamina.ranking.find((i) => i.stamina === stats.sta),
+            prod: statsData.statProd.ranking.find((i) => i.product === stats.atk * stats.def * stats.sta),
             fMove,
             cMovePri,
             cMoveSec,
             pokemonType,
           })
         );
-        dispatch(SpinnerActions.HideSpinner.create());
+        hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
           setTitleProps(setPokemonPVPTitle(true));
         } else {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as AxiosError).message,
-            })
-          );
+          showSpinnerMsg({
+            isError: true,
+            message: (e as AxiosError).message,
+          });
         }
       }
     }
-  }, [
-    params.serie,
-    params.pokemon,
-    params.cp,
-    searchParams,
-    statsRanking,
-    dataStore.combats,
-    dataStore.pokemons,
-    dataStore.assets,
-    dispatch,
-  ]);
+  }, [params.serie, params.pokemon, params.cp, searchParams, statsData, findMoveByName, findPokemonBySlug]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
-      router.action = null;
     };
-    if (
-      statsRanking &&
-      isNotEmpty(pvp.rankings) &&
-      isNotEmpty(pvp.trains) &&
-      isNotEmpty(dataStore.combats) &&
-      isNotEmpty(dataStore.pokemons) &&
-      isNotEmpty(dataStore.assets)
-    ) {
-      if (dataStore.combats.every((combat) => !combat.archetype)) {
-        loadPVPMoves(dispatch);
-      } else if (router.action) {
+    if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
+      if (isCombatsNoneArchetype()) {
+        loadPVPMoves();
+      } else if (routerAction) {
         fetchPokemon();
       }
     }
     return () => {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     };
-  }, [fetchPokemonInfo, rankingPoke, pvp.rankings, pvp.trains, router.action, dispatch]);
+  }, [fetchPokemonInfo, pvpData.rankings, pvpData.trains, routerAction]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvp.rankings.find((item) => item.id === LeagueBattleType.All && isIncludeList(item.cp, cp));
+    const league = pvpData.rankings.find((item) => item.id === LeagueBattleType.All && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
-          <div className="d-flex flex-wrap align-items-center filter-shadow text-shadow-black text-white column-gap-2">
+          <div className="tw-flex tw-flex-wrap tw-items-center filter-shadow text-shadow-black tw-text-white tw-gap-x-2">
             <img
               alt="Image League"
               width={64}
@@ -272,7 +252,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   return (
     <Error isError={!isFound}>
       <div
-        className="py-3"
+        className="tw-py-3"
         style={{
           backgroundImage: computeBgType(
             rankingPoke?.pokemon?.types,
@@ -283,39 +263,32 @@ const PokemonPVP = (props: IStyleSheetData) => {
           ),
         }}
       >
-        <div className="pokemon-ranking-body container pvp-container">
+        <div className="pokemon-ranking-body tw-container pvp-container">
           {renderLeague()}
           <hr />
-          <div className="ranking-link-group pt-2">
-            {getKeysObj(ScoreType).map((type, index) => (
-              <Button
-                key={index}
-                className={
-                  isEqual(
-                    getValueOrDefault(
-                      String,
-                      searchParams.get(Params.LeagueType),
-                      getKeyWithData(ScoreType, ScoreType.Overall)
-                    ).toLowerCase(),
-                    type,
-                    EqualMode.IgnoreCaseSensitive
-                  )
-                    ? 'active'
-                    : ''
-                }
-                onClick={() =>
-                  navigate(
-                    `/pvp/${params.cp}/${params.serie}/${params.pokemon}?${Params.LeagueType}=${type.toLowerCase()}`
-                  )
-                }
-              >
-                {type}
-              </Button>
-            ))}
-          </div>
-          <div className="w-100 ranking-info mt-2">
-            <div className="d-flex flex-wrap align-items-center justify-content-center gap-4">
-              <div className="position-relative filter-shadow" style={{ width: 128 }}>
+          <ToggleGroupMui
+            className="tw-flex tw-justify-center tw-overflow-x-auto tw-mt-2"
+            isNoneBorder
+            color="primary"
+            exclusive
+            value={getValueOrDefault(
+              String,
+              searchParams.get(Params.LeagueType),
+              getKeyWithData(ScoreType, ScoreType.Overall)
+            )}
+            toggles={getKeysObj(ScoreType).map((type) => ({
+              label: type,
+              value: type,
+              variant: 'contained',
+              onClick: () =>
+                navigate(
+                  `/pvp/${params.cp}/${params.serie}/${params.pokemon}?${Params.LeagueType}=${type.toLowerCase()}`
+                ),
+            }))}
+          />
+          <div className="tw-w-full ranking-info tw-mt-2">
+            <div className="tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-4">
+              <div className="tw-relative filter-shadow tw-w-32">
                 <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>
                   <img
                     alt="Image League"
@@ -338,8 +311,6 @@ const PokemonPVP = (props: IStyleSheetData) => {
             </div>
             <hr />
             <BodyPVP
-              assets={dataStore.assets}
-              pokemonData={dataStore.pokemons}
               data={rankingPoke?.data}
               cp={params.cp}
               serie={params.serie}
@@ -347,23 +318,18 @@ const PokemonPVP = (props: IStyleSheetData) => {
               styleList={props.styleSheet}
             />
           </div>
-          <div className="container">
+          <div className="tw-container">
             <hr />
           </div>
           <div className="stats-container">
-            <OverAllStats
-              data={rankingPoke}
-              statsRanking={statsRanking}
-              cp={params.cp}
-              type={searchParams.get(Params.LeagueType)}
-            />
+            <OverAllStats data={rankingPoke} cp={params.cp} type={searchParams.get(Params.LeagueType)} />
           </div>
-          <div className="container">
+          <div className="tw-container">
             <hr />
             <TypeEffectivePVP types={rankingPoke?.pokemon?.types} />
           </div>
-          <div className="container">
-            <MoveSet moves={rankingPoke?.data?.moves} pokemon={rankingPoke?.pokemon} combatData={dataStore.combats} />
+          <div className="tw-container">
+            <MoveSet moves={rankingPoke?.data?.moves} pokemon={rankingPoke?.pokemon} />
           </div>
         </div>
       </div>

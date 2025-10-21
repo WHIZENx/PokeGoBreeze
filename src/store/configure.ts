@@ -12,7 +12,7 @@ import localForage from 'localforage';
 import CryptoJS from 'crypto-js';
 import { LocalForageConfig } from './constants/local-forage';
 import { StoreState } from './models/state.model';
-import { persistKey, persistTimeout } from '../utils/helpers/context.helpers';
+import { persistKey, persistTimeout } from '../utils/helpers/options-context.helpers';
 
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY;
 const ENCRYPTION_SALT = process.env.REACT_APP_ENCRYPTION_SALT;

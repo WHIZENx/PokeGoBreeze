@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './TypeBadge.scss';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { ITypeBadgeComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../utils/extension';
+import { combineClasses, getValueOrDefault } from '../../../utils/extension';
 import { MoveType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../Link/LinkToTop';
+import useCombats from '../../../composables/useCombats';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
+  const { findMoveByName } = useCombats();
 
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {
-    if (props.move?.name && isNotEmpty(combat)) {
-      setMove(combat.find((item) => isEqual(item.name, props.move?.name)));
+    if (props.move?.name) {
+      setMove(findMoveByName(props.move?.name));
     }
-  }, [combat, props.move?.name]);
+  }, [findMoveByName, props.move?.name]);
 
   return (
     <div className={combineClasses('type-badge-container', props.isGrow ? 'filter-shadow' : '')} style={props.style}>
@@ -31,8 +30,8 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
       >
         {props.title}
       </span>
-      <LinkToTop to={`/move/${move?.id}`} className="d-flex align-items-center position-relative w-fit-content">
-        <span className={combineClasses(move?.type?.toLowerCase(), 'type-border position-relative')}>
+      <LinkToTop to={`/move/${move?.id}`} className="tw-flex tw-items-center tw-relative tw-w-fit">
+        <span className={combineClasses(move?.type?.toLowerCase(), 'type-border tw-relative')}>
           {move && props.moveType !== MoveType.None && (
             <span className="type-badge-border">
               <span
@@ -48,9 +47,9 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
           <span>{splitAndCapitalize(move?.name, '_', ' ')}</span>
         </span>
         <span className={combineClasses(move?.type?.toLowerCase(), 'type-icon-border')}>
-          <div style={{ width: 35 }}>
+          <div className="tw-w-9 tw-h-9">
             <img
-              className="sprite-type p-1 bg-black"
+              className="sprite-type tw-p-1 tw-bg-black"
               alt="Pokémon GO Type Logo"
               src={APIService.getTypeHqSprite(move?.type)}
             />

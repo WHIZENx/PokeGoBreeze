@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
+import { capitalize, createDataRows, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './SearchMoves.scss';
-import { useSelector } from 'react-redux';
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { ColumnType, TypeMove, VariantType } from '../../../enums/type.enum';
-import { StoreState } from '../../../store/models/state.model';
+import { ColumnType, TypeMove } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
@@ -14,7 +11,6 @@ import {
   getValueOrDefault,
   isEqual,
   isInclude,
-  isNotEmpty,
   toFloat,
   toFloatWithPadding,
   toNumber,
@@ -22,11 +18,15 @@ import {
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { Params } from '../../../utils/constants';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { PokemonTypeBadge } from '../../../core/models/type.model';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
+import { PokemonTypeBadge } from '../../../core/enums/pokemon-type.enum';
+import { getTypes } from '../../../utils/helpers/options-context.helpers';
+import useCombats from '../../../composables/useCombats';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -46,7 +46,7 @@ const numSortDps = (rowA: ICombat, rowB: ICombat) => {
   return a - b;
 };
 
-const columns: TableColumnModify<ICombat>[] = [
+const columns = createDataRows<TableColumnModify<ICombat>>(
   {
     id: ColumnType.Id,
     name: 'id',
@@ -89,8 +89,8 @@ const columns: TableColumnModify<ICombat>[] = [
     selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
     sortFunction: numSortDps,
     sortable: true,
-  },
-];
+  }
+);
 
 interface IFilter {
   fMoveType: SelectType;
@@ -119,8 +119,7 @@ const Search = () => {
       'Search and filter Pokémon GO moves by type, power, energy, and more. Find the best moves for your Pokémon in battles and raids.',
     keywords: ['Pokémon moves', 'move search', 'best moves', 'PVP moves', 'raid moves', 'Pokémon GO attacks'],
   });
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
-  const types = useSelector((state: StoreState) => state.store.data.typeEff);
+  const { getCombatsByTypeMove } = useCombats();
 
   const [filters, setFilters] = useState(new Filter());
 
@@ -134,11 +133,9 @@ const Search = () => {
   const [cMoveIsLoad, setCMoveIsLoad] = useState(false);
 
   useEffect(() => {
-    if (isNotEmpty(combat)) {
-      setCombatFMoves(combat.filter((item) => item.typeMove === TypeMove.Fast));
-      setCombatCMoves(combat.filter((item) => item.typeMove === TypeMove.Charge));
-    }
-  }, [combat]);
+    setCombatFMoves(getCombatsByTypeMove(TypeMove.Fast));
+    setCombatCMoves(getCombatsByTypeMove(TypeMove.Charge));
+  }, [getCombatsByTypeMove]);
 
   useEffect(() => {
     const debounced = debounce(() => {
@@ -189,51 +186,46 @@ const Search = () => {
 
   const moveList = (data: ICombat[], type: SelectType, name: string, moveLoad: boolean, category: TypeMove) => {
     return (
-      <div className="col-xl table-movesets-col p-0">
+      <div className="xl:tw-flex-1 table-movesets-col !tw-p-0">
         <table className="table-info table-movesets">
           <thead />
           <tbody>
-            <tr className="text-center">
+            <tr className="tw-text-center">
               <td className="table-sub-header" colSpan={3}>
-                <div className="row m-0">
-                  <div className="col-4 d-flex justify-content-center align-items-center p-0">{`${getKeyWithData(
+                <div className="row !tw-m-0">
+                  <div className="!tw-w-1/3 tw-flex-none tw-flex tw-justify-center tw-items-center !tw-p-0">{`${getKeyWithData(
                     TypeMove,
                     category
                   )} Moves List`}</div>
-                  <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                    <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
-                      <InputLabel>Type</InputLabel>
-                      <Select
-                        value={type}
-                        label="Type"
-                        onChange={(e) => setMoveByType(category, toNumber(e.target.value))}
-                      >
-                        <MenuItem value={SelectType.All} defaultChecked>
-                          {getKeyWithData(SelectType, SelectType.All)}
-                        </MenuItem>
-                        {Object.keys(types).map((value, index) => (
-                          <MenuItem
-                            key={index}
-                            value={getDataWithKey<PokemonTypeBadge>(
-                              PokemonTypeBadge,
-                              value,
-                              EqualMode.IgnoreCaseSensitive
-                            )}
-                          >
-                            {capitalize(value)}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                  <div className="!tw-w-1/3 tw-flex-none tw-flex tw-justify-center tw-items-center !tw-p-0">
+                    <SelectMui
+                      formClassName="tw-mt-2"
+                      formSx={{ m: 1, minWidth: 150 }}
+                      onChangeSelect={(value) => setMoveByType(category, toNumber(value))}
+                      value={type}
+                      inputLabel="Type"
+                      menuItems={[
+                        {
+                          value: SelectType.All,
+                          label: getKeyWithData(SelectType, SelectType.All),
+                          defaultChecked: true,
+                        },
+                        ...getTypes().map((value) => ({
+                          value: getDataWithKey<PokemonTypeBadge>(
+                            PokemonTypeBadge,
+                            value,
+                            EqualMode.IgnoreCaseSensitive
+                          ),
+                          label: capitalize(value),
+                        })),
+                      ]}
+                    />
                   </div>
-                  <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                    <TextField
-                      type="text"
-                      variant={VariantType.Outlined}
+                  <div className="!tw-w-1/3 tw-flex-none tw-flex tw-justify-center tw-items-center !tw-p-0">
+                    <InputMui
                       placeholder="Enter Name or ID"
                       defaultValue={name}
-                      onChange={(e) => setMoveNameByType(category, e.target.value)}
-                      size="small"
+                      onChange={(value) => setMoveNameByType(category, value)}
                     />
                   </div>
                 </div>
@@ -259,9 +251,9 @@ const Search = () => {
   };
 
   return (
-    <div className="container my-4">
+    <div className="tw-container tw-my-4">
       <div className="table-head">Moveset list in Pokémon GO</div>
-      <div className="row w-100 m-0">
+      <div className="row tw-w-full !tw-m-0">
         {moveList(resultFMove, fMoveType, fMoveName, fMoveIsLoad, TypeMove.Fast)}
         {moveList(resultCMove, cMoveType, cMoveName, cMoveIsLoad, TypeMove.Charge)}
       </div>

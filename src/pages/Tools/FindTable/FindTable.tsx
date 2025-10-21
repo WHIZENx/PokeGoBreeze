@@ -1,13 +1,12 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
+import { createDataRows, HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../utils/calculate';
 
 import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
 import dataCPM from '../../../data/cp_multiplier.json';
 
 import '../../../components/Find/FormSelect.scss';
-import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
 import './FindTable.scss';
@@ -19,13 +18,15 @@ import {
   PredictStatsModel,
   PredictCPModel,
 } from '../../../utils/models/calculate.model';
-import { useSelector } from 'react-redux';
-import { SearchingState } from '../../../store/models/state.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
-import { ColumnType, VariantType } from '../../../enums/type.enum';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/context.helpers';
+import { ColumnType } from '../../../enums/type.enum';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
+import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/options-context.helpers';
+import useSearch from '../../../composables/useSearch';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 interface IFindCP {
   level: number;
@@ -43,7 +44,7 @@ class FindCP implements IFindCP {
   }
 }
 
-const columnsIV: TableColumn<IPredictStatsModel>[] = [
+const columnsIV = createDataRows<TableColumn<IPredictStatsModel>>(
   {
     id: ColumnType.Level,
     name: 'Level',
@@ -79,10 +80,10 @@ const columnsIV: TableColumn<IPredictStatsModel>[] = [
     name: 'Percent',
     selector: (row) => row.percent,
     sortable: true,
-  },
-];
+  }
+);
 
-const columnsCP: TableColumn<IPredictCPModel>[] = [
+const columnsCP = createDataRows<TableColumn<IPredictCPModel>>(
   {
     id: ColumnType.Level,
     name: 'Level',
@@ -100,8 +101,8 @@ const columnsCP: TableColumn<IPredictCPModel>[] = [
     name: 'HP',
     selector: (row) => row.hp,
     sortable: true,
-  },
-];
+  }
+);
 
 const customStyles: TableStyles = {
   rows: {
@@ -116,7 +117,7 @@ const customStyles: TableStyles = {
   },
 };
 
-const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
+const conditionalRowStyles = createDataRows<ConditionalStyles<IPredictStatsModel>>(
   {
     when: (row) => row.percent === 100,
     style: {
@@ -146,10 +147,10 @@ const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
     style: {
       backgroundColor: '#d7d7d7',
     },
-  },
-];
+  }
+);
 
-const columns: TableColumn<IFindCP>[] = [
+const columns = createDataRows<TableColumn<IFindCP>>(
   {
     id: ColumnType.Level,
     name: 'Level',
@@ -167,8 +168,8 @@ const columns: TableColumn<IFindCP>[] = [
     name: 'MAX CP',
     selector: (row) => row.maxCP,
     sortable: true,
-  },
-];
+  }
+);
 
 const FindTable = () => {
   useTitle({
@@ -177,7 +178,7 @@ const FindTable = () => {
       'Find specific CP and IV combinations for any Pokémon in Pokémon GO. Our advanced search tool helps you locate perfect IVs and optimal CP values.',
     keywords: ['Find CP', 'Find IV', 'Pokémon GO CP search', 'IV finder', 'CP calculator', 'optimal Pokémon stats'],
   });
-  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
+  const { searchingToolCurrentDetails } = useSearch();
 
   const [searchCP, setSearchCP] = useState('');
 
@@ -188,28 +189,28 @@ const FindTable = () => {
   const [preIvArr, setPreIvArr] = useState<IPredictStatsCalculate>();
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
-    if (!pokemon) {
+    if (!searchingToolCurrentDetails) {
       return;
     }
     if (toNumber(searchCP) < minCp()) {
-      return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
+      return showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
     }
     const result = predictStat(
-      toNumber(pokemon.statsGO?.atk),
-      toNumber(pokemon.statsGO?.def),
-      toNumber(pokemon.statsGO?.sta),
+      toNumber(searchingToolCurrentDetails.statsGO?.atk),
+      toNumber(searchingToolCurrentDetails.statsGO?.def),
+      toNumber(searchingToolCurrentDetails.statsGO?.sta),
       searchCP
     );
     if (!isNotEmpty(result.result)) {
       setPreIvArr(undefined);
-      const name = splitAndCapitalize(pokemon.fullName, '_', ' ');
-      return enqueueSnackbar(`At CP: ${result.CP} impossible found in ${name}`, { variant: VariantType.Error });
+      const name = splitAndCapitalize(searchingToolCurrentDetails.fullName, '_', ' ');
+      return showSnackbar(`At CP: ${result.CP} impossible found in ${name}`, 'error');
     }
     setPreIvArr(result);
-  }, [enqueueSnackbar, pokemon, searchCP]);
+  }, [searchingToolCurrentDetails, searchCP]);
 
   const onFindStats = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -229,23 +230,23 @@ const FindTable = () => {
   };
 
   const findStatsCP = useCallback(() => {
-    if (!pokemon) {
+    if (!searchingToolCurrentDetails) {
       return;
     }
     if (isInvalidIV(searchATKIv) || isInvalidIV(searchDEFIv) || isInvalidIV(searchSTAIv)) {
-      enqueueSnackbar(`Please input IV between ${minIv()} - ${maxIv()}.`, { variant: VariantType.Error });
+      showSnackbar(`Please input IV between ${minIv()} - ${maxIv()}.`, 'error');
       return;
     }
     const result = predictCPList(
-      toNumber(pokemon.statsGO?.atk),
-      toNumber(pokemon.statsGO?.def),
-      toNumber(pokemon.statsGO?.sta),
+      toNumber(searchingToolCurrentDetails.statsGO?.atk),
+      toNumber(searchingToolCurrentDetails.statsGO?.def),
+      toNumber(searchingToolCurrentDetails.statsGO?.sta),
       searchATKIv,
       searchDEFIv,
       searchSTAIv
     );
     setPreCpArr(result);
-  }, [enqueueSnackbar, pokemon, searchATKIv, searchDEFIv, searchSTAIv]);
+  }, [searchingToolCurrentDetails, searchATKIv, searchDEFIv, searchSTAIv]);
 
   const onFindCP = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -256,16 +257,16 @@ const FindTable = () => {
   );
 
   const renderStar = (star: number | undefined, starAmount: number, style: string) => (
-    <div className="d-inline-block text-center">
+    <div className="tw-inline-block tw-text-center">
       <div className={`${style}-star`}>
         {isEqual(style, 'four') ? (
           <HundoRate name="hundo-rate" value={starAmount} max={3} readOnly />
         ) : (
           <Rating name={`${style}-rate`} value={starAmount} max={3} readOnly />
         )}
-        <hr className="m-0" />
+        <hr className="!tw-m-0" />
         <div>
-          <b className="text-black text-shadow">{star}</b>
+          <b className="tw-text-black text-shadow">{star}</b>
         </div>
       </div>
       <p>{toFloatWithPadding((toNumber(star) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
@@ -288,13 +289,13 @@ const FindTable = () => {
       <Fragment>
         {isNotEmpty(preIvArr?.result) && (
           <Fragment>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               All of result: <b>{preIvArr?.result.length}</b>
             </p>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               Average of percent: <b>{toFloatWithPadding(avgPercent, 2)}</b>
             </p>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             {renderStar(fourStar, 3, 'four')}
@@ -330,10 +331,10 @@ const FindTable = () => {
       <Fragment>
         {isNotEmpty(preCpArr?.result) && (
           <Fragment>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               Average of CP: <b>{Math.round(avgCp)}</b>
             </p>
-            <p className="mt-2">
+            <p className="tw-mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <CustomDataTable
@@ -352,12 +353,12 @@ const FindTable = () => {
   };
 
   const findMinMax = () => {
-    if (!pokemon) {
+    if (!searchingToolCurrentDetails) {
       return;
     }
-    const statATK = toNumber(pokemon.statsGO?.atk);
-    const statDEF = toNumber(pokemon.statsGO?.def);
-    const statSTA = toNumber(pokemon.statsGO?.sta);
+    const statATK = toNumber(searchingToolCurrentDetails.statsGO?.atk);
+    const statDEF = toNumber(searchingToolCurrentDetails.statsGO?.def);
+    const statSTA = toNumber(searchingToolCurrentDetails.statsGO?.sta);
     const dataTable = dataCPM
       .filter((item) => item.level >= minLevel() && item.level <= maxLevel())
       .map((item) => {
@@ -383,45 +384,39 @@ const FindTable = () => {
 
   return (
     <Fragment>
-      <div className="container mt-2">
+      <div className="tw-container tw-mt-2">
         <Find isHide clearStats={clearArrStats} />
-        <h1 id="main" className="text-center">
+        <h1 id="main" className="tw-text-center">
           Find IV
         </h1>
-        <form className="d-flex justify-content-center mt-2" onSubmit={onFindStats.bind(this)}>
-          <Box className="w-50" sx={{ minWidth: 350 }}>
-            <div className="input-group mb-3">
-              <div className="input-group-prepend">
-                <span className="input-group-text">CP</span>
-              </div>
-              <input
-                required
-                value={searchCP}
-                type="number"
-                min={minCp()}
-                className="form-control"
-                aria-label="cp"
-                aria-describedby="input-cp"
-                placeholder="Enter CP"
-                onInput={(e) => setSearchCP(e.currentTarget.value)}
-              />
-            </div>
-            <div className="btn-search d-flex justify-content-center text-center">
-              <button type="submit" className="btn btn-primary">
-                Search
-              </button>
+        <form className="tw-flex tw-justify-center tw-mt-2" onSubmit={onFindStats.bind(this)}>
+          <Box className="tw-w-1/2">
+            <InputMui
+              labelPrepend="CP"
+              className="tw-mb-3 tw-justify-center"
+              placeholder="Enter CP"
+              value={searchCP}
+              onChange={(value) => setSearchCP(value)}
+              inputProps={{
+                type: 'number',
+                min: minCp(),
+                required: true,
+              }}
+            />
+            <div className="btn-search tw-flex tw-justify-center tw-text-center">
+              <ButtonMui type="submit" label="Search" />
             </div>
           </Box>
         </form>
         {preIvArr && <Fragment>{showResultTableIV()}</Fragment>}
         <hr />
-        <h1 id="main" className="text-center">
+        <h1 id="main" className="tw-text-center">
           Find CP
         </h1>
-        <form id="formCP" className="mt-2" onSubmit={onFindCP.bind(this)}>
-          <div className="form-group d-flex justify-content-center text-center">
-            <Box className="w-50" sx={{ minWidth: 300 }}>
-              <div className="d-flex justify-content-between">
+        <form id="formCP" className="tw-mt-2" onSubmit={onFindCP.bind(this)}>
+          <div className="form-group tw-flex tw-justify-center tw-text-center">
+            <Box className="tw-w-1/2 tw-min-w-75">
+              <div className="tw-flex tw-justify-between">
                 <b>ATK</b>
                 <b>{searchATKIv}</b>
               </div>
@@ -436,7 +431,7 @@ const FindTable = () => {
                 marks={marks}
                 onChange={(_, v) => setSearchATKIv(v as number)}
               />
-              <div className="d-flex justify-content-between">
+              <div className="tw-flex tw-justify-between">
                 <b>DEF</b>
                 <b>{searchDEFIv}</b>
               </div>
@@ -451,7 +446,7 @@ const FindTable = () => {
                 marks={marks}
                 onChange={(_, v) => setSearchDEFIv(v as number)}
               />
-              <div className="d-flex justify-content-between">
+              <div className="tw-flex tw-justify-between">
                 <b>STA</b>
                 <b>{searchSTAIv}</b>
               </div>
@@ -468,15 +463,13 @@ const FindTable = () => {
               />
             </Box>
           </div>
-          <div className="form-group d-flex justify-content-center text-center mt-2">
-            <button type="submit" className="btn btn-primary">
-              Search
-            </button>
+          <div className="form-group tw-flex tw-justify-center tw-text-center tw-mt-2">
+            <ButtonMui type="submit" label="Search" />
           </div>
         </form>
         {preCpArr && <Fragment>{showResultTableCP()}</Fragment>}
         <hr />
-        <div className="mt-2">{findMinMax()}</div>
+        <div className="tw-mt-2">{findMinMax()}</div>
       </div>
     </Fragment>
   );

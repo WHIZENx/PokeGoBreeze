@@ -14,7 +14,7 @@ import { ScoreType } from '../../../utils/enums/constants.enum';
 import { EqualMode } from '../../../utils/enums/string.enum';
 import { AnimationType } from '../../../components/Sprites/Hexagon/enums/hexagon.enum';
 import { IStatsPokemonGO } from '../../../core/models/stats.model';
-import { maxLevel, maxIv } from '../../../utils/helpers/context.helpers';
+import { maxLevel, maxIv } from '../../../utils/helpers/options-context.helpers';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();
@@ -47,8 +47,8 @@ const OverAllStats = (props: OverAllStatsComponent) => {
   }, [pokemonAllStats, props.data?.stats, props.data?.id]);
 
   const renderTopStats = (data: IPokemonAllStats | undefined) => (
-    <ul className="mt-2">
-      <li className="mt-2">
+    <ul className="tw-mt-2">
+      <li className="tw-mt-2">
         {'CP: '}
         <b>
           {toNumber(data?.maxCP) > BattleLeagueCPType.Ultra
@@ -56,7 +56,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
             : `${toNumber(data?.currentStats.CP)}`}
         </b>
       </li>
-      <li className={toNumber(data?.level) <= 40 ? 'mt-2' : ''}>
+      <li className={toNumber(data?.level) <= 40 ? 'tw-mt-2' : ''}>
         Level:{' '}
         <b>
           {toNumber(data?.maxCP) > BattleLeagueCPType.Ultra
@@ -71,7 +71,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
           </b>
         )}
       </li>
-      <li className="mt-2">
+      <li className="tw-mt-2">
         <IVBar
           title="Attack"
           iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? maxIv() : toNumber(data?.currentStats.IV?.atkIV)}
@@ -92,13 +92,13 @@ const OverAllStats = (props: OverAllStatsComponent) => {
   );
 
   return (
-    <div className="row w-100 m-0">
+    <div className="row tw-w-full !tw-m-0">
       {isEqual(
         getValueOrDefault(String, props.type, getKeyWithData(ScoreType, ScoreType.Overall)),
         getKeyWithData(ScoreType, ScoreType.Overall),
         EqualMode.IgnoreCaseSensitive
       ) && (
-        <div className="col-lg-4 d-flex justify-content-center p-2">
+        <div className="lg:tw-w-1/3 tw-flex tw-justify-center tw-p-2">
           <div>
             <h5>
               <b>Overall Performance</b>
@@ -120,9 +120,9 @@ const OverAllStats = (props: OverAllStatsComponent) => {
             getKeyWithData(ScoreType, ScoreType.Overall),
             EqualMode.IgnoreCaseSensitive
           )
-            ? 'col-lg-8'
+            ? 'lg:tw-w-2/3'
             : '',
-          'container status-ranking'
+          'tw-container status-ranking'
         )}
       >
         <div>
@@ -134,7 +134,6 @@ const OverAllStats = (props: OverAllStatsComponent) => {
             statDEF={props.data?.def}
             statSTA={props.data?.sta}
             statProd={props.data?.prod}
-            pokemonStats={props.statsRanking}
             id={props.data?.pokemon?.num}
             form={props.data?.pokemon?.form}
             isDisabled={!props.data}

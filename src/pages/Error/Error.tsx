@@ -2,19 +2,16 @@ import React, { useEffect } from 'react';
 import { Location, useLocation } from 'react-router-dom';
 
 import './Error.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { SpinnerState } from '../../store/models/state.model';
 import { useTitle } from '../../utils/hooks/useTitle';
-import { SpinnerActions } from '../../store/actions';
 import { LocationState } from '../../core/models/router.model';
-import { LinkToTop } from '../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../components/Link/LinkToTop';
 import { IErrorPage } from '../models/page.model';
 import { isUndefined } from '../../utils/extension';
+import useSpinner from '../../composables/useSpinner';
 
 const Error = (props: IErrorPage) => {
-  const dispatch = useDispatch();
   const location = useLocation() as unknown as Location<LocationState>;
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const { spinnerIsLoading, hideSpinner } = useSpinner();
   if (props.isError && props.isShowTitle) {
     useTitle({
       title:
@@ -29,15 +26,15 @@ const Error = (props: IErrorPage) => {
   }
 
   useEffect(() => {
-    if (spinner.isLoading) {
-      dispatch(SpinnerActions.HideSpinner.create());
+    if (spinnerIsLoading) {
+      hideSpinner();
     }
-  }, [spinner.isLoading, dispatch]);
+  }, [spinnerIsLoading, hideSpinner]);
 
   return (
     <>
       {props.isError || isUndefined(props.isError) ? (
-        <div className="d-block position-relative">
+        <div className="tw-block tw-relative">
           <div className="error-img">
             <div className="img" />
           </div>
@@ -56,7 +53,7 @@ const Error = (props: IErrorPage) => {
                 </p>
               </span>
               <span>Maybe try one of the links in the menu or press Back to Home to go to the home page.</span>
-              <div className="mt-3">
+              <div className="tw-mt-3">
                 <LinkToTop className="btn btn-danger" to="/">
                   Back to Home
                 </LinkToTop>

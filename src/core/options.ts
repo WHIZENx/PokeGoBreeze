@@ -1,5 +1,5 @@
 import { Asset, CryPath, IAsset, ImageModel } from './models/asset.model';
-import { Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
+import { Bonus, Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
 import {
   EvoList,
   EvolutionQuest,
@@ -27,6 +27,7 @@ import {
   capitalize,
   checkMoveSetAvailable,
   convertPokemonDataName,
+  getBonusType,
   getDataWithKey,
   getItemEvolutionType,
   getKeyWithData,
@@ -37,9 +38,9 @@ import {
   isSpecialMegaFormType,
   replacePokemonGoForm,
   replaceTempMoveName,
+  splitAndCamelCase,
   splitAndCapitalize,
 } from '../utils/utils';
-import { ITypeSet, PokemonTypeBadge, TypeSet } from './models/type.model';
 import { BuffType, MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import {
   Encounter,
@@ -51,7 +52,7 @@ import {
   PokemonGenderRatio,
   StatsGO,
 } from './models/pokemon.model';
-import { ITypeEff } from './models/type-eff.model';
+import { ITypeEffectiveModel, TypeEffectiveModel } from './models/type-effective.model';
 import { versionList } from '../utils/constants';
 import { APIUrl } from '../services/constants';
 import {
@@ -81,6 +82,7 @@ import {
   toNumber,
   UniqValueInArray,
   isNull,
+  safeObjectEntries,
 } from '../utils/extension';
 import { GenderType } from './enums/asset.enum';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
@@ -105,9 +107,16 @@ import {
   minLevel,
   pathAssetPokeGo,
   stepLevel,
-} from '../utils/helpers/context.helpers';
+} from '../utils/helpers/options-context.helpers';
+import { IWeatherBoost } from './models/weather-boost.model';
+import { PokemonTypeBadge } from './enums/pokemon-type.enum';
 
-export const optionSettings = (data: PokemonDataGM[], settings = new Options()): Options => {
+export const optionSettings = (
+  data: PokemonDataGM[],
+  typeEffective: ITypeEffectiveModel,
+  weatherBoost: IWeatherBoost,
+  settings = new Options()
+): Options => {
   data.forEach((item) => {
     const templateHandlers: Record<string, (item: PokemonDataGM) => void> = {
       [TemplateId.PlayerSetting]: handlePlayerSettings,
@@ -127,6 +136,10 @@ export const optionSettings = (data: PokemonDataGM[], settings = new Options()):
     }
   });
 
+  settings.typeEffective = typeEffective;
+  settings.weatherBoost = weatherBoost;
+  settings.weatherTypes = Object.keys(weatherBoost);
+  settings.types = Object.keys(typeEffective);
   return settings;
 
   function handlePlayerSettings(item: PokemonDataGM) {
@@ -212,17 +225,31 @@ export const optionPokeImg = (data: APITree) => processAssetData(data, '.png');
 export const optionPokeSound = (data: APITree) => processAssetData(data, '.wav');
 
 export const optionPokemonTypes = (data: PokemonDataGM[]) => {
-  const types = new TypeSet() as unknown as DynamicObj<DynamicObj<number>>;
+  const types = new TypeEffectiveModel() as unknown as DynamicObj<DynamicObj<number>>;
   const typeSet = Object.keys(types);
   data
     .filter((item) => /^POKEMON_TYPE*/g.test(item.templateId))
     .forEach((item) => {
       const rootType = item.templateId.replace(`${PokemonConfig.Type}_`, '');
+      const typesRoot = types[splitAndCamelCase(rootType, '_', '')];
       typeSet.forEach((type, index) => {
-        types[rootType][type] = item.data.typeEffective.attackScalar[index];
+        typesRoot[splitAndCamelCase(type, '_', '')] = item.data.typeEffective.attackScalar[index];
       });
     });
-  return types as unknown as ITypeSet;
+  return types as unknown as ITypeEffectiveModel;
+};
+
+export const optionPokemonWeather = (data: PokemonDataGM[]) => {
+  const weather = new Object() as DynamicObj<string[]>;
+  data
+    .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
+    .forEach((item) => {
+      const rootType = item.data.weatherAffinities.weatherCondition;
+      weather[splitAndCamelCase(rootType, '_', '')] = item.data.weatherAffinities.pokemonType.map((type) =>
+        splitAndCamelCase(type.replace(`${PokemonConfig.Type}_`, ''), '_', '')
+      );
+    });
+  return weather as unknown as IWeatherBoost;
 };
 
 const optionFormNoneSpecial = (data: PokemonDataGM[], result: string[] = []) => {
@@ -241,13 +268,13 @@ const optionFormNoneSpecial = (data: PokemonDataGM[], result: string[] = []) => 
 
 const findPokemonData = (id: number, name: string, isDefault = false) =>
   Object.values(pokemonStoreData).find((pokemon) => {
-    const slugToCompare = isDefault ? pokemon.slug : pokemon.baseFormeSlug ?? pokemon.slug;
+    const slugToCompare = isDefault ? pokemon.slug : (pokemon.baseFormeSlug ?? pokemon.slug);
     const convertedSlug = convertPokemonDataName(slugToCompare);
     return pokemon.num === id && isEqual(name, convertedSlug);
   });
 
-const convertAndReplaceNameGO = (name: string, defaultName = ''): string => {
-  const formName = getValueOrDefault(String, name);
+const convertAndReplaceNameGO = (name: string | number, defaultName = ''): string => {
+  const formName = getValueOrDefault(String, name.toString());
   let result = formName.replace(`${replacePokemonGoForm(defaultName)}_`, '');
   const formReplacements: Record<string, string> = {
     '^S$': formShadow(),
@@ -255,7 +282,7 @@ const convertAndReplaceNameGO = (name: string, defaultName = ''): string => {
     GALARIAN_STANDARD: formGalarian(),
   };
 
-  Object.entries(formReplacements).forEach(([pattern, replacement]) => {
+  safeObjectEntries(formReplacements).forEach(([pattern, replacement]) => {
     result = result.replace(new RegExp(pattern, 'gi'), replacement);
   });
 
@@ -289,10 +316,10 @@ export const optionPokemonData = (
 
     const types: string[] = [];
     if (pokemonSettings.type) {
-      types.push(pokemonSettings.type.replace(`${PokemonConfig.Type}_`, ''));
+      types.push(splitAndCamelCase(pokemonSettings.type.replace(`${PokemonConfig.Type}_`, ''), '_', ''));
     }
     if (pokemonSettings.type2) {
-      types.push(pokemonSettings.type2.replace(`${PokemonConfig.Type}_`, ''));
+      types.push(splitAndCamelCase(pokemonSettings.type2.replace(`${PokemonConfig.Type}_`, ''), '_', ''));
     }
     pokemon.types = types;
 
@@ -377,7 +404,7 @@ export const optionPokemonData = (
 
     pokemonSettings.evolutionBranch?.forEach((evo) => {
       const dataEvo = new EvoList();
-      const name = getValueOrDefault(String, evo.evolution, pokemon.name);
+      const name = getValueOrDefault(String, evo.evolution?.toString(), pokemon.name);
       if (evo.form) {
         dataEvo.evoToForm = convertAndReplaceNameGO(evo.form, name);
       } else {
@@ -462,7 +489,7 @@ export const optionPokemonData = (
               const opponentPokemonBattle = new OpponentPokemonBattle();
               opponentPokemonBattle.requireDefeat = condition.withOpponentPokemonBattleStatus.requireDefeat;
               opponentPokemonBattle.types = condition.withOpponentPokemonBattleStatus.opponentPokemonType.map((type) =>
-                type.replace(`${PokemonConfig.Type}_`, '')
+                splitAndCamelCase(type.replace(`${PokemonConfig.Type}_`, ''), '_', '')
               );
               quest.opponentPokemonBattle = opponentPokemonBattle;
             }
@@ -556,7 +583,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         return;
       }
 
-      pokemon.types = item.types.map((type) => type.toUpperCase());
+      pokemon.types = item.types.map((type) => splitAndCamelCase(type, '_', ''));
       const optional = new PokemonDataOptional({
         ...item,
         baseForme: isNull(item.baseForme) ? undefined : item.baseForme,
@@ -600,9 +627,9 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         );
         if (tempEvo && isNotEmpty(pokemon.types)) {
           pokemon.stats = tempEvo.stats;
-          pokemon.types[0] = tempEvo.typeOverride1.replace(`${PokemonConfig.Type}_`, '');
+          pokemon.types[0] = splitAndCamelCase(tempEvo.typeOverride1.replace(`${PokemonConfig.Type}_`, ''), '_', '');
           if (tempEvo.typeOverride2) {
-            pokemon.types[1] = tempEvo.typeOverride2.replace(`${PokemonConfig.Type}_`, '');
+            pokemon.types[1] = splitAndCamelCase(tempEvo.typeOverride2.replace(`${PokemonConfig.Type}_`, ''), '_', '');
           }
         } else {
           if (pokemon.pokemonType === PokemonType.Mega) {
@@ -710,19 +737,6 @@ const addPokemonGMaxMove = (data: PokemonDataGM[], result: IPokemonData[]) => {
         item.dynamaxMoves.push(move.move);
       }
     });
-};
-
-export const optionPokemonWeather = (data: PokemonDataGM[]) => {
-  const weather = new Object() as DynamicObj<string[]>;
-  data
-    .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
-    .forEach((item) => {
-      const rootType = item.data.weatherAffinities.weatherCondition;
-      weather[rootType] = item.data.weatherAffinities.pokemonType.map((type) =>
-        type.replace(`${PokemonConfig.Type}_`, '')
-      );
-    });
-  return weather;
 };
 
 const checkDefaultStats = (data: PokemonDataGM[], pokemon: PokemonDataGM) => {
@@ -954,7 +968,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
   });
 };
 
-export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] => {
+export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel): ICombat[] => {
   const moves = extractBasicMoves(data);
   const sequence = extractMoveSequences(data);
   const moveSet = processCombatMoves(data, moves, sequence);
@@ -1002,7 +1016,11 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
         result.id = lastTrackId + id;
         result.track = lastTrackId + id;
         result.name = item.data.moveSettings.vfxName.split('_')[1].toUpperCase();
-        result.type = item.data.moveSettings.pokemonType.replace(`${PokemonConfig.Type}_`, '');
+        result.type = splitAndCamelCase(
+          item.data.moveSettings.pokemonType.replace(`${PokemonConfig.Type}_`, ''),
+          '_',
+          ''
+        );
         result.typeMove = TypeMove.Charge;
         result.moveType = MoveType.Dynamax;
         result.durationMs = item.data.moveSettings.durationMs;
@@ -1026,7 +1044,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
           result.name = item.templateId.replace(/^COMBAT_V\d{4}_MOVE_/, '');
         }
 
-        result.type = item.data.combatMove.type.replace(`${PokemonConfig.Type}_`, '');
+        result.type = splitAndCamelCase(item.data.combatMove.type.replace(`${PokemonConfig.Type}_`, ''), '_', '');
         const fastMoveType = getValueOrDefault(String, getKeyWithData(TypeMove, TypeMove.Fast)?.toUpperCase());
 
         if (item.templateId.endsWith(`_${fastMoveType}`) || isInclude(item.templateId, `_${fastMoveType}_`)) {
@@ -1055,6 +1073,8 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
         if (move) {
           setMoveStats(result, move);
         }
+
+        setNonMoveSetting(result, data);
 
         return result;
       });
@@ -1127,7 +1147,25 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
     result.staminaLossScalar = move.staminaLossScalar;
   }
 
-  function processSpecialMoves(data: PokemonDataGM[], moveSet: Combat[], types: ITypeEff) {
+  function setNonMoveSetting(result: Combat, data: PokemonDataGM[]) {
+    const item = data.find((item) =>
+      item.templateId.startsWith(`NON_COMBAT_V${result.id.toString().padStart(4, '0')}_MOVE`)
+    );
+    const dataNonCombat = item?.data.nonCombatMoveSettings;
+    if (dataNonCombat) {
+      result.bonus = Bonus.create({
+        cost: dataNonCombat.cost,
+        bonusEffect: dataNonCombat.bonusEffect,
+        durationMs: toNumber(dataNonCombat.durationMs),
+        bonusType: getBonusType(dataNonCombat.bonusType),
+        enableMultiUse: dataNonCombat.enableMultiUse,
+        extraDurationMs: toNumber(dataNonCombat.extraDurationMs),
+        enableNonCombatMove: dataNonCombat.enableNonCombatMove,
+      });
+    }
+  }
+
+  function processSpecialMoves(data: PokemonDataGM[], moveSet: Combat[], types: ITypeEffectiveModel) {
     const result = [...moveSet];
 
     moveSet
@@ -1251,7 +1289,9 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           case LeagueConditionType.PokemonType:
             result.conditions.uniqueType = getValueOrDefault(
               Array,
-              con.withPokemonType?.pokemonType.map((type) => type.replace(`${PokemonConfig.Type}_`, ''))
+              con.withPokemonType?.pokemonType.map((type) =>
+                splitAndCamelCase(type.replace(`${PokemonConfig.Type}_`, ''), '_', '')
+              )
             );
             break;
           case LeagueConditionType.PokemonLevelRange:
@@ -1490,7 +1530,9 @@ const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData
         reward.pokemon = {
           id,
           pokemonId: result.pokemonEncounter.pokemonId,
-          form: result.pokemonEncounter.pokemonDisplay?.form?.replace(`${result.pokemonEncounter.pokemonId}_`, ''),
+          form: result.pokemonEncounter.pokemonDisplay?.form
+            ?.toString()
+            .replace(`${result.pokemonEncounter.pokemonId}_`, ''),
           costume: result.pokemonEncounter.pokemonDisplay?.costume,
         };
       } else if (result.candy) {
@@ -1508,7 +1550,9 @@ const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData
 };
 
 const getTextWithKey = <T>(data: object, findKey: string | number) => {
-  const result = Object.entries(data).find(([key]) => isInclude(key, findKey, IncludeMode.IncludeIgnoreCaseSensitive));
+  const result = safeObjectEntries(data).find(([key]) =>
+    isInclude(key, findKey, IncludeMode.IncludeIgnoreCaseSensitive)
+  );
   return result && isNotEmpty(result) ? (result[1] as T) : undefined;
 };
 
@@ -1529,7 +1573,7 @@ const getInformationTitle = (itemSettings: ItemSettings | undefined) => {
       const [firstText] = srcText.split('_');
       if (isNumber(firstText) && !itemSettings.globalEventTicket.titleImageUrl) {
         const descKey = itemSettings.globalEventTicket.itemBagDescriptionKey.split('_');
-        return descKey[descKey.length - 1]?.split(/(?=[A-Z])/).join(' ');
+        return splitAndCapitalize(descKey[descKey.length - 1], /(?=[A-Z])/, ' ');
       }
       descKey = srcText.split('_');
       if (/^PGO/i.test(descKey[0])) {

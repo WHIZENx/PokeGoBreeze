@@ -7,10 +7,8 @@ import {
   IPokemonGenderRatio,
   PokemonRaidModel,
 } from '../../core/models/pokemon.model';
-import { IToolSearching } from '../../core/models/searching.model';
 import {
   IStatsPokemon,
-  IStatsRank,
   IStatsAtk,
   IStatsDef,
   IStatsProd,
@@ -22,19 +20,16 @@ import {
   IStatsRankSta,
   IStatsRankProd,
 } from '../../core/models/stats.model';
-import { ITypeEffChart } from '../../core/models/type-eff.model';
-import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
+import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
+import { ISelectMoveModel } from '../Commons/Inputs/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
-import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
-import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
-import { BadgeType } from '../Input/enums/badge-type.enum';
+import { CardType, MoveType, PokemonType, TypeAction, TypeSex } from '../../enums/type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../utils/models/util.model';
 import { PaletteMode } from '@mui/material';
-import { TableProps, TableStyles } from 'react-data-table-component';
-import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
+import React from 'react';
 
 export interface INavbarComponent {
   mode: PaletteMode;
@@ -47,16 +42,20 @@ export interface ICardMoveComponent {
 }
 
 export interface ICardSmallComponent {
-  value: ISelectMoveModel | ICombat | undefined;
+  value?: ISelectMoveModel | ICombat;
+  name?: string;
+  pokemonId?: number;
   isEmpty?: boolean;
   isDisable?: boolean;
   isShow?: boolean;
   isSelect?: boolean;
+  moveType?: MoveType;
+  isHideType?: boolean;
   clearData?: () => void;
 }
 
 export interface ICardPokemonComponent {
-  value: IPokemonData;
+  value: IPokemonData | undefined;
   score?: number;
   pokemonType?: PokemonType;
 }
@@ -75,17 +74,20 @@ export interface ICardPokemonInfoComponent {
 }
 
 export interface ICardTypeComponent {
+  isHideDefaultTitle?: boolean;
   value?: string;
   name?: string;
   moveType?: MoveType;
+  cardType?: CardType;
 }
 
-export interface ICardWeatherComponent {
-  value: string;
+export interface IEffectiveComponent {
+  title: string;
+  children: React.ReactNode;
 }
 
 export interface ITypeEffectiveComponent {
-  typeEffective: ITypeEffChart | undefined;
+  typeEffective: ITypeEffectiveChart | undefined;
 }
 
 export interface ITypeEffectiveSelectComponent {
@@ -117,7 +119,6 @@ export interface IFindComponent {
 }
 
 export interface IFormSelectComponent {
-  searching: IToolSearching | null;
   isRaid?: boolean;
   tier?: number;
   id?: number;
@@ -130,16 +131,13 @@ export interface IFormSelectComponent {
   isHide?: boolean;
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   setForm?: (form: IPokemonFormModify | undefined) => void;
-  stats: IStatsRank | null;
   onHandleSetStats?: (type: TypeAction, value: number) => void;
-  pokemonData: IPokemonData[];
   isObjective?: boolean;
 }
 
 export interface IToolsComponent {
   id: number | undefined;
   dataPoke: IPokemonDetailInfo[];
-  stats: IStatsRank | null;
   onSetStats: ((type: TypeAction, value: number) => void) | undefined;
   onClearStats: ((reset?: boolean) => void) | undefined;
   isRaid: boolean | undefined;
@@ -184,7 +182,6 @@ export interface IFormSpecialComponent {
 
 export interface IStatsComponent {
   pokemonType?: PokemonType;
-  pokemonStats: IStatsRank | null;
   stats?: IStatsPokemon;
   statATK?: IStatsAtk;
   statDEF?: IStatsDef;
@@ -201,70 +198,6 @@ export interface IGenderComponent {
   sprit?: IPokemonSprit;
 }
 
-export interface IMenuItem {
-  label: string | React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-  isClose?: boolean;
-}
-
-export interface ICustomInputComponent {
-  isAutoSearch?: boolean;
-  setSearchData?: () => void;
-  optionsIcon?: React.ReactNode;
-  inputPlaceholder?: string;
-  defaultValue?: string;
-  setSearchTerm?: (searchTerm: string) => void;
-  onOptionsClick?: React.MouseEventHandler<HTMLButtonElement>;
-  menuItems?: IMenuItem[];
-}
-
-export interface IDynamicInputCPComponent {
-  statATK: number | undefined;
-  statDEF: number | undefined;
-  statSTA: number | undefined;
-  ivAtk: number;
-  ivDef: number;
-  ivSta: number;
-  searchCP: string;
-  setSearchCP: React.Dispatch<React.SetStateAction<string>>;
-  label?: string;
-  width?: number | string;
-  minWidth?: number | string;
-}
-
-export interface ISelectBadgeComponent {
-  type: string;
-  priority: BadgeType;
-  setPriority: (priority: BadgeType) => void;
-}
-
-export interface ISelectMoveComponent {
-  move: ISelectMoveModel | ICombat | undefined;
-  setMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
-  clearData?: () => void;
-  pokemon: ISelectMovePokemonModel;
-  moveType: TypeMove;
-  inputType?: InputType;
-  isSelected?: boolean;
-  isDisable?: boolean;
-  maxHeight?: number;
-  position?: SelectPosition;
-}
-
-export interface ISelectPokemonComponent {
-  pokemon?: IPokemonData;
-  setCurrentPokemon: React.Dispatch<React.SetStateAction<IPokemonData | undefined>>;
-  isSelected: boolean;
-  setFMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
-  setCMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
-  clearData?: () => void;
-  isDisable?: boolean;
-  defaultSetting?: IPokemonDataStats;
-  maxHeight?: number;
-  position?: SelectPosition;
-}
-
 export interface IPokemonRaidComponent {
   id: number;
   pokemon: PokemonRaidModel;
@@ -274,14 +207,14 @@ export interface IPokemonRaidComponent {
   isControls: boolean;
   onCopyPokemon: (index: number) => void;
   onRemovePokemon: (index: number) => void;
-  onOptionsPokemon: (index: number, pokemon: IPokemonData) => void;
+  onOptionsPokemon: (index: number, pokemon: IPokemonData | undefined) => void;
   clearData?: (isForceClear?: boolean) => void;
 }
 
 export interface IRaidComponent {
   clearData?: (isForceClear?: boolean) => void;
   setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
-  currForm: Partial<IPokemonFormModify> | undefined;
+  pokemonType: PokemonType | undefined;
   id: number | undefined;
   statATK: number | undefined;
   statDEF: number | undefined;
@@ -420,7 +353,6 @@ export interface ILoadGroupComponent {
   className?: string;
   isShow: boolean;
   size?: number;
-  fontSize?: number;
   opacity?: number;
   bgColor?: string;
   isVertical?: boolean;
@@ -444,50 +376,4 @@ export interface IWeatherComponent {
 
 export interface ICounterComponent {
   pokemonData: Partial<IPokemonDetail> | undefined;
-}
-
-export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
-  isAutoSearch?: boolean;
-  menuItems?: IMenuItem[];
-  customColumns?: TableColumnModify<T>[];
-  customDataStyles?: TableStyles;
-  isShowSearch?: boolean;
-  customStyles?: TableStyles;
-  inputPlaceholder?: string;
-  searchFunction?: (item: T, searchTerm: string) => boolean;
-  debounceTime?: number;
-  isShowModalOptions?: boolean;
-  titleModalOptions?: string;
-  customOptionsModal?: () => React.ReactNode;
-  isXFixed?: boolean;
-}
-
-export interface ITableMoveComponent {
-  pokemonData: Partial<IPokemonDetail> | undefined;
-  maxHeight?: number | string;
-}
-
-export interface IPokemonTableComponent {
-  id: number | undefined;
-  formName: string | undefined;
-  gen: number | string | undefined;
-  region: string | undefined;
-  version: string | undefined;
-  weight: number | undefined;
-  height: number | undefined;
-  className?: string;
-  isLoadedForms?: boolean;
-}
-
-export interface IMoveComponent {
-  type?: TypeMove;
-  id: number | undefined;
-  form: string | undefined;
-  move: ICombat | undefined;
-  setMove: (move: ICombat | undefined) => void | React.Dispatch<React.SetStateAction<ICombat | undefined>>;
-  text: string;
-  isSelectDefault: boolean;
-  clearData?: (option?: boolean) => void;
-  isHighlight?: boolean;
-  pokemonType?: PokemonType;
 }

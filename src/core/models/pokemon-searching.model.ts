@@ -1,4 +1,4 @@
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { splitAndCapitalize } from '../../utils/utils';
 import { IPokemonData } from './pokemon.model';
 
@@ -15,7 +15,7 @@ export class PokemonSearching implements IPokemonSearching {
 
   constructor(item: IPokemonData) {
     this.id = item.num;
-    this.name = splitAndCapitalize(item.pokemonId?.replace(/-M$/, 'MALE').replace(/-F$/, 'FEMALE'), '_', ' ')
+    this.name = splitAndCapitalize(item.pokemonId?.toString().replace(/-M$/, 'MALE').replace(/-F$/, 'FEMALE'), '_', ' ')
       .replace('Mr ', 'Mr. ')
       .replace(/^Ho Oh$/, 'Ho-Oh')
       .replace(/ O$/, '-O');

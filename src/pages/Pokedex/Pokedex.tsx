@@ -1,27 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
-import TypeInfo from '../../components/Sprites/Type/Type';
-import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../utils/utils';
-import APIService from '../../services/API.service';
-import { queryAssetForm } from '../../utils/compute';
+import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
+import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  MenuProps,
-  OutlinedInput,
-  Select,
-  SelectChangeEvent,
-  Switch,
-} from '@mui/material';
-import { StoreState } from '../../store/models/state.model';
+import { Checkbox, FormControlLabel, ListItemText, MenuProps, Switch } from '@mui/material';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
@@ -36,12 +21,20 @@ import {
 } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
-import { TypeEff } from '../../core/models/type-eff.model';
 import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
 import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
-import { transitionTime } from '../../utils/helpers/context.helpers';
+import useIcon from '../../composables/useIcon';
+import useAssets from '../../composables/useAssets';
+import usePokemon from '../../composables/usePokemon';
+import InputMuiSearch from '../../components/Commons/Inputs/InputMuiSearch';
+import InputReleased from '../../components/Commons/Inputs/InputReleased';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../components/Commons/Buttons/ButtonMui';
+import ToggleType from '../../components/Commons/Buttons/ToggleType';
+import FormControlMui from '../../components/Commons/Forms/FormControlMui';
+import BackdropMui from '../../components/Commons/Backdrops/BackdropMui';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -109,11 +102,10 @@ const Pokedex = (props: IStyleSheetData) => {
   });
 
   const dispatch = useDispatch();
+  const { iconData } = useIcon();
+  const { getFilteredPokemons } = usePokemon();
+  const { queryAssetForm } = useAssets();
 
-  const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
-
-  const [types, setTypes] = useState(getKeysObj(new TypeEff()));
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
   const [selectTypes, setSelectTypes] = useState<string[]>([]);
   const [listOfPokemon, setListOfPokemon] = useState<IPokemonHomeModel[]>([]);
@@ -151,77 +143,77 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    setTypes(Object.keys(data.typeEff));
-  }, [data.typeEff]);
-
-  useEffect(() => {
-    if (isNotEmpty(data.assets) && isNotEmpty(data.pokemons)) {
-      setDataList(
-        data.pokemons
-          .map((item) => {
-            const assetForm = queryAssetForm(data.assets, item.num, item.form);
-            return new PokemonHomeModel(item, assetForm);
-          })
-          .sort((a, b) => a.id - b.id)
-      );
-    }
-  }, [data.assets, data.pokemons]);
+    const filteredPokemons = getFilteredPokemons();
+    setDataList(
+      filteredPokemons
+        .map((item) => {
+          const assetForm = queryAssetForm(item.num, item.form);
+          return new PokemonHomeModel(item, assetForm);
+        })
+        .sort((a, b) => a.id - b.id)
+    );
+  }, [getFilteredPokemons]);
 
   useEffect(() => {
     setIsLoading(true);
     if (isNotEmpty(dataList)) {
       try {
-        const debounced = debounce(() => {
-          try {
-            const result = dataList.filter((item) => {
-              const boolFilterType =
-                !isNotEmpty(selectTypes) ||
-                (item.types.every((item) => isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)) &&
-                  item.types.length === selectTypes.length);
-              const boolFilterPoke =
-                isEmpty(searchTerm) ||
-                (isMatch
-                  ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
-                  : isInclude(
-                      splitAndCapitalize(item.name, '-', ' '),
-                      searchTerm,
-                      IncludeMode.IncludeIgnoreCaseSensitive
-                    ) || isInclude(item.id, searchTerm));
-              const boolReleasedGO = releasedGO ? item.releasedGO : true;
-              const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
-              const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
-              const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
-              const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
-              const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
-              const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
+        const debounced = debounce(
+          () => {
+            try {
+              const result = dataList.filter((item) => {
+                const boolFilterType =
+                  !isNotEmpty(selectTypes) ||
+                  (item.types.every((item) =>
+                    isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)
+                  ) &&
+                    item.types.length === selectTypes.length);
+                const boolFilterPoke =
+                  isEmpty(searchTerm) ||
+                  (isMatch
+                    ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
+                    : isInclude(
+                        splitAndCapitalize(item.name, '-', ' '),
+                        searchTerm,
+                        IncludeMode.IncludeIgnoreCaseSensitive
+                      ) || isInclude(item.id, searchTerm));
+                const boolReleasedGO = releasedGO ? item.releasedGO : true;
+                const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
+                const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
+                const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
+                const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
+                const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
+                const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
 
-              const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
-              const findVersion = item.version === -1 || isIncludeList(version, item.version);
-              return (
-                boolFilterType &&
-                boolFilterPoke &&
-                boolReleasedGO &&
-                findGen &&
-                findVersion &&
-                boolMega &&
-                boolGMax &&
-                boolPrimal &&
-                boolLegend &&
-                boolMythic &&
-                boolUltra
+                const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
+                const findVersion = item.version === -1 || isIncludeList(version, item.version);
+                return (
+                  boolFilterType &&
+                  boolFilterPoke &&
+                  boolReleasedGO &&
+                  findGen &&
+                  findVersion &&
+                  boolMega &&
+                  boolGMax &&
+                  boolPrimal &&
+                  boolLegend &&
+                  boolMythic &&
+                  boolUltra
+                );
+              });
+              scrollID.current = 0;
+              setResult(result);
+              setListOfPokemon(result.slice(0, subItem.current));
+              setIsLoading(false);
+            } catch (error) {
+              dispatch(
+                SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true })
               );
-            });
-            scrollID.current = 0;
-            setResult(result);
-            setListOfPokemon(result.slice(0, subItem.current));
-            setIsLoading(false);
-          } catch (error) {
-            dispatch(
-              SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true })
-            );
-            setIsLoading(false);
-          }
-        }, Math.max(300, listOfPokemon.length > result.length ? listOfPokemon.length : result.length));
+              setIsLoading(false);
+            }
+          },
+          Math.max(300, listOfPokemon.length > result.length ? listOfPokemon.length : result.length)
+        );
         debounced();
         return () => {
           debounced.cancel();
@@ -290,8 +282,8 @@ const Pokedex = (props: IStyleSheetData) => {
     }
   }, [listOfPokemon, result]);
 
-  const handleChangeGen = (event: SelectChangeEvent<number[]>) => {
-    const isSelect = isIncludeList(event.target.value as number[], -1);
+  const handleChangeGen = (value: number[]) => {
+    const isSelect = isIncludeList(value, -1);
     if (isSelect) {
       setBtnSelected({
         ...btnSelected,
@@ -299,10 +291,10 @@ const Pokedex = (props: IStyleSheetData) => {
       });
     }
     const gen = !isSelect
-      ? (event.target.value as number[]).sort((a, b) => a - b)
+      ? value.sort((a, b) => a - b)
       : btnSelected.isSelectGen
-      ? []
-      : Object.values(genList).map((_, index) => index);
+        ? []
+        : Object.values(genList).map((_, index) => index);
 
     setFilters({
       ...filters,
@@ -310,8 +302,8 @@ const Pokedex = (props: IStyleSheetData) => {
     });
   };
 
-  const handleChangeVersion = (event: SelectChangeEvent<number[]>) => {
-    const isSelect = isIncludeList(event.target.value as number[], -1);
+  const handleChangeVersion = (value: number[]) => {
+    const isSelect = isIncludeList(value, -1);
     if (isSelect) {
       setBtnSelected({
         ...btnSelected,
@@ -319,10 +311,10 @@ const Pokedex = (props: IStyleSheetData) => {
       });
     }
     const version = !isSelect
-      ? (event.target.value as number[]).sort((a, b) => a - b)
+      ? value.sort((a, b) => a - b)
       : btnSelected.isSelectVersion
-      ? []
-      : versionList.map((_, index) => index);
+        ? []
+        : versionList.map((_, index) => index);
 
     setFilters({
       ...filters,
@@ -331,84 +323,49 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   return (
-    <div className="position-relative">
-      {!isNotEmpty(dataList) && (
-        <div className="ph-item w-100 h-100 position-absolute z-2 bg-transparent">
-          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
-        </div>
-      )}
-      <div className="text-center w-100">
+    <div className="tw-relative">
+      <div className="tw-relative tw-text-center tw-w-full">
+        {!isNotEmpty(dataList) && (
+          <div className="ph-item !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
+            <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0 !tw-bg-transparent" />
+          </div>
+        )}
         <div className="head-types">Filter By Types (Maximum 2)</div>
-        <div className="row w-100 m-0 types-select-btn">
-          {types.map((item, index) => (
-            <div key={index} className="col img-group m-0 p-0">
-              <button
-                value={item}
-                onClick={() => addTypeArr(item)}
-                className={combineClasses(
-                  'btn-select-type w-100 p-2',
-                  isIncludeList(selectTypes, item) ? 'select-type' : ''
-                )}
-                style={{ transition: transitionTime() }}
-              >
-                <TypeInfo isBlock arr={[item]} />
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className="w-100">
+        <ToggleType fullWidth value={selectTypes} onSelectType={(type) => addTypeArr(type)} />
+        <div className="tw-w-full">
           <div className="border-input">
             <div className="head-types">Options</div>
-            <div className="row m-0">
-              <div className="col-xl-4 p-0">
-                <div className="d-flex">
-                  <span className="input-group-text">Search name or ID</span>
-                  <input
-                    type="text"
-                    className="form-control input-search"
-                    placeholder="Enter Name or ID"
-                    defaultValue={searchTerm}
-                    onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
+            <div className="row !tw-m-0">
+              <div className="xl:tw-w-1/3 xl:tw-flex-initial !tw-p-0">
+                <InputMuiSearch
+                  isNoWrap
+                  value={searchTerm}
+                  onChange={(value) => setSearchTerm(value)}
+                  placeholder="Enter Name or ID"
+                  labelPrepend="Search name or ID"
+                />
+                <FormControlMui
+                  control={
+                    <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
+                  }
+                  label="Match Pokémon"
+                >
+                  <InputReleased
+                    releasedGO={releasedGO}
+                    setReleaseGO={(check) => setFilters({ ...filters, releasedGO: check })}
+                    isAvailable={releasedGO}
                   />
-                </div>
-                <div className="d-flex flex-wrap px-2">
-                  <FormControlLabel
-                    control={
-                      <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
-                    }
-                    label="Match Pokémon"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={releasedGO}
-                        onChange={(_, check) => setFilters({ ...filters, releasedGO: check })}
-                      />
-                    }
-                    label={
-                      <span className="d-flex align-items-center">
-                        Released in GO
-                        <img
-                          className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                          width={28}
-                          height={28}
-                          alt="Pokémon GO Icon"
-                          src={APIService.getPokemonGoIcon(icon)}
-                        />
-                      </span>
-                    }
-                  />
-                </div>
-                <div className="d-flex px-2">
-                  <FormControlLabel
+                  <FormControlMui
+                    isNotGroup
                     control={
                       <Switch checked={isShiny} onChange={(_, check) => setFilters({ ...filters, isShiny: check })} />
                     }
+                    className="tw-h-full"
                     label={
-                      <span className="d-flex align-items-center">
+                      <span className="tw-flex tw-items-center">
                         Show All Shiny Pokémon (Only Possible)
                         <img
-                          className={combineClasses('ms-1', isShiny ? 'filter-shiny' : 'filter-gray')}
+                          className={combineClasses('tw-ml-1', isShiny ? 'filter-shiny' : 'filter-gray')}
                           width={28}
                           height={28}
                           alt="Pokémon GO Icon"
@@ -417,66 +374,80 @@ const Pokedex = (props: IStyleSheetData) => {
                       </span>
                     }
                   />
-                </div>
+                </FormControlMui>
               </div>
-              <div className="col-xl-8 border-input p-2 gap-2">
-                <div className="d-flex">
-                  <FormControl className="w-50" sx={{ m: 1 }} size="small">
-                    <InputLabel>Generation(s)</InputLabel>
-                    <Select
-                      multiple
-                      value={gen}
-                      onChange={handleChangeGen}
-                      input={<OutlinedInput label="Generation(s)" />}
-                      renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
-                    >
-                      <MenuItem disableRipple disableTouchRipple value={-1}>
-                        <ListItemText
-                          primary={
-                            <button
-                              className={combineClasses('btn', btnSelected.isSelectGen ? 'btn-danger' : 'btn-success')}
-                            >{`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}</button>
-                          }
-                        />
-                      </MenuItem>
-                      {Object.values(genList).map((_, index) => (
-                        <MenuItem key={index} value={index}>
+              <div className="xl:tw-w-2/3 xl:tw-flex-initial border-input tw-p-2 tw-gap-2">
+                <div className="tw-flex">
+                  <SelectMui<number[]>
+                    multiple
+                    formClassName="tw-w-1/2"
+                    formSx={{ m: 1 }}
+                    inputLabel="Generation(s)"
+                    value={gen}
+                    onChangeSelect={handleChangeGen}
+                    renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
+                    insertItems={[
+                      {
+                        value: -1,
+                        label: (
+                          <ListItemText
+                            primary={
+                              <ButtonMui
+                                fullWidth
+                                color={btnSelected.isSelectGen ? 'error' : 'success'}
+                                label={`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}
+                              />
+                            }
+                          />
+                        ),
+                        disabled: false,
+                      },
+                    ]}
+                    menuItems={Object.values(genList).map((_, index) => ({
+                      value: index,
+                      label: (
+                        <>
                           <Checkbox checked={isIncludeList(gen, index)} />
                           <ListItemText primary={`Generation ${index + 1} (${regionList[index + 1]})`} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl className="w-50" sx={{ m: 1 }} size="small">
-                    <InputLabel>Version(s)</InputLabel>
-                    <Select
-                      multiple
-                      value={version}
-                      onChange={handleChangeVersion}
-                      input={<OutlinedInput label="Version(s)" />}
-                      renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
-                      MenuProps={versionProps}
-                    >
-                      <MenuItem disableRipple disableTouchRipple value={-1}>
-                        <ListItemText
-                          primary={
-                            <button
-                              className={combineClasses(
-                                'btn',
-                                btnSelected.isSelectVersion ? 'btn-danger' : 'btn-success'
-                              )}
-                            >{`${btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'}`}</button>
-                          }
-                        />
-                      </MenuItem>
-                      {versionList.map((value, index) => (
-                        <MenuItem key={index} value={index}>
+                        </>
+                      ),
+                    }))}
+                  />
+                  <SelectMui<number[]>
+                    multiple
+                    formClassName="tw-w-1/2"
+                    formSx={{ m: 1 }}
+                    inputLabel="Version(s)"
+                    value={version}
+                    onChangeSelect={handleChangeVersion}
+                    renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
+                    MenuProps={versionProps}
+                    insertItems={[
+                      {
+                        value: -1,
+                        label: (
+                          <ListItemText
+                            primary={
+                              <ButtonMui
+                                fullWidth
+                                color={btnSelected.isSelectVersion ? 'error' : 'success'}
+                                label={`${btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'}`}
+                              />
+                            }
+                          />
+                        ),
+                      },
+                    ]}
+                    menuItems={Object.values(versionList).map((value, index) => ({
+                      value: index,
+                      label: (
+                        <>
                           <Checkbox checked={isIncludeList(version, index)} />
                           <ListItemText primary={value} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                        </>
+                      ),
+                    }))}
+                  />
                 </div>
                 <div className="input-group border-input">
                   <span className="input-group-text">Filter only by</span>
@@ -582,10 +553,11 @@ const Pokedex = (props: IStyleSheetData) => {
           </div>
         </div>
       </div>
-      <LoadGroup className={'position-fixed text-center'} isShow={isLoading} isVertical={false} isHideAttr={false} />
-      <div className="text-center bg-white">
-        <div className={combineClasses('loading-group-spin-table', isLoading ? 'd-block' : 'd-none')} />
-        <ul className="d-grid pokemon-content">
+      <BackdropMui open={isLoading}>
+        <LoadGroup isShow={isLoading} isVertical={false} isHideAttr={false} />
+      </BackdropMui>
+      <div className="tw-text-center tw-bg-custom-default">
+        <ul className="tw-grid pokemon-content">
           {listOfPokemon.map((row, index) => (
             <CardPokemonInfo
               key={index}
@@ -596,7 +568,7 @@ const Pokedex = (props: IStyleSheetData) => {
               id={row.id}
               types={row.types}
               pokemonStat={row.goStats}
-              icon={icon}
+              icon={iconData}
               releasedGO={row.releasedGO}
               styleList={props.styleSheet}
             />

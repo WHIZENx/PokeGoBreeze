@@ -1,0 +1,371 @@
+// Theme variables for both light and dark modes
+// These will be used with Tailwind CSS and MUI theme
+
+// Common variables
+$text-constant: black;
+$primary-contrast-text: white;
+$secondary-contrast-text: white;
+$border-radius: 4px;
+$spacing-unit: 8px;
+
+// Theme mode
+$light-mode: "light";
+$dark-mode: "dark";
+
+// Primary colors
+$light-primary-main: #1976d2;
+$dark-primary-main: #90caf9;
+$light-primary-light: #42a5f5;
+$dark-primary-light: #e3f2fd;
+$light-primary-dark: #1565c0;
+$dark-primary-dark: #42a5f5;
+
+// Secondary colors
+$light-secondary-main: #9c27b0;
+$dark-secondary-main: #ce93d8;
+$light-secondary-light: #ba68c8;
+$dark-secondary-light: #f3e5f5;
+$light-secondary-dark: #7b1fa2;
+$dark-secondary-dark: #ab47bc;
+
+// Color palette
+$white: white;
+$black: black;
+$fafafa: #fafafa;
+$gray: gray;
+$v262626: #262626;
+$light-gray: lightgray;
+$b0b0b0: #b0b0b0;
+$eeeeee: #eeeeee;
+$v222222: #222222;
+$v333333: #333333;
+$v111111: #111111;
+$v050505: #050505;
+$v555555: #555555;
+$v666666: #666666;
+$v757575: #757575;
+$v0000001f: #0000001f;
+$ffffff1f: #ffffff1f;
+$v409ff1: #409ff1;
+$v1e78c2: #1e78c2;
+$v1a3f5f: #1a3f5f;
+$v204545: #204545;
+$aaaaaa: #aaaaaa;
+$v2b2b2b: #2b2b2b;
+$dddddd: #dddddd;
+$v444444: #444444;
+$cornsilk: cornsilk;
+$v4d4535: #4d4535;
+$dark-gray: #3d3d3d;
+$white-smoke: #f8f8f8;
+$e2eaf1: #e2eaf1;
+$ffffff60: #ffffff60;
+$f8f8f8: #f8f8f8;
+$v464646b3: #464646b3;
+$v46464666: #46464666;
+$e3f2fd: #e3f2fd;
+$grey: grey;
+$f1ffff: #f1ffff;
+$f1f1ff: #f1f1ff;
+$v0571c2: #0571c2;
+$b8d4da: #b8d4da;
+$v3386d2: #3386d2;
+$f6f6f6: #f6f6f6;
+$e6ffe6: #e6ffe6;
+$e6e6e6: #e6e6e6;
+$lightyellow: lightyellow;
+$e1e1e1: #e1e1e1;
+$v969696: #969696;
+$c8c8c8: #c8c8c8;
+$fafafaba: #fafafaba;
+$e7e7e7: #e7e7e7;
+$c8c8c8e6: #c8c8c8e6;
+$a8a8a8: #a8a8a8;
+$v00000000: #00000000;
+$v000000cc: #000000cc;
+$v2a3038: #2a3038;
+$v00000060: #00000060;
+$v232323: #232323;
+$v1e1e1e: #1e1e1e;
+$v303030b3: #303030b3;
+$v30303066: #30303066;
+$afafaf: #afafaf;
+$ebebeb: #ebebeb;
+$v90caf9: #90caf9;
+$v495559: #495559;
+$v0d5ca0: #0d5ca0;
+$v788c92: #788c92;
+$v193319: #193319;
+$v4d4d30: #4d4d30;
+$v3a3a45: #3a3a45;
+$v4f4f5c: #4f4f5c;
+$v454550: #454550;
+$v5a5a6a: #5a5a6a;
+$v222222ba: #222222ba;
+$v181818: #181818;
+$v373737e6: #373737e6;
+$v686868: #686868;
+$v495057: #495057;
+$dee2e6: #dee2e6;
+$f8f9fa: #f8f9fa;
+$v2b3035: #2b3035;
+$v212529: #212529;
+$light-link: #0d6efd;
+$dark-link: #6ea8fe;
+
+:root {
+  --text-constant: #{$black};
+  --primary-contrast-text: #{$white};
+  --secondary-contrast-text: #{$white};
+  --border-radius: 4px;
+  --spacing-unit: 8px;
+}
+
+:root[data-theme=#{$light-mode}] {
+  // Theme mode
+  --mode: #{$light-mode};
+
+  // Primary colors
+  --primary-main: #{$light-primary-main};
+  --primary-light: #{$light-primary-light};
+  --primary-dark: #{$light-primary-dark};
+  
+  // Secondary colors
+  --secondary-main: #{$light-secondary-main};
+  --secondary-light: #{$light-secondary-light};
+  --secondary-dark: #{$light-secondary-dark};
+
+  // Custom colors
+  --default: #{$black};
+  --revert: #{$white};
+  --custom-light-gray: #{$light-gray};
+  --custom-gray: #{$gray};
+
+  // Background colors
+  --custom-default: #{$fafafa};
+  --background-paper: #{$white};
+  --background-revert: #{$black};
+  --background-selected: #{$eeeeee};
+  --background-btn-type: #{$fafafa};
+  --background-btn-type-select: #{$v757575};
+  --table-primary: #{$white};
+  --background-table-divided: #{$v0000001f};
+  --background-table-strip: #{$fafafa};
+  --background-table-hover: #{$eeeeee};
+  --background-input: #{$eeeeee};
+  --background-stats-container: #{$c8c8c8e6};
+  --background-stats-performance: #{$a8a8a8};
+
+  // Text colors
+  --text-primary: #{$black};
+  --text-secondary: #{$v757575};
+  --text-disabled: rgb(0 0 0 / 38%);
+  --text-custom: #{$black};
+  --text-caption: #{$gray};
+
+  // Divider color
+  --divider: rgb(0 0 0 / 12%); 
+
+  // Shadow colors
+  --shadow-default: #{$black};
+  --shadow-default-revert: #{$white};
+  --shadow-custom: #{$v00000000};
+  --shadow-hover: #{$v000000cc};
+
+  // Placeholder
+  --loading-placeholder: #{$e2eaf1};
+  --loading-placeholder-bg: 255, 255, 255;
+  --loading-spinner: #{$ffffff60};
+  --loading-spinner-bg: #{$f8f8f8};
+  --loading-custom-bg: #{$white-smoke};
+  --loading-spinner-bg-start: #{$v464646b3};
+  --loading-spinner-bg-end: #{$v46464666};
+
+  // Data table
+  --table-highlight-row: #{$e3f2fd};
+  --table-sort: #{$gray};
+
+  // Custom selected
+  --custom-selected: #{$aaaaaa};
+  --custom-selected-border: #{$dddddd};
+  --custom-selected-bg: #{$white};
+  --custom-selected-hover: #{$light-gray};
+
+  // Custom text
+  --custom-text: #{$black};
+  --custom-caption: #{$grey};
+  --custom-pop-over: #{$cornsilk};
+
+  // Custom table
+  --table-head: #{$v409ff1};
+  --custom-table-background-odd: #{$eeeeee};
+  --custom-table-background-even: #{$white};
+  --table-info: #{$f1ffff};
+  --custom-table-strip: #{$fafafa};
+  --custom-table-hover: #{$eeeeee};
+  --custom-table-background-sub-head: #{$f1f1ff};
+  --custom-table-background-sub-head-text: #{$v0571c2};
+  --custom-table-background-sub-head-border: #{$b8d4da};
+  --custom-table-background-sub-head-hover: #{$v3386d2};
+  --custom-table-border: #{$light-gray};
+  --custom-btn-type-border: #{$b8d4da};
+
+  // According
+  --custom-according-header: #{$light-gray};
+  --custom-according-footer: #{$f6f6f6};
+  --custom-according-highlight: #{$e6ffe6};
+
+  // Dropdown
+  --custom-dropdown-header: #{$e6e6e6};
+  --custom-dropdown-highlight: #{$lightyellow};
+
+  // Custom button
+  --custom-btn-form: #{$e1e1e1};
+  --custom-btn-form-selected: #{$v969696};
+  --custom-btn-form-hover: #{$c8c8c8};
+  --custom-btn-form-focus: #{$grey};
+
+  // Validator
+  --custom-validator-disable: #{$light-gray};
+
+  // Background unavailable/disabled
+  --custom-background-unavailable: #{$fafafaba};
+  --custom-background-sub-unavailable: #{$e7e7e7};
+
+  // Bootstrap
+  --border-color: #{$dee2e6};
+  --tertiary-color: #{$f8f9fa};
+  --body-color: #{$v212529};
+  --link-color: #{$light-link};
+}
+
+:root[data-theme=#{$dark-mode}] {
+  // Theme mode
+  --mode: #{$dark-mode};
+
+  // Primary colors
+  --primary-main: #{$dark-primary-main};
+  --primary-light: #{$dark-primary-light};
+  --primary-dark: #{$dark-primary-dark};
+
+  // Secondary colors
+  --secondary-main: #{$dark-secondary-main};
+  --secondary-light: #{$dark-secondary-light};
+  --secondary-dark: #{$dark-secondary-dark};
+
+  // Custom colors
+  --default: #{$white};
+  --revert: #{$black};
+  --custom-light-gray: #{$dark-gray};
+  --custom-gray: #{$b0b0b0};
+
+  // Background colors
+  --custom-default: #{$v222222};
+  --background-paper: #{$v333333};
+  --background-revert: #{$white};
+  --background-selected: #{$v555555};
+  --background-btn-type: #{$v555555};
+  --background-btn-type-select: #{$v111111};
+  --table-primary: #{$v222222};
+  --background-table-divided: #{$ffffff1f};
+  --background-table-strip: #{$v050505};
+  --background-table-hover: #{$v333333};
+  --background-input: #{$v666666};
+  --background-stats-container: #{$v373737e6};
+  --background-stats-performance: #{$v686868};
+
+  // Text colors
+  --text-primary: #{$white};
+  --text-secondary: #{$afafaf};
+  --text-disabled: rgb(255 255 255 / 50%);
+  --text-custom: #{$white};
+  --text-caption: #{$ebebeb};
+
+  // Divider color
+  --divider: rgb(255 255 255 / 12%); 
+
+  // Shadow colors
+  --shadow-default: #{$white};
+  --shadow-default-revert: #{$white};
+  --shadow-custom: #{$white};
+  --shadow-hover: #{$white};
+
+  // Placeholder
+  --loading-placeholder: #{$v2a3038};
+  --loading-placeholder-bg: 0, 0, 0;
+  --loading-spinner: #{$v00000060};
+  --loading-spinner-bg: #{$v232323};
+  --loading-custom-bg: #{$v1e1e1e};
+  --loading-spinner-bg-start: #{$v303030b3};
+  --loading-spinner-bg-end: #{$v30303066};
+
+  // Data table
+  --table-highlight-row: #{$v1a3f5f};
+  --table-sort: #{$b0b0b0};
+
+  // Custom selected
+  --custom-selected: #{$v2b2b2b};
+  --custom-selected-border: #{$v444444};
+  --custom-selected-bg: #{$black};
+  --custom-selected-hover: #{$v333333};
+
+  // Custom text
+  --custom-text: #{$white};
+  --custom-caption: #{$ebebeb};
+  --custom-pop-over: #{$v4d4535};
+
+  // Custom table
+  --table-head: #{$v1e78c2};
+  --custom-table-background-odd: #{$v222222};
+  --custom-table-background-even: #{$black};
+  --table-info: #{$v204545};
+  --custom-table-strip: #{$v050505};
+  --custom-table-hover: #{$v111111};
+  --custom-table-background-sub-head: #{$v1e78c2};
+  --custom-table-background-sub-head-text: #{$v90caf9};
+  --custom-table-background-sub-head-border: #{$v495559};
+  --custom-table-background-sub-head-hover: #{$v0d5ca0};
+  --custom-table-border: #{$dark-gray};
+  --custom-btn-type-border: #{$v788c92};
+
+  // According
+  --custom-according-header: #{$dark-gray};
+  --custom-according-footer: #{$v262626};
+  --custom-according-highlight: #{$v193319};
+
+  // Dropdown
+  --custom-dropdown-header: #{$v333333};
+  --custom-dropdown-highlight: #{$v4d4d30};
+
+  // Custom button
+  --custom-btn-form: #{$v3a3a45};
+  --custom-btn-form-selected: #{$v4f4f5c};
+  --custom-btn-form-hover: #{$v454550};
+  --custom-btn-form-focus: #{$v5a5a6a};
+
+  // Validator
+  --custom-validator-disable: #{$dark-gray};
+
+  // Background unavailable/disabled
+  --custom-background-unavailable: #{$v222222ba};
+  --custom-background-sub-unavailable: #{$v181818};
+
+  // Bootstrap
+  --border-color: #{$v495057};
+  --tertiary-color: #{$v2b3035};
+  --body-color: #{$dee2e6};
+  --link-color: #{$dark-link};
+}
+
+// Theme mixins to make theme usage easier
+@mixin light-mode {
+  html[data-theme="#{$light-mode}"] & {
+    @content;
+  }
+}
+
+@mixin dark-mode {
+  html[data-theme="#{$dark-mode}"] & {
+    @content;
+  }
+}

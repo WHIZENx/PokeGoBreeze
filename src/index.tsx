@@ -6,8 +6,6 @@ import './index.scss';
 
 import { Provider } from 'react-redux';
 
-import { SnackbarProvider } from 'notistack';
-
 import reportWebVitals from './reportWebVitals';
 
 import configureStore from './store/configure';
@@ -15,11 +13,11 @@ import Main from './App';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';
 
-import RouterSync from './utils/hooks/RouterSync';
+import RouterSync from './utils/hooks/useRouterSync';
 import LoadingPersist from './components/Sprites/Loading/LoadingPersist';
 import { TypeTheme } from './enums/type.enum';
 import { LocalStorageConfig } from './store/constants/local-storage';
-import { lightThemeBg, darkThemeBg } from './utils/helpers/context.helpers';
+import { lightThemeBg, darkThemeBg } from './utils/helpers/options-context.helpers';
 
 const { store, persistor } = configureStore();
 
@@ -37,26 +35,17 @@ try {
 }
 
 document.documentElement.setAttribute('data-theme', theme);
-document.documentElement.setAttribute('data-bs-theme', theme);
 document.body.style.background = theme === TypeTheme.Dark ? darkThemeBg() : lightThemeBg();
 
 root.render(
   <>
     <Provider store={store}>
-      <SnackbarProvider
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        maxSnack={1}
-      >
-        <PersistGate loading={<LoadingPersist />} persistor={persistor}>
-          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <RouterSync />
-            <Main />
-          </BrowserRouter>
-        </PersistGate>
-      </SnackbarProvider>
+      <PersistGate loading={<LoadingPersist />} persistor={persistor}>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <RouterSync />
+          <Main />
+        </BrowserRouter>
+      </PersistGate>
     </Provider>
     <Analytics />
     <SpeedInsights />

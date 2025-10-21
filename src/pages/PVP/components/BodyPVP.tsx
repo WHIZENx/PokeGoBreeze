@@ -4,9 +4,9 @@ import { BackgroundType } from '../enums/model-type.enum';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { PokemonVersus } from '../../../core/models/pvp.model';
 import { PokemonType } from '../../../enums/type.enum';
-import APIService from '../../../services/API.service';
-import { findAssetForm, computeBgType } from '../../../utils/compute';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
+import APIService from '../../../services/api.service';
+import { computeBgType } from '../../../utils/compute';
+import { getValueOrDefault, isInclude, isNotEmpty } from '../../../utils/extension';
 import {
   convertNameRankingToOri,
   convertNameRankingToForm,
@@ -18,12 +18,16 @@ import {
 import { BodyModel, IBody } from '../models/body.model';
 import { Params } from '../../../utils/constants';
 import { IncludeMode } from '../../../utils/enums/string.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { ScoreType } from '../../../utils/enums/constants.enum';
-import { formShadow } from '../../../utils/helpers/context.helpers';
+import { formShadow } from '../../../utils/helpers/options-context.helpers';
+import useAssets from '../../../composables/useAssets';
+import usePokemon from '../../../composables/usePokemon';
 
 const BodyPVP = (props: BodyComponent) => {
+  const { findPokemonBySlug } = usePokemon();
+  const { getAssetNameById } = useAssets();
   const [matchups, setMatchups] = useState<IBody[]>();
   const [counters, setCounters] = useState<IBody[]>();
 
@@ -31,10 +35,12 @@ const BodyPVP = (props: BodyComponent) => {
     return data
       ?.sort((a, b) => a.rating - b.rating)
       .map((versus) => {
-        const name = convertNameRankingToOri(versus.opponent, convertNameRankingToForm(versus.opponent));
-        const pokemon = props.pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
+        const speciesId = versus.opponent;
+        const speciesName = convertNameRankingToForm(speciesId);
+        const name = convertNameRankingToOri(speciesId, speciesName);
+        const pokemon = findPokemonBySlug(name);
         const id = pokemon?.num;
-        const form = findAssetForm(props.assets, pokemon?.num, pokemon?.form);
+        const form = getAssetNameById(id, name, pokemon?.form);
         let pokemonType;
         if (isInclude(versus.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;
@@ -89,9 +95,9 @@ const BodyPVP = (props: BodyComponent) => {
         ),
       }}
     >
-      <div className="container d-flex align-items-center column-gap-2">
-        <div className="d-flex justify-content-center">
-          <span className="d-inline-block position-relative filter-shadow" style={{ width: 50 }}>
+      <div className="tw-container tw-flex tw-items-center tw-gap-x-2">
+        <div className="tw-flex tw-justify-center">
+          <span className="tw-inline-block tw-relative filter-shadow tw-w-12.5">
             <PokemonIconType pokemonType={data.pokemonType} size={28}>
               <img
                 alt="Image League"
@@ -106,15 +112,15 @@ const BodyPVP = (props: BodyComponent) => {
           </span>
         </div>
         <div>
-          <b className="text-white text-shadow-black">
+          <b className="tw-text-white text-shadow-black">
             #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
           </b>
           <TypeInfo isShowShadow isHideText height={20} arr={data.pokemon?.types} />
         </div>
       </div>
-      <div className="ms-3">
+      <div className="tw-ml-3">
         <span
-          className="ranking-score text-white text-shadow-black filter-shadow"
+          className="ranking-score tw-text-white text-shadow-black filter-shadow"
           style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
         >
           {data.rating}
@@ -124,23 +130,23 @@ const BodyPVP = (props: BodyComponent) => {
   );
 
   return (
-    <div className="row m-0">
-      <div className="col-lg-6 mt-2 p-0">
+    <div className="row !tw-m-0">
+      <div className="lg:tw-w-1/2 tw-mt-2 !tw-p-0">
         <div className="title-item-ranking">
-          <h4 className="text-white text-shadow-black">Best Matchups</h4>
-          <div className="ms-3">
-            <span className="ranking-score score-ic text-black">Rating</span>
+          <h4 className="tw-text-white text-shadow-black">Best Matchups</h4>
+          <div className="tw-ml-3">
+            <span className="ranking-score score-ic tw-text-black">Rating</span>
           </div>
         </div>
         {matchups?.map((matchup, index) => (
           <Fragment key={index}>{renderItemList(matchup, BackgroundType.Matchup)}</Fragment>
         ))}
       </div>
-      <div className="col-lg-6 mt-2 p-0">
+      <div className="lg:tw-w-1/2 tw-mt-2 !tw-p-0">
         <div className="title-item-ranking">
-          <h4 className="text-white text-shadow-black">Best Counters</h4>
-          <div className="ms-3">
-            <span className="ranking-score score-ic text-black">Rating</span>
+          <h4 className="tw-text-white text-shadow-black">Best Counters</h4>
+          <div className="tw-ml-3">
+            <span className="ranking-score score-ic tw-text-black">Rating</span>
           </div>
         </div>
         {counters?.map((counter, index) => (

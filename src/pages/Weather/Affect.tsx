@@ -1,77 +1,50 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import CardWeather from '../../components/Card/CardWeather';
-import WeatherEffective from '../../components/Effective/WeatherEffective';
-import { splitAndCapitalize } from '../../utils/utils';
-import { IWeatherAffComponent } from '../models/page.model';
-import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { DynamicObj, getPropertyName, isEqual } from '../../utils/extension';
+import { camelCase } from '../../utils/utils';
+import { WeatherBoost } from '../../core/models/weather-boost.model';
+import { DynamicObj, getPropertyName } from '../../utils/extension';
+import { getWeatherBoost } from '../../utils/helpers/options-context.helpers';
+import SelectTypeComponent from '../../components/Commons/Selects/SelectType';
+import { CardType } from '../../enums/type.enum';
+import Effective from '../../components/Effective/Effective';
+import TypeInfo from '../../components/Sprites/Type/Type';
 
-const Affect = (prop: IWeatherAffComponent) => {
-  const [weathers, setWeathers] = useState<string[]>([]);
+const Affect = () => {
+  const weathersBoost = getWeatherBoost();
 
-  const [currentWeather, setCurrentWeather] = useState(getPropertyName(prop.weathers, (o) => o.CLEAR));
-  const [showWeather, setShowWeather] = useState(false);
+  const [currentWeather, setCurrentWeather] = useState(camelCase(getPropertyName(weathersBoost, (o) => o.clear)));
 
   const [weatherEffective, setWeatherEffective] = useState<string[]>([]);
 
   const getWeatherEffective = useCallback(() => {
     setWeatherEffective(
-      Object.values(
-        ((prop.weathers ?? new WeatherBoost()) as unknown as DynamicObj<string>)[currentWeather] ?? new WeatherBoost()
-      )
+      Object.values((weathersBoost as unknown as DynamicObj<string>)[currentWeather] ?? new WeatherBoost())
     );
-  }, [currentWeather, prop.weathers]);
+  }, [currentWeather, weathersBoost]);
 
   useEffect(() => {
-    const results = Object.keys(prop.weathers ?? new WeatherBoost()).filter((item) => !isEqual(item, currentWeather));
-    setWeathers(results);
     getWeatherEffective();
-  }, [currentWeather, getWeatherEffective, prop.weathers]);
-
-  const changeWeather = (value: string) => {
-    setShowWeather(false);
-    setCurrentWeather(value);
-    getWeatherEffective();
-  };
+  }, [currentWeather, getWeatherEffective, weathersBoost]);
 
   return (
-    <div className="mt-2">
-      <h5 className="text-center">
+    <div className="tw-mt-2">
+      <h5 className="tw-text-center">
         <b>As Weather</b>
       </h5>
       <div className="row">
-        <div className="col d-flex justify-content-center">
-          <div>
-            <h6 className="text-center">
-              <b>Select Weather</b>
-            </h6>
-            <div className=" d-flex justify-content-center">
-              <div
-                className="card-input mb-3"
-                tabIndex={0}
-                onClick={() => setShowWeather(true)}
-                onBlur={() => setShowWeather(false)}
-              >
-                <div className="card-select">
-                  <CardWeather value={splitAndCapitalize(currentWeather, '_', ' ')} />
-                </div>
-                {showWeather && (
-                  <div className="result-weather">
-                    <ul>
-                      {weathers.map((value, index) => (
-                        <li className="container card-pokemon" key={index} onMouseDown={() => changeWeather(value)}>
-                          <CardWeather value={splitAndCapitalize(value, '_', ' ')} />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+        <div className="col tw-flex tw-justify-center">
+          <SelectTypeComponent
+            title="Select Weather"
+            data={weathersBoost}
+            currentType={currentWeather}
+            setCurrentType={setCurrentWeather}
+            filterType={[currentWeather]}
+            cardType={CardType.Weather}
+          />
         </div>
       </div>
-      <WeatherEffective weatherEffective={weatherEffective} />
+      <Effective title="Types Pokémon for Boosts">
+        <TypeInfo arr={weatherEffective} className="tw-ml-3" isShow />
+      </Effective>
     </div>
   );
 };

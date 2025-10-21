@@ -6,21 +6,19 @@ import { EffectiveType } from '../../../components/Effective/enums/type-effectiv
 
 const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
   const renderTypeEffective = (effType: EffectiveType) => (
-    <div className="col-lg-4 mb-3">
-      <div className="h-100">
-        <h6
-          className={`d-flex justify-content-center ${getKeyWithData(EffectiveType, effType)?.toLowerCase()}-bg-text`}
-        >
+    <div className="lg:tw-w-1/3 tw-mb-3">
+      <div className="tw-h-full">
+        <h6 className={`tw-flex tw-justify-center ${getKeyWithData(EffectiveType, effType)?.toLowerCase()}-bg-text`}>
           <b>{getKeyWithData(EffectiveType, effType)}</b>
         </h6>
-        <hr className="w-100" />
+        <hr className="tw-w-full" />
         {<TypeEffectiveSelect effect={effType} types={props.types} />}
       </div>
-      <hr className="w-100 m-0" />
+      <hr className="tw-w-full !tw-m-0" />
     </div>
   );
   return (
-    <div className="row text-white">
+    <div className="row tw-text-white text-shadow-black">
       {renderTypeEffective(EffectiveType.Weakness)}
       {renderTypeEffective(EffectiveType.Neutral)}
       {renderTypeEffective(EffectiveType.Resistance)}

@@ -168,9 +168,9 @@ export const isInclude = (
   }
 };
 
-export const isIncludeList = (
-  value: (string | number | undefined | null)[] | undefined | null,
-  includesValue: string | number | undefined | null,
+export const isIncludeList = <T>(
+  value: T[] | undefined | null,
+  includesValue: T | undefined | null,
   mode: IncludeMode.Include | IncludeMode.IncludeIgnoreCaseSensitive = IncludeMode.Include
 ) => {
   if (!isNotEmpty(value)) {
@@ -178,7 +178,7 @@ export const isIncludeList = (
   }
   const result = getValueOrDefault(
     Array,
-    value?.map((i) => (!isNullOrUndefined(i) ? i.toString() : ''))
+    value?.map((i) => (!isNullOrUndefined(i) ? (i as string).toString() : ''))
   );
   const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
   switch (mode) {
@@ -262,3 +262,8 @@ export const UniqValueInArray = <T>(array: (T | null | undefined)[] | null | und
   }
   return out;
 };
+
+export const safeObjectEntries = <T extends object | string | number, S extends string | number = string | number>(
+  obj: Record<S, T> | object | undefined,
+  defaultObj = new Object()
+) => Object.entries(obj || defaultObj) as [string, T][];

@@ -1,36 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import APIService from '../../../services/API.service';
-import { capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../utils/utils';
+import APIService from '../../../services/api.service';
+import {
+  camelCase,
+  capitalize,
+  createDataRows,
+  generateParamForm,
+  getItemSpritePath,
+  splitAndCapitalize,
+} from '../../../utils/utils';
 import './Types.scss';
-import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../utils/compute';
-import { Tabs, Tab } from 'react-bootstrap';
 import { calculateStatsByTag } from '../../../utils/calculate';
-import { FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
-import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
+  getPropertyName,
   getValueOrDefault,
-  isEqual,
   isInclude,
   isIncludeList,
   isNotEmpty,
   toNumber,
 } from '../../../utils/extension';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { IStyleSheetData } from '../../models/page.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
+import { getTypeEffective } from '../../../utils/helpers/options-context.helpers';
+import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
+import SelectTypeComponent from '../../../components/Commons/Selects/SelectType';
+import InputReleased from '../../../components/Commons/Inputs/InputReleased';
+import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -38,7 +46,7 @@ const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) =>
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const columnPokemon: TableColumnModify<IPokemonData>[] = [
+const columnPokemon = createDataRows<TableColumnModify<IPokemonData>>(
   {
     id: ColumnType.Id,
     name: 'ID',
@@ -57,7 +65,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
         <img
           height={48}
           alt="Pokémon Image"
-          className="me-2"
+          className="tw-mr-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -80,7 +88,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
           key={index}
           width={25}
           height={25}
-          className="me-2"
+          className="tw-mr-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
@@ -108,10 +116,10 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).sta,
     sortable: true,
     width: '100px',
-  },
-];
+  }
+);
 
-const columnMove: TableColumnModify<ICombat>[] = [
+const columnMove = createDataRows<TableColumnModify<ICombat>>(
   {
     id: ColumnType.Type,
     name: 'ID',
@@ -124,7 +132,7 @@ const columnMove: TableColumnModify<ICombat>[] = [
     name: 'Move Name',
     selector: (row) => (
       <LinkToTop
-        className="d-flex align-items-center"
+        className="tw-flex tw-items-center"
         to={`/move/${row.id}`}
         title={`${splitAndCapitalize(row.name, '_', ' ')}`}
       >
@@ -162,8 +170,8 @@ const columnMove: TableColumnModify<ICombat>[] = [
     selector: (row) => `${row.pvpEnergy > 0 ? '+' : ''}${row.pvpEnergy}`,
     sortable: true,
     width: '120px',
-  },
-];
+  }
+);
 
 interface IPokemonTypeMove {
   pokemonList: IPokemonData[];
@@ -202,17 +210,15 @@ class PokemonTypeData implements IPokemonTypeData {
 }
 
 const SearchTypes = (props: IStyleSheetData) => {
-  const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
-  const [typeList, setTypeList] = useState<string[]>([]);
+  const typesEffective = getTypeEffective();
+  const { getFilteredPokemons } = usePokemon();
+  const { getCombatsByTypeMove, getCombatsByTypeAndTypeMove } = useCombats();
 
   const [releasedGO, setReleaseGO] = useState(true);
 
-  const [currentType, setCurrentType] = useState('');
+  const [currentType, setCurrentType] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [result, setResult] = useState(new PokemonTypeMove());
   const [allData, setAllData] = useState<IPokemonTypeData>();
-
-  const [showType, setShowType] = useState(false);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PokéGO Breeze - Type',
@@ -242,108 +248,62 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(data.combats) && isNotEmpty(data.pokemons)) {
+    if (isNotEmpty(getFilteredPokemons())) {
       setAllData(
         PokemonTypeData.create({
-          pokemon: data.pokemons.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-          fastMoves: data.combats.filter((type) => type.typeMove === TypeMove.Fast).length,
-          chargedMoves: data.combats.filter((type) => type.typeMove === TypeMove.Charge).length,
+          pokemon: getFilteredPokemons((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
+          fastMoves: getCombatsByTypeMove(TypeMove.Fast).length,
+          chargedMoves: getCombatsByTypeMove(TypeMove.Charge).length,
         })
       );
     }
-  }, [releasedGO, data.combats, data.pokemons]);
+  }, [releasedGO, getCombatsByTypeMove, getFilteredPokemons]);
 
   useEffect(() => {
-    setTypeList(Object.keys(data.typeEff));
-  }, [data.typeEff]);
-
-  useEffect(() => {
-    if (isNotEmpty(typeList) && !currentType) {
-      setCurrentType(typeList[0]);
-    }
-  }, [typeList, currentType]);
-
-  useEffect(() => {
-    if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
+    if (isNotEmpty(getFilteredPokemons())) {
       setResult(
         PokemonTypeMove.create({
-          pokemonList: data.pokemons
-            .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-            .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
-          fastMove: data.combats.filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
-          chargedMove: data.combats.filter(
-            (type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)
+          pokemonList: getFilteredPokemons(
+            (pokemon) =>
+              (releasedGO ? pokemon.releasedGO : true) &&
+              isIncludeList(pokemon.types, currentType, IncludeMode.IncludeIgnoreCaseSensitive)
           ),
+          fastMove: getCombatsByTypeAndTypeMove(currentType, TypeMove.Fast),
+          chargedMove: getCombatsByTypeAndTypeMove(currentType, TypeMove.Charge),
         })
       );
     }
-  }, [currentType, releasedGO, data.pokemons, data.combats]);
-
-  const changeType = (value: string) => {
-    setShowType(false);
-    setCurrentType(value);
-  };
+  }, [currentType, releasedGO, getFilteredPokemons, getCombatsByTypeAndTypeMove]);
 
   return (
-    <div className="container mt-2">
-      <div className="d-flex justify-content-end">
-        <div>
-          <h6 className="text-center">
-            <b>Select Type</b>
-          </h6>
-          <div
-            className="card-input mb-3"
-            tabIndex={0}
-            onClick={() => setShowType(true)}
-            onBlur={() => setShowType(false)}
-          >
-            <div className="card-select">
-              <CardType value={capitalize(currentType)} />
-            </div>
-            {showType && (
-              <div className="result-type">
-                <ul>
-                  {Object.keys(data.typeEff)
-                    .filter((value) => !isEqual(value, currentType))
-                    .map((value, index) => (
-                      <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
-                        <CardType value={capitalize(value)} />
-                      </li>
-                    ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
+    <div className="tw-container tw-mt-2">
+      <div className="tw-flex tw-justify-end">
+        <SelectTypeComponent
+          title="Select Type"
+          data={typesEffective}
+          currentType={currentType}
+          setCurrentType={setCurrentType}
+          filterType={[currentType]}
+        />
       </div>
-      <FormControlLabel
-        control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
-        label={
-          <span className="d-flex align-items-center">
-            Released in GO
-            <img
-              className={combineClasses('mx-1', releasedGO ? '' : 'filter-gray')}
-              width={28}
-              height={28}
-              alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(icon)}
-            />
-            <b>{`Filter from ${allData?.pokemon} Pokémon`}</b>
-          </span>
-        }
+      <InputReleased
+        releasedGO={releasedGO}
+        setReleaseGO={(check) => setReleaseGO(check)}
+        isAvailable={releasedGO}
+        label={<b>{`Filter from ${allData?.pokemon} Pokémon`}</b>}
       />
       <div className="row">
-        <div className="col-xl-4 mt-2">
+        <div className="xl:tw-w-1/3 !tw-mt-2">
           <div
             className={combineClasses(
-              'd-flex flex-column align-items-center type-info-container',
+              'tw-flex tw-flex-col tw-items-center type-info-container',
               `${currentType.toLowerCase()}-border`
             )}
             style={{ background: computeBgType(currentType, PokemonType.Normal, props.styleSheet) }}
           >
-            <div className="filter-shadow" style={{ width: 128 }}>
+            <div className="filter-shadow tw-w-32">
               <img
-                className="sprite-type-large p-3 rounded-circle bg-black"
+                className="sprite-type-large tw-p-3 tw-rounded-full tw-bg-black"
                 alt="Pokémon GO Type Logo"
                 src={APIService.getTypeHqSprite(currentType)}
               />
@@ -351,10 +311,10 @@ const SearchTypes = (props: IStyleSheetData) => {
             <span
               className={combineClasses(
                 currentType.toLowerCase(),
-                'type-select-bg d-flex align-items-center filter-shadow mt-2 w-max-content'
+                'type-select-bg tw-flex tw-items-center filter-shadow tw-mt-2 tw-w-max'
               )}
             >
-              <div className="w-3 d-contents">
+              <div className="tw-w-3 tw-contents">
                 <img
                   className="pokemon-sprite-small sprite-type-select filter-shadow"
                   alt="Pokémon GO Type Logo"
@@ -363,7 +323,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               </div>
               <span className="filter-shadow">{capitalize(currentType)}</span>
             </span>
-            <span className="mt-2 text-white text-shadow-black">
+            <span className="tw-mt-2 tw-text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={getItemSpritePath(ItemName.PokeBall)} />
               <b>{` Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
@@ -393,13 +353,13 @@ const SearchTypes = (props: IStyleSheetData) => {
                 </li>
               </ul>
             </span>
-            <span className="mt-2 text-white text-shadow-black">
+            <span className="tw-mt-2 tw-text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1201')} />
               <b>{` Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
                 (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
-            <span className="mt-2 text-white text-shadow-black">
+            <span className="tw-mt-2 tw-text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1202')} />
               <b>{` Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
                 (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)
@@ -407,97 +367,111 @@ const SearchTypes = (props: IStyleSheetData) => {
             </span>
           </div>
         </div>
-        <div className="col-xl-8 mt-2">
-          <Tabs defaultActiveKey="pokemonLegacyList" className="lg-2">
-            <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
-              <CustomDataTable
-                customColumns={columnPokemon}
-                data={result.pokemonList.filter((pokemon) => pokemon.types.length === 1)}
-                pagination
-                defaultSortFieldId={ColumnType.Name}
-                highlightOnHover
-                striped
-                progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={<CircularProgressTable />}
-                isShowSearch
-                isAutoSearch
-                inputPlaceholder="Search Pokémon Name or ID"
-                searchFunction={(pokemon, searchTerm) =>
-                  isInclude(
-                    splitAndCapitalize(pokemon.name, '-', ' '),
-                    searchTerm,
-                    IncludeMode.IncludeIgnoreCaseSensitive
-                  ) || isInclude(pokemon.num, searchTerm)
-                }
-              />
-            </Tab>
-            <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
-              <CustomDataTable
-                customColumns={columnPokemon}
-                data={result.pokemonList.filter((pokemon) => pokemon.types.length > 1)}
-                pagination
-                defaultSortFieldId={ColumnType.Name}
-                highlightOnHover
-                striped
-                progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={<CircularProgressTable />}
-                isShowSearch
-                isAutoSearch
-                inputPlaceholder="Search Pokémon Name or ID"
-                searchFunction={(pokemon, searchTerm) =>
-                  isInclude(
-                    splitAndCapitalize(pokemon.name, '-', ' '),
-                    searchTerm,
-                    IncludeMode.IncludeIgnoreCaseSensitive
-                  ) || isInclude(pokemon.num, searchTerm)
-                }
-              />
-            </Tab>
-            <Tab eventKey="fastMovesList" title="Fast Move List">
-              <CustomDataTable
-                customColumns={columnMove}
-                data={result.fastMove}
-                pagination
-                defaultSortFieldId={ColumnType.Name}
-                highlightOnHover
-                striped
-                progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={<CircularProgressTable />}
-                isShowSearch
-                isAutoSearch
-                inputPlaceholder="Search Move Name or ID"
-                searchFunction={(move, searchTerm) =>
-                  isInclude(
-                    splitAndCapitalize(move.name, '_', ' '),
-                    searchTerm,
-                    IncludeMode.IncludeIgnoreCaseSensitive
-                  ) || isInclude(move.id, searchTerm)
-                }
-              />
-            </Tab>
-            <Tab eventKey="chargesMovesList" title="Charged Move List">
-              <CustomDataTable
-                customColumns={columnMove}
-                data={result.chargedMove}
-                pagination
-                defaultSortFieldId={ColumnType.Name}
-                highlightOnHover
-                striped
-                progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={<CircularProgressTable />}
-                isShowSearch
-                isAutoSearch
-                inputPlaceholder="Search Move Name or ID"
-                searchFunction={(move, searchTerm) =>
-                  isInclude(
-                    splitAndCapitalize(move.name, '_', ' '),
-                    searchTerm,
-                    IncludeMode.IncludeIgnoreCaseSensitive
-                  ) || isInclude(move.id, searchTerm)
-                }
-              />
-            </Tab>
-          </Tabs>
+        <div className="xl:tw-w-2/3 !tw-mt-2">
+          <TabsPanel
+            tabs={[
+              {
+                label: 'Pokémon Legacy Type List',
+                children: (
+                  <CustomDataTable
+                    customColumns={columnPokemon}
+                    data={result.pokemonList.filter((pokemon) => pokemon.types.length === 1)}
+                    pagination
+                    defaultSortFieldId={ColumnType.Name}
+                    highlightOnHover
+                    striped
+                    progressPending={!isNotEmpty(result.pokemonList)}
+                    progressComponent={<CircularProgressTable />}
+                    isShowSearch
+                    isAutoSearch
+                    inputPlaceholder="Search Pokémon Name or ID"
+                    searchFunction={(pokemon, searchTerm) =>
+                      isInclude(
+                        splitAndCapitalize(pokemon.name, '-', ' '),
+                        searchTerm,
+                        IncludeMode.IncludeIgnoreCaseSensitive
+                      ) || isInclude(pokemon.num, searchTerm)
+                    }
+                  />
+                ),
+              },
+              {
+                label: 'Pokémon Include Types List',
+                children: (
+                  <CustomDataTable
+                    customColumns={columnPokemon}
+                    data={result.pokemonList.filter((pokemon) => pokemon.types.length > 1)}
+                    pagination
+                    defaultSortFieldId={ColumnType.Name}
+                    highlightOnHover
+                    striped
+                    progressPending={!isNotEmpty(result.pokemonList)}
+                    progressComponent={<CircularProgressTable />}
+                    isShowSearch
+                    isAutoSearch
+                    inputPlaceholder="Search Pokémon Name or ID"
+                    searchFunction={(pokemon, searchTerm) =>
+                      isInclude(
+                        splitAndCapitalize(pokemon.name, '-', ' '),
+                        searchTerm,
+                        IncludeMode.IncludeIgnoreCaseSensitive
+                      ) || isInclude(pokemon.num, searchTerm)
+                    }
+                  />
+                ),
+              },
+              {
+                label: 'Fast Move List',
+                children: (
+                  <CustomDataTable
+                    customColumns={columnMove}
+                    data={result.fastMove}
+                    pagination
+                    defaultSortFieldId={ColumnType.Name}
+                    highlightOnHover
+                    striped
+                    progressPending={!isNotEmpty(result.pokemonList)}
+                    progressComponent={<CircularProgressTable />}
+                    isShowSearch
+                    isAutoSearch
+                    inputPlaceholder="Search Move Name or ID"
+                    searchFunction={(move, searchTerm) =>
+                      isInclude(
+                        splitAndCapitalize(move.name, '_', ' '),
+                        searchTerm,
+                        IncludeMode.IncludeIgnoreCaseSensitive
+                      ) || isInclude(move.id, searchTerm)
+                    }
+                  />
+                ),
+              },
+              {
+                label: 'Charged Move List',
+                children: (
+                  <CustomDataTable
+                    customColumns={columnMove}
+                    data={result.chargedMove}
+                    pagination
+                    defaultSortFieldId={ColumnType.Name}
+                    highlightOnHover
+                    striped
+                    progressPending={!isNotEmpty(result.pokemonList)}
+                    progressComponent={<CircularProgressTable />}
+                    isShowSearch
+                    isAutoSearch
+                    inputPlaceholder="Search Move Name or ID"
+                    searchFunction={(move, searchTerm) =>
+                      isInclude(
+                        splitAndCapitalize(move.name, '_', ' '),
+                        searchTerm,
+                        IncludeMode.IncludeIgnoreCaseSensitive
+                      ) || isInclude(move.id, searchTerm)
+                    }
+                  />
+                ),
+              },
+            ]}
+          />
         </div>
       </div>
     </div>

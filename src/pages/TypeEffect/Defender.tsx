@@ -1,151 +1,61 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import TypeEffective from '../../components/Effective/TypeEffective';
-import CardType from '../../components/Card/CardType';
-import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../utils/utils';
-import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
-import { ITypeEffComponent } from '../models/page.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isEqual } from '../../utils/extension';
-import { PokemonTypeBadge } from '../../core/models/type.model';
-import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
+import TypeEffectiveComponent from '../../components/Effective/TypeEffective';
+import { getMultiplyTypeEffect } from '../../utils/utils';
+import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-effective.model';
+import { DynamicObj, getPropertyName, isEmpty, safeObjectEntries } from '../../utils/extension';
+import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';
+import { camelCase } from 'lodash';
+import SelectTypeComponent from '../../components/Commons/Selects/SelectType';
 
-const Defender = (prop: ITypeEffComponent) => {
-  const [types, setTypes] = useState<string[]>([]);
+const Defender = () => {
+  const typesEffective = getTypeEffectiveContext();
+  const [typeEffective, setTypeEffective] = useState<ITypeEffectiveChart>();
 
-  const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
-
-  const [currentTypePri, setCurrentTypePri] = useState(
-    getValueOrDefault(String, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase())
-  );
+  const [currentTypePri, setCurrentTypePri] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [currentTypeSec, setCurrentTypeSec] = useState('');
 
-  const [showTypePri, setShowTypePri] = useState(false);
-  const [showTypeSec, setShowTypeSec] = useState(false);
-
   const getTypeEffective = useCallback(() => {
-    const data = TypeEffChart.create({
-      veryWeak: [],
-      weak: [],
-      superResist: [],
-      veryResist: [],
-      resist: [],
-      neutral: [],
-    });
-    Object.entries(prop.types ?? new TypeEff()).forEach(([key, value]: [string, DynamicObj<number>]) => {
+    const data = new TypeEffectiveChart();
+    safeObjectEntries<DynamicObj<number>>(typesEffective).forEach(([key, value]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= isEmpty(currentTypeSec) ? 1 : value[currentTypeSec];
       getMultiplyTypeEffect(data, valueEffective, key);
     });
     setTypeEffective(data);
-  }, [currentTypePri, currentTypeSec, prop.types]);
+  }, [currentTypePri, currentTypeSec, typesEffective]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? new TypeEff()).filter(
-      (item) => !isEqual(item, currentTypePri) && !isEqual(item, currentTypeSec)
-    );
-    setTypes(results);
     getTypeEffective();
-  }, [currentTypePri, currentTypeSec, getTypeEffective, prop.types]);
-
-  const changeTypePri = (value: string) => {
-    setShowTypePri(false);
-    setCurrentTypePri(value);
-    getTypeEffective();
-  };
-
-  const changeTypeSec = (value: string) => {
-    setShowTypeSec(false);
-    setCurrentTypeSec(value);
-    getTypeEffective();
-  };
-
-  const closeTypeSec = () => {
-    setShowTypeSec(false);
-    setCurrentTypeSec('');
-  };
+  }, [currentTypePri, currentTypeSec, getTypeEffective, typesEffective]);
 
   return (
-    <div className="mt-2">
-      <h5 className="text-center">
+    <div className="tw-mt-2">
+      <h5 className="tw-text-center">
         <b>As Defender</b>
       </h5>
       <div className="row">
-        <div className="col d-flex justify-content-center">
-          <div>
-            <h6 className="text-center">
-              <b>Type 1</b>
-            </h6>
-            <div
-              className="card-input mb-3"
-              tabIndex={0}
-              onClick={() => setShowTypePri(true)}
-              onBlur={() => setShowTypePri(false)}
-            >
-              <div className="card-select">
-                <CardType value={capitalize(currentTypePri)} />
-              </div>
-              {showTypePri && (
-                <div className="result-type">
-                  <ul>
-                    {types.map((value, index) => (
-                      <li
-                        className="container card-pokemon theme-bg-default"
-                        key={index}
-                        onMouseDown={() => changeTypePri(value)}
-                      >
-                        <CardType value={capitalize(value)} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="col tw-flex tw-justify-center">
+          <SelectTypeComponent
+            title="Type 1"
+            data={typesEffective}
+            currentType={currentTypePri}
+            setCurrentType={setCurrentTypePri}
+            filterType={[currentTypePri, currentTypeSec]}
+          />
         </div>
-        <div className="col d-flex justify-content-center">
-          <div>
-            <h6 className="text-center">
-              <b>Type 2</b>
-            </h6>
-            <div
-              className="card-input mb-3"
-              tabIndex={0}
-              onClick={() => setShowTypeSec(true)}
-              onBlur={() => setShowTypeSec(false)}
-            >
-              {isEmpty(currentTypeSec) ? (
-                <div className="type-none">
-                  <b>{getKeyWithData(EffectiveType, EffectiveType.None)}</b>
-                </div>
-              ) : (
-                <div className="type-sec">
-                  <div className="card-select">
-                    <CardType value={capitalize(currentTypeSec)} />
-                    <button
-                      type="button"
-                      className="btn-close btn-close-white remove-close"
-                      onMouseDown={closeTypeSec}
-                      aria-label="Close"
-                    />
-                  </div>
-                </div>
-              )}
-              {showTypeSec && (
-                <div className="result-type">
-                  <ul>
-                    {types.map((value, index) => (
-                      <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
-                        <CardType value={capitalize(value)} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="col tw-flex tw-justify-center">
+          <SelectTypeComponent
+            title="Type 2"
+            data={typesEffective}
+            currentType={currentTypeSec}
+            setCurrentType={setCurrentTypeSec}
+            filterType={[currentTypeSec, currentTypePri]}
+            isShowRemove
+          />
         </div>
       </div>
-      <TypeEffective typeEffective={typeEffective} />
+      <TypeEffectiveComponent typeEffective={typeEffective} />
     </div>
   );
 };

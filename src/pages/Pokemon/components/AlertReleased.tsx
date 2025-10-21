@@ -1,36 +1,29 @@
 import React from 'react';
-import { Alert } from 'react-bootstrap';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { splitAndCapitalize, getPokemonFormWithNoneSpecialForm } from '../../../utils/utils';
 import { IAlertReleasedComponent } from '../../models/page.model';
-import { VariantType } from '../../../enums/type.enum';
-import { useSelector } from 'react-redux';
-import { SearchingState } from '../../../store/models/state.model';
+import useSearch from '../../../composables/useSearch';
+import { Alert } from '@mui/material';
 
 const AlertReleased = (props: IAlertReleasedComponent) => {
-  const pokemon = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
+  const { searchingMainDetails } = useSearch();
   return (
     <>
-      {pokemon && !pokemon.releasedGO && (
-        <Alert variant={VariantType.Danger}>
-          <h5 className="text-danger m-0">
-            {'* '}
-            <b>
-              {splitAndCapitalize(
-                getPokemonFormWithNoneSpecialForm(props.formName?.replaceAll(' ', '-'), props.pokemonType),
-                '_',
-                ' '
-              )}
-            </b>
-            {' not released in Pokémon GO'}
-            <img
-              width={50}
-              height={50}
-              className="ms-2"
-              alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(props.icon)}
-            />
-          </h5>
+      {searchingMainDetails && !searchingMainDetails.releasedGO && (
+        <Alert sx={{ alignItems: 'center', justifyContent: 'center', mb: 1 }} severity="error">
+          <div className="tw-flex tw-items-center tw-text-base tw-gap-2">
+            <span>
+              <b>
+                {splitAndCapitalize(
+                  getPokemonFormWithNoneSpecialForm(props.formName?.replaceAll(' ', '-'), props.pokemonType),
+                  '_',
+                  ' '
+                )}
+              </b>
+              {' not released in Pokémon GO'}
+            </span>
+            <img width={50} height={50} alt="Pokémon GO Icon" src={APIService.getPokemonGoIcon(props.icon)} />
+          </div>
         </Alert>
       )}
     </>

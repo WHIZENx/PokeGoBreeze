@@ -62,9 +62,8 @@
 }
 
 @mixin table-head-style {
-  @include theme-background(var(--custom-table-background-head));
-  @include theme-text(white);
   @include theme-transition;
+  @apply tw-bg-table-head tw-text-white;
 }
 
 @mixin sub-head-style {
@@ -74,7 +73,7 @@
 }
 
 @mixin table-info-style {
-  @include theme-background(var(--custom-table-background-info));
+  @include theme-background(var(--table-info));
   @include theme-text(var(--custom-table-background-sub-head-text));
   @include theme-border;
 }
@@ -82,7 +81,7 @@
 @mixin hover-effect {
   &:hover,
   .ranking-container .accordion-button.collapsed:hover {
-    @include theme-background(var(--custom-selected-hover), true);
+    @include theme-background(var(--custom-selected-hover));
   }
 }
 
@@ -105,7 +104,7 @@
 
 @mixin info-table-style($important: false) {
   @include theme-text(var(--text-primary));
-  @include theme-background(var(--custom-table-background-info), $important);
+  @include theme-background(var(--table-info), $important);
 }
 
 @mixin default-text-shadow($width: 1px, $color: var(--shadow-default)) {
@@ -178,11 +177,11 @@
   -ms-filter: blur($width);
 }
 
-@mixin thin-border($side: right, $color: var(--custom-lightgray)) {
+@mixin thin-border($side: right, $color: var(--custom-light-gray)) {
   @include theme-border(0.5px, $side, $color);
 }
 
-@mixin bs-border-with-side($side) {
+@mixin border-with-side($side) {
   @include theme-border(1px, $side, var(--bs-border-color));
 }
 

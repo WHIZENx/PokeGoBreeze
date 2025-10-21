@@ -107,10 +107,6 @@
   min-width: 0;
 }
 
-.ranking-link-group {
-  white-space: nowrap;
-  overflow-x: auto;
-}
 
 .ranking-link-group button {
   border-radius: 0 !important;
@@ -194,14 +190,14 @@
 
 .battle-bar .battle-bar-container {
   overflow-x: auto;
-  width: 95%;
 }
 
-.fit-timeline .position-relative {
+.battle-bar .battle-bar-container,
+.fit-timeline .tw-relative {
   width: calc(100% - 20px);
 }
 
-.battle-bar .battle-bar-container .position-relative {
+.battle-bar .battle-bar-container .tw-relative {
   width: max-content;
 }
 
@@ -264,11 +260,6 @@
   width: max-content;
 }
 
-.border-type-init {
-  border-width: 1px;
-  border-style: solid;
-  height: 30px;
-}
 
 .block-attack-container {
   width: 44px;

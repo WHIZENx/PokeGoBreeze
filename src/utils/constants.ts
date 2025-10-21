@@ -1,11 +1,9 @@
 import { PVPInfo } from '../core/models/pvp.model';
-import { CostPowerUp, ITier, Tier } from './models/constants.model';
-import { DynamicObj, toNumber } from './extension';
+import { ITier, Tier } from './models/constants.model';
+import { DynamicObj } from './extension';
 import { LeagueBattleType } from '../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
-import { PokemonType } from '../enums/type.enum';
-import { maxLevel, minLevel, stepLevel } from './helpers/context.helpers';
 
 // Parameters
 export class Params {
@@ -114,35 +112,6 @@ export const versionList = [
   'Scarlet Violet',
 ];
 
-export const typeCostPowerUp = (type: PokemonType | undefined) => {
-  switch (type) {
-    case PokemonType.Shadow:
-      return CostPowerUp.create({
-        stardust: 1.2,
-        candy: 1.2,
-        type,
-      });
-    case PokemonType.Purified:
-      return CostPowerUp.create({
-        stardust: 0.9,
-        candy: 0.9,
-        type,
-      });
-    case PokemonType.Lucky:
-      return CostPowerUp.create({
-        stardust: 0.5,
-        candy: 1,
-        type,
-      });
-    default:
-      return CostPowerUp.create({
-        stardust: 1,
-        candy: 1,
-        type,
-      });
-  }
-};
-
 export const leaguesTeamBattle: PVPInfo[] = [
   {
     id: LeagueBattleType.All,
@@ -170,33 +139,4 @@ export const leaguesTeamBattle: PVPInfo[] = [
   },
 ];
 
-export const genRoman = (gen: number | string) => {
-  switch (toNumber(gen)) {
-    case 1:
-      return 'I';
-    case 2:
-      return 'II';
-    case 3:
-      return 'III';
-    case 4:
-      return 'IV';
-    case 5:
-      return 'V';
-    case 6:
-      return 'VI';
-    case 7:
-      return 'VII';
-    case 8:
-      return 'VIII';
-    case 9:
-      return 'IX';
-    default:
-      return '';
-  }
-};
-
 export const leaguesDefault = [BattleLeagueIconType.Great, BattleLeagueIconType.Ultra, BattleLeagueIconType.Master];
-export const levelList = Array.from(
-  { length: (maxLevel() - minLevel()) / stepLevel() + 1 },
-  (_, i) => 1 + i * stepLevel()
-);

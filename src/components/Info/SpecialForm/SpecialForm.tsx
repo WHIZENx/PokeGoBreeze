@@ -1,21 +1,20 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
-
 import './SpecialForm.scss';
-import { StoreState } from '../../../store/models/state.model';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
 import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../utils/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../Link/LinkToTop';
 import IconType from '../../Sprites/Icon/Type/Type';
+import useCombats from '../../../composables/useCombats';
+import usePokemon from '../../../composables/usePokemon';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
-  const evoData = useSelector((state: StoreState) => state.store.data.pokemons);
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
+  const { getFindPokemon } = usePokemon();
+  const { findMoveByName } = useCombats();
 
   const [pokemonType, setPokemonType] = useState(PokemonType.None);
   const [arrEvoList, setArrEvoList] = useState<IForm[]>();
@@ -48,17 +47,15 @@ const SpecialForm = (props: IFormSpecialComponent) => {
 
   const getQuestEvo = (name: string) => {
     name = splitAndCapitalize(name, '-', '_').toUpperCase();
-    const pokemonEvo = evoData
-      .find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)))
-      ?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
+    const pokemonEvo = getFindPokemon((item) =>
+      item.tempEvo?.some((value) => isEqual(value.tempEvolutionName, name))
+    )?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     return TempEvo.create({
       ...pokemonEvo,
       firstTempEvolution: pokemonEvo?.firstTempEvolution ? `x${pokemonEvo.firstTempEvolution}` : 'Unavailable',
       tempEvolution: pokemonEvo?.tempEvolution ? `x${pokemonEvo.tempEvolution}` : 'Unavailable',
     });
   };
-
-  const getCombatMove = (moveName: string | undefined) => combat.find((item) => isEqual(item.name, moveName));
 
   return (
     <Fragment>
@@ -68,9 +65,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
             <b>{getKeyWithData(PokemonType, pokemonType)} Evolution</b>
           </h4>
           <div className="form-special-container scroll-evolution">
-            <ul className="ul-evo d-flex justify-content-center gap-3">
+            <ul className="ul-evo tw-flex tw-justify-center tw-gap-3">
               {arrEvoList?.map((value, evo) => (
-                <li key={evo} className="img-form-gender-group li-evo w-fit-content h-fit-content">
+                <li key={evo} className="img-form-gender-group li-evo !tw-w-fit !tw-h-fit">
                   <img
                     id="Pokémon Image"
                     height="96"
@@ -130,10 +127,10 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                         width={25}
                         height={25}
                         alt="Pokémon GO Type Logo"
-                        className="me-1"
-                        type={getCombatMove(getQuestEvo(value.name).requireMove)?.type}
+                        className="tw-mr-1"
+                        type={findMoveByName(getQuestEvo(value.name).requireMove)?.type}
                       />
-                      <LinkToTop to={`../move/${getCombatMove(getQuestEvo(value.name).requireMove)?.id}`}>
+                      <LinkToTop to={`../move/${findMoveByName(getQuestEvo(value.name).requireMove)?.id}`}>
                         <b>{splitAndCapitalize(getQuestEvo(value.name).requireMove, '_', ' ')}</b>
                       </LinkToTop>
                     </span>

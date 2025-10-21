@@ -9,14 +9,9 @@
 }
 
 .sub-group-model .gender {
-  text-align: center;
-  font-weight: bold;
-  width: auto;
-  min-width: 180px;
+  @apply tw-w-auto tw-text-center tw-font-bold;
 }
 
 .group-model .desc {
-  text-align: center;
-  font-weight: bold;
-  width: auto !important;
+  @apply tw-w-full tw-text-center tw-font-bold;
 }

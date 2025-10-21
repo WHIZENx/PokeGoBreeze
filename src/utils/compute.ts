@@ -1,12 +1,72 @@
-import { IAsset } from '../core/models/asset.model';
 import { Color, ICandy } from '../core/models/candy.model';
 import { PokemonClass, PokemonType } from '../enums/type.enum';
-import APIService from '../services/API.service';
-import { BattleLeagueCPType, BattleLeagueIconType, FormType } from './enums/compute.enum';
-import { EqualMode, IncludeMode } from './enums/string.enum';
-import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from './extension';
-import { formGmax, formMega, formNormal } from './helpers/context.helpers';
+import APIService from '../services/api.service';
+import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
+import { EqualMode } from './enums/string.enum';
+import { getValueOrDefault, isEqual, isIncludeList, toNumber } from './extension';
 import { IStyleData } from './models/util.model';
+import candy from '../data/pokemon_candy_color_data.json';
+import { maxLevel, minLevel, stepLevel } from './helpers/options-context.helpers';
+import { CostPowerUp } from './models/constants.model';
+
+export const levelList = Array.from(
+  { length: (maxLevel() - minLevel()) / stepLevel() + 1 },
+  (_, i) => 1 + i * stepLevel()
+);
+
+export const genRoman = (gen: number | string) => {
+  switch (toNumber(gen)) {
+    case 1:
+      return 'I';
+    case 2:
+      return 'II';
+    case 3:
+      return 'III';
+    case 4:
+      return 'IV';
+    case 5:
+      return 'V';
+    case 6:
+      return 'VI';
+    case 7:
+      return 'VII';
+    case 8:
+      return 'VIII';
+    case 9:
+      return 'IX';
+    default:
+      return '';
+  }
+};
+
+export const typeCostPowerUp = (type: PokemonType | undefined) => {
+  switch (type) {
+    case PokemonType.Shadow:
+      return CostPowerUp.create({
+        stardust: 1.2,
+        candy: 1.2,
+        type,
+      });
+    case PokemonType.Purified:
+      return CostPowerUp.create({
+        stardust: 0.9,
+        candy: 0.9,
+        type,
+      });
+    case PokemonType.Lucky:
+      return CostPowerUp.create({
+        stardust: 0.5,
+        candy: 1,
+        type,
+      });
+    default:
+      return CostPowerUp.create({
+        stardust: 1,
+        candy: 1,
+        type,
+      });
+  }
+};
 
 export const priorityBadge = (priority: number) => {
   if (priority === 0) {
@@ -28,8 +88,9 @@ export const rankName = (rank: number) => {
   }
 };
 
-export const rankIconName = (rank: number) => {
-  switch (rank) {
+export const rankIconName = (rank: number | string) => {
+  const rankNumber = toNumber(rank);
+  switch (rankNumber) {
     case 20:
       return APIService.getPokeOtherLeague('CombatRank03');
     case 21:
@@ -42,15 +103,15 @@ export const rankIconName = (rank: number) => {
       return APIService.getPokeOtherLeague('special_combat_rank_4');
     default:
       return APIService.getPokeOtherLeague(
-        `CombatRank${Math.floor(rank / 5)
+        `CombatRank${Math.floor(rankNumber / 5)
           .toString()
           .padStart(2, '0')}`
       );
   }
 };
 
-export const rankIconCenterName = (rank: number) => {
-  switch (rank) {
+export const rankIconCenterName = (rank: number | string) => {
+  switch (toNumber(rank)) {
     case 21:
     case 22:
     case 23:
@@ -89,8 +150,8 @@ export const raidEgg = (tier: number, pokemonType?: PokemonType, pokemonClass?: 
   }
 };
 
-export const computeCandyColor = (candyData: ICandy[], id: number | undefined) => {
-  const data = candyData.find(
+export const computeCandyColor = (id: number | undefined) => {
+  const data = (candy as ICandy[]).find(
     (item) =>
       isIncludeList(
         item.familyGroup.map((value) => value.id),
@@ -101,8 +162,8 @@ export const computeCandyColor = (candyData: ICandy[], id: number | undefined) =
   return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 };
 
-export const computeCandyBgColor = (candyData: ICandy[], id: number | undefined) => {
-  const data = candyData.find(
+export const computeCandyBgColor = (id: number | undefined) => {
+  const data = (candy as ICandy[]).find(
     (item) =>
       isIncludeList(
         item.familyGroup.map((value) => value.id),
@@ -151,49 +212,6 @@ export const computeBgType = (
     default:
       return `linear-gradient(to bottom right, ${priColor}, ${secColor})`;
   }
-};
-
-export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName = formNormal()) => {
-  const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets) {
-    return;
-  }
-  const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
-  if (asset) {
-    return asset;
-  } else if (
-    isNotEmpty(pokemonAssets.image) &&
-    !isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive)
-  ) {
-    const formOrigin = pokemonAssets.image.find((img) => img.form === formNormal());
-    if (!formOrigin) {
-      return pokemonAssets.image[0];
-    }
-    return formOrigin;
-  }
-  return;
-};
-
-export const findAssetForm = (
-  pokemonAssets: IAsset[],
-  id: number | undefined,
-  formName = formNormal(),
-  formType = FormType.Default
-) => {
-  if (isEqual(formName, formGmax(), EqualMode.IgnoreCaseSensitive)) {
-    return;
-  }
-  const form = queryAssetForm(pokemonAssets, id, formName);
-  if (form) {
-    switch (formType) {
-      case FormType.Shiny:
-        return form.shiny;
-      case FormType.Default:
-      default:
-        return form.default;
-    }
-  }
-  return;
 };
 
 export const findStabType = (types: string[] | undefined, findType: string | undefined) =>

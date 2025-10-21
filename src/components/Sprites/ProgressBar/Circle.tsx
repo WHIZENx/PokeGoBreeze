@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { ICircleBarComponent } from '../../models/component.model';
 import { toNumber } from '../../../utils/extension';
 
@@ -87,11 +87,11 @@ const CircleBar = (props: ICircleBarComponent) => {
 
   return (
     <div
-      className="d-flex flex-column align-items-center justify-content-between row-gap-2"
+      className="tw-flex tw-flex-col tw-items-center tw-justify-between tw-gap-y-2"
       style={{ color: props.isDisable ? 'red' : 'var(--text-primary)' }}
     >
       {props.text && (
-        <span className="text-center">
+        <span className="tw-text-center">
           <b>{props.text}</b>
         </span>
       )}

@@ -3,19 +3,19 @@ import { Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } fr
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 
 import './Sticker.scss';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import React, { Fragment, useEffect, useState } from 'react';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Form, OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../components/Popover/CustomPopover';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
+import { OverlayTrigger } from 'react-bootstrap';
+import CustomPopover from '../../components/Commons/Popovers/CustomPopover';
 import { ISticker } from '../../core/models/sticker.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
 import { GlobalType } from '../../enums/type.enum';
 import { ShopType } from './enums/sticker-type.enum';
+import useDataStore from '../../composables/useDataStore';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
 
 interface PokemonStickerModel {
   id?: number;
@@ -33,13 +33,13 @@ const Sticker = () => {
   const [shopType, setShopType] = useState(ShopType.All);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);
 
-  const pokeStickerList = useSelector((state: StoreState) => state.store.data.stickers);
+  const { stickersData } = useDataStore();
 
   const [selectPokemon, setSelectPokemon] = useState<PokemonStickerModel[]>([]);
 
   useEffect(() => {
-    if (isNotEmpty(pokeStickerList) && !isNotEmpty(selectPokemon)) {
-      const result = pokeStickerList
+    if (isNotEmpty(stickersData) && !isNotEmpty(selectPokemon)) {
+      const result = stickersData
         .reduce((prev: PokemonStickerModel[], curr) => {
           if (
             curr.pokemonName &&
@@ -58,12 +58,12 @@ const Sticker = () => {
         .sort((a, b) => toNumber(a.id) - toNumber(b.id));
       setSelectPokemon(result);
     }
-  }, [pokeStickerList, selectPokemon]);
+  }, [stickersData, selectPokemon]);
 
   useEffect(() => {
-    if (isNotEmpty(pokeStickerList)) {
+    if (isNotEmpty(stickersData)) {
       setPokemonStickerFilter(
-        pokeStickerList
+        stickersData
           .filter((item) => {
             if (shopType === ShopType.All) {
               return true;
@@ -82,29 +82,30 @@ const Sticker = () => {
           })
       );
     }
-  }, [id, shopType, pokeStickerList]);
+  }, [id, shopType, stickersData]);
 
   return (
-    <div className="container p-3">
-      <h2 className="title-leagues mb-3">Sticker List</h2>
+    <div className="tw-container tw-p-3">
+      <h2 className="title-leagues tw-mb-3">Sticker List</h2>
       <hr />
-      <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
+      <div className="tw-w-1/4 input-group tw-min-w-75">
         <span className="input-group-text">Find Sticker</span>
-        <Form.Select className="form-control input-search" value={id} onChange={(e) => setId(toNumber(e.target.value))}>
-          <option value={GlobalType.All}>{getKeyWithData(GlobalType, GlobalType.All)}</option>
-          <option value={GlobalType.None}>{getKeyWithData(GlobalType, GlobalType.None)}</option>
-          {selectPokemon
-            .filter((value) => toNumber(value.id) > 0)
-            .map((value, index) => (
-              <option key={index} value={toNumber(value.id)}>{`#${value.id} ${splitAndCapitalize(
-                value.name,
-                '_',
-                ' '
-              )}`}</option>
-            ))}
-        </Form.Select>
+        <SelectMui
+          formSx={{ width: 200 }}
+          value={id}
+          onChangeSelect={(value) => setId(value)}
+          isNoneBorder
+          menuItems={[
+            { value: GlobalType.All, label: getKeyWithData(GlobalType, GlobalType.All) },
+            { value: GlobalType.None, label: getKeyWithData(GlobalType, GlobalType.None) },
+            ...selectPokemon.map((value) => ({
+              value: toNumber(value.id),
+              label: `#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`,
+            })),
+          ]}
+        />
       </div>
-      <FormControl className="mt-2">
+      <FormControl className="!tw-mt-2">
         <FormLabel>Filter sticker shopping</FormLabel>
         <RadioGroup row value={shopType} onChange={(e) => setShopType(toNumber(e.target.value))}>
           <FormControlLabel value={ShopType.All} control={<Radio />} label="All" />
@@ -135,7 +136,7 @@ const Sticker = () => {
                     </CustomPopover>
                   }
                 >
-                  <div className="sticker-detail position-relative">
+                  <div className="sticker-detail tw-relative">
                     <Badge
                       color="primary"
                       overlap="circular"

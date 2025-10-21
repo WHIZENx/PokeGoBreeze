@@ -4,8 +4,6 @@ import { computeCandyBgColor, computeCandyColor } from '../../../utils/compute';
 
 import bgCandyXL from '../../../assets/bg_CandyXL.png';
 
-import candy from '../../../data/pokemon_candy_color_data.json';
-import { ICandy } from '../../../core/models/candy.model';
 import { ICandyComponent } from '../../models/component.model';
 import { combineClasses, toNumber } from '../../../utils/extension';
 
@@ -41,14 +39,14 @@ const CandyXL = (props: ICandyComponent) => {
   const [bgColor, setBgColor] = useState<string>();
 
   useEffect(() => {
-    const candyColor = computeCandyColor(candy as ICandy[], props.id);
-    const candyBgColor = computeCandyBgColor(candy as ICandy[], props.id);
+    const candyColor = computeCandyColor(props.id);
+    const candyBgColor = computeCandyBgColor(props.id);
     setColor(candyColor);
     setBgColor(candyBgColor);
   }, [props.id]);
 
   return (
-    <div className={combineClasses('position-relative d-inline-block', props.className)} style={props.style}>
+    <div className={combineClasses('tw-relative tw-inline-block', props.className)} style={props.style}>
       <Background $candyBgColor={bgColor} $size={props.size} />
       <Fill $candyColor={color} $size={props.size} />
     </div>

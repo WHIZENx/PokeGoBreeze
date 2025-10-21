@@ -1,10 +1,7 @@
 import { OptionsPokemon } from '../../core/models/pokemon.model';
-import { ISearchingModel } from '../../store/models/searching.model';
 import { IBattlePokemonData } from '../../core/models/pvp.model';
 import { IPokemonBattle } from '../PVP/models/battle.model';
 import { IPokemonDmgOption } from '../../core/models/damage.model';
-import { ITypeEff } from '../../core/models/type-eff.model';
-import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { PokemonType } from '../../enums/type.enum';
 import { SearchOption } from '../Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../utils/models/util.model';
@@ -40,7 +37,6 @@ export interface ISearchBarMainComponent {
 }
 
 export interface IPokemonPage {
-  searching?: ISearchingModel | null;
   searchOption?: SearchOption;
   onDecId?: () => void;
   onIncId?: () => void;
@@ -60,7 +56,7 @@ export interface IDamageTableComponent {
   result: IPokemonDmgOption;
 }
 
-export interface IStatsTableComponent {
+export interface IStatsDamageTableComponent {
   pokemonType?: PokemonType;
   setStatType?: React.Dispatch<React.SetStateAction<PokemonType>>;
   setStatLevel?: React.Dispatch<React.SetStateAction<number>>;
@@ -70,17 +66,4 @@ export interface IStatsTableComponent {
   setStatLvATK?: React.Dispatch<React.SetStateAction<number>>;
   setStatLvDEF?: React.Dispatch<React.SetStateAction<number>>;
   setStatLvSTA?: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export interface ITypeEffComponent {
-  types: ITypeEff | undefined;
-}
-
-export interface IWeatherAffComponent {
-  weathers: IWeatherBoost | undefined;
-}
-
-export interface IWeatherEffComponent {
-  weathers: IWeatherBoost | undefined;
-  types: ITypeEff | undefined;
 }

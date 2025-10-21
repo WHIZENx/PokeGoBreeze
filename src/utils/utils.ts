@@ -1,6 +1,6 @@
 import { RadioGroup, Rating, Slider, styled } from '@mui/material';
 import Moment from 'moment';
-import { IPokemonData, PokemonData, PokemonModel } from '../core/models/pokemon.model';
+import { IPokemonData } from '../core/models/pokemon.model';
 import {
   IStatsAtk,
   IStatsDef,
@@ -15,14 +15,8 @@ import {
 } from '../core/models/stats.model';
 import { IPokemonDetail, IPokemonDetailInfo, Stats } from '../core/models/API/info.model';
 import { Params, versionList } from './constants';
-import {
-  IPokemonFormModify,
-  PokemonFormModifyModel,
-  PokemonSprit,
-  IPokemonFormDetail,
-} from '../core/models/API/form.model';
-import { PokemonSearching } from '../core/models/pokemon-searching.model';
-import APIService from '../services/API.service';
+import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit } from '../core/models/API/form.model';
+import APIService from '../services/api.service';
 import { TableStyles } from 'react-data-table-component';
 import {
   DynamicObj,
@@ -35,11 +29,12 @@ import {
   isNullOrUndefined,
   isUndefined,
   toNumber,
+  safeObjectEntries,
 } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
-import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
-import { TypeEffChart } from '../core/models/type-eff.model';
+import { ISelectMoveModel, SelectMoveModel } from '../components/Commons/Inputs/models/select-move.model';
+import { TypeEffectiveChart } from '../core/models/type-effective.model';
 import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
 import {
@@ -77,7 +72,7 @@ import {
   formStandard,
   maxIv,
   minIv,
-} from './helpers/context.helpers';
+} from './helpers/options-context.helpers';
 
 class Mask {
   value: number;
@@ -192,9 +187,38 @@ export const HundoRate = styled(Rating)(() => ({
   },
 }));
 
-export const capitalize = (str: string | undefined | null, defaultText = '') =>
-  getValueOrDefault(String, str?.charAt(0).toUpperCase()) +
-  getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
+export const camelCase = (str: string | undefined | null, defaultText = '') => {
+  if (isNullOrUndefined(str)) {
+    return defaultText;
+  }
+
+  const words = str
+    .replace(/(?=[A-Z])+/g, ' ')
+    .replace(/[-_\s]+/g, ' ')
+    .trim()
+    .split(' ');
+
+  return words.map((word, index) => (index === 0 ? word.toLowerCase() : capitalize(word))).join('');
+};
+
+export const splitAndCamelCase = (
+  str: string | undefined | null,
+  splitBy: string | RegExp,
+  joinBy: string,
+  defaultText = ''
+) =>
+  getValueOrDefault(
+    String,
+    str
+      ?.split(splitBy)
+      .map((text, index) => (index === 0 ? text.toLowerCase() : capitalize(text)))
+      .join(joinBy),
+    defaultText
+  );
+
+export const capitalize = (str: string | number | undefined | null, defaultText = '') =>
+  getValueOrDefault(String, str?.toString().charAt(0).toUpperCase()) +
+  getValueOrDefault(String, str?.toString().slice(1).toLowerCase(), defaultText);
 
 export const splitAndCapitalize = (
   str: string | undefined | null,
@@ -250,8 +274,8 @@ export const convertModelSpritName = (text: string | undefined) =>
       (isInclude(text, 'meowstic', IncludeMode.IncludeIgnoreCaseSensitive)
         ? '-'
         : isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
-        ? ''
-        : '_') + isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
+          ? ''
+          : '_') + isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
         ? ''
         : 'm'
     )
@@ -285,7 +309,10 @@ export const convertModelSpritName = (text: string | undefined) =>
 export const convertNameRankingToForm = (text: string) => {
   let form = '';
   if (isInclude(text, '_')) {
-    form = ` (${capitalize(text.split('_').at(1))})`;
+    form = ` (${text
+      .split('_')
+      .map((t) => capitalize(t))
+      .join(' ')})`;
   }
   return text + form;
 };
@@ -336,16 +363,16 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     .replace('-reine', '')
     .replace('-red-striped', '')
     .replace('-full-belly', '')
-    .replace('-sword', '')
-    .replace('-shield', '')
     .replace('-rider', '')
+    .replace('-hero', '')
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
-    .replace('-shaymin', '');
+    .replace('-shaymin', '')
+    .replace('-altered', '');
   if (isInclude(text, formStandard(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     form = `-${formStandard().toLowerCase()}`;
   }
-  const invalidForm: string[] = [
+  const invalidForm = [
     '-therian',
     '-o',
     '-origin',
@@ -366,6 +393,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     '-speed',
     '-dusk',
     '-dawn',
+    '-white',
+    '-black',
     `-${formHisuian().toLowerCase()}`,
     `-${formGalarian().toLowerCase()}`,
   ];
@@ -488,9 +517,6 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
   return mSet;
 };
 
-export const checkPokemonGO = (id: number, name: string | undefined, details: IPokemonData[]) =>
-  details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
-
 export const convertFormGif = (name: string | undefined) => {
   if (isEqual(name, 'nidoran')) {
     name = 'nidoran_m';
@@ -548,30 +574,6 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank, stats: IStatsPok
 export const calRank = (pokemonStats: DynamicObj<OptionsRank>, type: string, rank: number) =>
   ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
 
-export const mappingPokemonName = (pokemonData: IPokemonData[]) =>
-  pokemonData
-    .filter(
-      (pokemon) =>
-        pokemon.num > 0 &&
-        (pokemon.form === formNormal() || (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form)))
-    )
-    .map((pokemon) => new PokemonSearching(pokemon))
-    .sort((a, b) => a.id - b.id);
-
-export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
-  const result = pokemonData
-    .filter((pokemon) => pokemon.num === id)
-    .find(
-      (pokemon) =>
-        isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
-        (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
-    );
-  if (!result) {
-    return;
-  }
-  return new PokemonModel(result.num, result.name);
-};
-
 const mergeTableStyles = (custom: Partial<TableStyles>, defaults: TableStyles): TableStyles => {
   if (!custom) {
     return { ...defaults };
@@ -609,20 +611,20 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
   const defaultData: TableStyles = {
     header: {
       style: {
-        backgroundColor: 'var(--background-default)',
+        backgroundColor: 'var(--custom-default)',
         color: 'var(--text-primary)',
       },
     },
     subHeader: {
       style: {
-        backgroundColor: 'var(--background-default)',
+        backgroundColor: 'var(--custom-default)',
         color: 'var(--text-primary)',
       },
     },
     rows: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         '&:not(:last-of-type)': {
           borderBottomColor: 'var(--background-table-divided)',
         },
@@ -637,7 +639,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     },
     headCells: {
       style: {
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         color: 'var(--text-primary)',
       },
     },
@@ -649,7 +651,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     pagination: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         borderTopColor: 'var(--background-table-divided)',
       },
       pageButtonsStyle: {
@@ -670,7 +672,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     noData: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
       },
     },
   };
@@ -686,12 +688,12 @@ export const getDataWithKey = <T>(
   findKey: string | number | undefined | null,
   mode = EqualMode.CaseSensitive
 ) => {
-  const result = Object.entries(data).find(([key]) => isEqual(key, findKey, mode));
+  const result = safeObjectEntries(data).find(([key]) => isEqual(key, findKey, mode));
   return result && isNotEmpty(result) ? (result[1] as T) : undefined;
 };
 
 export const getKeyWithData = <T>(data: object, findValue: T) => {
-  const result = Object.entries(data).find(([, value]: [string, T]) => value === findValue);
+  const result = safeObjectEntries(data).find(([, value]: [string, T]) => value === findValue);
   return result && isNotEmpty(result) ? result[0] : undefined;
 };
 
@@ -700,10 +702,10 @@ export const getKeysObj = (data: object) =>
     .map((v) => getValueOrDefault<string>(String, v.toString()))
     .filter((_, i) => i < Object.values(data).length / 2);
 
-export const getValuesObj = <T extends object>(data: T) =>
+export const getValuesObj = <T extends object>(data: T, divide = 2) =>
   Object.keys(data)
     .map((v) => v as unknown as T)
-    .filter((_, i) => i < Object.keys(data).length / 2);
+    .filter((_, i) => i < Object.keys(data).length / divide);
 
 export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   if (!pokemon) {
@@ -718,11 +720,6 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
     !isEqual(chargeMoves[0], 'STRUGGLE')
   );
 };
-
-export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) =>
-  pokemon.some(
-    (p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), getValueOrDefault(String, p.fullName, p.name))
-  );
 
 const convertNameEffort = (name: string) => {
   switch (name) {
@@ -751,7 +748,10 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
   return result as unknown as IStatsPokemon;
 };
 
-export const replacePokemonGoForm = (form: string) => form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
+export const replacePokemonGoForm = (form: string | number) =>
+  String(form)
+    .replace(/_MALE$/, '')
+    .replace(/_FEMALE$/, '');
 
 export const formIconAssets = (value: IPokemonFormModify) =>
   isInclude(value.form.name, `-${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive) ||
@@ -897,41 +897,6 @@ export const generateFormName = (form: string | null | undefined, pokemonType: P
   return form;
 };
 
-export const generatePokemonGoForms = (
-  pokemonData: IPokemonData[],
-  dataFormList: IPokemonFormDetail[][],
-  formListResult: IPokemonFormModify[][],
-  id: number,
-  name: string,
-  index = 0
-) => {
-  const formList = dataFormList.flatMap((form) => form).map((p) => convertPokemonAPIDataName(p.formName, formNormal()));
-  pokemonData
-    .filter((pokemon) => pokemon.num === id)
-    .forEach((pokemon) => {
-      const isIncludeFormGO = formList.some((form) => isInclude(pokemon.form, form));
-      if (!isIncludeFormGO) {
-        index--;
-        const pokemonGOModify = new PokemonFormModifyModel(
-          id,
-          name,
-          pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase(),
-          pokemon.form?.replaceAll('_', '-')?.toLowerCase(),
-          pokemon.fullName?.replaceAll('_', '-')?.toLowerCase(),
-          versionList[0].replace(' ', '-'),
-          pokemon.types,
-          new PokemonSprit(),
-          index,
-          PokemonType.Normal,
-          false
-        );
-        formListResult.push([pokemonGOModify]);
-      }
-    });
-
-  return index;
-};
-
 export const generatePokemonGoShadowForms = (
   dataPokeList: IPokemonDetailInfo[],
   formListResult: IPokemonFormModify[][],
@@ -994,58 +959,6 @@ export const getFormFromForms = (
     }
   }
   return filterForm;
-};
-
-export const retrieveMoves = (
-  pokemon: IPokemonData[],
-  id: number | undefined,
-  form: string | undefined,
-  pokemonType = PokemonType.None
-) => {
-  if (isNotEmpty(pokemon)) {
-    if (pokemonType === PokemonType.GMax) {
-      return pokemon.find((item) => item.num === id && isEqual(item.form, formGmax()));
-    }
-    const resultFilter = pokemon.filter((item) => item.num === id);
-    const pokemonForm = getValueOrDefault(
-      String,
-      form?.replaceAll('-', '_').toUpperCase().replace(`_${formStandard()}`, '').replace(formGmax(), formNormal()),
-      formNormal()
-    );
-    const result = resultFilter.find((item) => isEqual(item.fullName, pokemonForm) || isEqual(item.form, pokemonForm));
-    return PokemonData.copy(result ?? resultFilter[0]);
-  }
-};
-
-export const getPokemonDetails = (
-  pokemonData: IPokemonData[],
-  id: number | undefined,
-  form: string | undefined,
-  pokemonType = PokemonType.None,
-  isDefault = false
-) => {
-  if (form) {
-    const name = getPokemonFormWithNoneSpecialForm(
-      form
-        .replace(/10$/, 'TEN_PERCENT')
-        .replace(/50$/, 'FIFTY_PERCENT')
-        .replace(/UNOWN-/i, '')
-        .replaceAll(' ', '-'),
-      pokemonType
-    );
-    let pokemonForm = pokemonData.find(
-      (item) => item.num === id && isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive)
-    );
-
-    if (isDefault && !pokemonForm) {
-      pokemonForm = pokemonData.find(
-        (item) =>
-          item.num === id && (item.form === formNormal() || (item.baseForme && isEqual(item.baseForme, item.form)))
-      );
-    }
-    return PokemonData.copyWithCreate(pokemonForm);
-  }
-  return new PokemonData();
 };
 
 export const replaceTempMoveName = (name: string | number) => {
@@ -1122,22 +1035,22 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction
       return form === PokemonType.Shadow
         ? combatShadowBonusAtk()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusAtk()
-        : 1;
+          ? combatPurifiedBonusAtk()
+          : 1;
     }
     case TypeAction.Def: {
       return form === PokemonType.Shadow
         ? combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusDef()
-        : 1;
+          ? combatPurifiedBonusDef()
+          : 1;
     }
     case TypeAction.Prod: {
       return form === PokemonType.Shadow
         ? combatShadowBonusAtk() * combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusAtk() * combatPurifiedBonusDef()
-        : 1;
+          ? combatPurifiedBonusAtk() * combatPurifiedBonusDef()
+          : 1;
     }
     default:
       return 1;
@@ -1243,7 +1156,7 @@ export const generateParamForm = (form: string | undefined, pokemonType = Pokemo
   return '';
 };
 
-export const getMultiplyTypeEffect = (data: TypeEffChart, valueEffective: number, key: string) => {
+export const getMultiplyTypeEffect = (data: TypeEffectiveChart, valueEffective: number, key: string) => {
   if (valueEffective >= EffectiveType.VeryWeakness && !isIncludeList(data.veryWeak, key)) {
     data.veryWeak?.push(key);
   } else if (valueEffective >= EffectiveType.Weakness && !isIncludeList(data.weak, key)) {
@@ -1389,22 +1302,24 @@ export const getValidPokemonImgPath = (src: string | undefined | null, id?: numb
   return APIService.getPokeFullSprite();
 };
 
-export const getBonusType = (bonusType: string | number) => {
-  if (bonusType === BonusType.SlowFreezeBonus || bonusType === 6) {
+export const getBonusType = (bonusType: string | number | BonusType | undefined) => {
+  if (bonusType === BonusType.AttackDefenseBonus || bonusType === BonusType.AttackDefenseBonus2) {
+    return BonusType.AttackDefenseBonus;
+  } else if (bonusType === BonusType.SlowFreezeBonus || bonusType === BonusType.SlowFreezeBonus2) {
     return BonusType.SlowFreezeBonus;
-  } else if (isEqual(bonusType, 'SPACE_BONUS')) {
+  } else if (isEqual(bonusType, 'SPACE_BONUS') || bonusType === BonusType.SpaceBonus) {
     return BonusType.SpaceBonus;
-  } else if (isEqual(bonusType, 'TIME_BONUS')) {
+  } else if (isEqual(bonusType, 'TIME_BONUS') || bonusType === BonusType.TimeBonus) {
     return BonusType.TimeBonus;
-  } else if (isEqual(bonusType, 'DAY_BONUS')) {
+  } else if (isEqual(bonusType, 'DAY_BONUS') || bonusType === BonusType.DayBonus) {
     return BonusType.DayBonus;
-  } else if (isEqual(bonusType, 'NIGHT_BONUS')) {
+  } else if (isEqual(bonusType, 'NIGHT_BONUS') || bonusType === BonusType.NightBonus) {
     return BonusType.NightBonus;
   }
   return BonusType.None;
 };
 
-const isPokemonNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) =>
+export const isPokemonNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) =>
   !isSpecialFormType(pokemonType) &&
   (isInclude(form, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) ||
     isInclude(form, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive));
@@ -1450,3 +1365,7 @@ export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
 
 export const isSpecialMegaFormType = (pokemonType: PokemonType | undefined) =>
   pokemonType === PokemonType.Mega || pokemonType === PokemonType.Primal;
+
+export const createDataRows = <T>(...rows: T[]) => {
+  return [...rows];
+};

@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 import { IDamageTableComponent } from '../../models/page.model';
@@ -13,7 +13,7 @@ import { LabelDamage } from '../../../core/models/damage.model';
 import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { PokemonType } from '../../../enums/type.enum';
 import { EffectiveType } from '../../../components/Effective/enums/type-effective.enum';
-import { getThrowCharge } from '../../../utils/helpers/context.helpers';
+import { getThrowCharge } from '../../../utils/helpers/options-context.helpers';
 
 const DamageTable = (props: IDamageTableComponent) => {
   const setLabelDamage = (amount: EffectiveType) =>
@@ -21,10 +21,7 @@ const DamageTable = (props: IDamageTableComponent) => {
       label: toFloat(amount, 3),
       style: getValueOrDefault(
         String,
-        getKeyWithData(EffectiveType, amount)
-          ?.split(/(?=[A-Z])/)
-          .join('-')
-          .toLowerCase()
+        splitAndCapitalize(getKeyWithData(EffectiveType, amount), /(?=[A-Z])/, '-').toLowerCase()
       ),
     });
 
@@ -46,12 +43,12 @@ const DamageTable = (props: IDamageTableComponent) => {
   };
 
   return (
-    <div className="container">
-      <div className="d-flex justify-content-center">
+    <div className="tw-container">
+      <div className="tw-flex tw-justify-center">
         <table className="table-info table-result">
           <thead />
           <tbody>
-            <tr className="text-center">
+            <tr className="tw-text-center">
               <td className="table-sub-header" colSpan={2}>
                 Battle Result
               </td>
@@ -62,13 +59,13 @@ const DamageTable = (props: IDamageTableComponent) => {
                 {props.result.objPoke ? (
                   <Fragment>
                     {props.result.type === PokemonType.Buddy && (
-                      <img height={20} className="me-2" alt="Image Buddy" src={APIService.getPokeBuddy()} />
+                      <img height={20} className="tw-mr-2" alt="Image Buddy" src={APIService.getPokeBuddy()} />
                     )}
                     {props.result.type === PokemonType.Shadow && (
-                      <img height={20} className="me-2" alt="Image Shadow" src={APIService.getPokeShadow()} />
+                      <img height={20} className="tw-mr-2" alt="Image Shadow" src={APIService.getPokeShadow()} />
                     )}
                     {`${splitAndCapitalize(props.result.currPoke?.form?.name, '-', ' ')} `}
-                    <span className="d-inline-block caption">(LV. {props.result.currLevel})</span>
+                    <span className="tw-inline-block caption">(LV. {props.result.currLevel})</span>
                   </Fragment>
                 ) : (
                   '-'
@@ -81,13 +78,13 @@ const DamageTable = (props: IDamageTableComponent) => {
                 {props.result.objPoke ? (
                   <Fragment>
                     {props.result.typeObj === PokemonType.Buddy && (
-                      <img height={20} className="me-2" alt="Image Buddy" src={APIService.getPokeBuddy()} />
+                      <img height={20} className="tw-mr-2" alt="Image Buddy" src={APIService.getPokeBuddy()} />
                     )}
                     {props.result.typeObj === PokemonType.Shadow && (
-                      <img height={20} className="me-2" alt="Image Shadow" src={APIService.getPokeShadow()} />
+                      <img height={20} className="tw-mr-2" alt="Image Shadow" src={APIService.getPokeShadow()} />
                     )}
                     {`${splitAndCapitalize(props.result.objPoke.form?.name, '-', ' ')} `}
-                    <span className="d-inline-block caption">(LV. {props.result.objLevel})</span>
+                    <span className="tw-inline-block caption">(LV. {props.result.objLevel})</span>
                   </Fragment>
                 ) : (
                   '-'
@@ -107,9 +104,9 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.battleState ? (
                   props.result.battleState.isStab ? (
-                    <DoneIcon sx={{ color: 'green' }} />
+                    <DoneIcon color="success" />
                   ) : (
-                    <CloseIcon sx={{ color: 'red' }} />
+                    <CloseIcon color="error" />
                   )
                 ) : (
                   '-'
@@ -121,9 +118,9 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.battleState ? (
                   props.result.battleState.isWb ? (
-                    <DoneIcon sx={{ color: 'green' }} />
+                    <DoneIcon color="success" />
                   ) : (
-                    <CloseIcon sx={{ color: 'red' }} />
+                    <CloseIcon color="error" />
                   )
                 ) : (
                   '-'
@@ -135,9 +132,9 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.battleState ? (
                   props.result.battleState.isDodge ? (
-                    <DoneIcon sx={{ color: 'green' }} />
+                    <DoneIcon color="success" />
                   ) : (
-                    <CloseIcon sx={{ color: 'red' }} />
+                    <CloseIcon color="error" />
                   )
                 ) : (
                   '-'
@@ -149,9 +146,9 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.battleState ? (
                   props.result.battleState.isTrainer ? (
-                    <DoneIcon sx={{ color: 'green' }} />
+                    <DoneIcon color="success" />
                   ) : (
-                    <CloseIcon sx={{ color: 'red' }} />
+                    <CloseIcon color="error" />
                   )
                 ) : (
                   '-'
@@ -184,21 +181,25 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>
-                <img className="me-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
-                Damage Taken
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                  <span>Damage Taken</span>
+                </div>
               </td>
               <td>{props.result.damage ? <b>{props.result.damage}</b> : '-'}</td>
             </tr>
             <tr>
               <td>
-                <img className="me-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
-                Damage Reduced
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                  <span>Damage Reduced</span>
+                </div>
               </td>
               <td>
                 {props.result.damage ? (
                   <Fragment>
                     {props.result.damage < toNumber(props.result.move?.pvePower) ? (
-                      <b className="text-success">
+                      <b className="tw-text-green-600">
                         {toFloatWithPadding(
                           ((toNumber(props.result.move?.pvePower) - props.result.damage) * 100) /
                             toNumber(props.result.move?.pvePower, 1),
@@ -207,7 +208,7 @@ const DamageTable = (props: IDamageTableComponent) => {
                         %
                       </b>
                     ) : (
-                      <b className="text-danger">0</b>
+                      <b className="tw-text-red-600">0</b>
                     )}
                   </Fragment>
                 ) : (
@@ -217,17 +218,19 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>
-                <img className="me-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
-                HP Object remaining
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
+                  <span>HP Object remaining</span>
+                </div>
               </td>
               <td>
                 {props.result.hp ? (
                   <b>
                     {Math.floor(props.result.hp - toNumber(props.result.damage))}
                     {Math.floor(props.result.hp - toNumber(props.result.damage)) > 0 ? (
-                      <span className="caption-small text-success"> (Alive)</span>
+                      <span className="caption-small tw-text-green-600"> (Alive)</span>
                     ) : (
-                      <span className="caption-small text-danger"> (Dead)</span>
+                      <span className="caption-small tw-text-red-600"> (Dead)</span>
                     )}
                   </b>
                 ) : (

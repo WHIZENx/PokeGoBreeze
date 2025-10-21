@@ -4,28 +4,29 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
-import { useSelector } from 'react-redux';
-import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
-import { combineClasses, isNotEmpty, UniqValueInArray } from '../../../utils/extension';
+import { combineClasses, isNotEmpty, safeObjectEntries, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
+import { useIcon } from '../../../composables/useIcon';
+import { useAssets } from '../../../composables/useAssets';
+import { useSearch } from '../../../composables/useSearch';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
-  const icon = useSelector((state: StoreState) => state.store.icon);
-  const assets = useSelector((state: StoreState) => state.store.data.assets);
-  const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
+  const { iconData } = useIcon();
+  const { findAssetsById } = useAssets();
+  const { searchingMainDetails } = useSearch();
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const [gender, setGender] = useState<PokemonGender>();
   const [asset, setAsset] = useState<IAsset>();
 
   const getImageList = (id: number | undefined, genderRatio: IPokemonGenderRatio) => {
-    const pokemonAsset = assets.find((item) => item.id === id);
+    const pokemonAsset = findAssetsById(id);
     setAsset(pokemonAsset);
     setGender({
       malePercent: genderRatio.M,
@@ -39,134 +40,127 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(assets) && pokemonData?.fullName && pokemonData.genderRatio) {
-      setPokeAssets(getImageList(pokemonData.id, pokemonData.genderRatio));
+    if (searchingMainDetails?.fullName && searchingMainDetails.genderRatio) {
+      setPokeAssets(getImageList(searchingMainDetails.id, searchingMainDetails.genderRatio));
     }
-  }, [assets, pokemonData]);
+  }, [searchingMainDetails]);
+
+  const renderGender = (asset: string, id: number | undefined, tag: string) => (
+    <div className="tw-flex tw-flex-col tw-w-full tw-justify-center tw-items-center">
+      <div className="!tw-w-20">
+        <img
+          className="pokemon-sprite-model"
+          alt="Pokémon Model"
+          src={APIService.getPokemonModel(asset, id)}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, id, asset);
+          }}
+        />
+      </div>
+      <span className="caption">{tag}</span>
+    </div>
+  );
 
   return (
-    <div className="mt-2 position-relative">
+    <div className="tw-mt-2 tw-relative">
       <h4 className="title-evo">
-        <b>{`Assets of ${splitAndCapitalize(pokemonData?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
-        <img className="ms-1" width={36} height={36} alt="Pokémon GO Icon" src={APIService.getPokemonGoIcon(icon)} />
+        <b>{`Assets of ${splitAndCapitalize(searchingMainDetails?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
+        <img
+          className="tw-ml-1"
+          width={36}
+          height={36}
+          alt="Pokémon GO Icon"
+          src={APIService.getPokemonGoIcon(iconData)}
+        />
       </h4>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0" style={{ height: 176 }}>
+        <div className="ph-item !tw-w-full !tw-m-0 !tw-p-0" style={{ height: 176 }}>
           <div
-            className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
-            style={{ background: 'var(--background-default)' }}
+            className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
+            style={{ background: 'var(--custom-default)' }}
           />
         </div>
       ) : (
-        <div>
+        <div className="tw-flex tw-flex-wrap">
           {pokeAssets.map((assets, index) => (
-            <div key={index} className="d-inline-block group-model text-center">
-              {assets.image.map((value, index) => (
-                <div
-                  key={index}
-                  className={combineClasses(
-                    'd-inline-block',
-                    value.gender === GenderType.GenderLess ? 'w-100' : 'w-auto'
-                  )}
-                >
-                  <div className="sub-group-model">
-                    {gender && !gender.genderlessPercent && (
-                      <div className="gender">
-                        {value.gender === GenderType.GenderLess ? (
-                          <Fragment>
-                            {gender.malePercent !== 0 && <MaleIcon sx={{ color: 'blue' }} />}
-                            {gender.femalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }} />}
-                          </Fragment>
-                        ) : (
-                          <Fragment>
-                            {value.gender === GenderType.Male ? (
-                              <MaleIcon sx={{ color: 'blue' }} />
-                            ) : (
-                              <FemaleIcon sx={{ color: 'red' }} />
-                            )}
-                          </Fragment>
-                        )}
-                      </div>
+            <div key={index} className="group-model tw-flex tw-w-fit tw-justify-center tw-flex-col tw-items-center">
+              <div className="tw-flex tw-flex-wrap tw-w-full tw-items-center">
+                {assets.image.map((value, index) => (
+                  <div
+                    key={index}
+                    className={combineClasses(
+                      'tw-inline-block',
+                      value.gender === GenderType.GenderLess ? 'tw-w-full' : 'tw-w-auto'
                     )}
-                    <div className={combineClasses('model text-center', value.shiny ? 'w-pct-50' : 'w-pct-100')}>
-                      <div className="d-flex w-100 justify-content-center">
-                        <div style={{ width: 80 }}>
-                          <img
-                            className="pokemon-sprite-model"
-                            alt="Pokémon Model"
-                            src={APIService.getPokemonModel(value.default, value.pokemonId)}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = getValidPokemonImgPath(
-                                e.currentTarget.src,
-                                value.pokemonId,
-                                value.default
-                              );
-                            }}
-                          />
+                  >
+                    <div className="sub-group-model">
+                      {gender && !gender.genderlessPercent && (
+                        <div className="gender">
+                          {value.gender === GenderType.GenderLess ? (
+                            <Fragment>
+                              {gender.malePercent !== 0 && <MaleIcon sx={{ color: 'blue' }} />}
+                              {gender.femalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }} />}
+                            </Fragment>
+                          ) : (
+                            <Fragment>
+                              {value.gender === GenderType.Male ? (
+                                <MaleIcon sx={{ color: 'blue' }} />
+                              ) : (
+                                <FemaleIcon sx={{ color: 'red' }} />
+                              )}
+                            </Fragment>
+                          )}
                         </div>
+                      )}
+                      <div className={combineClasses('model text-center', value.shiny ? 'tw-w-1/2' : 'tw-w-full')}>
+                        {renderGender(value.default, value.pokemonId, 'Default')}
                       </div>
-                      <span className="caption">Default</span>
+                      {value.shiny && (
+                        <div className="model tw-text-center">
+                          {renderGender(value.shiny, value.pokemonId, 'Shiny')}
+                        </div>
+                      )}
                     </div>
-                    {value.shiny && (
-                      <div className="model text-center">
-                        <div className="d-flex w-100 justify-content-center">
-                          <div style={{ width: 80 }}>
-                            <img
-                              className="pokemon-sprite-model"
-                              alt="Pokémon Model"
-                              src={APIService.getPokemonModel(value.shiny, value.pokemonId)}
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = getValidPokemonImgPath(
-                                  e.currentTarget.src,
-                                  value.pokemonId,
-                                  value.shiny
-                                );
-                              }}
-                            />
-                          </div>
-                        </div>
-                        <span className="caption">Shiny</span>
-                      </div>
-                    )}
                   </div>
-                </div>
-              ))}
-              <div className="desc text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
+                ))}
+              </div>
+              <div className="desc tw-text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
             </div>
           ))}
-          {!isNotEmpty(pokeAssets) && <div className="text-danger mb-3">&emsp;Assets in Pokémon GO unavailable</div>}
+          {!isNotEmpty(pokeAssets) && (
+            <div className="tw-text-red-600 tw-mb-3">&emsp;Assets in Pokémon GO unavailable</div>
+          )}
         </div>
       )}
       <h4 className="title-evo">
-        <b>{`Sound of ${splitAndCapitalize(pokemonData?.pokemonId, '_', ' ')}`}</b>
+        <b>{`Sound of ${splitAndCapitalize(searchingMainDetails?.pokemonId, '_', ' ')}`}</b>
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0 h-9">
+        <div className="ph-item !tw-w-full !tw-m-0 !tw-p-0 tw-h-9">
           <div
-            className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
-            style={{ background: 'var(--background-default)' }}
+            className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
+            style={{ background: 'var(--custom-default)' }}
           />
         </div>
       ) : (
         <Fragment>
           {!isNotEmpty(props.originSoundCry) ? (
-            <div className="text-danger">&emsp;Sound in Pokémon unavailable.</div>
+            <div className="tw-text-red-600">&emsp;Sound in Pokémon unavailable.</div>
           ) : (
-            <ul className="m-0">
+            <ul className="!tw-m-0">
               {props.originSoundCry.map((value, index) => (
-                <li key={index} className="list-style-disc">
+                <li key={index} className="tw-list-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
-                  <ul className="m-0">
+                  <ul className="!tw-m-0">
                     {value.cries &&
-                      Object.entries(value.cries).map(([k, v], i) => (
+                      safeObjectEntries(value.cries).map(([k, v], i) => (
                         <Fragment key={i}>
                           {v && (
-                            <li className="list-style-circle">
+                            <li className="tw-list-circle">
                               <h6>Type: {capitalize(k)}</h6>
-                              <audio src={v} className="w-100 h-5" controls>
+                              <audio src={v} className="tw-w-full tw-h-8" controls>
                                 <source type="audio/ogg" />
                                 Your browser does not support the audio element.
                               </audio>
@@ -183,22 +177,22 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       )}
       <h6>Pokémon GO:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0 h-9">
+        <div className="ph-item !tw-w-full !tw-m-0 !tw-p-0 !tw-h-9">
           <div
-            className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
-            style={{ background: 'var(--background-default)' }}
+            className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
+            style={{ background: 'var(--custom-default)' }}
           />
         </div>
       ) : (
         <Fragment>
           {!isNotEmpty(asset?.sound.cry) ? (
-            <div className="text-danger">&emsp;Sound in Pokémon GO unavailable.</div>
+            <div className="tw-text-red-600">&emsp;Sound in Pokémon GO unavailable.</div>
           ) : (
-            <ul className="m-0">
+            <ul className="!tw-m-0">
               {asset?.sound.cry.map((value, index) => (
-                <li key={index} className="list-style-disc">
+                <li key={index} className="tw-list-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
-                  <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100 h-5" controls>
+                  <audio src={APIService.getSoundPokemonGO(value.path)} className="tw-w-full tw-h-8" controls>
                     <source type="audio/wav" />
                     Your browser does not support the audio element.
                   </audio>

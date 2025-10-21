@@ -15,7 +15,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import React, { Fragment, useEffect, useState } from 'react';
 import Xarrow, { cAnchorEdge } from 'react-xarrows';
 import { Link } from 'react-router-dom';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import './Evolution.scss';
 import {
@@ -27,19 +27,17 @@ import {
   getDataWithKey,
   getGenerationPokemon,
   getItemSpritePath,
+  isPokemonNoneSpecialForm,
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../Popover/CustomPopover';
-import { useSelector } from 'react-redux';
+import CustomPopover from '../../Commons/Popovers/CustomPopover';
 import Candy from '../../Sprites/Candy/Candy';
-import { RouterState, StoreState } from '../../../store/models/state.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { Action } from 'history';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
@@ -54,7 +52,9 @@ import { ItemName } from '../../../pages/News/enums/item-type.enum';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { APIUrl } from '../../../services/constants';
-import { formNormal, formStandard } from '../../../utils/helpers/context.helpers';
+import { formNormal, formStandard } from '../../../utils/helpers/options-context.helpers';
+import usePokemon from '../../../composables/usePokemon';
+import useEvolution from '../../../composables/useEvolution';
 
 interface IPokemonEvo {
   prev?: string;
@@ -97,9 +97,8 @@ class PokemonEvo implements IPokemonEvo {
 }
 
 const Evolution = (props: IEvolutionComponent) => {
-  const router = useSelector((state: RouterState) => state.router);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
-  const evolutionChains = useSelector((state: StoreState) => state.store.data.evolutionChains);
+  const { findEvoChainsById } = useEvolution();
+  const { getFilteredPokemons, getFindPokemon } = usePokemon();
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const [idEvoChain, setIdEvoChain] = useState(0);
@@ -185,8 +184,8 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getPrevEvoChainStore = (id: number | undefined, form: string | undefined, result: IPokemonEvo[][]) => {
     const evoList: IPokemonEvo[] = [];
-    const pokemon = pokemonData.filter((pokemon) =>
-      pokemon.evoList?.find((evo) => evo.evoToId === id && isEqual(evo.evoToForm, form))
+    const pokemon = getFilteredPokemons((pokemon) =>
+      pokemon.evoList?.some((evo) => evo.evoToId === id && isEqual(evo.evoToForm, form))
     );
     if (!isNotEmpty(pokemon)) {
       return;
@@ -211,8 +210,8 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getCurrEvoChainStore = (poke: Partial<IPokemonDetail>, result: IPokemonEvo[][]) => {
     let evoList: IPokemonEvo[] = [];
-    const pokemon = pokemonData.find((pokemon) =>
-      pokemon.evoList?.find(
+    const pokemon = getFindPokemon((pokemon) =>
+      pokemon.evoList?.some(
         (evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.form?.replace(`_${formStandard()}`, ''))
       )
     );
@@ -275,9 +274,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
 
     evoList?.forEach((evo) => {
-      const pokemon = pokemonData.find(
-        (pokemon) => pokemon.num === evo.evoToId && isEqual(pokemon.form, evo.evoToForm)
-      );
+      const pokemon = getFindPokemon((pokemon) => pokemon.num === evo.evoToId && isEqual(pokemon.form, evo.evoToForm));
       getNextEvoChainStore(pokemon?.name, pokemon?.evoList, result);
     });
 
@@ -285,7 +282,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number | undefined, form: string | undefined) => {
-    const pokemonChain = evolutionChains.find((chain) => chain.id === id);
+    const pokemonChain = findEvoChainsById(id);
     if (pokemonChain) {
       const chainForms = pokemonChain.evolutionInfos.filter((info) =>
         isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)
@@ -368,23 +365,29 @@ const Evolution = (props: IEvolutionComponent) => {
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
   const getQuestEvo = (prevId: number, form: string) => {
-    const pokemon = pokemonData.find((item) =>
-      item.evoList?.find(
-        (value) => isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) && value.evoToId === prevId
+    const pokemon = getFindPokemon((item) =>
+      item.evoList?.some(
+        (value) =>
+          (isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
+            (isPokemonNoneSpecialForm(form) && value.evoToForm === formNormal())) &&
+          value.evoToId === prevId
       )
     );
     if (pokemon) {
       return pokemon.evoList?.find(
-        (item) => isInclude(item.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) && item.evoToId === prevId
+        (item) =>
+          (isInclude(item.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
+            (isPokemonNoneSpecialForm(form) && item.evoToForm === formNormal())) &&
+          item.evoToId === prevId
       );
     } else {
-      const pokemonChain = evolutionChains.find((chain) => chain.id === prevId);
+      const pokemonChain = findEvoChainsById(prevId);
       if (pokemonChain) {
         const chainForm = pokemonChain.evolutionInfos.find(
           (info) => info.id !== prevId && isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)
         );
         if (chainForm && prevId === props.id) {
-          const pokemon = pokemonData.find((item) => item.evoList?.find((value) => value.evoToId === prevId));
+          const pokemon = getFindPokemon((item) => item.evoList?.some((value) => value.evoToId === prevId));
           if (pokemon) {
             return pokemon.evoList?.find((item) => item.evoToId === prevId);
           }
@@ -442,28 +445,24 @@ const Evolution = (props: IEvolutionComponent) => {
             <Xarrow
               labels={{
                 end: (
-                  <div className="position-absolute -left-6">
-                    {value.pokemonType !== PokemonType.GMax && (
+                  <div className="tw-absolute -tw-left-6">
+                    {data && value.pokemonType !== PokemonType.GMax && (
                       <div>
-                        {toNumber(data?.evoToId) > 0 &&
-                          !data?.itemCost &&
-                          (data?.candyCost || data?.purificationEvoCandyCost) && (
-                            <span className="d-flex align-items-center caption w-max-content">
-                              <Candy id={value.id} />
-                              <span className="ms-1">{`x${
-                                props.pokemonData?.pokemonType === PokemonType.Purified
-                                  ? data.purificationEvoCandyCost
-                                  : data.candyCost
-                              }`}</span>
-                            </span>
-                          )}
-                        {props.pokemonData?.pokemonType === PokemonType.Purified &&
-                          data?.candyCost &&
-                          data?.purificationEvoCandyCost && (
-                            <span className="d-block text-end caption text-danger">{`-${
-                              data.candyCost - data.purificationEvoCandyCost
+                        {toNumber(data.evoToId) > 0 && !data.itemCost && (
+                          <span className="tw-flex tw-items-center caption tw-w-max">
+                            <Candy id={value.id} />
+                            <span className="tw-ml-1">{`x${
+                              props.pokemonData?.pokemonType === PokemonType.Purified
+                                ? data.purificationEvoCandyCost
+                                : data.candyCost
                             }`}</span>
-                          )}
+                          </span>
+                        )}
+                        {props.pokemonData?.pokemonType === PokemonType.Purified && (
+                          <span className="tw-block tw-text-right caption tw-text-red-600">{`-${
+                            data.candyCost - data.purificationEvoCandyCost
+                          }`}</span>
+                        )}
                       </div>
                     )}
                     {isNotEmpty(Object.keys(data?.quest ?? new EvolutionQuest())) && (
@@ -502,9 +501,9 @@ const Evolution = (props: IEvolutionComponent) => {
                           <span className="caption">
                             {`${
                               data.quest.isMustBeBuddy ? (
-                                <div className="d-flex align-items-end">
+                                <div className="tw-flex tw-items-end">
                                   <DirectionsWalkIcon fontSize="small" />
-                                  <PetsIcon className="u-fs-3" />
+                                  <PetsIcon className="tw-text-sm" />
                                 </div>
                               ) : (
                                 <DirectionsWalkIcon fontSize="small" />
@@ -530,7 +529,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}
                             />
                             {data.itemCost && (
-                              <span className="d-flex align-items-center caption ms-1 w-max-content">{`x${data.itemCost}`}</span>
+                              <span className="tw-flex tw-items-center caption tw-ml-1 tw-w-max">{`x${data.itemCost}`}</span>
                             )}
                           </Fragment>
                         )}
@@ -555,11 +554,11 @@ const Evolution = (props: IEvolutionComponent) => {
                               </Fragment>
                             )}
                             {data?.quest.condition.desc === ConditionType.Pokemon && (
-                              <div className="d-flex align-items-center mt-1">
+                              <div className="tw-flex tw-items-center tw-mt-1">
                                 {data.quest.condition.pokemonType?.map((value, index) => (
                                   <IconType key={index} height={20} alt="Pokémon GO Type Logo" type={value} />
                                 ))}
-                                <span className="ms-1">{`x${data.quest.goal}`}</span>
+                                <span className="tw-ml-1">{`x${data.quest.goal}`}</span>
                               </div>
                             )}
                             {data.quest.condition.desc === ConditionType.WinRaid && (
@@ -570,7 +569,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             )}
                             {data.quest.condition.desc === ConditionType.PokemonBattle && (
                               <Fragment>
-                                <div className="inline-flex gap-1">
+                                <div className="tw-inline-flex tw-gap-1">
                                   {data.quest.condition.opponentPokemonBattle?.types.map((value, index) => (
                                     <IconType
                                       key={index}
@@ -581,7 +580,7 @@ const Evolution = (props: IEvolutionComponent) => {
                                     />
                                   ))}
                                 </div>
-                                <span style={{ fontSize: 11, lineHeight: 1 }}>{`Battle x${data.quest.goal} ${
+                                <span className="tw-text-sm tw-leading-1">{`Battle x${data.quest.goal} ${
                                   data.quest.condition.opponentPokemonBattle?.requireDefeat ? 'Defeat' : ''
                                 }`}</span>
                               </Fragment>
@@ -613,7 +612,7 @@ const Evolution = (props: IEvolutionComponent) => {
                                 height={20}
                                 src={getItemSpritePath(ItemName.Incense)}
                               />
-                              <div style={{ fontSize: 11, lineHeight: 1 }}>Use Incense</div>
+                              <div className="tw-text-sm tw-leading-1">Use Incense</div>
                             </Fragment>
                           </span>
                         )}
@@ -664,19 +663,19 @@ const Evolution = (props: IEvolutionComponent) => {
             <span className="img-evo-container">{renderImgGif(value)}</span>
           )}
           <div id="id-pokemon">
-            <b className="theme-text-primary">#{value.id}</b>
+            <b className="tw-text-default">#{value.id}</b>
           </div>
           <div>
             <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
           </div>
         </span>
-        {value.isBaby && <span className="caption text-danger">(Baby)</span>}
+        {value.isBaby && <span className="caption tw-text-red-600">(Baby)</span>}
         <p>{isCurrent && <span className="caption">Current</span>}</p>
       </Fragment>
     );
   };
 
-  const reload = (element: JSX.Element, color = 'var(--background-default)') => {
+  const reload = (element: JSX.Element, color = 'var(--custom-default)') => {
     if (
       props.isLoadedForms ||
       (isNotEmpty(arrEvoList) && arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id)))
@@ -684,8 +683,8 @@ const Evolution = (props: IEvolutionComponent) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 p-0 m-auto" style={{ height: 120 }}>
-        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
+      <div className="ph-item !tw-w-3/4 !tw-p-0 !tw-m-auto !tw-h-30">
+        <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
       </div>
     );
   };
@@ -699,56 +698,56 @@ const Evolution = (props: IEvolutionComponent) => {
           overlay={
             <CustomPopover id="popover-info">
               <span className="info-evo">
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <img alt="Image Stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of
                   pokemon.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <QuestionMarkIcon fontSize="small" /> : Random evolution.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <MaleIcon fontSize="small" />/<FemaleIcon fontSize="small" /> : Only once gender can evolution.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <DirectionsWalkIcon fontSize="small" />
-                  <PetsIcon className="u-fs-3" /> : Walk together with buddy.
+                  <PetsIcon className="tw-text-sm" /> : Walk together with buddy.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <DirectionsWalkIcon fontSize="small" /> : Buddy walk with trainer.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <WbSunnyIcon fontSize="small" /> : Evolution during at day.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <DarkModeIcon fontSize="small" /> : Evolution during at night.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <img alt="Image Troy Required" height={20} src={APIService.getItemTroy()} /> : Evolution in lure
                   module.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <SecurityUpdateIcon fontSize="small" /> : Evolution at upside down phone.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <CallMadeIcon fontSize="small" /> : Throw pokeball with condition.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <img alt="Image Stardust" height={20} src={APIService.getPokeSprite()} /> : Catch pokemon with type.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <SportsMartialArtsIcon fontSize="small" /> : Win raid.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <FavoriteIcon fontSize="small" sx={{ color: 'red' }} /> : Evolution with affection points.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <RestaurantIcon fontSize="small" /> : Buddy feed.
                 </span>
-                <span className="d-block caption">
+                <span className="tw-block caption">
                   - <img alt="icon-incense" width={20} height={20} src={getItemSpritePath(ItemName.Incense)} /> : Use
                   Incense.
                 </span>
-                <span className="d-block caption">- Pokémon Battle.</span>
+                <span className="tw-block caption">- Pokémon Battle.</span>
               </span>
             </CustomPopover>
           }
@@ -761,23 +760,20 @@ const Evolution = (props: IEvolutionComponent) => {
       <div className="evo-container scroll-evolution">
         {reload(
           <ul
-            className="ul-evo d-inline-flex"
+            className="ul-evo tw-inline-flex"
             style={{
               columnGap: isNotEmpty(arrEvoList) ? window.innerWidth / (6.5 * arrEvoList.length) : 0,
             }}
           >
             {arrEvoList.map((values, evo) => (
               <li key={evo} className="img-form-gender-group li-evo">
-                <ul className="ul-evo d-flex flex-column">
+                <ul className="ul-evo tw-flex tw-flex-col">
                   {values.map((value, index) => (
                     <li key={index} className="img-form-gender-group img-evo-group li-evo">
                       {props.setSearchOption ? (
                         <div
                           className="select-evo"
                           onClick={() => {
-                            if (router.action === Action.Pop) {
-                              router.action = Action.Replace;
-                            }
                             props.setSearchOption?.({ id: value.id, form: value.form, pokemonType: value.pokemonType });
                           }}
                           title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}

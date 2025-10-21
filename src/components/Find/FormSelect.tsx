@@ -1,17 +1,11 @@
-import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import Tools from './Tools';
 
 import {
-  capitalize,
   convertPokemonImageName,
   convertSexName,
-  formIconAssets,
-  generatePokemonGoForms,
   getItemSpritePath,
-  getPokemonById,
-  getPokemonDetails,
   getPokemonType,
   getValidPokemonImgPath,
   splitAndCapitalize,
@@ -32,12 +26,15 @@ import {
 import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
 import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
-import { PokemonType, TypeRaid, VariantType } from '../../enums/type.enum';
+import { PokemonType, TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
-import { formNormal } from '../../utils/helpers/context.helpers';
+import useSearch from '../../composables/useSearch';
+import usePokemon from '../../composables/usePokemon';
+import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
+import { useSnackbar } from '../../contexts/snackbar.context';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -47,6 +44,8 @@ interface OptionsPokemon {
 
 const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
+  const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
+  const { generatePokemonGoForms, getPokemonDetails, getPokemonById, findPokemonById } = usePokemon();
 
   const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
@@ -61,7 +60,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [currentForm, setCurrentForm] = useState<IPokemonFormModify>();
 
   const axiosSource = useRef(APIService.getCancelToken());
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const fetchMap = useCallback(
     async (specie: IPokemonSpecie) => {
@@ -72,10 +71,10 @@ const FormSelect = (props: IFormSelectComponent) => {
       const cancelToken = axiosSource.current.token;
       await Promise.all(
         specie.varieties.map(async (value) => {
-          const pokeInfo = (await APIService.getFetchUrl<PokemonInfo>(value.path, { cancelToken })).data;
+          const { data: pokeInfo } = await APIService.getFetchUrl<PokemonInfo>(value.path, { cancelToken });
           const pokeForm = await Promise.all(
             pokeInfo.forms.map(async (item) => {
-              const form = (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data;
+              const { data: form } = await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken });
               return PokemonFormDetail.setDetails(form);
             })
           );
@@ -87,7 +86,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         return;
       });
 
-      const pokemon = props.pokemonData.find((item) => item.num === specie.id);
+      const pokemon = findPokemonById(specie.id);
       const isShadow = Boolean(
         pokemon?.hasShadowForm && toNumber(pokemon.purified?.candy) >= 0 && toNumber(pokemon.purified?.stardust) >= 0
       );
@@ -107,24 +106,22 @@ const FormSelect = (props: IFormSelectComponent) => {
         )
         .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
-      generatePokemonGoForms(props.pokemonData, dataFormList, formListResult, specie.id, specie.name);
+      generatePokemonGoForms(dataFormList, formListResult, specie.id, specie.name);
 
       setPokeData(dataPokeList);
       setFormList(formListResult);
 
       const defaultForm = formListResult.flatMap((value) => value).filter((item) => item.form.isDefault);
       let currentForm = defaultForm.find((item) => item.form.id === specie.id);
-      if (props.searching) {
+      if (searchingToolData) {
         const defaultFormSearch = formListResult
           .flatMap((value) => value)
           .find((item) =>
             isEqual(
               item.form.formName,
               props.isObjective
-                ? props.searching?.object
-                  ? props.searching.object.form?.form?.formName
-                  : ''
-                : props.searching?.current?.form?.form?.formName
+                ? searchingToolObjectData?.form?.form?.formName
+                : searchingToolCurrentData?.form?.form?.formName
             )
           );
         if (defaultFormSearch) {
@@ -148,7 +145,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
       setData(specie);
     },
-    [props.searching]
+    [searchingToolData]
   );
 
   const queryPokemon = useCallback(
@@ -167,10 +164,10 @@ const FormSelect = (props: IFormSelectComponent) => {
           if (APIService.isCancel(e)) {
             return;
           }
-          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: VariantType.Error });
+          showSnackbar(`Pokémon ID or name: ${id} Not found!`, 'error');
         });
     },
-    [enqueueSnackbar, fetchMap]
+    [fetchMap]
   );
 
   useEffect(() => {
@@ -183,7 +180,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(props.pokemonData)) {
+    if (id > 0 && toNumber(data?.id) !== id) {
       clearData();
       queryPokemon(id);
     }
@@ -192,54 +189,49 @@ const FormSelect = (props: IFormSelectComponent) => {
         APIService.cancel(axiosSource.current);
       }
     };
-  }, [props.id, props.pokemonData, data?.id, queryPokemon]);
+  }, [props.id, data?.id, queryPokemon]);
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (currentForm && toNumber(data?.id) > 0 && id > 0) {
+    if (
+      currentForm &&
+      toNumber(data?.id) > 0 &&
+      id > 0 &&
+      (searchingToolObjectData?.pokemon?.id !== id ||
+        !isEqual(searchingToolObjectData?.form?.form?.formName, currentForm.form.formName))
+    ) {
       const formName = getValueOrDefault(
         String,
         currentForm.form.name,
         currentForm.form.formName,
         currentForm.defaultName
       );
-      const details = getPokemonDetails(
-        props.pokemonData,
-        id,
-        formName,
-        currentForm.form.pokemonType,
-        currentForm.form.isDefault
-      );
+      const details = getPokemonDetails(id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
       details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
-      if (
-        props.searching?.object?.pokemon?.id !== props.id ||
-        !isEqual(props.searching?.object?.form?.form?.formName, currentForm.form.formName)
-      ) {
-        const pokemonDetails = PokemonDetail.setData(details);
-        if (props.isObjective) {
-          dispatch(SearchingActions.SetToolObjectPokemonDetails.create(pokemonDetails));
-          dispatch(SearchingActions.SetToolObjectPokemonForm.create(currentForm));
-        } else {
-          dispatch(SearchingActions.SetToolPokemonDetails.create(pokemonDetails));
-          dispatch(SearchingActions.SetToolPokemonForm.create(currentForm));
-        }
+      const pokemonDetails = PokemonDetail.setData(details);
+      if (props.isObjective) {
+        dispatch(SearchingActions.SetToolObjectPokemonDetails.create(pokemonDetails));
+        dispatch(SearchingActions.SetToolObjectPokemonForm.create(currentForm));
+      } else {
+        dispatch(SearchingActions.SetToolPokemonDetails.create(pokemonDetails));
+        dispatch(SearchingActions.SetToolPokemonForm.create(currentForm));
       }
     }
-  }, [currentForm, props.isObjective, dispatch]);
+  }, [currentForm, props.isObjective, dispatch, getPokemonDetails]);
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (isNotEmpty(props.pokemonData) && id > 0) {
-      const currentPokemon = getPokemonById(props.pokemonData, id);
+    if (id > 0) {
+      const currentPokemon = getPokemonById(id);
       if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(props.pokemonData, currentPokemon.id - 1),
-          current: getPokemonById(props.pokemonData, currentPokemon.id),
-          next: getPokemonById(props.pokemonData, currentPokemon.id + 1),
+          prev: getPokemonById(currentPokemon.id - 1),
+          current: getPokemonById(currentPokemon.id),
+          next: getPokemonById(currentPokemon.id + 1),
         });
       }
     }
-  }, [props.pokemonData, props.id]);
+  }, [getPokemonById, props.id]);
 
   const clearData = () => {
     setCurrentForm(undefined);
@@ -253,7 +245,9 @@ const FormSelect = (props: IFormSelectComponent) => {
     }
   };
 
-  const changeForm = (isSelected: boolean, name: string) => {
+  const changeForm = (value: IPokemonFormModify) => {
+    const isSelected = value.form.id === currentForm?.form.id;
+    const name = value.form.name;
     if (isSelected) {
       return;
     }
@@ -297,9 +291,9 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   return (
     <Fragment>
-      <div className="d-inline-block w-9 h-9">
+      <div className="tw-inline-block tw-w-16 tw-h-16">
         {dataStorePokemon?.prev && (
-          <div className="cursor-pointer" onClick={() => props.onSetPrev?.()}>
+          <div className="tw-cursor-pointer" onClick={() => props.onSetPrev?.()}>
             <div>
               <img
                 height={64}
@@ -320,7 +314,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         )}
       </div>
       <img
-        className="p-2"
+        className="tw-p-2"
         height={200}
         alt="Image Pokemon"
         src={APIService.getPokeFullSprite(
@@ -332,9 +326,9 @@ const FormSelect = (props: IFormSelectComponent) => {
           e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
         }}
       />
-      <div className="d-inline-block w-9 h-9">
+      <div className="tw-inline-block tw-w-16 tw-h-16">
         {dataStorePokemon?.next && (
-          <div className="cursor-pointer" onClick={() => props.onSetNext?.()}>
+          <div className="tw-cursor-pointer" onClick={() => props.onSetNext?.()}>
             <div>
               <img
                 height={64}
@@ -354,59 +348,26 @@ const FormSelect = (props: IFormSelectComponent) => {
           </div>
         )}
       </div>
-      <div className="mt-2 h-9">{currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}</div>
+      <div className="tw-mt-2 tw-h-16">{currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}</div>
       <h4>
         <b>
           {dataStorePokemon?.current?.id && <>{`#${dataStorePokemon.current.id} `}</>}
           {currentForm ? splitAndCapitalize(convertSexName(currentForm.form.name), '-', ' ') : props.name}
         </b>
       </h4>
-      <div className="scroll-card">
-        {currentForm?.defaultId && isNotEmpty(pokeData) && isNotEmpty(formList) ? (
-          <Fragment>
-            {formList.map((value, index) => (
-              <Fragment key={index}>
-                {value.map((value, index) => (
-                  <button
-                    key={index}
-                    className={combineClasses(
-                      'btn btn-form',
-                      value.form.id === currentForm.form.id ? 'form-selected' : ''
-                    )}
-                    onClick={() => changeForm(value.form.id === currentForm.form.id, value.form.name)}
-                  >
-                    <img
-                      width={64}
-                      height={64}
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = APIService.getPokeIconSprite();
-                      }}
-                      alt="Image Icon Form"
-                      src={formIconAssets(value)}
-                    />
-                    <p>
-                      {!value.form.formName
-                        ? capitalize(formNormal())
-                        : splitAndCapitalize(value.form.formName, '-', ' ')}
-                    </p>
-                    {toNumber(value.form.id) > 0 && value.form.id === currentForm.defaultId && (
-                      <b>
-                        <small>(Default)</small>
-                      </b>
-                    )}
-                    {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
-                  </button>
-                ))}
-              </Fragment>
-            ))}
-          </Fragment>
-        ) : (
-          <LoadGroup isShow isVertical isHideAttr size={40} />
-        )}
-      </div>
+      <ButtonGroupForm
+        className="tw-my-1"
+        width={350}
+        height={180}
+        isLoaded={toNumber(currentForm?.defaultId) > 0 && isNotEmpty(pokeData) && isNotEmpty(formList)}
+        forms={formList}
+        id={currentForm?.form.id}
+        defaultId={currentForm?.defaultId}
+        changeForm={changeForm}
+        loading={<LoadGroup isShow isVertical isHideAttr size={40} />}
+      />
       {!props.isHide && (
-        <div className="d-flex justify-content-center text-center">
+        <div className="tw-flex tw-justify-center tw-text-center">
           <TypeRadioGroup
             row
             aria-labelledby="row-types-group-label"
@@ -418,32 +379,33 @@ const FormSelect = (props: IFormSelectComponent) => {
               value={TypeRaid.Pokemon}
               control={<Radio />}
               label={
-                <span>
-                  <img height={32} alt="Pokémon Image" src={getItemSpritePath(ItemName.PokeBall)} /> Pokémon Stats
-                </span>
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img height={32} alt="Pokémon Image" src={getItemSpritePath(ItemName.PokeBall)} />
+                  <span>Pokémon Stats</span>
+                </div>
               }
             />
             <FormControlLabel
               value={TypeRaid.Boss}
               control={<Radio />}
               label={
-                <span>
+                <div className="tw-flex tw-items-center tw-gap-2">
                   <img
                     className="img-type-icon"
                     height={32}
                     alt="img-boss"
                     src={APIService.getRaidSprite('ic_raid_small')}
                   />{' '}
-                  Boss Stats
-                </span>
+                  <span>Boss Stats</span>
+                </div>
               }
             />
           </TypeRadioGroup>
         </div>
       )}
       <div className="row">
-        <div className="col-sm-6" />
-        <div className="col-sm-6" />
+        <div className="sm:tw-w-1/2" />
+        <div className="sm:tw-w-1/2" />
       </div>
       <Tools
         isHide={props.isHide}
@@ -452,7 +414,6 @@ const FormSelect = (props: IFormSelectComponent) => {
         setTier={onSetTier}
         id={dataStorePokemon?.current?.id}
         dataPoke={pokeData}
-        stats={props.stats}
         onSetStats={props.onHandleSetStats}
         onClearStats={props.onClearStats}
       />

@@ -1,4 +1,4 @@
-import { BadgeType } from '../../../../components/Input/enums/badge-type.enum';
+import { BadgeType } from '../../../../components/enums/badge-type.enum';
 import { IEncounter } from '../../../../core/models/pokemon.model';
 import { ThrowType } from '../../../../enums/type.enum';
 import { DynamicObj } from '../../../../utils/extension';

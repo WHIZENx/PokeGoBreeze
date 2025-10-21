@@ -1,10 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
-import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
 import {
@@ -15,13 +13,14 @@ import {
   toNumber,
   UniqValueInArray,
 } from '../../../utils/extension';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../Link/LinkToTop';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
-import { formNormal } from '../../../utils/helpers/context.helpers';
+import { formNormal } from '../../../utils/helpers/options-context.helpers';
+import { useAssets } from '../../../composables/useAssets';
 
 const FromChange = (props: IFromChangeComponent) => {
-  const assets = useSelector((state: StoreState) => state.store.data.assets);
+  const { findAssetsById } = useAssets();
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const [dataSrc, setDataSrc] = useState<string>();
@@ -29,7 +28,7 @@ const FromChange = (props: IFromChangeComponent) => {
   const [pokemon, setPokemon] = useState<Partial<IPokemonDetail>>();
 
   const getImageList = (id: number | undefined) => {
-    const model = assets.find((item) => item.id === id);
+    const model = findAssetsById(id);
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
       (value) => new PokemonModelComponent(value, model?.image)
     );
@@ -43,10 +42,10 @@ const FromChange = (props: IFromChangeComponent) => {
       setPokemon(undefined);
       return;
     }
-    if (toNumber(props.currentId) > 0 && isNotEmpty(assets)) {
+    if (toNumber(props.currentId) > 0) {
       setPokeAssets(getImageList(props.currentId));
     }
-  }, [assets, props.currentId, props.pokemonData]);
+  }, [props.currentId, props.pokemonData]);
 
   useEffect(() => {
     if (isNotEmpty(pokeAssets) && props.pokemonData?.fullName) {
@@ -82,10 +81,10 @@ const FromChange = (props: IFromChangeComponent) => {
               <b>Form Change</b>
             </h4>
             {isNotEmpty(pokeAssets) && (
-              <div className="mt-2 d-flex">
-                <div className="d-flex flex-column align-items-center justify-content-center w-50">
-                  <div className="d-flex flex-column align-items-center justify-content-center" id="form-origin">
-                    <div style={{ width: 96 }}>
+              <div className="tw-mt-2 tw-flex">
+                <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-w-1/2">
+                  <div className="tw-flex tw-flex-col tw-items-center tw-justify-center" id="form-origin">
+                    <div className="tw-w-24">
                       <img
                         className="pokemon-sprite-large"
                         alt="Pokémon Model"
@@ -105,16 +104,16 @@ const FromChange = (props: IFromChangeComponent) => {
                     </span>
                   </div>
                 </div>
-                <div className="d-flex flex-column align-items-center justify-content-center w-50 row-gap-3">
+                <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-w-1/2 tw-gap-x-3">
                   {pokemon.formChange.map((value, key) => (
                     <Fragment key={key}>
                       {value.availableForm.map((name, index) => (
                         <div
                           key={index}
-                          className="d-flex flex-column align-items-center justify-content-center"
+                          className="tw-flex tw-flex-col tw-items-center tw-justify-center"
                           id={`form-${key}-${index}`}
                         >
-                          <div style={{ width: 96 }}>
+                          <div className="tw-w-24">
                             <img
                               className="pokemon-sprite-large"
                               alt="Pokémon Model"
@@ -143,36 +142,36 @@ const FromChange = (props: IFromChangeComponent) => {
                       <Xarrow
                         labels={{
                           end: (
-                            <div className="position-absolute -left-10">
+                            <div className="tw-absolute -tw-left-10">
                               {value.candyCost && (
-                                <span className="d-flex align-items-center caption w-max-content">
+                                <span className="tw-flex tw-items-center caption tw-w-max">
                                   <Candy
                                     id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id}
                                   />
                                   <LinkToTop
-                                    className="ms-1"
+                                    className="tw-ml-1"
                                     to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(
                                       pokemon.form
                                     )}`}
                                   >
                                     {splitAndCapitalize(value.componentPokemonSettings?.pokedexId, '_', ' ')}
                                   </LinkToTop>
-                                  <span className="ms-1">{`x${value.candyCost}`}</span>
+                                  <span className="tw-ml-1">{`x${value.candyCost}`}</span>
                                 </span>
                               )}
                               {value.stardustCost && (
-                                <span className="d-flex align-items-center caption mt-1 w-max-content">
-                                  <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
+                                <span className="tw-flex tw-items-center caption tw-mt-1 w-max-content">
+                                  <div className="tw-inline-flex tw-justify-center tw-w-5">
                                     <img
                                       alt="Image Stardust"
                                       height={20}
                                       src={APIService.getItemSprite('stardust_painted')}
                                     />
                                   </div>
-                                  <span className="ms-1">{`x${value.stardustCost}`}</span>
+                                  <span className="tw-ml-1">{`x${value.stardustCost}`}</span>
                                 </span>
                               )}
-                              <span className="d-flex flex-column caption mt-1 w-max-content">
+                              <span className="tw-flex tw-flex-col caption tw-mt-1 tw-w-max">
                                 {value.item && (
                                   <>
                                     <span>Required Item</span>

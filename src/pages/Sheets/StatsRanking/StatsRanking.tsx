@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import {
   splitAndCapitalize,
   capitalize,
   convertPokemonImageName,
-  getPokemonDetails,
   generateParamForm,
   getValidPokemonImgPath,
   getDmgMultiplyBonus,
@@ -12,20 +11,19 @@ import {
   isSpecialFormType,
   getKeyWithData,
   getCustomThemeDataTable,
+  createDataRows,
 } from '../../../utils/utils';
 import { ConditionalStyles, TableStyles } from 'react-data-table-component';
-import { useSelector } from 'react-redux';
 import Stats from '../../../components/Info/Stats/Stats';
-import TableMove from '../../../components/Table/Move/MoveTable';
+import TableMove from '../../../components/Commons/Tables/Move/MoveTable';
 
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
 import './StatsRanking.scss';
-import { FormControlLabel, Checkbox } from '@mui/material';
+import { Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
-import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
 import {
   IPokemonStatsRanking,
@@ -35,13 +33,12 @@ import {
   StatsProd,
   StatsSta,
 } from '../../../core/models/stats.model';
-import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
+import PokemonTable from '../../../components/Commons/Tables/Pokemon/PokemonTable';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
-  combineClasses,
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
@@ -54,18 +51,23 @@ import {
   toNumber,
 } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
-import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
 import { Action } from 'history';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
-import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { IMenuItem } from '../../../components/models/component.model';
-import { formNormal } from '../../../utils/helpers/context.helpers';
+import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
+import { IMenuItem } from '../../../components/Commons/models/menu.model';
+import { formNormal } from '../../../utils/helpers/options-context.helpers';
+import useStats from '../../../composables/useStats';
+import useRouter from '../../../composables/useRouter';
+import usePokemon from '../../../composables/usePokemon';
+import InputReleased from '../../../components/Commons/Inputs/InputReleased';
+import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 
-const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
+const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
     id: ColumnType.None,
     name: '',
@@ -74,7 +76,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
         to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
-        <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="small" />
+        <VisibilityIcon className="view-pokemon tw-text-default" fontSize="small" />
       </LinkToTop>
     ),
     width: '55px',
@@ -105,7 +107,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
         <img
           height={48}
           alt="Pokémon Image"
-          className="me-2"
+          className="tw-mr-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -126,7 +128,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
           key={index}
           width={25}
           height={25}
-          className="me-2"
+          className="tw-mr-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
@@ -161,8 +163,8 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     selector: (row) => toNumber(row.prod.product),
     sortable: true,
     width: '150px',
-  },
-];
+  }
+);
 
 const customStyles: TableStyles = {
   rows: {
@@ -191,8 +193,8 @@ class Filter implements IFilter {
 const defaultPerPages = 25;
 
 const StatsRanking = () => {
-  const router = useSelector((state: RouterState) => state.router);
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { routerAction } = useRouter();
+  const { getPokemonDetails } = usePokemon();
   useTitle({
     title: 'PokéGO Breeze - Stats Ranking',
     description:
@@ -208,20 +210,20 @@ const StatsRanking = () => {
   });
   const [searchParams, setSearchParams] = useSearchParams();
   const [select, setSelect] = useState<IPokemonStatsRanking>();
-  const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
+  const conditionalRowStyles = createDataRows<ConditionalStyles<IPokemonStatsRanking>>(
     {
       when: () => true,
-      style: { backgroundColor: 'var(--background-table-primary)' },
+      style: { backgroundColor: 'var(--table-primary)' },
     },
     {
       when: (row) =>
         !isNullOrUndefined(select) && row.fullName === select.fullName && row.pokemonType === select.pokemonType,
       style: { backgroundColor: 'var(--table-highlight-row)', fontWeight: 'bold' },
-    },
-  ];
+    }
+  );
 
-  const stats = useSelector((state: StatsState) => state.stats);
-  const pokemons = useSelector((state: StoreState) => state.store.data.pokemons);
+  const { statsData } = useStats();
+  const { getFilteredPokemons, getFindPokemon } = usePokemon();
   const [pokemon, setPokemon] = useState<IPokemonDetail>();
 
   const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
@@ -237,19 +239,19 @@ const StatsRanking = () => {
         fullName: details.fullName,
         atk: StatsAtk.create({
           attack: atkShadow,
-          rank: stats?.attack?.ranking?.find((stat) => stat.attack === atkShadow)?.rank,
+          rank: statsData?.attack?.ranking?.find((stat) => stat.attack === atkShadow)?.rank,
         }),
         def: StatsDef.create({
           defense: defShadow,
-          rank: stats?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank,
+          rank: statsData?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank,
         }),
         sta: StatsSta.create({
           stamina: sta,
-          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
+          rank: statsData?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
         }),
         prod: StatsProd.create({
           product: prodShadow,
-          rank: stats?.statProd?.ranking?.find((stat) => stat.product === prodShadow)?.rank,
+          rank: statsData?.statProd?.ranking?.find((stat) => stat.product === prodShadow)?.rank,
         }),
       })
     );
@@ -263,28 +265,28 @@ const StatsRanking = () => {
         pokemonType: PokemonType.Purified,
         atk: StatsAtk.create({
           attack: atkPurification,
-          rank: stats?.attack?.ranking?.find((stat) => stat.attack === atkPurification)?.rank,
+          rank: statsData?.attack?.ranking?.find((stat) => stat.attack === atkPurification)?.rank,
         }),
         def: StatsDef.create({
           defense: defPurification,
-          rank: stats?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank,
+          rank: statsData?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank,
         }),
         sta: StatsSta.create({
           stamina: sta,
-          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
+          rank: statsData?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
         }),
         prod: StatsProd.create({
           product: prodPurification,
-          rank: stats?.statProd?.ranking?.find((stat) => stat.product === prodPurification)?.rank,
+          rank: statsData?.statProd?.ranking?.find((stat) => stat.product === prodPurification)?.rank,
         }),
       })
     );
   };
 
-  const mappingData = (pokemon: IPokemonData[]) => {
+  const mappingData = () => {
     const result: IPokemonStatsRanking[] = [];
-    pokemon.forEach((data) => {
-      const details = getPokemonDetails(pokemon, data.num, data.fullName, data.pokemonType, true);
+    getFilteredPokemons().forEach((data) => {
+      const details = getPokemonDetails(data.num, data.fullName, data.pokemonType, true);
       if (isSpecialFormType(data.pokemonType)) {
         details.pokemonType = PokemonType.Normal;
       }
@@ -296,19 +298,19 @@ const StatsRanking = () => {
           fullName: details.fullName,
           atk: StatsAtk.create({
             attack: details.statsGO.atk,
-            rank: stats?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank,
+            rank: statsData?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank,
           }),
           def: StatsDef.create({
             defense: details.statsGO.def,
-            rank: stats?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank,
+            rank: statsData?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank,
           }),
           sta: StatsSta.create({
             stamina: details.statsGO.sta,
-            rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank,
+            rank: statsData?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank,
           }),
           prod: StatsProd.create({
             product: details.statsGO.prod,
-            rank: stats?.statProd?.ranking?.find((stat) => stat.product === details.statsGO.prod)?.rank,
+            rank: statsData?.statProd?.ranking?.find((stat) => stat.product === details.statsGO.prod)?.rank,
           }),
         })
       );
@@ -400,10 +402,10 @@ const StatsRanking = () => {
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
-  const menuItems: IMenuItem[] = [
+  const menuItems = createDataRows<IMenuItem<IPokemonStatsRanking>>(
     {
       label: (
-        <FormControlLabel
+        <FormControlMui
           control={
             <Checkbox
               checked={isMatch}
@@ -416,54 +418,38 @@ const StatsRanking = () => {
     },
     {
       label: (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={releasedGO}
-              onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
-            />
-          }
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                width={28}
-                height={28}
-                alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(icon)}
-              />
-            </span>
-          }
+        <InputReleased
+          releasedGO={releasedGO}
+          setReleaseGO={(check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
+          isAvailable={releasedGO}
+          inputMode={'checkbox'}
         />
       ),
-    },
-  ];
+    }
+  );
 
   useEffect(() => {
     if (
-      isNotEmpty(pokemons) &&
+      isNotEmpty(getFilteredPokemons()) &&
       !isNotEmpty(pokemonList) &&
-      stats?.attack?.ranking &&
-      stats?.defense?.ranking &&
-      stats?.stamina?.ranking &&
-      stats?.statProd?.ranking
+      statsData?.attack?.ranking &&
+      statsData?.defense?.ranking &&
+      statsData?.stamina?.ranking &&
+      statsData?.statProd?.ranking
     ) {
-      const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
-      const mapping = mappingData(pokemon);
+      const mapping = mappingData();
       const pokemonList = sortRanking(mapping, sortId);
       setPokemonList(pokemonList);
       setPokemonFilter(pokemonList);
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     }
-  }, [pokemonList, pokemons, stats]);
+  }, [pokemonList, getFilteredPokemons, statsData]);
 
   useEffect(() => {
     if (!select && isNotEmpty(pokemonList)) {
       const result = pokemonFilter[0];
 
-      const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
-      const details = getPokemonDetails(pokemon, result.num, result.fullName, result.pokemonType, true);
+      const details = getPokemonDetails(result.num, result.fullName, result.pokemonType, true);
       const pokemonDetails = PokemonDetail.setData(details);
       setPokemon(pokemonDetails);
 
@@ -487,9 +473,8 @@ const StatsRanking = () => {
       if (index > -1) {
         const result = pokemonFilter[index];
 
-        const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
-        const details = getPokemonDetails(pokemon, id, result.fullName, result.pokemonType, true);
-        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
+        const details = getPokemonDetails(id, result.fullName, result.pokemonType, true);
+        details.pokemonType = formType ? pokemonType : (result.pokemonType ?? PokemonType.Normal);
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
 
@@ -530,7 +515,7 @@ const StatsRanking = () => {
 
   useEffect(() => {
     const paramId = toNumber(searchParams.get(Params.Id));
-    if (paramId > 0 && router.action === Action.Pop && isNotEmpty(pokemonList)) {
+    if (paramId > 0 && routerAction === Action.Pop && isNotEmpty(pokemonList)) {
       const form = getValueOrDefault(String, searchParams.get(Params.Form), formNormal()).replaceAll('-', '_');
       const formType = searchParams.get(Params.FormType);
       const pokemonType = getPokemonType(formType);
@@ -541,23 +526,22 @@ const StatsRanking = () => {
           ((!formType && !isSpecialFormType(row.pokemonType)) || row.pokemonType === pokemonType)
       );
       if (result) {
-        const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
-        const details = getPokemonDetails(pokemon, paramId, result.fullName, result.pokemonType, true);
-        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
+        const details = getPokemonDetails(paramId, result.fullName, result.pokemonType, true);
+        details.pokemonType = formType ? pokemonType : (result.pokemonType ?? PokemonType.Normal);
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
         setSelect(result);
       }
     }
-  }, [router, pokemonList, searchParams]);
+  }, [routerAction, pokemonList, searchParams]);
 
   return (
-    <div className="pb-3 position-relative poke-container container">
-      <div className="w-100 d-inline-block align-middle my-3">
-        <div className="d-flex justify-content-center w-100">
-          <div className="d-inline-block img-desc">
+    <div className="tw-pb-3 tw-relative poke-container tw-container">
+      <div className="tw-w-full tw-inline-block tw-align-middle tw-my-3">
+        <div className="tw-flex tw-justify-center tw-w-full">
+          <div className="tw-inline-block img-desc">
             <img
-              className="pokemon-main-sprite v-align-baseline"
+              className="pokemon-main-sprite !tw-align-baseline"
               alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 select?.num,
@@ -570,8 +554,8 @@ const StatsRanking = () => {
             />
           </div>
         </div>
-        <div className="row w-100 mt-2 m-0">
-          <div className="col-xl-5 p-0">
+        <div className="row tw-w-full !tw-mt-2 !tw-m-0">
+          <div className="xl:tw-w-5/12 !tw-p-0">
             <PokemonTable
               id={select?.num}
               gen={select?.gen}
@@ -587,7 +571,7 @@ const StatsRanking = () => {
             />
           </div>
           {select && (
-            <div className="col-xl-7 p-0">
+            <div className="xl:tw-w-7/12 !tw-p-0">
               <TableMove pokemonData={pokemon} maxHeight={400} />
             </div>
           )}
@@ -598,7 +582,6 @@ const StatsRanking = () => {
         statDEF={select?.def}
         statSTA={select?.sta}
         statProd={select?.prod}
-        pokemonStats={stats}
         id={select?.num}
         form={select?.form}
         isDisabled
@@ -613,7 +596,7 @@ const StatsRanking = () => {
         onRowClicked={(row) => {
           if (select?.id !== row.id) {
             setFilterParams(row);
-            const pokemon = pokemons.find((pokemon) => pokemon.num === row.num && isEqual(row.form, pokemon.form));
+            const pokemon = getFindPokemon((pokemon) => pokemon.num === row.num && isEqual(row.form, pokemon.form));
             if (pokemon) {
               pokemon.pokemonType = row.pokemonType || PokemonType.Normal;
               const pokemonDetails = PokemonDetail.setData(pokemon);
