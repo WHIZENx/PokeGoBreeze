@@ -135,7 +135,7 @@ const Pokemon = (props: IPokemonPage) => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
     if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(getFilteredPokemons())) {
       const pokemon = getFindPokemon((p) =>
-        isEqual(p.pokemonId?.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
+        isEqual(p.pokemonId?.toString().replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
       );
       id = toNumber(pokemon?.num);
     }
