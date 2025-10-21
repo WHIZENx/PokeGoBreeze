@@ -19,4 +19,8 @@ export const PaletteData = (mode: TypeTheme) =>
       default: mode === TypeTheme.Light ? '#fafafa' : '#222222',
       paper: mode === TypeTheme.Light ? '#ffffff' : '#333333',
     },
-  } as unknown as Palette);
+    openLeague: {
+      main: mode === TypeTheme.Light ? '#e6ffe6' : '#193319',
+      select: mode === TypeTheme.Light ? '#e6ffe6' : '#193319',
+    },
+  }) as unknown as Palette;

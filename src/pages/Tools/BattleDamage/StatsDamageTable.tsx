@@ -129,7 +129,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
             />
           </TypeRadioGroup>
         </div>
-        <div className="tw-flex tw-justify-center tw-text-center" style={{ height: 80 }}>
+        <div className="tw-flex tw-justify-center tw-text-center tw-h-20">
           <Box className="tw-w-3/5" sx={{ minWidth: 320 }}>
             <div className="tw-flex tw-justify-between">
               <b>Level</b>

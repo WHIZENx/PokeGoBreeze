@@ -4,6 +4,7 @@ import {
   Breakpoint,
   ButtonProps,
   FormControlLabelProps,
+  LinearProgressProps,
   SxProps,
   Theme,
   ToggleButtonGroupProps,
@@ -11,7 +12,7 @@ import {
 } from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats } from '../../../core/models/pokemon.model';
-import { LabelType, PokemonType, PokemonClass, CardType, TypeMove } from '../../../enums/type.enum';
+import { LabelType, PokemonType, PokemonClass, CardType, TypeMove, TypeAction } from '../../../enums/type.enum';
 import { BadgeType } from '../../enums/badge-type.enum';
 import { InputSearchType, InputType } from '../Inputs/enums/input-type.enum';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Inputs/models/select-move.model';
@@ -24,6 +25,7 @@ import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PVPInfo } from '../../../core/models/pvp.model';
 import React from 'react';
 import { IAppMenuItem, IMenuItem } from './menu.model';
+import { IStatsRankAtk, IStatsRankDef, IStatsRankSta, IStatsRankProd } from '../../../core/models/stats.model';
 
 export interface IResponsiveAppBarComponent {
   version?: string;
@@ -444,6 +446,7 @@ export interface TabPanelComponent {
 export interface IIDefaultOptionAccordion<T> extends IDefaultOption<T> {
   hideIcon?: boolean;
   footer?: React.ReactNode;
+  bgHeadColor?: string;
   sxHeader?: SxProps<Theme>;
   sxSummary?: SxProps<Theme>;
   sxDetails?: SxProps<Theme>;
@@ -458,6 +461,7 @@ export interface AccordionMuiComponent<T> {
   resetItemOnChange?: boolean;
   onChange?: (value: (T | T[]) | undefined, index: number) => void;
   items: IIDefaultOptionAccordion<T>[] | undefined;
+  maxHeight?: number;
 }
 
 export interface IDialogAction {
@@ -484,4 +488,18 @@ export interface IBackdropMuiComponent {
   isShowOnAbove?: boolean;
   noneCircular?: boolean;
   backgroundColor?: string;
+}
+
+export interface IStatBarComponent extends LinearProgressProps {
+  tag: string;
+  statsPercent: number;
+  rank: number | string | undefined;
+  pokemonStatsRank: IStatsRankAtk | IStatsRankDef | IStatsRankSta | IStatsRankProd | undefined;
+  currentStats: number;
+  optionalStats?: string;
+  id?: string;
+  form?: string;
+  statType: TypeAction;
+  isDisabled?: boolean;
+  pokemonType?: PokemonType;
 }

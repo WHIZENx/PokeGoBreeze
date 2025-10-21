@@ -268,13 +268,13 @@ const optionFormNoneSpecial = (data: PokemonDataGM[], result: string[] = []) => 
 
 const findPokemonData = (id: number, name: string, isDefault = false) =>
   Object.values(pokemonStoreData).find((pokemon) => {
-    const slugToCompare = isDefault ? pokemon.slug : pokemon.baseFormeSlug ?? pokemon.slug;
+    const slugToCompare = isDefault ? pokemon.slug : (pokemon.baseFormeSlug ?? pokemon.slug);
     const convertedSlug = convertPokemonDataName(slugToCompare);
     return pokemon.num === id && isEqual(name, convertedSlug);
   });
 
-const convertAndReplaceNameGO = (name: string, defaultName = ''): string => {
-  const formName = getValueOrDefault(String, name);
+const convertAndReplaceNameGO = (name: string | number, defaultName = ''): string => {
+  const formName = getValueOrDefault(String, name.toString());
   let result = formName.replace(`${replacePokemonGoForm(defaultName)}_`, '');
   const formReplacements: Record<string, string> = {
     '^S$': formShadow(),
@@ -404,7 +404,7 @@ export const optionPokemonData = (
 
     pokemonSettings.evolutionBranch?.forEach((evo) => {
       const dataEvo = new EvoList();
-      const name = getValueOrDefault(String, evo.evolution, pokemon.name);
+      const name = getValueOrDefault(String, evo.evolution?.toString(), pokemon.name);
       if (evo.form) {
         dataEvo.evoToForm = convertAndReplaceNameGO(evo.form, name);
       } else {

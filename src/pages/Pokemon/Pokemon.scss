@@ -4,9 +4,10 @@
 }
 
 .img-desc {
-  width: 210px;
-  height: 210px;
-  padding: 5px;
+  width: 217px;
+  height: 217px;
+
+  @apply tw-p-1;
 }
 
 .text-gen {

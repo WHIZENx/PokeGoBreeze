@@ -168,7 +168,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               {isEqual(getPokemonType(pokemon?.speciesId), PokemonType.Shadow) && (
                 <span
                   className={combineClasses(
-                    'type-icon-small ic tw-mr-1 tw-flex tw-items-center tw-h-3',
+                    'type-icon-small ic tw-mr-1 !tw-flex tw-items-center tw-h-3',
                     `${getKeyWithData(PokemonType, PokemonType.Shadow)?.toLowerCase()}-ic`
                   )}
                 >
@@ -176,7 +176,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                 </span>
               )}
               {score > 0 && (
-                <span className="type-icon-small ic elite-ic tw-mr-1 tw-flex tw-items-center tw-h-3">{score}</span>
+                <span className="type-icon-small ic elite-ic tw-mr-1 !tw-flex tw-items-center tw-h-3">{score}</span>
               )}
             </>
           )

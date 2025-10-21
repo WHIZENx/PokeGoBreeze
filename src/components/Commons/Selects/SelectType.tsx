@@ -42,7 +42,7 @@ const SelectTypeComponent = <T extends object>(props: ISelectTypeComponent<T>) =
           <div className="card-select tw-h-full tw-flex tw-justify-between tw-items-center">
             <Card value={splitAndCapitalize(props.currentType, /(?=[A-Z])/, ' ')} cardType={props.cardType} />
             {props.isShowRemove && props.currentType && (
-              <IconButton className="tw-h-fit" sx={{ color: 'red' }} onMouseDown={closeType}>
+              <IconButton className="tw-h-fit" color="error" onMouseDown={closeType}>
                 <CloseIcon />
               </IconButton>
             )}

@@ -97,7 +97,7 @@ const BodyPVP = (props: BodyComponent) => {
     >
       <div className="tw-container tw-flex tw-items-center tw-gap-x-2">
         <div className="tw-flex tw-justify-center">
-          <span className="tw-inline-block tw-relative filter-shadow" style={{ width: 50 }}>
+          <span className="tw-inline-block tw-relative filter-shadow tw-w-12.5">
             <PokemonIconType pokemonType={data.pokemonType} size={28}>
               <img
                 alt="Image League"

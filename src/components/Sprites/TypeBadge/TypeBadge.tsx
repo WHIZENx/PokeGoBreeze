@@ -31,7 +31,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
         {props.title}
       </span>
       <LinkToTop to={`/move/${move?.id}`} className="tw-flex tw-items-center tw-relative tw-w-fit">
-        <span className={combineClasses(move?.type?.toLowerCase(), 'type-border tw-relative tw-leading-[1.5]')}>
+        <span className={combineClasses(move?.type?.toLowerCase(), 'type-border tw-relative')}>
           {move && props.moveType !== MoveType.None && (
             <span className="type-badge-border">
               <span

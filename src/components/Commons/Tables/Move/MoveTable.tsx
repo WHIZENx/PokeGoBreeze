@@ -229,11 +229,11 @@ const TableMove = (props: ITableMoveComponent) => {
       <tr>
         <td className="text-origin tw-bg-table-primary">
           <LinkToTop to={`../move/${value.fMove.id}`} className="tw-block">
-            <div className="tw-inline-block tw-mr-1 v-align-text-bottom">
+            <div className="tw-inline-block tw-mr-1 tw-align-text-bottom">
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.fMove.type} />
             </div>
             <span className="tw-mr-1">{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
-            <span className="tw-w-max v-align-text-bottom">
+            <span className="tw-w-max tw-align-text-bottom">
               {value.fMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -249,11 +249,11 @@ const TableMove = (props: ITableMoveComponent) => {
         </td>
         <td className="text-origin tw-bg-table-primary">
           <LinkToTop to={`../move/${value.cMove.id}`} className="tw-block">
-            <div className="tw-inline-block tw-mr-1 v-align-text-bottom">
+            <div className="tw-inline-block tw-mr-1 tw-align-text-bottom">
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.cMove.type} />
             </div>
             <span className="tw-mr-1">{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
-            <span className="tw-w-max v-align-text-bottom">
+            <span className="tw-w-max tw-align-text-bottom">
               {value.cMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -278,11 +278,11 @@ const TableMove = (props: ITableMoveComponent) => {
         <tr key={index}>
           <td className="text-origin tw-bg-table-primary">
             <LinkToTop to={`../move/${value.id}`} className="tw-block">
-              <div className="tw-inline-block tw-mr-1 v-align-text-bottom">
+              <div className="tw-inline-block tw-mr-1 tw-align-text-bottom">
                 <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.type} />
               </div>
               <span className="tw-mr-1">{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
-              <span className="tw-w-max v-align-text-bottom">
+              <span className="tw-w-max tw-align-text-bottom">
                 {value.moveType !== MoveType.None && (
                   <span
                     className={combineClasses(

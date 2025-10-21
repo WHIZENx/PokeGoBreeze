@@ -43,8 +43,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
             <Fragment>
               {value.type === AttackType.Block ? (
                 <div
-                  style={{ height: 80 }}
-                  className={combineClasses('tw-flex tw-items-center turn-battle', end ? 'tw-justify-end' : '')}
+                  className={combineClasses('tw-flex tw-items-center turn-battle tw-h-20', end ? 'tw-justify-end' : '')}
                 >
                   <div className="block-attack-container">
                     <img
@@ -92,8 +91,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
                   ? 'fast-attack-container'
                   : 'wait-attack-container',
                 end ? 'tw-justify-end' : '',
-                'turn-battle',
-                value.isTap ? `${value.color}-border` : ''
+                'turn-battle'
               )}
               anchorOrigin={{
                 vertical: 'top',
@@ -113,10 +111,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
             </Badge>
           )}
           {value.type === AttackType.Prepare && (
-            <div
-              style={{ height: 80 }}
-              className={combineClasses('tw-flex tw-items-center turn-battle', end ? 'tw-justify-end' : '')}
-            >
+            <div className={combineClasses('tw-flex tw-items-center turn-battle tw-h-20', end ? 'tw-justify-end' : '')}>
               <div className={combineClasses('swipe-attack-container', `${value.color}-border`, 'tw-text-center')}>
                 <span className="tw-text-sm">
                   <b>Swipe Charge</b>

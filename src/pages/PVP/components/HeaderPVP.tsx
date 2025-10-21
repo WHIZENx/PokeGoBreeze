@@ -7,7 +7,7 @@ import { splitAndCapitalize, getMoveType } from '../../../utils/utils';
 const HeaderPVP = (props: HeaderComponent) => {
   return (
     <>
-      <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-y-3">
+      <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-x-3">
         {props.data && (
           <h3 className="tw-text-white text-shadow-black">
             <b>

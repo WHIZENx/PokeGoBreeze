@@ -23,7 +23,7 @@ import { getTime } from '../../../utils/utils';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-import '../../Navbar.scss';
+import './Navbar.scss';
 import { IResponsiveAppBarComponent } from '../models/component.model';
 import { pages, POKEDEX } from '../constants/app-bar';
 import ButtonMui from '../Buttons/ButtonMui';
@@ -116,9 +116,9 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         {toNumber(timestamp?.gamemaster) > 0 && (
           <span className="tw-truncate">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
-        <span className="tw-text-right tw-text-yellow-600 tw-text-xs">
+        <Typography variant="caption" sx={{ color: 'warning.light' }} fontSize={8} className="tw-text-right">
           <b>{props.version}</b>
-        </span>
+        </Typography>
       </>
     );
   }, [timestamp, props.version]);
@@ -139,9 +139,9 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
           color="inherit"
         >
           {theme.palette.mode === TypeTheme.Light ? (
-            <LightModeIcon fontSize="large" style={{ color: 'white' }} />
+            <LightModeIcon fontSize="large" color="inherit" />
           ) : (
-            <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
+            <DarkModeIcon fontSize="large" color="inherit" />
           )}
         </IconButton>
       </Box>
@@ -149,7 +149,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   }, [infoVersion, stateTheme, isDelay, onChangeTheme]);
 
   return (
-    <AppBar position="sticky">
+    <AppBar className="tw-overflow-x-auto" position="sticky">
       <Toolbar sx={{ mx: 2, my: 0.5 }} disableGutters variant="dense">
         {/* width >= 900 */}
         <Box className="tw-text-white" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>

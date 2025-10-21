@@ -301,7 +301,7 @@ const SearchTypes = (props: IStyleSheetData) => {
             )}
             style={{ background: computeBgType(currentType, PokemonType.Normal, props.styleSheet) }}
           >
-            <div className="filter-shadow" style={{ width: 128 }}>
+            <div className="filter-shadow tw-w-32">
               <img
                 className="sprite-type-large tw-p-3 tw-rounded-full tw-bg-black"
                 alt="Pokémon GO Type Logo"

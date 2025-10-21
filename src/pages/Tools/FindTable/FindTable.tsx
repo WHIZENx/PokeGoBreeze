@@ -415,7 +415,7 @@ const FindTable = () => {
         </h1>
         <form id="formCP" className="tw-mt-2" onSubmit={onFindCP.bind(this)}>
           <div className="form-group tw-flex tw-justify-center tw-text-center">
-            <Box className="tw-w-1/2" sx={{ minWidth: 300 }}>
+            <Box className="tw-w-1/2 tw-min-w-75">
               <div className="tw-flex tw-justify-between">
                 <b>ATK</b>
                 <b>{searchATKIv}</b>

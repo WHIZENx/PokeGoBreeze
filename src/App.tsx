@@ -211,7 +211,6 @@ export default function Main() {
   const theme = useMemo(() => {
     const newTheme = createTheme(getDesignThemes(mode));
     document.documentElement.setAttribute('data-theme', newTheme.palette.mode);
-    document.documentElement.setAttribute('data-bs-theme', newTheme.palette.mode);
     return newTheme;
   }, [mode]);
 

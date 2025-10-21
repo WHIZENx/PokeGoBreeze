@@ -192,7 +192,7 @@ const Counter = (props: ICounterComponent) => {
       name: 'Fast',
       selector: (row) => (
         <LinkToTop to={`../move/${row.fMove.id}`} className="tw-grid">
-          <div className="tw-mr-1 v-align-text-bottom">
+          <div className="tw-mr-1 tw-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
           <span className="tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
@@ -219,7 +219,7 @@ const Counter = (props: ICounterComponent) => {
       name: 'Charged',
       selector: (row) => (
         <LinkToTop to={`../move/${row.cMove.id}`} className="tw-grid">
-          <div className="tw-mr-1 v-align-text-bottom">
+          <div className="tw-mr-1 tw-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
           <span className="tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
@@ -253,14 +253,14 @@ const Counter = (props: ICounterComponent) => {
   );
 
   const CounterLoader = () => (
-    <div className="tw-w-full counter-none v-align-top">
+    <div className="tw-w-full counter-none tw-align-top">
       <div className="text-origin tw-text-center tw-bg-table-primary">
         <div className="ph-item">
           <div className="ph-col-12 tw-bg-table-primary !tw-m-0 !tw-p-0 tw-gap-2">
             {[...Array(5).keys()].map((_, index) => (
               <div key={index} className="ph-row tw-flex tw-gap-[5%]">
-                <div className="ph-picture !tw-w-1/4" style={{ height: 100 }} />
-                <div className="ph-picture !tw-w-[70%]" style={{ height: 100 }} />
+                <div className="ph-picture !tw-w-1/4 !tw-h-25" />
+                <div className="ph-picture !tw-w-[70%] !tw-h-25" />
               </div>
             ))}
           </div>
@@ -340,10 +340,13 @@ const Counter = (props: ICounterComponent) => {
   }, [counterList, showMegaPrimal, releasedGO, enableBest]);
 
   const filterBestOptions = (result: ICounterModel[]) => {
-    const group = result.reduce((res, obj) => {
-      (res[obj.pokemonName] = getValueOrDefault(Array, res[obj.pokemonName])).push(obj);
-      return res;
-    }, new Object() as DynamicObj<ICounterModel[]>);
+    const group = result.reduce(
+      (res, obj) => {
+        (res[obj.pokemonName] = getValueOrDefault(Array, res[obj.pokemonName])).push(obj);
+        return res;
+      },
+      new Object() as DynamicObj<ICounterModel[]>
+    );
     return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p.ratio > c.ratio ? p : c)));
   };
 

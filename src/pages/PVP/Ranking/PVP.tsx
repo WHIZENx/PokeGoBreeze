@@ -278,7 +278,7 @@ const RankingPVP = (props: IStyleSheetData) => {
         <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
       </LinkToTop>
       <div className="tw-flex tw-justify-center">
-        <span className="tw-relative" style={{ width: 50 }}>
+        <span className="tw-relative tw-w-12.5">
           <PokemonIconType pokemonType={data.pokemonType} size={28}>
             <img
               alt="Image League"
@@ -359,8 +359,8 @@ const RankingPVP = (props: IStyleSheetData) => {
             </h2>
           </div>
         ) : (
-          <div className="ph-item tw-mt-2">
-            <div className="ph-picture tw-mb-0 tw-px-0 tw-h-9 tw-w-2/5" />
+          <div className="ph-item !tw-mt-2">
+            <div className="ph-picture !tw-mb-0 !tw-px-0 !tw-h-9 !tw-w-2/5" />
           </div>
         )}
       </Fragment>

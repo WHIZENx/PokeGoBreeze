@@ -60,7 +60,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 className="ic-copy-small !tw-p-0 !tw-min-w-8 !tw-h-8"
                 disabled={!dataTargetPokemon}
                 title="Options"
-                label={<SettingsIcon color="inherit" className="!tw-text-[1rem]" />}
+                label={<SettingsIcon color="inherit" className="!tw-title-medium" />}
                 onClick={() => props.onOptionsPokemon(props.id, dataTargetPokemon)}
               />
               <ButtonMui
@@ -68,7 +68,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 className="ic-copy-small !tw-p-0 !tw-min-w-8 !tw-h-8"
                 disabled={!dataTargetPokemon || props.id < 0}
                 title="Copy"
-                label={<ContentCopyIcon color="inherit" className="!tw-text-[1rem]" />}
+                label={<ContentCopyIcon color="inherit" className="!tw-title-medium" />}
                 onClick={() => props.onCopyPokemon(props.id)}
               />
               <ButtonMui
@@ -77,7 +77,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 disabled={props.id <= 0 && (props.data.length <= 1 || !props.data.at(0)?.dataTargetPokemon)}
                 color="error"
                 title="Remove"
-                label={<DeleteIcon color="inherit" className="!tw-text-[1rem]" />}
+                label={<DeleteIcon color="inherit" className="!tw-title-medium" />}
                 onClick={() => {
                   setDataTargetPokemon(props.data[props.id + 1]?.dataTargetPokemon);
                   setFMoveTargetPokemon(props.data[props.id + 1]?.fMoveTargetPokemon);

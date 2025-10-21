@@ -225,10 +225,10 @@ const RaidBattle = () => {
       filters.selected.sortBy === SortType.TDO
         ? r.tdoAtk
         : filters.selected.sortBy === SortType.TTK
-        ? r.ttkAtk
-        : filters.selected.sortBy === SortType.TANK
-        ? r.ttkDef
-        : r.dpsAtk
+          ? r.ttkAtk
+          : filters.selected.sortBy === SortType.TANK
+            ? r.ttkDef
+            : r.dpsAtk
     );
     const a = primary as unknown as DynamicObj<SortType>;
     const b = secondary as unknown as DynamicObj<SortType>;
@@ -477,11 +477,14 @@ const RaidBattle = () => {
       };
       setResultBoss(result);
     } else {
-      const group = dataList.reduce((result, obj) => {
-        const name = getValueOrDefault(String, obj.pokemon?.name);
-        (result[name] = getValueOrDefault(Array, result[name])).push(obj);
-        return result;
-      }, new Object() as DynamicObj<IPokemonMoveData[]>);
+      const group = dataList.reduce(
+        (result, obj) => {
+          const name = getValueOrDefault(String, obj.pokemon?.name);
+          (result[name] = getValueOrDefault(Array, result[name])).push(obj);
+          return result;
+        },
+        new Object() as DynamicObj<IPokemonMoveData[]>
+      );
       dataList = Object.values(group)
         .map((pokemon) => pokemon.reduce((p, c) => (p.dpsAtk > c.dpsAtk ? p : c)))
         .sort((a, b) => b.dpsAtk - a.dpsAtk);
@@ -862,7 +865,7 @@ const RaidBattle = () => {
     return (
       <Fragment>
         <div className="tw-w-full tw-flex tw-flex-col tw-items-center">
-          <div className="tw-relative" style={{ width: 96 }}>
+          <div className="tw-relative tw-w-24">
             <PokemonIconType pokemonType={showSettingPokemon.pokemon?.stats?.pokemonType} size={36}>
               <img
                 alt="Pokémon Image"
@@ -1070,7 +1073,7 @@ const RaidBattle = () => {
           src={APIService.getTypeHqSprite(value?.type)}
         />
       </div>
-      <span className="filter-shadow tw-leading-[1.5]">{splitAndCapitalize(value?.name, '_', ' ')}</span>
+      <span className="filter-shadow">{splitAndCapitalize(value?.name, '_', ' ')}</span>
     </div>
   );
 
@@ -1387,10 +1390,10 @@ const RaidBattle = () => {
                   used.sortBy === SortType.DPS
                     ? 'Damage Per Seconds (DPS)'
                     : used.sortBy === SortType.TDO
-                    ? 'Total Damage Output (TDO)'
-                    : used.sortBy === SortType.TTK
-                    ? 'Time To Kill'
-                    : 'Tankiness'
+                      ? 'Total Damage Output (TDO)'
+                      : used.sortBy === SortType.TTK
+                        ? 'Time To Kill'
+                        : 'Tankiness'
                 } `}
                 <span className="tw-text-red-600">{`${used.onlyShadow ? '*Only Shadow' : ''}${
                   used.onlyMega ? '*Only Mega' : ''
@@ -1534,7 +1537,7 @@ const RaidBattle = () => {
                     className="ic-copy !tw-p-0 !tw-min-w-8 !tw-h-8"
                     disabled={!trainer.pokemons.at(0)?.dataTargetPokemon}
                     title="Copy"
-                    label={<ContentCopyIcon color="inherit" className="!tw-text-[1rem]" />}
+                    label={<ContentCopyIcon color="inherit" className="!tw-text-small" />}
                     onClick={() => {
                       setCountTrainer(countTrainer + 1);
                       setTrainerBattle(
@@ -1550,7 +1553,7 @@ const RaidBattle = () => {
                     disabled={index === 0}
                     color="error"
                     title="Remove"
-                    label={<DeleteIcon color="inherit" className="!tw-text-[1rem]" />}
+                    label={<DeleteIcon color="inherit" className="!tw-text-small" />}
                     onClick={() => setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }))}
                   />
                 </span>
@@ -1791,7 +1794,7 @@ const RaidBattle = () => {
         title={`Trainer #${trainerBattleId + 1}`}
         content={
           <>
-            <div className="tw-overflow-y-auto" style={{ maxHeight: '60vh' }}>
+            <div className="tw-overflow-y-auto tw-max-h-[60vh]">
               {pokemonBattle.map((pokemon, index) => (
                 <div className={index === 0 ? '' : 'tw-mt-2'} key={index}>
                   <PokemonRaid
@@ -1843,11 +1846,7 @@ const RaidBattle = () => {
         open={showOption}
         onClose={handleCloseOption}
         title="Search Options"
-        content={
-          <div className="tw-overflow-y-auto" style={{ maxHeight: '60vh' }}>
-            {modalFormFilters()}
-          </div>
-        }
+        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalFormFilters()}</div>}
         actions={[
           {
             label: 'Cancel',
@@ -1865,11 +1864,7 @@ const RaidBattle = () => {
         open={showSettingPokemon.isShow}
         onClose={handleCloseSettingPokemon}
         title="Pokémon Settings"
-        content={
-          <div className="tw-overflow-y-auto" style={{ maxHeight: '60vh' }}>
-            {modalFormSetting()}
-          </div>
-        }
+        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalFormSetting()}</div>}
         actions={[
           {
             label: 'Cancel',
@@ -1887,11 +1882,7 @@ const RaidBattle = () => {
         open={showMovePokemon.isShow}
         onClose={handleCloseMovePokemon}
         title="Move Pokémon"
-        content={
-          <div className="tw-overflow-y-auto tw-py-2" style={{ maxHeight: '60vh' }}>
-            {modalMovePokemon()}
-          </div>
-        }
+        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalMovePokemon()}</div>}
         actions={[
           {
             label: 'Cancel',

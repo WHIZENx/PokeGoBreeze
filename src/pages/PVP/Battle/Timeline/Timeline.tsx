@@ -21,16 +21,16 @@ const Timeline = (
 ) => {
   const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => (
     <Fragment>
-      <div className="tw-mt-2" style={{ height: 12 }}>
+      <div className="tw-mt-2 tw-h-3">
         <div className="tw-flex tw-gap-x-2 tw-w-max">
           {poke.timeline.map((value, index) => (
             <span className="tw-relative" key={index} style={{ width: value.size }}>
-              {value.isTap && (
+              {value.isTap && showTap && (
                 <div
                   style={{
                     borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                   }}
-                  className={combineClasses('charge-attack opacity-50', showTap ? 'tw-block' : 'tw-hidden')}
+                  className="charge-attack opacity-50"
                 />
               )}
               {!value.isTap && (
@@ -56,7 +56,7 @@ const Timeline = (
                           ))}
                         </div>
                       ) : (
-                        <div className={combineClasses('wait-attack', showTap ? 'tw-block' : 'tw-hidden')} />
+                        showTap && <div className="wait-attack" />
                       )}
                     </Fragment>
                   )}

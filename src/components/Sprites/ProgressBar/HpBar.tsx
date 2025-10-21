@@ -60,7 +60,7 @@ const HpBar = (props: IHpBarComponent) => {
           <FillDmg $height={props.height} $hp={props.hp} $maxHp={props.maxHp} $color="orange" $dmg={props.dmg} />
         )}
       </Bar>
-      <span className="tw-text-center tw-text-nowrap" style={{ minWidth: 72, maxWidth: 72 }}>
+      <span className="tw-text-center tw-text-nowrap tw-min-w-18 tw-max-w-18">
         <b>
           {props.hp} / {props.maxHp}
         </b>

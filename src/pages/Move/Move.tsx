@@ -344,7 +344,7 @@ const Move = (props: IMovePage) => {
 
   const renderReward = (itemName: string) => (
     <div className="tw-flex tw-items-center tw-flex-col">
-      <div style={{ width: 35 }}>
+      <div className="tw-w-[35px]">
         <img alt="Icon Item" className="sprite-type" src={getItemSpritePath(itemName)} />
       </div>
       <span className="caption">{splitAndCapitalize(itemName.replace('ITEM_', ''), '_', ' ')}</span>
@@ -388,8 +388,8 @@ const Move = (props: IMovePage) => {
         </>
       ) : (
         <div className="ph-item">
-          <div className="ph-row tw-h-full head-box tw-flex tw-mb-0 tw-pl-0">
-            <div className="ph-picture tw-w-2/5" style={{ height: 45 }} />
+          <div className="ph-row !tw-h-full head-box !tw-flex !tw-mb-0 !tw-pl-0">
+            <div className="ph-picture !tw-w-2/5 !tw-h-[45px]" />
           </div>
         </div>
       )}
@@ -540,11 +540,7 @@ const Move = (props: IMovePage) => {
                         <CircleIcon className="tw-text-xs" /> {getKeyWithData(BuffType, value.target)}
                       </td>
                       <td>
-                        {value.power > 0 ? (
-                          <ArrowUpwardIcon sx={{ color: 'green' }} />
-                        ) : (
-                          <ArrowDownwardIcon sx={{ color: 'red' }} />
-                        )}
+                        {value.power > 0 ? <ArrowUpwardIcon color="success" /> : <ArrowDownwardIcon color="error" />}
                         <span className="tw-inline-block caption">
                           {value.type === TypeAction.Atk ? 'Attack ' : 'Defense '}
                           <span
@@ -593,7 +589,7 @@ const Move = (props: IMovePage) => {
                 <td>Sound</td>
                 <td colSpan={2}>
                   {move?.sound ? (
-                    <audio className="tw-flex tw-w-full" controls style={{ height: 30 }}>
+                    <audio className="tw-flex tw-w-full tw-h-[30px]" controls>
                       <source src={APIService.getSoundMove(move.sound)} type="audio/wav" />
                       Your browser does not support the audio element.
                     </audio>
@@ -710,9 +706,9 @@ const Move = (props: IMovePage) => {
                                   <td>Multi Use</td>
                                   <td colSpan={2}>
                                     {move.bonus.enableMultiUse ? (
-                                      <DoneIcon sx={{ color: 'green' }} />
+                                      <DoneIcon color="success" />
                                     ) : (
-                                      <CloseIcon sx={{ color: 'red' }} />
+                                      <CloseIcon color="error" />
                                     )}
                                   </td>
                                 </tr>
@@ -720,9 +716,9 @@ const Move = (props: IMovePage) => {
                                   <td>None Combat</td>
                                   <td colSpan={2}>
                                     {move.bonus.enableNonCombatMove ? (
-                                      <DoneIcon sx={{ color: 'green' }} />
+                                      <DoneIcon color="success" />
                                     ) : (
-                                      <CloseIcon sx={{ color: 'red' }} />
+                                      <CloseIcon color="error" />
                                     )}
                                   </td>
                                 </tr>
@@ -732,7 +728,7 @@ const Move = (props: IMovePage) => {
                                     <Candy id={0} /> {move.bonus.cost.candyCost}
                                   </td>
                                   <td className="table-bonus-cost">
-                                    <div className="tw-inline-flex tw-justify-center" style={{ width: 20 }}>
+                                    <div className="tw-inline-flex tw-justify-center tw-w-5">
                                       <img
                                         alt="Image Stardust"
                                         height={20}

@@ -30,7 +30,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
                 <NavigateBeforeIcon fontSize="large" />
               </b>
             </div>
-            <div className="tw-h-full tw-cursor-pointer" style={{ width: 60 }}>
+            <div className="tw-h-full tw-cursor-pointer tw-w-15">
               <img
                 style={{ padding: '5px 5px 5px 0' }}
                 className="pokemon-navigate-sprite"
@@ -71,7 +71,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
               </div>
               <div className="text-navigate">{splitAndCapitalize(props.data.next.name, '-', ' ')}</div>
             </div>
-            <div className="tw-h-full tw-cursor-pointer" style={{ width: 60 }}>
+            <div className="tw-h-full tw-cursor-pointer tw-w-15">
               <img
                 style={{ padding: '5px 0 5px 5px' }}
                 className="pokemon-navigate-sprite"

@@ -35,7 +35,6 @@ try {
 }
 
 document.documentElement.setAttribute('data-theme', theme);
-document.documentElement.setAttribute('data-bs-theme', theme);
 document.body.style.background = theme === TypeTheme.Dark ? darkThemeBg() : lightThemeBg();
 
 root.render(

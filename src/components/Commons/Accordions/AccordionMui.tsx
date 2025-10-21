@@ -205,15 +205,29 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
     }
   };
 
+  const isExpanded = (panel: T | undefined) => {
+    return (props.alwaysOpen && isIncludeList(multiExpanded, panel)) || expanded === panel;
+  };
+
   return (
-    <Box className={combineClasses('tw-w-full', props.className)}>
+    <Box
+      className={combineClasses('tw-w-full tw-overflow-y-auto', props.className)}
+      sx={{ maxHeight: props.maxHeight }}
+    >
       {props.items?.map((item, index) => (
         <Accordion
           key={index}
           ref={(el) => (accordionsRef.current[index] = el)}
-          expanded={(props.alwaysOpen && isIncludeList(multiExpanded, item.value)) || expanded === item.value}
+          expanded={isExpanded(item.value)}
           onChange={!isHiding ? handleChange(item.value, index) : undefined}
-          sx={{ p: 0, ...(item.sxHeader ? item.sxHeader : {}) }}
+          sx={{
+            p: 0,
+            ...(item.bgHeadColor ? { backgroundColor: `${item.bgHeadColor}.main` } : {}),
+            ...(isExpanded(item.value)
+              ? { backgroundColor: item.bgHeadColor ? `${item.bgHeadColor}.select` : 'background.default' }
+              : {}),
+            ...(item.sxHeader ? item.sxHeader : {}),
+          }}
         >
           <AccordionSummary
             sx={item.sxSummary}

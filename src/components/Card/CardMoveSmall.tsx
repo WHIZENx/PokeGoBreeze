@@ -54,13 +54,13 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               <span className="tw-mr-1">{splitAndCapitalize(move.name, '_', ' ')}</span>
               {!props.isHideType && isHaveMoveType() && (
                 <span
-                  style={{ color: props.isDisable ? 'lightgray !important' : '' }}
                   className={combineClasses(
                     `${getKeyWithData(
                       MoveType,
                       props.isDisable ? MoveType.Disable : move.moveType || props.moveType
                     )?.toLowerCase()}-ic`,
-                    'type-icon-small ic tw-flex tw-items-center tw-h-3'
+                    props.isDisable && '!tw-text-lightgray',
+                    'type-icon-small ic !tw-flex tw-items-center tw-h-3'
                   )}
                 >
                   {getKeyWithData(MoveType, move.moveType || props.moveType)}
@@ -70,11 +70,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                 <div className="select-down tw-flex tw-items-center">
                   {props.isSelect && <KeyboardArrowDownIcon fontSize="small" />}
                   {props.clearData && (
-                    <CloseIcon
-                      className="remove-pokemon-select"
-                      sx={{ color: 'red' }}
-                      onClick={() => props.clearData?.()}
-                    />
+                    <CloseIcon className="remove-pokemon-select" color="error" onClick={() => props.clearData?.()} />
                   )}
                 </div>
               )}

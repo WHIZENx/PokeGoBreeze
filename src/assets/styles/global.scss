@@ -11,7 +11,7 @@
   background-color: var(--tertiary-color);
   border: 1px solid var(--border-color);
 
-  @apply tw-flex tw-text-center tw-whitespace-nowrap tw-leading-6 tw-font-normal tw-py-[.375rem] tw-px-3 tw-text-[1rem] tw-text-default
+  @apply tw-flex tw-text-center tw-whitespace-nowrap tw-leading-6 tw-font-normal tw-py-[.375rem] tw-px-3 tw-text-small tw-text-default
 }
 
 .input-control-group {

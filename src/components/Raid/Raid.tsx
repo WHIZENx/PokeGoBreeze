@@ -89,7 +89,7 @@ const Raid = (props: IRaidComponent) => {
           <h5>{RAID_BOSS_TIER[tier].level}</h5>
         </div>
       </div>
-      <div className="row tw-mt-2 tw-container !tw-m-0">
+      <div className="row !tw-mt-2 tw-container !tw-m-0">
         <div className="tw-flex-1 tw-flex tw-justify-center tw-items-center tw-mb-3">
           <img
             className={tier === 2 ? 'img-type-icon' : ''}

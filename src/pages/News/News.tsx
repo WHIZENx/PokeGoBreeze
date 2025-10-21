@@ -224,13 +224,13 @@ const News = () => {
       return element;
     }
     return (
-      <div className="tw-w-full tw-h-full counter-none v-align-top">
+      <div className="tw-w-full tw-h-full counter-none tw-align-top">
         <div className="text-origin tw-text-center">
           <div className="ph-item tw-bg-transparent">
             <div className="ph-col-12 !tw-m-0 !tw-p-0 tw-gap-3">
               {[...Array(3).keys()].map((_, index) => (
                 <div key={index} className="ph-row">
-                  <div className="ph-picture tw-w-full" style={{ height: 256 }} />
+                  <div className="ph-picture !tw-w-full !tw-h-[256px]" />
                 </div>
               ))}
             </div>
@@ -275,8 +275,8 @@ const News = () => {
                                   value.eventType === DateEvent.End
                                     ? 'info-event-ending'
                                     : DateEvent.Progressing
-                                    ? 'info-event-progress'
-                                    : 'info-event-future'
+                                      ? 'info-event-progress'
+                                      : 'info-event-future'
                                 )}
                               >
                                 <b>{getKeyWithData(DateEvent, value.eventType)}</b>

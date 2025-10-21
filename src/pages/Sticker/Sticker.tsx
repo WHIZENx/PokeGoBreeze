@@ -88,7 +88,7 @@ const Sticker = () => {
     <div className="tw-container tw-p-3">
       <h2 className="title-leagues tw-mb-3">Sticker List</h2>
       <hr />
-      <div className="tw-w-1/4 input-group" style={{ minWidth: 300 }}>
+      <div className="tw-w-1/4 input-group tw-min-w-75">
         <span className="input-group-text">Find Sticker</span>
         <SelectMui
           formSx={{ width: 200 }}

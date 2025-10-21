@@ -111,13 +111,13 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
           startAdornment: isHideIcon
             ? undefined
             : position.current === 'start' || customPrepend
-            ? customPrepend || iconSearch()
-            : undefined,
+              ? customPrepend || iconSearch()
+              : undefined,
           endAdornment: isHideIcon
             ? undefined
             : position.current === 'end' || customAppend
-            ? customAppend || iconSearch()
-            : undefined,
+              ? customAppend || iconSearch()
+              : undefined,
         }}
         SelectProps={{
           MenuProps: {

@@ -92,8 +92,8 @@ const Hexagon = (props: IHexagonComponent) => {
     return animationType === AnimationType.On
       ? Math.min(startStat + endStat / 30, endStat)
       : endStat > startStat
-      ? Math.min(startStat + endStat / 30, endStat)
-      : Math.max(startStat - endStat / 30, endStat);
+        ? Math.min(startStat + endStat / 30, endStat)
+        : Math.max(startStat - endStat / 30, endStat);
   };
 
   const getPercentageBySize = (size: number, fullSize = props.size / 2) => (fullSize * size) / 100;

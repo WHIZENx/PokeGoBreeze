@@ -16,8 +16,8 @@ const StatsTable = (props: IStatsTableComponent) => {
       return element;
     }
     return (
-      <div className="ph-item tw-w-3/4 !tw-p-0 tw-m-auto tw-h-4">
-        <div className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
+      <div className="ph-item tw-w-3/4 !tw-p-0 !tw-m-auto !tw-h-4">
+        <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
       </div>
     );
   };

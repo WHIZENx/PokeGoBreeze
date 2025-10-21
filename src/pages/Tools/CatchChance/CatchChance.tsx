@@ -648,8 +648,7 @@ const CatchChance = () => {
                     <div className="tw-w-full tw-text-center">
                       <LevelSlider
                         aria-label="Radius"
-                        className="tw-w-full"
-                        style={{ maxWidth: 300 }}
+                        className="tw-w-full tw-max-w-75"
                         value={radius}
                         defaultValue={100}
                         valueLabelDisplay="off"

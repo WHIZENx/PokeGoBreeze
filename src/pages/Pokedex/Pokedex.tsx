@@ -158,57 +158,62 @@ const Pokedex = (props: IStyleSheetData) => {
     setIsLoading(true);
     if (isNotEmpty(dataList)) {
       try {
-        const debounced = debounce(() => {
-          try {
-            const result = dataList.filter((item) => {
-              const boolFilterType =
-                !isNotEmpty(selectTypes) ||
-                (item.types.every((item) => isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)) &&
-                  item.types.length === selectTypes.length);
-              const boolFilterPoke =
-                isEmpty(searchTerm) ||
-                (isMatch
-                  ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
-                  : isInclude(
-                      splitAndCapitalize(item.name, '-', ' '),
-                      searchTerm,
-                      IncludeMode.IncludeIgnoreCaseSensitive
-                    ) || isInclude(item.id, searchTerm));
-              const boolReleasedGO = releasedGO ? item.releasedGO : true;
-              const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
-              const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
-              const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
-              const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
-              const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
-              const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
+        const debounced = debounce(
+          () => {
+            try {
+              const result = dataList.filter((item) => {
+                const boolFilterType =
+                  !isNotEmpty(selectTypes) ||
+                  (item.types.every((item) =>
+                    isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)
+                  ) &&
+                    item.types.length === selectTypes.length);
+                const boolFilterPoke =
+                  isEmpty(searchTerm) ||
+                  (isMatch
+                    ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
+                    : isInclude(
+                        splitAndCapitalize(item.name, '-', ' '),
+                        searchTerm,
+                        IncludeMode.IncludeIgnoreCaseSensitive
+                      ) || isInclude(item.id, searchTerm));
+                const boolReleasedGO = releasedGO ? item.releasedGO : true;
+                const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
+                const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
+                const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
+                const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
+                const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
+                const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
 
-              const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
-              const findVersion = item.version === -1 || isIncludeList(version, item.version);
-              return (
-                boolFilterType &&
-                boolFilterPoke &&
-                boolReleasedGO &&
-                findGen &&
-                findVersion &&
-                boolMega &&
-                boolGMax &&
-                boolPrimal &&
-                boolLegend &&
-                boolMythic &&
-                boolUltra
+                const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
+                const findVersion = item.version === -1 || isIncludeList(version, item.version);
+                return (
+                  boolFilterType &&
+                  boolFilterPoke &&
+                  boolReleasedGO &&
+                  findGen &&
+                  findVersion &&
+                  boolMega &&
+                  boolGMax &&
+                  boolPrimal &&
+                  boolLegend &&
+                  boolMythic &&
+                  boolUltra
+                );
+              });
+              scrollID.current = 0;
+              setResult(result);
+              setListOfPokemon(result.slice(0, subItem.current));
+              setIsLoading(false);
+            } catch (error) {
+              dispatch(
+                SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true })
               );
-            });
-            scrollID.current = 0;
-            setResult(result);
-            setListOfPokemon(result.slice(0, subItem.current));
-            setIsLoading(false);
-          } catch (error) {
-            dispatch(
-              SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true })
-            );
-            setIsLoading(false);
-          }
-        }, Math.max(300, listOfPokemon.length > result.length ? listOfPokemon.length : result.length));
+              setIsLoading(false);
+            }
+          },
+          Math.max(300, listOfPokemon.length > result.length ? listOfPokemon.length : result.length)
+        );
         debounced();
         return () => {
           debounced.cancel();
@@ -288,8 +293,8 @@ const Pokedex = (props: IStyleSheetData) => {
     const gen = !isSelect
       ? value.sort((a, b) => a - b)
       : btnSelected.isSelectGen
-      ? []
-      : Object.values(genList).map((_, index) => index);
+        ? []
+        : Object.values(genList).map((_, index) => index);
 
     setFilters({
       ...filters,
@@ -308,8 +313,8 @@ const Pokedex = (props: IStyleSheetData) => {
     const version = !isSelect
       ? value.sort((a, b) => a - b)
       : btnSelected.isSelectVersion
-      ? []
-      : versionList.map((_, index) => index);
+        ? []
+        : versionList.map((_, index) => index);
 
     setFilters({
       ...filters,
@@ -321,8 +326,8 @@ const Pokedex = (props: IStyleSheetData) => {
     <div className="tw-relative">
       <div className="tw-relative tw-text-center tw-w-full">
         {!isNotEmpty(dataList) && (
-          <div className="ph-item tw-w-full tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
-            <div className="ph-picture ph-col-3 tw-w-full tw-h-full !tw-m-0 !tw-p-0 !tw-bg-transparent" />
+          <div className="ph-item !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
+            <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0 !tw-bg-transparent" />
           </div>
         )}
         <div className="head-types">Filter By Types (Maximum 2)</div>

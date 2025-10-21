@@ -19,9 +19,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: 0.1s;
-  touch-action: manipulation;
 
-  @apply tw-h-full tw-m-0 tw-text-default tw-bg-custom-default tw-leading-[1.5];
+  @apply tw-h-full tw-m-0 tw-text-default tw-bg-custom-default tw-leading-default tw-touch-manipulation;
 }
 
 #root {

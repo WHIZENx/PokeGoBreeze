@@ -340,7 +340,7 @@ const Calculate = () => {
             </Box>
           </div>
           <div className="form-group tw-flex tw-justify-center tw-text-center">
-            <Box className="tw-w-1/2" sx={{ minWidth: 300 }}>
+            <Box className="tw-w-1/2 tw-min-w-75">
               <div className="tw-flex tw-justify-between">
                 <b>ATK</b>
                 <b>{ATKIv}</b>
@@ -466,7 +466,7 @@ const Calculate = () => {
           </div>
         </form>
         <div>
-          <div className="tw-flex tw-justify-center tw-text-center" style={{ height: 80 }}>
+          <div className="tw-flex tw-justify-center tw-text-center tw-h-20">
             <Box className="tw-w-3/5" sx={{ minWidth: 320 }}>
               <div className="tw-flex tw-justify-between">
                 <b>Level</b>
