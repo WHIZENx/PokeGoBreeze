@@ -14,20 +14,20 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
     <Fragment>
       {isNotEmpty(data) && (
         <Fragment>
-          <h6 className={combineClasses('mb-0', props.isBlock ? 'mt-2' : '')}>
+          <h6 className={combineClasses('tw-mb-0', props.isBlock ? 'tw-mt-2' : '')}>
             <b className="text-shadow-black">x{toFloat(amount, 3)}</b>
           </h6>
-          <div className="d-flex flex-wrap gap-2">
+          <div className="tw-flex tw-flex-wrap tw-gap-2">
             {data?.map((value, index) => (
               <div
                 key={index}
                 className={combineClasses(
                   value.toLowerCase(),
-                  'type-select-bg d-flex align-items-center filter-shadow text-shadow-black'
+                  'type-select-bg tw-flex tw-align-items-center filter-shadow text-shadow-black'
                 )}
               >
                 <img
-                  className="w-3 pokemon-sprite-small sprite-type-select filter-shadow"
+                  className="tw-w-3 pokemon-sprite-small sprite-type-select filter-shadow"
                   alt="Pokémon GO Type Logo"
                   src={APIService.getTypeHqSprite(value)}
                 />
@@ -56,7 +56,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       });
 
       return (
-        <div className="container d-flex flex-column pb-2 gap-2">
+        <div className="tw-container tw-flex tw-flex-col tw-pb-2 tw-gap-2">
           {renderEffective(EffectiveType.VeryWeakness, data.veryWeak)}
           {renderEffective(EffectiveType.Weakness, data.weak)}
         </div>
@@ -72,7 +72,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         }
       });
       return (
-        <div className="container d-flex flex-column pb-2 gap-2">
+        <div className="tw-container tw-flex tw-flex-col tw-pb-2 tw-gap-2">
           {renderEffective(EffectiveType.Neutral, data.neutral)}
         </div>
       );
@@ -91,7 +91,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         }
       });
       return (
-        <div className="container d-flex flex-column pb-2 gap-2">
+        <div className="tw-container tw-flex tw-flex-col tw-pb-2 tw-gap-2">
           {renderEffective(EffectiveType.SuperResistance, data.superResist)}
           {renderEffective(EffectiveType.VeryResistance, data.veryResist)}
           {renderEffective(EffectiveType.Resistance, data.resist)}

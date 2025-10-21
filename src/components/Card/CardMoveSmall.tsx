@@ -16,48 +16,61 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
   const [move, setMove] = useState<ICombat>();
 
   useEffect(() => {
-    if (!props.isEmpty && props.value) {
-      const move = findMoveByName(props.value?.name);
+    if (!props.isEmpty && (props.value || props.name)) {
+      const move = findMoveByName(props.name || props.value?.name, props.pokemonId);
       setMove(move);
     }
-  }, [findMoveByName, props.value, props.isEmpty]);
+  }, [findMoveByName, props.value, props.isEmpty, props.name, props.pokemonId]);
+
+  const isHaveMoveType = () => {
+    if (move && move.moveType !== undefined) {
+      return move.moveType !== MoveType.None;
+    } else if (props.moveType !== undefined) {
+      return props.moveType !== MoveType.None;
+    }
+    return false;
+  };
 
   return (
     <Fragment>
       {props.isEmpty ? (
-        <div className="h-100" />
+        <div className="tw-h-full" />
       ) : (
         <Fragment>
-          {props.value && move && (
+          {(props.value || props.name) && move && (
             <div
               className={combineClasses(
-                'd-flex align-items-center w-100 h-100 p-1 overflow-x-hidden text-nowrap',
-                props.isDisable ? 'disable-card-move' : ''
+                'tw-flex tw-items-center tw-w-full tw-h-full tw-overflow-x-hidden tw-text-nowrap',
+                props.isDisable && 'disable-card-move'
               )}
             >
-              <IconType width={18} height={18} alt="Pokémon GO Type Logo" className="me-2" type={move.type} />
-              <span className="me-1">{splitAndCapitalize(move.name, '_', ' ')}</span>
-              <span className="d-flex">
-                {props.value.moveType !== MoveType.None && (
-                  <span
-                    className={combineClasses(
-                      'type-icon-small ic',
-                      `${getKeyWithData(MoveType, props.value.moveType)?.toLowerCase()}-ic`
-                    )}
-                  >
-                    {getKeyWithData(MoveType, props.value.moveType)}
-                  </span>
-                )}
-              </span>
+              <IconType
+                width={18}
+                height={18}
+                alt="Pokémon GO Type Logo"
+                className={combineClasses('tw-mr-2', props.isDisable && 'filter-gray')}
+                type={move.type}
+              />
+              <span className="tw-mr-1">{splitAndCapitalize(move.name, '_', ' ')}</span>
+              {!props.isHideType && isHaveMoveType() && (
+                <span
+                  className={combineClasses(
+                    `${getKeyWithData(
+                      MoveType,
+                      props.isDisable ? MoveType.Disable : move.moveType || props.moveType
+                    )?.toLowerCase()}-ic`,
+                    props.isDisable && '!tw-text-lightgray',
+                    'type-icon-small ic !tw-flex tw-items-center tw-h-3'
+                  )}
+                >
+                  {getKeyWithData(MoveType, move.moveType || props.moveType)}
+                </span>
+              )}
               {props.isShow && !props.isDisable && (
-                <div className="select-down d-flex align-items-center">
+                <div className="select-down tw-flex tw-items-center">
                   {props.isSelect && <KeyboardArrowDownIcon fontSize="small" />}
                   {props.clearData && (
-                    <CloseIcon
-                      className="remove-pokemon-select"
-                      sx={{ color: 'red' }}
-                      onClick={() => props.clearData?.()}
-                    />
+                    <CloseIcon className="remove-pokemon-select" color="error" onClick={() => props.clearData?.()} />
                   )}
                 </div>
               )}

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import TypeEffectiveComponent from '../Effective/TypeEffective';
-import WeatherTypeEffective from '../Effective/WeatherTypeEffective';
 import TypeInfo from '../Sprites/Type/Type';
 
 import { TypeEffectiveChart } from '../../core/models/type-effective.model';
@@ -9,6 +8,8 @@ import { IncludeMode } from '../../utils/enums/string.enum';
 import { camelCase, getMultiplyTypeEffect } from '../../utils/utils';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
 import useSearch from '../../composables/useSearch';
+import Effective from '../Effective/Effective';
+import Weather from '../Sprites/Weather';
 
 const Info = () => {
   const { searchingMainForm } = useSearch();
@@ -48,15 +49,17 @@ const Info = () => {
   };
 
   return (
-    <div className="mb-3">
-      <h4 className="mt-2 info-title">
+    <div className="tw-mb-3">
+      <h4 className="tw-mt-2 info-title">
         <b>Information</b>
       </h4>
-      <h5 className="mt-2">
+      <h5 className="tw-mt-2">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={types} className="ms-3" isShow />
-      <WeatherTypeEffective weatherEffective={getWeatherEffective(types)} />
+      <TypeInfo arr={types} className="tw-ml-3" isShow />
+      <Effective title="Weather Boosts">
+        <Weather arr={getWeatherEffective(types)} className="tw-ml-3" />
+      </Effective>
       <TypeEffectiveComponent typeEffective={getTypeEffectiveChart(types)} />
     </div>
   );

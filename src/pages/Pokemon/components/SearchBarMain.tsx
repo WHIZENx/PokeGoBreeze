@@ -15,22 +15,22 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
         <div
           title="Previous Pokémon"
           className={combineClasses(
-            'prev-block p-0 h-100 float-start',
+            'prev-block !tw-p-0 tw-h-full tw-float-left',
             props.data?.next ? 'next-border' : '',
-            `col${props.data.next ? '-6' : ''}`
+            `${props.data.next ? 'tw-flex-none !tw-w-1/2' : 'col'}`
           )}
         >
           <Link
             to={`/pokemon/${props.data.prev.id}`}
-            className="d-flex justify-content-start align-items-center h-100"
+            className="tw-flex tw-justify-start tw-items-center tw-h-full"
             title={`#${props.data.prev.id} ${splitAndCapitalize(props.data.prev.name, '-', ' ')}`}
           >
-            <div className="cursor-pointer">
+            <div className="tw-cursor-pointer">
               <b>
                 <NavigateBeforeIcon fontSize="large" />
               </b>
             </div>
-            <div className="h-100 cursor-pointer" style={{ width: 60 }}>
+            <div className="tw-h-full tw-cursor-pointer tw-w-15">
               <img
                 style={{ padding: '5px 5px 5px 0' }}
                 className="pokemon-navigate-sprite"
@@ -42,8 +42,8 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
                 }}
               />
             </div>
-            <div className="w-100 cursor-pointer text-start overflow-hidden">
-              <div className="text-start">
+            <div className="tw-w-full tw-cursor-pointer tw-text-left tw-overflow-hidden">
+              <div className="tw-text-left">
                 <b>#{props.data.prev.id}</b>
               </div>
               <div className="text-navigate">{splitAndCapitalize(props.data.prev.name, '-', ' ')}</div>
@@ -55,23 +55,23 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
         <div
           title="Next Pokémon"
           className={combineClasses(
-            'next-block p-0 h-100 float-end',
+            'next-block !tw-p-0 tw-h-full tw-float-right',
             props.data?.prev ? 'prev-border' : '',
-            `col${props.data.prev ? '-6' : ''}`
+            `${props.data.prev ? 'tw-flex-none !tw-w-1/2' : 'col'}`
           )}
         >
           <Link
             to={`/pokemon/${props.data.next.id}`}
-            className="d-flex justify-content-end align-items-center h-100"
+            className="tw-flex tw-justify-end tw-items-center tw-h-full"
             title={`#${props.data.next.id} ${splitAndCapitalize(props.data.next.name, '-', ' ')}`}
           >
-            <div className="w-100 cursor-pointer text-end overflow-hidden">
-              <div className="text-end">
+            <div className="tw-w-full tw-cursor-pointer tw-text-right tw-overflow-hidden">
+              <div className="tw-text-right">
                 <b>#{props.data.next.id}</b>
               </div>
               <div className="text-navigate">{splitAndCapitalize(props.data.next.name, '-', ' ')}</div>
             </div>
-            <div className="h-100 cursor-pointer" style={{ width: 60 }}>
+            <div className="tw-h-full tw-cursor-pointer tw-w-15">
               <img
                 style={{ padding: '5px 0 5px 5px' }}
                 className="pokemon-navigate-sprite"
@@ -83,7 +83,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
                 }}
               />
             </div>
-            <div className="cursor-pointer">
+            <div className="tw-cursor-pointer">
               <b>
                 <NavigateNextIcon fontSize="large" />
               </b>

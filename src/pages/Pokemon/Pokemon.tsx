@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
 import { Location, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -39,7 +38,7 @@ import {
 } from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
-import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
+import PokemonTable from '../../components/Commons/Tables/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
@@ -61,8 +60,8 @@ import {
 } from '../../utils/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
-import { PokemonType, TypeAction, VariantType } from '../../enums/type.enum';
-import { useNavigateToTop } from '../../components/LinkToTop';
+import { PokemonType, TypeAction } from '../../enums/type.enum';
+import { useNavigateToTop } from '../../components/Link/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
 import { useTitle } from '../../utils/hooks/useTitle';
@@ -73,6 +72,7 @@ import useSpinner from '../../composables/useSpinner';
 import useRouter from '../../composables/useRouter';
 import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
+import { useSnackbar } from '../../contexts/snackbar.context';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -129,13 +129,13 @@ const Pokemon = (props: IPokemonPage) => {
   const [progress, setProgress] = useState(new PokemonProgress());
 
   const axiosSource = useRef(APIService.getCancelToken());
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const getPokemonIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
     if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(getFilteredPokemons())) {
       const pokemon = getFindPokemon((p) =>
-        isEqual(p.pokemonId?.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
+        isEqual(p.pokemonId?.toString().replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
       );
       id = toNumber(pokemon?.num);
     }
@@ -341,7 +341,7 @@ const Pokemon = (props: IPokemonPage) => {
           if (APIService.isCancel(e)) {
             return;
           }
-          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: VariantType.Error });
+          showSnackbar(`Pokémon ID or name: ${id} Not found!`, 'error');
           if (params.id) {
             setIsFound(false);
           } else {
@@ -352,7 +352,7 @@ const Pokemon = (props: IPokemonPage) => {
           }
         });
     },
-    [enqueueSnackbar, fetchMap]
+    [fetchMap]
   );
 
   const clearData = (isForceClear = false) => {
@@ -400,7 +400,7 @@ const Pokemon = (props: IPokemonPage) => {
       if (id <= 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemons)) {
         id = getPokemonIdByParam();
         if (id <= 0) {
-          enqueueSnackbar(`Pokémon ID or name: ${params.id} Not found!`, { variant: VariantType.Error });
+          showSnackbar(`Pokémon ID or name: ${params.id} Not found!`, 'error');
           setIsFound(false);
           return;
         }
@@ -494,10 +494,10 @@ const Pokemon = (props: IPokemonPage) => {
         routerAction === Action.Pop && searchingMainData && !params.id
           ? searchingMainForm?.form?.name
           : searchingMainForm.form?.isDefault
-          ? searchingMainForm.form.name
-          : formParams || toNumber(searchingMainForm.form?.id) < 0
-          ? searchingMainForm.form?.name
-          : data.name;
+            ? searchingMainForm.form.name
+            : formParams || toNumber(searchingMainForm.form?.id) < 0
+              ? searchingMainForm.form?.name
+              : data.name;
       setFormName(convertSexName(nameInfo));
       const originForm = splitAndCapitalize(searchingMainForm.form?.formName, '-', '-');
       setOriginForm(originForm);
@@ -593,15 +593,15 @@ const Pokemon = (props: IPokemonPage) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 m-0 p-0 h-4">
-        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
+      <div className="ph-item !tw-w-3/4 !tw-m-0 !tw-p-0 !tw-h-6">
+        <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
       </div>
     );
   };
 
   return (
     <Error isError={!isFound}>
-      <div className="w-100 row prev-next-block sticky-top">
+      <div className="tw-w-full row prev-next-block tw-sticky tw-top-14">
         {params.id ? (
           <SearchBarMain data={dataStorePokemon} />
         ) : (
@@ -610,15 +610,15 @@ const Pokemon = (props: IPokemonPage) => {
       </div>
       <div
         className={combineClasses(
-          'pb-3 position-relative poke-container theme-text-primary',
-          props.isSearch ? '' : 'container'
+          'tw-pb-3 tw-relative poke-container tw-text-default',
+          props.isSearch ? '' : 'tw-container'
         )}
       >
-        <div className="w-100 text-center d-inline-block align-middle my-3">
+        <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
           <AlertReleased formName={formName} pokemonType={searchingMainForm?.form?.pokemonType} icon={iconData} />
-          <div className="d-inline-block img-desc">
+          <div className="tw-inline-block img-desc">
             <img
-              className="pokemon-main-sprite v-align-baseline"
+              className="pokemon-main-sprite !tw-align-baseline"
               alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 dataStorePokemon?.current?.id,
@@ -634,7 +634,7 @@ const Pokemon = (props: IPokemonPage) => {
               }}
             />
           </div>
-          <div className="d-inline-block">
+          <div className="tw-inline-block tw-align-bottom">
             <PokemonTable
               id={dataStorePokemon?.current?.id}
               gen={generation}
@@ -646,11 +646,11 @@ const Pokemon = (props: IPokemonPage) => {
               isLoadedForms={progress.isLoadedForms}
             />
           </div>
-          <div className="d-inline-block p-0">
+          <div className="tw-inline-block !tw-p-0 tw-align-bottom">
             <table className="table-info table-main">
               <thead />
               <tbody>
-                <tr className="text-center">
+                <tr className="tw-text-center">
                   <td className="table-sub-header">Unlock third move</td>
                   <td className="table-sub-header">Costs</td>
                 </tr>
@@ -658,9 +658,9 @@ const Pokemon = (props: IPokemonPage) => {
                   <td>
                     <img alt="Image Cost Info" width={100} src={APIService.getItemSprite('Item_1202')} />
                   </td>
-                  <td className="p-0">
-                    <div className="d-flex align-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} className="me-1" />
+                  <td className="!tw-p-0">
+                    <div className="tw-flex tw-items-center row-extra td-costs">
+                      <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
                       {reload(
                         <span>
                           {!isUndefined(costModifier?.thirdMove.candy)
@@ -669,8 +669,8 @@ const Pokemon = (props: IPokemonPage) => {
                         </span>
                       )}
                     </div>
-                    <div className="row-extra d-flex">
-                      <div className="d-inline-flex justify-content-center me-1" style={{ width: 20 }}>
+                    <div className="row-extra tw-flex">
+                      <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(
@@ -683,7 +683,7 @@ const Pokemon = (props: IPokemonPage) => {
                     </div>
                   </td>
                 </tr>
-                <tr className="text-center">
+                <tr className="tw-text-center">
                   <td className="table-sub-header">Purified</td>
                   <td className="table-sub-header">Costs</td>
                 </tr>
@@ -691,9 +691,9 @@ const Pokemon = (props: IPokemonPage) => {
                   <td>
                     <img alt="Image Cost Info" width={60} height={60} src={APIService.getPokePurified()} />
                   </td>
-                  <td className="p-0">
-                    <div className="d-flex align-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} className="me-1" />
+                  <td className="!tw-p-0">
+                    <div className="tw-flex tw-items-center row-extra td-costs">
+                      <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
                       {reload(
                         <span>
                           {!isUndefined(costModifier?.purified.candy)
@@ -702,8 +702,8 @@ const Pokemon = (props: IPokemonPage) => {
                         </span>
                       )}
                     </div>
-                    <div className="row-extra d-flex">
-                      <div className="d-inline-flex justify-content-center me-1" style={{ width: 20 }}>
+                    <div className="row-extra tw-flex">
+                      <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(

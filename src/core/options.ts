@@ -1,5 +1,5 @@
 import { Asset, CryPath, IAsset, ImageModel } from './models/asset.model';
-import { Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
+import { Bonus, Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
 import {
   EvoList,
   EvolutionQuest,
@@ -27,6 +27,7 @@ import {
   capitalize,
   checkMoveSetAvailable,
   convertPokemonDataName,
+  getBonusType,
   getDataWithKey,
   getItemEvolutionType,
   getKeyWithData,
@@ -267,13 +268,13 @@ const optionFormNoneSpecial = (data: PokemonDataGM[], result: string[] = []) => 
 
 const findPokemonData = (id: number, name: string, isDefault = false) =>
   Object.values(pokemonStoreData).find((pokemon) => {
-    const slugToCompare = isDefault ? pokemon.slug : pokemon.baseFormeSlug ?? pokemon.slug;
+    const slugToCompare = isDefault ? pokemon.slug : (pokemon.baseFormeSlug ?? pokemon.slug);
     const convertedSlug = convertPokemonDataName(slugToCompare);
     return pokemon.num === id && isEqual(name, convertedSlug);
   });
 
-const convertAndReplaceNameGO = (name: string, defaultName = ''): string => {
-  const formName = getValueOrDefault(String, name);
+const convertAndReplaceNameGO = (name: string | number, defaultName = ''): string => {
+  const formName = getValueOrDefault(String, name.toString());
   let result = formName.replace(`${replacePokemonGoForm(defaultName)}_`, '');
   const formReplacements: Record<string, string> = {
     '^S$': formShadow(),
@@ -302,10 +303,12 @@ export const optionPokemonData = (
     if (!pokemonSettingForm) {
       pokemon.form = formNormal();
     } else if (pokemon.id !== 201) {
-      pokemon.form = convertAndReplaceNameGO(pokemonSettingForm, pokemonSettings.pokemonId);
+      pokemon.form = convertAndReplaceNameGO(pokemonSettingForm, pokemonSettings.pokemonId?.toString());
     }
     if (pokemon.id !== 201) {
-      pokemon.name = pokemonSettings.form ? `${pokemon.pokemonId}_${pokemon.form}` : pokemonSettings.pokemonId;
+      pokemon.name = pokemonSettings.form
+        ? `${pokemon.pokemonId}_${pokemon.form}`
+        : pokemonSettings.pokemonId?.toString();
     } else {
       const form = getValueOrDefault(String, pokemon.form?.toString());
       pokemon.name = form;
@@ -364,7 +367,7 @@ export const optionPokemonData = (
       pokemon.id,
       pokemon.form && pokemon.pokemonType !== PokemonType.Normal
         ? `${pokemon.pokemonId}_${pokemon.form}`
-        : pokemonSettings.pokemonId,
+        : pokemonSettings.pokemonId?.toString(),
       pokemon.pokemonType === PokemonType.Normal
     );
     if (pokemonBaseData) {
@@ -403,7 +406,7 @@ export const optionPokemonData = (
 
     pokemonSettings.evolutionBranch?.forEach((evo) => {
       const dataEvo = new EvoList();
-      const name = getValueOrDefault(String, evo.evolution, pokemon.name);
+      const name = getValueOrDefault(String, evo.evolution?.toString(), pokemon.name);
       if (evo.form) {
         dataEvo.evoToForm = convertAndReplaceNameGO(evo.form, name);
       } else {
@@ -424,7 +427,7 @@ export const optionPokemonData = (
                 pokemon.form?.toString(),
                 formNormal()
               ),
-              i.data.pokemonSettings.pokemonId
+              i.data.pokemonSettings.pokemonId?.toString()
             ),
             dataEvo.evoToForm
           )
@@ -809,7 +812,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
   return family.map((item) => {
     const result = new Asset();
     result.id = toNumber(pokemon.find((poke) => isEqual(poke.pokemonId, item))?.num);
-    result.name = item;
+    result.name = item.toString();
 
     let formSet = imgs.filter((img) => isInclude(img, `/pm${result.id}.`) && !isInclude(img, 'cry'));
     let count = 0;
@@ -1073,6 +1076,8 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel):
           setMoveStats(result, move);
         }
 
+        setNonMoveSetting(result, data);
+
         return result;
       });
   }
@@ -1144,6 +1149,24 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel):
     result.staminaLossScalar = move.staminaLossScalar;
   }
 
+  function setNonMoveSetting(result: Combat, data: PokemonDataGM[]) {
+    const item = data.find((item) =>
+      item.templateId.startsWith(`NON_COMBAT_V${result.id.toString().padStart(4, '0')}_MOVE`)
+    );
+    const dataNonCombat = item?.data.nonCombatMoveSettings;
+    if (dataNonCombat) {
+      result.bonus = Bonus.create({
+        cost: dataNonCombat.cost,
+        bonusEffect: dataNonCombat.bonusEffect,
+        durationMs: toNumber(dataNonCombat.durationMs),
+        bonusType: getBonusType(dataNonCombat.bonusType),
+        enableMultiUse: dataNonCombat.enableMultiUse,
+        extraDurationMs: toNumber(dataNonCombat.extraDurationMs),
+        enableNonCombatMove: dataNonCombat.enableNonCombatMove,
+      });
+    }
+  }
+
   function processSpecialMoves(data: PokemonDataGM[], moveSet: Combat[], types: ITypeEffectiveModel) {
     const result = [...moveSet];
 
@@ -1195,7 +1218,7 @@ const setPokemonPermission = (
           pokemonPermission.push(
             new PokemonPermission({
               id: item?.num,
-              name: item?.pokemonId,
+              name: item?.pokemonId?.toString(),
               form,
               pokemonType: getPokemonType(form),
             })
@@ -1206,7 +1229,7 @@ const setPokemonPermission = (
       pokemonPermission.push(
         new PokemonPermission({
           id: item?.num,
-          name: item?.pokemonId,
+          name: item?.pokemonId?.toString(),
           form,
           pokemonType: getPokemonType(form),
         })
@@ -1302,7 +1325,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
             const item = pokemon.find((item) => isEqual(item.pokemonId, poke));
             return new PokemonPermission({
               id: item?.num,
-              name: item?.pokemonId,
+              name: item?.pokemonId?.toString(),
               form: formNormal(),
               pokemonType: PokemonType.Normal,
             });

@@ -4,7 +4,7 @@ import { Location, useLocation } from 'react-router-dom';
 import './Error.scss';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { LocationState } from '../../core/models/router.model';
-import { LinkToTop } from '../../components/LinkToTop';
+import { LinkToTop } from '../../components/Link/LinkToTop';
 import { IErrorPage } from '../models/page.model';
 import { isUndefined } from '../../utils/extension';
 import useSpinner from '../../composables/useSpinner';
@@ -34,7 +34,7 @@ const Error = (props: IErrorPage) => {
   return (
     <>
       {props.isError || isUndefined(props.isError) ? (
-        <div className="d-block position-relative">
+        <div className="tw-block tw-relative">
           <div className="error-img">
             <div className="img" />
           </div>
@@ -53,7 +53,7 @@ const Error = (props: IErrorPage) => {
                 </p>
               </span>
               <span>Maybe try one of the links in the menu or press Back to Home to go to the home page.</span>
-              <div className="mt-3">
+              <div className="tw-mt-3">
                 <LinkToTop className="btn btn-danger" to="/">
                   Back to Home
                 </LinkToTop>

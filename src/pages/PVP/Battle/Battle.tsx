@@ -13,22 +13,12 @@ import {
 } from '../../../utils/utils';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
-import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
 import TimelineVertical from './Timeline/TimelineVertical';
 
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-} from '@mui/material';
+import { Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -50,8 +40,7 @@ import { useParams } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { useSnackbar } from 'notistack';
-import { BattlePokemonData, IBattlePokemonData, RankingsPVP, Toggle } from '../../../core/models/pvp.model';
+import { BattlePokemonData, IBattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
 import { ICombat } from '../../../core/models/combat.model';
 import {
   IPokemonBattleData,
@@ -63,8 +52,9 @@ import {
 } from '../models/battle.model';
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
-import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
+import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import {
+  combineClasses,
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
@@ -78,7 +68,7 @@ import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { TimelineEvent } from '../../../utils/models/overrides/dom.model';
-import { LinkToTop, useNavigateToTop } from '../../../components/LinkToTop';
+import { LinkToTop, useNavigateToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';
@@ -105,6 +95,11 @@ import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import { Params } from '../../../utils/constants';
 import useDevice from '../../../composables/useDevice';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -132,7 +127,7 @@ const Battle = () => {
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
   const [data, setData] = useState<IBattlePokemonData[]>([]);
   const [options, setOptions] = useState<OptionsBattle>({
@@ -158,9 +153,7 @@ const Battle = () => {
 
   const battleAnimation = () => {
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
-      enqueueSnackbar('Something went wrong! Please try again.', {
-        variant: VariantType.Error,
-      });
+      showSnackbar('Something went wrong! Please try again.', 'error');
       return;
     }
 
@@ -170,9 +163,7 @@ const Battle = () => {
       (!pokemonCurr.disableCMovePri && !pokemonCurr.cMovePri) ||
       (!pokemonObj.disableCMovePri && !pokemonObj.cMovePri)
     ) {
-      enqueueSnackbar('Required charge move', {
-        variant: VariantType.Error,
-      });
+      showSnackbar('Required charge move', 'error');
       return;
     }
     arrBound.current = [];
@@ -668,20 +659,20 @@ const Battle = () => {
       return <></>;
     }
     return (
-      <div className="bufs-container d-flex flex-row column-gap-1">
+      <div className="bufs-container tw-flex tw-flex-row tw-gap-y-1">
         {move?.buffs.map((value, index) => (
-          <div key={index} className="d-flex position-relative column-gap-1">
+          <div key={index} className="tw-flex tw-relative tw-gap-y-1">
             <img width={15} height={15} alt="Image ATK" src={value.type === TypeAction.Atk ? ATK_LOGO : DEF_LOGO} />
-            <div className="position-absolute icon-buff">
-              {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
-              {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
-              {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
-              {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
-              <span className={value.power < 0 ? 'text-danger' : 'text-success'} style={{ fontSize: 12 }}>
+            <div className="tw-absolute icon-buff">
+              {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" color="success" />}
+              {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" color="success" />}
+              {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" color="error" />}
+              {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" color="error" />}
+              <span className={combineClasses('tw-text-sm', value.power < 0 ? 'text-danger' : 'text-success')}>
                 {value.power}
               </span>
             </div>
-            <b style={{ fontSize: 12 }}>{toNumber(value.buffChance) * 100}%</b>
+            <b className="tw-text-sm">{toNumber(value.buffChance) * 100}%</b>
           </div>
         ))}
       </div>
@@ -696,9 +687,7 @@ const Battle = () => {
   ) => {
     e.preventDefault();
     if (!pokemon.pokemonData) {
-      enqueueSnackbar('Pokémon not found.', {
-        variant: VariantType.Error,
-      });
+      showSnackbar('Pokémon not found.', 'error');
       return;
     }
     const battleType = getKeyWithData(BattleType, type);
@@ -713,9 +702,7 @@ const Battle = () => {
 
     const paramCP = toNumber(params?.cp);
     if (cp > paramCP) {
-      enqueueSnackbar(`This stats Pokémon CP is greater than ${paramCP}, which is not permitted by the league.`, {
-        variant: VariantType.Error,
-      });
+      showSnackbar(`This stats Pokémon CP is greater than ${paramCP}, which is not permitted by the league.`, 'error');
       return;
     }
 
@@ -815,182 +802,197 @@ const Battle = () => {
   ) => {
     const battleType = getKeyWithData(BattleType, type);
     return (
-      <Accordion defaultActiveKey={[]} alwaysOpen>
-        <Accordion.Item eventKey="0">
-          <Accordion.Header>Information</Accordion.Header>
-          <Accordion.Body>
-            <div className="w-100 d-flex justify-content-center">
-              <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
-                  <img
-                    alt="Image League"
-                    className="pokemon-sprite-raid"
-                    src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = getValidPokemonImgPath(
-                        e.currentTarget.src,
-                        pokemon.pokemonData?.id,
-                        pokemon.pokemonData?.form
-                      );
+      <AccordionMui
+        items={[
+          {
+            value: 0,
+            label: 'Information',
+            children: (
+              <>
+                <div className="tw-w-full tw-flex tw-justify-center">
+                  <div className="tw-relative filter-shadow tw-w-32">
+                    <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
+                      <img
+                        alt="Image League"
+                        className="pokemon-sprite-raid"
+                        src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = getValidPokemonImgPath(
+                            e.currentTarget.src,
+                            pokemon.pokemonData?.id,
+                            pokemon.pokemonData?.form
+                          );
+                        }}
+                      />
+                    </PokemonIconType>
+                  </div>
+                </div>
+                <div className="tw-w-full tw-flex tw-justify-center tw-items-center tw-gap-1">
+                  <LinkToTop
+                    to={`/pvp/${params.cp}/all/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}?${
+                      Params.LeagueType
+                    }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
+                  >
+                    <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
+                  </LinkToTop>
+                  <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
+                </div>
+                <h6>
+                  <b>Stats</b>
+                </h6>
+                CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | {'Level: '}
+                <b>{pokemon.pokemonData?.currentStats?.level ?? minLevel()}</b>
+                <br />
+                {'IV: '}
+                <b>
+                  {toNumber(pokemon.pokemonData?.currentStats?.IV?.atkIV)}/
+                  {toNumber(pokemon.pokemonData?.currentStats?.IV?.defIV)}/
+                  {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
+                </b>
+                <br />
+                <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
+                {'Attack: '}
+                <b>
+                  {Math.floor(
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
+                      getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk)
+                  )}
+                </b>
+                <br />
+                <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
+                {'Defense: '}
+                <b>
+                  {Math.floor(
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
+                      getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Def)
+                  )}
+                </b>
+                <br />
+                <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
+                HP: <b>{toNumber(Math.round(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
+                <br />
+                {'Stats Prod: '}
+                <b>
+                  {Math.round(
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
+                      toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
+                      toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA) *
+                      getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Prod)
+                  )}
+                </b>
+                <br />
+                <form
+                  className="tw-mt-2"
+                  onSubmit={(e) => {
+                    calculateStatPokemon(e, type, pokemon, setPokemon);
+                  }}
+                >
+                  <InputMui
+                    labelPrepend="Level"
+                    defaultValue={pokemon.pokemonData?.currentStats?.level}
+                    inputProps={{
+                      type: 'number',
+                      min: minLevel(),
+                      max: maxLevel(),
+                      step: stepLevel(),
+                      required: true,
                     }}
+                    placeholder="Enter Level"
+                    id={`level${battleType}`}
+                    fullWidth
                   />
-                </PokemonIconType>
-              </div>
-            </div>
-            <div className="w-100 d-flex justify-content-center align-items-center gap-1">
-              <LinkToTop
-                to={`/pvp/${params.cp}/all/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}?${
-                  Params.LeagueType
-                }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
-              >
-                <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
-              </LinkToTop>
-              <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
-            </div>
-            <h6>
-              <b>Stats</b>
-            </h6>
-            CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | {'Level: '}
-            <b>{pokemon.pokemonData?.currentStats?.level ?? minLevel()}</b>
-            <br />
-            {'IV: '}
-            <b>
-              {toNumber(pokemon.pokemonData?.currentStats?.IV?.atkIV)}/
-              {toNumber(pokemon.pokemonData?.currentStats?.IV?.defIV)}/
-              {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
-            </b>
-            <br />
-            <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
-            {'Attack: '}
-            <b>
-              {Math.floor(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
-                  getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk)
-              )}
-            </b>
-            <br />
-            <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
-            {'Defense: '}
-            <b>
-              {Math.floor(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
-                  getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Def)
-              )}
-            </b>
-            <br />
-            <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
-            HP: <b>{toNumber(Math.round(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
-            <br />
-            {'Stats Prod: '}
-            <b>
-              {Math.round(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
-                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
-                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA) *
-                  getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Prod)
-              )}
-            </b>
-            <br />
-            <form
-              onSubmit={(e) => {
-                calculateStatPokemon(e, type, pokemon, setPokemon);
-              }}
-            >
-              <div className="mt-2 input-group">
-                <span className="input-group-text">Level</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.level}
-                  id={`level${battleType}`}
-                  type="number"
-                  step={stepLevel()}
-                  min={minLevel()}
-                  max={maxLevel()}
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-group-text">Attack IV</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.atkIV}
-                  id={`atkIV${battleType}`}
-                  type="number"
-                  step={1}
-                  min={minIv()}
-                  max={maxIv()}
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-group-text">Defense IV</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.defIV}
-                  id={`defIV${battleType}`}
-                  type="number"
-                  step={1}
-                  min={minIv()}
-                  max={maxIv()}
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-group-text">HP IV</span>
-                <input
-                  className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.staIV}
-                  id={`hpIV${battleType}`}
-                  type="number"
-                  step={1}
-                  min={minIv()}
-                  max={maxIv()}
-                />
-              </div>
-              <div className="w-100 mt-2">
-                <Button type="submit" className="w-100" color="primary">
-                  Calculate Stats
-                </Button>
-              </div>
-            </form>
-            <div className="w-100 mt-2">
-              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
-                Set Random Stats
-              </Button>
-            </div>
-            <div className="w-100 mt-2">
-              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon)}>
-                Set Best Stats
-              </Button>
-            </div>
-            <hr />
-            <TypeBadge
-              isFind
-              title="Fast Move"
-              move={pokemon.fMove}
-              moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
-            />
-            <div className="d-flex w-100 position-relative column-gap-2">
-              <TypeBadge
-                isFind
-                title="Primary Charged Move"
-                move={pokemon.cMovePri}
-                moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMovePri?.name)}
-              />
-              {findBuff(pokemon.cMovePri)}
-            </div>
-            {pokemon.cMoveSec && (
-              <div className="d-flex w-100 position-relative column-gap-2">
+                  <InputMui
+                    labelPrepend="Attack IV"
+                    defaultValue={pokemon.pokemonData?.currentStats?.IV?.atkIV}
+                    inputProps={{
+                      type: 'number',
+                      min: minIv(),
+                      max: maxIv(),
+                      required: true,
+                    }}
+                    placeholder="Enter Attack IV"
+                    id={`atkIV${battleType}`}
+                    fullWidth
+                  />
+                  <InputMui
+                    labelPrepend="Defense IV"
+                    defaultValue={pokemon.pokemonData?.currentStats?.IV?.defIV}
+                    inputProps={{
+                      type: 'number',
+                      min: minIv(),
+                      max: maxIv(),
+                      required: true,
+                    }}
+                    placeholder="Enter Defense IV"
+                    id={`defIV${battleType}`}
+                    fullWidth
+                  />
+                  <InputMui
+                    labelPrepend="HP IV"
+                    defaultValue={pokemon.pokemonData?.currentStats?.IV?.staIV}
+                    inputProps={{
+                      type: 'number',
+                      min: minIv(),
+                      max: maxIv(),
+                      required: true,
+                    }}
+                    placeholder="Enter HP IV"
+                    id={`hpIV${battleType}`}
+                    fullWidth
+                  />
+                  <div className="tw-w-full tw-mt-2">
+                    <ButtonMui type="submit" color="success" fullWidth label="Calculate Stats" />
+                  </div>
+                </form>
+                <div className="tw-w-full tw-mt-2">
+                  <ButtonMui
+                    fullWidth
+                    color="primary"
+                    onClick={() => onSetStats(type, pokemon, setPokemon, true)}
+                    label="Set Random Stats"
+                  />
+                </div>
+                <div className="tw-w-full tw-mt-2">
+                  <ButtonMui
+                    fullWidth
+                    color="primary"
+                    onClick={() => onSetStats(type, pokemon, setPokemon)}
+                    label="Set Best Stats"
+                  />
+                </div>
+                <hr />
                 <TypeBadge
                   isFind
-                  title="Secondary Charged Move"
-                  move={pokemon.cMoveSec}
-                  moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMoveSec.name)}
+                  title="Fast Move"
+                  move={pokemon.fMove}
+                  moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
                 />
-                {findBuff(pokemon.cMoveSec)}
-              </div>
-            )}
-          </Accordion.Body>
-        </Accordion.Item>
-      </Accordion>
+                <div className="tw-flex tw-w-full tw-relative tw-gap-x-2">
+                  <TypeBadge
+                    isFind
+                    title="Primary Charged Move"
+                    move={pokemon.cMovePri}
+                    moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMovePri?.name)}
+                  />
+                  {findBuff(pokemon.cMovePri)}
+                </div>
+                {pokemon.cMoveSec && (
+                  <div className="tw-flex tw-w-full tw-relative tw-gap-x-2">
+                    <TypeBadge
+                      isFind
+                      title="Secondary Charged Move"
+                      move={pokemon.cMoveSec}
+                      moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMoveSec.name)}
+                    />
+                    {findBuff(pokemon.cMoveSec)}
+                  </div>
+                )}
+              </>
+            ),
+          },
+        ]}
+      />
     );
   };
 
@@ -1014,46 +1016,71 @@ const Battle = () => {
         />
         {pokemon.pokemonData && (
           <Fragment>
-            <div className="input-group">
-              <span className="input-group-text">Energy</span>
-              <input
-                className="form-control shadow-none"
-                defaultValue={pokemon.energy}
-                type="number"
-                min={0}
-                max={battleMaxEnergy()}
-                onInput={(e) => {
-                  const value = toNumber(e.currentTarget.value);
-                  if (isNaN(value)) {
-                    return;
-                  }
-                  if (type === BattleType.Current) {
-                    setPlayTimeline({
-                      ...playTimeline,
-                      pokemonCurr: PokemonBattleData.create({
-                        ...playTimeline.pokemonCurr,
-                        energy: value,
-                      }),
-                    });
-                  } else if (type === BattleType.Object) {
-                    setPlayTimeline({
-                      ...playTimeline,
-                      pokemonObj: PokemonBattleData.create({
-                        ...playTimeline.pokemonObj,
-                        energy: value,
-                      }),
-                    });
-                  }
-                  setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: value }));
-                }}
-              />
-            </div>
-            <div className="input-group">
-              <span className="input-group-text">Block</span>
-              <Form.Select
-                className="form-control rounded-0"
-                defaultValue={pokemon.block}
-                onChange={(e) => {
+            <InputMui
+              labelPrepend="Energy"
+              defaultValue={pokemon.energy}
+              inputProps={{
+                type: 'number',
+                min: 0,
+                max: battleMaxEnergy(),
+                step: 1,
+                required: true,
+              }}
+              id={`energy${type}`}
+              fullWidth
+              onChange={(value) => {
+                const energy = toNumber(value);
+                if (type === BattleType.Current) {
+                  setPlayTimeline({
+                    ...playTimeline,
+                    pokemonCurr: PokemonBattleData.create({
+                      ...playTimeline.pokemonCurr,
+                      energy,
+                    }),
+                  });
+                } else if (type === BattleType.Object) {
+                  setPlayTimeline({
+                    ...playTimeline,
+                    pokemonObj: PokemonBattleData.create({
+                      ...playTimeline.pokemonObj,
+                      energy,
+                    }),
+                  });
+                }
+                setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy }));
+              }}
+            />
+            <InputMui
+              labelPrepend="Block"
+              defaultValue={pokemon.block}
+              fullWidth
+              onChange={(value) => {
+                const block = toNumber(value);
+                setPlayTimeline({
+                  ...playTimeline,
+                  pokemonCurr: PokemonBattleData.create({
+                    ...playTimeline.pokemonCurr,
+                    energy: 0,
+                  }),
+                  pokemonObj: PokemonBattleData.create({
+                    ...playTimeline.pokemonObj,
+                    energy: 0,
+                  }),
+                });
+                setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block }));
+              }}
+              select
+              menuItems={getArrayBySeq(defaultBlock() + 1).map((value) => ({
+                label: value,
+                value,
+              }))}
+            />
+            {(!pokemon.disableCMovePri || !pokemon.disableCMoveSec) && (pokemon.cMovePri || pokemon.cMoveSec) && (
+              <InputMui
+                labelPrepend="Charge Slot"
+                value={pokemon.chargeSlot}
+                fullWidth
+                onChange={(value) => {
                   setPlayTimeline({
                     ...playTimeline,
                     pokemonCurr: PokemonBattleData.create({
@@ -1066,65 +1093,33 @@ const Battle = () => {
                     }),
                   });
                   setPokemon(
-                    PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block: toNumber(e.target.value) })
+                    PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, chargeSlot: toNumber(value) })
                   );
                 }}
-              >
-                {getArrayBySeq(defaultBlock() + 1).map((value, index) => (
-                  <option key={index} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </Form.Select>
-            </div>
-            {(!pokemon.disableCMovePri || !pokemon.disableCMoveSec) && (pokemon.cMovePri || pokemon.cMoveSec) && (
-              <div className="input-group">
-                <span className="input-group-text">Charge Slot</span>
-                <Form.Select
-                  className="form-control rounded-0"
-                  value={pokemon.chargeSlot}
-                  onChange={(e) => {
-                    setPlayTimeline({
-                      ...playTimeline,
-                      pokemonCurr: PokemonBattleData.create({
-                        ...playTimeline.pokemonCurr,
-                        energy: 0,
-                      }),
-                      pokemonObj: PokemonBattleData.create({
-                        ...playTimeline.pokemonObj,
-                        energy: 0,
-                      }),
-                    });
-                    setPokemon(
-                      PokemonBattle.create({
-                        ...pokemon,
-                        timeline: [],
-                        energy: 0,
-                        chargeSlot: toNumber(e.target.value),
-                      })
-                    );
-                  }}
-                >
-                  <option value={ChargeType.Primary} disabled={pokemon.disableCMovePri || !pokemon.cMovePri}>
-                    {ChargeType.Primary}
-                  </option>
-                  <option value={ChargeType.Secondary} disabled={pokemon.disableCMoveSec || !pokemon.cMoveSec}>
-                    {ChargeType.Secondary}
-                  </option>
-                  <option
-                    value={ChargeType.Random}
-                    disabled={
-                      pokemon.disableCMovePri || pokemon.disableCMoveSec || !pokemon.cMovePri || !pokemon.cMoveSec
-                    }
-                  >
-                    Random
-                  </option>
-                </Form.Select>
-              </div>
+                select
+                menuItems={[
+                  {
+                    label: ChargeType.Primary,
+                    value: ChargeType.Primary,
+                    disabled: pokemon.disableCMovePri || !pokemon.cMovePri,
+                  },
+                  {
+                    label: ChargeType.Secondary,
+                    value: ChargeType.Secondary,
+                    disabled: pokemon.disableCMoveSec || !pokemon.cMoveSec,
+                  },
+                  {
+                    label: 'Random',
+                    value: ChargeType.Random,
+                    disabled:
+                      pokemon.disableCMovePri || pokemon.disableCMoveSec || !pokemon.cMovePri || !pokemon.cMoveSec,
+                  },
+                ]}
+              />
             )}
             {pokemon && (
-              <div className="w-100 bg-ref-pokemon">
-                <div className="w-100 bg-type-moves">
+              <div className="tw-w-full bg-ref-pokemon">
+                <div className="tw-w-full bg-type-moves">
                   <CircleBar
                     text={splitAndCapitalize(pokemon.cMovePri?.name, '_', ' ')}
                     type={pokemon.cMovePri?.type}
@@ -1171,107 +1166,110 @@ const Battle = () => {
     );
   };
 
-  const CustomToggle = (props: Toggle) => {
-    const decoratedOnClick = useAccordionButton(props.eventKey);
+  const CustomToggle = () => (
+    <div className="btn-collapse-battle">
+      {openBattle ? (
+        <RemoveCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="error" />
+      ) : (
+        <AddCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="primary" />
+      )}
+    </div>
+  );
 
-    return (
-      <div className="btn-collapse-battle" onClick={decoratedOnClick}>
-        {openBattle ? (
-          <RemoveCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="error" />
-        ) : (
-          <AddCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="primary" />
-        )}
+  const renderHeader = (pokemonCurr: PokemonBattle, pokemonObj: PokemonBattle) => (
+    <div className="tw-relative tw-w-full">
+      <div className="tw-flex timeline-vertical">
+        <div className="tw-w-1/2">
+          <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-start tw-gap-2">
+            <div className="tw-relative filter-shadow tw-w-[35px]">
+              <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
+                <img
+                  alt="Image League"
+                  className="sprite-type"
+                  src={APIService.getPokemonModel(pokemonCurr.pokemonData?.form, pokemonCurr.pokemonData?.id)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getValidPokemonImgPath(
+                      e.currentTarget.src,
+                      pokemonCurr.pokemonData?.id,
+                      pokemonCurr.pokemonData?.form
+                    );
+                  }}
+                />
+              </PokemonIconType>
+            </div>
+            <b>{splitAndCapitalize(pokemonCurr.pokemonData?.name, '-', ' ')}</b>
+          </div>
+        </div>
+        <div className="tw-w-1/2">
+          <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-end tw-gap-2">
+            <div className="tw-relative filter-shadow tw-w-[35px]">
+              <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
+                <img
+                  alt="Image League"
+                  className="sprite-type"
+                  src={APIService.getPokemonModel(pokemonObj.pokemonData?.form, pokemonObj.pokemonData?.id)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getValidPokemonImgPath(
+                      e.currentTarget.src,
+                      pokemonObj.pokemonData?.id,
+                      pokemonObj.pokemonData?.form
+                    );
+                  }}
+                />
+              </PokemonIconType>
+            </div>
+            <b>{splitAndCapitalize(pokemonObj.pokemonData?.name, '-', ' ')}</b>
+          </div>
+        </div>
       </div>
-    );
-  };
+      <CustomToggle />
+    </div>
+  );
 
   return (
     <Error isError={!isFound}>
-      <div className="container mt-2 battle-body-container">
-        <Form.Select
-          onChange={(e) => {
-            navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
-            setOptions({ ...options, league: toNumber(e.target.value) });
+      <div className="tw-container tw-mt-2 battle-body-container">
+        <SelectMui
+          fullWidth
+          value={league}
+          onChangeSelect={(value) => {
+            navigateToTop(`/pvp/battle/${value}`);
+            setOptions({ ...options, league: value });
           }}
-          defaultValue={league}
-        >
-          <option value={BattleLeagueCPType.Little}>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</option>
-          <option value={BattleLeagueCPType.Great}>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</option>
-          <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
-          <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
-        </Form.Select>
-        <div className="row mt-2 m-0">
-          <div className="col-lg-3">
+          menuItems={[
+            { value: BattleLeagueCPType.Little, label: getPokemonBattleLeagueName(BattleLeagueCPType.Little) },
+            { value: BattleLeagueCPType.Great, label: getPokemonBattleLeagueName(BattleLeagueCPType.Great) },
+            { value: BattleLeagueCPType.Ultra, label: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra) },
+            { value: BattleLeagueCPType.InsMaster, label: getPokemonBattleLeagueName(BattleLeagueCPType.InsMaster) },
+          ]}
+        />
+        <div className="row tw-mt-4 !tw-m-0">
+          <div className="lg:tw-w-1/4">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
           </div>
-          <div className="col-lg-6">
+          <div className="lg:tw-w-1/2">
             {pokemonCurr.pokemonData &&
               pokemonObj.pokemonData &&
               isNotEmpty(pokemonCurr.timeline) &&
               isNotEmpty(pokemonObj.timeline) && (
                 <Fragment>
-                  <Accordion defaultActiveKey={[]}>
-                    <Card className="position-relative">
-                      <Card.Header className="p-0">
-                        <div className="d-flex timeline-vertical">
-                          <div className="w-50">
-                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start gap-2">
-                              <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                                <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
-                                  <img
-                                    alt="Image League"
-                                    className="sprite-type"
-                                    src={APIService.getPokemonModel(
-                                      pokemonCurr.pokemonData.form,
-                                      pokemonCurr.pokemonData.id
-                                    )}
-                                    onError={(e) => {
-                                      e.currentTarget.onerror = null;
-                                      e.currentTarget.src = getValidPokemonImgPath(
-                                        e.currentTarget.src,
-                                        pokemonCurr.pokemonData?.id,
-                                        pokemonCurr.pokemonData?.form
-                                      );
-                                    }}
-                                  />
-                                </PokemonIconType>
-                              </div>
-                              <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
-                            </div>
-                          </div>
-                          <div className="w-50">
-                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end gap-2">
-                              <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                                <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
-                                  <img
-                                    alt="Image League"
-                                    className="sprite-type"
-                                    src={APIService.getPokemonModel(
-                                      pokemonObj.pokemonData.form,
-                                      pokemonObj.pokemonData.id
-                                    )}
-                                    onError={(e) => {
-                                      e.currentTarget.onerror = null;
-                                      e.currentTarget.src = getValidPokemonImgPath(
-                                        e.currentTarget.src,
-                                        pokemonObj.pokemonData?.id,
-                                        pokemonObj.pokemonData?.form
-                                      );
-                                    }}
-                                  />
-                                </PokemonIconType>
-                              </div>
-                              <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>
-                            </div>
-                          </div>
-                        </div>
-                        <CustomToggle eventKey="0" />
-                      </Card.Header>
-                      <Accordion.Collapse eventKey="0">
-                        <Card.Body className="p-0">{TimelineVertical(pokemonCurr, pokemonObj)}</Card.Body>
-                      </Accordion.Collapse>
-                    </Card>
-                  </Accordion>
+                  <AccordionMui
+                    onChange={(value) => {
+                      setOpenBattle(value === 0);
+                    }}
+                    items={[
+                      {
+                        sxSummary: { p: 0, '& .MuiAccordionSummary-content': { m: 0 } },
+                        noPadding: true,
+                        hideIcon: true,
+                        value: 0,
+                        label: renderHeader(pokemonCurr, pokemonObj),
+                        children: TimelineVertical(pokemonCurr, pokemonObj),
+                      },
+                    ]}
+                  />
                   <div>
                     {timelineType === TimelineType.Normal ? (
                       <Fragment>
@@ -1298,7 +1296,7 @@ const Battle = () => {
                         )}
                       </Fragment>
                     )}
-                    <div className="d-flex justify-content-center">
+                    <div className="tw-flex tw-justify-center">
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -1318,66 +1316,65 @@ const Battle = () => {
                         <FormControlLabel value={TimelineType.Fit} control={<Radio />} label="Fit Timeline" />
                         <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
                       </RadioGroup>
-                      <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
-                        <InputLabel>Speed</InputLabel>
-                        <Select
-                          value={duration}
-                          onChange={(e) => setOptions({ ...options, duration: toFloat(e.target.value) })}
-                          label="Speed"
-                        >
-                          <MenuItem value={0.5}>x0.5</MenuItem>
-                          <MenuItem value={1}>Normal</MenuItem>
-                          <MenuItem value={2}>x2</MenuItem>
-                          <MenuItem value={5}>x5</MenuItem>
-                          <MenuItem value={10}>x10</MenuItem>
-                        </Select>
-                      </FormControl>
+                      <SelectMui
+                        formClassName="tw-mt-2"
+                        formSx={{ m: 1, minWidth: 120 }}
+                        onChangeSelect={(value) => setOptions({ ...options, duration: toFloat(value) })}
+                        value={duration}
+                        inputLabel="Speed"
+                        menuItems={[
+                          { value: 0.5, label: 'x0.5' },
+                          { value: 1, label: 'Normal' },
+                          { value: 2, label: 'x2' },
+                          { value: 5, label: 'x5' },
+                          { value: 10, label: 'x10' },
+                        ]}
+                      />
                     </div>
-                    <div className="d-flex justify-content-center column-gap-2">
-                      <button
-                        className="btn btn-primary"
+                    <div className="tw-flex tw-justify-center tw-gap-x-2">
+                      <ButtonMui
+                        startIcon={playState ? <PauseIcon /> : <PlayArrowIcon />}
+                        label={playState ? 'Stop' : 'Play'}
                         onMouseDown={() => (isMobile ? undefined : playState ? stopTimeline() : playingTimeline())}
                         onTouchEnd={() => (isMobile ? (playState ? stopTimeline() : playingTimeline()) : undefined)}
-                      >
-                        {playState ? (
-                          <Fragment>
-                            <PauseIcon /> Stop
-                          </Fragment>
-                        ) : (
-                          <Fragment>
-                            <PlayArrowIcon /> Play
-                          </Fragment>
-                        )}
-                      </button>
-                      <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeline()}>
-                        <RestartAltIcon /> Reset
-                      </button>
+                      />
+                      <ButtonMui
+                        color="error"
+                        startIcon={<RestartAltIcon />}
+                        label="Reset"
+                        onClick={() => resetTimeline()}
+                        disabled={playState}
+                      />
                     </div>
                   </div>
                 </Fragment>
               )}
           </div>
-          <div className="col-lg-3">
+          <div className="lg:tw-w-1/4">
             {renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}
           </div>
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
-          <div className="text-center mt-2">
-            <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
-              {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
-                <Fragment>
-                  <RestartAltIcon /> Reset Battle
-                </Fragment>
-              ) : (
-                <Fragment>
-                  <span className="position-relative">
+          <div className="tw-text-center tw-mt-2">
+            <ButtonMui
+              className="tw-h-12.5"
+              startIcon={
+                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
+                  <RestartAltIcon />
+                ) : (
+                  <span className="tw-relative">
                     <img height={36} alt="ATK Left" src={ATK_LOGO} />
                     <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
                   </span>
-                  {' Battle Simulator'}
-                </Fragment>
-              )}
-            </button>
+                )
+              }
+              label={
+                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)
+                  ? 'Reset Battle'
+                  : 'Battle Simulator'
+              }
+              onClick={() => battleAnimation()}
+            />
           </div>
         )}
       </div>

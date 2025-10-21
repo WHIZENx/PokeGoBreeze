@@ -23,7 +23,7 @@ const TypeEffect = () => {
   });
 
   return (
-    <div className="container mt-2 pb-3">
+    <div className="tw-container tw-mt-2 tw-pb-3">
       <Row>
         <Col>
           <Attacker />

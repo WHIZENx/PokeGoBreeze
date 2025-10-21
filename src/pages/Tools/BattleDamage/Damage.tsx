@@ -1,6 +1,5 @@
-import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
@@ -14,9 +13,9 @@ import DamageTable from './DamageTable';
 import ATK_LOGO from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Find from '../../../components/Find/Find';
-import StatsTable from './StatsDamageTable';
+import StatsDamageTable from './StatsDamageTable';
 
-import Move from '../../../components/Table/Move';
+import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMove';
 import { findStabType } from '../../../utils/compute';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
@@ -29,9 +28,12 @@ import {
   safeObjectEntries,
   toNumber,
 } from '../../../utils/extension';
-import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
+import { PokemonType, ThrowType, TypeAction, TypeMove } from '../../../enums/type.enum';
 import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import SelectMui from '../../../components/Commons/Selects/SelectMui';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -108,7 +110,7 @@ const Damage = () => {
   const { isWeather, isDodge, isTrainer } = battleState;
   const [result, setResult] = useState(new PokemonDmgOption());
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (searchingToolCurrentData?.pokemon?.statsGO?.atk !== 0) {
@@ -188,11 +190,10 @@ const Damage = () => {
           })
         );
       } else {
-        enqueueSnackbar('Please select move for pokémon!', { variant: VariantType.Error });
+        showSnackbar('Please select move for pokémon!', 'error');
       }
     },
     [
-      enqueueSnackbar,
       enableFriend,
       battleState,
       move,
@@ -218,9 +219,9 @@ const Damage = () => {
   return (
     <Fragment>
       <div className="row battle-game">
-        <div className="col-lg border-window">
+        <div className="lg:tw-flex-1 border-window">
           <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
-          <StatsTable
+          <StatsDamageTable
             setStatLvATK={setStatLvATK}
             setStatLevel={setStatLevel}
             setStatType={setStatType}
@@ -230,9 +231,9 @@ const Damage = () => {
             pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
           />
         </div>
-        <div className="col-lg border-window">
+        <div className="lg:tw-flex-1 border-window">
           <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
-          <StatsTable
+          <StatsDamageTable
             setStatLvDEF={setStatLvDEFObj}
             setStatLvSTA={setStatLvSTAObj}
             setStatLevel={setStatLevelObj}
@@ -244,26 +245,26 @@ const Damage = () => {
           />
         </div>
       </div>
-      <h1 id="main" className="text-center">
+      <h1 id="main" className="tw-text-center">
         Battle Damage Calculate
       </h1>
-      <div className="d-flex justify-content-center">
-        <div className="mt-2 container row mb-3">
-          <div className="col mb-3">
+      <div className="tw-flex tw-justify-center">
+        <div className="tw-mt-2 tw-container row tw-mb-3">
+          <div className="col tw-mb-3">
             <form onSubmit={onCalculateDamagePoke.bind(this)}>
-              <div className="d-flex justify-content-center">
-                <div className="row text-center" style={{ width: 520 }}>
+              <div className="tw-flex tw-justify-center">
+                <div className="row tw-text-center" style={{ width: 520 }}>
                   <div className="col">
-                    <h5 className="text-success">- Current Pokémon Type -</h5>
+                    <h5 className="tw-text-green-600">- Current Pokémon Type -</h5>
                     {searchingToolCurrentData?.form && <TypeInfo arr={searchingToolCurrentData?.form.form?.types} />}
                   </div>
                   <div className="col">
-                    <h5 className="text-danger">- Object Pokémon Type -</h5>
+                    <h5 className="tw-text-red-600">- Object Pokémon Type -</h5>
                     {searchingToolObjectData?.form && <TypeInfo arr={searchingToolObjectData?.form.form?.types} />}
                   </div>
                 </div>
               </div>
-              <Move
+              <SelectCustomMove
                 text="Select Moves"
                 id={searchingToolCurrentData?.form?.defaultId}
                 isSelectDefault
@@ -278,9 +279,9 @@ const Damage = () => {
                 isHighlight
                 pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
               />
-              <div className="mt-2">
+              <div className="tw-mt-2">
                 {move && (
-                  <div className="m-auto" style={{ width: 300 }}>
+                  <div className="tw-m-auto tw-w-75">
                     <p>
                       - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                     </p>
@@ -296,13 +297,13 @@ const Damage = () => {
                       <b>
                         {move.pvePower}
                         {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
-                          <span className="caption-small text-success"> (x1.2)</span>
+                          <span className="caption-small tw-text-green-600"> (x1.2)</span>
                         )}
                       </b>
                     </p>
                   </div>
                 )}
-                <div className="text-center">
+                <div className="tw-text-center">
                   <FormGroup>
                     <FormControlLabel
                       control={<Checkbox checked={isWeather} onChange={handleCheckbox} name="isWeather" />}
@@ -317,7 +318,7 @@ const Damage = () => {
                       label="Trainer"
                     />
                   </FormGroup>
-                  <Box className="d-flex align-items-center justify-content-center">
+                  <Box className="tw-flex tw-items-center tw-justify-center">
                     <FormControlLabel
                       control={
                         <Switch
@@ -351,40 +352,40 @@ const Damage = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                    <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
+                    <Box className="tw-text-sm" sx={{ ml: 2, color: 'green' }}>
                       x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
-                    <FormControl sx={{ width: 200 }}>
-                      <InputLabel id="demo-simple-select-label">Charge ability</InputLabel>
-                      <Select
-                        name="throwLevel"
-                        value={battleState.throwLevel}
-                        label="Charge ability"
-                        onChange={(event) => {
-                          setBattleState(
-                            Filter.create({
-                              ...battleState,
-                              throwLevel: toNumber(event.target.value),
-                            })
-                          );
-                        }}
-                      >
-                        {safeObjectEntries(getThrowCharge()).map(([type, value], index) => (
-                          <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
+                    <SelectMui
+                      formSx={{ width: 200 }}
+                      inputLabel="Charge ability"
+                      value={battleState.throwLevel}
+                      onChangeSelect={(throwLevel) => setBattleState({ ...battleState, throwLevel })}
+                      menuItems={safeObjectEntries(getThrowCharge()).map(([type, value], index) => ({
+                        value: index,
+                        label: (
+                          <>
                             {capitalize(type)}
                             <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>
                               x{value}
                             </span>
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                          </>
+                        ),
+                        sx: { color: labels[index].color },
+                      }))}
+                    />
                   </Box>
-                  <button type="submit" className="btn btn-primary mt-2">
-                    <img alt="ATK" width={20} height={20} src={ATK_LOGO} /> Battle
-                  </button>
+                  <ButtonMui
+                    label={
+                      <div className="tw-flex tw-items-center tw-gap-1">
+                        <img alt="ATK" width={20} height={20} src={ATK_LOGO} />
+                        <span>Battle</span>
+                      </div>
+                    }
+                    type="submit"
+                    className="!tw-mt-2"
+                  />
                 </div>
               </div>
             </form>

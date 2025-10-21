@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import SelectMove from '../../../components/Input/SelectMove';
+import SelectMove from '../../../components/Commons/Selects/SelectMove';
 import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 
@@ -14,7 +14,7 @@ import {
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { levelList, RAID_BOSS_TIER } from '../../../utils/constants';
+import { RAID_BOSS_TIER } from '../../../utils/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -23,7 +23,7 @@ import {
   TimeToKill,
 } from '../../../utils/calculate';
 
-import { Badge, Checkbox, FormControlLabel, Switch } from '@mui/material';
+import { Badge, Checkbox, FormControlLabel, IconButton, Switch } from '@mui/material';
 
 import './RaidBattle.scss';
 import APIService from '../../../services/api.service';
@@ -40,8 +40,7 @@ import TimerIcon from '@mui/icons-material/Timer';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { useSnackbar } from 'notistack';
-import { Modal, Button, Form, OverlayTrigger } from 'react-bootstrap';
+import { OverlayTrigger } from 'react-bootstrap';
 
 import update from 'immutability-helper';
 import {
@@ -57,8 +56,8 @@ import {
   ISelectMoveModel,
   SelectMoveModel,
   SelectMovePokemonModel,
-} from '../../../components/Input/models/select-move.model';
-import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
+} from '../../../components/Commons/Inputs/models/select-move.model';
+import { MoveType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { BattleCalculate } from '../../../utils/models/calculate.model';
 import {
@@ -88,17 +87,23 @@ import {
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
-import CustomPopover from '../../../components/Popover/CustomPopover';
-import { LinkToTop } from '../../../components/LinkToTop';
+import CustomPopover from '../../../components/Commons/Popovers/CustomPopover';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { StatsIV } from '../../../core/models/stats.model';
 import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
-import useIcon from '../../../composables/useIcon';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
 import useSearch from '../../../composables/useSearch';
+import { levelList } from '../../../utils/compute';
+import InputMui from '../../../components/Commons/Inputs/InputMui';
+import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
+import InputReleased from '../../../components/Commons/Inputs/InputReleased';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import DialogMui from '../../../components/Commons/Dialogs/Dialogs';
 
 const RaidBattle = () => {
   useTitle({
@@ -114,7 +119,6 @@ const RaidBattle = () => {
       'raid team builder',
     ],
   });
-  const { iconData } = useIcon();
   const { getFilteredPokemons } = usePokemon();
   const { findMoveByName } = useCombats();
   const { getAssetNameById } = useAssets();
@@ -221,10 +225,10 @@ const RaidBattle = () => {
       filters.selected.sortBy === SortType.TDO
         ? r.tdoAtk
         : filters.selected.sortBy === SortType.TTK
-        ? r.ttkAtk
-        : filters.selected.sortBy === SortType.TANK
-        ? r.ttkDef
-        : r.dpsAtk
+          ? r.ttkAtk
+          : filters.selected.sortBy === SortType.TANK
+            ? r.ttkDef
+            : r.dpsAtk
     );
     const a = primary as unknown as DynamicObj<SortType>;
     const b = secondary as unknown as DynamicObj<SortType>;
@@ -299,7 +303,7 @@ const RaidBattle = () => {
   const [countTrainer, setCountTrainer] = useState(1);
   const [isLoadedForms, setIsLoadedForms] = useState(false);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const clearDataBoss = () => {
     setResult([]);
@@ -315,7 +319,7 @@ const RaidBattle = () => {
     setPokemonBattle(update(pokemonBattle, { $splice: [[index, 1]] }));
   };
 
-  const onOptionsPokemon = (index: number, pokemon: IPokemonData) => {
+  const onOptionsPokemon = (index: number, pokemon: IPokemonData | undefined) => {
     setShowSettingPokemon(
       RaidSetting.create({
         isShow: true,
@@ -381,7 +385,7 @@ const RaidBattle = () => {
           }
 
           if (!statsAttacker || !statsDefender) {
-            enqueueSnackbar('Something went wrong!', { variant: VariantType.Error });
+            showSnackbar('Something went wrong!', 'error');
             return;
           }
 
@@ -473,11 +477,14 @@ const RaidBattle = () => {
       };
       setResultBoss(result);
     } else {
-      const group = dataList.reduce((result, obj) => {
-        const name = getValueOrDefault(String, obj.pokemon?.name);
-        (result[name] = getValueOrDefault(Array, result[name])).push(obj);
-        return result;
-      }, new Object() as DynamicObj<IPokemonMoveData[]>);
+      const group = dataList.reduce(
+        (result, obj) => {
+          const name = getValueOrDefault(String, obj.pokemon?.name);
+          (result[name] = getValueOrDefault(Array, result[name])).push(obj);
+          return result;
+        },
+        new Object() as DynamicObj<IPokemonMoveData[]>
+      );
       dataList = Object.values(group)
         .map((pokemon) => pokemon.reduce((p, c) => (p.dpsAtk > c.dpsAtk ? p : c)))
         .sort((a, b) => b.dpsAtk - a.dpsAtk);
@@ -561,10 +568,10 @@ const RaidBattle = () => {
     const trainer = trainerBattle.map((trainer) => trainer.pokemons);
     const trainerNoPokemon = trainer.filter((pokemon) => isNotEmpty(pokemon.filter((item) => !item.dataTargetPokemon)));
     if (isNotEmpty(trainerNoPokemon)) {
-      enqueueSnackbar('Please select Pokémon to raid battle!', { variant: VariantType.Error });
+      showSnackbar('Please select Pokémon to raid battle!', 'error');
       return;
     }
-    enqueueSnackbar('Simulator battle raid successfully!', { variant: VariantType.Success });
+    showSnackbar('Simulator battle raid successfully!', 'success');
 
     const turn: IPokemonRaidModel[][] = [];
     trainer.forEach((pokemons, trainerId) => {
@@ -670,34 +677,34 @@ const RaidBattle = () => {
     const percent = (Math.floor(bossHp - tdo) * 100) / Math.floor(bossHp);
     return (
       <Fragment>
-        <div className="progress position-relative">
+        <div className="progress tw-relative">
           <div
-            className={`progress-bar bg-success mt-0 w-pct-${Math.round(percent)}`}
+            className={`progress-bar bg-success tw-mt-0 tw-w-[${Math.round(percent)}%]`}
             role="progressbar"
             aria-valuenow={percent}
             aria-valuemin={0}
             aria-valuemax={100}
           />
           <div
-            className={`progress-bar bg-danger mt-0 w-pct-${Math.round(100 - percent)}`}
+            className={`progress-bar bg-danger tw-mt-0 tw-w-[${Math.round(100 - percent)}%]`}
             role="progressbar"
             aria-valuenow={100 - percent}
             aria-valuemin={0}
             aria-valuemax={100}
           />
-          <div className="justify-content-start align-items-center d-flex position-absolute h-100 w-100">
-            <div className="line-dps position-relative" style={{ width: `calc(${dps}% + 2px` }}>
+          <div className="tw-justify-start tw-items-center tw-flex tw-absolute tw-h-full tw-w-full">
+            <div className="line-dps tw-relative" style={{ width: `calc(${dps}% + 2px` }}>
               <span className="line-left">
                 <b>|</b>
               </span>
-              <hr className="w-100" />
+              <hr className="tw-w-full" />
               <span className="line-right">
                 <b>|</b>
               </span>
               <div className="caption text-dps">DPS</div>
             </div>
           </div>
-          <div className="box-text rank-text text-black justify-content-end d-flex w-100 position-absolute">
+          <div className="box-text rank-text tw-text-black tw-justify-end tw-flex tw-w-full tw-absolute">
             <span>HP: {`${Math.floor(bossHp - tdo)} / ${Math.floor(bossHp)}`}</span>
           </div>
         </div>
@@ -712,82 +719,80 @@ const RaidBattle = () => {
     return (
       <td
         colSpan={3}
-        className={combineClasses('text-center bg-summary', `bg-${status === RaidState.Win ? 'success' : 'danger'}`)}
+        className={combineClasses('tw-text-center bg-summary', `bg-${status === RaidState.Win ? 'success' : 'danger'}`)}
       >
-        <span className="text-white">{result}</span>
+        <span className="tw-text-white">{result}</span>
       </td>
     );
   };
 
   const modalFormFilters = () => (
     <form>
-      <label className="form-label">Pokémon level</label>
-      <div className="input-group mb-3">
-        <span className="input-group-text">Level</span>
-        <Form.Select
-          value={filters.selected.level}
-          className="form-control"
-          onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: toFloat(e.target.value) } })}
-        >
-          {levelList.map((value, index) => (
-            <option key={index} value={value}>
-              {value}
-            </option>
-          ))}
-        </Form.Select>
-      </div>
-      <label className="form-label">Pokémon IV</label>
-      <div className="input-group mb-3">
-        <span className="input-group-text">ATK</span>
-        <input
+      <label className="tw-mb-2">Pokémon level</label>
+      <InputMui
+        labelPrepend="Level"
+        className="tw-mb-3"
+        value={filters.selected.level}
+        fullWidth
+        select
+        menuItems={levelList.map((value) => ({ value, label: value }))}
+        onChange={(value) => setFilters({ ...filters, selected: { ...selected, level: toFloat(value) } })}
+      />
+      <label className="tw-mb-2">Pokémon IV</label>
+      <div className="input-control-group tw-mb-3">
+        <InputMui
+          labelPrepend="ATK"
           value={filters.selected.iv.atkIV}
-          type="number"
-          min={minIv()}
-          max={maxIv()}
-          required
-          className="form-control"
           placeholder="IV ATK"
-          onInput={(e) =>
-            setFilters({
-              ...filters,
-              selected: { ...selected, iv: { ...selected.iv, atkIV: toNumber(e.currentTarget.value) } },
-            })
-          }
+          fullWidth
+          inputProps={{
+            type: 'number',
+            min: minIv(),
+            max: maxIv(),
+            required: true,
+            onInput: (e) =>
+              setFilters({
+                ...filters,
+                selected: { ...selected, iv: { ...selected.iv, atkIV: toNumber(e.currentTarget.value) } },
+              }),
+          }}
         />
-        <span className="input-group-text">DEF</span>
-        <input
+        <InputMui
+          labelPrepend="DEF"
           value={filters.selected.iv.defIV}
-          type="number"
-          min={minIv()}
-          max={maxIv()}
-          required
-          className="form-control"
           placeholder="IV DEF"
-          onInput={(e) =>
-            setFilters({
-              ...filters,
-              selected: { ...selected, iv: { ...selected.iv, defIV: toNumber(e.currentTarget.value) } },
-            })
-          }
+          fullWidth
+          inputProps={{
+            type: 'number',
+            min: minIv(),
+            max: maxIv(),
+            required: true,
+            onInput: (e) =>
+              setFilters({
+                ...filters,
+                selected: { ...selected, iv: { ...selected.iv, defIV: toNumber(e.currentTarget.value) } },
+              }),
+          }}
         />
-        <span className="input-group-text">STA</span>
-        <input
+        <InputMui
+          labelPrepend="STA"
           value={filters.selected.iv.staIV}
-          type="number"
-          min={minIv()}
-          max={maxIv()}
-          required
-          className="form-control"
           placeholder="IV STA"
-          onInput={(e) =>
-            setFilters({
-              ...filters,
-              selected: { ...selected, iv: { ...selected.iv, staIV: toNumber(e.currentTarget.value) } },
-            })
-          }
+          fullWidth
+          inputProps={{
+            type: 'number',
+            min: minIv(),
+            max: maxIv(),
+            required: true,
+            onInput: (e) =>
+              setFilters({
+                ...filters,
+                selected: { ...selected, iv: { ...selected.iv, staIV: toNumber(e.currentTarget.value) } },
+              }),
+          }}
         />
       </div>
-      <div className="input-group mb-3 border-input">
+      <div className="input-group tw-mb-3">
         <span className="input-group-text">Search filter only by</span>
         <FormControlLabel
           control={
@@ -818,51 +823,37 @@ const RaidBattle = () => {
           label={getKeyWithData(PokemonType, PokemonType.Mega)}
         />
       </div>
-      <div className="input-group mb-3">
-        <FormControlLabel
-          control={
-            <Switch
-              checked={filters.selected.onlyReleasedGO}
-              onChange={(_, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
-            />
-          }
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={combineClasses('ms-1', filters.selected.onlyReleasedGO ? '' : 'filter-gray')}
-                width={28}
-                height={28}
-                alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(iconData)}
-              />
-            </span>
-          }
+      <div className="input-group tw-mb-3">
+        <InputReleased
+          releasedGO={filters.selected.onlyReleasedGO}
+          setReleaseGO={(check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
+          isAvailable={filters.selected.onlyReleasedGO}
         />
       </div>
-      <label className="form-label">Sorting</label>
-      <div className="input-group mb-3">
-        <span className="input-group-text">Sort By</span>
-        <Form.Select
-          value={filters.selected.sortBy}
-          className="form-control w-pct-40"
-          onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
-        >
-          <option value={SortType.DPS}>Damage Per Second</option>
-          <option value={SortType.TDO}>Total Damage Output</option>
-          <option value={SortType.TTK}>Time To Kill</option>
-          <option value={SortType.TANK}>Tankiness</option>
-        </Form.Select>
-        <span className="input-group-text">Priority</span>
-        <Form.Select
-          className="form-control w-pct-15"
-          value={filters.selected.sorted}
-          onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
-        >
-          <option value={SortDirectionType.ASC}>Best</option>
-          <option value={SortDirectionType.DESC}>Worst</option>
-        </Form.Select>
-      </div>
+      <InputMui
+        labelPrepend="Sorting"
+        value={filters.selected.sortBy}
+        fullWidth
+        select
+        menuItems={[
+          { value: SortType.DPS, label: 'Damage Per Second' },
+          { value: SortType.TDO, label: 'Total Damage Output' },
+          { value: SortType.TTK, label: 'Time To Kill' },
+          { value: SortType.TANK, label: 'Tankiness' },
+        ]}
+        onChange={(value) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(value) } })}
+      />
+      <InputMui
+        labelPrepend="Priority"
+        value={filters.selected.sorted}
+        fullWidth
+        select
+        menuItems={[
+          { value: SortDirectionType.ASC, label: 'Best' },
+          { value: SortDirectionType.DESC, label: 'Worst' },
+        ]}
+        onChange={(value) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(value) } })}
+      />
     </form>
   );
 
@@ -873,8 +864,8 @@ const RaidBattle = () => {
     }
     return (
       <Fragment>
-        <div className="w-100 d-flex flex-column align-items-center">
-          <div className="position-relative" style={{ width: 96 }}>
+        <div className="tw-w-full tw-flex tw-flex-col tw-items-center">
+          <div className="tw-relative tw-w-24">
             <PokemonIconType pokemonType={showSettingPokemon.pokemon?.stats?.pokemonType} size={36}>
               <img
                 alt="Pokémon Image"
@@ -891,8 +882,8 @@ const RaidBattle = () => {
             <b>{splitAndCapitalize(pokemon.name, '-', ' ')}</b>
           </div>
         </div>
-        <form className="mt-2">
-          <FormControlLabel
+        <form className="tw-mt-2">
+          <FormControlMui
             control={
               <Checkbox
                 checked={showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow}
@@ -919,7 +910,7 @@ const RaidBattle = () => {
               />
             }
             label={
-              <span className="d-flex align-items-center">
+              <div className="tw-flex tw-items-center tw-gap-2">
                 <img
                   className={showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? '' : 'filter-gray'}
                   width={28}
@@ -937,116 +928,117 @@ const RaidBattle = () => {
                 >
                   {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
-              </span>
+              </div>
             }
           />
           <div>
-            <label className="form-label">Pokémon level</label>
+            <label className="tw-mb-2">Pokémon level</label>
           </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text">Level</span>
-            <Form.Select
-              value={pokemon.stats?.level}
-              className="form-control"
-              onChange={(e) => {
-                if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon(
-                    RaidSetting.create({
-                      ...showSettingPokemon,
-                      pokemon: {
-                        ...showSettingPokemon.pokemon,
-                        stats: { ...showSettingPokemon.pokemon.stats, level: toFloat(e.target.value) },
-                      },
-                    })
-                  );
-                }
-              }}
-            >
-              {levelList.map((value, index) => (
-                <option key={index} value={value}>
-                  {value}
-                </option>
-              ))}
-            </Form.Select>
-          </div>
-          <label className="form-label">Pokémon IV</label>
-          <div className="input-group mb-3">
-            <span className="input-group-text">ATK</span>
-            <input
+          <InputMui
+            labelPrepend="Level"
+            className="tw-mb-3"
+            value={pokemon.stats?.level}
+            fullWidth
+            select
+            menuItems={levelList.map((value) => ({ value, label: value }))}
+            onChange={(value) => {
+              if (showSettingPokemon.pokemon?.stats) {
+                setShowSettingPokemon(
+                  RaidSetting.create({
+                    ...showSettingPokemon,
+                    pokemon: {
+                      ...showSettingPokemon.pokemon,
+                      stats: { ...showSettingPokemon.pokemon.stats, level: toFloat(value) },
+                    },
+                  })
+                );
+              }
+            }}
+          />
+          <label className="tw-mb-2">Pokémon IV</label>
+          <div className="input-control-group tw-mb-3">
+            <InputMui
+              labelPrepend="ATK"
               value={pokemon.stats?.iv.atkIV}
-              type="number"
-              min={minIv()}
-              max={maxIv()}
-              required
-              className="form-control"
               placeholder="IV ATK"
-              onInput={(e) => {
-                if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon(
-                    RaidSetting.create({
-                      ...showSettingPokemon,
-                      pokemon: {
-                        ...showSettingPokemon.pokemon,
-                        stats: {
-                          ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, atkIV: toNumber(e.currentTarget.value) },
+              fullWidth
+              inputProps={{
+                type: 'number',
+                min: minIv(),
+                max: maxIv(),
+                required: true,
+                onInput: (e) => {
+                  if (showSettingPokemon.pokemon?.stats) {
+                    setShowSettingPokemon(
+                      RaidSetting.create({
+                        ...showSettingPokemon,
+                        pokemon: {
+                          ...showSettingPokemon.pokemon,
+                          stats: {
+                            ...showSettingPokemon.pokemon.stats,
+                            iv: { ...showSettingPokemon.pokemon.stats.iv, atkIV: toNumber(e.currentTarget.value) },
+                          },
                         },
-                      },
-                    })
-                  );
-                }
+                      })
+                    );
+                  }
+                },
               }}
             />
-            <span className="input-group-text">DEF</span>
-            <input
+            <InputMui
+              labelPrepend="DEF"
               value={pokemon.stats?.iv.defIV}
-              type="number"
-              min={minIv()}
-              max={maxIv()}
-              required
-              className="form-control"
               placeholder="IV DEF"
-              onInput={(e) => {
-                if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon(
-                    RaidSetting.create({
-                      ...showSettingPokemon,
-                      pokemon: {
-                        ...showSettingPokemon.pokemon,
-                        stats: {
-                          ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, defIV: toNumber(e.currentTarget.value) },
+              fullWidth
+              inputProps={{
+                type: 'number',
+                min: minIv(),
+                max: maxIv(),
+                required: true,
+                onInput: (e) => {
+                  if (showSettingPokemon.pokemon?.stats) {
+                    setShowSettingPokemon(
+                      RaidSetting.create({
+                        ...showSettingPokemon,
+                        pokemon: {
+                          ...showSettingPokemon.pokemon,
+                          stats: {
+                            ...showSettingPokemon.pokemon.stats,
+                            iv: { ...showSettingPokemon.pokemon.stats.iv, defIV: toNumber(e.currentTarget.value) },
+                          },
                         },
-                      },
-                    })
-                  );
-                }
+                      })
+                    );
+                  }
+                },
               }}
             />
-            <span className="input-group-text">STA</span>
-            <input
+            <InputMui
+              labelPrepend="STA"
               value={pokemon.stats?.iv.staIV}
-              type="number"
-              min={minIv()}
-              max={maxIv()}
-              required
-              className="form-control"
               placeholder="IV STA"
-              onInput={(e) => {
-                if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon(
-                    RaidSetting.create({
-                      ...showSettingPokemon,
-                      pokemon: {
-                        ...showSettingPokemon.pokemon,
-                        stats: {
-                          ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, staIV: toNumber(e.currentTarget.value) },
+              fullWidth
+              inputProps={{
+                type: 'number',
+                min: minIv(),
+                max: maxIv(),
+                required: true,
+                onInput: (e) => {
+                  if (showSettingPokemon.pokemon?.stats) {
+                    setShowSettingPokemon(
+                      RaidSetting.create({
+                        ...showSettingPokemon,
+                        pokemon: {
+                          ...showSettingPokemon.pokemon,
+                          stats: {
+                            ...showSettingPokemon.pokemon.stats,
+                            iv: { ...showSettingPokemon.pokemon.stats.iv, staIV: toNumber(e.currentTarget.value) },
+                          },
                         },
-                      },
-                    })
-                  );
-                }
+                      })
+                    );
+                  }
+                },
               }}
             />
           </div>
@@ -1056,10 +1048,10 @@ const RaidBattle = () => {
   };
 
   const renderMove = (value: Partial<ICombat> | undefined) => (
-    <span
+    <div
       className={combineClasses(
         value?.type?.toLowerCase(),
-        'position-relative type-select-bg d-flex align-items-center filter-shadow'
+        'tw-relative type-select-bg tw-flex tw-items-center filter-shadow'
       )}
     >
       {value && value.moveType !== MoveType.None && (
@@ -1074,7 +1066,7 @@ const RaidBattle = () => {
           </span>
         </span>
       )}
-      <div className="w-3 d-contents">
+      <div className="tw-w-3 tw-contents">
         <img
           className="pokemon-sprite-small sprite-type-select filter-shadow"
           alt="Pokémon GO Type Logo"
@@ -1082,7 +1074,7 @@ const RaidBattle = () => {
         />
       </div>
       <span className="filter-shadow">{splitAndCapitalize(value?.name, '_', ' ')}</span>
-    </span>
+    </div>
   );
 
   const onHoverSlot = (id: string) => {
@@ -1119,9 +1111,9 @@ const RaidBattle = () => {
     }
     return (
       <Fragment>
-        <div className="d-flex flex-wrap align-items-center ps-2 column-gap-1">
+        <div className="tw-flex tw-flex-wrap tw-items-center tw-pl-2 tw-gap-x-1">
           <div className="pokemon-battle">
-            <span className="position-relative">
+            <span className="tw-relative">
               <PokemonIconType pokemonType={pokemon.pokemonType} size={18}>
                 <img
                   className="pokemon-sprite-battle"
@@ -1135,15 +1127,15 @@ const RaidBattle = () => {
               </PokemonIconType>
             </span>
           </div>
-          <div className="d-flex flex-wrap align-items-center column-gap-2">
+          <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-x-2">
             {renderMove({ ...pokemon.fMove, moveType: pokemon.fMoveType })}
             {renderMove({ ...pokemon.cMove, moveType: pokemon.cMoveType })}
           </div>
         </div>
-        <p className="mt-2">Select slot Pokémon that you want to replace.</p>
-        <div className="mt-2 justify-content-center px-2">
+        <p className="tw-mt-2">Select slot Pokémon that you want to replace.</p>
+        <div className="tw-mt-2 tw-justify-center tw-px-2">
           {trainerBattle.map((trainer) => (
-            <div className="trainer-battle d-flex align-items-center position-relative" key={trainer.trainerId}>
+            <div className="trainer-battle tw-flex tw-items-center tw-relative" key={trainer.trainerId}>
               <Badge
                 color="primary"
                 overlap="circular"
@@ -1174,7 +1166,7 @@ const RaidBattle = () => {
                     onClick={() => onMovePokemon(poke)}
                   >
                     {poke.dataTargetPokemon ? (
-                      <span className="position-relative">
+                      <span className="tw-relative">
                         <PokemonIconType
                           pokemonType={
                             hoverSlot === `${trainer.trainerId}-${index}`
@@ -1219,7 +1211,7 @@ const RaidBattle = () => {
       return <></>;
     }
     return (
-      <div className="d-flex flex-wrap align-items-center gap-2">
+      <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-2">
         {renderMove(pokemon.fMove)}
         {renderMove(pokemon.cMove)}
       </div>
@@ -1231,7 +1223,7 @@ const RaidBattle = () => {
     return (
       <LinkToTop
         to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.form, value.pokemonType)}`}
-        className="sprite-raid position-relative"
+        className="sprite-raid tw-relative"
       >
         <PokemonIconType pokemonType={value.pokemonType} size={64}>
           <img
@@ -1250,23 +1242,23 @@ const RaidBattle = () => {
 
   return (
     <Fragment>
-      <div className="row m-0 overflow-x-hidden">
-        <div className="col-lg p-0">
+      <div className="row !tw-m-0 tw-overflow-x-hidden">
+        <div className="lg:tw-flex-1 !tw-p-0">
           <Find isHide title="Raid Boss" clearStats={clearDataBoss} />
         </div>
-        <div className="col-lg d-flex justify-content-center align-items-center p-0">
-          <div className="mt-2 position-relative">
+        <div className="lg:tw-flex-1 tw-flex tw-justify-center tw-items-center !tw-p-0">
+          <div className="tw-mt-2 tw-relative">
             {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
-              <div className="position-absolute w-100 h-100 z-2">
+              <div className="tw-absolute tw-w-full tw-h-full tw-z-2">
                 <div className="moveset-error" />
                 <span className="moveset-error-msg">Moveset not Available</span>
               </div>
             )}
-            <h3 className="text-center text-decoration-underline">Select Boss Moveset</h3>
-            <div className="row mt-2">
-              <div className="col d-flex justify-content-center">
+            <h3 className="tw-text-center tw-underline">Select Boss Moveset</h3>
+            <div className="row tw-mt-2">
+              <div className="col tw-flex tw-justify-center">
                 <div>
-                  <h6 className="text-center">
+                  <h6 className="tw-text-center">
                     <b>Fast Moves</b>
                   </h6>
                   <SelectMove
@@ -1284,9 +1276,9 @@ const RaidBattle = () => {
                   />
                 </div>
               </div>
-              <div className="col d-flex justify-content-center">
+              <div className="col tw-flex tw-justify-center">
                 <div>
-                  <h6 className="text-center">
+                  <h6 className="tw-text-center">
                     <b>Charged Moves</b>
                   </h6>
                   <SelectMove
@@ -1310,7 +1302,7 @@ const RaidBattle = () => {
               clearData={clearDataBoss}
               setTierBoss={setTier}
               setTimeAllow={setTimeAllow}
-              currForm={searchingToolCurrentData?.form}
+              pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
               id={searchingToolCurrentData?.form?.defaultId}
               statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
               statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
@@ -1320,8 +1312,8 @@ const RaidBattle = () => {
               isLoadedForms={isLoadedForms}
             />
             <hr />
-            <div className="row align-items-center mt-2 m-0">
-              <div className="col-6 d-flex justify-content-end">
+            <div className="row tw-items-center tw-mt-2 !tw-m-0">
+              <div className="!tw-w-1/2 tw-flex-none tw-flex tw-justify-end">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -1332,7 +1324,7 @@ const RaidBattle = () => {
                   label="Boss Weather Boost"
                 />
               </div>
-              <div className="col-6">
+              <div className="!tw-w-1/2 tw-flex-none">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -1344,8 +1336,8 @@ const RaidBattle = () => {
                 />
               </div>
             </div>
-            <div className="row align-items-center mt-2 m-0">
-              <div className="col-6 d-flex justify-content-end pe-0">
+            <div className="row tw-items-center tw-mt-2 !tw-m-0">
+              <div className="!tw-w-1/2 tw-flex-none tw-flex tw-justify-end pr-0">
                 <FormControlLabel
                   control={
                     <Switch
@@ -1356,65 +1348,61 @@ const RaidBattle = () => {
                   label={`Time Allow (Default: ${RAID_BOSS_TIER[tier].timer}sec)`}
                 />
               </div>
-              <div className="col-6 ps-0">
-                <div className="input-group">
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={timeAllow}
-                    placeholder="Battle Time"
-                    aria-label="Battle Time"
-                    min={0}
-                    disabled={!enableTimeAllow}
-                    onInput={(e) => setTimeAllow(toNumber(e.currentTarget.value))}
-                  />
-                  <span className="input-group-text">sec</span>
-                </div>
+              <div className="!tw-w-1/2 tw-flex-none tw-pl-0">
+                <InputMui
+                  labelAppend="sec"
+                  placeholder="Battle Time"
+                  value={timeAllow}
+                  inputAlign="right"
+                  inputProps={{
+                    type: 'number',
+                    min: 0,
+                    disabled: !enableTimeAllow,
+                    onInput: (e) => setTimeAllow(toNumber(e.currentTarget.value)),
+                  }}
+                />
               </div>
             </div>
             {resultFMove && resultCMove && (
-              <div className="text-center mt-2">
-                <button
-                  className="btn btn-primary w-50"
+              <div className="tw-text-center tw-mt-2">
+                <ButtonMui
+                  className="tw-w-1/2"
                   disabled={Boolean(resultBoss)}
                   onClick={() => handleCalculate()}
-                >
-                  Search
-                </button>
+                  label="Search"
+                />
               </div>
             )}
           </div>
         </div>
       </div>
       <hr />
-      <div className="container pb-3">
-        <div className="d-flex flex-wrap align-items-center justify-content-between">
+      <div className="tw-container tw-pb-3">
+        <div className="tw-flex tw-flex-wrap tw-items-center tw-justify-between">
           <div>
             <h4>
               {`${used.sorted ? 'Worst' : 'Best'} 10 Counters Level: `}
               {<span>{`${used.level} - ${used.iv.atkIV}/${used.iv.defIV}/${used.iv.staIV}`}</span>}
             </h4>
-            <p className="text-primary">
+            <p className="tw-text-blue-600">
               <b>
                 {`Sort By: ${
                   used.sortBy === SortType.DPS
                     ? 'Damage Per Seconds (DPS)'
                     : used.sortBy === SortType.TDO
-                    ? 'Total Damage Output (TDO)'
-                    : used.sortBy === SortType.TTK
-                    ? 'Time To Kill'
-                    : 'Tankiness'
+                      ? 'Total Damage Output (TDO)'
+                      : used.sortBy === SortType.TTK
+                        ? 'Time To Kill'
+                        : 'Tankiness'
                 } `}
-                <span className="text-danger">{`${used.onlyShadow ? '*Only Shadow' : ''}${
+                <span className="tw-text-red-600">{`${used.onlyShadow ? '*Only Shadow' : ''}${
                   used.onlyMega ? '*Only Mega' : ''
                 }`}</span>
               </b>
             </p>
           </div>
           <div>
-            <button className="btn btn-primary" onClick={handleShowOption}>
-              Search options
-            </button>
+            <ButtonMui onClick={handleShowOption} label="Search options" />
           </div>
         </div>
         {isNotEmpty(result) && (
@@ -1427,7 +1415,7 @@ const RaidBattle = () => {
                 if (obj.pokemon) {
                   const isReleasedGO = checkPokemonGO(
                     obj.pokemon.num,
-                    getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId)
+                    getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId?.toString())
                   );
                   return getValueOrDefault(Boolean, obj.pokemon.releasedGO, isReleasedGO);
                 }
@@ -1447,38 +1435,45 @@ const RaidBattle = () => {
               })
               .slice(0, 10)
               .map((value, index) => (
-                <div className="position-relative top-raid-pokemon" key={index}>
+                <div className="tw-relative top-raid-pokemon" key={index}>
                   <div>
-                    <AddCircleIcon
-                      className="position-absolute cursor-pointer link-success"
-                      fontSize="large"
+                    <IconButton
+                      color="success"
+                      className="tw-absolute !tw-p-0"
                       onClick={() => handleShowMovePokemon(value)}
-                    />
+                    >
+                      <AddCircleIcon fontSize="large" />
+                    </IconButton>
                   </div>
-                  <div className="d-flex justify-content-center w-100">{renderPokemon(value)}</div>
-                  <span className="d-flex justify-content-center w-100">
-                    <b>
-                      #{value.pokemon?.num} {splitAndCapitalize(value.pokemon?.name, '-', ' ')}
-                    </b>
-                  </span>
-                  <span className="d-block mt-2">
-                    DPS: <b>{toFloatWithPadding(value.dpsAtk, 2)}</b>
-                  </span>
-                  <span className="d-block">
-                    Total Damage Output: <b>{toFloatWithPadding(value.tdoAtk, 2)}</b>
-                  </span>
-                  <span className="d-block">
-                    Death: <b className={value.death === 0 ? 'text-success' : 'text-danger'}>{value.death}</b>
-                  </span>
-                  <span className="d-block">
-                    Time to Kill <span className="d-inline-block caption">(Boss)</span>:{' '}
-                    <b>{toFloatWithPadding(value.ttkAtk, 2)} sec</b>
-                  </span>
-                  <span className="d-block">
-                    Time is Killed: <b>{toFloatWithPadding(value.ttkDef, 2)} sec</b>
-                  </span>
+                  <div className="tw-flex tw-flex-col tw-gap-2">
+                    <div className="tw-flex tw-justify-center tw-w-full">{renderPokemon(value)}</div>
+                    <span className="tw-flex tw-justify-center tw-gap-2 tw-font-bold tw-w-full">
+                      <span>#{value.pokemon?.num}</span>
+                      <span>{splitAndCapitalize(value.pokemon?.name, '-', ' ')}</span>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>DPS:</span>
+                      <b>{toFloatWithPadding(value.dpsAtk, 2)}</b>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Total Damage Output:</span>
+                      <b>{toFloatWithPadding(value.tdoAtk, 2)}</b>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Death:</span>
+                      <b className={value.death === 0 ? 'text-success' : 'text-danger'}>{value.death}</b>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Time to Kill (Boss):</span>
+                      <b>{toFloatWithPadding(value.ttkAtk, 2)} sec</b>
+                    </span>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Time is Killed:</span>
+                      <b>{toFloatWithPadding(value.ttkDef, 2)} sec</b>
+                    </span>
+                  </div>
                   <hr />
-                  <div className="container mb-3">
+                  <div className="tw-mb-3">
                     <TypeBadge title="Fast Move" move={value.fMove} moveType={value.fMoveType ?? MoveType.None} />
                     <TypeBadge title="Charged Move" move={value.cMove} moveType={value.cMoveType ?? MoveType.None} />
                   </div>
@@ -1486,10 +1481,10 @@ const RaidBattle = () => {
               ))}
           </div>
         )}
-        <div className="row my-3 mx-0">
-          <div className="col-lg-5 justify-content-center mb-3">
+        <div className="row tw-my-3 tw-mx-0">
+          <div className="lg:tw-w-5/12 tw-justify-center tw-mb-3">
             {trainerBattle.map((trainer, index) => (
-              <div className="trainer-battle d-flex align-items-center position-relative" key={index}>
+              <div className="trainer-battle tw-flex tw-items-center tw-relative" key={index}>
                 <Badge
                   color="primary"
                   overlap="circular"
@@ -1506,14 +1501,16 @@ const RaidBattle = () => {
                     src={APIService.getTrainerModel(trainer.trainerId % 294)}
                   />
                 </Badge>
-                <button className="btn btn-primary me-2" onClick={() => handleShow(trainer.pokemons, index)}>
-                  <EditIcon fontSize="small" />
-                </button>
+                <ButtonMui
+                  className="!tw-mr-2"
+                  onClick={() => handleShow(trainer.pokemons, index)}
+                  label={<EditIcon fontSize="small" />}
+                />
                 <div className="pokemon-battle-group">
                   {trainer.pokemons.map((pokemon, index) => (
                     <div key={index} className="pokemon-battle">
                       {pokemon.dataTargetPokemon ? (
-                        <span className="position-relative">
+                        <span className="tw-relative">
                           <PokemonIconType pokemonType={pokemon.dataTargetPokemon.stats?.pokemonType} size={18}>
                             <img
                               className="pokemon-sprite-battle"
@@ -1534,66 +1531,52 @@ const RaidBattle = () => {
                     </div>
                   ))}
                 </div>
-                <span className="d-flex ic-group">
-                  <span
-                    className={combineClasses(
-                      'ic-copy text-white me-1',
-                      trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
-                    )}
+                <span className="tw-flex tw-items-center ic-group tw-gap-2">
+                  <ButtonMui
+                    isRound
+                    className="ic-copy !tw-p-0 !tw-min-w-8 !tw-h-8"
+                    disabled={!trainer.pokemons.at(0)?.dataTargetPokemon}
                     title="Copy"
+                    label={<ContentCopyIcon color="inherit" className="!tw-text-small" />}
                     onClick={() => {
-                      if (trainer.pokemons.at(0)?.dataTargetPokemon) {
-                        setCountTrainer(countTrainer + 1);
-                        setTrainerBattle(
-                          update(trainerBattle, {
-                            $push: [{ ...trainerBattle[index], trainerId: countTrainer + 1 }],
-                          })
-                        );
-                      }
+                      setCountTrainer(countTrainer + 1);
+                      setTrainerBattle(
+                        update(trainerBattle, {
+                          $push: [{ ...trainerBattle[index], trainerId: countTrainer + 1 }],
+                        })
+                      );
                     }}
-                  >
-                    <ContentCopyIcon sx={{ fontSize: 14 }} />
-                  </span>
-                  <span
-                    className={combineClasses(
-                      'ic-remove text-white',
-                      index > 0 ? 'bg-danger' : 'click-none bg-secondary'
-                    )}
+                  />
+                  <ButtonMui
+                    isRound
+                    className="ic-remove !tw-p-0 !tw-min-w-8 !tw-h-8"
+                    disabled={index === 0}
+                    color="error"
                     title="Remove"
-                    onClick={() => {
-                      if (index > 0) {
-                        setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }));
-                      }
-                    }}
-                  >
-                    <DeleteIcon sx={{ fontSize: 14 }} />
-                  </span>
+                    label={<DeleteIcon color="inherit" className="!tw-text-small" />}
+                    onClick={() => setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }))}
+                  />
                 </span>
               </div>
             ))}
-            <div className="text-center mt-2">
-              <button
-                className="btn btn-primary"
+            <div className="tw-text-center tw-mt-2">
+              <ButtonMui
                 onClick={() => calculateTrainerBattle(trainerBattle)}
                 disabled={!resultBoss}
-              >
-                Raid Battle
-              </button>
-            </div>
-            <div className="d-flex flex-wrap justify-content-center align-items-center mt-2">
-              <RemoveCircleIcon
-                className={combineClasses('cursor-pointer link-danger', trainerBattle.length > 1 ? '' : 'click-none')}
-                fontSize="large"
-                onClick={() => {
-                  if (trainerBattle.length > 1) {
-                    setTrainerBattle(update(trainerBattle, { $splice: [[trainerBattle.length - 1]] }));
-                  }
-                }}
+                label="Raid Battle"
               />
+            </div>
+            <div className="tw-flex tw-flex-wrap tw-justify-center tw-items-center tw-mt-2">
+              <IconButton
+                disabled={trainerBattle.length <= 1}
+                color="error"
+                onClick={() => setTrainerBattle(update(trainerBattle, { $splice: [[trainerBattle.length - 1]] }))}
+              >
+                <RemoveCircleIcon fontSize="large" />
+              </IconButton>
               <div className="count-pokemon">{trainerBattle.length}</div>
-              <AddCircleIcon
-                className="cursor-pointer link-success"
-                fontSize="large"
+              <IconButton
+                color="success"
                 onClick={() => {
                   setCountTrainer(countTrainer + 1);
                   setTrainerBattle(
@@ -1602,11 +1585,13 @@ const RaidBattle = () => {
                     })
                   );
                 }}
-              />
+              >
+                <AddCircleIcon fontSize="large" />
+              </IconButton>
             </div>
           </div>
-          <div className="col-lg-7 stats-boss h-100">
-            <div className="d-flex flex-wrap align-items-center column-gap-3">
+          <div className="lg:tw-w-7/12 stats-boss tw-h-full">
+            <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-x-3">
               <h3>
                 <b>
                   {searchingToolCurrentData?.form ? `#${searchingToolCurrentData?.form?.defaultId}` : ''}{' '}
@@ -1618,63 +1603,65 @@ const RaidBattle = () => {
               </h3>
               <TypeInfo arr={searchingToolCurrentData?.form?.form?.types} />
             </div>
-            <div className="d-flex flex-wrap align-items-center column-gap-3">
+            <div className="tw-flex tw-flex-wrap tw-items-center tw-gap-x-3">
               <TypeBadge title="Fast Move" move={fMove} moveType={fMove?.moveType ?? MoveType.None} />
               <TypeBadge title="Charged Move" move={cMove} moveType={cMove?.moveType ?? MoveType.None} />
             </div>
             {resultBoss && (
               <Fragment>
                 <hr />
-                <div className="row m-0">
-                  <div className="col-lg-6 mb-3">
-                    <span className="d-block mt-2">
-                      {`DPS: `}
+                <div className="row !tw-m-0">
+                  <div className="lg:tw-w-1/2 tw-flex tw-flex-col tw-gap-2 tw-mb-3">
+                    <span className="tw-flex tw-gap-2">
+                      <span>DPS:</span>
                       <b>
                         {toFloatWithPadding(resultBoss.minDPS, 2)} - {toFloatWithPadding(resultBoss.maxDPS, 2)}
                       </b>
                     </span>
-                    <span className="d-block">
-                      Average DPS: <b>{toFloatWithPadding((resultBoss.minDPS + resultBoss.maxDPS) / 2, 2)}</b>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Average DPS:</span>
+                      <b>{toFloatWithPadding((resultBoss.minDPS + resultBoss.maxDPS) / 2, 2)}</b>
                     </span>
-                    <span className="d-block">
-                      {'Total Damage Output: '}
+                    <span className="tw-flex tw-gap-2 tw-flex-col">
+                      <span>Total Damage Output:</span>
                       <b>
                         {toFloatWithPadding(resultBoss.minTDO, 2)} - {toFloatWithPadding(resultBoss.maxTDO, 2)}
                       </b>
                     </span>
-                    <span className="d-block">
-                      Average Total Damage Output:{' '}
+                    <span className="tw-flex tw-gap-2">
+                      <span>Average Total Damage Output:</span>
                       <b>{toFloatWithPadding((resultBoss.minTDO + resultBoss.maxTDO) / 2, 2)}</b>
                     </span>
-                    <span className="d-block">
-                      {'Boss HP Remaining: '}
+                    <span className="tw-flex tw-gap-2">
+                      <span>Boss HP Remaining:</span>
                       <b>
                         {Math.round(resultBoss.minHP)} - {Math.round(resultBoss.maxHP)}
                       </b>
                     </span>
-                    <span className="d-block">
-                      Boss Average HP Remaining: <b>{Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)}</b>
+                    <span className="tw-flex tw-gap-2">
+                      <span>Boss Average HP Remaining:</span>
+                      <b>{Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)}</b>
                     </span>
                   </div>
-                  <div className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center mb-3">
-                    <h2 className="text-center m-0">Suggested players</h2>
-                    <hr className="w-100" />
-                    <div className="d-inline-block text-center">
-                      <h3 className="d-block m-0">
+                  <div className="lg:tw-w-1/2 tw-flex tw-flex-wrap tw-justify-center tw-items-center tw-mb-3">
+                    <h2 className="tw-text-center !tw-m-0">Suggested players</h2>
+                    <hr className="tw-w-full" />
+                    <div className="tw-inline-block tw-text-center">
+                      <h3 className="tw-block !tw-m-0">
                         {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP)))}
                       </h3>
                       {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP))) === 1 ? (
-                        <span className="caption text-success">Easy</span>
+                        <span className="caption tw-text-green-600">Easy</span>
                       ) : (
-                        <span className="caption text-danger">Hard</span>
+                        <span className="caption tw-text-red-600">Hard</span>
                       )}
                     </div>
-                    <h3 className="mx-2 mb-3"> - </h3>
-                    <div className="d-inline-block text-center">
-                      <h3 className="d-block m-0">
+                    <h3 className="tw-mx-2 tw-mb-3"> - </h3>
+                    <div className="tw-inline-block tw-text-center">
+                      <h3 className="tw-block !tw-m-0">
                         {Math.ceil(statBossHP / (statBossHP - Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)))}+
                       </h3>
-                      <span className="caption text-success">Easy</span>
+                      <span className="caption tw-text-green-600">Easy</span>
                     </div>
                   </div>
                 </div>
@@ -1683,15 +1670,15 @@ const RaidBattle = () => {
             {isNotEmpty(resultRaid) && (
               <Fragment>
                 <hr />
-                <ul className="mt-2 list-style-initial">
+                <ul className="tw-mt-2 list-style-initial">
                   {resultRaid?.map((result, turn) => (
-                    <li className="mb-3" key={turn}>
+                    <li className="tw-mb-3" key={turn}>
                       <h4>
                         <b>Pokémon Round {turn + 1}</b>
                       </h4>
-                      <div className="w-100 overflow-x-auto">
+                      <div className="tw-w-full tw-overflow-x-auto">
                         <table className="table-info table-round-battle">
-                          <thead className="text-center">
+                          <thead className="tw-text-center">
                             <tr className="table-header">
                               <th>Trainer ID</th>
                               <th>Pokémon</th>
@@ -1701,7 +1688,7 @@ const RaidBattle = () => {
                               <th>HP</th>
                             </tr>
                           </thead>
-                          <tbody className="text-center">
+                          <tbody className="tw-text-center">
                             {result.pokemon.map((data, index) => (
                               <tr key={index}>
                                 <td>#{toNumber(data.trainerId) + 1}</td>
@@ -1711,7 +1698,7 @@ const RaidBattle = () => {
                                     overlay={<CustomPopover>{modalDetailsPokemon(data)}</CustomPopover>}
                                   >
                                     <span className="tooltips-info">
-                                      <div className="d-flex align-items-center table-pokemon">
+                                      <div className="tw-flex tw-items-center table-pokemon">
                                         <PokemonIconType pokemonType={data.pokemon?.stats?.pokemonType} size={18}>
                                           <img
                                             className="pokemon-sprite-battle"
@@ -1764,7 +1751,7 @@ const RaidBattle = () => {
                             )}
                             <tr className="text-summary">
                               <td colSpan={2}>Total DPS: {toFloatWithPadding(result.summary.dpsAtk, 2)}</td>
-                              <td className="text-center" colSpan={2}>
+                              <td className="tw-text-center" colSpan={2}>
                                 Total TDO: {toFloatWithPadding(result.summary.tdoAtk, 2)}
                               </td>
                               <td colSpan={2}>
@@ -1776,8 +1763,13 @@ const RaidBattle = () => {
                               (!enableTimeAllow && result.summary.timer <= timeAllow)) && (
                               <tr className="text-summary">
                                 <td colSpan={3}>
-                                  <TimerIcon /> Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}
-                                  {enableTimeAllow && ` / ${timeAllow}`}
+                                  <div className="tw-flex tw-items-center tw-gap-2">
+                                    <TimerIcon />
+                                    <span className="tw-mb-2">
+                                      Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}
+                                      {enableTimeAllow && ` / ${timeAllow}`}
+                                    </span>
+                                  </div>
                                 </td>
                                 {resultBattle(
                                   Math.floor(result.summary.bossHp - result.summary.tdoAtk),
@@ -1796,109 +1788,109 @@ const RaidBattle = () => {
           </div>
         </div>
       </div>
-      <Modal show={show && !showSettingPokemon.isShow} onHide={handleClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Trainer #{trainerBattleId + 1}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
-            {pokemonBattle.map((pokemon, index) => (
-              <div className={index === 0 ? '' : 'mt-2'} key={index}>
-                <PokemonRaid
-                  isControls
-                  id={index}
-                  pokemon={pokemon}
-                  data={pokemonBattle}
-                  setData={setPokemonBattle}
-                  defaultSetting={initPokemonStats}
-                  onCopyPokemon={onCopyPokemon}
-                  onRemovePokemon={onRemovePokemon}
-                  onOptionsPokemon={onOptionsPokemon}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="d-flex flex-wrap justify-content-center align-items-center mt-2">
-            <RemoveCircleIcon
-              className={combineClasses('cursor-pointer link-danger', pokemonBattle.length > 1 ? '' : 'click-none')}
-              fontSize="large"
-              onClick={() => {
-                if (pokemonBattle.length > 1) {
-                  setPokemonBattle(update(pokemonBattle, { $splice: [[pokemonBattle.length - 1]] }));
-                }
-              }}
-            />
-            <div className="count-pokemon">{pokemonBattle.length}</div>
-            <AddCircleIcon
-              className="cursor-pointer link-success"
-              fontSize="large"
-              onClick={() => setPokemonBattle(update(pokemonBattle, { $push: [new PokemonRaidModel()] }))}
-            />
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant={VariantType.Secondary} onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant={VariantType.Primary} onClick={handleSave}>
-            Save changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <DialogMui
+        open={show && !showSettingPokemon.isShow}
+        onClose={handleClose}
+        title={`Trainer #${trainerBattleId + 1}`}
+        content={
+          <>
+            <div className="tw-overflow-y-auto tw-max-h-[60vh]">
+              {pokemonBattle.map((pokemon, index) => (
+                <div className={index === 0 ? '' : 'tw-mt-2'} key={index}>
+                  <PokemonRaid
+                    isControls
+                    id={index}
+                    pokemon={pokemon}
+                    data={pokemonBattle}
+                    setData={setPokemonBattle}
+                    defaultSetting={initPokemonStats}
+                    onCopyPokemon={onCopyPokemon}
+                    onRemovePokemon={onRemovePokemon}
+                    onOptionsPokemon={onOptionsPokemon}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="tw-flex tw-flex-wrap tw-justify-center tw-items-center tw-mt-2">
+              <IconButton
+                disabled={pokemonBattle.length <= 1}
+                color="error"
+                onClick={() => setPokemonBattle(update(pokemonBattle, { $splice: [[pokemonBattle.length - 1]] }))}
+              >
+                <RemoveCircleIcon fontSize="large" />
+              </IconButton>
+              <div className="count-pokemon">{pokemonBattle.length}</div>
+              <IconButton
+                color="success"
+                onClick={() => setPokemonBattle(update(pokemonBattle, { $push: [new PokemonRaidModel()] }))}
+              >
+                <AddCircleIcon fontSize="large" />
+              </IconButton>
+            </div>
+          </>
+        }
+        actions={[
+          {
+            label: 'Cancel',
+            color: 'tertiary',
+            isClose: true,
+          },
+          {
+            label: 'Save',
+            onClick: handleSave,
+          },
+        ]}
+      />
 
-      <Modal show={showOption} onHide={handleCloseOption} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Search Options</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
-            {modalFormFilters()}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant={VariantType.Secondary} onClick={handleCloseOption}>
-            Close
-          </Button>
-          <Button variant={VariantType.Primary} onClick={handleSaveOption}>
-            Save changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <DialogMui
+        open={showOption}
+        onClose={handleCloseOption}
+        title="Search Options"
+        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalFormFilters()}</div>}
+        actions={[
+          {
+            label: 'Cancel',
+            color: 'tertiary',
+            isClose: true,
+          },
+          {
+            label: 'Save',
+            onClick: handleSaveOption,
+          },
+        ]}
+      />
 
-      <Modal show={showSettingPokemon.isShow} onHide={handleCloseSettingPokemon} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Pokémon Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
-            {modalFormSetting()}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant={VariantType.Secondary} onClick={handleCloseSettingPokemon}>
-            Close
-          </Button>
-          <Button variant={VariantType.Primary} onClick={handleSaveSettingPokemon}>
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <DialogMui
+        open={showSettingPokemon.isShow}
+        onClose={handleCloseSettingPokemon}
+        title="Pokémon Settings"
+        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalFormSetting()}</div>}
+        actions={[
+          {
+            label: 'Cancel',
+            color: 'tertiary',
+            isClose: true,
+          },
+          {
+            label: 'Save',
+            onClick: handleSaveSettingPokemon,
+          },
+        ]}
+      />
 
-      <Modal show={showMovePokemon.isShow} onHide={handleCloseMovePokemon} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Move Pokémon</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
-            {modalMovePokemon()}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant={VariantType.Secondary} onClick={handleCloseMovePokemon}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <DialogMui
+        open={showMovePokemon.isShow}
+        onClose={handleCloseMovePokemon}
+        title="Move Pokémon"
+        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalMovePokemon()}</div>}
+        actions={[
+          {
+            label: 'Cancel',
+            color: 'tertiary',
+            isClose: true,
+          },
+        ]}
+      />
     </Fragment>
   );
 };

@@ -38,7 +38,8 @@ const Hexagon = (props: IHexagonComponent) => {
     ctx: CanvasRenderingContext2D,
     center: IPointer,
     percentage: number,
-    color: string,
+    bgColor: string,
+    strokeColor: string,
     isFill: boolean
   ) => {
     const start = getHexConnerCord(center, percentage, 0);
@@ -50,23 +51,23 @@ const Hexagon = (props: IHexagonComponent) => {
     }
     ctx.setLineDash([20, 15]);
     if (isFill) {
-      ctx.fillStyle = 'gray';
+      ctx.fillStyle = bgColor;
       ctx.fill();
     }
     ctx.lineWidth = 3;
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = strokeColor;
     ctx.stroke();
     ctx.closePath();
   };
 
-  const drawStatsHex = (ctx: CanvasRenderingContext2D, center: IPointer, stat: IHexagonStats, hexSize: number) => {
+  const drawStatsHex = (ctx: CanvasRenderingContext2D, center: IPointer, stat: IHexagonStats) => {
     const stats: DynamicObj<number> = {
-      '0': (stat.switching * hexSize) / 100,
-      '1': (stat.charger * hexSize) / 100,
-      '2': (stat.closer * hexSize) / 100,
-      '3': (stat.cons * hexSize) / 100,
-      '4': (stat.atk * hexSize) / 100,
-      '5': (stat.lead * hexSize) / 100,
+      '0': getPercentageBySize(stat.switching),
+      '1': getPercentageBySize(stat.charger),
+      '2': getPercentageBySize(stat.closer),
+      '3': getPercentageBySize(stat.cons),
+      '4': getPercentageBySize(stat.atk),
+      '5': getPercentageBySize(stat.lead),
     };
     const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
     ctx.beginPath();
@@ -91,8 +92,23 @@ const Hexagon = (props: IHexagonComponent) => {
     return animationType === AnimationType.On
       ? Math.min(startStat + endStat / 30, endStat)
       : endStat > startStat
-      ? Math.min(startStat + endStat / 30, endStat)
-      : Math.max(startStat - endStat / 30, endStat);
+        ? Math.min(startStat + endStat / 30, endStat)
+        : Math.max(startStat - endStat / 30, endStat);
+  };
+
+  const getPercentageBySize = (size: number, fullSize = props.size / 2) => (fullSize * size) / 100;
+
+  const getColorVar = (color: string) => {
+    if (color.startsWith('var(')) {
+      const tempElement = document.createElement('div');
+      tempElement.style.color = color;
+      document.body.appendChild(tempElement);
+      const computedColor = getComputedStyle(tempElement).color;
+      document.body.removeChild(tempElement);
+      return computedColor;
+    } else {
+      return color;
+    }
   };
 
   const drawHexagon = useCallback(
@@ -102,15 +118,17 @@ const Hexagon = (props: IHexagonComponent) => {
 
       const ctx = canvasHex.current?.getContext('2d');
       if (ctx) {
+        const bgColor = getColorVar('var(--custom-gray)');
+        const strokeColor = getColorVar('var(--custom-table-border)');
         ctx.beginPath();
         ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
         ctx.closePath();
         const pointer = new Pointer(hexSize, (hexBorderSize + 4) / 2);
-        drawLineHex(ctx, pointer, hexSize, 'white', true);
-        drawLineHex(ctx, pointer, 25, 'var(--custom-table-border)', false);
-        drawLineHex(ctx, pointer, 50, 'var(--custom-table-border)', false);
-        drawLineHex(ctx, pointer, 75, 'var(--custom-table-border)', false);
-        drawStatsHex(ctx, pointer, stats, hexSize);
+        drawLineHex(ctx, pointer, hexSize, bgColor, strokeColor, true);
+        drawLineHex(ctx, pointer, getPercentageBySize(25), bgColor, strokeColor, false);
+        drawLineHex(ctx, pointer, getPercentageBySize(50), bgColor, strokeColor, false);
+        drawLineHex(ctx, pointer, getPercentageBySize(75), bgColor, strokeColor, false);
+        drawStatsHex(ctx, pointer, stats);
         setInitHex(true);
       }
     },
@@ -128,45 +146,47 @@ const Hexagon = (props: IHexagonComponent) => {
     );
   };
 
+  const animationStatsRef = useRef({ ...defaultStats });
+  const animateId = useRef<number>();
+
   useEffect(() => {
-    if (props.name && props.animation === AnimationType.On) {
-      setDefaultStats(new HexagonStats());
-    } else {
+    if (!props.animation) {
       setDefaultStats(props.defaultStats ?? props.stats ?? new HexagonStats());
     }
-  }, [props.name, props.animation, props.defaultStats, props.stats]);
+  }, [props.defaultStats, props.stats, props.animation]);
 
   useEffect(() => {
+    animationStatsRef.current = { ...defaultStats };
+
     if (props.animation === AnimationType.On) {
       animateId.current = requestAnimationFrame(function animate() {
-        setDefaultStats(
-          HexagonStats.render({
-            lead: loop(props.animation, defaultStats.lead, props.stats?.lead),
-            charger: loop(props.animation, defaultStats.charger, props.stats?.charger),
-            closer: loop(props.animation, defaultStats.closer, props.stats?.closer),
-            cons: loop(props.animation, defaultStats.cons, props.stats?.cons),
-            atk: loop(props.animation, defaultStats.atk, props.stats?.atk),
-            switching: loop(props.animation, defaultStats.switching, props.stats?.switching),
-          })
-        );
-        animateId.current = requestAnimationFrame(animate);
+        animationStatsRef.current = HexagonStats.render({
+          lead: loop(props.animation, animationStatsRef.current.lead, props.stats?.lead),
+          charger: loop(props.animation, animationStatsRef.current.charger, props.stats?.charger),
+          closer: loop(props.animation, animationStatsRef.current.closer, props.stats?.closer),
+          cons: loop(props.animation, animationStatsRef.current.cons, props.stats?.cons),
+          atk: loop(props.animation, animationStatsRef.current.atk, props.stats?.atk),
+          switching: loop(props.animation, animationStatsRef.current.switching, props.stats?.switching),
+        });
+
+        drawHexagon(animationStatsRef.current);
+
+        if (!equalStats(animationStatsRef.current)) {
+          animateId.current = requestAnimationFrame(animate);
+        }
       });
+    } else {
+      drawHexagon(props.stats ?? defaultStats ?? new HexagonStats());
     }
 
-    if (!equalStats(defaultStats)) {
-      drawHexagon(defaultStats);
-    } else {
-      drawHexagon(props.stats ?? new HexagonStats());
-    }
     return () => {
-      if (props.animation === AnimationType.On && animateId.current) {
+      if (animateId.current) {
         cancelAnimationFrame(animateId.current);
         animateId.current = undefined;
       }
     };
-  }, [drawHexagon, defaultStats, props.animation, props.stats]);
+  }, [drawHexagon, props.animation, props.stats]);
 
-  const animateId = useRef<number>();
   const onPlayAnimation = () => {
     if (animateId.current) {
       cancelAnimationFrame(animateId.current);
@@ -195,35 +215,35 @@ const Hexagon = (props: IHexagonComponent) => {
   };
 
   return (
-    <div className="position-relative stats-border" style={{ width: props.borderSize, height: props.borderSize }}>
+    <div className="tw-relative stats-border" style={{ width: props.borderSize, height: props.borderSize }}>
       {initHex && (
         <Fragment>
-          <div className="position-absolute text-center leader-text">
+          <div className="tw-absolute tw-text-center leader-text">
             {toFloatWithPadding(props.stats?.lead, 1)}
             <br />
             <b>Leader</b>
           </div>
-          <div className="position-absolute text-center attacker-text">
+          <div className="tw-absolute tw-text-center attacker-text">
             {toFloatWithPadding(props.stats?.atk, 1)}
             <br />
             <b>Attacker</b>
           </div>
-          <div className="position-absolute text-center consistence-text">
+          <div className="tw-absolute tw-text-center consistence-text">
             {toFloatWithPadding(props.stats?.cons, 1)}
             <br />
             <b>Consistence</b>
           </div>
-          <div className="position-absolute text-center closer-text">
+          <div className="tw-absolute tw-text-center closer-text">
             {toFloatWithPadding(props.stats?.closer, 1)}
             <br />
             <b>Closer</b>
           </div>
-          <div className="position-absolute text-center charger-text">
+          <div className="tw-absolute tw-text-center charger-text">
             {toFloatWithPadding(props.stats?.charger, 1)}
             <br />
             <b>Charger</b>
           </div>
-          <div className="position-absolute text-center switch-text">
+          <div className="tw-absolute tw-text-center switch-text">
             {toFloatWithPadding(props.stats?.switching, 1)}
             <br />
             <b>Switch</b>

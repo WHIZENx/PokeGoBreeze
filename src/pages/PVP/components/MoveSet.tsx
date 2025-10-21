@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { MoveSetComponent } from '../models/component.model';
 import { OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../../components/Popover/CustomPopover';
+import CustomPopover from '../../../components/Commons/Popovers/CustomPopover';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
@@ -23,7 +23,7 @@ import { ArcheType } from '../enums/arche-type.enum';
 import { MoveType } from '../../../enums/type.enum';
 import { PokemonRankingMove } from '../../../core/models/pvp.model';
 import { IMoveSet, MoveSetModel } from '../models/move-set.model';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import useCombats from '../../../composables/useCombats';
 
@@ -48,11 +48,11 @@ const MoveSet = (props: MoveSetComponent) => {
             {value === ArcheType.HeavyDamage && <BrokenImageIcon sx={{ color: 'brown' }} />}
             {value === ArcheType.Multipurpose && <SpokeIcon sx={{ color: 'lightskyblue' }} />}
             {value === ArcheType.SelfDebuff && (
-              <div className="position-relative">
+              <div className="tw-relative">
                 <PersonIcon sx={{ color: 'black' }} />
                 <KeyboardDoubleArrowDownIcon
                   fontSize="small"
-                  className="position-absolute"
+                  className="tw-absolute"
                   sx={{ color: 'red', left: '50%', bottom: 0 }}
                 />
               </div>
@@ -69,43 +69,43 @@ const MoveSet = (props: MoveSetComponent) => {
       overlay={
         <CustomPopover id="popover-info">
           <span className="info-evo">
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <CircleIcon className="filter-shadow" sx={{ color: 'white' }} /> {ArcheType.General}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <RocketLaunchIcon className="filter-shadow" sx={{ color: 'gray' }} /> {ArcheType.Nuke}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <BakeryDiningIcon className="filter-shadow" sx={{ color: 'pink' }} /> {ArcheType.SpamBait}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <EnergySavingsLeafIcon className="filter-shadow" sx={{ color: 'orange' }} /> {ArcheType.HighEnergy}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <StairsIcon className="filter-shadow" sx={{ color: 'lightgray' }} /> {ArcheType.LowQuality}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <ArrowDownwardIcon className="filter-shadow" sx={{ color: 'lightcoral' }} /> {ArcheType.Debuff}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <ArrowUpwardIcon className="filter-shadow" sx={{ color: 'lightgreen' }} /> {ArcheType.Boost}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <BoltIcon className="filter-shadow" sx={{ color: '#f8d030' }} /> {ArcheType.FastCharge}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <BrokenImageIcon className="filter-shadow" sx={{ color: 'brown' }} /> {ArcheType.HeavyDamage}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               - <SpokeIcon className="filter-shadow" sx={{ color: 'lightskyblue' }} /> {ArcheType.Multipurpose}
             </span>
-            <span className="d-block caption">
+            <span className="tw-block caption">
               {'- '}
-              <span className="position-relative filter-shadow me-1">
+              <span className="tw-relative filter-shadow tw-mr-1">
                 <PersonIcon sx={{ color: 'black' }} />
                 <KeyboardDoubleArrowDownIcon
                   fontSize="small"
-                  className="position-absolute"
+                  className="tw-absolute"
                   sx={{ color: 'red', left: '50%', bottom: 0 }}
                 />
               </span>
@@ -126,19 +126,19 @@ const MoveSet = (props: MoveSetComponent) => {
       to={`/move/${move?.id}`}
       className={combineClasses(
         move?.type?.toLowerCase(),
-        'filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
+        'filter-shadow-hover tw-text-white type-rank-item tw-flex tw-items-center tw-justify-between'
       )}
     >
-      <div className="d-flex column-gap-2">
+      <div className="tw-flex tw-gap-x-2">
         <IconType width={24} height={24} alt="Pokémon GO Type Logo" type={move?.type} isBorder />
         <span className="filter-shadow">
           {splitAndCapitalize(move.name, '_', ' ')}{' '}
           {move.moveType !== MoveType.None && <b className="filter-shadow">*</b>}
         </span>
       </div>
-      <div className="d-flex align-items-center column-gap-2">
+      <div className="tw-flex tw-items-center tw-gap-x-2">
         {move?.archetype && findArchetype(move.archetype)}
-        <span className="ranking-score score-ic text-black filter-shadow">{move.uses}</span>
+        <span className="ranking-score score-ic tw-text-black filter-shadow">{move.uses}</span>
       </div>
     </LinkToTop>
   );
@@ -177,8 +177,8 @@ const MoveSet = (props: MoveSetComponent) => {
   }, [fastMoves, chargedMoves, props.moves?.fastMoves, props.moves?.chargedMoves]);
 
   return (
-    <div className="row m-0">
-      <div className="col-xl-6 moves-title-container p-0">
+    <div className="row !tw-m-0">
+      <div className="xl:tw-w-1/2 moves-title-container !tw-p-0">
         <div className="moves-title">Fast Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {fastMoves?.map((value, index) => (
@@ -186,7 +186,7 @@ const MoveSet = (props: MoveSetComponent) => {
           ))}
         </div>
       </div>
-      <div className="col-xl-6 moves-title-container p-0">
+      <div className="xl:tw-w-1/2 moves-title-container !tw-p-0">
         <div className="moves-title">Charged Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {chargedMoves?.map((value, index) => (

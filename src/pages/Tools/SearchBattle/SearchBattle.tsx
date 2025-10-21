@@ -16,9 +16,6 @@ import {
 } from '../../../utils/utils';
 import { calculateStats } from '../../../utils/calculate';
 
-import { Accordion, useAccordionButton } from 'react-bootstrap';
-import { useSnackbar } from 'notistack';
-
 import { marks, PokeGoSlider } from '../../../utils/utils';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
@@ -29,7 +26,7 @@ import {
   IQueryStatesEvoChain,
   StatsCalculate,
 } from '../../../utils/models/calculate.model';
-import DynamicInputCP from '../../../components/Input/DynamicInputCP';
+import DynamicInputCP from '../../../components/Commons/Inputs/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import {
@@ -43,18 +40,19 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
-import { Toggle } from '../../../core/models/pvp.model';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
-import { VariantType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../components/LinkToTop';
+import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import useCalculate from '../../../composables/useCalculate';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 const FindBattle = () => {
   useTitle({
@@ -87,7 +85,7 @@ const FindBattle = () => {
   const [evoChain, setEvoChain] = useState<IQueryStatesEvoChain[][]>([]);
   const [bestInLeague, setBestInLeague] = useState<IBattleBaseStats[]>([]);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const clearArrStats = () => {
     setSearchCP('');
@@ -114,7 +112,8 @@ const FindBattle = () => {
           ...curr,
           form,
           id: toNumber(curr?.num),
-          name: getValueOrDefault(String, curr?.pokemonId),
+          name: getValueOrDefault(String, curr?.pokemonId?.toString()),
+          pokemonId: curr?.pokemonId?.toString(),
           evoList: getValueOrDefault(Array, curr?.evoList),
           tempEvo: getValueOrDefault(Array, curr?.tempEvo),
         });
@@ -141,7 +140,8 @@ const FindBattle = () => {
       ) {
         arr.push({
           ...obj,
-          name: getValueOrDefault(String, obj.pokemonId),
+          name: getValueOrDefault(String, obj.pokemonId?.toString()),
+          pokemonId: obj.pokemonId?.toString(),
           id: obj.num,
           evoList: getValueOrDefault(Array, obj.evoList),
           tempEvo: getValueOrDefault(Array, obj.tempEvo),
@@ -219,11 +219,11 @@ const FindBattle = () => {
                   !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]
                     ? b
                     : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
-                    ? a
-                    : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
-                      toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
-                    ? a
-                    : b
+                      ? a
+                      : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
+                          toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
+                        ? a
+                        : b
                 ),
               })
             );
@@ -240,11 +240,11 @@ const FindBattle = () => {
                 !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]
                   ? b
                   : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
-                  ? a
-                  : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
-                    toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
-                  ? a
-                  : b
+                    ? a
+                    : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
+                        toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
+                      ? a
+                      : b
               ),
             });
           }
@@ -271,13 +271,7 @@ const FindBattle = () => {
         }
         setBestInLeague(bestLeague.sort((a, b) => toNumber(a.maxCP) - toNumber(b.maxCP)));
       } else {
-        setTimeout(
-          () =>
-            enqueueSnackbar(`Error! Something went wrong.`, {
-              variant: VariantType.Error,
-            }),
-          300
-        );
+        setTimeout(() => showSnackbar(`Error! Something went wrong.`, 'error'), 300);
       }
       hideSpinner();
     },
@@ -288,7 +282,7 @@ const FindBattle = () => {
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (toNumber(searchCP) < minCp()) {
-        return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
+        return showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
       }
       showSpinner();
       const statATK = toNumber(searchingToolCurrentData?.pokemon?.statsGO?.atk);
@@ -304,7 +298,6 @@ const FindBattle = () => {
       ATKIv,
       DEFIv,
       STAIv,
-      enqueueSnackbar,
       searchCP,
       searchingToolCurrentData?.pokemon?.statsGO?.atk,
       searchingToolCurrentData?.pokemon?.statsGO?.def,
@@ -317,20 +310,16 @@ const FindBattle = () => {
     const name = splitAndCapitalize(searchingToolCurrentData?.pokemon?.fullName, '_', ' ');
     if (result.level === 0) {
       hideSpinner();
-      return enqueueSnackbar(
+      return showSnackbar(
         `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} impossible found in ${name}`,
-        {
-          variant: VariantType.Error,
-        }
+        'error'
       );
     }
     setTimeout(() => {
       searchStatsPoke(result.level);
-      enqueueSnackbar(
+      showSnackbar(
         `Search success at CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} found in ${name}`,
-        {
-          variant: VariantType.Success,
-        }
+        'success'
       );
     }, 500);
   };
@@ -358,18 +347,6 @@ const FindBattle = () => {
     }`;
   };
 
-  const LeaveToggle = (props: Toggle) => {
-    const decoratedOnClick = useAccordionButton(props.eventKey);
-
-    return (
-      <div className="accordion-footer" onClick={decoratedOnClick}>
-        <span className="text-danger">
-          Close <CloseIcon sx={{ color: 'red' }} />
-        </span>
-      </div>
-    );
-  };
-
   const renderPokemon = (value: IBattleBaseStats | IQueryStatesEvoChain, className?: string, height = 100) => {
     const assets = getAssetNameById(value.id, value.name, value.form);
     return (
@@ -386,16 +363,75 @@ const FindBattle = () => {
     );
   };
 
+  const renderPokemonBattleLeague = (
+    value: IQueryStatesEvoChain[],
+    item: IQueryStatesEvoChain,
+    battleStats: IBattleBaseStats,
+    cp: BattleLeagueCPType
+  ) => (
+    <div className="tw-mt-2 tw-flex tw-justify-center tw-text-left">
+      {battleStats.rank ? (
+        <ul className="list-best-league">
+          <h6>
+            <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon(cp)} />
+            <b>{` ${getPokemonBattleLeagueName(cp)}`}</b>
+          </h6>
+          <li>
+            Rank: <b>#{battleStats.rank}</b>
+          </li>
+          <li>CP: {battleStats.CP}</li>
+          <li>Level: {battleStats.level}</li>
+          <li>
+            {'Stats Prod (%): '}
+            <span className={combineClasses('!tw-bg-transparent', getTextColorRatio(battleStats.ratio))}>
+              <b>{toFloatWithPadding(battleStats.ratio, 2)}</b>
+            </span>
+          </li>
+          <li>
+            <span className="tw-flex tw-items-center">
+              <Candy id={item.id} className="tw-mr-1" />
+              <span className="tw-flex tw-items-center tw-mr-1">
+                {toNumber(battleStats.resultBetweenCandy) + getCandyEvo(value, item.id)}
+                <span className="tw-inline-block caption tw-text-green-600">(+{getCandyEvo(value, item.id)})</span>
+              </span>
+              <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
+              {battleStats.resultBetweenXLCandy}
+            </span>
+          </li>
+          <li>
+            <img
+              className="tw-mr-1"
+              alt="Image Stardust"
+              height={20}
+              src={APIService.getItemSprite('stardust_painted')}
+            />
+            {` ${battleStats.resultBetweenStardust}`}
+          </li>
+        </ul>
+      ) : (
+        <div>
+          <h6>
+            <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon(cp)} />
+            <b>{` ${getPokemonBattleLeagueName(cp)}`}</b>
+          </h6>
+          <b className="tw-text-red-600 tw-p-3">
+            <CloseIcon color="error" /> Not Elidge
+          </b>
+        </div>
+      )}
+    </div>
+  );
+
   return (
-    <div className="container">
+    <div className="tw-container">
       <Find isHide clearStats={clearArrStats} />
-      <h1 id="main" className="text-center">
+      <h1 id="main" className="tw-text-center">
         Search Battle Leagues Stats
       </h1>
-      <form className="mt-2 pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
-        <div className="form-group d-flex justify-content-center text-center">
-          <Box className="w-50" sx={{ minWidth: 350 }}>
-            <div className="justify-content-center input-group mb-3">
+      <form className="tw-mt-2 tw-pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
+        <div className="form-group tw-flex tw-justify-center tw-text-center">
+          <Box className="tw-w-1/2" sx={{ minWidth: 350 }}>
+            <div className="tw-justify-center input-group tw-mb-3">
               <DynamicInputCP
                 statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
                 statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
@@ -412,9 +448,9 @@ const FindBattle = () => {
             </div>
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center">
-          <Box className="w-50" sx={{ minWidth: 300 }}>
-            <div className="d-flex justify-content-between">
+        <div className="form-group tw-flex tw-justify-center tw-text-center">
+          <Box className="tw-w-1/2 tw-min-w-75">
+            <div className="tw-flex tw-justify-between">
               <b>ATK</b>
               <b>{ATKIv}</b>
             </div>
@@ -432,7 +468,7 @@ const FindBattle = () => {
                 setATKIv(v as number);
               }}
             />
-            <div className="d-flex justify-content-between">
+            <div className="tw-flex tw-justify-between">
               <b>DEF</b>
               <b>{DEFIv}</b>
             </div>
@@ -450,7 +486,7 @@ const FindBattle = () => {
                 setDEFIv(v as number);
               }}
             />
-            <div className="d-flex justify-content-between">
+            <div className="tw-flex tw-justify-between">
               <b>STA</b>
               <b>{STAIv}</b>
             </div>
@@ -470,26 +506,24 @@ const FindBattle = () => {
             />
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center mt-2">
-          <button type="submit" className="btn btn-primary">
-            Search
-          </button>
+        <div className="form-group tw-flex tw-justify-center tw-text-center tw-mt-2">
+          <ButtonMui type="submit" label="Search" />
         </div>
       </form>
       <Fragment>
         {isNotEmpty(evoChain) && isNotEmpty(bestInLeague) && (
-          <div className="text-center">
-            <div>
-              <h4 className="text-decoration-underline">Recommend Battle League</h4>
+          <div className="tw-text-center tw-pb-3">
+            <div className="tw-mb-3">
+              <h4 className="tw-underline">Recommend Battle League</h4>
               {bestInLeague.map((value, index) => (
                 <LinkToTop
                   to={`/pokemon/${value.id}${generateParamForm(value.form)}`}
-                  className="d-inline-block contain-poke-best-league border-best-poke"
+                  className="tw-inline-block contain-poke-best-league border-best-poke"
                   key={index}
                   title={`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}
                 >
-                  <div className="d-flex align-items-center h-100">
-                    <div className="border-best-poke h-100">
+                  <div className="tw-flex tw-items-center tw-h-full">
+                    <div className="border-best-poke tw-h-full">
                       {renderPokemon(value, 'poke-best-league', 102)}
                       <span className="caption border-best-poke best-name">
                         <b>
@@ -507,10 +541,10 @@ const FindBattle = () => {
                             value.league === LeagueBattleType.Little
                               ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)
                               : value.league === LeagueBattleType.Great
-                              ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)
-                              : value.league === LeagueBattleType.Ultra
-                              ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)
-                              : getPokemonBattleLeagueIcon()
+                                ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)
+                                : value.league === LeagueBattleType.Ultra
+                                  ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)
+                                  : getPokemonBattleLeagueIcon()
                           }
                         />
                         <div>
@@ -518,7 +552,7 @@ const FindBattle = () => {
                         </div>
                         <span className="caption caption-constant text-shadow">CP: {value.CP}</span>
                       </div>
-                      <span className="caption text-black border-best-poke">
+                      <span className="caption tw-text-black border-best-poke">
                         <b>#{value.rank}</b>
                       </span>
                     </div>
@@ -527,315 +561,85 @@ const FindBattle = () => {
               ))}
             </div>
             {evoChain.map((value, index) => (
-              <Accordion className="pb-3" key={index} style={{ marginTop: '3%', marginBottom: '5%' }}>
+              <Fragment key={index}>
                 <div className="form-header">
                   {!value.at(0)?.form ? capitalize(formNormal()) : splitAndCapitalize(value.at(0)?.form, '_', ' ')}
                   {' Form'}
                 </div>
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <b>More information</b>
-                  </Accordion.Header>
-                  <Accordion.Body className="p-0">
-                    <div className="sub-body">
-                      <div className="row justify-content-center league-info-content m-0">
-                        {value.map((item, index) => (
-                          <div className="col d-inline-block evo-item-desc justify-content-center p-0" key={index}>
-                            <div className="pokemon-best-league">
-                              <LinkToTop
-                                to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
-                                title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
-                              >
-                                <Badge color="primary" overlap="circular" badgeContent={index + 1}>
-                                  {renderPokemon(item)}
-                                </Badge>
-                                <div>
-                                  <b>
-                                    {`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')} `}
-                                    {splitAndCapitalize(searchingToolCurrentData?.form?.form?.formName, '-', ' ')}
-                                  </b>
+                <AccordionMui
+                  key={index}
+                  defaultValue={0}
+                  className="tw-mb-3"
+                  isShowAction
+                  items={[
+                    {
+                      value: index,
+                      label: <b>More information</b>,
+                      children: (
+                        <div className="sub-body">
+                          <div className="row tw-justify-center league-info-content !tw-m-0">
+                            {value.map((item, index) => (
+                              <div className="col tw-inline-block evo-item-desc tw-justify-center !tw-p-0" key={index}>
+                                <div className="pokemon-best-league">
+                                  <LinkToTop
+                                    to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                                    title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
+                                  >
+                                    <Badge color="primary" overlap="circular" badgeContent={index + 1}>
+                                      {renderPokemon(item)}
+                                    </Badge>
+                                    <div>
+                                      <b>
+                                        {`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')} `}
+                                        {splitAndCapitalize(searchingToolCurrentData?.form?.form?.formName, '-', ' ')}
+                                      </b>
+                                    </div>
+                                  </LinkToTop>
                                 </div>
-                              </LinkToTop>
-                            </div>
-                            {toNumber(item.maxCP) < maxCP ? (
-                              <div className="text-danger">
-                                <b>
-                                  <CloseIcon sx={{ color: 'red' }} /> Not Elidge
-                                </b>
+                                {toNumber(item.maxCP) < maxCP ? (
+                                  <div className="tw-text-red-600">
+                                    <b>
+                                      <CloseIcon color="error" /> Not Elidge
+                                    </b>
+                                  </div>
+                                ) : (
+                                  <Fragment>
+                                    <hr />
+                                    {renderPokemonBattleLeague(
+                                      value,
+                                      item,
+                                      item.battleLeague.little,
+                                      BattleLeagueCPType.Little
+                                    )}
+                                    {renderPokemonBattleLeague(
+                                      value,
+                                      item,
+                                      item.battleLeague.great,
+                                      BattleLeagueCPType.Great
+                                    )}
+                                    {renderPokemonBattleLeague(
+                                      value,
+                                      item,
+                                      item.battleLeague.ultra,
+                                      BattleLeagueCPType.Ultra
+                                    )}
+                                    {renderPokemonBattleLeague(
+                                      value,
+                                      item,
+                                      item.battleLeague.master,
+                                      BattleLeagueCPType.Master
+                                    )}
+                                  </Fragment>
+                                )}
                               </div>
-                            ) : (
-                              <Fragment>
-                                <hr />
-                                <div className="mt-2 d-flex justify-content-center text-start">
-                                  {item.battleLeague.little.rank ? (
-                                    <ul className="list-best-league">
-                                      <h6>
-                                        <img
-                                          alt="Pokémon Model"
-                                          height={32}
-                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
-                                        />
-                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
-                                      </h6>
-                                      <li>
-                                        Rank: <b>#{item.battleLeague.little.rank}</b>
-                                      </li>
-                                      <li>CP: {item.battleLeague.little.CP}</li>
-                                      <li>Level: {item.battleLeague.little.level}</li>
-                                      <li>
-                                        {'Stats Prod (%): '}
-                                        <span
-                                          className={combineClasses(
-                                            'bg-transparent',
-                                            getTextColorRatio(item.battleLeague.little.ratio)
-                                          )}
-                                        >
-                                          <b>{toFloatWithPadding(item.battleLeague.little.ratio, 2)}</b>
-                                        </span>
-                                      </li>
-                                      <li>
-                                        <span className="d-flex align-items-center">
-                                          <Candy id={item.id} className="me-1" />
-                                          <span className="d-flex align-items-center me-1">
-                                            {toNumber(item.battleLeague.little.resultBetweenCandy) +
-                                              getCandyEvo(value, item.id)}
-                                            <span className="d-inline-block caption text-success">
-                                              (+{getCandyEvo(value, item.id)})
-                                            </span>
-                                          </span>
-                                          <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
-                                          {item.battleLeague.little.resultBetweenXLCandy}
-                                        </span>
-                                      </li>
-                                      <li>
-                                        <img
-                                          className="me-1"
-                                          alt="Image Stardust"
-                                          height={20}
-                                          src={APIService.getItemSprite('stardust_painted')}
-                                        />
-                                        {` ${item.battleLeague.little.resultBetweenStardust}`}
-                                      </li>
-                                    </ul>
-                                  ) : (
-                                    <div>
-                                      <h6>
-                                        <img
-                                          alt="Pokémon Model"
-                                          height={32}
-                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
-                                        />
-                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
-                                      </h6>
-                                      <b className="text-danger p-3">
-                                        <CloseIcon sx={{ color: 'red' }} /> Not Elidge
-                                      </b>
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="mt-2 d-flex justify-content-center text-start">
-                                  {item.battleLeague.great.rank ? (
-                                    <ul className="list-best-league">
-                                      <h6>
-                                        <img
-                                          alt="Pokémon Model"
-                                          height={32}
-                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
-                                        />
-                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
-                                      </h6>
-                                      <li>
-                                        Rank: <b>#{item.battleLeague.great.rank}</b>
-                                      </li>
-                                      <li>CP: {item.battleLeague.great.CP}</li>
-                                      <li>Level: {item.battleLeague.great.level}</li>
-                                      <li>
-                                        {'Stats Prod (%): '}
-                                        <span
-                                          className={combineClasses(
-                                            'bg-transparent',
-                                            getTextColorRatio(item.battleLeague.great.ratio)
-                                          )}
-                                        >
-                                          <b>{toFloatWithPadding(item.battleLeague.great.ratio, 2)}</b>
-                                        </span>
-                                      </li>
-                                      <li>
-                                        <span className="d-flex align-items-center">
-                                          <Candy id={item.id} className="me-1" />
-                                          <span className="d-flex align-items-center">
-                                            {toNumber(item.battleLeague.great.resultBetweenCandy) +
-                                              getCandyEvo(value, item.id)}
-                                            <span className="d-inline-block caption text-success">
-                                              (+{getCandyEvo(value, item.id)})
-                                            </span>
-                                          </span>
-                                          <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
-                                          {item.battleLeague.great.resultBetweenXLCandy}
-                                        </span>
-                                      </li>
-                                      <li>
-                                        <img
-                                          className="me-1"
-                                          alt="Image Stardust"
-                                          height={20}
-                                          src={APIService.getItemSprite('stardust_painted')}
-                                        />
-                                        {` ${item.battleLeague.great.resultBetweenStardust}`}
-                                      </li>
-                                    </ul>
-                                  ) : (
-                                    <div>
-                                      <h6>
-                                        <img
-                                          alt="Pokémon Model"
-                                          height={32}
-                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
-                                        />
-                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
-                                      </h6>
-                                      <b className="text-danger p-3">
-                                        <CloseIcon sx={{ color: 'red' }} /> Not Elidge
-                                      </b>
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="mt-2 d-flex justify-content-center text-start">
-                                  {item.battleLeague.ultra.rank ? (
-                                    <ul className="list-best-league">
-                                      <h6>
-                                        <img
-                                          alt="Pokémon Model"
-                                          height={32}
-                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
-                                        />
-                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
-                                      </h6>
-                                      <li>
-                                        Rank: <b>#{item.battleLeague.ultra.rank}</b>
-                                      </li>
-                                      <li>CP: {item.battleLeague.ultra.CP}</li>
-                                      <li>Level: {item.battleLeague.ultra.level}</li>
-                                      <li>
-                                        {'Stats Prod (%): '}
-                                        <span
-                                          className={combineClasses(
-                                            'bg-transparent',
-                                            getTextColorRatio(item.battleLeague.ultra.ratio)
-                                          )}
-                                        >
-                                          <b>{toFloatWithPadding(item.battleLeague.ultra.ratio, 2)}</b>
-                                        </span>
-                                      </li>
-                                      <li>
-                                        <span className="d-flex align-items-center">
-                                          <Candy id={item.id} className="me-1" />
-                                          <span className="d-flex align-items-center">
-                                            {toNumber(item.battleLeague.ultra.resultBetweenCandy) +
-                                              getCandyEvo(value, item.id)}
-                                            <span className="d-inline-block caption text-success">
-                                              (+{getCandyEvo(value, item.id)})
-                                            </span>
-                                          </span>
-                                          <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
-                                          {item.battleLeague.ultra.resultBetweenXLCandy}
-                                        </span>
-                                      </li>
-                                      <li>
-                                        <img
-                                          className="me-1"
-                                          alt="Image Stardust"
-                                          height={20}
-                                          src={APIService.getItemSprite('stardust_painted')}
-                                        />
-                                        {` ${item.battleLeague.ultra.resultBetweenStardust}`}
-                                      </li>
-                                    </ul>
-                                  ) : (
-                                    <div>
-                                      <h6>
-                                        <img
-                                          alt="Pokémon Model"
-                                          height={32}
-                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
-                                        />
-                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
-                                      </h6>
-                                      <b className="text-danger p-3">
-                                        <CloseIcon sx={{ color: 'red' }} /> Not Elidge
-                                      </b>
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="mt-2 d-flex justify-content-center text-start">
-                                  {item.battleLeague.master.rank ? (
-                                    <ul className="list-best-league">
-                                      <h6>
-                                        <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
-                                        <b>{` ${getPokemonBattleLeagueName()}`}</b>
-                                      </h6>
-                                      <li>
-                                        Rank: <b>#{item.battleLeague.master.rank}</b>
-                                      </li>
-                                      <li>CP: {item.battleLeague.master.CP}</li>
-                                      <li>Level: {item.battleLeague.master.level}</li>
-                                      <li>
-                                        {'Stats Prod (%): '}
-                                        <span
-                                          className={combineClasses(
-                                            'bg-transparent',
-                                            getTextColorRatio(item.battleLeague.master.ratio)
-                                          )}
-                                        >
-                                          <b>{toFloatWithPadding(item.battleLeague.master.ratio, 2)}</b>
-                                        </span>
-                                      </li>
-                                      <li>
-                                        <span className="d-flex align-items-center">
-                                          <Candy id={item.id} className="me-1" />
-                                          <span className="d-flex align-items-center">
-                                            {toNumber(item.battleLeague.master.resultBetweenCandy) +
-                                              getCandyEvo(value, item.id)}
-                                            <span className="d-inline-block caption text-success">
-                                              (+{getCandyEvo(value, item.id)})
-                                            </span>
-                                          </span>
-                                          <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
-                                          {item.battleLeague.master.resultBetweenXLCandy}
-                                        </span>
-                                      </li>
-                                      <li>
-                                        <img
-                                          className="me-1"
-                                          alt="Image Stardust"
-                                          height={20}
-                                          src={APIService.getItemSprite('stardust_painted')}
-                                        />
-                                        {` ${item.battleLeague.master.resultBetweenStardust}`}
-                                      </li>
-                                    </ul>
-                                  ) : (
-                                    <div>
-                                      <h6>
-                                        <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
-                                        <b>{` ${getPokemonBattleLeagueName()}`}</b>
-                                      </h6>
-                                      <b className="text-danger p-3">
-                                        <CloseIcon sx={{ color: 'red' }} /> Not Elidge
-                                      </b>
-                                    </div>
-                                  )}
-                                </div>
-                              </Fragment>
-                            )}
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                    <LeaveToggle eventKey={index.toString()} />
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
+              </Fragment>
             ))}
           </div>
         )}

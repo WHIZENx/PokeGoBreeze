@@ -4,33 +4,23 @@ import { TypeTheme } from '../../../enums/type.enum';
 export const PaletteData = (mode: TypeTheme) =>
   ({
     mode,
-    error: {
-      main: '#f44336',
-      light: '#e57373',
-      dark: '#d32f2f',
+    tertiary: {
+      main: mode === TypeTheme.Light ? '#5a6268' : '#6c757d',
+      select: '#5a6268',
       contrastText: '#ffffff',
     },
-    warning: {
-      main: '#ff9800',
-      light: '#ffb74d',
-      dark: '#f57c00',
-      contrastText: 'rgba(0, 0, 0, 0.87)',
-    },
-    info: {
-      main: '#2196f3',
-      light: '#64b5f6',
-      dark: '#1976d2',
-      contrastText: '#ffffff',
-    },
-    success: {
-      main: '#4caf50',
-      light: '#81c784',
-      dark: '#388e3c',
-      contrastText: 'rgba(0, 0, 0, 0.87)',
+    default: {
+      main: mode === TypeTheme.Light ? '#e1e1e1' : '#3a3a45',
+      select: mode === TypeTheme.Light ? '#969696' : '#4f4f5c',
+      contrastText: mode === TypeTheme.Light ? '#000000' : '#ffffff',
     },
     divider: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)',
     background: {
       default: mode === TypeTheme.Light ? '#fafafa' : '#222222',
       paper: mode === TypeTheme.Light ? '#ffffff' : '#333333',
     },
-  } as unknown as Palette);
+    openLeague: {
+      main: mode === TypeTheme.Light ? '#e6ffe6' : '#193319',
+      select: mode === TypeTheme.Light ? '#e6ffe6' : '#193319',
+    },
+  }) as unknown as Palette;

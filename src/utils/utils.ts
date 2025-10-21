@@ -33,7 +33,7 @@ import {
 } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
-import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMoveModel } from '../components/Commons/Inputs/models/select-move.model';
 import { TypeEffectiveChart } from '../core/models/type-effective.model';
 import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
@@ -274,8 +274,8 @@ export const convertModelSpritName = (text: string | undefined) =>
       (isInclude(text, 'meowstic', IncludeMode.IncludeIgnoreCaseSensitive)
         ? '-'
         : isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
-        ? ''
-        : '_') + isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
+          ? ''
+          : '_') + isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
         ? ''
         : 'm'
     )
@@ -367,7 +367,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     .replace('-hero', '')
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
-    .replace('-shaymin', '');
+    .replace('-shaymin', '')
+    .replace('-altered', '');
   if (isInclude(text, formStandard(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     form = `-${formStandard().toLowerCase()}`;
   }
@@ -610,20 +611,20 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
   const defaultData: TableStyles = {
     header: {
       style: {
-        backgroundColor: 'var(--background-default)',
+        backgroundColor: 'var(--custom-default)',
         color: 'var(--text-primary)',
       },
     },
     subHeader: {
       style: {
-        backgroundColor: 'var(--background-default)',
+        backgroundColor: 'var(--custom-default)',
         color: 'var(--text-primary)',
       },
     },
     rows: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         '&:not(:last-of-type)': {
           borderBottomColor: 'var(--background-table-divided)',
         },
@@ -638,7 +639,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     },
     headCells: {
       style: {
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         color: 'var(--text-primary)',
       },
     },
@@ -650,7 +651,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     pagination: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         borderTopColor: 'var(--background-table-divided)',
       },
       pageButtonsStyle: {
@@ -671,7 +672,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     noData: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
       },
     },
   };
@@ -747,7 +748,11 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
   return result as unknown as IStatsPokemon;
 };
 
-export const replacePokemonGoForm = (form: string) => form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
+export const replacePokemonGoForm = (form: string | number) =>
+  form
+    .toString()
+    .replace(/_MALE$/, '')
+    .replace(/_FEMALE$/, '');
 
 export const formIconAssets = (value: IPokemonFormModify) =>
   isInclude(value.form.name, `-${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive) ||
@@ -1031,22 +1036,22 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction
       return form === PokemonType.Shadow
         ? combatShadowBonusAtk()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusAtk()
-        : 1;
+          ? combatPurifiedBonusAtk()
+          : 1;
     }
     case TypeAction.Def: {
       return form === PokemonType.Shadow
         ? combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusDef()
-        : 1;
+          ? combatPurifiedBonusDef()
+          : 1;
     }
     case TypeAction.Prod: {
       return form === PokemonType.Shadow
         ? combatShadowBonusAtk() * combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusAtk() * combatPurifiedBonusDef()
-        : 1;
+          ? combatPurifiedBonusAtk() * combatPurifiedBonusDef()
+          : 1;
     }
     default:
       return 1;
@@ -1298,16 +1303,18 @@ export const getValidPokemonImgPath = (src: string | undefined | null, id?: numb
   return APIService.getPokeFullSprite();
 };
 
-export const getBonusType = (bonusType: string | number) => {
-  if (bonusType === BonusType.SlowFreezeBonus || bonusType === 6) {
+export const getBonusType = (bonusType: string | number | BonusType | undefined) => {
+  if (bonusType === BonusType.AttackDefenseBonus || bonusType === BonusType.AttackDefenseBonus2) {
+    return BonusType.AttackDefenseBonus;
+  } else if (bonusType === BonusType.SlowFreezeBonus || bonusType === BonusType.SlowFreezeBonus2) {
     return BonusType.SlowFreezeBonus;
-  } else if (isEqual(bonusType, 'SPACE_BONUS')) {
+  } else if (isEqual(bonusType, 'SPACE_BONUS') || bonusType === BonusType.SpaceBonus) {
     return BonusType.SpaceBonus;
-  } else if (isEqual(bonusType, 'TIME_BONUS')) {
+  } else if (isEqual(bonusType, 'TIME_BONUS') || bonusType === BonusType.TimeBonus) {
     return BonusType.TimeBonus;
-  } else if (isEqual(bonusType, 'DAY_BONUS')) {
+  } else if (isEqual(bonusType, 'DAY_BONUS') || bonusType === BonusType.DayBonus) {
     return BonusType.DayBonus;
-  } else if (isEqual(bonusType, 'NIGHT_BONUS')) {
+  } else if (isEqual(bonusType, 'NIGHT_BONUS') || bonusType === BonusType.NightBonus) {
     return BonusType.NightBonus;
   }
   return BonusType.None;
@@ -1359,3 +1366,7 @@ export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
 
 export const isSpecialMegaFormType = (pokemonType: PokemonType | undefined) =>
   pokemonType === PokemonType.Mega || pokemonType === PokemonType.Primal;
+
+export const createDataRows = <T>(...rows: T[]) => {
+  return [...rows];
+};

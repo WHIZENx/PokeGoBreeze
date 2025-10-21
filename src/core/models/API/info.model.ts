@@ -376,7 +376,7 @@ export class PokemonDetail implements IPokemonDetail {
     obj.pokemonType = data.pokemonType;
     obj.formChange = data.formChange;
     obj.genderRatio = data.genderRatio;
-    obj.pokemonId = data.pokemonId;
+    obj.pokemonId = data.pokemonId?.toString();
     obj.evoList = data.evoList;
     obj.tempEvo = data.tempEvo;
     obj.prevEvo = data.prevEvo;

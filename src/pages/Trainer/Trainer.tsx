@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
-import { getValueOrDefault, isNotEmpty, toNumber } from '../../utils/extension';
+import { getValueOrDefault, isNotEmpty } from '../../utils/extension';
 import { getItemSpritePath, splitAndCapitalize } from '../../utils/utils';
 
 import './Trainer.scss';
 import { AwardItem } from '../../core/models/trainer.model';
 import useDataStore from '../../composables/useDataStore';
+import SelectMui from '../../components/Commons/Selects/SelectMui';
 
 interface TrainerLevelUp {
   levelUps: AwardItem[];
@@ -29,34 +29,36 @@ const Trainer = () => {
   }, [trainersData, level]);
 
   return (
-    <div className="container p-3">
-      <h2 className="title-leagues mb-3">Trainer</h2>
+    <div className="tw-container tw-p-3">
+      <h2 className="title-leagues tw-mb-3">Trainer</h2>
       <hr />
       <div>
-        <Form.Select onChange={(e) => setLevel(toNumber(e.target.value))} defaultValue={level}>
-          {trainersData.map((value, index) => (
-            <option key={index} value={value.level}>
-              Level {value.level}
-            </option>
-          ))}
-        </Form.Select>
+        <SelectMui
+          formSx={{ width: 200 }}
+          value={level}
+          onChangeSelect={(value) => setLevel(value)}
+          menuItems={trainersData.map((value) => ({
+            value: value.level,
+            label: `Level ${value.level}`,
+          }))}
+        />
       </div>
       {data && (
         <>
-          <p className="title-leagues mt-2">Receive Items</p>
-          <div className="d-flex justify-content-center mt-2">
+          <p className="title-leagues tw-mt-2">Receive Items</p>
+          <div className="tw-flex tw-justify-center tw-mt-2">
             <div className="trainer-levelup">
               <div className="levelup-container">
                 <>
                   {data.levelUps.map((value, index) => (
-                    <div className="d-flex justify-content-center flex-column align-items-center" key={index}>
+                    <div className="tw-flex tw-justify-center tw-flex-col tw-items-center" key={index}>
                       <img
-                        className="pokemon-sprite-medium w-9"
+                        className="pokemon-sprite-medium tw-w-16"
                         alt="Pokémon Image"
                         title={splitAndCapitalize(value.name.replace('ITEM_', ''), '_', ' ')}
                         src={getItemSpritePath(value.name)}
                       />
-                      <span className="caption text-black">
+                      <span className="caption tw-text-black">
                         {splitAndCapitalize(value.name.replace('ITEM_', ''), '_', ' ')} <b>x{value.amount}</b>
                       </span>
                     </div>
@@ -67,20 +69,20 @@ const Trainer = () => {
           </div>
           {isNotEmpty(data.itemUnlocks) && (
             <>
-              <p className="title-leagues mt-2">Receive Items</p>
-              <div className="d-flex justify-content-center mt-2">
+              <p className="title-leagues tw-mt-2">Receive Items</p>
+              <div className="tw-flex tw-justify-center tw-mt-2">
                 <div className="trainer-levelup">
-                  <div className="levelup-container justify-content-center">
+                  <div className="levelup-container tw-justify-center">
                     <>
                       {data.itemUnlocks?.map((value, index) => (
-                        <div className="d-flex justify-content-center flex-column align-items-center" key={index}>
+                        <div className="tw-flex tw-justify-center tw-flex-col tw-items-center" key={index}>
                           <img
-                            className="pokemon-sprite-medium w-9"
+                            className="pokemon-sprite-medium tw-w-16"
                             alt="Pokémon Image"
                             title={splitAndCapitalize(value.replace('ITEM_', ''), '_', ' ')}
                             src={getItemSpritePath(value)}
                           />
-                          <span className="caption text-black">
+                          <span className="caption tw-text-black">
                             {splitAndCapitalize(value.replace('ITEM_', ''), '_', ' ')}
                           </span>
                         </div>

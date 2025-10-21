@@ -90,13 +90,23 @@ interface SlowFreezeBonus {
   catchCircleOuterTimeScaleOverride: number;
 }
 
-export type BonusEffectType = SpaceBonus | TimeBonus | DayNightBonus | SlowFreezeBonus;
+interface Attributes {
+  combatTypes: string[];
+  attackMultiplier: number;
+}
+
+interface AttackDefenseBonus {
+  attributes: Attributes[];
+}
+
+export type BonusEffectType = SpaceBonus | TimeBonus | DayNightBonus | SlowFreezeBonus | AttackDefenseBonus;
 
 export interface IBonusEffect {
   spaceBonus?: SpaceBonus;
   timeBonus?: TimeBonus;
   dayNightBonus?: DayNightBonus;
   slowFreezeBonus?: SlowFreezeBonus;
+  attackDefenseBonus?: AttackDefenseBonus;
 }
 
 class BonusEffect implements IBonusEffect {

@@ -4,6 +4,16 @@ import { ThemeOptions } from '@mui/material';
 
 export const getDesignThemes = (mode: TypeTheme) =>
   ({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 576,
+        md: 768,
+        lg: 992,
+        xl: 1200,
+        '2xl': 1400,
+      },
+    },
     components: {
       MuiInputBase: {
         styleOverrides: {
@@ -13,6 +23,23 @@ export const getDesignThemes = (mode: TypeTheme) =>
           input: {
             '&::placeholder': {
               color: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.5)',
+            },
+          },
+        },
+      },
+      MuiButton: {
+        styleOverrides: {
+          containedSuccess: {
+            color: '#ffffff',
+          },
+          containedTertiary: {
+            color: '#ffffff',
+          },
+          containedDefault: {
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              backgroundColor: mode === TypeTheme.Light ? '#969696' : '#4f4f5c',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
             },
           },
         },
@@ -68,4 +95,4 @@ export const getDesignThemes = (mode: TypeTheme) =>
       fontWeightBold: 700,
     },
     spacing: 8,
-  } as unknown as ThemeOptions);
+  }) as unknown as ThemeOptions;

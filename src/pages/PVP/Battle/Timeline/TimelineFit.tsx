@@ -28,13 +28,13 @@ const TimelineFit = (
 
   const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle) => (
     <Fragment>
-      <div className="mt-2" style={{ height: 12 }}>
-        <div className="position-relative timeline-fit-container">
+      <div className="tw-mt-2 tw-h-3">
+        <div className="tw-relative timeline-fit-container">
           {poke.timeline.map((value, index) => (
             <Fragment key={index}>
-              {value.isTap && (
+              {value.isTap && showTap && (
                 <div
-                  className={combineClasses('charge-attack opacity-50', showTap ? 'd-block' : 'd-none')}
+                  className="charge-attack opacity-50"
                   style={{
                     width: value.size,
                     left: calculateWidthBasedPosition(poke.timeline, index),
@@ -46,8 +46,8 @@ const TimelineFit = (
                 <Fragment>
                   {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                     <div
-                      className="position-absolute icon-buff-timeline"
-                      style={{ left: calculateWidthBasedPosition(poke.timeline, index), top: 10 }}
+                      className="tw-absolute icon-buff-timeline tw-top-[10px]"
+                      style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}
                     >
                       {value.buff?.map((b, i) => (
                         <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
@@ -61,11 +61,8 @@ const TimelineFit = (
                       pokeObj.timeline.at(index)?.type === AttackType.Charge &&
                       isNotEmpty(value.buff) ? (
                         <div
-                          className="position-absolute icon-buff-timeline"
-                          style={{
-                            left: calculateWidthBasedPosition(poke.timeline, index),
-                            top: 10,
-                          }}
+                          className="tw-absolute icon-buff-timeline tw-top-[10px]"
+                          style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}
                         >
                           {value.buff?.map((b, i) => (
                             <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
@@ -74,13 +71,12 @@ const TimelineFit = (
                           ))}
                         </div>
                       ) : (
-                        <div
-                          className={combineClasses('wait-attack', showTap ? 'd-block' : 'd-none')}
-                          style={{
-                            width: value.size,
-                            left: calculateWidthBasedPosition(poke.timeline, index),
-                          }}
-                        />
+                        showTap && (
+                          <div
+                            className="wait-attack"
+                            style={{ width: value.size, left: calculateWidthBasedPosition(poke.timeline, index) }}
+                          />
+                        )
                       )}
                     </Fragment>
                   )}
@@ -90,7 +86,7 @@ const TimelineFit = (
           ))}
         </div>
       </div>
-      <div className="position-relative timeline-fit-container" style={{ height: 30 }}>
+      <div className="tw-relative timeline-fit-container tw-h-7.5">
         {poke.timeline.map((value, index) => (
           <Fragment key={index}>
             {value.type === AttackType.Block && (
@@ -159,16 +155,16 @@ const TimelineFit = (
   return (
     <Fragment>
       {!isHide && (
-        <div className="w-100 fit-timeline d-flex justify-content-center">
+        <div className="tw-w-full fit-timeline tw-flex tw-justify-center">
           <div
-            className="position-relative h-100"
+            className="tw-relative tw-h-full"
             ref={timeline}
             onMouseMove={move.bind(this)}
             onMouseOver={move.bind(this)}
             onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
           >
             {renderTimelineFit(pokemonCurr, pokemonObj)}
-            <hr className="w-100 m-0" />
+            <hr className="tw-w-full !tw-m-0" />
             {renderTimelineFit(pokemonObj, pokemonCurr)}
             <div id="play-line" ref={eRef} className="play-line" />
           </div>

@@ -1,6 +1,8 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Button, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { VariantType } from '../../enums/type.enum';
+import ButtonMui from '../Commons/Buttons/ButtonMui';
 
 interface Props {
   children: ReactNode;
@@ -61,33 +63,29 @@ class ErrorBoundary extends Component<Props, IState> {
       }
 
       return (
-        <div
-          className="d-flex flex-column align-items-center justify-content-center text-center p-4"
-          style={{
-            minHeight: '50vh',
-          }}
-        >
+        <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-p-4 tw-min-h-[50vh]">
           <Typography variant="h5" component="h2" gutterBottom>
             Something went wrong
           </Typography>
           <Typography variant="body1" gutterBottom>
             The application encountered an error.
           </Typography>
-          <div className="d-flex gap-2 mt-3">
-            <Button variant="contained" color="primary" onClick={this.handleGoHome}>
-              Back to Home
-            </Button>
-            <Button variant="outlined" color="primary" onClick={this.handleRefresh} startIcon={<RefreshIcon />}>
-              Refresh Page
-            </Button>
+          <div className="tw-flex tw-gap-2 tw-mt-3">
+            <ButtonMui onClick={this.handleGoHome} label="Back to Home" />
+            <ButtonMui
+              variant={VariantType.Outlined}
+              onClick={this.handleRefresh}
+              startIcon={<RefreshIcon />}
+              label="Refresh Page"
+            />
           </div>
           {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
-            <div className="mt-4 mw-100 overflow-auto">
+            <div className="tw-mt-4 tw-max-w-full tw-overflow-auto">
               <Typography variant="subtitle2" component="h3" gutterBottom>
                 Error Details (Deployment Only):
               </Typography>
               {this.state.error && (
-                <pre className="theme-custom-selected-bg p-2 rounded-1 mw-100 overflow-x-auto text-start">
+                <pre className="tw-bg-revert tw-p-2 tw-rounded-sm tw-max-w-full tw-overflow-x-auto tw-text-left">
                   {this.state.error.toString()}
                   {this.state.errorInfo?.componentStack}
                 </pre>

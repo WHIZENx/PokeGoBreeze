@@ -4,29 +4,43 @@ import { useCallback } from 'react';
 import { Combat, ICombat } from '../core/models/combat.model';
 import { TypeMove } from '../enums/type.enum';
 import { EqualMode } from '../utils/enums/string.enum';
-import { reverseReplaceTempMovePvpName, findMoveTeam } from '../utils/utils';
+import { reverseReplaceTempMovePvpName, findMoveTeam, getMoveType } from '../utils/utils';
+import usePokemon from './usePokemon';
 
 export const useCombats = () => {
   const { combatsData } = useDataStore();
+  const { findPokemonById } = usePokemon();
 
   const findMoveByName = useCallback(
-    (move: string | undefined) => {
-      return combatsData.find((item) => isEqual(item.name, move?.replaceAll('-', '_'), EqualMode.IgnoreCaseSensitive));
+    (move: string | undefined, pokemonId = 0) => {
+      const result = combatsData.find((item) =>
+        isEqual(item.name, move?.replaceAll('-', '_'), EqualMode.IgnoreCaseSensitive)
+      );
+      if (result && pokemonId) {
+        const pokemon = findPokemonById(pokemonId);
+        result.moveType = getMoveType(pokemon, move);
+      }
+      return result;
     },
     [combatsData]
   );
 
   const findMoveById = useCallback(
-    (track: number, type: string) => {
-      return combatsData.find(
+    (track: number, type: string, pokemonId = 0) => {
+      const result = combatsData.find(
         (item) => item.track === track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)
       );
+      if (result && pokemonId) {
+        const pokemon = findPokemonById(pokemonId);
+        result.moveType = getMoveType(pokemon, result.name);
+      }
+      return result;
     },
     [combatsData]
   );
 
   const findMoveByTag = useCallback(
-    (nameSet: string[], tag: string) => {
+    (nameSet: string[], tag: string, pokemonId = 0) => {
       let move: ICombat | undefined;
       if (!tag) {
         return move;
@@ -53,7 +67,10 @@ export const useCombats = () => {
           (item.abbreviation && isEqual(item.abbreviation, tag)) ||
           (isNotEmpty(nameSet) && !item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(nameSet[0])))
       );
-
+      if (move && pokemonId) {
+        const pokemon = findPokemonById(pokemonId);
+        move.moveType = getMoveType(pokemon, move.name);
+      }
       return move;
     },
     [combatsData]
