@@ -111,7 +111,7 @@ export const usePokemon = () => {
         const pokemonGOModify = new PokemonFormModifyModel(
           id,
           name,
-          pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase(),
+          pokemon.pokemonId?.toString().replaceAll('_', '-')?.toLowerCase(),
           pokemon.form?.replaceAll('_', '-')?.toLowerCase(),
           pokemon.fullName?.replaceAll('_', '-')?.toLowerCase(),
           versionList[0].replace(' ', '-'),
@@ -148,11 +148,10 @@ export const usePokemon = () => {
   };
 
   const getPokemonDetails = useCallback(
-    (id: number | undefined, form: string | number | undefined, pokemonType = PokemonType.None, isDefault = false) => {
+    (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None, isDefault = false) => {
       if (form) {
         const name = getPokemonFormWithNoneSpecialForm(
           form
-            .toString()
             .replace(/10$/, 'TEN_PERCENT')
             .replace(/50$/, 'FIFTY_PERCENT')
             .replace(/UNOWN-/i, '')

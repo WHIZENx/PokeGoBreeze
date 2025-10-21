@@ -196,7 +196,7 @@ export interface PokemonModel {
   pokemonClass: string | undefined;
   formChange?: IPokemonFormChange[];
   tempEvoOverrides?: TempEvoOverrides[];
-  pokemonId: string;
+  pokemonId: string | number;
   modelScale: number;
   type?: string;
   type2?: string;
@@ -216,7 +216,7 @@ export interface PokemonModel {
   candyToEvolve: number;
   kmBuddyDistance: number;
   modelHeight: number;
-  parentPokemonId?: string;
+  parentPokemonId?: string | number;
   evolutionBranch?: EvolutionBranch[];
   modelScaleV2: number;
   buddyOffsetMale: number[];
@@ -258,7 +258,7 @@ export class PokemonGenderRatio implements IPokemonGenderRatio {
 }
 
 export interface IPokemonData {
-  pokemonId?: string;
+  pokemonId?: string | number;
   num: number;
   name: string;
   fullName?: string;
@@ -499,7 +499,7 @@ export class PokemonDataOptional implements IPokemonDataOptional {
 }
 
 export class PokemonData implements IPokemonData {
-  pokemonId?: string;
+  pokemonId?: string | number;
   num = 0;
   name = '';
   fullName?: string;
@@ -593,7 +593,7 @@ export class PokemonData implements IPokemonData {
       obj.fullName =
         pokemon.form && pokemon.pokemonType !== PokemonType.Normal
           ? `${pokemon.pokemonId}_${pokemon.form}`
-          : pokemon.pokemonId;
+          : pokemon.pokemonId.toString();
     } else {
       obj.fullName = getValueOrDefault(String, pokemon.form?.toString());
     }
@@ -619,7 +619,7 @@ export class PokemonData implements IPokemonData {
       pokemon.evolutionIds?.map((name) => capitalize(name))
     );
     obj.baseForme = options?.baseForme;
-    obj.prevEvo = capitalize(pokemon.parentPokemonId || options?.prevEvo) || undefined;
+    obj.prevEvo = capitalize(pokemon.parentPokemonId?.toString() || options?.prevEvo) || undefined;
     obj.releasedGO = getValueOrDefault(Boolean, options?.releasedGO);
     obj.isTransferable = pokemon.isTransferable;
     obj.isDeployable = pokemon.isDeployable;
@@ -633,7 +633,7 @@ export class PokemonData implements IPokemonData {
       options?.version,
       versionList[versionList.length - 1].toLowerCase().replaceAll(' ', '-')
     );
-    obj.baseSpecies = capitalize(pokemon.pokemonId);
+    obj.baseSpecies = capitalize(pokemon.pokemonId?.toString());
     obj.form = pokemon.form ? pokemon.form.toString() : formNormal();
     obj.encounter = pokemon.encounter;
     obj.hasShadowForm = Boolean(pokemon.shadow);
@@ -674,7 +674,7 @@ export class PokemonDataModel {
   pokemonClass: string | undefined;
   formChange?: IPokemonFormChange[] | undefined;
   tempEvoOverrides?: TempEvoOverrides[] | undefined;
-  pokemonId = '';
+  pokemonId: string | number = '';
   modelScale = 0;
   type?: string | undefined;
   type2?: string | undefined;
@@ -694,7 +694,7 @@ export class PokemonDataModel {
   candyToEvolve = 0;
   kmBuddyDistance = 0;
   modelHeight = 0;
-  parentPokemonId?: string | undefined;
+  parentPokemonId?: string | number;
   evolutionBranch?: EvolutionBranch[] | undefined;
   modelScaleV2 = 0;
   buddyOffsetMale: number[] = [];

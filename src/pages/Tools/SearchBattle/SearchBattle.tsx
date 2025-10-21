@@ -112,7 +112,8 @@ const FindBattle = () => {
           ...curr,
           form,
           id: toNumber(curr?.num),
-          name: getValueOrDefault(String, curr?.pokemonId),
+          name: getValueOrDefault(String, curr?.pokemonId?.toString()),
+          pokemonId: curr?.pokemonId?.toString(),
           evoList: getValueOrDefault(Array, curr?.evoList),
           tempEvo: getValueOrDefault(Array, curr?.tempEvo),
         });
@@ -139,7 +140,8 @@ const FindBattle = () => {
       ) {
         arr.push({
           ...obj,
-          name: getValueOrDefault(String, obj.pokemonId),
+          name: getValueOrDefault(String, obj.pokemonId?.toString()),
+          pokemonId: obj.pokemonId?.toString(),
           id: obj.num,
           evoList: getValueOrDefault(Array, obj.evoList),
           tempEvo: getValueOrDefault(Array, obj.tempEvo),
