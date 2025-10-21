@@ -8,12 +8,12 @@ import { ISelectBadgeComponent } from '../models/component.model';
 
 const SelectBadge = (props: ISelectBadgeComponent) => {
   const Badge = (props: ISelectBadgeComponent, type = BadgeType.None) => (
-    <div className="text-center">
+    <div className="tw-text-center">
       <div
-        className={combineClasses('position-relative frame-badge', props.priority === type ? 'frame-badge-select' : '')}
+        className={combineClasses('tw-relative frame-badge', props.priority === type ? 'frame-badge-select' : '')}
         onClick={() => props.setPriority(type)}
       >
-        <span className="w-6">
+        <span className="tw-w-6">
           <img
             alt="Frame Type"
             className={combineClasses('frame-type-sprit', type === BadgeType.Platinum ? 'filter-platinum' : '')}
@@ -21,7 +21,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
           />
         </span>
         {type !== BadgeType.None && (
-          <span className="position-badge w-3">
+          <span className="position-badge tw-w-3">
             <img alt="Badge Type" className="badge-type-sprit" src={APIService.getTypeHqSprite(props.type)} />
           </span>
         )}
@@ -31,13 +31,13 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
   );
 
   return (
-    <div className="w-100 mt-2">
-      <div className="d-flex justify-content-center align-items-center">
+    <div className="tw-w-full tw-mt-2">
+      <div className="tw-flex tw-justify-center tw-items-center">
         <div className={combineClasses('type-icon-small w-max-content', props.type.toLowerCase())}>
           {capitalize(props.type)} Badge
         </div>
       </div>
-      <div className="d-flex flex-wrap justify-content-center align-items-center mt-2 gap-2">
+      <div className="tw-flex tw-flex-wrap tw-justify-center tw-items-center tw-mt-2 tw-gap-2">
         {getKeysObj(BadgeType).map((value, i) => (
           <Fragment key={i}>{Badge(props, getDataWithKey(BadgeType, value))}</Fragment>
         ))}

@@ -152,7 +152,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           <b>Form varieties</b>
         </h4>
         <ButtonGroupForm
-          className="my-3"
+          className="tw-my-3"
           isFullWidth
           isLoaded={props.isLoadedForms}
           forms={props.formList}
@@ -160,11 +160,11 @@ const FormComponent = (props: IFormInfoComponent) => {
           defaultId={props.defaultId}
           changeForm={changeForm}
           loading={
-            <div className="ph-item flex-nowrap column-gap-2 w-100">
+            <div className="ph-item !tw-flex-nowrap tw-gap-x-2 tw-w-full !tw-p-0">
               {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
-                <div key={index} className="ph-col-3 p-0 my-1">
+                <div key={index} className="ph-col-3 !tw-p-0 tw-my-1 !tw-mb-0">
                   <div className="ph-row">
-                    <div className="ph-picture ph-col-3 m-0" style={{ height: 146, width: 90 }} />
+                    <div className="ph-picture ph-col-3 !tw-m-0 !tw-h-36.5 !tw-w-22.5" />
                   </div>
                 </div>
               ))}
@@ -173,7 +173,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         />
       </div>
       {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
-        <div className="d-flex flex-wrap row-gap-3" style={{ columnGap: 50 }}>
+        <div className="tw-flex tw-flex-wrap tw-gap-y-3 tw-gap-x-12.5">
           {genderRatio.M !== 0 && (
             <Gender ratio={genderRatio} sex={TypeSex.Male} sprit={searchingMainForm?.form?.sprites} />
           )}
@@ -194,9 +194,9 @@ const FormComponent = (props: IFormInfoComponent) => {
         form={searchingMainDetails?.form}
         isDisabled={!statsData}
       />
-      <hr className="w-100" />
-      <div className="row w-100 m-0">
-        <div className="col-md-5 p-0 overflow-auto">
+      <hr className="tw-w-full" />
+      <div className="row tw-w-full !tw-m-0">
+        <div className="md:tw-w-5/12 !tw-p-0 tw-overflow-auto">
           <Info />
           {!isSpecialFormType(searchingMainForm?.form?.pokemonType) && (
             <Fragment>
@@ -213,17 +213,21 @@ const FormComponent = (props: IFormInfoComponent) => {
             </Fragment>
           )}
         </div>
-        <div className="col-md-7 p-0">
+        <div className="md:tw-w-7/12 !tw-p-0">
           <TableMove pokemonData={searchingMainDetails} />
           <Counter pokemonData={searchingMainDetails} />
         </div>
       </div>
-      <hr className="w-100" />
+      <hr className="tw-w-full" />
       {searchingMainDetails?.pokemonType !== PokemonType.GMax &&
       !isSpecialFormType(searchingMainDetails?.pokemonType) ? (
-        <div className="row w-100 m-0 p-0">
-          <div className="col-xl h-100 position-relative">{renderEvolution()}</div>
-          <SpecialForm className="col-xl h-100 position-relative p-0" formList={props.formList} id={props.defaultId} />
+        <div className="row tw-w-full !tw-m-0 !tw-p-0">
+          <div className="xl:tw-flex-1 tw-h-full tw-relative">{renderEvolution()}</div>
+          <SpecialForm
+            className="xl:tw-flex-1 tw-h-full tw-relative !tw-p-0"
+            formList={props.formList}
+            id={props.defaultId}
+          />
         </div>
       ) : (
         renderEvolution()

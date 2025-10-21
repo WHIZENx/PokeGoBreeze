@@ -3,12 +3,15 @@ import { PokemonClass, PokemonType } from '../../../enums/type.enum';
 import { getKeyWithData, isSpecialMegaFormType } from '../../../utils/utils';
 import { ISelectTierComponent } from '../models/component.model';
 import SelectMui from './SelectMui';
+import { Box } from '@mui/material';
+import { combineClasses } from '../../../utils/extension';
 
 const SelectTierMui = (props: ISelectTierComponent) => {
   return (
-    <div className="d-flex justify-content-center w-50">
+    <Box className={combineClasses('tw-flex tw-justify-center', props.boxClassName)}>
       <SelectMui
         className={props.className}
+        isNoneBorder
         onChangeSelect={(tier) => {
           if (props.setCurrTier) {
             props.setCurrTier(tier);
@@ -65,7 +68,7 @@ const SelectTierMui = (props: ISelectTierComponent) => {
             : []),
         ]}
       />
-    </div>
+    </Box>
   );
 };
 

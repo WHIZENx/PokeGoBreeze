@@ -1,4 +1,3 @@
-import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
@@ -26,8 +25,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Checkbox } from '@mui/material';
-import { Accordion } from 'react-bootstrap';
-import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
+import { BuffType, ColumnType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
@@ -62,6 +60,8 @@ import useCalculate from '../../composables/useCalculate';
 import InputReleased from '../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
+import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
+import { useSnackbar } from '../../contexts/snackbar.context';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -97,7 +97,7 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
         <img
           height={48}
           alt="Pokémon Image"
-          className="me-2"
+          className="tw-mr-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -163,7 +163,7 @@ const Move = (props: IMovePage) => {
   const [moveType, setMoveType] = useState<string>();
   const [progress, setProgress] = useState(false);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const menuItems = createDataRows<IMenuItem<IPokemonTopMove>>(
     {
@@ -259,7 +259,7 @@ const Move = (props: IMovePage) => {
             image: APIService.getTypeHqSprite(move.type),
           });
         } else {
-          enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: VariantType.Error });
+          showSnackbar(`Move ID: ${id} Not found!`, 'error');
           if (id) {
             setTitleProps({
               title: `#${id} - Not Found`,
@@ -270,7 +270,7 @@ const Move = (props: IMovePage) => {
         }
       }
     },
-    [enqueueSnackbar, getCombatsById]
+    [getCombatsById]
   );
 
   const getMoveIdByParam = () => {
@@ -334,7 +334,7 @@ const Move = (props: IMovePage) => {
       return value;
     } else if (isEqual(bonusType, BonusType.TimeBonus)) {
       return (
-        <div className="d-flex flex-wrap gap-2">
+        <div className="tw-flex tw-flex-wrap tw-gap-2">
           {getValueOrDefault<string[]>(Array, value as string[]).map((item) => renderReward(item))}
         </div>
       );
@@ -343,8 +343,8 @@ const Move = (props: IMovePage) => {
   };
 
   const renderReward = (itemName: string) => (
-    <div className="d-flex align-items-center flex-column">
-      <div style={{ width: 35 }}>
+    <div className="tw-flex tw-items-center tw-flex-col">
+      <div className="tw-w-[35px]">
         <img alt="Icon Item" className="sprite-type" src={getItemSpritePath(itemName)} />
       </div>
       <span className="caption">{splitAndCapitalize(itemName.replace('ITEM_', ''), '_', ' ')}</span>
@@ -352,10 +352,10 @@ const Move = (props: IMovePage) => {
   );
 
   return (
-    <div className={combineClasses('pb-3 poke-container', props.id ? '' : 'container')}>
+    <div className={combineClasses('tw-pb-3 poke-container', props.id ? '' : 'tw-container')}>
       {move ? (
         <>
-          <div className="h-100 head-box d-flex flex-wrap align-items-center">
+          <div className="tw-h-full head-box tw-flex tw-flex-wrap tw-items-center">
             <h1 className="text-move">
               <b>{splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}</b>
             </h1>
@@ -363,7 +363,7 @@ const Move = (props: IMovePage) => {
           </div>
           {move.isMultipleWithType && (
             <SelectMui
-              formClassName="mt-2"
+              formClassName="tw-mt-2"
               formSx={{ width: 250 }}
               onChangeSelect={(value) => {
                 searchParams.set(Params.MoveType, value.toLowerCase());
@@ -388,16 +388,16 @@ const Move = (props: IMovePage) => {
         </>
       ) : (
         <div className="ph-item">
-          <div className="ph-row h-100 head-box d-flex mb-0 ps-0">
-            <div className="ph-picture w-pct-40" style={{ height: 45 }} />
+          <div className="ph-row !tw-h-full head-box !tw-flex !tw-mb-0 !tw-pl-0">
+            <div className="ph-picture !tw-w-2/5 !tw-h-[45px]" />
           </div>
         </div>
       )}
       <hr />
-      <div className="row m-0">
-        <div className="col p-0">
+      <div className="row !tw-m-0">
+        <div className="col !tw-p-0">
           <table className="table-info move-table">
-            <thead className="text-center">
+            <thead className="tw-text-center">
               <tr>
                 <th colSpan={3}>{`Stats ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} in Pokémon GO`}</th>
               </tr>
@@ -419,7 +419,7 @@ const Move = (props: IMovePage) => {
                 <td>Type</td>
                 <td colSpan={2}>
                   {move && (
-                    <div className={combineClasses('type-icon-small w-fit-content', move.type?.toLowerCase())}>
+                    <div className={combineClasses('type-icon-small tw-w-fit', move.type?.toLowerCase())}>
                       {capitalize(move.type)}
                     </div>
                   )}
@@ -435,21 +435,19 @@ const Move = (props: IMovePage) => {
                 <td>Weather Boosts</td>
                 <td colSpan={2}>
                   {move && (
-                    <>
+                    <div className="tw-flex tw-items-center tw-gap-2">
                       <img
-                        className="img-type-icon me-3"
+                        className="img-type-icon"
                         height={25}
                         alt="Image Weather"
                         src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
                       />
-                      <span className="d-inline-block caption">
-                        {splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}
-                      </span>
-                    </>
+                      <span className="caption">{splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}</span>
+                    </div>
                   )}
                 </td>
               </tr>
-              <tr className="text-center">
+              <tr className="tw-text-center">
                 <td className="table-sub-header" colSpan={3}>
                   PVE Stats
                 </td>
@@ -465,12 +463,12 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td colSpan={2}>
                   {move && (
-                    <>
+                    <div className="tw-flex tw-items-center tw-gap-1">
                       <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
-                      <span className="text-success d-inline-block caption ms-1">
+                      <span className="tw-text-green-600 tw-inline-block caption tw-ml-1">
                         {`+${toFloatWithPadding(move.pvePower * 0.2, 2)}`}
                       </span>
-                    </>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -489,7 +487,7 @@ const Move = (props: IMovePage) => {
                   </td>
                 </tr>
               )}
-              <tr className="text-center">
+              <tr className="tw-text-center">
                 <td className="table-sub-header" colSpan={3}>
                   PVP Stats
                 </td>
@@ -505,12 +503,12 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td colSpan={2}>
                   {move && (
-                    <>
+                    <div className="tw-flex tw-items-center tw-gap-1">
                       <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
-                      <span className="text-success d-inline-block caption ms-1">
+                      <span className="tw-text-green-600 tw-inline-block caption tw-ml-1">
                         {`+${toFloatWithPadding(move.pvpPower * 0.2, 2)}`}
                       </span>
-                    </>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -531,7 +529,7 @@ const Move = (props: IMovePage) => {
               )}
               {isNotEmpty(move?.buffs) && (
                 <Fragment>
-                  <tr className="text-center">
+                  <tr className="tw-text-center">
                     <td className="table-sub-header" colSpan={3}>
                       PVP Buffs
                     </td>
@@ -539,15 +537,11 @@ const Move = (props: IMovePage) => {
                   {move?.buffs.map((value, index) => (
                     <tr key={index}>
                       <td className="target-buff">
-                        <CircleIcon className="u-fs-1" /> {getKeyWithData(BuffType, value.target)}
+                        <CircleIcon className="tw-text-xs" /> {getKeyWithData(BuffType, value.target)}
                       </td>
                       <td>
-                        {value.power > 0 ? (
-                          <ArrowUpwardIcon sx={{ color: 'green' }} />
-                        ) : (
-                          <ArrowDownwardIcon sx={{ color: 'red' }} />
-                        )}
-                        <span className="d-inline-block caption">
+                        {value.power > 0 ? <ArrowUpwardIcon color="success" /> : <ArrowDownwardIcon color="error" />}
+                        <span className="tw-inline-block caption">
                           {value.type === TypeAction.Atk ? 'Attack ' : 'Defense '}
                           <span
                             className={combineClasses('buff-power', value.power > 0 ? 'text-success' : 'text-danger')}
@@ -559,13 +553,13 @@ const Move = (props: IMovePage) => {
                           </span>
                         </span>
                       </td>
-                      <td className="theme-text-primary">{toNumber(value.buffChance) * 100}%</td>
+                      <td className="tw-text-default">{toNumber(value.buffChance) * 100}%</td>
                     </tr>
                   ))}
                 </Fragment>
               )}
 
-              <tr className="text-center">
+              <tr className="tw-text-center">
                 <td className="table-sub-header" colSpan={3}>
                   Other Stats
                 </td>
@@ -586,7 +580,7 @@ const Move = (props: IMovePage) => {
                 <td>Critical Chance</td>
                 <td colSpan={2}>{move && `${move.criticalChance * 100}%`}</td>
               </tr>
-              <tr className="text-center">
+              <tr className="tw-text-center">
                 <td className="table-sub-header" colSpan={3}>
                   Effect
                 </td>
@@ -595,7 +589,7 @@ const Move = (props: IMovePage) => {
                 <td>Sound</td>
                 <td colSpan={2}>
                   {move?.sound ? (
-                    <audio className="d-flex w-100" controls style={{ height: 30 }}>
+                    <audio className="tw-flex tw-w-full tw-h-[30px]" controls>
                       <source src={APIService.getSoundMove(move.sound)} type="audio/wav" />
                       Your browser does not support the audio element.
                     </audio>
@@ -607,15 +601,15 @@ const Move = (props: IMovePage) => {
             </tbody>
           </table>
         </div>
-        <div className="col p-0">
+        <div className="col !tw-p-0">
           <table className="table-info move-damage-table">
-            <thead className="text-center">
+            <thead className="tw-text-center">
               <tr>
                 <th colSpan={2}>{`Damage ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} Simulator`}</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="text-center">
+              <tr className="tw-text-center">
                 <td className="table-sub-header" colSpan={2}>
                   PVE Stats
                 </td>
@@ -657,7 +651,7 @@ const Move = (props: IMovePage) => {
                   <td>{move && `${toFloatWithPadding(move.pveEnergy / (move.durationMs / 1000), 2)}`}</td>
                 </tr>
               )}
-              <tr className="text-center">
+              <tr className="tw-text-center">
                 <td className="table-sub-header" colSpan={2}>
                   PVP Stats
                 </td>
@@ -675,129 +669,132 @@ const Move = (props: IMovePage) => {
               </tr>
               {move?.bonus && (
                 <tr>
-                  <td className="table-sub-header p-0" colSpan={2}>
-                    <Accordion defaultActiveKey="0">
-                      <Accordion.Item key={0} eventKey="0" className="table-sub-bonus">
-                        <Accordion.Header className="table-sub-bonus">
-                          <span>Bonus Combat</span>
-                        </Accordion.Header>
-                        <Accordion.Body>
-                          <table>
-                            <tbody>
-                              <tr>
-                                <td>Bonus Type</td>
-                                <td colSpan={2}>
-                                  {splitAndCapitalize(
-                                    getKeyWithData(BonusType, move.bonus.bonusType),
-                                    /(?=[A-Z])/,
-                                    ' '
-                                  )}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Duration</td>
-                                <td colSpan={2}>{`${move.bonus.durationMs} ms (${
-                                  move.bonus.durationMs / 1000
-                                } sec)`}</td>
-                              </tr>
-                              <tr>
-                                <td>Extra Duration</td>
-                                <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${
-                                  move.bonus.extraDurationMs / 1000
-                                } sec)`}</td>
-                              </tr>
-                              <tr>
-                                <td>Multi Use</td>
-                                <td colSpan={2}>
-                                  {move.bonus.enableMultiUse ? (
-                                    <DoneIcon sx={{ color: 'green' }} />
-                                  ) : (
-                                    <CloseIcon sx={{ color: 'red' }} />
-                                  )}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>None Combat</td>
-                                <td colSpan={2}>
-                                  {move.bonus.enableNonCombatMove ? (
-                                    <DoneIcon sx={{ color: 'green' }} />
-                                  ) : (
-                                    <CloseIcon sx={{ color: 'red' }} />
-                                  )}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Cost</td>
-                                <td className="table-bonus-cost">
-                                  <Candy id={0} /> {move.bonus.cost.candyCost}
-                                </td>
-                                <td className="table-bonus-cost">
-                                  <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
-                                    <img
-                                      alt="Image Stardust"
-                                      height={20}
-                                      src={APIService.getItemSprite('stardust_painted')}
-                                    />
-                                  </div>
-                                  {move.bonus.cost.stardustCost}
-                                </td>
-                              </tr>
-                              {safeObjectEntries<BonusEffectType>(move.bonus.bonusEffect).map(([k, v], i) => (
-                                <Fragment key={i}>
-                                  <tr>
-                                    <td colSpan={3} className="text-center">
-                                      {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
-                                    </td>
-                                  </tr>
-                                  {safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
-                                    <Fragment key={j}>
-                                      {move?.bonus?.bonusEffect?.attackDefenseBonus ? (
-                                        move?.bonus?.bonusEffect?.attackDefenseBonus.attributes.map((attr, k) => (
-                                          <tr key={k}>
-                                            <td>
-                                              {splitAndCapitalize(key, /(?=[A-Z])/, ' ')}
-                                              <span className="caption">
-                                                (
-                                                {attr.combatTypes
-                                                  .map((type) => capitalize(type.replace('COMBAT_TYPE_', '')))
-                                                  .join(', ')}
-                                                )
-                                              </span>
-                                            </td>
+                  <td className="table-sub-header !tw-p-0" colSpan={2}>
+                    <AccordionMui
+                      defaultValue={0}
+                      items={[
+                        {
+                          value: 0,
+                          noPadding: true,
+                          label: 'Bonus Combat',
+                          children: (
+                            <table>
+                              <tbody>
+                                <tr>
+                                  <td>Bonus Type</td>
+                                  <td colSpan={2}>
+                                    {splitAndCapitalize(
+                                      getKeyWithData(BonusType, move.bonus.bonusType),
+                                      /(?=[A-Z])/,
+                                      ' '
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Duration</td>
+                                  <td colSpan={2}>{`${move.bonus.durationMs} ms (${
+                                    move.bonus.durationMs / 1000
+                                  } sec)`}</td>
+                                </tr>
+                                <tr>
+                                  <td>Extra Duration</td>
+                                  <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${
+                                    move.bonus.extraDurationMs / 1000
+                                  } sec)`}</td>
+                                </tr>
+                                <tr>
+                                  <td>Multi Use</td>
+                                  <td colSpan={2}>
+                                    {move.bonus.enableMultiUse ? (
+                                      <DoneIcon color="success" />
+                                    ) : (
+                                      <CloseIcon color="error" />
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>None Combat</td>
+                                  <td colSpan={2}>
+                                    {move.bonus.enableNonCombatMove ? (
+                                      <DoneIcon color="success" />
+                                    ) : (
+                                      <CloseIcon color="error" />
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Cost</td>
+                                  <td className="table-bonus-cost">
+                                    <Candy id={0} /> {move.bonus.cost.candyCost}
+                                  </td>
+                                  <td className="table-bonus-cost">
+                                    <div className="tw-inline-flex tw-justify-center tw-w-5">
+                                      <img
+                                        alt="Image Stardust"
+                                        height={20}
+                                        src={APIService.getItemSprite('stardust_painted')}
+                                      />
+                                    </div>
+                                    {move.bonus.cost.stardustCost}
+                                  </td>
+                                </tr>
+                                {safeObjectEntries<BonusEffectType>(move.bonus.bonusEffect).map(([k, v], i) => (
+                                  <Fragment key={i}>
+                                    <tr>
+                                      <td colSpan={3} className="tw-text-center">
+                                        {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
+                                      </td>
+                                    </tr>
+                                    {safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
+                                      <Fragment key={j}>
+                                        {move?.bonus?.bonusEffect?.attackDefenseBonus ? (
+                                          move?.bonus?.bonusEffect?.attackDefenseBonus.attributes.map((attr, k) => (
+                                            <tr key={k}>
+                                              <td>
+                                                {splitAndCapitalize(key, /(?=[A-Z])/, ' ')}
+                                                <span className="caption">
+                                                  (
+                                                  {attr.combatTypes
+                                                    .map((type) => capitalize(type.replace('COMBAT_TYPE_', '')))
+                                                    .join(', ')}
+                                                  )
+                                                </span>
+                                              </td>
+                                              <td colSpan={2} key={j}>
+                                                {renderBonus(move.bonus?.bonusType, `x${attr.attackMultiplier}`)}
+                                              </td>
+                                            </tr>
+                                          ))
+                                        ) : (
+                                          <tr key={j}>
+                                            <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
                                             <td colSpan={2} key={j}>
-                                              {renderBonus(move.bonus?.bonusType, `x${attr.attackMultiplier}`)}
+                                              {renderBonus(move.bonus?.bonusType, value)}
                                             </td>
                                           </tr>
-                                        ))
-                                      ) : (
-                                        <tr key={j}>
-                                          <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
-                                          <td colSpan={2} key={j}>
-                                            {renderBonus(move.bonus?.bonusType, value)}
-                                          </td>
-                                        </tr>
-                                      )}
-                                    </Fragment>
-                                  ))}
-                                </Fragment>
-                              ))}
-                            </tbody>
-                          </table>
-                        </Accordion.Body>
-                      </Accordion.Item>
-                    </Accordion>
+                                        )}
+                                      </Fragment>
+                                    ))}
+                                  </Fragment>
+                                ))}
+                              </tbody>
+                            </table>
+                          ),
+                        },
+                      ]}
+                    />
                   </td>
                 </tr>
               )}
-              <tr className="text-center">
+              <tr className="tw-text-center">
                 <td className="table-sub-header" colSpan={2}>
-                  <div className="input-group align-items-center justify-content-center">
+                  <div className="input-group tw-items-center tw-justify-center">
                     <span>{`Top Pokémon in move ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`}</span>
                   </div>
                 </td>
               </tr>
               <tr>
-                <td className="table-top-of-move p-0" colSpan={2}>
+                <td className="table-top-of-move !tw-p-0" colSpan={2}>
                   <CustomDataTable
                     className="table-top-of-move-container"
                     customColumns={columns}

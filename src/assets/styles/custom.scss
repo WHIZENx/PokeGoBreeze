@@ -1,0 +1,492 @@
+@use "./common.scss" as *;
+
+// Text shadow
+.text-shadow {
+  text-shadow: 1px 1px var(--shadow-default-revert);
+}
+
+// Override some of the existing styles to use theme variables
+.caption,
+.text-gen {
+  @include theme-text(var(--text-caption));
+}
+
+// Selection classes
+.highlight-select-pokemon,
+.current-select-pokemon,
+.selected {
+  @include theme-background(var(--custom-selected), true);
+}
+
+// Result classes with shared styles
+.result,
+.result-pokemon,
+.result-move-select,
+.result-move-select-default {
+  @include theme-background(var(--custom-selected-bg));
+
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+
+  @include theme-text(var(--text-primary));
+}
+
+// Card classes with shared border
+.card-pokemon,
+.card-move,
+.card-pokemon-select {
+  @include theme-border(1px, top, var(--background-table-divided));
+  @include hover-effect;
+}
+
+// Error message classes
+.moveset-error {
+  @include theme-background(var(--background-paper));
+}
+
+.moveset-error-msg {
+  @include theme-background(var(--custom-default));
+  @include theme-text(var(--error-main, #f44336));
+}
+
+// Button styling using CSS variables
+.types-select-btn {
+
+  button.btn-select-type {
+    @include theme-border(1px, top, var(--custom-btn-type-border));
+    @include theme-border(1px, bottom, var(--custom-btn-type-border));
+  }
+
+  div.col:first-child button.btn-select-type {
+    @include theme-border(1px, left, var(--custom-btn-type-border));
+  }
+  div.col:not(:first-child) button.btn-select-type {
+    @include theme-border(0.5px, left, var(--custom-btn-type-border));
+  }
+
+  div.col:last-child button.btn-select-type {
+    @include theme-border(1px, right, var(--custom-btn-type-border));
+  }
+  div.col:not(:last-child) button.btn-select-type {
+    @include theme-border(0.5px, right, var(--custom-btn-type-border));
+  }
+}
+
+.btn-select-type {
+  @include theme-background(var(--background-btn-type));
+  @include theme-text(var(--text-primary));
+  @include theme-transition;
+
+  &:hover:not(.select-type) {
+    @include theme-background(var(--background-table-hover));
+  }
+
+  &.select-type {
+    @include theme-background(var(--background-btn-type-select));
+    @include theme-border(1px, all, white);
+
+    span {
+      @include theme-text(white, true);
+    }
+  }
+}
+
+// Border input styling
+.border-input {
+  @include theme-background(var(--background-paper));
+  @include theme-border;
+  @include theme-transition;
+}
+
+// Table head classes
+.head-types {
+  @include table-head-style;
+  @apply tw-p-2.5 tw-font-bold;
+}
+
+.table-head {
+  @include table-head-style;
+  @include theme-border;
+}
+
+.sticker-container h5 {
+  @include theme-background(var(--table-head));
+  @include theme-border;
+}
+
+// Shadow classes
+.theme-shadow {
+  text-shadow: 1px 1px var(--shadow-custom);
+}
+
+a.pokemon-link:hover {
+  box-shadow: inset 0 0 8px 1px var(--shadow-hover);
+}
+
+// Navigation block
+.prev-next-block {
+  @include theme-background(var(--background-selected));
+  @include theme-text(var(--text-primary), true);
+
+  a {
+    @include theme-text(var(--text-primary), true);
+  }
+}
+
+// Table description classes
+.table-desc {
+  tbody {
+    tr {
+      td:nth-child(1) {
+        @include theme-text(var(--text-primary), true);
+      }
+
+      td:nth-child(2) {
+        @include theme-text(var(--text-primary));
+      }
+
+      &:nth-child(odd) td {
+        @include theme-background(var(--custom-table-background-odd), true);
+      }
+
+      &:nth-child(even) td {
+        @include theme-background(var(--custom-table-background-even), true);
+      }
+    }
+  }
+}
+
+// Table cell styles with shared text color
+.ranking-header,
+.table-round-battle tbody tr td:not(:first-child),
+.table-raid-cal tbody tr td,
+.table-info tbody tr td:nth-child(2),
+.battle-league tbody tr td {
+  @include theme-text(var(--text-primary));
+}
+
+// Classes with background-default
+.reward-league.group-rank-league,
+.bg-ref-pokemon,
+.result-type ul,
+.result-weather ul,
+.result-move ul,
+.pokemon-content,
+.table-raid-cal thead tr th:nth-child(1),
+.table-info tbody tr.info-costs td:nth-child(1),
+.ranking-header,
+.table-round-battle tbody tr td:first-child,
+.table-round-battle tbody tr td:not(:first-child, .bg-summary) {
+  @include theme-background(var(--custom-default), true);
+}
+
+// Add text color to ranking headers
+.table-round-battle tbody tr td:first-child {
+  @include theme-text(var(--text-primary), true);
+}
+
+// Table classes with shared sub-head style
+.rank-header,
+.moves-title,
+.table-round-battle thead tr.table-header th,
+.table-raid-cal thead tr.table-header th:not(:first-child),
+.group-model .desc,
+.sub-header,
+.table-column-head,
+.table-raid-cal tbody tr td:nth-child(1) {
+  @include sub-head-style;
+}
+
+// Special case for raid-cal table cells
+.table-raid-cal tbody tr td:nth-child(1) {
+  @include theme-text(var(--text-primary), true);
+}
+
+// Table info styling
+.table-raid tbody tr td:nth-child(1),
+.table-info tbody tr td:first-child,
+.sub-group-model .gender {
+  @include table-info-style;
+}
+
+// Special table styles
+.table-catch-chance thead th,
+.table-info tbody tr.info-costs td:nth-child(2) {
+  @include info-table-style(true);
+}
+
+.ranking-link-group button {
+  @include info-table-style;
+}
+
+// Table classes with sub-header styles
+.table-info,
+.table-main,
+.table-moves {
+  tbody tr td.table-sub-header {
+    @include sub-head-style;
+  }
+}
+
+// Form button styling
+.btn-form {
+  @include theme-background(var(--custom-btn-form), true);
+  @include theme-text(var(--text-primary), true);
+
+  &:hover:not(.form-selected) {
+    @include theme-background(var(--custom-btn-form-hover));
+  }
+
+  &:focus {
+    @include theme-background(var(--custom-btn-form-focus));
+  }
+
+  &.form-selected {
+    @include theme-background(var(--custom-btn-form-selected), true);
+  }
+}
+
+// Card selection classes
+.card-select-enabled {
+  @include theme-background(var(--background-paper));
+}
+
+.card-select-disabled {
+  @include theme-background(var(--bs-secondary-bg), true);
+  @include theme-text(var(--body-color), true);
+}
+
+.pokemon-select-right,
+.select-down {
+  @include theme-background(var(--body-color));
+}
+
+.stats-container {
+  @include theme-background(var(--background-stats-container));
+}
+
+// Table text colors
+.table-movesets tbody tr td,
+.table-moves tbody tr td {
+  @include theme-text(var(--custom-table-background-sub-head-text));
+}
+
+// Table border styling
+th,
+td,
+.table-info,
+.table-counter-container,
+.list-item-ranking,
+.season-league,
+.group-rank-league,
+.sticker-detail,
+.sticker-container,
+.top-raid-group,
+.top-raid-pokemon,
+.trainer-battle,
+.pokemon-battle,
+.trainer-levelup {
+  @include theme-border(1px, all, var(--custom-table-background-sub-head-border), true);
+}
+
+.table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs {
+  @include theme-border(1px, bottom, var(--custom-table-background-sub-head-border), true);
+}
+
+.custom-border-right {
+  @include theme-border(1px, right);
+}
+
+.card-ranking,
+.custom-border-left-2 {
+  @include theme-border(2px, left);
+}
+
+.card-ranking,
+.custom-border-right-2 {
+  @include theme-border(2px, right);
+}
+
+.card-ranking,
+.custom-border-bottom-2 {
+  @include theme-border(2px, bottom);
+}
+
+.card-ranking:first-of-type,
+.custom-border-top-2 {
+  @include theme-border(2px, top);
+}
+
+.model,
+.frame-badge,
+.table-desc tbody tr td,
+.prev-next-block,
+.bg-ref-pokemon,
+.border-type-stat,
+.border-best-poke,
+.stats-border {
+  @include standard-border;
+}
+
+.border-types,
+.btn-form,
+.btn-default,
+.border-window,
+.count-pokemon,
+.frame-badge-select,
+.frame-badge:hover {
+  @include hover-border;
+}
+
+.timeline-vertical div:first-child .pokemon-battle-header {
+  @include theme-border(1px, left, var(--custom-gray));
+}
+
+.pokemon-battle-header {
+  @include theme-border(1px, right, var(--custom-gray));
+  @include theme-border(1px, top, var(--custom-gray));
+  @include theme-border(1px, bottom, var(--custom-gray));
+}
+
+.move-img-desc img,
+.img-desc,
+.border-box-battle,
+.stats-boss {
+  @include thick-standard-border;
+}
+
+// Table header styling
+.table-info thead tr,
+.table-moves thead tr {
+  @include table-head-style;
+  @apply tw-font-bold;
+}
+
+// Icon shadow
+.img-type-icon,
+.pokemon-link .pokemon-sprite-large {
+  @include default-shadow;
+}
+
+// Header backgrounds
+.bg-zero,
+.pokemon-battle-header,
+.moves-title-container,
+.frame-badge-select,
+.frame-badge:hover,
+.form-header {
+  @include theme-background(var(--custom-according-header));
+}
+
+.accordion-footer {
+  @include theme-background(var(--custom-according-footer));
+}
+
+.card-header {
+  @include theme-background(var(--custom-dropdown-header), true);
+}
+
+.bg-card-highlight {
+  @include theme-background(var(--custom-dropdown-highlight), true);
+}
+
+// Table sort styling
+.ranking-header .ranking-sort:not(.ranking-selected) {
+  @include theme-text(var(--table-sort), true);
+}
+
+// Loading container
+.loading-spin-container {
+  background: radial-gradient(closest-side, var(--loading-spinner-bg-start), var(--loading-spinner-bg-end));
+}
+
+// Stats and UI elements
+.stats-border {
+  @include theme-background(var(--background-stats-performance));
+}
+
+.play-line {
+  @include theme-background(var(--background-revert));
+}
+
+.league-opened .accordion-button.collapsed {
+  @include theme-background(var(--custom-according-highlight));
+}
+
+.table-catch-chance tbody td:not(.table-catch-chance tbody td:nth-child(1)) {
+  @include theme-background(var(--custom-btn-form-selected));
+}
+
+.table-sub-bonus .accordion-button {
+  @include theme-background(var(--custom-table-background-sub-head));
+  @include theme-text(var(--custom-table-background-sub-head-text));
+}
+
+.click-none,
+.click-none.link-danger:hover {
+  @include theme-text(var(--custom-validator-disable), true);
+}
+
+// Group elements with identical thin border styles
+.table-desc tbody tr td div.first-extra-col,
+.next-border {
+  @include thin-border(right);
+}
+
+.prev-border {
+  @include thin-border(left);
+}
+
+// Group elements with bottom bs-border
+.ranking-container {
+  @include border-with-side(bottom);
+}
+
+// Group elements with top bs-border
+.accordion-footer,
+.turn-battle {
+  @include border-with-side(top);
+}
+
+// Group elements with identical hover border styling
+.btn-form:focus,
+.btn-form:hover:not(.form-selected),
+.list-item-ranking:hover {
+  @include black-hover-border;
+}
+
+// Info container with multi-side border
+.info-container {
+  @include border-with-side(top);
+  @include bs-border-sides;
+}
+
+// Tab body with multi-side border
+.tab-body {
+  @include border-with-side(bottom);
+  @include bs-border-sides;
+}
+
+// Table border - specialized case
+.table-top-of-move-container {
+  @include theme-border(1px, top, var(--custom-table-background-sub-head-border), true);
+}
+
+.card-input {
+  @include theme-border(1px, all, var(--custom-selected-border), true);
+}
+
+.ranking-header {
+  @include theme-border;
+}
+
+.iv-bg-bar {
+  @include theme-background(var(--custom-btn-form));
+}
+
+.impossible-encounter {
+  @include theme-background(var(--custom-background-unavailable));
+}
+
+.text-not-encounter {
+  @include theme-background(var(--custom-background-sub-unavailable));
+}

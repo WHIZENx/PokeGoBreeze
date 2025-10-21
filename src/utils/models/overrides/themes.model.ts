@@ -4,6 +4,16 @@ import { ThemeOptions } from '@mui/material';
 
 export const getDesignThemes = (mode: TypeTheme) =>
   ({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 576,
+        md: 768,
+        lg: 992,
+        xl: 1200,
+        '2xl': 1400,
+      },
+    },
     components: {
       MuiInputBase: {
         styleOverrides: {
@@ -85,4 +95,4 @@ export const getDesignThemes = (mode: TypeTheme) =>
       fontWeightBold: 700,
     },
     spacing: 8,
-  } as unknown as ThemeOptions);
+  }) as unknown as ThemeOptions;

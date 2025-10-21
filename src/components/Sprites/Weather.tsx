@@ -9,21 +9,21 @@ const Weather = (props: IWeatherComponent) => {
   return (
     <Fragment>
       {!isNotEmpty(props.arr) ? (
-        <div className="mt-2 d-flex ms-3">
-          <div className="text-center" key={0}>
+        <div className="tw-mt-2 tw-flex tw-ml-3">
+          <div className="tw-text-center" key={0}>
             <img height={50} alt="Pokémon Image" src={APIService.getPokeSprite()} />
-            <span className="caption theme-text-primary">None</span>
+            <span className="caption tw-text-default">None</span>
           </div>
         </div>
       ) : (
         <div className={combineClasses('mt-2', props.className)} style={props.style}>
           {props.text && <p>{props.text}</p>}
-          <div className="d-inline-flex flex-wrap type-list align-items-center">
+          <div className="tw-inline-flex tw-flex-wrap type-list tw-items-center">
             {props.arr?.map((value, index) => (
-              <div className="text-center d-flex" key={index}>
+              <div className="tw-text-center tw-flex" key={index}>
                 <div>
                   <img height={50} alt="Pokémon Image" src={APIService.getWeatherSprite(value)} />
-                  <span className="caption theme-text-primary">{splitAndCapitalize(value, /(?=[A-Z])/, ' ')}</span>
+                  <span className="caption tw-text-default">{splitAndCapitalize(value, /(?=[A-Z])/, ' ')}</span>
                 </div>
               </div>
             ))}

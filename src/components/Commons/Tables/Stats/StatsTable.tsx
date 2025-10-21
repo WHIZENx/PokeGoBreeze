@@ -16,8 +16,8 @@ const StatsTable = (props: IStatsTableComponent) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 p-0 m-auto h-4">
-        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
+      <div className="ph-item tw-w-3/4 !tw-p-0 !tw-m-auto !tw-h-4">
+        <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
       </div>
     );
   };
@@ -39,13 +39,13 @@ const StatsTable = (props: IStatsTableComponent) => {
         {
           value: (
             <>
-              <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} /> ATK
+              <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} /> ATK
             </>
           ),
         },
         {
           value: reload(<>{!isUndefined(props.pokemonType) ? calculateRaidStat(props.statATK, props.tier) : ''}</>),
-          className: 'text-center theme-text-primary',
+          className: '!tw-text-center tw-text-default',
         },
       ],
     },
@@ -55,13 +55,13 @@ const StatsTable = (props: IStatsTableComponent) => {
         {
           value: (
             <>
-              <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} /> DEF
+              <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} /> DEF
             </>
           ),
         },
         {
           value: reload(<>{!isUndefined(props.pokemonType) ? calculateRaidStat(props.statDEF, props.tier) : ''}</>),
-          className: 'text-center theme-text-primary',
+          className: '!tw-text-center tw-text-default',
         },
       ],
     },
@@ -71,7 +71,7 @@ const StatsTable = (props: IStatsTableComponent) => {
         {
           value: (
             <>
-              <img className="me-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} /> HP
+              <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} /> HP
             </>
           ),
         },
@@ -83,7 +83,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                 : props.statSTA || ''}
             </>
           ),
-          className: 'text-center theme-text-primary',
+          className: '!tw-text-center tw-text-default',
         },
       ],
     }
@@ -97,14 +97,14 @@ const StatsTable = (props: IStatsTableComponent) => {
           {
             value: (
               <>
-                <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
+                <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
                 HP
               </>
             ),
           },
           {
             value: reload(<>{RAID_BOSS_TIER[props.tier].sta}</>),
-            className: 'text-center theme-text-primary',
+            className: '!tw-text-center tw-text-default',
           },
         ],
       });

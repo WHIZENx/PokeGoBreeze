@@ -10,14 +10,14 @@ const PokemonTable = (props: IPokemonTableComponent) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 h-100 m-0 p-0">
-        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
+      <div className="ph-item tw-w-3/4 !tw-h-full !tw-m-0 !tw-p-0">
+        <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
       </div>
     );
   };
 
   const renderPokemonId = () => (
-    <h5 className="d-flex">
+    <h5 className="tw-flex">
       <b>#{props.id}</b>
     </h5>
   );
@@ -28,17 +28,17 @@ const PokemonTable = (props: IPokemonTableComponent) => {
       <tbody>
         <tr>
           <td>
-            <h5 className="d-flex">ID</h5>
+            <h5 className="tw-flex">ID</h5>
           </td>
           <td colSpan={2}>{toNumber(props.id) > 0 ? renderPokemonId() : reload(renderPokemonId())}</td>
         </tr>
         <tr>
           <td>
-            <h5 className="d-flex">Name</h5>
+            <h5 className="tw-flex">Name</h5>
           </td>
           <td colSpan={2}>
             {reload(
-              <h5 className="d-flex">
+              <h5 className="tw-flex">
                 <b>{splitAndCapitalize(props.formName, '-', ' ')}</b>
               </h5>
             )}
@@ -46,11 +46,11 @@ const PokemonTable = (props: IPokemonTableComponent) => {
         </tr>
         <tr>
           <td>
-            <h5 className="d-flex">Generation</h5>
+            <h5 className="tw-flex">Generation</h5>
           </td>
           <td colSpan={2}>
             {reload(
-              <h5 className="d-flex align-items-center gap-1">
+              <h5 className="tw-flex tw-items-center tw-gap-1">
                 {isUndefined(props.gen) || !isNumber(props.gen) ? (
                   <></>
                 ) : props.gen === 0 ? (
@@ -67,17 +67,17 @@ const PokemonTable = (props: IPokemonTableComponent) => {
         </tr>
         <tr>
           <td>
-            <h5 className="d-flex">Region</h5>
+            <h5 className="tw-flex">Region</h5>
           </td>
-          <td colSpan={2}>{reload(<h5 className="d-flex">{splitAndCapitalize(props.region, '-', ' ')}</h5>)}</td>
+          <td colSpan={2}>{reload(<h5 className="tw-flex">{splitAndCapitalize(props.region, '-', ' ')}</h5>)}</td>
         </tr>
         <tr>
           <td>
-            <h5 className="d-flex">Version</h5>
+            <h5 className="tw-flex">Version</h5>
           </td>
           <td colSpan={2}>
             {reload(
-              <h5 className="d-flex">
+              <h5 className="tw-flex">
                 {splitAndCapitalize(props.version, '-', ' ').replace(/GO$/i, 'GO').replace(/X y$/i, 'X-Y')}
               </h5>,
               'var(--background-btn-type)'
@@ -86,25 +86,25 @@ const PokemonTable = (props: IPokemonTableComponent) => {
         </tr>
         <tr>
           <td>
-            <h5 className="d-flex">Body</h5>
+            <h5 className="tw-flex">Body</h5>
           </td>
-          <td colSpan={2} className="p-0">
-            <div className="d-flex align-items-center first-extra-col h-100 w-50 float-start">
+          <td colSpan={2} className="!tw-p-0">
+            <div className="tw-flex tw-items-center first-extra-col tw-h-full tw-w-1/2 tw-float-left">
               <div>
-                <div className="d-inline-block me-1">
+                <div className="tw-inline-block tw-mr-1">
                   <h6>Weight:</h6>
                 </div>
-                <div className="d-inline-block">
+                <div className="tw-inline-block">
                   {reload(<h6>{!isUndefined(props.weight) && `${toFloatWithPadding(props.weight / 10, 2)} kg`}</h6>)}
                 </div>
               </div>
             </div>
-            <div className="d-flex align-items-center h-100 w-50 float-start">
+            <div className="tw-flex tw-items-center tw-h-full tw-w-1/2 tw-float-left">
               <div>
-                <div className="d-inline-block me-1">
+                <div className="tw-inline-block tw-mr-1">
                   <h6>Height:</h6>
                 </div>
-                <div className="d-inline-block">
+                <div className="tw-inline-block">
                   {reload(<h6>{!isUndefined(props.height) && `${toFloatWithPadding(props.height / 10, 2)} m`}</h6>)}
                 </div>
               </div>

@@ -36,7 +36,11 @@ const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
   return (
     <div
       style={{ width: props.width, height: props.height }}
-      className={combineClasses('group-selected', props.className, props.isLoaded && props.isFullWidth ? 'w-100' : '')}
+      className={combineClasses(
+        'group-selected',
+        props.className,
+        props.isLoaded && props.isFullWidth ? 'tw-w-full' : ''
+      )}
     >
       {props.isLoaded ? (
         <Fragment>
@@ -56,7 +60,7 @@ const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
                 color="default"
                 className="btn-default"
                 label={
-                  <div className="d-flex flex-column">
+                  <div className="tw-flex tw-flex-col">
                     <img
                       alt="Image League"
                       title={renderLeagueName(props.data?.name, value)}
@@ -67,7 +71,7 @@ const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
                     <div>
                       <b>{renderLeagueName(props.data?.name, value)}</b>
                     </div>
-                    <span className="text-danger">CP below {value}</span>
+                    <span className="tw-text-red-600">CP below {value}</span>
                   </div>
                 }
               />

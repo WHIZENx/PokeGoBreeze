@@ -85,10 +85,10 @@ const Sticker = () => {
   }, [id, shopType, stickersData]);
 
   return (
-    <div className="container p-3">
-      <h2 className="title-leagues mb-3">Sticker List</h2>
+    <div className="tw-container tw-p-3">
+      <h2 className="title-leagues tw-mb-3">Sticker List</h2>
       <hr />
-      <div className="w-25 input-group" style={{ minWidth: 300 }}>
+      <div className="tw-w-1/4 input-group tw-min-w-75">
         <span className="input-group-text">Find Sticker</span>
         <SelectMui
           formSx={{ width: 200 }}
@@ -105,7 +105,7 @@ const Sticker = () => {
           ]}
         />
       </div>
-      <FormControl className="mt-2">
+      <FormControl className="!tw-mt-2">
         <FormLabel>Filter sticker shopping</FormLabel>
         <RadioGroup row value={shopType} onChange={(e) => setShopType(toNumber(e.target.value))}>
           <FormControlLabel value={ShopType.All} control={<Radio />} label="All" />
@@ -136,7 +136,7 @@ const Sticker = () => {
                     </CustomPopover>
                   }
                 >
-                  <div className="sticker-detail position-relative">
+                  <div className="sticker-detail tw-relative">
                     <Badge
                       color="primary"
                       overlap="circular"

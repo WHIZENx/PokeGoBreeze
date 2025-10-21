@@ -21,11 +21,11 @@ const CustomInput = <T,>(props: ICustomInputComponent<T>) => {
   };
 
   return (
-    <Paper className="d-flex align-items-center w-100 h-100 rounded-0">
+    <Paper className="tw-flex tw-items-center tw-w-full tw-h-full !tw-rounded-none">
       {isNotEmpty(props.menuItems) && (
         <>
           <IconButton
-            className="p-2"
+            className="tw-p-2"
             aria-label="menu"
             aria-controls={open ? 'basic-menu' : undefined}
             aria-haspopup="true"
@@ -61,7 +61,7 @@ const CustomInput = <T,>(props: ICustomInputComponent<T>) => {
         </>
       )}
       <InputBase
-        className="ms-2"
+        className="tw-ml-2"
         sx={{ flex: 1, minHeight: 40 }}
         placeholder={props.inputPlaceholder}
         defaultValue={props.defaultValue}
@@ -69,12 +69,12 @@ const CustomInput = <T,>(props: ICustomInputComponent<T>) => {
         inputProps={{ 'aria-label': props.inputPlaceholder }}
       />
       {!props.isAutoSearch && (
-        <IconButton type="button" className="p-2" aria-label="search" onClick={() => props.setSearchData?.()}>
+        <IconButton type="button" className="tw-p-2" aria-label="search" onClick={() => props.setSearchData?.()}>
           <SearchIcon />
         </IconButton>
       )}
-      {props.optionsIcon && <Divider className="m-1" sx={{ height: 28 }} orientation="vertical" />}
-      <IconButton className="p-2" color="primary" aria-label="options" onClick={props.onOptionsClick}>
+      {props.optionsIcon && <Divider className="tw-m-1" sx={{ height: 28 }} orientation="vertical" />}
+      <IconButton className="tw-p-2" color="primary" aria-label="options" onClick={props.onOptionsClick}>
         {props.optionsIcon}
       </IconButton>
     </Paper>

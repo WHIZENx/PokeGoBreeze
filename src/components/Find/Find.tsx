@@ -130,7 +130,7 @@ const Find = (props: IFindComponent) => {
 
   const searchPokemon = () => (
     <div
-      className="col d-flex justify-content-center"
+      className="col tw-flex tw-justify-center"
       style={{
         height:
           Math.min(
@@ -150,7 +150,10 @@ const Find = (props: IFindComponent) => {
         <Fragment>
           {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
             <div
-              className={combineClasses('container card-pokemon', value.id === id ? 'selected' : '')}
+              className={combineClasses(
+                'tw-container card-pokemon tw-flex tw-items-center',
+                value.id === id ? 'selected' : ''
+              )}
               key={index}
               onMouseDown={() => getInfoPoke(value)}
             >
@@ -175,7 +178,7 @@ const Find = (props: IFindComponent) => {
   );
 
   const showPokemon = () => (
-    <div className="col d-flex justify-content-center text-center">
+    <div className="col tw-flex tw-justify-center tw-text-center">
       <div>
         {isNotEmpty(pokemonList) && (
           <FormSelect
@@ -200,8 +203,8 @@ const Find = (props: IFindComponent) => {
   );
 
   return (
-    <div className="container mt-2">
-      <h1 id="main" className="text-center mb-3">
+    <div className="tw-container tw-mt-2">
+      <h1 id="main" className="tw-text-center tw-mb-3">
         {getValueOrDefault(String, props.title, 'Pokémon GO Tools')}
       </h1>
       {isNotEmpty(pokemonList) ? (
@@ -219,9 +222,9 @@ const Find = (props: IFindComponent) => {
           )}
         </div>
       ) : (
-        <div className="ph-item d-flex justify-content-center w-100">
+        <div className="ph-item tw-flex tw-justify-center !tw-w-full">
           <div
-            className="ph-picture d-flex align-item-center justify-content-center position-relative w-50 theme-spinner-bg"
+            className="ph-picture tw-flex align-item-center tw-justify-center tw-relative !tw-w-1/2 !tw-bg-spinner-overlay"
             style={{ height: 600 }}
           >
             <LoadGroup isShow isVertical isHideAttr size={40} />

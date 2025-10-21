@@ -12,7 +12,7 @@ const InputMui = (props: IInputMuiComponent) => {
 
   return (
     <div
-      className={combineClasses('d-flex', disableGrow ? '' : 'flex-grow-1', props.className)}
+      className={combineClasses('tw-flex', disableGrow ? '' : 'tw-flex-grow', props.className)}
       style={{
         flexBasis: basis,
       }}

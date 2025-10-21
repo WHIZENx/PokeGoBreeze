@@ -186,20 +186,20 @@ const Search = () => {
 
   const moveList = (data: ICombat[], type: SelectType, name: string, moveLoad: boolean, category: TypeMove) => {
     return (
-      <div className="col-xl table-movesets-col p-0">
+      <div className="xl:tw-flex-1 table-movesets-col !tw-p-0">
         <table className="table-info table-movesets">
           <thead />
           <tbody>
-            <tr className="text-center">
+            <tr className="tw-text-center">
               <td className="table-sub-header" colSpan={3}>
-                <div className="row m-0">
-                  <div className="col-4 d-flex justify-content-center align-items-center p-0">{`${getKeyWithData(
+                <div className="row !tw-m-0">
+                  <div className="!tw-w-1/3 tw-flex-none tw-flex tw-justify-center tw-items-center !tw-p-0">{`${getKeyWithData(
                     TypeMove,
                     category
                   )} Moves List`}</div>
-                  <div className="col-4 d-flex justify-content-center align-items-center p-0">
+                  <div className="!tw-w-1/3 tw-flex-none tw-flex tw-justify-center tw-items-center !tw-p-0">
                     <SelectMui
-                      formClassName="mt-2"
+                      formClassName="tw-mt-2"
                       formSx={{ m: 1, minWidth: 150 }}
                       onChangeSelect={(value) => setMoveByType(category, toNumber(value))}
                       value={type}
@@ -221,7 +221,7 @@ const Search = () => {
                       ]}
                     />
                   </div>
-                  <div className="col-4 d-flex justify-content-center align-items-center p-0">
+                  <div className="!tw-w-1/3 tw-flex-none tw-flex tw-justify-center tw-items-center !tw-p-0">
                     <InputMui
                       placeholder="Enter Name or ID"
                       defaultValue={name}
@@ -251,9 +251,9 @@ const Search = () => {
   };
 
   return (
-    <div className="container my-4">
+    <div className="tw-container tw-my-4">
       <div className="table-head">Moveset list in Pokémon GO</div>
-      <div className="row w-100 m-0">
+      <div className="row tw-w-full !tw-m-0">
         {moveList(resultFMove, fMoveType, fMoveName, fMoveIsLoad, TypeMove.Fast)}
         {moveList(resultCMove, cMoveType, cMoveName, cMoveIsLoad, TypeMove.Charge)}
       </div>

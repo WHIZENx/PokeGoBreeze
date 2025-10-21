@@ -216,9 +216,9 @@ export const splitAndCamelCase = (
     defaultText
   );
 
-export const capitalize = (str: string | undefined | null, defaultText = '') =>
-  getValueOrDefault(String, str?.charAt(0).toUpperCase()) +
-  getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
+export const capitalize = (str: string | number | undefined | null, defaultText = '') =>
+  getValueOrDefault(String, str?.toString().charAt(0).toUpperCase()) +
+  getValueOrDefault(String, str?.toString().slice(1).toLowerCase(), defaultText);
 
 export const splitAndCapitalize = (
   str: string | undefined | null,
@@ -274,8 +274,8 @@ export const convertModelSpritName = (text: string | undefined) =>
       (isInclude(text, 'meowstic', IncludeMode.IncludeIgnoreCaseSensitive)
         ? '-'
         : isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
-        ? ''
-        : '_') + isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
+          ? ''
+          : '_') + isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
         ? ''
         : 'm'
     )
@@ -611,20 +611,20 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
   const defaultData: TableStyles = {
     header: {
       style: {
-        backgroundColor: 'var(--background-default)',
+        backgroundColor: 'var(--custom-default)',
         color: 'var(--text-primary)',
       },
     },
     subHeader: {
       style: {
-        backgroundColor: 'var(--background-default)',
+        backgroundColor: 'var(--custom-default)',
         color: 'var(--text-primary)',
       },
     },
     rows: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         '&:not(:last-of-type)': {
           borderBottomColor: 'var(--background-table-divided)',
         },
@@ -639,7 +639,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     },
     headCells: {
       style: {
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         color: 'var(--text-primary)',
       },
     },
@@ -651,7 +651,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     pagination: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
         borderTopColor: 'var(--background-table-divided)',
       },
       pageButtonsStyle: {
@@ -672,7 +672,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     noData: {
       style: {
         color: 'var(--text-primary)',
-        backgroundColor: 'var(--background-table-primary)',
+        backgroundColor: 'var(--table-primary)',
       },
     },
   };
@@ -748,7 +748,10 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
   return result as unknown as IStatsPokemon;
 };
 
-export const replacePokemonGoForm = (form: string) => form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
+export const replacePokemonGoForm = (form: string | number) =>
+  String(form)
+    .replace(/_MALE$/, '')
+    .replace(/_FEMALE$/, '');
 
 export const formIconAssets = (value: IPokemonFormModify) =>
   isInclude(value.form.name, `-${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive) ||
@@ -1032,22 +1035,22 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction
       return form === PokemonType.Shadow
         ? combatShadowBonusAtk()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusAtk()
-        : 1;
+          ? combatPurifiedBonusAtk()
+          : 1;
     }
     case TypeAction.Def: {
       return form === PokemonType.Shadow
         ? combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusDef()
-        : 1;
+          ? combatPurifiedBonusDef()
+          : 1;
     }
     case TypeAction.Prod: {
       return form === PokemonType.Shadow
         ? combatShadowBonusAtk() * combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? combatPurifiedBonusAtk() * combatPurifiedBonusDef()
-        : 1;
+          ? combatPurifiedBonusAtk() * combatPurifiedBonusDef()
+          : 1;
     }
     default:
       return 1;

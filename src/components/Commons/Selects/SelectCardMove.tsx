@@ -66,7 +66,7 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
   );
 
   return (
-    <Box className={combineClasses('input-control-group', props.isNoWrap ? 'flex-nowrap' : '')} style={props.style}>
+    <Box className={combineClasses('input-control-group', props.isNoWrap ? '!tw-flex-nowrap' : '')} style={props.style}>
       {props.labelPrepend && <div className="input-group-text">{props.labelPrepend}</div>}
       <SelectMui
         displayEmpty={!props.isHideEmpty}

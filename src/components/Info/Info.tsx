@@ -49,16 +49,16 @@ const Info = () => {
   };
 
   return (
-    <div className="mb-3">
-      <h4 className="mt-2 info-title">
+    <div className="tw-mb-3">
+      <h4 className="tw-mt-2 info-title">
         <b>Information</b>
       </h4>
-      <h5 className="mt-2">
+      <h5 className="tw-mt-2">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={types} className="ms-3" isShow />
+      <TypeInfo arr={types} className="tw-ml-3" isShow />
       <Effective title="Weather Boosts">
-        <Weather arr={getWeatherEffective(types)} className="ms-3" />
+        <Weather arr={getWeatherEffective(types)} className="tw-ml-3" />
       </Effective>
       <TypeEffectiveComponent typeEffective={getTypeEffectiveChart(types)} />
     </div>

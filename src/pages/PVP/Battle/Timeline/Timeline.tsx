@@ -21,22 +21,22 @@ const Timeline = (
 ) => {
   const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => (
     <Fragment>
-      <div className="mt-2" style={{ height: 12 }}>
-        <div className="d-flex column-gap-2 w-max-content">
+      <div className="tw-mt-2 tw-h-3">
+        <div className="tw-flex tw-gap-x-2 tw-w-max">
           {poke.timeline.map((value, index) => (
-            <span className="position-relative" key={index} style={{ width: value.size }}>
-              {value.isTap && (
+            <span className="tw-relative" key={index} style={{ width: value.size }}>
+              {value.isTap && showTap && (
                 <div
                   style={{
                     borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                   }}
-                  className={combineClasses('charge-attack opacity-50', showTap ? 'd-block' : 'd-none')}
+                  className="charge-attack opacity-50"
                 />
               )}
               {!value.isTap && (
                 <Fragment>
                   {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
-                    <div className="position-absolute icon-buff-timeline">
+                    <div className="tw-absolute icon-buff-timeline">
                       {value.buff?.map((b, i) => (
                         <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                           {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
@@ -48,7 +48,7 @@ const Timeline = (
                       {pokeObj.timeline.at(index) &&
                       pokeObj.timeline.at(index)?.type === AttackType.Charge &&
                       isNotEmpty(value.buff) ? (
-                        <div className="position-absolute icon-buff-timeline">
+                        <div className="tw-absolute icon-buff-timeline">
                           {value.buff?.map((b, i) => (
                             <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                               {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
@@ -56,7 +56,7 @@ const Timeline = (
                           ))}
                         </div>
                       ) : (
-                        <div className={combineClasses('wait-attack', showTap ? 'd-block' : 'd-none')} />
+                        showTap && <div className="wait-attack" />
                       )}
                     </Fragment>
                   )}
@@ -67,7 +67,7 @@ const Timeline = (
         </div>
       </div>
       <div
-        className="d-flex align-items-center column-gap-2 w-max-content"
+        className="tw-flex tw-items-center tw-gap-x-2 tw-w-max"
         style={{
           borderBottom: border ? 'var(--custom-table-border)' : 'none',
         }}
@@ -121,10 +121,10 @@ const Timeline = (
   return (
     <Fragment>
       {!isHide && move.bind && (
-        <div className="w-100 battle-bar d-flex justify-content-center">
+        <div className="tw-w-full battle-bar tw-flex tw-justify-center">
           <div id="battle-bar-scroll" className="battle-bar-container" ref={elem} onScroll={scroll.bind(this)}>
             <div
-              className="position-relative"
+              className="tw-relative"
               ref={timeline}
               onMouseMove={move.bind(this)}
               onMouseOver={move.bind(this)}

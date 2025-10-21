@@ -3,7 +3,6 @@ import React from 'react';
 import Affect from './Affect';
 import Effect from './Effect';
 
-import './Weather.scss';
 import { useTitle } from '../../utils/hooks/useTitle';
 
 const Weather = () => {
@@ -15,12 +14,12 @@ const Weather = () => {
   });
 
   return (
-    <div className="container mt-2">
-      <div className="container w-75">
+    <div className="tw-container tw-mt-2">
+      <div className="tw-container tw-w-3/4">
         <Affect />
       </div>
-      <hr className="my-3" />
-      <div className="container w-75">
+      <hr className="tw-my-3" />
+      <div className="tw-container tw-w-3/4">
         <Effect />
       </div>
     </div>

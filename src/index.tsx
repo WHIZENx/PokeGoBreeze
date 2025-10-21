@@ -6,8 +6,6 @@ import './index.scss';
 
 import { Provider } from 'react-redux';
 
-import { SnackbarProvider } from 'notistack';
-
 import reportWebVitals from './reportWebVitals';
 
 import configureStore from './store/configure';
@@ -37,26 +35,17 @@ try {
 }
 
 document.documentElement.setAttribute('data-theme', theme);
-document.documentElement.setAttribute('data-bs-theme', theme);
 document.body.style.background = theme === TypeTheme.Dark ? darkThemeBg() : lightThemeBg();
 
 root.render(
   <>
     <Provider store={store}>
-      <SnackbarProvider
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        maxSnack={1}
-      >
-        <PersistGate loading={<LoadingPersist />} persistor={persistor}>
-          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <RouterSync />
-            <Main />
-          </BrowserRouter>
-        </PersistGate>
-      </SnackbarProvider>
+      <PersistGate loading={<LoadingPersist />} persistor={persistor}>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <RouterSync />
+          <Main />
+        </BrowserRouter>
+      </PersistGate>
     </Provider>
     <Analytics />
     <SpeedInsights />

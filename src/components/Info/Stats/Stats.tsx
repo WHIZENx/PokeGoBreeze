@@ -4,11 +4,11 @@ import { checkRankAllAvailable, getDmgMultiplyBonus } from '../../../utils/utils
 
 import './Stats.scss';
 import { IStatsPokemonGO, StatsPokemonGO, StatsRankPokemonGO } from '../../../core/models/stats.model';
-import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { toFloatWithPadding, toNumber } from '../../../utils/extension';
 import useStats from '../../../composables/useStats';
+import StatBar from '../../Commons/Progress/StatBar';
 
 interface ICurrentStats {
   stats: IStatsPokemonGO;
@@ -82,67 +82,67 @@ const Stats = (props: IStatsComponent) => {
     Math.round(stats * getDmgMultiplyBonus(props.pokemonType, type));
 
   return (
-    <div className="mt-2 text-black">
-      <StatsBar
+    <div className="tw-mt-2 tw-text-black">
+      <StatBar
         tag="ATK"
-        class="bg-danger"
+        color="error"
         statsPercent={currentStats.atkPercent}
         rank={
           availableRankGO.attackRank ? availableRankGO.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'
         }
         pokemonStatsRank={statsData?.attack}
         currentStats={currentStats.stats.atk}
-        id={props.id}
+        id={props.id?.toString()}
         form={props.form}
         statType={TypeAction.Atk}
         isDisabled={props.isDisabled}
         pokemonType={props.pokemonType}
       />
-      <StatsBar
+      <StatBar
         tag="DEF"
-        class="bg-success"
+        color="success"
         statsPercent={currentStats.defPercent}
         rank={
           availableRankGO.defenseRank ? availableRankGO.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'
         }
         pokemonStatsRank={statsData?.defense}
         currentStats={currentStats.stats.def}
-        id={props.id}
+        id={props.id?.toString()}
         form={props.form}
         statType={TypeAction.Def}
         isDisabled={props.isDisabled}
         pokemonType={props.pokemonType}
       />
-      <StatsBar
+      <StatBar
         tag="STA"
-        class="bg-info"
+        color="info"
         statsPercent={currentStats.staPercent}
         rank={
           availableRankGO.staminaRank ? availableRankGO.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'
         }
         pokemonStatsRank={statsData?.stamina}
         currentStats={currentStats.stats.sta}
-        id={props.id}
+        id={props.id?.toString()}
         form={props.form}
         statType={TypeAction.Sta}
         isDisabled={props.isDisabled}
         pokemonType={props.pokemonType}
       />
-      <StatsBar
+      <StatBar
         tag="Stat Prod"
-        class="bg-warning"
+        color="warning"
         statsPercent={currentStats.prodPercent}
         rank={
           availableRankGO.statProdRank
             ? availableRankGO.statProdRank
             : props.statProd
-            ? props.statProd.rank
-            : 'Unavailable'
+              ? props.statProd.rank
+              : 'Unavailable'
         }
         pokemonStatsRank={statsData?.statProd}
         currentStats={currentStats.stats.prod}
         optionalStats={`${toFloatWithPadding(currentStats.stats.prod / Math.pow(10, 6), 2)} MM`}
-        id={props.id}
+        id={props.id?.toString()}
         form={props.form}
         statType={TypeAction.Prod}
         isDisabled={props.isDisabled}

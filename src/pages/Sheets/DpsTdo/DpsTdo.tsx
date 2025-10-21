@@ -29,7 +29,6 @@ import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
-import './DpsTdo.scss';
 import SelectPokemon from '../../../components/Commons/Selects/SelectPokemon';
 import { Action } from 'history';
 import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
@@ -56,7 +55,6 @@ import {
   toNumber,
 } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
-import Loading from '../../../components/Sprites/Loading/Loading';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
@@ -82,6 +80,7 @@ import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../../components/Commons/Buttons/ToggleType';
 import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
+import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -148,12 +147,13 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
       <LinkToTop
         to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.form, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
+        className="tw-flex tw-items-center"
       >
         <PokemonIconType pokemonType={row.pokemonType} size={25}>
           <img
             height={48}
             alt="Pokémon Image"
-            className="me-2"
+            className="tw-mr-2"
             src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -177,7 +177,7 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
           key={index}
           width={25}
           height={25}
-          className="me-2"
+          className="tw-mr-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
@@ -190,11 +190,11 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
     name: 'Fast Move',
     selector: (row) => (
       <LinkToTop
-        className="d-flex align-items-center"
+        className="tw-flex tw-items-center"
         to={`/move/${row.fMove?.id}`}
         title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}
       >
-        <IconType width={25} height={25} className="me-2" alt="Pokémon GO Type Logo" type={row.fMove?.type} />
+        <IconType width={25} height={25} className="tw-mr-2" alt="Pokémon GO Type Logo" type={row.fMove?.type} />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}</span>
           {row.fMoveType !== MoveType.None && (
@@ -219,11 +219,11 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
     name: 'Charged Move',
     selector: (row) => (
       <LinkToTop
-        className="d-flex align-items-center"
+        className="tw-flex tw-items-center"
         to={`/move/${row.cMove?.id}`}
         title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}
       >
-        <IconType width={25} height={25} className="me-2" alt="Pokémon GO Type Logo" type={row.cMove?.type} />
+        <IconType width={25} height={25} className="tw-mr-2" alt="Pokémon GO Type Logo" type={row.cMove?.type} />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}</span>
           {row.cMoveType !== MoveType.None && (
@@ -467,10 +467,13 @@ const DpsTdo = () => {
     const bestType = getPropertyName<PokemonSheetData, 'multiDpsTdo' | 'dps' | 'tdo'>(result[0], (r) =>
       best === BestOptionType.dps ? r.dps : best === BestOptionType.tdo ? r.tdo : r.multiDpsTdo
     );
-    const group = result.reduce((res, obj) => {
-      (res[obj.pokemon.name] = getValueOrDefault(Array, res[obj.pokemon.name])).push(obj);
-      return res;
-    }, new Object() as DynamicObj<PokemonSheetData[]>);
+    const group = result.reduce(
+      (res, obj) => {
+        (res[obj.pokemon.name] = getValueOrDefault(Array, res[obj.pokemon.name])).push(obj);
+        return res;
+      },
+      new Object() as DynamicObj<PokemonSheetData[]>
+    );
     return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p[bestType] > c[bestType] ? p : c)));
   };
 
@@ -660,20 +663,20 @@ const DpsTdo = () => {
   };
 
   return (
-    <div className="position-relative">
-      {!isNotEmpty(dpsTable) && (
-        <div className="ph-item w-100 h-100 position-absolute z-2 bg-transparent">
-          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
-        </div>
-      )}
-      <div className="text-center w-100">
+    <div className="tw-relative">
+      <div className="tw-relative tw-text-center tw-w-full">
+        {!isNotEmpty(dpsTable) && (
+          <div className="ph-item !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
+            <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0 !tw-bg-transparent" />
+          </div>
+        )}
         <div className="head-types">Filter Moves By Types</div>
         <ToggleType fullWidth value={selectTypes} onSelectType={(type) => addTypeArr(type)} />
-        <div className="row w-100 m-0">
-          <div className="col-xxl p-0">
+        <div className="row tw-w-full !tw-m-0">
+          <div className="2xl:tw-flex-1 !tw-p-0">
             <div>
-              <div className="row w-100 m-0">
-                <div className="d-flex col-md-9 p-0">
+              <div className="row tw-w-full !tw-m-0">
+                <div className="tw-flex md:tw-w-3/4 !tw-p-0">
                   <InputMuiSearch
                     value={searchTerm}
                     onChange={(value) => setSearchTerm(value)}
@@ -682,7 +685,7 @@ const DpsTdo = () => {
                     isNoWrap
                   />
                 </div>
-                <div className="d-flex col-md-3">
+                <div className="tw-flex md:tw-w-1/4">
                   <FormControlLabel
                     control={
                       <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
@@ -923,8 +926,8 @@ const DpsTdo = () => {
               />
             </FormControlMui>
             <div className="input-group">
-              <div className="row w-100 m-0">
-                <Box className="col-xl-4 p-0">
+              <div className="row tw-w-full !tw-m-0">
+                <Box className="xl:tw-w-1/3 !tw-p-0">
                   <SelectPokemon
                     pokemon={dataTargetPokemon}
                     isSelected
@@ -937,7 +940,7 @@ const DpsTdo = () => {
                     isNoWrap
                   />
                 </Box>
-                <Box className="col-xl-4 p-0">
+                <Box className="xl:tw-w-1/3 !tw-p-0">
                   <SelectCardMove
                     isNoWrap
                     labelPrepend="Fast Move"
@@ -954,7 +957,7 @@ const DpsTdo = () => {
                     isDisable={isShowSpinner}
                   />
                 </Box>
-                <Box className="col-xl-4 p-0">
+                <Box className="xl:tw-w-1/3 !tw-p-0">
                   <SelectCardMove
                     isNoWrap
                     labelPrepend="Charged Move"
@@ -974,9 +977,9 @@ const DpsTdo = () => {
               </div>
             </div>
           </div>
-          <div className="col-xxl p-0">
+          <div className="2xl:tw-flex-1 !tw-p-0">
             <div className="head-types">Options</div>
-            <form className="w-100" onSubmit={onCalculateTable.bind(this)}>
+            <form className="tw-w-full" onSubmit={onCalculateTable.bind(this)}>
               <FormControlMui
                 control={
                   <Switch
@@ -1157,7 +1160,7 @@ const DpsTdo = () => {
                 />
                 <FormControlMui
                   isNotGroup
-                  boxClassName="d-flex align-items-center flex-grow-1"
+                  boxClassName="tw-flex tw-items-center tw-flex-grow"
                   control={
                     <Switch
                       onChange={(_, check) => {
@@ -1196,8 +1199,8 @@ const DpsTdo = () => {
           </div>
         </div>
       </div>
-      <div className="position-relative">
-        <Loading isShow={isShowSpinner} />
+      <div className="tw-relative">
+        <BackdropMui open={isShowSpinner && isNotEmpty(dpsTable)} isShowOnAbove={false} />
         <CustomDataTable
           customColumns={columns}
           data={dataFilter}

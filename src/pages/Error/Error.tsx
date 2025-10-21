@@ -34,7 +34,7 @@ const Error = (props: IErrorPage) => {
   return (
     <>
       {props.isError || isUndefined(props.isError) ? (
-        <div className="d-block position-relative">
+        <div className="tw-block tw-relative">
           <div className="error-img">
             <div className="img" />
           </div>
@@ -53,7 +53,7 @@ const Error = (props: IErrorPage) => {
                 </p>
               </span>
               <span>Maybe try one of the links in the menu or press Back to Home to go to the home page.</span>
-              <div className="mt-3">
+              <div className="tw-mt-3">
                 <LinkToTop className="btn btn-danger" to="/">
                   Back to Home
                 </LinkToTop>

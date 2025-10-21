@@ -11,7 +11,7 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
   return (
     <div
       style={{ width: props.width, height: props.height }}
-      className={combineClasses('scroll-form', props.className, props.isLoaded && props.isFullWidth ? 'w-100' : '')}
+      className={combineClasses('scroll-form', props.className, props.isLoaded && props.isFullWidth ? 'tw-w-full' : '')}
     >
       {props.isLoaded ? (
         <Fragment>
@@ -23,12 +23,12 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                   active={value.form.id === props.id}
                   onClick={() => props.changeForm(value)}
                   sx={{ minHeight: 142 }}
-                  className={combineClasses(index + subIndex === 0 ? '' : 'ms-3', 'btn-default')}
+                  className={combineClasses(index + subIndex === 0 ? '' : '!tw-ml-3', 'btn-default')}
                   color="default"
                   label={
-                    <div className="h-100">
-                      <div className="d-flex w-100 justify-content-center">
-                        <div className="position-relative w-9">
+                    <div className="tw-h-full">
+                      <div className="tw-flex tw-w-full tw-justify-center">
+                        <div className="tw-relative tw-w-16">
                           <PokemonIconType pokemonType={value.form.pokemonType} size={24}>
                             <img
                               className="pokemon-sprite-medium"
@@ -47,13 +47,13 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                           ? capitalize(formNormal())
                           : splitAndCapitalize(value.form.formName, '-', ' ')}
                       </p>
-                      <div className="d-flex flex-column">
+                      <div className="tw-flex tw-flex-col">
                         {toNumber(value.form.id) > 0 && value.form.id === props.defaultId && (
                           <b>
                             <small>(Default)</small>
                           </b>
                         )}
-                        {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
+                        {toNumber(value.form.id) <= 0 && <small className="tw-text-red-600">* Only in GO</small>}
                       </div>
                     </div>
                   }

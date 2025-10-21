@@ -30,17 +30,17 @@
   // Custom colors
   --custom-white: white;
   --custom-black: black;
-  --custom-lightgray: lightgray;
+  --custom-light-gray: lightgray;
   --custom-gray: gray;
 
   // Background colors
-  --background-default: #fafafa;
+  --custom-default: #fafafa;
   --background-paper: white;
   --background-revert: black;
   --background-selected: #eeeeee;
   --background-btn-type: #fafafa;
   --background-btn-type-select: #757575;
-  --background-table-primary: white;
+  --table-primary: white;
   --background-table-divided: #0000001f;
   --background-table-strip: #fafafa;
   --background-table-hover: #eeeeee;
@@ -89,10 +89,10 @@
   --custom-pop-over: cornsilk;
 
   // Custom table
-  --custom-table-background-head: #409ff1;
+  --table-head: #409ff1;
   --custom-table-background-odd: #eeeeee;
   --custom-table-background-even: white;
-  --custom-table-background-info: #f1ffff;
+  --table-info: #f1ffff;
   --custom-table-strip: #fafafa;
   --custom-table-hover: #eeeeee;
   --custom-table-background-sub-head: #f1f1ff;
@@ -142,17 +142,17 @@
   // Custom colors
   --custom-white: black;
   --custom-black: white;
-  --custom-lightgray: #3d3d3d;
+  --custom-light-gray: #3d3d3d;
   --custom-gray: #b0b0b0;
 
   // Background colors
-  --background-default: #222222;
+  --custom-default: #222222;
   --background-paper: #333333;
   --background-revert: white;
   --background-selected: #555555;
   --background-btn-type: #555555;
   --background-btn-type-select: #111111;
-  --background-table-primary: #222222;
+  --table-primary: #222222;
   --background-table-divided: #ffffff1f;
   --background-table-strip: #050505;
   --background-table-hover: #333333;
@@ -201,10 +201,10 @@
   --custom-pop-over: #4d4535;
 
   // Custom table
-  --custom-table-background-head: #1e78c2;
+  --table-head: #1e78c2;
   --custom-table-background-odd: #222222;
   --custom-table-background-even: black;
-  --custom-table-background-info: #204545;
+  --table-info: #204545;
   --custom-table-strip: #050505;
   --custom-table-hover: #111111;
   --custom-table-background-sub-head: #1e78c2;

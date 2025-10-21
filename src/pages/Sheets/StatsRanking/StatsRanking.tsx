@@ -76,7 +76,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
         to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
-        <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="small" />
+        <VisibilityIcon className="view-pokemon tw-text-default" fontSize="small" />
       </LinkToTop>
     ),
     width: '55px',
@@ -107,7 +107,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
         <img
           height={48}
           alt="Pokémon Image"
-          className="me-2"
+          className="tw-mr-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -128,7 +128,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
           key={index}
           width={25}
           height={25}
-          className="me-2"
+          className="tw-mr-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
@@ -213,7 +213,7 @@ const StatsRanking = () => {
   const conditionalRowStyles = createDataRows<ConditionalStyles<IPokemonStatsRanking>>(
     {
       when: () => true,
-      style: { backgroundColor: 'var(--background-table-primary)' },
+      style: { backgroundColor: 'var(--table-primary)' },
     },
     {
       when: (row) =>
@@ -474,7 +474,7 @@ const StatsRanking = () => {
         const result = pokemonFilter[index];
 
         const details = getPokemonDetails(id, result.fullName, result.pokemonType, true);
-        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
+        details.pokemonType = formType ? pokemonType : (result.pokemonType ?? PokemonType.Normal);
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
 
@@ -527,7 +527,7 @@ const StatsRanking = () => {
       );
       if (result) {
         const details = getPokemonDetails(paramId, result.fullName, result.pokemonType, true);
-        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
+        details.pokemonType = formType ? pokemonType : (result.pokemonType ?? PokemonType.Normal);
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
         setSelect(result);
@@ -536,12 +536,12 @@ const StatsRanking = () => {
   }, [routerAction, pokemonList, searchParams]);
 
   return (
-    <div className="pb-3 position-relative poke-container container">
-      <div className="w-100 d-inline-block align-middle my-3">
-        <div className="d-flex justify-content-center w-100">
-          <div className="d-inline-block img-desc">
+    <div className="tw-pb-3 tw-relative poke-container tw-container">
+      <div className="tw-w-full tw-inline-block tw-align-middle tw-my-3">
+        <div className="tw-flex tw-justify-center tw-w-full">
+          <div className="tw-inline-block img-desc">
             <img
-              className="pokemon-main-sprite v-align-baseline"
+              className="pokemon-main-sprite !tw-align-baseline"
               alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 select?.num,
@@ -554,8 +554,8 @@ const StatsRanking = () => {
             />
           </div>
         </div>
-        <div className="row w-100 mt-2 m-0">
-          <div className="col-xl-5 p-0">
+        <div className="row tw-w-full !tw-mt-2 !tw-m-0">
+          <div className="xl:tw-w-5/12 !tw-p-0">
             <PokemonTable
               id={select?.num}
               gen={select?.gen}
@@ -571,7 +571,7 @@ const StatsRanking = () => {
             />
           </div>
           {select && (
-            <div className="col-xl-7 p-0">
+            <div className="xl:tw-w-7/12 !tw-p-0">
               <TableMove pokemonData={pokemon} maxHeight={400} />
             </div>
           )}

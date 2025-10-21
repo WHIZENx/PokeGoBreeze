@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import './News.scss';
-import { Accordion } from 'react-bootstrap';
 import {
   generateParamForm,
   getItemSpritePath,
@@ -32,6 +31,9 @@ import Candy from '../../components/Sprites/Candy/Candy';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import { useDataStore } from '../../composables/useDataStore';
 import useAssets from '../../composables/useAssets';
+import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
+import { Divider } from '@mui/material';
+import DOMPurify from 'dompurify';
 
 const News = () => {
   useTitle({
@@ -189,14 +191,14 @@ const News = () => {
 
   const renderReward = (value: IRewardNews) => (
     <div>
-      <div className="w-100 h-100">
+      <div className="tw-w-full tw-h-full">
         {value.type === TicketRewardType.Candy ? (
-          <div className="d-flex w-100 justify-content-center">
+          <div className="tw-flex tw-w-full tw-justify-center">
             <Candy id={value.candy?.id} size={48} />
           </div>
         ) : (
           <img
-            className="pokemon-sprite-medium w-9"
+            className="pokemon-sprite-medium tw-w-16"
             alt="pokemon-sprite"
             src={
               value.type === TicketRewardType.Pokemon
@@ -210,7 +212,7 @@ const News = () => {
           />
         )}
       </div>
-      <p className="mt-2 fw-bold">
+      <p className="tw-mt-2 tw-font-bold">
         <span className={value.type === TicketRewardType.Pokemon ? 'select-evo' : ''}>{value.title}</span>
         {value.count > 0 && ` x${value.count}`}
       </p>
@@ -222,13 +224,13 @@ const News = () => {
       return element;
     }
     return (
-      <div className="w-100 h-100 counter-none v-align-top">
-        <div className="text-origin text-center">
-          <div className="ph-item bg-transparent">
-            <div className="ph-col-12 m-0 p-0 gap-3">
+      <div className="tw-w-full tw-h-full counter-none tw-align-top">
+        <div className="text-origin tw-text-center">
+          <div className="ph-item tw-bg-transparent">
+            <div className="ph-col-12 !tw-m-0 !tw-p-0 tw-gap-3">
               {[...Array(3).keys()].map((_, index) => (
                 <div key={index} className="ph-row">
-                  <div className="ph-picture w-100" style={{ height: 256 }} />
+                  <div className="ph-picture !tw-w-full !tw-h-[256px]" />
                 </div>
               ))}
             </div>
@@ -239,79 +241,93 @@ const News = () => {
   };
 
   return (
-    <div className="container mb-3">
-      <div className="info-main-container pb-3 mt-2">
-        <h1 className="text-center text-decoration-underline">News</h1>
+    <div className="tw-container tw-mb-3">
+      <div className="info-main-container tw-pb-3 tw-mt-2">
+        <h1 className="tw-text-center tw-underline">News</h1>
         {reload(
-          <div className={combineClasses('w-100 h-100', isNotEmpty(data) ? 'overflow-auto' : 'overflow-hidden')}>
+          <div
+            className={combineClasses(
+              'tw-w-full tw-h-full',
+              isNotEmpty(data) ? 'tw-overflow-auto' : 'tw-overflow-hidden'
+            )}
+          >
             {data
               .filter((info) => info.giftAble || isInclude(info.id, ItemTicketRewardType.BattlePass))
               .map((value, index) => (
                 <div className="info-news" key={index}>
-                  <div className="position-relative info-container">
+                  <div className="tw-relative info-container">
                     <img alt="Info Background" className="info-background" src={value.backgroundImgUrl} />
                     <img alt="Info Banner" className="info-banner-img" src={value.bannerUrl} />
                   </div>
-                  <Accordion>
-                    <Accordion.Item key={index} eventKey={index.toString()}>
-                      <Accordion.Header>
-                        <div className="w-100 d-flex justify-content-between me-3 column-gap-3">
-                          <div className="d-flex align-items-center flex-start column-gap-2">
-                            {value.titleImgUrl && <img alt="Image League" height={50} src={value.titleImgUrl} />}
-                            <b>{value.title}</b>
-                          </div>
-                          <div className="d-flex align-items-center flex-end">
-                            <div
-                              className={combineClasses(
-                                'p-1 rounded-1 u-fs-3',
-                                value.eventType === DateEvent.End
-                                  ? 'info-event-ending'
-                                  : DateEvent.Progressing
-                                  ? 'info-event-progress'
-                                  : 'info-event-future'
-                              )}
-                            >
-                              <b>{getKeyWithData(DateEvent, value.eventType)}</b>
+                  <AccordionMui
+                    items={[
+                      {
+                        label: (
+                          <div className="tw-w-full tw-flex tw-justify-between tw-mr-3 tw-gap-y-3">
+                            <div className="tw-flex tw-items-center tw-justify-start tw-gap-x-2">
+                              {value.titleImgUrl && <img alt="Image League" height={50} src={value.titleImgUrl} />}
+                              <b>{value.title}</b>
+                            </div>
+                            <div className="tw-flex tw-items-center tw-justify-end">
+                              <div
+                                className={combineClasses(
+                                  'tw-p-1 tw-rounded-sm tw-text-sm',
+                                  value.eventType === DateEvent.End
+                                    ? 'info-event-ending'
+                                    : DateEvent.Progressing
+                                      ? 'info-event-progress'
+                                      : 'info-event-future'
+                                )}
+                              >
+                                <b>{getKeyWithData(DateEvent, value.eventType)}</b>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        <div className="sub-body">
-                          {value.desc && <p>{value.desc}</p>}
-                          <div className="d-flex justify-content-center">
-                            <h5>
-                              Start time: {value.startTime} | End time: {value.endTime}
-                            </h5>
+                        ),
+                        value: value.id,
+                        children: (
+                          <div className="sub-body">
+                            {value.desc && <p>{value.desc}</p>}
+                            <div className="tw-flex tw-justify-center">
+                              <h5>
+                                Start time: {value.startTime} | End time: {value.endTime}
+                              </h5>
+                            </div>
+                            {isNotEmpty(value.rewardNews) && (
+                              <>
+                                <h6 className="tw-underline">Rewards</h6>
+                                <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle">
+                                  {value.rewardNews.map((value, i) => (
+                                    <div key={i} className="tw-inline-block tw-mx-2">
+                                      {value.type === TicketRewardType.Pokemon && value.pokemon ? (
+                                        <LinkToTop
+                                          className="select-evo"
+                                          to={`/pokemon/${value.pokemon.id}${generateParamForm(value.pokemon.form)}`}
+                                        >
+                                          {renderReward(value)}
+                                        </LinkToTop>
+                                      ) : (
+                                        renderReward(value)
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                            {value.detailsLink && (
+                              <>
+                                <Divider sx={{ my: 1 }} />
+                                <p
+                                  className="tw-mt-3"
+                                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value.detailsLink) }}
+                                />
+                              </>
+                            )}
                           </div>
-                          {isNotEmpty(value.rewardNews) && (
-                            <>
-                              <h6 className="text-decoration-underline">Rewards</h6>
-                              <div className="w-100 text-center d-inline-block align-middle">
-                                {value.rewardNews.map((value, i) => (
-                                  <div key={i} className="d-inline-block mx-2">
-                                    {value.type === TicketRewardType.Pokemon && value.pokemon ? (
-                                      <LinkToTop
-                                        className="select-evo"
-                                        to={`/pokemon/${value.pokemon.id}${generateParamForm(value.pokemon.form)}`}
-                                      >
-                                        {renderReward(value)}
-                                      </LinkToTop>
-                                    ) : (
-                                      renderReward(value)
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            </>
-                          )}
-                          {value.detailsLink && (
-                            <p className="mt-2" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />
-                          )}
-                        </div>
-                      </Accordion.Body>
-                    </Accordion.Item>
-                  </Accordion>
+                        ),
+                      },
+                    ]}
+                  />
                 </div>
               ))}
           </div>

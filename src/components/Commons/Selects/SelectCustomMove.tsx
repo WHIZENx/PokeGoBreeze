@@ -70,10 +70,10 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
 
   return (
     <Fragment>
-      <h6 className="text-center">
+      <h6 className="tw-text-center">
         <b>{props.text}</b>
       </h6>
-      <div className="d-flex justify-content-center">
+      <div className="tw-flex tw-justify-center">
         <div className="card-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
           <div className="card-select">
             <Card
@@ -83,7 +83,7 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
             />
           </div>
           {showMove && (
-            <div className="result-type result-move">
+            <div className="result-type result-move tw-w-[300px]">
               <ul>
                 {resultMove && (
                   <Fragment>
@@ -103,7 +103,7 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
                           )}
                           <li
                             className={combineClasses(
-                              'container card-pokemon',
+                              'tw-container card-pokemon tw-flex tw-items-center',
                               props.isHighlight && isEqual(currentMove?.name, value.name) ? 'bg-card-highlight' : ''
                             )}
                             onMouseDown={() => changeMove(value)}

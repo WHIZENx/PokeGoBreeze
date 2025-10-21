@@ -10,9 +10,9 @@ import update from 'immutability-helper';
 import { PokemonType, TypeMove } from '../../enums/type.enum';
 import APIService from '../../services/api.service';
 import { IPokemonRaidComponent } from '../models/component.model';
-import { combineClasses } from '../../utils/extension';
 import { SelectMovePokemonModel } from '../Commons/Inputs/models/select-move.model';
 import SelectCardMove from '../Commons/Selects/SelectCardMove';
+import ButtonMui from '../Commons/Buttons/ButtonMui';
 
 const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
@@ -34,72 +34,61 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
   }, [props.data, dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, props.id, props.setData]);
 
   return (
-    <div className="position-relative">
-      <span className="input-group-text justify-content-center position-relative h-6">
-        {dataTargetPokemon && (
-          <div className="d-flex text-group-small">
-            <span>
-              LV: {dataTargetPokemon.stats?.level} {dataTargetPokemon.stats?.iv.atkIV}/
-              {dataTargetPokemon.stats?.iv.defIV}/{`${dataTargetPokemon.stats?.iv.staIV} `}
-              {dataTargetPokemon.stats?.pokemonType === PokemonType.Shadow && (
-                <img height={24} alt="Image Shadow" src={APIService.getPokeShadow()} />
-              )}
-            </span>
-          </div>
-        )}
-        <Badge color="primary" overlap="circular" badgeContent={props.id + 1} />
-        {props.isControls && (
-          <div className="d-flex ic-group-small">
-            <span
-              className={combineClasses(
-                'ic-copy-small text-white me-1',
-                dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
-              )}
-              title="Options"
-              onClick={() => {
-                if (dataTargetPokemon) {
-                  props.onOptionsPokemon(props.id, dataTargetPokemon);
-                }
-              }}
-            >
-              <SettingsIcon className="u-fs-3" />
-            </span>
-            <span
-              className={combineClasses(
-                'ic-copy-small text-white me-1',
-                dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
-              )}
-              title="Copy"
-              onClick={() => {
-                if (dataTargetPokemon && props.id >= 0) {
-                  props.onCopyPokemon(props.id);
-                }
-              }}
-            >
-              <ContentCopyIcon className="u-fs-3" />
-            </span>
-            <span
-              className={combineClasses(
-                'ic-remove-small text-white',
-                props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon)
-                  ? 'bg-danger'
-                  : 'click-none bg-secondary'
-              )}
-              title="Remove"
-              onClick={() => {
-                if (props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon)) {
+    <div className="tw-relative tw-w-full">
+      <div className="input-group-text tw-items-center tw-justify-center">
+        <div className="tw-w-1/3 tw-float-left">
+          {dataTargetPokemon && (
+            <div className="tw-flex tw-items-center tw-font-bold">
+              <span>
+                LV: {dataTargetPokemon.stats?.level} {dataTargetPokemon.stats?.iv.atkIV}/
+                {dataTargetPokemon.stats?.iv.defIV}/{`${dataTargetPokemon.stats?.iv.staIV} `}
+                {dataTargetPokemon.stats?.pokemonType === PokemonType.Shadow && (
+                  <img height={24} alt="Image Shadow" src={APIService.getPokeShadow()} />
+                )}
+              </span>
+            </div>
+          )}
+        </div>
+        <div className="tw-w-1/3">
+          <Badge color="primary" overlap="circular" badgeContent={props.id + 1} />
+        </div>
+        <div className="tw-w-1/3 tw-float-right">
+          {props.isControls && (
+            <div className="tw-flex tw-items-center tw-justify-end tw-gap-2">
+              <ButtonMui
+                isRound
+                className="ic-copy-small !tw-p-0 !tw-min-w-8 !tw-h-8"
+                disabled={!dataTargetPokemon}
+                title="Options"
+                label={<SettingsIcon color="inherit" className="!tw-title-medium" />}
+                onClick={() => props.onOptionsPokemon(props.id, dataTargetPokemon)}
+              />
+              <ButtonMui
+                isRound
+                className="ic-copy-small !tw-p-0 !tw-min-w-8 !tw-h-8"
+                disabled={!dataTargetPokemon || props.id < 0}
+                title="Copy"
+                label={<ContentCopyIcon color="inherit" className="!tw-title-medium" />}
+                onClick={() => props.onCopyPokemon(props.id)}
+              />
+              <ButtonMui
+                isRound
+                className="ic-remove-small !tw-p-0 !tw-min-w-8 !tw-h-8"
+                disabled={props.id <= 0 && (props.data.length <= 1 || !props.data.at(0)?.dataTargetPokemon)}
+                color="error"
+                title="Remove"
+                label={<DeleteIcon color="inherit" className="!tw-title-medium" />}
+                onClick={() => {
                   setDataTargetPokemon(props.data[props.id + 1]?.dataTargetPokemon);
                   setFMoveTargetPokemon(props.data[props.id + 1]?.fMoveTargetPokemon);
                   setCMoveTargetPokemon(props.data[props.id + 1]?.cMoveTargetPokemon);
                   props.onRemovePokemon(props.id);
-                }
-              }}
-            >
-              <DeleteIcon className="u-fs-3" />
-            </span>
-          </div>
-        )}
-      </span>
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </div>
       <SelectPokemon
         clearData={props.clearData}
         isSelected
@@ -110,7 +99,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         setCMovePokemon={setCMoveTargetPokemon}
         maxHeight={120}
       />
-      <span className="input-group-text justify-content-center">
+      <span className="input-group-text tw-justify-center">
         <b>Fast Move</b>
       </span>
       <SelectCardMove
@@ -122,7 +111,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         moveType={TypeMove.Fast}
         emptyText="- Please select Pokémon -"
       />
-      <span className="input-group-text justify-content-center">
+      <span className="input-group-text tw-justify-center">
         <b>Charged Move</b>
       </span>
       <SelectCardMove

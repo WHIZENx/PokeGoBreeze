@@ -1,7 +1,7 @@
 @use "./common.scss" as *;
 
 // Text color classes
-.theme-text-primary {
+.tw-text-default {
   @include theme-text(var(--text-primary), true);
 }
 
@@ -11,11 +11,11 @@
 
 // Background color classes
 .theme-bg-default {
-  @include theme-background(var(--background-default));
+  @include theme-background(var(--custom-default));
 }
 
 .theme-table-primary {
-  @include theme-background(var(--background-table-primary), true);
+  @include theme-background(var(--table-primary), true);
 }
 
 // Theme spinner classes
@@ -34,7 +34,7 @@
 
 // Table-related theme classes
 .theme-table-info-bg {
-  @include theme-background(var(--custom-table-background-info));
+  @include theme-background(var(--table-info));
 }
 
 .theme-table-info-bg,
@@ -86,7 +86,7 @@
 }
 
 .moveset-error-msg {
-  @include theme-background(var(--background-default));
+  @include theme-background(var(--custom-default));
   @include theme-text(var(--error-main, #f44336));
 }
 
@@ -142,9 +142,7 @@
 // Table head classes
 .head-types {
   @include table-head-style;
-
-  padding: 10px;
-  font-weight: bolder;
+  @apply tw-p-2.5 tw-font-bold;
 }
 
 .table-head {
@@ -153,7 +151,7 @@
 }
 
 .sticker-container h5 {
-  @include theme-background(var(--custom-table-background-head));
+  @include theme-background(var(--table-head));
   @include theme-border;
 }
 
@@ -220,7 +218,7 @@ a.pokemon-link:hover {
 .ranking-header,
 .table-round-battle tbody tr td:first-child,
 .table-round-battle tbody tr td:not(:first-child, .bg-summary) {
-  @include theme-background(var(--background-default), true);
+  @include theme-background(var(--custom-default), true);
 }
 
 // Add text color to ranking headers
@@ -378,7 +376,7 @@ td,
   @include hover-border;
 }
 
-.timeline-vertical .w-50:first-child .pokemon-battle-header {
+.timeline-vertical div:first-child .pokemon-battle-header {
   @include theme-border(1px, left, var(--custom-gray));
 }
 
@@ -480,13 +478,13 @@ td,
 
 // Group elements with bottom bs-border
 .ranking-container {
-  @include bs-border-with-side(bottom);
+  @include border-with-side(bottom);
 }
 
 // Group elements with top bs-border
 .accordion-footer,
 .turn-battle {
-  @include bs-border-with-side(top);
+  @include border-with-side(top);
 }
 
 // Group elements with identical hover border styling
@@ -498,13 +496,13 @@ td,
 
 // Info container with multi-side border
 .info-container {
-  @include bs-border-with-side(top);
+  @include border-with-side(top);
   @include bs-border-sides;
 }
 
 // Tab body with multi-side border
 .tab-body {
-  @include bs-border-with-side(bottom);
+  @include border-with-side(bottom);
   @include bs-border-sides;
 }
 

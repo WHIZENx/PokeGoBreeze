@@ -20,8 +20,8 @@ import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
 import { isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
 import useStats from '../../composables/useStats';
 import useSearch from '../../composables/useSearch';
-import SelectTier from '../Commons/Selects/SelectTier';
 import StatsTable from '../Commons/Tables/Stats/StatsTable';
+import SelectTierMui from '../Commons/Selects/SelectTierMui';
 
 const Tools = (props: IToolsComponent) => {
   const { statsData } = useStats();
@@ -136,9 +136,9 @@ const Tools = (props: IToolsComponent) => {
   return (
     <Fragment>
       {props.isRaid ? (
-        <div className="mt-2 mb-3">
-          <SelectTier
-            className="w-100"
+        <div className="tw-mt-2 tw-mb-3">
+          <SelectTierMui
+            className="tw-text-left"
             tier={currTier}
             setTier={props.setTier}
             setCurrTier={setCurrTier}

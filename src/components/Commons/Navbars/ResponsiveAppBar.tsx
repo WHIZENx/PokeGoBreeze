@@ -23,7 +23,7 @@ import { getTime } from '../../../utils/utils';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-import '../../Navbar.scss';
+import './Navbar.scss';
 import { IResponsiveAppBarComponent } from '../models/component.model';
 import { pages, POKEDEX } from '../constants/app-bar';
 import ButtonMui from '../Buttons/ButtonMui';
@@ -32,8 +32,17 @@ import { useNavigateToTop } from '../../Link/LinkToTop';
 import { LinearProgress, ListSubheader } from '@mui/material';
 import useRouter from '../../../composables/useRouter';
 import DrawerSideBar from '../Drawers/DrawerSideBar';
+import { useTheme as useThemeMui } from '@mui/material/styles';
+import { useLocation } from 'react-router-dom';
 
 const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
+  try {
+    useLocation();
+  } catch (e) {
+    return;
+  }
+
+  const theme = useThemeMui();
   const navigateToTop = useNavigateToTop();
   const router = useRouter();
 
@@ -58,17 +67,23 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
       const value = pages.find(
         (page) => isEqual(page.path, pathName) || page.subMenus?.some((subMenu) => isEqual(subMenu.path, pathName))
       );
-      setCurrentPage(value?.value?.toString() || POKEDEX);
+      setCurrentPage(value?.value?.toString());
+      if (isNotEmpty(value?.subMenus)) {
+        const subValue = value?.subMenus?.find((subMenu) => isEqual(subMenu.path, pathName));
+        setCurrentPageSub(subValue?.value?.toString());
+      } else if (!value?.value) {
+        setCurrentPageSub('');
+      }
     }
   }, [router.routerLocation]);
 
   const onChangeTheme = () => {
     if (!isDelay) {
       setIsDelay(true);
-      loadTheme(props.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light, setStateTheme);
+      loadTheme(theme.palette.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light, setStateTheme);
       setTimeout(() => {
         setIsDelay(false);
-        props.toggleColorMode();
+        props.toggleColorMode?.();
       }, 500);
     }
   };
@@ -91,6 +106,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
       setShowMenu(true);
     } else {
       setTimeout(() => navigateToTop(page.path || '/'), 100);
+      setCurrentPageSub('');
     }
   };
 
@@ -98,11 +114,11 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
     return (
       <>
         {toNumber(timestamp?.gamemaster) > 0 && (
-          <span className="text-truncate">Updated: {getTime(timestamp.gamemaster, true)}</span>
+          <span className="tw-truncate">Updated: {getTime(timestamp.gamemaster, true)}</span>
         )}
-        <span className="text-end text-warning u-fs-2">
+        <Typography variant="caption" sx={{ color: 'warning.light' }} fontSize={8} className="tw-text-right">
           <b>{props.version}</b>
-        </span>
+        </Typography>
       </>
     );
   }, [timestamp, props.version]);
@@ -110,20 +126,22 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   const navigateInfo = useMemo(() => {
     return (
       <Box sx={{ display: 'flex', gap: 1 }}>
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column' }}>{infoVersion}</Box>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column' }} className="tw-w-full">
+          {infoVersion}
+        </Box>
         <IconButton
           sx={{ p: 0 }}
           className={combineClasses(
             stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
-            isDelay ? 'cursor-default' : 'cursor-pointer'
+            isDelay ? 'cursor-default' : 'tw-cursor-pointer'
           )}
           onClick={onChangeTheme}
           color="inherit"
         >
-          {props.mode === TypeTheme.Light ? (
-            <LightModeIcon fontSize="large" style={{ color: 'white' }} />
+          {theme.palette.mode === TypeTheme.Light ? (
+            <LightModeIcon fontSize="large" color="inherit" />
           ) : (
-            <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
+            <DarkModeIcon fontSize="large" color="inherit" />
           )}
         </IconButton>
       </Box>
@@ -131,10 +149,10 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   }, [infoVersion, stateTheme, isDelay, onChangeTheme]);
 
   return (
-    <AppBar position="sticky">
+    <AppBar className="tw-overflow-x-auto" position="sticky">
       <Toolbar sx={{ mx: 2, my: 0.5 }} disableGutters variant="dense">
         {/* width >= 900 */}
-        <Box className="text-white" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+        <Box className="tw-text-white" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
           <img src={logo} width="30" height="30" alt="Home" />
           <Typography
             noWrap
@@ -179,7 +197,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
                 }}
                 endIcon={isNotEmpty(page.subMenus) && <ArrowDropDownIcon />}
                 value={page.value}
-                label={<span className="text-truncate">{page.label}</span>}
+                label={<span className="tw-truncate">{page.label}</span>}
               />
               {isNotEmpty(page.subMenus) && (
                 <Menu
@@ -216,7 +234,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         {navigateInfo}
       </Toolbar>
       {spinnerBarIsShow && (
-        <Box className="w-100 position-absolute z-7">
+        <Box className="tw-w-full tw-absolute tw-z-7">
           <LinearProgress variant={VariantType.Determinate} value={spinnerPercent} />
         </Box>
       )}
@@ -229,7 +247,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         setOpen={setOpen}
         footer={
           <Box
-            className="theme-text-primary"
+            className="tw-text-default"
             sx={{
               display: { xs: 'flex', md: 'none' },
               flexDirection: 'column',

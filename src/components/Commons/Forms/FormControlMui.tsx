@@ -10,7 +10,7 @@ const FormControlMui = (props: FormControlMuiComponent) => {
     <Box
       className={combineClasses(
         isNotGroup ? '' : 'input-control-group',
-        props.width === 'fit-content' ? 'w-fit-content' : '',
+        props.width === 'fit-content' ? '!tw-w-fit' : '',
         boxClassName
       )}
     >
@@ -18,7 +18,7 @@ const FormControlMui = (props: FormControlMuiComponent) => {
       {control && (
         <FormControlLabel
           {...controlProps}
-          className={combineClasses(className, 'mx-0 pe-3')}
+          className={combineClasses(className, '!tw-mx-0 tw-pr-3')}
           sx={{
             '& .MuiTypography-root': {
               width: props.width,

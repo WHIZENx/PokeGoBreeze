@@ -21,7 +21,7 @@ const Card = (props: ICardTypeComponent) => {
   }, [findMoveByName, props.value, props.cardType]);
 
   const renderWeather = () => (
-    <img height={64} alt="Pokémon GO Weather Logo" className="me-2" src={APIService.getWeatherSprite(props.value)} />
+    <img height={64} alt="Pokémon GO Weather Logo" className="tw-mr-2" src={APIService.getWeatherSprite(props.value)} />
   );
 
   return (
@@ -29,8 +29,8 @@ const Card = (props: ICardTypeComponent) => {
       {props.value ? (
         <div
           className={combineClasses(
-            'd-flex align-items-center w-100 h-100 overflow-x-hidden text-nowrap',
-            props.cardType === CardType.Move ? 'p-1' : ''
+            'tw-flex tw-items-center tw-w-full tw-h-full tw-overflow-x-hidden tw-text-nowrap',
+            props.cardType === CardType.Move ? 'tw-p-1' : ''
           )}
         >
           {props.cardType === CardType.Weather ? (
@@ -40,18 +40,18 @@ const Card = (props: ICardTypeComponent) => {
               width={64}
               height={64}
               alt="Pokémon GO Type Logo"
-              className="me-2"
+              className="tw-mr-2"
               type={props.cardType === CardType.Move ? move?.type : props.value}
             />
           )}
-          <span className={props.cardType === CardType.Move ? 'me-1' : ''}>
+          <span className={props.cardType === CardType.Move ? 'tw-mr-1' : ''}>
             <b>{`${splitAndCapitalize(
               getValueOrDefault(String, props.cardType === CardType.Move ? move?.name : props.name, props.value),
               '_',
               ' '
             )} `}</b>
           </span>
-          <span className={props.cardType === CardType.Move ? 'd-flex' : ''}>
+          <span className={props.cardType === CardType.Move ? 'tw-flex' : ''}>
             {move && props.moveType !== MoveType.None && (
               <span
                 className={combineClasses(
@@ -65,7 +65,7 @@ const Card = (props: ICardTypeComponent) => {
           </span>
         </div>
       ) : (
-        <div className="d-flex justify-content-center align-items-center w-100 h-9">
+        <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-16">
           {!props.isHideDefaultTitle && <b>- Select -</b>}
         </div>
       )}

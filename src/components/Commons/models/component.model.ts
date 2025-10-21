@@ -1,9 +1,10 @@
 import {
   BaseSelectProps,
   BaseTextFieldProps,
+  Breakpoint,
   ButtonProps,
   FormControlLabelProps,
-  PaletteMode,
+  LinearProgressProps,
   SxProps,
   Theme,
   ToggleButtonGroupProps,
@@ -11,7 +12,7 @@ import {
 } from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats } from '../../../core/models/pokemon.model';
-import { LabelType, PokemonType, PokemonClass, CardType, TypeMove } from '../../../enums/type.enum';
+import { LabelType, PokemonType, PokemonClass, CardType, TypeMove, TypeAction } from '../../../enums/type.enum';
 import { BadgeType } from '../../enums/badge-type.enum';
 import { InputSearchType, InputType } from '../Inputs/enums/input-type.enum';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Inputs/models/select-move.model';
@@ -24,11 +25,11 @@ import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PVPInfo } from '../../../core/models/pvp.model';
 import React from 'react';
 import { IAppMenuItem, IMenuItem } from './menu.model';
+import { IStatsRankAtk, IStatsRankDef, IStatsRankSta, IStatsRankProd } from '../../../core/models/stats.model';
 
 export interface IResponsiveAppBarComponent {
-  mode: PaletteMode;
   version?: string;
-  toggleColorMode: () => void;
+  toggleColorMode?: () => void;
 }
 
 export interface IDrawerSideBarComponent {
@@ -165,6 +166,7 @@ export interface ISelectTierComponent {
   pokemonType: PokemonType | undefined;
   pokemonClass?: PokemonClass;
   tier: number;
+  boxClassName?: string;
   className?: string;
   setCurrTier?: (tier: number) => void;
   setTier?: (tier: number) => void;
@@ -184,6 +186,7 @@ export interface FormControlMuiComponent extends Omit<FormControlLabelProps, 'co
 export interface IButtonMuiStyle {
   textTransform?: 'capitalize' | 'uppercase' | 'lowercase' | 'none';
   isNoneBorder?: boolean;
+  isRound?: boolean;
   active?: boolean;
 }
 
@@ -421,4 +424,82 @@ export interface ITableComponent {
 export interface IMenuItemComponent<T> {
   item: IMenuItem<T>;
   index: number;
+}
+
+interface IDefaultOption<T> {
+  label?: string | React.ReactNode;
+  value?: T;
+  children?: React.ReactNode;
+  noPadding?: boolean;
+}
+
+export interface ITab extends IDefaultOption<number> {
+  tabValue?: number;
+}
+
+export interface TabPanelComponent {
+  defaultValue?: number;
+  className?: string;
+  tabs: ITab[];
+}
+
+export interface IIDefaultOptionAccordion<T> extends IDefaultOption<T> {
+  hideIcon?: boolean;
+  footer?: React.ReactNode;
+  bgHeadColor?: string;
+  sxHeader?: SxProps<Theme>;
+  sxSummary?: SxProps<Theme>;
+  sxDetails?: SxProps<Theme>;
+  sxFooter?: SxProps<Theme>;
+}
+
+export interface AccordionMuiComponent<T> {
+  defaultValue?: T;
+  className?: string;
+  isShowAction?: boolean;
+  alwaysOpen?: boolean;
+  resetItemOnChange?: boolean;
+  onChange?: (value: (T | T[]) | undefined, index: number) => void;
+  items: IIDefaultOptionAccordion<T>[] | undefined;
+  maxHeight?: number;
+}
+
+export interface IDialogAction {
+  label: string;
+  isClose?: boolean;
+  variant?: 'contained' | 'outlined' | 'text';
+  color?: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success' | 'tertiary';
+  onClick?: () => void;
+}
+
+export interface IDialogMuiComponent {
+  open?: boolean;
+  keepMounted?: boolean;
+  width?: Breakpoint;
+  title?: React.ReactNode;
+  content?: React.ReactNode;
+  actions?: IDialogAction[];
+  onClose?: () => void;
+}
+
+export interface IBackdropMuiComponent {
+  open?: boolean;
+  children?: React.ReactNode;
+  isShowOnAbove?: boolean;
+  noneCircular?: boolean;
+  backgroundColor?: string;
+}
+
+export interface IStatBarComponent extends LinearProgressProps {
+  tag: string;
+  statsPercent: number;
+  rank: number | string | undefined;
+  pokemonStatsRank: IStatsRankAtk | IStatsRankDef | IStatsRankSta | IStatsRankProd | undefined;
+  currentStats: number;
+  optionalStats?: string;
+  id?: string;
+  form?: string;
+  statType: TypeAction;
+  isDisabled?: boolean;
+  pokemonType?: PokemonType;
 }

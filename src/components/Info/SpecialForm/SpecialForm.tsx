@@ -65,9 +65,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
             <b>{getKeyWithData(PokemonType, pokemonType)} Evolution</b>
           </h4>
           <div className="form-special-container scroll-evolution">
-            <ul className="ul-evo d-flex justify-content-center gap-3">
+            <ul className="ul-evo tw-flex tw-justify-center tw-gap-3">
               {arrEvoList?.map((value, evo) => (
-                <li key={evo} className="img-form-gender-group li-evo w-fit-content h-fit-content">
+                <li key={evo} className="img-form-gender-group li-evo !tw-w-fit !tw-h-fit">
                   <img
                     id="Pokémon Image"
                     height="96"
@@ -127,7 +127,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                         width={25}
                         height={25}
                         alt="Pokémon GO Type Logo"
-                        className="me-1"
+                        className="tw-mr-1"
                         type={findMoveByName(getQuestEvo(value.name).requireMove)?.type}
                       />
                       <LinkToTop to={`../move/${findMoveByName(getQuestEvo(value.name).requireMove)?.id}`}>

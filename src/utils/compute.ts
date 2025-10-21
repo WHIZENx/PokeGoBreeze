@@ -88,8 +88,9 @@ export const rankName = (rank: number) => {
   }
 };
 
-export const rankIconName = (rank: number) => {
-  switch (rank) {
+export const rankIconName = (rank: number | string) => {
+  const rankNumber = toNumber(rank);
+  switch (rankNumber) {
     case 20:
       return APIService.getPokeOtherLeague('CombatRank03');
     case 21:
@@ -102,15 +103,15 @@ export const rankIconName = (rank: number) => {
       return APIService.getPokeOtherLeague('special_combat_rank_4');
     default:
       return APIService.getPokeOtherLeague(
-        `CombatRank${Math.floor(rank / 5)
+        `CombatRank${Math.floor(rankNumber / 5)
           .toString()
           .padStart(2, '0')}`
       );
   }
 };
 
-export const rankIconCenterName = (rank: number) => {
-  switch (rank) {
+export const rankIconCenterName = (rank: number | string) => {
+  switch (toNumber(rank)) {
     case 21:
     case 22:
     case 23:

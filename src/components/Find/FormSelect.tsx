@@ -1,4 +1,3 @@
-import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../services/api.service';
 import Tools from './Tools';
@@ -27,7 +26,7 @@ import {
 import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
 import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
-import { PokemonType, TypeRaid, VariantType } from '../../enums/type.enum';
+import { PokemonType, TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
@@ -35,6 +34,7 @@ import { ItemName } from '../../pages/News/enums/item-type.enum';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
+import { useSnackbar } from '../../contexts/snackbar.context';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -60,7 +60,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [currentForm, setCurrentForm] = useState<IPokemonFormModify>();
 
   const axiosSource = useRef(APIService.getCancelToken());
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const fetchMap = useCallback(
     async (specie: IPokemonSpecie) => {
@@ -164,10 +164,10 @@ const FormSelect = (props: IFormSelectComponent) => {
           if (APIService.isCancel(e)) {
             return;
           }
-          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: VariantType.Error });
+          showSnackbar(`Pokémon ID or name: ${id} Not found!`, 'error');
         });
     },
-    [enqueueSnackbar, fetchMap]
+    [fetchMap]
   );
 
   useEffect(() => {
@@ -291,9 +291,9 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   return (
     <Fragment>
-      <div className="d-inline-block w-9 h-9">
+      <div className="tw-inline-block tw-w-16 tw-h-16">
         {dataStorePokemon?.prev && (
-          <div className="cursor-pointer" onClick={() => props.onSetPrev?.()}>
+          <div className="tw-cursor-pointer" onClick={() => props.onSetPrev?.()}>
             <div>
               <img
                 height={64}
@@ -314,7 +314,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         )}
       </div>
       <img
-        className="p-2"
+        className="tw-p-2"
         height={200}
         alt="Image Pokemon"
         src={APIService.getPokeFullSprite(
@@ -326,9 +326,9 @@ const FormSelect = (props: IFormSelectComponent) => {
           e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
         }}
       />
-      <div className="d-inline-block w-9 h-9">
+      <div className="tw-inline-block tw-w-16 tw-h-16">
         {dataStorePokemon?.next && (
-          <div className="cursor-pointer" onClick={() => props.onSetNext?.()}>
+          <div className="tw-cursor-pointer" onClick={() => props.onSetNext?.()}>
             <div>
               <img
                 height={64}
@@ -348,7 +348,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           </div>
         )}
       </div>
-      <div className="mt-2 h-9">{currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}</div>
+      <div className="tw-mt-2 tw-h-16">{currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}</div>
       <h4>
         <b>
           {dataStorePokemon?.current?.id && <>{`#${dataStorePokemon.current.id} `}</>}
@@ -356,7 +356,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         </b>
       </h4>
       <ButtonGroupForm
-        className="my-1"
+        className="tw-my-1"
         width={350}
         height={180}
         isLoaded={toNumber(currentForm?.defaultId) > 0 && isNotEmpty(pokeData) && isNotEmpty(formList)}
@@ -367,7 +367,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         loading={<LoadGroup isShow isVertical isHideAttr size={40} />}
       />
       {!props.isHide && (
-        <div className="d-flex justify-content-center text-center">
+        <div className="tw-flex tw-justify-center tw-text-center">
           <TypeRadioGroup
             row
             aria-labelledby="row-types-group-label"
@@ -379,32 +379,33 @@ const FormSelect = (props: IFormSelectComponent) => {
               value={TypeRaid.Pokemon}
               control={<Radio />}
               label={
-                <span>
-                  <img height={32} alt="Pokémon Image" src={getItemSpritePath(ItemName.PokeBall)} /> Pokémon Stats
-                </span>
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img height={32} alt="Pokémon Image" src={getItemSpritePath(ItemName.PokeBall)} />
+                  <span>Pokémon Stats</span>
+                </div>
               }
             />
             <FormControlLabel
               value={TypeRaid.Boss}
               control={<Radio />}
               label={
-                <span>
+                <div className="tw-flex tw-items-center tw-gap-2">
                   <img
                     className="img-type-icon"
                     height={32}
                     alt="img-boss"
                     src={APIService.getRaidSprite('ic_raid_small')}
                   />{' '}
-                  Boss Stats
-                </span>
+                  <span>Boss Stats</span>
+                </div>
               }
             />
           </TypeRadioGroup>
         </div>
       )}
       <div className="row">
-        <div className="col-sm-6" />
-        <div className="col-sm-6" />
+        <div className="sm:tw-w-1/2" />
+        <div className="sm:tw-w-1/2" />
       </div>
       <Tools
         isHide={props.isHide}

@@ -94,7 +94,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
   } = props;
 
   return (
-    <Box className={combineClasses('input-control-group', isNoWrap ? 'flex-nowrap' : '')}>
+    <Box className={combineClasses('input-control-group', isNoWrap ? '!tw-flex-nowrap' : '')}>
       {labelPrepend && (
         <div ref={prependRef} className="input-group-text">
           {labelPrepend}
@@ -111,13 +111,13 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
           startAdornment: isHideIcon
             ? undefined
             : position.current === 'start' || customPrepend
-            ? customPrepend || iconSearch()
-            : undefined,
+              ? customPrepend || iconSearch()
+              : undefined,
           endAdornment: isHideIcon
             ? undefined
             : position.current === 'end' || customAppend
-            ? customAppend || iconSearch()
-            : undefined,
+              ? customAppend || iconSearch()
+              : undefined,
         }}
         SelectProps={{
           MenuProps: {
