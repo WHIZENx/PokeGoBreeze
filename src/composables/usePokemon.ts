@@ -148,10 +148,11 @@ export const usePokemon = () => {
   };
 
   const getPokemonDetails = useCallback(
-    (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None, isDefault = false) => {
+    (id: number | undefined, form: string | number | undefined, pokemonType = PokemonType.None, isDefault = false) => {
       if (form) {
         const name = getPokemonFormWithNoneSpecialForm(
           form
+            .toString()
             .replace(/10$/, 'TEN_PERCENT')
             .replace(/50$/, 'FIFTY_PERCENT')
             .replace(/UNOWN-/i, '')

@@ -216,9 +216,9 @@ export const splitAndCamelCase = (
     defaultText
   );
 
-export const capitalize = (str: string | undefined | null, defaultText = '') =>
-  getValueOrDefault(String, str?.charAt(0).toUpperCase()) +
-  getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
+export const capitalize = (str: string | number | undefined | null, defaultText = '') =>
+  getValueOrDefault(String, str?.toString().charAt(0).toUpperCase()) +
+  getValueOrDefault(String, str?.toString().slice(1).toLowerCase(), defaultText);
 
 export const splitAndCapitalize = (
   str: string | undefined | null,
@@ -748,7 +748,10 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
   return result as unknown as IStatsPokemon;
 };
 
-export const replacePokemonGoForm = (form: string) => form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
+export const replacePokemonGoForm = (form: string | number) =>
+  String(form)
+    .replace(/_MALE$/, '')
+    .replace(/_FEMALE$/, '');
 
 export const formIconAssets = (value: IPokemonFormModify) =>
   isInclude(value.form.name, `-${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive) ||

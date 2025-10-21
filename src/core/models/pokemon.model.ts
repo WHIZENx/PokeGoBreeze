@@ -77,7 +77,7 @@ interface QuestDisplay {
 }
 
 interface EvolutionBranch {
-  evolution: string;
+  evolution: string | number;
   candyCost: number;
   evolutionItemRequirementCost?: number;
   form: string;
@@ -585,7 +585,7 @@ export class PokemonData implements IPokemonData {
         return;
       }
     });
-    const name = pokemon.name.replaceAll('_', '-');
+    const name = pokemon.name.toString().replaceAll('_', '-');
     obj.pokemonId = pokemon.pokemonId;
     obj.num = pokemon.id;
     obj.name = capitalize(name);
