@@ -200,6 +200,7 @@ const Evolution = (props: IEvolutionComponent) => {
             form: getValueOrDefault(String, evo.form, formNormal()),
             evoList: getValueOrDefault(Array, evo.evoList),
             tempEvo: getValueOrDefault(Array, evo.tempEvo),
+            pokemonId: evo.pokemonId?.toString(),
           })
         )
       );

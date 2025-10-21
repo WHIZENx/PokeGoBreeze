@@ -513,7 +513,7 @@ const DpsTdo = () => {
       if (releasedGO) {
         const isReleasedGO = checkPokemonGO(
           item.pokemon.num,
-          getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId)
+          getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId?.toString())
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, isReleasedGO);
       }

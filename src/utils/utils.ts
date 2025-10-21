@@ -216,9 +216,9 @@ export const splitAndCamelCase = (
     defaultText
   );
 
-export const capitalize = (str: string | number | undefined | null, defaultText = '') =>
-  getValueOrDefault(String, str?.toString().charAt(0).toUpperCase()) +
-  getValueOrDefault(String, str?.toString().slice(1).toLowerCase(), defaultText);
+export const capitalize = (str: string | undefined | null, defaultText = '') =>
+  getValueOrDefault(String, str?.charAt(0).toUpperCase()) +
+  getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
 
 export const splitAndCapitalize = (
   str: string | undefined | null,
@@ -749,7 +749,8 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
 };
 
 export const replacePokemonGoForm = (form: string | number) =>
-  String(form)
+  form
+    .toString()
     .replace(/_MALE$/, '')
     .replace(/_FEMALE$/, '');
 

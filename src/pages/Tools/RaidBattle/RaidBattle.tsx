@@ -1415,7 +1415,7 @@ const RaidBattle = () => {
                 if (obj.pokemon) {
                   const isReleasedGO = checkPokemonGO(
                     obj.pokemon.num,
-                    getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId)
+                    getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId?.toString())
                   );
                   return getValueOrDefault(Boolean, obj.pokemon.releasedGO, isReleasedGO);
                 }

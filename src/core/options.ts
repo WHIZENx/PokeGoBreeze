@@ -303,10 +303,12 @@ export const optionPokemonData = (
     if (!pokemonSettingForm) {
       pokemon.form = formNormal();
     } else if (pokemon.id !== 201) {
-      pokemon.form = convertAndReplaceNameGO(pokemonSettingForm, pokemonSettings.pokemonId);
+      pokemon.form = convertAndReplaceNameGO(pokemonSettingForm, pokemonSettings.pokemonId?.toString());
     }
     if (pokemon.id !== 201) {
-      pokemon.name = pokemonSettings.form ? `${pokemon.pokemonId}_${pokemon.form}` : pokemonSettings.pokemonId;
+      pokemon.name = pokemonSettings.form
+        ? `${pokemon.pokemonId}_${pokemon.form}`
+        : pokemonSettings.pokemonId?.toString();
     } else {
       const form = getValueOrDefault(String, pokemon.form?.toString());
       pokemon.name = form;
@@ -365,7 +367,7 @@ export const optionPokemonData = (
       pokemon.id,
       pokemon.form && pokemon.pokemonType !== PokemonType.Normal
         ? `${pokemon.pokemonId}_${pokemon.form}`
-        : pokemonSettings.pokemonId,
+        : pokemonSettings.pokemonId?.toString(),
       pokemon.pokemonType === PokemonType.Normal
     );
     if (pokemonBaseData) {
@@ -425,7 +427,7 @@ export const optionPokemonData = (
                 pokemon.form?.toString(),
                 formNormal()
               ),
-              i.data.pokemonSettings.pokemonId
+              i.data.pokemonSettings.pokemonId?.toString()
             ),
             dataEvo.evoToForm
           )
@@ -810,7 +812,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
   return family.map((item) => {
     const result = new Asset();
     result.id = toNumber(pokemon.find((poke) => isEqual(poke.pokemonId, item))?.num);
-    result.name = item;
+    result.name = item.toString();
 
     let formSet = imgs.filter((img) => isInclude(img, `/pm${result.id}.`) && !isInclude(img, 'cry'));
     let count = 0;
@@ -1216,7 +1218,7 @@ const setPokemonPermission = (
           pokemonPermission.push(
             new PokemonPermission({
               id: item?.num,
-              name: item?.pokemonId,
+              name: item?.pokemonId?.toString(),
               form,
               pokemonType: getPokemonType(form),
             })
@@ -1227,7 +1229,7 @@ const setPokemonPermission = (
       pokemonPermission.push(
         new PokemonPermission({
           id: item?.num,
-          name: item?.pokemonId,
+          name: item?.pokemonId?.toString(),
           form,
           pokemonType: getPokemonType(form),
         })
@@ -1323,7 +1325,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
             const item = pokemon.find((item) => isEqual(item.pokemonId, poke));
             return new PokemonPermission({
               id: item?.num,
-              name: item?.pokemonId,
+              name: item?.pokemonId?.toString(),
               form: formNormal(),
               pokemonType: PokemonType.Normal,
             });
