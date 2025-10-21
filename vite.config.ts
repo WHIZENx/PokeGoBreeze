@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => {
             'api-vendor': ['axios'],
             'crypto-vendor': ['crypto-js', 'dompurify'],
             'vercel-vendor': ['@vercel/analytics', '@vercel/edge-config', '@vercel/postgres', '@vercel/speed-insights'],
-            'hooks-vendor': ['usehooks-ts', 'react-device-detect']
+            'hooks-vendor': ['usehooks-ts', 'react-device-detect'],
           },
           chunkFileNames: 'static/js/[name].[hash].js',
           entryFileNames: 'static/js/[name].[hash].js',
