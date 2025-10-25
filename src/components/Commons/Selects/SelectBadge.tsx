@@ -16,13 +16,13 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
         <span className="tw-w-6">
           <img
             alt="Frame Type"
-            className={combineClasses('frame-type-sprit', type === BadgeType.Platinum ? 'filter-platinum' : '')}
+            className={combineClasses('frame-type-sprite', type === BadgeType.Platinum ? 'filter-platinum' : '')}
             src={priorityBadge(type)}
           />
         </span>
         {type !== BadgeType.None && (
           <span className="position-badge tw-w-3">
-            <img alt="Badge Type" className="badge-type-sprit" src={APIService.getTypeHqSprite(props.type)} />
+            <img alt="Badge Type" className="badge-type-sprite" src={APIService.getTypeHqSprite(props.type)} />
           </span>
         )}
       </div>
