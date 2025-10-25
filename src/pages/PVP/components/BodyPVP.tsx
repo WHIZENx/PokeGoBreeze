@@ -130,7 +130,7 @@ const BodyPVP = (props: BodyComponent) => {
   );
 
   return (
-    <div className="row !tw-m-0">
+    <div className="row !tw-m-0 tw-gap-y-4">
       <div className="lg:tw-w-1/2 tw-mt-2 !tw-p-0">
         <div className="title-item-ranking">
           <h4 className="tw-text-white text-shadow-black">Best Matchups</h4>

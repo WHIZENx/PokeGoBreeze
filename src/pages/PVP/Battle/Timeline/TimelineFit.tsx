@@ -50,7 +50,7 @@ const TimelineFit = (
                       style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}
                     >
                       {value.buff?.map((b, i) => (
-                        <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
+                        <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
                           {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                         </span>
                       ))}
@@ -65,7 +65,7 @@ const TimelineFit = (
                           style={{ left: calculateWidthBasedPosition(poke.timeline, index) }}
                         >
                           {value.buff?.map((b, i) => (
-                            <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
+                            <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
                               {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
                             </span>
                           ))}

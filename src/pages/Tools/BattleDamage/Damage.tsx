@@ -38,19 +38,19 @@ import { useSnackbar } from '../../../contexts/snackbar.context';
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
     color: 'var(--text-primary)',
-    style: 'text-danger',
+    style: '!tw-text-red-600',
   }),
   1: LabelDamage.create({
     color: 'blue',
-    style: 'text-warning',
+    style: '!tw-text-yellow-600',
   }),
   2: LabelDamage.create({
     color: 'green',
-    style: 'text-warning',
+    style: '!tw-text-yellow-600',
   }),
   3: LabelDamage.create({
     color: 'red',
-    style: 'text-success',
+    style: '!tw-text-green-600',
   }),
 };
 
