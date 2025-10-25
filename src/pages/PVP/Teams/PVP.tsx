@@ -343,11 +343,11 @@ const TeamPVP = (props: IStyleSheetData) => {
       </div>
       <div className="tw-flex tw-items-center tw-mr-3 tw-gap-x-12.5">
         <div className="tw-text-center" style={{ width: 200 }}>
-          <span className="ranking-score score-ic tw-text-black">{value.teamScore}</span>
+          <span className="ranking-score score-ic !tw-text-black">{value.teamScore}</span>
         </div>
-        <div className="tw-text-center ranking-score score-ic tw-text-black tw-w-fit">
+        <div className="tw-text-center ranking-score score-ic !tw-text-black tw-w-fit">
           {toFloatWithPadding((value.games * 100) / value.teamsTotalGames, 2)}
-          <span className="caption tw-text-black">
+          <span className="caption !tw-text-black">
             {value.games}/{value.teamsTotalGames}
           </span>
         </div>
@@ -574,14 +574,14 @@ const TeamPVP = (props: IStyleSheetData) => {
                   </div>
                   <div className="tw-flex filter-shadow tw-items-center tw-mr-3 tw-gap-x-7.5">
                     <div className="tw-text-center" style={{ width: 120 }}>
-                      <span className="ranking-score score-ic tw-text-black">{value.teamScore}</span>
+                      <span className="ranking-score score-ic !tw-text-black">{value.teamScore}</span>
                     </div>
                     <div className="tw-text-center" style={{ width: 160 }}>
-                      <span className="ranking-score score-ic tw-text-black">{value.individualScore}</span>
+                      <span className="ranking-score score-ic !tw-text-black">{value.individualScore}</span>
                     </div>
-                    <div className="tw-text-center ranking-score score-ic tw-text-black tw-w-fit">
+                    <div className="tw-text-center ranking-score score-ic !tw-text-black tw-w-fit">
                       {toFloatWithPadding((value.games * 100) / value.performersTotalGames, 2)}
-                      <span className="caption tw-text-black">
+                      <span className="caption !tw-text-black">
                         {value.games}/{value.performersTotalGames}
                       </span>
                     </div>

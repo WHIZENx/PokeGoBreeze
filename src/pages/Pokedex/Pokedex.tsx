@@ -6,7 +6,7 @@ import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
-import { Checkbox, FormControlLabel, ListItemText, MenuProps, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel, ListItemText, Switch } from '@mui/material';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
@@ -35,14 +35,6 @@ import ButtonMui from '../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../components/Commons/Buttons/ToggleType';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import BackdropMui from '../../components/Commons/Backdrops/BackdropMui';
-
-const versionProps: Partial<MenuProps> = {
-  PaperProps: {
-    style: {
-      maxHeight: 220,
-    },
-  },
-};
 
 interface IFilter {
   isMatch: boolean;
@@ -449,7 +441,7 @@ const Pokedex = (props: IStyleSheetData) => {
                   />
                 </div>
                 <div className="input-group border-input">
-                  <span className="input-group-text">Filter only by</span>
+                  <span className="input-group-text !tw-max-h-[42px]">Filter only by</span>
                   <FormControlLabel
                     control={
                       <Checkbox

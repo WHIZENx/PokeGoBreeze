@@ -537,7 +537,7 @@ const Move = (props: IMovePage) => {
                   {move?.buffs.map((value, index) => (
                     <tr key={index}>
                       <td className="target-buff">
-                        <CircleIcon className="tw-text-xs" /> {getKeyWithData(BuffType, value.target)}
+                        <CircleIcon sx={{ fontSize: 4 }} /> {getKeyWithData(BuffType, value.target)}
                       </td>
                       <td>
                         {value.power > 0 ? <ArrowUpwardIcon color="success" /> : <ArrowDownwardIcon color="error" />}
