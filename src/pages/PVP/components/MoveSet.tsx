@@ -179,7 +179,10 @@ const MoveSet = (props: MoveSetComponent) => {
   return (
     <div className="row !tw-m-0">
       <div className="xl:tw-w-1/2 moves-title-container !tw-p-0">
-        <div className="moves-title">Fast Moves{moveOverlay()}</div>
+        <div className="moves-title tw-flex tw-items-center tw-justify-center tw-gap-2">
+          <span>Fast Moves</span>
+          {moveOverlay()}
+        </div>
         <div className="type-rank-list">
           {fastMoves?.map((value, index) => (
             <Fragment key={index}>{renderMove(value)}</Fragment>
@@ -187,7 +190,10 @@ const MoveSet = (props: MoveSetComponent) => {
         </div>
       </div>
       <div className="xl:tw-w-1/2 moves-title-container !tw-p-0">
-        <div className="moves-title">Charged Moves{moveOverlay()}</div>
+        <div className="moves-title tw-flex tw-items-center tw-justify-center tw-gap-2">
+          <span>Charged Moves</span>
+          {moveOverlay()}
+        </div>
         <div className="type-rank-list">
           {chargedMoves?.map((value, index) => (
             <Fragment key={index}>{renderMove(value)}</Fragment>

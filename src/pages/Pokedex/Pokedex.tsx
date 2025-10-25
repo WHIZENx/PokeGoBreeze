@@ -421,7 +421,6 @@ const Pokedex = (props: IStyleSheetData) => {
                     value={version}
                     onChangeSelect={handleChangeVersion}
                     renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
-                    MenuProps={versionProps}
                     insertItems={[
                       {
                         value: -1,

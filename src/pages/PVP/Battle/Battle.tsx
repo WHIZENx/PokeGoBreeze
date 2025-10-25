@@ -1246,7 +1246,7 @@ const Battle = () => {
           ]}
         />
         <div className="row tw-mt-4 !tw-m-0">
-          <div className="lg:tw-w-1/4">
+          <div className="lg:tw-w-1/4 !tw-my-2">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
           </div>
           <div className="lg:tw-w-1/2">
@@ -1350,7 +1350,7 @@ const Battle = () => {
                 </Fragment>
               )}
           </div>
-          <div className="lg:tw-w-1/4">
+          <div className="lg:tw-w-1/4 !tw-my-2">
             {renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}
           </div>
         </div>

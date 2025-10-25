@@ -347,7 +347,7 @@ const Move = (props: IMovePage) => {
       <div className="tw-w-[35px]">
         <img alt="Icon Item" className="sprite-type" src={getItemSpritePath(itemName)} />
       </div>
-      <span className="caption">{splitAndCapitalize(itemName.replace('ITEM_', ''), '_', ' ')}</span>
+      <span className="caption">{splitAndCapitalize(itemName?.toString().replace('ITEM_', ''), '_', ' ')}</span>
     </div>
   );
 
