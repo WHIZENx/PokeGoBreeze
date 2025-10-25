@@ -460,7 +460,7 @@ const Evolution = (props: IEvolutionComponent) => {
                           </span>
                         )}
                         {props.pokemonData?.pokemonType === PokemonType.Purified && (
-                          <span className="tw-block tw-text-right caption tw-text-red-600">{`-${
+                          <span className="tw-block tw-text-right caption !tw-text-red-500">{`-${
                             data.candyCost - data.purificationEvoCandyCost
                           }`}</span>
                         )}
