@@ -668,7 +668,9 @@ const Battle = () => {
               {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" color="success" />}
               {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" color="error" />}
               {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" color="error" />}
-              <span className={combineClasses('tw-text-sm', value.power < 0 ? 'text-danger' : 'text-success')}>
+              <span
+                className={combineClasses('tw-text-sm', value.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600')}
+              >
                 {value.power}
               </span>
             </div>

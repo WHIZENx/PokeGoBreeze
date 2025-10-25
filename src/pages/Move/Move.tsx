@@ -544,7 +544,10 @@ const Move = (props: IMovePage) => {
                         <span className="tw-inline-block caption">
                           {value.type === TypeAction.Atk ? 'Attack ' : 'Defense '}
                           <span
-                            className={combineClasses('buff-power', value.power > 0 ? 'text-success' : 'text-danger')}
+                            className={combineClasses(
+                              'buff-power',
+                              value.power > 0 ? '!tw-text-green-600' : '!tw-text-red-600'
+                            )}
                           >
                             <b>
                               {value.power > 0 && '+'}

@@ -1461,7 +1461,7 @@ const RaidBattle = () => {
                     </span>
                     <span className="tw-flex tw-gap-2">
                       <span>Death:</span>
-                      <b className={value.death === 0 ? 'text-success' : 'text-danger'}>{value.death}</b>
+                      <b className={value.death === 0 ? '!tw-text-green-600' : '!tw-text-red-600'}>{value.death}</b>
                     </span>
                     <span className="tw-flex tw-gap-2">
                       <span>Time to Kill (Boss):</span>
@@ -1729,7 +1729,9 @@ const RaidBattle = () => {
                                   <b>
                                     <span
                                       className={
-                                        Math.floor(toNumber(data.atkHpRemain)) === 0 ? 'text-danger' : 'text-success'
+                                        Math.floor(toNumber(data.atkHpRemain)) === 0
+                                          ? '!tw-text-red-600'
+                                          : '!tw-text-green-600'
                                       }
                                     >
                                       {Math.max(0, Math.floor(toNumber(data.atkHpRemain)))}

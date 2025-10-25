@@ -159,7 +159,9 @@ const Leagues = () => {
           height={50}
           src={APIService.getAssetPokeGo(league.iconUrl)}
         />
-        <b className={league.enabled ? '' : 'text-danger'}>{splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}</b>
+        <b className={league.enabled ? '' : '!tw-text-red-600'}>
+          {splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
+        </b>
       </div>
       {isEqual(league.leagueType, LeagueType.Premier) && (
         <div className="tw-flex tw-items-center tw-justify-end">
