@@ -8,7 +8,9 @@ const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
   const renderTypeEffective = (effType: EffectiveType) => (
     <div className="lg:tw-w-1/3 tw-mb-3">
       <div className="tw-h-full">
-        <h6 className={`tw-flex tw-justify-center ${getKeyWithData(EffectiveType, effType)?.toLowerCase()}-bg-text`}>
+        <h6
+          className={`tw-flex tw-justify-center !tw-text-white text-shadow-black ${getKeyWithData(EffectiveType, effType)?.toLowerCase()}-bg-text`}
+        >
           <b>{getKeyWithData(EffectiveType, effType)}</b>
         </h6>
         <hr className="tw-w-full" />
@@ -18,7 +20,7 @@ const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
     </div>
   );
   return (
-    <div className="row tw-text-white text-shadow-black">
+    <div className="row">
       {renderTypeEffective(EffectiveType.Weakness)}
       {renderTypeEffective(EffectiveType.Neutral)}
       {renderTypeEffective(EffectiveType.Resistance)}

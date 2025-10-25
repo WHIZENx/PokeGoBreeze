@@ -127,7 +127,7 @@ const Sticker = () => {
                   key={index}
                   placement="auto"
                   overlay={
-                    <CustomPopover id={`popover-sticker-${index}`}>
+                    <CustomPopover id="popover-info">
                       {value.isShop ? (
                         <span>Available in shop sell pack: {value.pack.join(', ')}</span>
                       ) : (

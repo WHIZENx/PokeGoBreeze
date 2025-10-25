@@ -159,7 +159,9 @@ const Leagues = () => {
           height={50}
           src={APIService.getAssetPokeGo(league.iconUrl)}
         />
-        <b className={league.enabled ? '' : 'text-danger'}>{splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}</b>
+        <b className={league.enabled ? '' : '!tw-text-red-600'}>
+          {splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
+        </b>
       </div>
       {isEqual(league.leagueType, LeagueType.Premier) && (
         <div className="tw-flex tw-items-center tw-justify-end">
@@ -631,7 +633,7 @@ const Leagues = () => {
                 {showData.track === LeagueRewardType.Free ? (
                   <div className="tw-flex tw-gap-x-2 tw-items-center">
                     <img
-                      className="pokemon-sprite-small filter-shadow !tw-w-fit"
+                      className="pokemon-sprite-small filter-shadow !tw-w-4"
                       alt="Pokémon Image"
                       title="Battle Icon"
                       src={APIService.getPokeOtherLeague('BattleIconColor')}
@@ -641,7 +643,7 @@ const Leagues = () => {
                 ) : (
                   <div className="tw-flex tw-gap-x-2 tw-items-center">
                     <img
-                      className="pokemon-sprite-small filter-shadow !tw-w-fit"
+                      className="pokemon-sprite-small filter-shadow !tw-w-4"
                       alt="Pokémon Image"
                       title="Paid Raid Ticket"
                       src={getItemSpritePath(ItemName.PaidRaidTicket)}

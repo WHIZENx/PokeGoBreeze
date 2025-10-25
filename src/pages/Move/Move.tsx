@@ -347,7 +347,7 @@ const Move = (props: IMovePage) => {
       <div className="tw-w-[35px]">
         <img alt="Icon Item" className="sprite-type" src={getItemSpritePath(itemName)} />
       </div>
-      <span className="caption">{splitAndCapitalize(itemName.replace('ITEM_', ''), '_', ' ')}</span>
+      <span className="caption">{splitAndCapitalize(itemName?.toString().replace('ITEM_', ''), '_', ' ')}</span>
     </div>
   );
 
@@ -537,14 +537,17 @@ const Move = (props: IMovePage) => {
                   {move?.buffs.map((value, index) => (
                     <tr key={index}>
                       <td className="target-buff">
-                        <CircleIcon className="tw-text-xs" /> {getKeyWithData(BuffType, value.target)}
+                        <CircleIcon sx={{ fontSize: 4 }} /> {getKeyWithData(BuffType, value.target)}
                       </td>
                       <td>
                         {value.power > 0 ? <ArrowUpwardIcon color="success" /> : <ArrowDownwardIcon color="error" />}
                         <span className="tw-inline-block caption">
                           {value.type === TypeAction.Atk ? 'Attack ' : 'Defense '}
                           <span
-                            className={combineClasses('buff-power', value.power > 0 ? 'text-success' : 'text-danger')}
+                            className={combineClasses(
+                              'buff-power',
+                              value.power > 0 ? '!tw-text-green-600' : '!tw-text-red-600'
+                            )}
                           >
                             <b>
                               {value.power > 0 && '+'}

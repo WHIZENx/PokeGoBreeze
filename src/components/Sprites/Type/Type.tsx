@@ -57,7 +57,7 @@ const TypeInfo = (props: ITypeComponent) => {
                         <span
                           className={combineClasses(
                             'caption',
-                            props.isShowShadow ? `tw-text-white text-shadow-black` : ''
+                            props.isShowShadow ? `!tw-text-white text-shadow-black` : ''
                           )}
                           style={{ color: `${props.color} !important` }}
                         >

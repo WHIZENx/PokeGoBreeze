@@ -236,7 +236,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
               height={64}
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
-            <h2>
+            <h2 className="!tw-text-white">
               <b>
                 {isEqual(league.name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)
                   ? getPokemonBattleLeagueName(cp)
@@ -267,7 +267,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
           {renderLeague()}
           <hr />
           <ToggleGroupMui
-            className="tw-flex tw-justify-center tw-overflow-x-auto tw-mt-2"
+            className="tw-flex sm:tw-justify-center tw-overflow-x-auto tw-mt-2 tw-w-full"
             isNoneBorder
             color="primary"
             exclusive

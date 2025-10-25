@@ -199,7 +199,7 @@ const Calculate = () => {
         <td className="table-sub-header" colSpan={4}>
           <div className="tw-flex tw-items-center tw-justify-center tw-gap-2">
             <img alt="Image League" width={30} height={30} src={getPokemonBattleLeagueIcon(cp)} />
-            <span className={dataLeague ? (dataLeague.isElidge ? '' : 'text-danger') : ''}>
+            <span className={dataLeague ? (dataLeague.isElidge ? '' : '!tw-text-red-600') : ''}>
               {getPokemonBattleLeagueName(cp)}
               {dataLeague ? dataLeague.isElidge ? '' : <span> (Not Elidge)</span> : ''}
             </span>
@@ -282,7 +282,7 @@ const Calculate = () => {
           <div className="tw-flex tw-items-center tw-gap-2">
             <img alt="Image League" width={20} height={20} src={ATK_LOGO} />
             {dataLeague?.isElidge ? (
-              <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
+              <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-green-600' : ''}>
                 {dataLeague.stats?.atk}
               </span>
             ) : (
@@ -294,7 +294,7 @@ const Calculate = () => {
           <div className="tw-flex tw-items-center tw-gap-2">
             <img alt="Image League" width={20} height={20} src={DEF_LOGO} />
             {dataLeague?.isElidge ? (
-              <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
+              <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-red-600' : ''}>
                 {dataLeague.stats?.def}
               </span>
             ) : (
