@@ -37,14 +37,14 @@ const Gender = (props: IGenderComponent) => {
                 props.sex === TypeSex.Male
                   ? getValueOrDefault(
                       String,
-                      props.sprit?.frontDefault,
-                      props.sprit?.frontFemale,
+                      props.sprite?.frontDefault,
+                      props.sprite?.frontFemale,
                       APIService.getPokeSprite()
                     )
                   : getValueOrDefault(
                       String,
-                      props.sprit?.frontFemale,
-                      props.sprit?.frontDefault,
+                      props.sprite?.frontFemale,
+                      props.sprite?.frontDefault,
                       APIService.getPokeSprite()
                     )
               }
@@ -66,14 +66,14 @@ const Gender = (props: IGenderComponent) => {
                 props.sex === TypeSex.Male
                   ? getValueOrDefault(
                       String,
-                      props.sprit?.frontShiny,
-                      props.sprit?.frontShinyFemale,
+                      props.sprite?.frontShiny,
+                      props.sprite?.frontShinyFemale,
                       APIService.getPokeSprite()
                     )
                   : getValueOrDefault(
                       String,
-                      props.sprit?.frontShinyFemale,
-                      props.sprit?.frontShiny,
+                      props.sprite?.frontShinyFemale,
+                      props.sprite?.frontShiny,
                       APIService.getPokeSprite()
                     )
               }

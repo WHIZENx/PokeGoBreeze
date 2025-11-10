@@ -15,7 +15,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       {isNotEmpty(data) && (
         <Fragment>
           <h6 className={combineClasses('tw-mb-0', props.isBlock ? 'tw-mt-2' : '')}>
-            <b className="text-shadow-black">x{toFloat(amount, 3)}</b>
+            <b className="!tw-text-white text-shadow-black">x{toFloat(amount, 3)}</b>
           </h6>
           <div className="tw-flex tw-flex-wrap tw-gap-2">
             {data?.map((value, index) => (
@@ -23,7 +23,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
                 key={index}
                 className={combineClasses(
                   value.toLowerCase(),
-                  'type-select-bg tw-flex tw-align-items-center filter-shadow text-shadow-black'
+                  'type-select-bg tw-flex tw-items-center filter-shadow text-shadow-black'
                 )}
               >
                 <img

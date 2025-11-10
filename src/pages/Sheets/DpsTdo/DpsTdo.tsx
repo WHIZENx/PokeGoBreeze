@@ -685,7 +685,7 @@ const DpsTdo = () => {
                     isNoWrap
                   />
                 </div>
-                <div className="tw-flex md:tw-w-1/4">
+                <div className="tw-flex md:tw-w-1/4 !tw-px-3 !tw-max-h-10">
                   <FormControlLabel
                     control={
                       <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />

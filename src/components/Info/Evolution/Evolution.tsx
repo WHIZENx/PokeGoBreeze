@@ -38,7 +38,7 @@ import Candy from '../../Sprites/Candy/Candy';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty, isNumber, toNumber } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 import {
@@ -98,7 +98,7 @@ class PokemonEvo implements IPokemonEvo {
 
 const Evolution = (props: IEvolutionComponent) => {
   const { findEvoChainsById } = useEvolution();
-  const { getFilteredPokemons, getFindPokemon } = usePokemon();
+  const { getFilteredPokemons, getFindPokemon, getPokemonById } = usePokemon();
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const [idEvoChain, setIdEvoChain] = useState(0);
@@ -157,7 +157,7 @@ const Evolution = (props: IEvolutionComponent) => {
   const pokeSetName = (name: string) => name.replace(`_${formNormal()}`, '').replaceAll('_', '-').replace('MR', 'MR.');
 
   const modelEvoChain = (pokemon: IEvolution) => {
-    const name = pokeSetName(
+    let name = pokeSetName(
       !isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive)
         ? pokemon.name.replace(`_${pokemon.form}`, '')
         : pokemon.name
@@ -170,6 +170,13 @@ const Evolution = (props: IEvolutionComponent) => {
       pokemon.id === 664 || pokemon.id === 665
         ? getValueOrDefault(String, pokemon.pokemonId?.toLowerCase(), pokemon.name)
         : convertModelSpritName(form ? `${name}_${form}` : name);
+
+    if (isNumber(name)) {
+      const result = getPokemonById(pokemon.id);
+      if (result) {
+        name = result.name;
+      }
+    }
 
     return PokemonEvo.create(
       name,
@@ -460,7 +467,7 @@ const Evolution = (props: IEvolutionComponent) => {
                           </span>
                         )}
                         {props.pokemonData?.pokemonType === PokemonType.Purified && (
-                          <span className="tw-block tw-text-right caption tw-text-red-600">{`-${
+                          <span className="tw-block tw-text-right caption !tw-text-red-500">{`-${
                             data.candyCost - data.purificationEvoCandyCost
                           }`}</span>
                         )}

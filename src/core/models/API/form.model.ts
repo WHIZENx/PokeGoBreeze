@@ -6,7 +6,7 @@ import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 import { Path } from './species.model';
 
-export interface IPokemonSprit {
+export interface IPokemonSprite {
   backDefault: string;
   backFemale: string;
   backShiny: string;
@@ -17,7 +17,7 @@ export interface IPokemonSprit {
   frontShinyFemale: string;
 }
 
-export class PokemonSprit implements IPokemonSprit {
+export class PokemonSprite implements IPokemonSprite {
   backDefault = '';
   backFemale = '';
   backShiny = '';
@@ -28,7 +28,7 @@ export class PokemonSprit implements IPokemonSprit {
   frontShinyFemale = '';
 
   static setDetails(info: SpriteInfo | undefined) {
-    const obj = new PokemonSprit();
+    const obj = new PokemonSprite();
     if (info) {
       obj.backDefault = info.back_default;
       obj.backFemale = getValueOrDefault(String, info.back_female);
@@ -67,7 +67,7 @@ export interface IPokemonFormDetail {
   pokemonType: PokemonType;
   name: string;
   pokemon: Path;
-  sprites?: IPokemonSprit;
+  sprites?: IPokemonSprite;
   types: string[];
   version: string | undefined;
 }
@@ -79,7 +79,7 @@ export class PokemonFormDetail implements IPokemonFormDetail {
   pokemonType = PokemonType.None;
   name = '';
   pokemon!: Path;
-  sprites: IPokemonSprit | undefined;
+  sprites: IPokemonSprite | undefined;
   types: string[] = [];
   version = '';
 
@@ -91,7 +91,7 @@ export class PokemonFormDetail implements IPokemonFormDetail {
     obj.pokemonType = getPokemonType(obj.formName, info.is_mega);
     obj.name = info.name;
     obj.pokemon = info.pokemon;
-    obj.sprites = PokemonSprit.setDetails(info.sprites);
+    obj.sprites = PokemonSprite.setDetails(info.sprites);
     obj.types = info.types.map((t) => t.type.name);
     obj.version = info.version_group.name;
     return obj;
@@ -118,7 +118,7 @@ export interface IPokemonFormModify {
   defaultName: string;
   name: string;
   form: IForm;
-  sprites?: IPokemonSprit;
+  sprites?: IPokemonSprite;
 }
 
 export class PokemonFormModify implements IPokemonFormModify {
@@ -154,7 +154,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
   defaultName: string;
   name: string;
   form: IForm;
-  sprites = new PokemonSprit();
+  sprites = new PokemonSprite();
 
   constructor(
     id: number,
@@ -164,7 +164,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
     fullFormName: string | undefined,
     version: string | undefined,
     types: string[],
-    sprites: IPokemonSprit | undefined,
+    sprites: IPokemonSprite | undefined,
     formId: number,
     pokemonType = PokemonType.Normal,
     isDefault = true

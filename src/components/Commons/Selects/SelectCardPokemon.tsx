@@ -28,6 +28,11 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
   const pokemonListFilterSlice = pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex);
 
   useEffect(() => {
+    setPokemonIcon(props.sprite);
+    setSearch(props.value);
+  }, [props.sprite, props.value]);
+
+  useEffect(() => {
     if (isNotEmpty(props.pokemonList)) {
       const debounced = debounce(() => {
         const results = props.pokemonList.filter((item) => {

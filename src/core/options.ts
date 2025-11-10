@@ -296,6 +296,9 @@ export const optionPokemonData = (
 ) => {
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
+    if (isNumber(pokemonSettings.pokemonId) && !pokemonSettings.form) {
+      pokemonSettings.pokemonId = item.templateId.replace(/V\d{4}_POKEMON_/g, '');
+    }
     const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
     const pokemon = PokemonDataModel.create(id, undefined, pokemonSettings);
 

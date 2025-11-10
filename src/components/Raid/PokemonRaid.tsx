@@ -20,6 +20,12 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState(props.pokemon.cMoveTargetPokemon);
 
   useEffect(() => {
+    setDataTargetPokemon(props.pokemon.dataTargetPokemon);
+    setFMoveTargetPokemon(props.pokemon.fMoveTargetPokemon);
+    setCMoveTargetPokemon(props.pokemon.cMoveTargetPokemon);
+  }, [props.pokemon]);
+
+  useEffect(() => {
     props.setData(
       update(props.data, {
         [props.id]: {
@@ -31,7 +37,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         },
       })
     );
-  }, [props.data, dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, props.id, props.setData]);
+  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon]);
 
   return (
     <div className="tw-relative tw-w-full">
@@ -79,9 +85,6 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 title="Remove"
                 label={<DeleteIcon color="inherit" className="!tw-title-medium" />}
                 onClick={() => {
-                  setDataTargetPokemon(props.data[props.id + 1]?.dataTargetPokemon);
-                  setFMoveTargetPokemon(props.data[props.id + 1]?.fMoveTargetPokemon);
-                  setCMoveTargetPokemon(props.data[props.id + 1]?.cMoveTargetPokemon);
                   props.onRemovePokemon(props.id);
                 }}
               />

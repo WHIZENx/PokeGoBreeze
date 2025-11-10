@@ -3,6 +3,7 @@ import { Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { VariantType } from '../../enums/type.enum';
 import ButtonMui from '../Commons/Buttons/ButtonMui';
+import loading from '../../assets/loading.png';
 
 interface Props {
   children: ReactNode;
@@ -38,7 +39,6 @@ class ErrorBoundary extends Component<Props, IState> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // console.error('ErrorBoundary caught an error', error, errorInfo);
     this.setState(
       State.create({
         hasError: true,
@@ -63,7 +63,8 @@ class ErrorBoundary extends Component<Props, IState> {
       }
 
       return (
-        <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-p-4 tw-min-h-[50vh]">
+        <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-p-4 tw-min-h-screen">
+          <img width={64} height={64} alt="Pokémon Image" src={loading} />
           <Typography variant="h5" component="h2" gutterBottom>
             Something went wrong
           </Typography>
@@ -82,7 +83,7 @@ class ErrorBoundary extends Component<Props, IState> {
           {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
             <div className="tw-mt-4 tw-max-w-full tw-overflow-auto">
               <Typography variant="subtitle2" component="h3" gutterBottom>
-                Error Details (Deployment Only):
+                Error Details:
               </Typography>
               {this.state.error && (
                 <pre className="tw-bg-revert tw-p-2 tw-rounded-sm tw-max-w-full tw-overflow-x-auto tw-text-left">

@@ -52,11 +52,12 @@
     "lint:style": "stylelint \"src/**/*.{css,scss}\"",
     "lint": "npm run lint:code && npm run lint:style",
     "format": "npm run format:code && npm run format:style",
-    "develop": "sh -c '. ./config.sh && vite'",
+    "develop": "bash -c 'source ./config.sh && vite'",
     "test-vite": "vite",
     "debug-vite": "vite --debug --force",
     "prebuild": "rimraf dist",
-    "deploy": "sh -c '. ./config.sh && npm run lint && vite build' && node sitemap/buildSitemap.js",
+    "build:vite": "vite build",
+    "deploy": "bash -c 'source ./config.sh && npm run lint && vite build' && node sitemap/buildSitemap.js",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
   "browserslist": {
@@ -113,11 +114,14 @@
     "stylelint": "^15.11.0",
     "stylelint-config-standard": "^34.0.0",
     "stylelint-config-standard-scss": "^11.1.0",
+    "stylelint-scss": "^5.3.2",
     "stylelint-stylistic": "^0.4.5",
     "tailwindcss": "^3.4.17",
     "typescript": "5.5.3",
     "util": "^0.12.5",
-    "vite": "^5.4.21"
+    "vite": "^5.4.21",
+    "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-stylelint": "^6.0.2"
   },
   "peerDependencies": {
     "postcss": "8.4.31"
