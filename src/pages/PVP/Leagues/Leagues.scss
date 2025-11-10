@@ -127,8 +127,14 @@ li.unique-type ul {
   font-size: 20px;
 }
 
-.require-rank-info b {
-  color: red;
+.require-rank-info {
+  b {
+    @apply tw-text-red-600;
+  }
+
+  li {
+    @apply tw-list-none;
+  }
 }
 
 .combat-center-league-top {

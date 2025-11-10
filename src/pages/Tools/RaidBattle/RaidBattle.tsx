@@ -23,7 +23,7 @@ import {
   TimeToKill,
 } from '../../../utils/calculate';
 
-import { Badge, Checkbox, FormControlLabel, IconButton, Switch } from '@mui/material';
+import { Badge, Checkbox, FormControlLabel, IconButton, LinearProgress, Switch } from '@mui/material';
 
 import './RaidBattle.scss';
 import APIService from '../../../services/api.service';
@@ -678,26 +678,28 @@ const RaidBattle = () => {
     return (
       <Fragment>
         <div className="progress tw-relative">
-          <div
-            className={`progress-bar bg-success tw-mt-0 tw-w-[${Math.round(percent)}%]`}
-            role="progressbar"
-            aria-valuenow={percent}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          />
-          <div
-            className={`progress-bar bg-danger tw-mt-0 tw-w-[${Math.round(100 - percent)}%]`}
-            role="progressbar"
-            aria-valuenow={100 - percent}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          />
+          <div className="tw-absolute tw-flex tw-w-full">
+            <LinearProgress
+              color="success"
+              className="!tw-h-7.5 tw-rounded-s-sm"
+              style={{ width: `${Math.round(percent)}%` }}
+              variant="determinate"
+              value={100}
+            />
+            <LinearProgress
+              color="error"
+              className="!tw-h-7.5 tw-rounded-e-sm"
+              style={{ width: `${Math.round(100 - percent)}%` }}
+              variant="determinate"
+              value={100}
+            />
+          </div>
           <div className="tw-justify-start tw-items-center tw-flex tw-absolute tw-h-full tw-w-full">
             <div className="line-dps tw-relative" style={{ width: `calc(${dps}% + 2px` }}>
+              <hr className="tw-w-full !tw-mt-[3px]" />
               <span className="line-left">
                 <b>|</b>
               </span>
-              <hr className="tw-w-full" />
               <span className="line-right">
                 <b>|</b>
               </span>
@@ -716,11 +718,9 @@ const RaidBattle = () => {
     const status =
       enableTimeAllow && timer >= timeAllow ? RaidState.TimeOut : bossHp > 0 ? RaidState.Loss : RaidState.Win;
     const result = splitAndCapitalize(getKeyWithData(RaidState, status), /(?=[A-Z])/, ' ').toUpperCase();
+    const className = `!tw-bg-${status === RaidState.Win ? 'green-600' : 'red-600'}`;
     return (
-      <td
-        colSpan={3}
-        className={combineClasses('tw-text-center bg-summary', `bg-${status === RaidState.Win ? 'success' : 'danger'}`)}
-      >
+      <td colSpan={3} className={combineClasses('!tw-text-center bg-summary', className)}>
         <span className="tw-text-white">{result}</span>
       </td>
     );
@@ -1651,9 +1651,9 @@ const RaidBattle = () => {
                         {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP)))}
                       </h3>
                       {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP))) === 1 ? (
-                        <span className="caption tw-text-green-600">Easy</span>
+                        <span className="caption !tw-text-green-600">Easy</span>
                       ) : (
-                        <span className="caption tw-text-red-600">Hard</span>
+                        <span className="caption !tw-text-red-600">Hard</span>
                       )}
                     </div>
                     <h3 className="tw-mx-2 tw-mb-3"> - </h3>
@@ -1661,7 +1661,7 @@ const RaidBattle = () => {
                       <h3 className="tw-block !tw-m-0">
                         {Math.ceil(statBossHP / (statBossHP - Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)))}+
                       </h3>
-                      <span className="caption tw-text-green-600">Easy</span>
+                      <span className="caption !tw-text-green-600">Easy</span>
                     </div>
                   </div>
                 </div>
@@ -1695,7 +1695,9 @@ const RaidBattle = () => {
                                 <td>
                                   <OverlayTrigger
                                     placement="auto"
-                                    overlay={<CustomPopover>{modalDetailsPokemon(data)}</CustomPopover>}
+                                    overlay={
+                                      <CustomPopover id="popover-info">{modalDetailsPokemon(data)}</CustomPopover>
+                                    }
                                   >
                                     <span className="tooltips-info">
                                       <div className="tw-flex tw-items-center table-pokemon">
@@ -1767,7 +1769,7 @@ const RaidBattle = () => {
                                 <td colSpan={3}>
                                   <div className="tw-flex tw-items-center tw-gap-2">
                                     <TimerIcon />
-                                    <span className="tw-mb-2">
+                                    <span>
                                       Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}
                                       {enableTimeAllow && ` / ${timeAllow}`}
                                     </span>

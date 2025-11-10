@@ -40,6 +40,7 @@ export default defineConfig(({ mode }) => {
         buffer: 'buffer',
         util: 'util',
       },
+      dedupe: ['styled-components'],
     },
     build: {
       outDir: 'dist',
@@ -144,8 +145,19 @@ export default defineConfig(({ mode }) => {
         'buffer',
         'util',
         'process',
+        'styled-components',
+        'shallowequal',
+        'react-data-table-component',
+        'react-xarrows',
       ],
-      exclude: ['@vercel/analytics', '@vercel/speed-insights'],
+      exclude: [
+        '@vercel/analytics',
+        '@vercel/speed-insights',
+        '@vercel/edge-config',
+        '@vercel/postgres',
+        '@redux-devtools/extension',
+        'dompurify',
+      ],
     },
     envPrefix: 'REACT_APP_',
   };
