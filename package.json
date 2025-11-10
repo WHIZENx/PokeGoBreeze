@@ -52,11 +52,11 @@
     "lint:style": "stylelint \"src/**/*.{css,scss}\"",
     "lint": "npm run lint:code && npm run lint:style",
     "format": "npm run format:code && npm run format:style",
-    "develop": "sh -c '. ./config.sh && vite'",
+    "develop": "bash -c 'source ./config.sh && vite'",
     "test-vite": "vite",
     "debug-vite": "vite --debug --force",
     "prebuild": "rimraf dist",
-    "deploy": "sh -c '. ./config.sh && npm run lint && vite build' && node sitemap/buildSitemap.js",
+    "deploy": "bash -c 'source ./config.sh && npm run lint && vite build' && node sitemap/buildSitemap.js",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
   "browserslist": {
