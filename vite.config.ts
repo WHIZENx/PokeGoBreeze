@@ -9,38 +9,34 @@ import { resolve } from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const isDev = mode === 'development';
-  const isCI = process.env.CI === 'true';
 
   return {
     plugins: [
       react({
         jsxRuntime: 'automatic',
       }),
-      // Skip ESLint in CI to avoid memory issues (lint runs separately in workflow)
-      ...(isCI
+      ...(isDev
         ? []
         : [
             eslint({
-              cache: false,
+              cache: true,
               include: ['src/**/*.{ts,tsx,js,jsx}'],
-              exclude: ['node_modules', 'dist'],
+              exclude: ['node_modules', 'dist', 'build', '**/*.spec.*', '**/*.test.*'],
               failOnError: !isDev,
               failOnWarning: !isDev,
               emitWarning: true,
-              emitError: true,
+              emitError: false,
             }),
           ]),
-      // Skip Stylelint in CI to avoid memory issues (lint runs separately in workflow)
-      ...(isCI
+      ...(isDev
         ? []
         : [
             stylelint({
               include: ['src/**/*.{css,scss}'],
-              exclude: ['node_modules', 'dist'],
-              build: !isDev,
-              dev: isDev,
-              lintInWorker: true,
-              cache: false,
+              exclude: ['node_modules', 'dist', 'build'],
+              build: false,
+              lintInWorker: false,
+              cache: true,
             }),
           ]),
     ],

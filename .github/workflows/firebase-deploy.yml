@@ -6,7 +6,6 @@ on:
     # Also allows manual trigger from any branch
 
 env:
-  CI: true
   NODE_OPTIONS: --max_old_space_size=4096
   REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
   REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
@@ -35,13 +34,13 @@ jobs:
             ENVIRONMENT="production"
           elif [ "$BRANCH_NAME" = "stage" ]; then
             HOSTING_TARGET="pokego-breeze-stage"
-            ENVIRONMENT="staging"
+            ENVIRONMENT="development"
           elif [ "$BRANCH_NAME" = "update-patch" ]; then
             HOSTING_TARGET="pokego-breeze-develop"
             ENVIRONMENT="development"
           else
             HOSTING_TARGET="pokego-breeze-develop"
-            ENVIRONMENT="preview"
+            ENVIRONMENT="development"
           fi
           
           echo "Hosting target: $HOSTING_TARGET"
