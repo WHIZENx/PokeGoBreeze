@@ -6,6 +6,7 @@ on:
     # Also allows manual trigger from any branch
 
 env:
+  CI: true
   NODE_OPTIONS: --max_old_space_size=4096
   REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
   REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
@@ -34,13 +35,13 @@ jobs:
             ENVIRONMENT="production"
           elif [ "$BRANCH_NAME" = "stage" ]; then
             HOSTING_TARGET="pokego-breeze-stage"
-            ENVIRONMENT="development"
+            ENVIRONMENT="staging"
           elif [ "$BRANCH_NAME" = "update-patch" ]; then
             HOSTING_TARGET="pokego-breeze-develop"
             ENVIRONMENT="development"
           else
             HOSTING_TARGET="pokego-breeze-develop"
-            ENVIRONMENT="development"
+            ENVIRONMENT="preview"
           fi
           
           echo "Hosting target: $HOSTING_TARGET"
@@ -54,6 +55,7 @@ jobs:
           echo "📦 Hosting target: ${{ steps.set-target.outputs.target }}"
           echo "🌍 Environment: ${{ steps.set-target.outputs.environment }}"
           echo "📝 Commit SHA: ${{ github.sha }}"
+          echo "🔧 Deployment Mode: ${REACT_APP_DEPLOYMENT_MODE:-not set}"
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -74,8 +76,20 @@ jobs:
         continue-on-error: false
 
       - name: Build website
+        env:
+          # Explicitly export environment variables for the shell script
+          REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
+          REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
+          REACT_APP_EDGE_CONFIG: ${{ secrets.REACT_APP_EDGE_CONFIG }}
+          REACT_APP_EDGE_ID: ${{ secrets.REACT_APP_EDGE_ID }}
+          REACT_APP_EDGE_READ_TOKEN: ${{ secrets.REACT_APP_EDGE_READ_TOKEN }}
+          REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
+          REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
+          REACT_APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
         run: |
           echo "Building with increased memory limit..."
+          echo "Verifying environment variables:"
+          echo "  REACT_APP_DEPLOYMENT_MODE: ${REACT_APP_DEPLOYMENT_MODE:-not set}"
           npm run prebuild
           bash -c 'source ./config.sh && npx vite build'
           npm run generate:sitemap
