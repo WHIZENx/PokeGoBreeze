@@ -175,14 +175,14 @@ const FormComponent = (props: IFormInfoComponent) => {
       {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
         <div className="tw-flex tw-flex-wrap tw-gap-y-3 tw-gap-x-12.5">
           {genderRatio.M !== 0 && (
-            <Gender ratio={genderRatio} sex={TypeSex.Male} sprit={searchingMainForm?.form?.sprites} />
+            <Gender ratio={genderRatio} sex={TypeSex.Male} sprite={searchingMainForm?.form?.sprites} />
           )}
           {genderRatio.F !== 0 && (
-            <Gender ratio={genderRatio} sex={TypeSex.Female} sprit={searchingMainForm?.form?.sprites} />
+            <Gender ratio={genderRatio} sex={TypeSex.Female} sprite={searchingMainForm?.form?.sprites} />
           )}
         </div>
       ) : (
-        <Gender sex={TypeSex.Genderless} />
+        <Gender sex={TypeSex.Genderless} sprite={searchingMainForm?.form?.sprites} />
       )}
       <Stats
         pokemonType={searchingMainForm?.form?.pokemonType}
