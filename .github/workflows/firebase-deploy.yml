@@ -24,10 +24,37 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Display current branch
+      - name: Set Firebase hosting target based on branch
+        id: set-target
         run: |
-          echo "Deploying from branch: ${{ github.ref_name }}"
-          echo "Commit SHA: ${{ github.sha }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+          echo "Branch name: $BRANCH_NAME"
+          
+          if [ "$BRANCH_NAME" = "main" ]; then
+            HOSTING_TARGET="hosting:deploy"
+            ENVIRONMENT="production"
+          elif [ "$BRANCH_NAME" = "stage" ]; then
+            HOSTING_TARGET="hosting:pokego-breeze-stage"
+            ENVIRONMENT="staging"
+          elif [ "$BRANCH_NAME" = "update-patch" ]; then
+            HOSTING_TARGET="hosting:pokego-breeze-develop"
+            ENVIRONMENT="development"
+          else
+            HOSTING_TARGET="hosting:pokego-breeze-develop"
+            ENVIRONMENT="preview"
+          fi
+          
+          echo "Hosting target: $HOSTING_TARGET"
+          echo "Environment: $ENVIRONMENT"
+          echo "target=$HOSTING_TARGET" >> $GITHUB_OUTPUT
+          echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+
+      - name: Display deployment info
+        run: |
+          echo "🚀 Deploying from branch: ${{ github.ref_name }}"
+          echo "📦 Hosting target: ${{ steps.set-target.outputs.target }}"
+          echo "🌍 Environment: ${{ steps.set-target.outputs.environment }}"
+          echo "📝 Commit SHA: ${{ github.sha }}"
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -51,16 +78,16 @@ jobs:
         run: |
           echo "Building with increased memory limit..."
           npm run prebuild
-          bash -c 'source ./config.sh && vite build'
+          bash -c 'source ./config.sh && npx vite build'
           npm run generate:sitemap
 
       - name: Deploy to Firebase
         run: |
           firebase deploy \
-            --only hosting:pokego-breeze-develop \
+            --only ${{ steps.set-target.outputs.target }} \
             --non-interactive \
             --token ${{ secrets.FIREBASE_TOKEN }} \
-            -m "Branch: ${{ github.ref_name }} | RunID: ${{ github.run_id }} | Commit: ${{ github.sha }}"
+            -m "Branch: ${{ github.ref_name }} | Env: ${{ steps.set-target.outputs.environment }} | RunID: ${{ github.run_id }} | Commit: ${{ github.sha }}"
 
       - name: Archive build Artifact
         uses: actions/upload-artifact@v4
@@ -69,3 +96,11 @@ jobs:
           name: build-${{ github.ref_name }}-${{ github.sha }}
           path: dist
           retention-days: 7
+
+      - name: Deployment Summary
+        if: success()
+        run: |
+          echo "✅ Deployment successful!"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Target: ${{ steps.set-target.outputs.target }}"
+          echo "Environment: ${{ steps.set-target.outputs.environment }}"
