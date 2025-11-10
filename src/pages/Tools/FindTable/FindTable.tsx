@@ -266,7 +266,7 @@ const FindTable = () => {
         )}
         <hr className="!tw-m-0" />
         <div>
-          <b className="tw-text-black text-shadow">{star}</b>
+          <b className={isEqual(style, 'zero') ? 'tw-text-default' : 'tw-text-black'}>{star}</b>
         </div>
       </div>
       <p>{toFloatWithPadding((toNumber(star) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>

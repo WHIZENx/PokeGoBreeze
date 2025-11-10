@@ -8,7 +8,7 @@ import {
   IPokemonFormDetail,
   IPokemonFormModify,
   PokemonFormModifyModel,
-  PokemonSprit,
+  PokemonSprite,
 } from '../core/models/API/form.model';
 import { PokemonType } from '../enums/type.enum';
 import { versionList } from '../utils/constants';
@@ -116,7 +116,7 @@ export const usePokemon = () => {
           pokemon.fullName?.replaceAll('_', '-')?.toLowerCase(),
           versionList[0].replace(' ', '-'),
           pokemon.types,
-          new PokemonSprit(),
+          new PokemonSprite(),
           index,
           PokemonType.Normal,
           false

@@ -1,5 +1,8 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+// @ts-expect-error - vite-plugin-eslint has type definition issues with package.json exports
+import eslint from 'vite-plugin-eslint';
+import stylelint from 'vite-plugin-stylelint';
 import { resolve } from 'path';
 
 // https://vitejs.dev/config/
@@ -12,6 +15,30 @@ export default defineConfig(({ mode }) => {
       react({
         jsxRuntime: 'automatic',
       }),
+      ...(isDev
+        ? []
+        : [
+            eslint({
+              cache: true,
+              include: ['src/**/*.{ts,tsx,js,jsx}'],
+              exclude: ['node_modules', 'dist', 'build', '**/*.spec.*', '**/*.test.*'],
+              failOnError: !isDev,
+              failOnWarning: !isDev,
+              emitWarning: true,
+              emitError: false,
+            }),
+          ]),
+      ...(isDev
+        ? []
+        : [
+            stylelint({
+              include: ['src/**/*.{css,scss}'],
+              exclude: ['node_modules', 'dist', 'build'],
+              build: false,
+              lintInWorker: false,
+              cache: true,
+            }),
+          ]),
     ],
     define: {
       'process.env': JSON.stringify({
@@ -40,6 +67,7 @@ export default defineConfig(({ mode }) => {
         buffer: 'buffer',
         util: 'util',
       },
+      dedupe: ['styled-components'],
     },
     build: {
       outDir: 'dist',
@@ -144,8 +172,19 @@ export default defineConfig(({ mode }) => {
         'buffer',
         'util',
         'process',
+        'styled-components',
+        'shallowequal',
+        'react-data-table-component',
+        'react-xarrows',
       ],
-      exclude: ['@vercel/analytics', '@vercel/speed-insights'],
+      exclude: [
+        '@vercel/analytics',
+        '@vercel/speed-insights',
+        '@vercel/edge-config',
+        '@vercel/postgres',
+        '@redux-devtools/extension',
+        'dompurify',
+      ],
     },
     envPrefix: 'REACT_APP_',
   };

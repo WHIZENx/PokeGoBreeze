@@ -4,7 +4,7 @@ import { getGenerationPokemon, splitAndCapitalize } from '../../../utils/utils';
 import { IEvoList, ITempEvo } from '../evolution.model';
 import { Encounter, IPokemonData, IPokemonFormChange, IPokemonGenderRatio, PokemonGenderRatio } from '../pokemon.model';
 import { StatsPokemonGO } from '../stats.model';
-import { IPokemonSprit, PokemonSprit } from './form.model';
+import { IPokemonSprite, PokemonSprite } from './form.model';
 import { Path } from './species.model';
 
 export interface SpriteInfo {
@@ -248,7 +248,7 @@ export interface IPokemonDetailInfo {
   isDefault: boolean;
   name: string;
   speciesName?: string;
-  sprites: IPokemonSprit;
+  sprites: IPokemonSprite;
   stats: Stats[];
   types: string[];
   weight: number;
@@ -263,7 +263,7 @@ export class PokemonDetailInfo implements IPokemonDetailInfo {
   isDefault = false;
   name = '';
   speciesName?: string;
-  sprites = new PokemonSprit();
+  sprites = new PokemonSprite();
   stats: Stats[] = [];
   types: string[] = [];
   weight = 0;
@@ -277,7 +277,7 @@ export class PokemonDetailInfo implements IPokemonDetailInfo {
     obj.id = info.id;
     obj.name = info.name;
     obj.speciesName = info.species?.name;
-    obj.sprites = PokemonSprit.setDetails(info.sprites);
+    obj.sprites = PokemonSprite.setDetails(info.sprites);
     obj.stats = info.stats;
     obj.types = info.types.map((item) => item.type.name);
     obj.weight = info.weight;
@@ -321,7 +321,7 @@ export class PokemonDetail implements IPokemonDetail {
   isDefault = false;
   name = '';
   speciesName?: string;
-  sprites = new PokemonSprit();
+  sprites = new PokemonSprite();
   stats: Stats[] = [];
   types: string[] = [];
   weight = 0;

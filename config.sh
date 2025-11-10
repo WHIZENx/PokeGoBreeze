@@ -18,7 +18,7 @@ fi
 # Set Edge Config variables - use GitHub Actions env vars if available, otherwise use .env values
 EDGE_ID=${VERCEL_EDGE_CONFIG_ID:-$REACT_APP_EDGE_ID}
 EDGE_READ_TOKEN=${VERCEL_TOKEN:-$REACT_APP_EDGE_READ_TOKEN}
-APP_DEPLOYMENT_MODE=${APP_DEPLOYMENT_MODE:-$REACT_APP_DEPLOYMENT_MODE}
+APP_DEPLOYMENT_MODE=${APP_DEPLOYMENT_MODE:-${REACT_APP_DEPLOYMENT_MODE:-development}}
 
 if [[ "$APP_DEPLOYMENT_MODE" == "development" ]]; then
   VERSION_VAR="version-dev"

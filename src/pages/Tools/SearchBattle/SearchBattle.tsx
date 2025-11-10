@@ -392,7 +392,7 @@ const FindBattle = () => {
               <Candy id={item.id} className="tw-mr-1" />
               <span className="tw-flex tw-items-center tw-mr-1">
                 {toNumber(battleStats.resultBetweenCandy) + getCandyEvo(value, item.id)}
-                <span className="tw-inline-block caption tw-text-green-600">(+{getCandyEvo(value, item.id)})</span>
+                <span className="tw-inline-block caption !tw-text-green-600">(+{getCandyEvo(value, item.id)})</span>
               </span>
               <CandyXL id={searchingToolCurrentData?.form?.defaultId} />
               {battleStats.resultBetweenXLCandy}
@@ -552,7 +552,7 @@ const FindBattle = () => {
                         </div>
                         <span className="caption caption-constant text-shadow">CP: {value.CP}</span>
                       </div>
-                      <span className="caption tw-text-black border-best-poke">
+                      <span className="caption !tw-text-black border-best-poke">
                         <b>#{value.rank}</b>
                       </span>
                     </div>

@@ -1,4 +1,4 @@
-import { IFormSoundCry, IPokemonFormModify, IPokemonSprit } from '../../core/models/API/form.model';
+import { IFormSoundCry, IPokemonFormModify, IPokemonSprite } from '../../core/models/API/form.model';
 import { IImage } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
 import {
@@ -195,7 +195,7 @@ export interface IStatsComponent {
 export interface IGenderComponent {
   sex: TypeSex;
   ratio?: IPokemonGenderRatio;
-  sprit?: IPokemonSprit;
+  sprite?: IPokemonSprite;
 }
 
 export interface IPokemonRaidComponent {
