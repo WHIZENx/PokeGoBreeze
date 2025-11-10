@@ -6,8 +6,10 @@
 
 # development
 .vs
-.github
 .vscode
+# Track workflow files but ignore other .github configs
+.github/*
+!.github/workflows/
 
 # production
 /build

@@ -1,22 +1,55 @@
-name: Deploy to Vercel (Development)
-
+name: Deploy to Vercel
 on:
   push:
-    branches:
-      - stage
+    # Runs on any branch push
+  workflow_dispatch:
+    # Also allows manual trigger from any branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: development
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
+      - name: Determine deployment environment
+        id: set-env
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          echo "Branch name: $BRANCH_NAME"
+          
+          if [ "$BRANCH_NAME" = "main" ]; then
+            ENVIRONMENT="production"
+            SHOULD_DEPLOY="true"
+          elif [ "$BRANCH_NAME" = "stage" ]; then
+            ENVIRONMENT="development"
+            SHOULD_DEPLOY="true"
+          elif [ "$BRANCH_NAME" = "update-patch" ] || [ "$BRANCH_NAME" = "develop" ]; then
+            ENVIRONMENT="development"
+            SHOULD_DEPLOY="true"
+          else
+            ENVIRONMENT="preview"
+            SHOULD_DEPLOY="false"
+          fi
+          
+          echo "Environment: $ENVIRONMENT"
+          echo "Should deploy: $SHOULD_DEPLOY"
+          echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+          echo "should_deploy=$SHOULD_DEPLOY" >> $GITHUB_OUTPUT
+
+      - name: Display deployment info
+        run: |
+          echo "🚀 Branch: ${{ github.ref_name }}"
+          echo "🌍 Environment: ${{ steps.set-env.outputs.environment }}"
+          echo "📝 Commit SHA: ${{ github.sha }}"
+          echo "✅ Will deploy: ${{ steps.set-env.outputs.should_deploy }}"
+
       - name: Make deploy script executable
+        if: steps.set-env.outputs.should_deploy == 'true'
         run: chmod +x ./deploy.sh
 
       - name: Deploy with Edge Config updates
+        if: steps.set-env.outputs.should_deploy == 'true'
         run: ./deploy.sh
         env:
           VERCEL_TOKEN: ${{ secrets.REACT_APP_EDGE_TOKEN }}
@@ -29,3 +62,16 @@ jobs:
           NEON_REFRESH_TOKEN: ${{ secrets.NEON_REFRESH_TOKEN }}
           NEON_AUTH_USER_ID: ${{ secrets.NEON_AUTH_USER_ID }}
           APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+
+      - name: Deployment Summary
+        if: steps.set-env.outputs.should_deploy == 'true' && success()
+        run: |
+          echo "✅ Deployment successful!"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Environment: ${{ steps.set-env.outputs.environment }}"
+
+      - name: Skipped Deployment
+        if: steps.set-env.outputs.should_deploy == 'false'
+        run: |
+          echo "⏭️ Skipping deployment for branch: ${{ github.ref_name }}"
+          echo "Only main, stage, update-patch, and develop branches are deployed to Vercel"

@@ -36,7 +36,7 @@ jobs:
           elif [ "$BRANCH_NAME" = "stage" ]; then
             HOSTING_TARGET="pokego-breeze-stage"
             ENVIRONMENT="staging"
-          elif [ "$BRANCH_NAME" = "update-patch" ]; then
+          elif [ "$BRANCH_NAME" = "develop" ]; then
             HOSTING_TARGET="pokego-breeze-develop"
             ENVIRONMENT="development"
           else
