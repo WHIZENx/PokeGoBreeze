@@ -23,7 +23,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
                 key={index}
                 className={combineClasses(
                   value.toLowerCase(),
-                  'type-select-bg tw-flex tw-align-items-center filter-shadow text-shadow-black'
+                  'type-select-bg tw-flex tw-items-center filter-shadow text-shadow-black'
                 )}
               >
                 <img

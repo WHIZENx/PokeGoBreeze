@@ -465,7 +465,7 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <div className="tw-flex tw-items-center tw-gap-1">
                       <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
-                      <span className="tw-text-green-600 tw-inline-block caption tw-ml-1">
+                      <span className="!tw-text-green-600 tw-inline-block caption tw-ml-1">
                         {`+${toFloatWithPadding(move.pvePower * 0.2, 2)}`}
                       </span>
                     </div>
@@ -505,7 +505,7 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <div className="tw-flex tw-items-center tw-gap-1">
                       <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
-                      <span className="tw-text-green-600 tw-inline-block caption tw-ml-1">
+                      <span className="!tw-text-green-600 tw-inline-block caption tw-ml-1">
                         {`+${toFloatWithPadding(move.pvpPower * 0.2, 2)}`}
                       </span>
                     </div>
