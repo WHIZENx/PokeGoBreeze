@@ -1,0 +1,119 @@
+name: Firebase hosting
+on:
+  push:
+    # Runs on any branch push
+  workflow_dispatch:
+    # Also allows manual trigger from any branch
+
+env:
+  CI: true
+  NODE_OPTIONS: --max_old_space_size=4096
+  REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
+  REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
+  REACT_APP_EDGE_CONFIG: ${{ secrets.REACT_APP_EDGE_CONFIG }}
+  REACT_APP_EDGE_ID: ${{ secrets.REACT_APP_EDGE_ID }}
+  REACT_APP_EDGE_READ_TOKEN: ${{ secrets.REACT_APP_EDGE_READ_TOKEN }}
+  REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
+  REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
+  REACT_APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Set Firebase hosting target based on branch
+        id: set-target
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          echo "Branch name: $BRANCH_NAME"
+          
+          if [ "$BRANCH_NAME" = "main" ]; then
+            HOSTING_TARGET="deploy"
+            ENVIRONMENT="production"
+          elif [ "$BRANCH_NAME" = "stage" ]; then
+            HOSTING_TARGET="pokego-breeze-stage"
+            ENVIRONMENT="staging"
+          elif [ "$BRANCH_NAME" = "develop" ]; then
+            HOSTING_TARGET="pokego-breeze-develop"
+            ENVIRONMENT="development"
+          else
+            HOSTING_TARGET="pokego-breeze-develop"
+            ENVIRONMENT="preview"
+          fi
+          
+          echo "Hosting target: $HOSTING_TARGET"
+          echo "Environment: $ENVIRONMENT"
+          echo "target=$HOSTING_TARGET" >> $GITHUB_OUTPUT
+          echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+
+      - name: Display deployment info
+        run: |
+          echo "🚀 Deploying from branch: ${{ github.ref_name }}"
+          echo "📦 Hosting target: ${{ steps.set-target.outputs.target }}"
+          echo "🌍 Environment: ${{ steps.set-target.outputs.environment }}"
+          echo "📝 Commit SHA: ${{ github.sha }}"
+          echo "🔧 Deployment Mode: ${REACT_APP_DEPLOYMENT_MODE:-not set}"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.17.0'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install firebase tools
+        run: |
+          npm install -g firebase-tools@13.35.1
+          firebase use pokego-breeze --token ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Run linting (separate from build)
+        run: npm run lint
+        continue-on-error: false
+
+      - name: Build website
+        env:
+          # Explicitly export environment variables for the shell script
+          REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
+          REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
+          REACT_APP_EDGE_CONFIG: ${{ secrets.REACT_APP_EDGE_CONFIG }}
+          REACT_APP_EDGE_ID: ${{ secrets.REACT_APP_EDGE_ID }}
+          REACT_APP_EDGE_READ_TOKEN: ${{ secrets.REACT_APP_EDGE_READ_TOKEN }}
+          REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
+          REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
+          REACT_APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+        run: |
+          echo "Building with increased memory limit..."
+          echo "Verifying environment variables:"
+          echo "  REACT_APP_DEPLOYMENT_MODE: ${REACT_APP_DEPLOYMENT_MODE:-not set}"
+          npm run prebuild
+          bash -c 'source ./config.sh && npx vite build'
+          npm run generate:sitemap
+
+      - name: Deploy to Firebase
+        run: |
+          firebase deploy \
+            --only hosting:${{ steps.set-target.outputs.target }} \
+            --non-interactive \
+            --token ${{ secrets.FIREBASE_TOKEN }} \
+            -m "Branch: ${{ github.ref_name }} | Env: ${{ steps.set-target.outputs.environment }} | RunID: ${{ github.run_id }} | Commit: ${{ github.sha }}"
+
+      - name: Archive build Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-${{ github.ref_name }}-${{ github.sha }}
+          path: dist
+          retention-days: 7
+
+      - name: Deployment Summary
+        if: success()
+        run: |
+          echo "✅ Deployment successful!"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Target: ${{ steps.set-target.outputs.target }}"
+          echo "Environment: ${{ steps.set-target.outputs.environment }}"
