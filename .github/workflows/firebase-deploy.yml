@@ -31,16 +31,16 @@ jobs:
           echo "Branch name: $BRANCH_NAME"
           
           if [ "$BRANCH_NAME" = "main" ]; then
-            HOSTING_TARGET="hosting:deploy"
+            HOSTING_TARGET="deploy"
             ENVIRONMENT="production"
           elif [ "$BRANCH_NAME" = "stage" ]; then
-            HOSTING_TARGET="hosting:pokego-breeze-stage"
+            HOSTING_TARGET="pokego-breeze-stage"
             ENVIRONMENT="staging"
           elif [ "$BRANCH_NAME" = "update-patch" ]; then
-            HOSTING_TARGET="hosting:pokego-breeze-develop"
+            HOSTING_TARGET="pokego-breeze-develop"
             ENVIRONMENT="development"
           else
-            HOSTING_TARGET="hosting:pokego-breeze-develop"
+            HOSTING_TARGET="pokego-breeze-develop"
             ENVIRONMENT="preview"
           fi
           
@@ -84,7 +84,7 @@ jobs:
       - name: Deploy to Firebase
         run: |
           firebase deploy \
-            --only ${{ steps.set-target.outputs.target }} \
+            --only hosting:${{ steps.set-target.outputs.target }} \
             --non-interactive \
             --token ${{ secrets.FIREBASE_TOKEN }} \
             -m "Branch: ${{ github.ref_name }} | Env: ${{ steps.set-target.outputs.environment }} | RunID: ${{ github.run_id }} | Commit: ${{ github.sha }}"

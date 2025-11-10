@@ -5,10 +5,13 @@
   "targets": {
     "pokego-breeze": {
       "hosting": {
-        "dev": [
+        "pokego-breeze-develop": [
           "pokego-breeze-develop"
         ],
-        "prod": [
+        "pokego-breeze-stage": [
+          "pokego-breeze-stage"
+        ],
+        "deploy": [
           "pokego-breeze"
         ]
       }
