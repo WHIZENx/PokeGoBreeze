@@ -1,7 +1,10 @@
 name: Firebase hosting
 on:
   push:
-    branches: [main]
+    # Runs on any branch push
+  workflow_dispatch:
+    # Also allows manual trigger from any branch
+
 env:
   REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
   REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
@@ -11,29 +14,47 @@ env:
   REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
   REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
   REACT_APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Display current branch
+        run: |
+          echo "Deploying from branch: ${{ github.ref_name }}"
+          echo "Commit SHA: ${{ github.sha }}"
+
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: '18.17.0'
+          cache: 'npm'
+
       - name: Install dependencies
-        run: |
-          npm install
+        run: npm ci
+
       - name: Install firebase tools
         run: |
           npm install -g firebase-tools@13.35.1
-          firebase use pokego-breeze --token ${{secrets.FIREBASE_TOKEN}}
+          firebase use pokego-breeze --token ${{ secrets.FIREBASE_TOKEN }}
+
       - name: Build website
+        run: npm run deploy
+
+      - name: Deploy to Firebase
         run: |
-          npm run deploy
-      - name: Deploy to production site
-        run: firebase deploy --only hosting:prod --non-interactive --token ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
+          firebase deploy \
+            --only hosting:pokego-breeze-develop \
+            --non-interactive \
+            --token ${{ secrets.FIREBASE_TOKEN }} \
+            -m "Branch: ${{ github.ref_name }} | RunID: ${{ github.run_id }} | Commit: ${{ github.sha }}"
+
       - name: Archive build Artifact
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
-          path: build
+          name: build-${{ github.ref_name }}-${{ github.sha }}
+          path: dist
+          retention-days: 7
