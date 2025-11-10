@@ -1,5 +1,8 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+// @ts-expect-error - vite-plugin-eslint has type definition issues with package.json exports
+import eslint from 'vite-plugin-eslint';
+import stylelint from 'vite-plugin-stylelint';
 import { resolve } from 'path';
 
 // https://vitejs.dev/config/
@@ -11,6 +14,23 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react({
         jsxRuntime: 'automatic',
+      }),
+      eslint({
+        cache: false,
+        include: ['src/**/*.{ts,tsx,js,jsx}'],
+        exclude: ['node_modules', 'dist'],
+        failOnError: !isDev,
+        failOnWarning: !isDev,
+        emitWarning: true,
+        emitError: true,
+      }),
+      stylelint({
+        include: ['src/**/*.{css,scss}'],
+        exclude: ['node_modules', 'dist'],
+        build: !isDev,
+        dev: isDev,
+        lintInWorker: true,
+        cache: false,
       }),
     ],
     define: {
