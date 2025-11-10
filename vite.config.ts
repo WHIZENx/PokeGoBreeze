@@ -9,29 +9,40 @@ import { resolve } from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const isDev = mode === 'development';
+  const isCI = process.env.CI === 'true';
 
   return {
     plugins: [
       react({
         jsxRuntime: 'automatic',
       }),
-      eslint({
-        cache: false,
-        include: ['src/**/*.{ts,tsx,js,jsx}'],
-        exclude: ['node_modules', 'dist'],
-        failOnError: !isDev,
-        failOnWarning: !isDev,
-        emitWarning: true,
-        emitError: true,
-      }),
-      stylelint({
-        include: ['src/**/*.{css,scss}'],
-        exclude: ['node_modules', 'dist'],
-        build: !isDev,
-        dev: isDev,
-        lintInWorker: true,
-        cache: false,
-      }),
+      // Skip ESLint in CI to avoid memory issues (lint runs separately in workflow)
+      ...(isCI
+        ? []
+        : [
+            eslint({
+              cache: false,
+              include: ['src/**/*.{ts,tsx,js,jsx}'],
+              exclude: ['node_modules', 'dist'],
+              failOnError: !isDev,
+              failOnWarning: !isDev,
+              emitWarning: true,
+              emitError: true,
+            }),
+          ]),
+      // Skip Stylelint in CI to avoid memory issues (lint runs separately in workflow)
+      ...(isCI
+        ? []
+        : [
+            stylelint({
+              include: ['src/**/*.{css,scss}'],
+              exclude: ['node_modules', 'dist'],
+              build: !isDev,
+              dev: isDev,
+              lintInWorker: true,
+              cache: false,
+            }),
+          ]),
     ],
     define: {
       'process.env': JSON.stringify({

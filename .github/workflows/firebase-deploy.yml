@@ -6,6 +6,8 @@ on:
     # Also allows manual trigger from any branch
 
 env:
+  CI: true
+  NODE_OPTIONS: --max_old_space_size=4096
   REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
   REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
   REACT_APP_EDGE_CONFIG: ${{ secrets.REACT_APP_EDGE_CONFIG }}
@@ -41,8 +43,16 @@ jobs:
           npm install -g firebase-tools@13.35.1
           firebase use pokego-breeze --token ${{ secrets.FIREBASE_TOKEN }}
 
+      - name: Run linting (separate from build)
+        run: npm run lint
+        continue-on-error: false
+
       - name: Build website
-        run: npm run deploy
+        run: |
+          echo "Building with increased memory limit..."
+          npm run prebuild
+          bash -c 'source ./config.sh && vite build'
+          npm run generate:sitemap
 
       - name: Deploy to Firebase
         run: |
@@ -54,6 +64,7 @@ jobs:
 
       - name: Archive build Artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: build-${{ github.ref_name }}-${{ github.sha }}
           path: dist

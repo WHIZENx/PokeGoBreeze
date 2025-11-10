@@ -56,6 +56,7 @@
     "test-vite": "vite",
     "debug-vite": "vite --debug --force",
     "prebuild": "rimraf dist",
+    "build:vite": "vite build",
     "deploy": "bash -c 'source ./config.sh && npm run lint && vite build' && node sitemap/buildSitemap.js",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
