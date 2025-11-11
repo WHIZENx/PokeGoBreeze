@@ -2,6 +2,8 @@
 @use "./base.scss";
 @use "./variables.scss";
 @use "./custom.scss";
+@use "./type.scss";
+@use "./shadow.scss";
 
 .input-group {
   @apply tw-flex tw-flex-wrap tw-w-full tw-relative tw-items-stretch;
