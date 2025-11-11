@@ -1,6 +1,6 @@
 {
   "name": "pokego-breeze",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "main": "index.tsx",
   "license": "MIT",
   "description": "Web Application for Pokémon GO Tools&Information",
@@ -74,6 +74,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "7.21.0-placeholder-for-preset-env.2",
+    "@nabla/vite-plugin-eslint": "^2.0.6",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -120,7 +121,6 @@
     "typescript": "5.5.3",
     "util": "^0.12.5",
     "vite": "^5.4.21",
-    "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-stylelint": "^6.0.2"
   },
   "peerDependencies": {

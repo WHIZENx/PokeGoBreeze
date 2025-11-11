@@ -202,8 +202,6 @@ ul {
   width: fit-content !important;
 }
 
-
-
 .type-border,
 .text-shadow-black {
   text-shadow: 1px 1px black;
@@ -212,4 +210,10 @@ ul {
 .type-border-white {
   border: 1px solid white;
   border-radius: 50%;
+}
+
+.popover-info {
+  background-color: var(--custom-pop-over);
+
+  @apply tw-p-4 tw-rounded-lg;
 }

@@ -87,7 +87,7 @@ jobs:
           REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
           REACT_APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
         run: |
-          echo "Building with increased memory limit..."
+          echo "Building..."
           echo "Verifying environment variables:"
           echo "  REACT_APP_DEPLOYMENT_MODE: ${REACT_APP_DEPLOYMENT_MODE:-not set}"
           npm run prebuild

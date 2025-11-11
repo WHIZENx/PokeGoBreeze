@@ -1,7 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { MoveSetComponent } from '../models/component.model';
-import { OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../../components/Commons/Popovers/CustomPopover';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
@@ -26,6 +24,7 @@ import { IMoveSet, MoveSetModel } from '../models/move-set.model';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import useCombats from '../../../composables/useCombats';
+import Tooltips from '../../../components/Commons/Tooltips/Tooltips';
 
 const MoveSet = (props: MoveSetComponent) => {
   const { findMoveByName } = useCombats();
@@ -64,10 +63,24 @@ const MoveSet = (props: MoveSetComponent) => {
   };
 
   const moveOverlay = () => (
-    <OverlayTrigger
-      placement="auto"
-      overlay={
-        <CustomPopover id="popover-info">
+    <Tooltips
+      hideBackground
+      arrow
+      colorArrow="var(--custom-pop-over)"
+      slotProps={{
+        popper: {
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [0, -8],
+              },
+            },
+          ],
+        },
+      }}
+      title={
+        <div className="popover-info">
           <span className="info-evo">
             <span className="tw-block caption">
               - <CircleIcon className="filter-shadow" sx={{ color: 'white' }} /> {ArcheType.General}
@@ -112,13 +125,13 @@ const MoveSet = (props: MoveSetComponent) => {
               {` ${ArcheType.SelfDebuff}`}
             </span>
           </span>
-        </CustomPopover>
+        </div>
       }
     >
       <span className="tooltips-info">
         <InfoOutlinedIcon color="primary" />
       </span>
-    </OverlayTrigger>
+    </Tooltips>
   );
 
   const renderMove = (move: IMoveSet) => (

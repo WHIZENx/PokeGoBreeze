@@ -32,8 +32,6 @@ import {
   splitAndCapitalize,
 } from '../../../utils/utils';
 
-import { OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../Commons/Popovers/CustomPopover';
 import Candy from '../../Sprites/Candy/Candy';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
 import { IEvolutionComponent } from '../../models/component.model';
@@ -55,6 +53,7 @@ import { APIUrl } from '../../../services/constants';
 import { formNormal, formStandard } from '../../../utils/helpers/options-context.helpers';
 import usePokemon from '../../../composables/usePokemon';
 import useEvolution from '../../../composables/useEvolution';
+import Tooltips from '../../Commons/Tooltips/Tooltips';
 
 interface IPokemonEvo {
   prev?: string;
@@ -701,10 +700,24 @@ const Evolution = (props: IEvolutionComponent) => {
     <Fragment>
       <h4 className="title-evo">
         <b>Evolution Chain</b>
-        <OverlayTrigger
-          placement="auto"
-          overlay={
-            <CustomPopover id="popover-info">
+        <Tooltips
+          hideBackground
+          arrow
+          colorArrow="var(--custom-pop-over)"
+          slotProps={{
+            popper: {
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [0, -4],
+                  },
+                },
+              ],
+            },
+          }}
+          title={
+            <div className="popover-info">
               <span className="info-evo">
                 <span className="tw-block caption">
                   - <img alt="Image Stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of
@@ -757,13 +770,13 @@ const Evolution = (props: IEvolutionComponent) => {
                 </span>
                 <span className="tw-block caption">- Pokémon Battle.</span>
               </span>
-            </CustomPopover>
+            </div>
           }
         >
           <span className="tooltips-info">
             <InfoOutlinedIcon color="primary" />
           </span>
-        </OverlayTrigger>
+        </Tooltips>
       </h4>
       <div className="evo-container scroll-evolution">
         {reload(

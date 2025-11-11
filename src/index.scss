@@ -7,7 +7,6 @@
   $ph-border-radius: 0
 );
 @use "../node_modules/placeholder-loading/src/scss/placeholder-loading.scss" as *;
-@use "./styles/popover.scss";
 @use "./styles/shadow.scss";
 html {
   @apply tw-h-full;

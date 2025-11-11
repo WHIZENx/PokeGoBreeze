@@ -1,7 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-// @ts-expect-error - vite-plugin-eslint has type definition issues with package.json exports
-import eslint from 'vite-plugin-eslint';
+import eslint from '@nabla/vite-plugin-eslint';
 import stylelint from 'vite-plugin-stylelint';
 import { resolve } from 'path';
 
@@ -15,30 +14,29 @@ export default defineConfig(({ mode }) => {
       react({
         jsxRuntime: 'automatic',
       }),
-      ...(isDev
-        ? []
-        : [
-            eslint({
-              cache: true,
-              include: ['src/**/*.{ts,tsx,js,jsx}'],
-              exclude: ['node_modules', 'dist', 'build', '**/*.spec.*', '**/*.test.*'],
-              failOnError: !isDev,
-              failOnWarning: !isDev,
-              emitWarning: true,
-              emitError: false,
-            }),
-          ]),
-      ...(isDev
-        ? []
-        : [
-            stylelint({
-              include: ['src/**/*.{css,scss}'],
-              exclude: ['node_modules', 'dist', 'build'],
-              build: false,
-              lintInWorker: false,
-              cache: true,
-            }),
-          ]),
+      eslint({
+        eslintOptions: {
+          cache: true,
+        },
+        shouldLint: (path) => {
+          return (
+            path.includes('/src/') &&
+            /\.(ts|tsx|js|jsx)$/.test(path) &&
+            !path.includes('node_modules') &&
+            !path.includes('dist') &&
+            !path.includes('build') &&
+            !path.includes('.spec.') &&
+            !path.includes('.test.')
+          );
+        },
+      }),
+      stylelint({
+        include: ['src/**/*.{css,scss}'],
+        exclude: ['node_modules', 'dist', 'build'],
+        build: false,
+        lintInWorker: false,
+        cache: false,
+      }),
     ],
     define: {
       'process.env': JSON.stringify({
