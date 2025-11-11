@@ -112,8 +112,8 @@ jobs:
           echo "Only main, stage, and develop branches are deployed to Firebase"
 
       - name: Archive build Artifact
+        if: steps.set-target.outputs.target != ''
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: build-${{ github.ref_name }}-${{ github.sha }}
           path: dist
