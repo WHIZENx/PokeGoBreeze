@@ -39,10 +39,6 @@ jobs:
           elif [ "$BRANCH_NAME" = "develop" ]; then
             HOSTING_TARGET="pokego-breeze-develop"
             ENVIRONMENT="development"
-          else
-            HOSTING_TARGET="pokego-breeze-develop"
-            ENVIRONMENT="preview"
-          fi
           
           echo "Hosting target: $HOSTING_TARGET"
           echo "Environment: $ENVIRONMENT"
@@ -95,12 +91,19 @@ jobs:
           npm run generate:sitemap
 
       - name: Deploy to Firebase
+        if: steps.set-target.outputs.target != ''
         run: |
           firebase deploy \
             --only hosting:${{ steps.set-target.outputs.target }} \
             --non-interactive \
             --token ${{ secrets.FIREBASE_TOKEN }} \
             -m "Branch: ${{ github.ref_name }} | Env: ${{ steps.set-target.outputs.environment }} | RunID: ${{ github.run_id }} | Commit: ${{ github.sha }}"
+
+      - name: Skip deployment notification
+        if: steps.set-target.outputs.target == ''
+        run: |
+          echo "⚠️ Deployment skipped for branch: ${{ github.ref_name }}"
+          echo "Only main, stage, and develop branches are deployed to Firebase"
 
       - name: Archive build Artifact
         uses: actions/upload-artifact@v4
@@ -111,7 +114,7 @@ jobs:
           retention-days: 7
 
       - name: Deployment Summary
-        if: success()
+        if: success() && steps.set-target.outputs.target != ''
         run: |
           echo "✅ Deployment successful!"
           echo "Branch: ${{ github.ref_name }}"
