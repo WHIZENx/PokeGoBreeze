@@ -64,9 +64,11 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        if: steps.set-target.outputs.target != ''
         run: npm ci
 
       - name: Install firebase tools
+        if: steps.set-target.outputs.target != ''
         run: |
           npm install -g firebase-tools@13.35.1
           firebase use pokego-breeze --token ${{ secrets.FIREBASE_TOKEN }}
@@ -76,6 +78,7 @@ jobs:
         continue-on-error: false
 
       - name: Build website
+        if: steps.set-target.outputs.target != ''
         env:
           # Explicitly export environment variables for the shell script
           REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
