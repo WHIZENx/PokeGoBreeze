@@ -82,7 +82,6 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             'react-vendor': ['react', 'react-dom'],
             'utility-vendor': ['lodash', 'moment'],
-            'bootstrap-vendor': ['react-bootstrap', 'bootstrap'],
             'router-vendor': ['react-router-dom', 'history'],
             'redux-vendor': ['react-redux', 'redux', 'redux-persist', 'redux-thunk', '@redux-devtools/extension'],
             'mui-vendor': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
@@ -157,7 +156,6 @@ export default defineConfig(({ mode }) => {
         'redux-thunk',
         'lodash',
         'moment',
-        'react-bootstrap',
         '@mui/material',
         '@mui/icons-material',
         '@emotion/react',
