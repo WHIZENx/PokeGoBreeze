@@ -39,6 +39,10 @@ jobs:
           elif [ "$BRANCH_NAME" = "develop" ]; then
             HOSTING_TARGET="pokego-breeze-develop"
             ENVIRONMENT="development"
+          else
+            HOSTING_TARGET=""
+            ENVIRONMENT="preview"
+          fi
           
           echo "Hosting target: $HOSTING_TARGET"
           echo "Environment: $ENVIRONMENT"
