@@ -64,7 +64,6 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        if: steps.set-target.outputs.target != ''
         run: npm ci
 
       - name: Install firebase tools
