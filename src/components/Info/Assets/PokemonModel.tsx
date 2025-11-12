@@ -15,6 +15,7 @@ import { GenderType } from '../../../core/enums/asset.enum';
 import { useIcon } from '../../../composables/useIcon';
 import { useAssets } from '../../../composables/useAssets';
 import { useSearch } from '../../../composables/useSearch';
+import { Skeleton } from '@mui/material';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const { iconData } = useIcon();
@@ -75,11 +76,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         />
       </h4>
       {!props.isLoadedForms ? (
-        <div className="ph-item !tw-w-full !tw-m-0 !tw-p-0" style={{ height: 176 }}>
-          <div
-            className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
-            style={{ background: 'var(--custom-default)' }}
-          />
+        <div
+          className="slide-container !tw-w-full !tw-m-0 !tw-p-0 tw-opacity-50"
+          style={{ background: 'var(--custom-default)', height: 176 }}
+        >
+          <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
         </div>
       ) : (
         <div className="tw-flex tw-flex-wrap">
@@ -138,11 +139,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item !tw-w-full !tw-m-0 !tw-p-0 tw-h-9">
-          <div
-            className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
-            style={{ background: 'var(--custom-default)' }}
-          />
+        <div
+          className="slide-container !tw-w-full tw-h-9 !tw-m-0 !tw-p-0 tw-opacity-50"
+          style={{ background: 'var(--custom-default)' }}
+        >
+          <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
         </div>
       ) : (
         <Fragment>
@@ -175,13 +176,13 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           )}
         </Fragment>
       )}
-      <h6>Pokémon GO:</h6>
+      <h6 className="tw-mt-2">Pokémon GO:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item !tw-w-full !tw-m-0 !tw-p-0 !tw-h-9">
-          <div
-            className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
-            style={{ background: 'var(--custom-default)' }}
-          />
+        <div
+          className="slide-container !tw-w-full tw-h-9 !tw-m-0 !tw-p-0 tw-opacity-50"
+          style={{ background: 'var(--custom-default)' }}
+        >
+          <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
         </div>
       ) : (
         <Fragment>

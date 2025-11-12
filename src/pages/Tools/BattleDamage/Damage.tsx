@@ -1,6 +1,5 @@
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
@@ -304,20 +303,18 @@ const Damage = () => {
                   </div>
                 )}
                 <div className="tw-text-center">
-                  <FormGroup>
-                    <FormControlLabel
-                      control={<Checkbox checked={isWeather} onChange={handleCheckbox} name="isWeather" />}
-                      label="Weather Boosts"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox checked={isDodge} onChange={handleCheckbox} name="isDodge" />}
-                      label="Dodge"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox checked={isTrainer} onChange={handleCheckbox} name="isTrainer" />}
-                      label="Trainer"
-                    />
-                  </FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox checked={isWeather} onChange={handleCheckbox} name="isWeather" />}
+                    label="Weather Boosts"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={isDodge} onChange={handleCheckbox} name="isDodge" />}
+                    label="Dodge"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={isTrainer} onChange={handleCheckbox} name="isTrainer" />}
+                    label="Trainer"
+                  />
                   <Box className="tw-flex tw-items-center tw-justify-center">
                     <FormControlLabel
                       control={

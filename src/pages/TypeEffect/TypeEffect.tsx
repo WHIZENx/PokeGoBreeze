@@ -1,5 +1,4 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
 
 import Attacker from './Attacker';
 import Defender from './Defender';
@@ -24,14 +23,14 @@ const TypeEffect = () => {
 
   return (
     <div className="tw-container tw-mt-2 tw-pb-3">
-      <Row>
-        <Col>
+      <div className="row">
+        <div className="col">
           <Attacker />
-        </Col>
-        <Col>
+        </div>
+        <div className="col">
           <Defender />
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 };

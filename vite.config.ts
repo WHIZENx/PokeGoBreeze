@@ -1,7 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-// @ts-expect-error - vite-plugin-eslint has type definition issues with package.json exports
-import eslint from 'vite-plugin-eslint';
+import eslint from '@nabla/vite-plugin-eslint';
 import stylelint from 'vite-plugin-stylelint';
 import { resolve } from 'path';
 
@@ -15,30 +14,29 @@ export default defineConfig(({ mode }) => {
       react({
         jsxRuntime: 'automatic',
       }),
-      ...(isDev
-        ? []
-        : [
-            eslint({
-              cache: true,
-              include: ['src/**/*.{ts,tsx,js,jsx}'],
-              exclude: ['node_modules', 'dist', 'build', '**/*.spec.*', '**/*.test.*'],
-              failOnError: !isDev,
-              failOnWarning: !isDev,
-              emitWarning: true,
-              emitError: false,
-            }),
-          ]),
-      ...(isDev
-        ? []
-        : [
-            stylelint({
-              include: ['src/**/*.{css,scss}'],
-              exclude: ['node_modules', 'dist', 'build'],
-              build: false,
-              lintInWorker: false,
-              cache: true,
-            }),
-          ]),
+      eslint({
+        eslintOptions: {
+          cache: true,
+        },
+        shouldLint: (path) => {
+          return (
+            path.includes('/src/') &&
+            /\.(ts|tsx|js|jsx)$/.test(path) &&
+            !path.includes('node_modules') &&
+            !path.includes('dist') &&
+            !path.includes('build') &&
+            !path.includes('.spec.') &&
+            !path.includes('.test.')
+          );
+        },
+      }),
+      stylelint({
+        include: ['src/**/*.{css,scss}'],
+        exclude: ['node_modules', 'dist', 'build'],
+        build: false,
+        lintInWorker: false,
+        cache: false,
+      }),
     ],
     define: {
       'process.env': JSON.stringify({
@@ -66,6 +64,8 @@ export default defineConfig(({ mode }) => {
         stream: 'stream-browserify',
         buffer: 'buffer',
         util: 'util',
+        events: 'events',
+        vm: 'vm-browserify',
       },
       dedupe: ['styled-components'],
     },
@@ -77,6 +77,12 @@ export default defineConfig(({ mode }) => {
       target: 'es2015',
       cssMinify: !isDev,
       rollupOptions: {
+        onwarn(warning, warn) {
+          if (warning.code === 'EVAL' && warning.id?.includes('vm-browserify')) {
+            return;
+          }
+          warn(warning);
+        },
         input: {
           main: resolve(__dirname, 'index.html'),
         },
@@ -84,7 +90,6 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             'react-vendor': ['react', 'react-dom'],
             'utility-vendor': ['lodash', 'moment'],
-            'bootstrap-vendor': ['react-bootstrap', 'bootstrap'],
             'router-vendor': ['react-router-dom', 'history'],
             'redux-vendor': ['react-redux', 'redux', 'redux-persist', 'redux-thunk', '@redux-devtools/extension'],
             'mui-vendor': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
@@ -92,7 +97,6 @@ export default defineConfig(({ mode }) => {
             'storage-vendor': ['localforage', 'immutability-helper'],
             'api-vendor': ['axios'],
             'crypto-vendor': ['crypto-js', 'dompurify'],
-            'vercel-vendor': ['@vercel/analytics', '@vercel/edge-config', '@vercel/postgres', '@vercel/speed-insights'],
             'hooks-vendor': ['usehooks-ts', 'react-device-detect'],
           },
           chunkFileNames: 'static/js/[name].[hash].js',
@@ -159,7 +163,6 @@ export default defineConfig(({ mode }) => {
         'redux-thunk',
         'lodash',
         'moment',
-        'react-bootstrap',
         '@mui/material',
         '@mui/icons-material',
         '@emotion/react',
@@ -172,6 +175,8 @@ export default defineConfig(({ mode }) => {
         'buffer',
         'util',
         'process',
+        'events',
+        'vm-browserify',
         'styled-components',
         'shallowequal',
         'react-data-table-component',

@@ -3,6 +3,7 @@ import { splitAndCapitalize } from '../../../../utils/utils';
 import { genRoman } from '../../../../utils/compute';
 import { IPokemonTableComponent } from '../../models/component.model';
 import { combineClasses, isNumber, isUndefined, toFloatWithPadding, toNumber } from '../../../../utils/extension';
+import { Skeleton } from '@mui/material';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
   const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
@@ -10,8 +11,8 @@ const PokemonTable = (props: IPokemonTableComponent) => {
       return element;
     }
     return (
-      <div className="ph-item tw-w-3/4 !tw-h-full !tw-m-0 !tw-p-0">
-        <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
+      <div className="slide-container tw-w-full !tw-h-full !tw-m-0 !tw-p-0 tw-opacity-50" style={{ background: color }}>
+        <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
       </div>
     );
   };

@@ -9,6 +9,7 @@ import {
   Theme,
   ToggleButtonGroupProps,
   ToggleButtonProps,
+  TooltipProps,
 } from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats } from '../../../core/models/pokemon.model';
@@ -502,4 +503,13 @@ export interface IStatBarComponent extends LinearProgressProps {
   statType: TypeAction;
   isDisabled?: boolean;
   pokemonType?: PokemonType;
+}
+
+export interface ITooltip extends TooltipProps {
+  children: React.ReactElement;
+  id?: string;
+  className?: string;
+  hideBackground?: boolean;
+  customStyles?: SxProps<Theme>;
+  colorArrow?: string;
 }

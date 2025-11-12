@@ -66,6 +66,7 @@ import usePokemon from '../../../composables/usePokemon';
 import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
+import { Skeleton } from '@mui/material';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
@@ -359,8 +360,8 @@ const RankingPVP = (props: IStyleSheetData) => {
             </h2>
           </div>
         ) : (
-          <div className="ph-item !tw-mt-2">
-            <div className="ph-picture !tw-mb-0 !tw-px-0 !tw-h-9 !tw-w-2/5" />
+          <div className="slide-container !tw-mt-2">
+            <Skeleton variant="rectangular" animation="wave" className="!tw-px-0 !tw-h-9 !tw-w-2/5" />
           </div>
         )}
       </Fragment>

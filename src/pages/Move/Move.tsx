@@ -24,7 +24,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { Checkbox } from '@mui/material';
+import { Checkbox, Skeleton } from '@mui/material';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
@@ -387,10 +387,8 @@ const Move = (props: IMovePage) => {
           )}
         </>
       ) : (
-        <div className="ph-item">
-          <div className="ph-row !tw-h-full head-box !tw-flex !tw-mb-0 !tw-pl-0">
-            <div className="ph-picture !tw-w-2/5 !tw-h-[45px]" />
-          </div>
+        <div className="slide-container !tw-px-0 !tw-pb-0 !tw-w-full tw-h-18">
+          <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full" />
         </div>
       )}
       <hr />

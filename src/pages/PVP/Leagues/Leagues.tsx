@@ -16,7 +16,7 @@ import {
   getValidPokemonImgPath,
 } from '../../../utils/utils';
 import { rankIconCenterName, rankIconName, rankName } from '../../../utils/compute';
-import { Badge } from '@mui/material';
+import { Badge, Skeleton } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Xarrow from 'react-xarrows';
 import {
@@ -559,8 +559,8 @@ const Leagues = () => {
           </div>
         </Fragment>
       ) : (
-        <div className="ph-item !tw-mt-2">
-          <div className="ph-picture !tw-px-0" style={{ height: 450 }} />
+        <div className="slide-container !tw-mt-2">
+          <Skeleton variant="rectangular" animation="wave" height={450} className="!tw-px-0" />
         </div>
       )}
       <div className="input-group tw-w-fit">
