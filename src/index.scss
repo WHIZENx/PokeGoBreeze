@@ -1,12 +1,5 @@
 @use "./assets/styles/tailwind.css";
 @use "./assets/styles/global.scss";
-@use "../node_modules/placeholder-loading/src/scss/variables.scss" as * with (
-  $ph-bg: var(--loading-placeholder-bg),
-  $ph-color: var(--loading-placeholder),
-  $ph-border: none,
-  $ph-border-radius: 0
-);
-@use "../node_modules/placeholder-loading/src/scss/placeholder-loading.scss" as *;
 
 html {
   @apply tw-h-full;

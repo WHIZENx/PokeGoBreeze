@@ -32,7 +32,7 @@ import { formNormal } from '../../utils/helpers/options-context.helpers';
 import { useDataStore } from '../../composables/useDataStore';
 import useAssets from '../../composables/useAssets';
 import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
-import { Divider } from '@mui/material';
+import { Divider, Skeleton } from '@mui/material';
 import DOMPurify from 'dompurify';
 
 const News = () => {
@@ -226,12 +226,10 @@ const News = () => {
     return (
       <div className="tw-w-full tw-h-full counter-none tw-align-top">
         <div className="text-origin tw-text-center">
-          <div className="ph-item tw-bg-transparent">
-            <div className="ph-col-12 !tw-m-0 !tw-p-0 tw-gap-3">
-              {[...Array(3).keys()].map((_, index) => (
-                <div key={index} className="ph-row">
-                  <div className="ph-picture !tw-w-full !tw-h-[256px]" />
-                </div>
+          <div className="slide-container">
+            <div className="slide-col !tw-flex tw-w-full tw-h-full tw-flex-col !tw-m-0 !tw-p-0 tw-gap-3">
+              {[...Array(3).keys()].map((index) => (
+                <Skeleton key={index} variant="rectangular" animation="wave" height={256} />
               ))}
             </div>
           </div>

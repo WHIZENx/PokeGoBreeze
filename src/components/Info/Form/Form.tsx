@@ -34,6 +34,7 @@ import { Action } from 'history';
 import { useSearch } from '../../../composables/useSearch';
 import ButtonGroupForm from '../../Commons/Buttons/ButtonGroupForm';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
+import { Skeleton } from '@mui/material';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
@@ -160,14 +161,12 @@ const FormComponent = (props: IFormInfoComponent) => {
           defaultId={props.defaultId}
           changeForm={changeForm}
           loading={
-            <div className="ph-item !tw-flex-nowrap tw-gap-x-2 tw-w-full !tw-p-0">
-              {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
-                <div key={index} className="ph-col-3 !tw-p-0 tw-my-1 !tw-mb-0">
-                  <div className="ph-row">
-                    <div className="ph-picture ph-col-3 !tw-m-0 !tw-h-36.5 !tw-w-22.5" />
-                  </div>
-                </div>
-              ))}
+            <div className="slide-container !tw-p-0">
+              <div className="slide-col !tw-flex !tw-flex-nowrap !tw-m-0 !tw-p-0 tw-gap-x-2">
+                {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((index) => (
+                  <Skeleton key={index} variant="rectangular" animation="wave" height={143} width={90} />
+                ))}
+              </div>
             </div>
           }
         />

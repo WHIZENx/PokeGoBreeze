@@ -97,7 +97,6 @@ export default defineConfig(({ mode }) => {
             'storage-vendor': ['localforage', 'immutability-helper'],
             'api-vendor': ['axios'],
             'crypto-vendor': ['crypto-js', 'dompurify'],
-            'vercel-vendor': ['@vercel/analytics', '@vercel/edge-config', '@vercel/postgres', '@vercel/speed-insights'],
             'hooks-vendor': ['usehooks-ts', 'react-device-detect'],
           },
           chunkFileNames: 'static/js/[name].[hash].js',
