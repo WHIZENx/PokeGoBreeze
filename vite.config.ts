@@ -77,6 +77,12 @@ export default defineConfig(({ mode }) => {
       target: 'es2015',
       cssMinify: !isDev,
       rollupOptions: {
+        onwarn(warning, warn) {
+          if (warning.code === 'EVAL' && warning.id?.includes('vm-browserify')) {
+            return;
+          }
+          warn(warning);
+        },
         input: {
           main: resolve(__dirname, 'index.html'),
         },
