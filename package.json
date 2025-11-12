@@ -95,6 +95,7 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-stylelint": "^0.1.1",
+    "events": "^3.3.0",
     "prettier": "^3.2.5",
     "process": "^0.11.10",
     "rimraf": "^5.0.5",
@@ -110,7 +111,8 @@
     "typescript": "5.5.3",
     "util": "^0.12.5",
     "vite": "^5.4.21",
-    "vite-plugin-stylelint": "^6.0.2"
+    "vite-plugin-stylelint": "^6.0.2",
+    "vm-browserify": "^1.1.2"
   },
   "peerDependencies": {
     "postcss": "8.4.31"
