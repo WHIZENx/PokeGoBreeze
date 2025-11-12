@@ -1,4 +1,4 @@
-import { Badge } from '@mui/material';
+import { Badge, Skeleton } from '@mui/material';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
@@ -690,8 +690,11 @@ const Evolution = (props: IEvolutionComponent) => {
       return element;
     }
     return (
-      <div className="ph-item !tw-w-3/4 !tw-p-0 !tw-m-auto !tw-h-30">
-        <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
+      <div
+        className="slide-container !tw-w-3/4 !tw-p-0 !tw-m-auto !tw-h-30 tw-opacity-50"
+        style={{ background: color }}
+      >
+        <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
       </div>
     );
   };

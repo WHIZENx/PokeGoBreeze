@@ -6,7 +6,7 @@ import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
-import { Checkbox, FormControlLabel, ListItemText, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel, ListItemText, Skeleton, Switch } from '@mui/material';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
@@ -318,8 +318,8 @@ const Pokedex = (props: IStyleSheetData) => {
     <div className="tw-relative">
       <div className="tw-relative tw-text-center tw-w-full">
         {!isNotEmpty(dataList) && (
-          <div className="ph-item !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
-            <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0 !tw-bg-transparent" />
+          <div className="slide-container !tw-p-0 !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
+            <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
           </div>
         )}
         <div className="head-types">Filter By Types (Maximum 2)</div>

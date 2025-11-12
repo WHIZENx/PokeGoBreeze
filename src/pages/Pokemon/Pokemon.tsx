@@ -73,6 +73,7 @@ import useRouter from '../../composables/useRouter';
 import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
 import { useSnackbar } from '../../contexts/snackbar.context';
+import { Skeleton } from '@mui/material';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -593,8 +594,8 @@ const Pokemon = (props: IPokemonPage) => {
       return element;
     }
     return (
-      <div className="ph-item !tw-w-3/4 !tw-m-0 !tw-p-0 !tw-h-6">
-        <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0" style={{ background: color }} />
+      <div className="slide-container !tw-w-3/4 !tw-m-0 !tw-p-0 !tw-h-6 tw-opacity-50" style={{ background: color }}>
+        <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
       </div>
     );
   };
