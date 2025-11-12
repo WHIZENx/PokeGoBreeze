@@ -39,20 +39,20 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "bash -c 'source ./config.sh && vite'",
-    "build": "vite build && npm run generate:sitemap",
+    "start": "bash -c 'source ./config.sh && VITE_CJS_IGNORE_WARNING=true vite'",
+    "build": "VITE_CJS_IGNORE_WARNING=true vite build && npm run generate:sitemap",
     "format:code": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "format:style": "stylelint --fix \"src/**/*.{css,scss}\"",
     "lint:code": "eslint \"src/**/*.{ts,tsx,js,jsx}\"",
     "lint:style": "stylelint \"src/**/*.{css,scss}\"",
     "lint": "npm run lint:code && npm run lint:style",
     "format": "npm run format:code && npm run format:style",
-    "develop": "bash -c 'source ./config.sh && vite'",
-    "test-vite": "vite",
-    "debug-vite": "vite --debug --force",
+    "develop": "bash -c 'source ./config.sh && VITE_CJS_IGNORE_WARNING=true vite'",
+    "test-vite": "VITE_CJS_IGNORE_WARNING=true vite",
+    "debug-vite": "VITE_CJS_IGNORE_WARNING=true vite --debug --force",
     "prebuild": "rimraf dist",
-    "build:vite": "vite build",
-    "deploy": "bash -c 'source ./config.sh && npm run lint && vite build' && node sitemap/buildSitemap.js",
+    "build:vite": "VITE_CJS_IGNORE_WARNING=true vite build",
+    "deploy": "bash -c 'source ./config.sh && npm run lint && VITE_CJS_IGNORE_WARNING=true vite build' && node sitemap/buildSitemap.js",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
   "browserslist": {
