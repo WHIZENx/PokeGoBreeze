@@ -2,6 +2,8 @@
 @use "./base.scss";
 @use "./variables.scss";
 @use "./custom.scss";
+@use "./type.scss";
+@use "./shadow.scss";
 
 .input-group {
   @apply tw-flex tw-flex-wrap tw-w-full tw-relative tw-items-stretch;
@@ -38,8 +40,20 @@
   @apply tw-flex-1;
 }
 
-.ph-item {
-  @apply tw-p-0 !tw-m-0;
+.slide-container {
+  direction: ltr;
+
+  @apply tw-flex tw-relative tw-flex-wrap tw-px-8 tw-py-4 tw-overflow-hidden tw-border-none tw-rounded-none;
+
+  .slide-col {
+    direction: ltr;
+
+    @apply tw-flex-shrink-0 tw-flex-grow-0 tw-basis-full;
+
+    div {
+      @apply tw-mt-2;
+    }
+  }
 }
 
 .caption-constant {

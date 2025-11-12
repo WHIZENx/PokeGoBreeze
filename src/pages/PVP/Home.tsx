@@ -11,6 +11,7 @@ import useTimestamp from '../../composables/useTimestamp';
 import useCombats from '../../composables/useCombats';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
 import ButtonGroupLeague from '../../components/Commons/Buttons/ButtonGroupLeague';
+import { Skeleton } from '@mui/material';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -72,14 +73,12 @@ const PVPHome = () => {
   const renderLoading = () => {
     return (
       <div className="tw-overflow-x-hidden">
-        <div className="ph-item !tw-flex-nowrap !tw-w-fit !tw-p-0">
-          {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
-            <div key={index} className="ph-col-3 !tw-m-0 !tw-p-2">
-              <div className="ph-row">
-                <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
-              </div>
-            </div>
-          ))}
+        <div className="slide-container !tw-p-0">
+          <div className="slide-col !tw-flex !tw-flex-nowrap !tw-m-0 !tw-p-0 tw-gap-x-2">
+            {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
+              <Skeleton key={index} variant="rectangular" animation="wave" height={200} width={154} />
+            ))}
+          </div>
         </div>
       </div>
     );

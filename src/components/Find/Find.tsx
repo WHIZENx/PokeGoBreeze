@@ -13,6 +13,7 @@ import { debounce } from 'lodash';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 import InputMuiSearch from '../Commons/Inputs/InputMuiSearch';
+import { Skeleton } from '@mui/material';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -222,13 +223,12 @@ const Find = (props: IFindComponent) => {
           )}
         </div>
       ) : (
-        <div className="ph-item tw-flex tw-justify-center !tw-w-full">
-          <div
-            className="ph-picture tw-flex align-item-center tw-justify-center tw-relative !tw-w-1/2 !tw-bg-spinner-overlay"
-            style={{ height: 600 }}
-          >
-            <LoadGroup isShow isVertical isHideAttr size={40} />
-          </div>
+        <div
+          className="slide-container !tw-p-0 tw-flex tw-justify-center tw-relative !tw-w-full !tw-bg-spinner-overlay"
+          style={{ height: 600 }}
+        >
+          <Skeleton variant="rectangular" animation="wave" className="tw-w-full tw-opacity-50 !tw-h-full" />
+          <LoadGroup isShow isVertical isHideAttr size={40} />
         </div>
       )}
     </div>

@@ -25,7 +25,7 @@ import {
 
 import APIService from '../../../services/api.service';
 
-import { Checkbox, FormControlLabel, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel, Skeleton, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
@@ -666,8 +666,8 @@ const DpsTdo = () => {
     <div className="tw-relative">
       <div className="tw-relative tw-text-center tw-w-full">
         {!isNotEmpty(dpsTable) && (
-          <div className="ph-item !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
-            <div className="ph-picture ph-col-3 !tw-w-full !tw-h-full !tw-m-0 !tw-p-0 !tw-bg-transparent" />
+          <div className="slide-container !tw-p-0 !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
+            <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
           </div>
         )}
         <div className="head-types">Filter Moves By Types</div>
