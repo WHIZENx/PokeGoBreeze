@@ -7,8 +7,6 @@ import APIService from '../../services/api.service';
 import React, { Fragment, useEffect, useState } from 'react';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { OverlayTrigger } from 'react-bootstrap';
-import CustomPopover from '../../components/Commons/Popovers/CustomPopover';
 import { ISticker } from '../../core/models/sticker.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
@@ -16,6 +14,7 @@ import { GlobalType } from '../../enums/type.enum';
 import { ShopType } from './enums/sticker-type.enum';
 import useDataStore from '../../composables/useDataStore';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
+import Tooltips from '../../components/Commons/Tooltips/Tooltips';
 
 interface PokemonStickerModel {
   id?: number;
@@ -123,17 +122,19 @@ const Sticker = () => {
           ) : (
             <Fragment>
               {pokemonStickerFilter.map((value, index) => (
-                <OverlayTrigger
+                <Tooltips
                   key={index}
-                  placement="auto"
-                  overlay={
-                    <CustomPopover id="popover-info">
+                  hideBackground
+                  arrow
+                  colorArrow="var(--custom-pop-over)"
+                  title={
+                    <div className="popover-info">
                       {value.isShop ? (
                         <span>Available in shop sell pack: {value.pack.join(', ')}</span>
                       ) : (
                         <span>Unavailable in shop</span>
                       )}
-                    </CustomPopover>
+                    </div>
                   }
                 >
                   <div className="sticker-detail tw-relative">
@@ -159,7 +160,7 @@ const Sticker = () => {
                     )}
                     <span className="caption">{splitAndCapitalize(value.id.toLowerCase(), '_', ' ')}</span>
                   </div>
-                </OverlayTrigger>
+                </Tooltips>
               ))}
             </Fragment>
           )}

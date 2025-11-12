@@ -38,7 +38,6 @@ PokeGoBreeze is a comprehensive, feature-rich web application designed for Poké
 ### UI & Styling
 - **Component Libraries**:
   - Material UI (MUI) v5 - Primary UI framework
-  - React Bootstrap 2.10.0
   - Styled Components 6.1.8
 - **Styling System**:
   - SCSS/Sass 1.83.0 with modern @use syntax
@@ -102,7 +101,7 @@ PokeGoBreeze is a comprehensive, feature-rich web application designed for Poké
 
 ```
 /src
-├── assets           # Static assets, images, and icons
+├── assets           # Static assets, images, global styles and theme definitions, and icons
 ├── components       # Reusable UI components
 ├── core             # Core functionality and utilities
 ├── data             # Static data files and game data
@@ -125,7 +124,6 @@ PokeGoBreeze is a comprehensive, feature-rich web application designed for Poké
 │   ├── effects      # Side effects and async logic
 │   ├── reducers     # State reducers
 │   └── selectors    # State selectors
-├── styles           # Global styles and theme definitions
 └── util             # Utility functions and helpers
 ```
 

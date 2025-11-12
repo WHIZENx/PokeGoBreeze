@@ -40,8 +40,6 @@ import TimerIcon from '@mui/icons-material/Timer';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { OverlayTrigger } from 'react-bootstrap';
-
 import update from 'immutability-helper';
 import {
   IPokemonData,
@@ -87,7 +85,6 @@ import {
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
-import CustomPopover from '../../../components/Commons/Popovers/CustomPopover';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { StatsIV } from '../../../core/models/stats.model';
@@ -104,6 +101,7 @@ import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import DialogMui from '../../../components/Commons/Dialogs/Dialogs';
+import Tooltips from '../../../components/Commons/Tooltips/Tooltips';
 
 const RaidBattle = () => {
   useTitle({
@@ -1693,11 +1691,11 @@ const RaidBattle = () => {
                               <tr key={index}>
                                 <td>#{toNumber(data.trainerId) + 1}</td>
                                 <td>
-                                  <OverlayTrigger
-                                    placement="auto"
-                                    overlay={
-                                      <CustomPopover id="popover-info">{modalDetailsPokemon(data)}</CustomPopover>
-                                    }
+                                  <Tooltips
+                                    hideBackground
+                                    arrow
+                                    colorArrow="var(--custom-pop-over)"
+                                    title={<div className="popover-info">{modalDetailsPokemon(data)}</div>}
                                   >
                                     <span className="tooltips-info">
                                       <div className="tw-flex tw-items-center table-pokemon">
@@ -1718,7 +1716,7 @@ const RaidBattle = () => {
                                         </span>
                                       </div>
                                     </span>
-                                  </OverlayTrigger>
+                                  </Tooltips>
                                 </td>
                                 <td>{toFloatWithPadding(data.dpsAtk, 2)}</td>
                                 <td>{Math.floor(data.tdoAtk) === 0 ? '-' : toFloatWithPadding(data.tdoAtk, 2)}</td>
