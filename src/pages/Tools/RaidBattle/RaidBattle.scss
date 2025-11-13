@@ -1,6 +1,5 @@
 .top-raid-group {
-  white-space: nowrap;
-  overflow-x: auto;
+  @apply tw-whitespace-nowrap tw-overflow-x-auto;
 }
 
 .top-raid-pokemon {

@@ -53,6 +53,7 @@ import { Files } from '../store/models/store.model';
 import { calculateBaseCPM, calculateCPM } from '../core/cpm';
 import { maxIv, minIv } from '../utils/helpers/options-context.helpers';
 import { BASE_CPM } from '../utils/constants';
+import { useSnackbar } from '../contexts/snackbar.context';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -63,6 +64,7 @@ import { BASE_CPM } from '../utils/constants';
 export const useDataStore = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
+  const { showSnackbar } = useSnackbar();
 
   /**
    * Update options in the store
@@ -184,6 +186,7 @@ export const useDataStore = () => {
   const loadGameMaster = async (imageRoot: APITreeRoot[], soundsRoot: APITreeRoot[], timestampLoaded: Timestamp) => {
     APIService.getFetchUrl<PokemonDataGM[]>(APIUrl.GAMEMASTER)
       .then(async (gm) => {
+        showSnackbar('Please waiting to load game master...', 'info');
         if (!gm || !isNotEmpty(gm.data)) {
           dispatch(
             SpinnerActions.ShowSpinnerMsg.create({
