@@ -85,4 +85,4 @@ jobs:
         if: steps.set-env.outputs.should_deploy == 'false'
         run: |
           echo "⏭️ Skipping deployment for branch: ${{ github.ref_name }}"
-          echo "Only main and stage branches are update version with environment variables"
+          echo "Only stage branches are update version with environment variables"
