@@ -179,6 +179,7 @@ const RaidBattle = () => {
   const [resultRaid, setResultRaid] = useState<IRaidResult[]>();
   const [result, setResult] = useState<IPokemonMoveData[]>([]);
 
+  const [disableSearch, setDisableSearch] = useState(false);
   const [show, setShow] = useState(false);
   const [showOption, setShowOption] = useState(false);
   const [showSettingPokemon, setShowSettingPokemon] = useState(new RaidSetting());
@@ -474,6 +475,7 @@ const RaidBattle = () => {
         maxHP: toNumber(sortedHP[dataList.length - 1].attackHpRemain),
       };
       setResultBoss(result);
+      setDisableSearch(true);
     } else {
       const group = dataList.reduce(
         (result, obj) => {
@@ -562,12 +564,20 @@ const RaidBattle = () => {
     }
   };
 
-  const calculateTrainerBattle = (trainerBattle: ITrainerBattle[]) => {
+  const disableRaidBattle = (trainerBattle: ITrainerBattle[]) => {
     const trainer = trainerBattle.map((trainer) => trainer.pokemons);
     const trainerNoPokemon = trainer.filter((pokemon) => isNotEmpty(pokemon.filter((item) => !item.dataTargetPokemon)));
-    if (isNotEmpty(trainerNoPokemon)) {
+    return isNotEmpty(trainerNoPokemon);
+  };
+
+  const calculateTrainerBattle = (trainerBattle: ITrainerBattle[]) => {
+    const trainer = trainerBattle.map((trainer) => trainer.pokemons);
+    if (disableRaidBattle(trainerBattle)) {
       showSnackbar('Please select Pokémon to raid battle!', 'error');
       return;
+    }
+    if (!resultBoss) {
+      handleCalculate();
     }
     showSnackbar('Simulator battle raid successfully!', 'success');
 
@@ -663,9 +673,14 @@ const RaidBattle = () => {
     }
   }, [getFilteredPokemons, searchingToolCurrentData?.form]);
 
+  useEffect(() => {
+    setDisableSearch(false);
+  }, [options.enableTimeAllow, options.isReleased, options.isWeatherBoss, options.isWeatherCounter, timeAllow]);
+
   const handleCalculate = () => {
     showSpinner();
     setTimeout(() => {
+      clearDataBoss();
       calculateBossBattle();
     }, 500);
   };
@@ -704,7 +719,7 @@ const RaidBattle = () => {
               <div className="caption text-dps">DPS</div>
             </div>
           </div>
-          <div className="box-text rank-text tw-text-black tw-justify-end tw-flex tw-w-full tw-absolute">
+          <div className="box-text rank-text tw-text-black tw-justify-end tw-flex tw-w-full tw-absolute !tw-text-extra-small">
             <span>HP: {`${Math.floor(bossHp - tdo)} / ${Math.floor(bossHp)}`}</span>
           </div>
         </div>
@@ -716,11 +731,18 @@ const RaidBattle = () => {
     const status =
       enableTimeAllow && timer >= timeAllow ? RaidState.TimeOut : bossHp > 0 ? RaidState.Loss : RaidState.Win;
     const result = splitAndCapitalize(getKeyWithData(RaidState, status), /(?=[A-Z])/, ' ').toUpperCase();
-    const className = `!tw-bg-${status === RaidState.Win ? 'green-600' : 'red-600'}`;
     return (
-      <td colSpan={3} className={combineClasses('!tw-text-center bg-summary', className)}>
-        <span className="tw-text-white">{result}</span>
-      </td>
+      <>
+        {status === RaidState.Win ? (
+          <td colSpan={3} className="!tw-text-center bg-summary !tw-bg-green-600">
+            <span className="tw-text-white">{result}</span>
+          </td>
+        ) : (
+          <td colSpan={3} className="!tw-text-center bg-summary !tw-bg-red-600">
+            <span className="tw-text-white">{result}</span>
+          </td>
+        )}
+      </>
     );
   };
 
@@ -1365,7 +1387,7 @@ const RaidBattle = () => {
               <div className="tw-text-center tw-mt-2">
                 <ButtonMui
                   className="tw-w-1/2"
-                  disabled={Boolean(resultBoss)}
+                  disabled={disableSearch}
                   onClick={() => handleCalculate()}
                   label="Search"
                 />
@@ -1479,7 +1501,7 @@ const RaidBattle = () => {
               ))}
           </div>
         )}
-        <div className="row tw-my-3 tw-mx-0">
+        <div className="row tw-mt-5 tw-mb-2 tw-mx-0">
           <div className="lg:tw-w-5/12 tw-justify-center tw-mb-3">
             {trainerBattle.map((trainer, index) => (
               <div className="trainer-battle tw-flex tw-items-center tw-relative" key={index}>
@@ -1560,7 +1582,7 @@ const RaidBattle = () => {
             <div className="tw-text-center tw-mt-2">
               <ButtonMui
                 onClick={() => calculateTrainerBattle(trainerBattle)}
-                disabled={!resultBoss}
+                disabled={disableRaidBattle(trainerBattle)}
                 label="Raid Battle"
               />
             </div>
@@ -1690,7 +1712,7 @@ const RaidBattle = () => {
                             {result.pokemon.map((data, index) => (
                               <tr key={index}>
                                 <td>#{toNumber(data.trainerId) + 1}</td>
-                                <td>
+                                <td className="!tw-text-center">
                                   <Tooltips
                                     hideBackground
                                     arrow

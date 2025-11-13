@@ -30,7 +30,7 @@ try {
   if (savedTheme) {
     theme = JSON.parse(savedTheme) === TypeTheme.Dark ? TypeTheme.Dark : TypeTheme.Light;
   }
-} catch (e) {
+} catch {
   theme = TypeTheme.Light;
 }
 

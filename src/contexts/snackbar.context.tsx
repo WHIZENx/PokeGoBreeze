@@ -37,6 +37,7 @@ interface ISnackbarProps extends SnackbarProps {
   severity?: AlertColor;
   variant?: 'standard' | 'filled' | 'outlined';
   transition?: 'grow' | 'fade' | 'slide';
+  timeOut?: number;
 }
 
 export const SnackbarProvider: React.FC<ISnackbarProps> = (props: ISnackbarProps) => {
@@ -58,7 +59,7 @@ export const SnackbarProvider: React.FC<ISnackbarProps> = (props: ISnackbarProps
     ...props,
     open: false,
     message: '',
-    autoHideDuration: 5000,
+    autoHideDuration: props.timeOut || 5000,
     TransitionComponent: props.transition === 'grow' ? Grow : props.transition === 'fade' ? Fade : SlideTransition,
     anchorOrigin,
   });

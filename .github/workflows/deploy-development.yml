@@ -20,7 +20,7 @@ jobs:
           
           if [ "$BRANCH_NAME" = "main" ]; then
             ENVIRONMENT="production"
-            SHOULD_DEPLOY="true"
+            SHOULD_DEPLOY="false"
           elif [ "$BRANCH_NAME" = "stage" ]; then
             ENVIRONMENT="development"
             SHOULD_DEPLOY="true"
@@ -85,4 +85,4 @@ jobs:
         if: steps.set-env.outputs.should_deploy == 'false'
         run: |
           echo "⏭️ Skipping deployment for branch: ${{ github.ref_name }}"
-          echo "Only main, stage, update-patch, and develop branches are update version with environment variables"
+          echo "Only stage branches are update version with environment variables"
