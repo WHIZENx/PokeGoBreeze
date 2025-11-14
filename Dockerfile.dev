@@ -2,8 +2,8 @@ FROM node:18.17.0-alpine
 
 WORKDIR /app
 
-# Install Python and build dependencies
-RUN apk add --no-cache python3 make g++ gcc curl
+# Install Python, bash, and build dependencies
+RUN apk add --no-cache python3 make g++ gcc curl bash
 
 COPY . .
 RUN npm install --location=global npm@10.8.2

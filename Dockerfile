@@ -2,8 +2,8 @@
 FROM node:18.17.0-alpine as builder
 WORKDIR /app
 
-# Install Python and build dependencies
-RUN apk add --no-cache python3 make g++ gcc curl
+# Install Python, bash, and build dependencies
+RUN apk add --no-cache python3 make g++ gcc curl bash
 
 # Create build directory explicitly
 RUN mkdir -p /app/build
