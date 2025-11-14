@@ -1,5 +1,5 @@
 .four-star {
-  @apply tw-bg-[#ffffd7] tw-bg-red-600 tw-border tw-border-red-600 tw-rounded-lg tw-m-2.5 tw-p-[5px];
+  @apply tw-bg-[#ffd7d7] tw-border tw-border-solid tw-border-red-600 tw-rounded-lg tw-m-2.5 tw-p-[5px];
 }
 
 .one-star,.three-star,.two-star {
@@ -7,5 +7,5 @@
 }
 
 .one-star,.three-star,.two-star,.zero-star {
-  @apply tw-border tw-border-yellow-600 tw-rounded-lg tw-m-2.5 tw-p-[5px];
+  @apply tw-border tw-border-solid tw-border-yellow-400 tw-rounded-lg tw-m-2.5 tw-p-[5px];
 }

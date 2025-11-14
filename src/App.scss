@@ -148,9 +148,7 @@ ul {
 }
 
 .type-border-white {
-  border-radius: 50%;
-
-  @apply tw-border-solid tw-border tw-border-white;
+  @apply tw-border-solid tw-border tw-border-white tw-rounded-full;
 }
 
 .popover-info {

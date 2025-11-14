@@ -118,7 +118,7 @@ img.pokemon-sprite-battle {
 .slot-active {
   box-shadow: inset 0 0 4px 0.5px #19875480;
 
-  @apply tw-cursor-pointer tw-border tw-border-[#198754];
+  @apply tw-cursor-pointer tw-border tw-border-solid tw-border-[#198754];
 }
 
 .move-badge {
