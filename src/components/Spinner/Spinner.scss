@@ -1,7 +1,7 @@
 #p1,
 #p2,
 #p3 {
-  opacity: 0;
+  @apply tw-opacity-0;
 }
 
 #p1 {
@@ -23,13 +23,9 @@
 }
 
 .reload-text {
-  margin: 10px 0;
-  text-decoration: underline;
-  font-weight: 500;
-  color: lightgray;
-  cursor: pointer;
+  @apply tw-my-2.5 tw-mx-0 tw-underline tw-font-medium tw-cursor-pointer tw-text-lightgray;
 }
 
 .reload-text:hover {
-  color: #e2e2e2;
+  @apply tw-text-[#e2e2e2];
 }

@@ -3,85 +3,64 @@
 }
 
 .top-raid-pokemon {
-  min-width: 250px;
-  display: inline-block;
-  padding: 10px;
+  @apply tw-min-w-[250px] tw-inline-block tw-p-2.5;
 }
 
 .trainer-battle {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
+  @apply tw-w-full tw-p-2.5 tw-mb-[15px];
 }
 
 .pokemon-battle {
-  display: inline-block;
+  @apply tw-inline-block;
 }
 
 .pokemon-battle span {
-  display: flex;
-  width: 45px;
-  height: 45px;
-  padding: 5px;
+  @apply tw-flex tw-w-[45px] tw-h-[45px] tw-p-[5px];
 }
 
 img.pokemon-sprite-battle {
-  margin-right: 10px;
-  width: 36px;
-  object-fit: contain;
+  @apply tw-mr-2.5 tw-w-9 tw-object-contain;
 }
 
 .pokemon-battle-group {
-  white-space: nowrap;
-  overflow-y: auto;
+  @apply tw-whitespace-nowrap tw-overflow-y-auto;
 }
 
 .sprite-raid {
-  width: 128px;
+  @apply tw-w-32;
 }
 
 .stats-boss {
-  padding: 1rem;
+  @apply tw-p-4;
 }
 
 .line-dps {
-  color: yellow;
-  margin-left: 1px;
+  @apply tw-text-yellow-400 tw-ml-px;
 }
 
 .line-left,
 .line-right {
-  position: absolute;
-  top: -10px;
+  @apply tw-absolute -tw-top-2.5;
 }
 
 .line-dps span.line-left {
-  left: -1.5px;
+  @apply -tw-left-[1.5px];
 }
 
 .line-dps span.line-right {
-  right: -1.5px;
+  @apply -tw-right-[1.5px];
 }
 
 .line-dps hr {
-  position: absolute;
-  margin: 0;
-  opacity: 1;
-  height: 2px;
+  @apply tw-absolute tw-m-0 tw-opacity-100 tw-h-0.5;
 }
 
 .line-dps div.text-dps {
-  position: absolute;
-  color: yellow;
-  top: -15.5px;
-  left: calc(50% - 7.5px);
-  font-size: 8px;
-  font-weight: 500;
+  @apply tw-absolute tw-text-yellow-400 -tw-top-[15.5px] tw-left-[calc(50%-7.5px)] tw-text-[8px] tw-font-medium;
 }
 
 .count-pokemon {
-  border-radius: 5px;
-  padding: 8px 15px;
+  @apply tw-rounded-[5px] tw-py-2 tw-px-[15px];
 }
 
 .click-none {
@@ -89,25 +68,19 @@ img.pokemon-sprite-battle {
 }
 
 .table-round-battle thead tr th {
-  font-size: 16px;
-  height: 35px;
-  padding: 5px 10px;
+  @apply tw-text-[16px] tw-h-[35px] tw-py-[5px] tw-px-2.5;
 }
 
 .table-round-battle tbody tr td:nth-child(1) {
-  width: auto;
-  min-width: auto;
-  text-align: center;
-  font-weight: bold;
+  @apply tw-w-auto tw-min-w-0 tw-text-center tw-font-bold;
 }
 
 .table-info tbody tr td .table-pokemon {
-  width: max-content;
-  height: 36px;
+  @apply tw-w-max tw-h-9;
 }
 
 .text-summary {
-  font-weight: bold;
+  @apply tw-font-bold;
 }
 
 .ic-group {
@@ -116,21 +89,16 @@ img.pokemon-sprite-battle {
 
 .ic-copy,
 .ic-remove {
-  padding: 3px 8px;
-  border-radius: 50%;
-  cursor: pointer;
+  @apply tw-py-[3px] tw-px-2 tw-rounded-full tw-cursor-pointer;
 }
 
 .ic-group-small {
-  position: absolute;
-  right: 5px;
+  @apply tw-absolute tw-right-[5px];
 }
 
 .ic-copy-small,
 .ic-remove-small {
-  padding: 3px 8px;
-  border-radius: 50%;
-  cursor: pointer;
+  @apply tw-py-[3px] tw-px-2 tw-rounded-full tw-cursor-pointer;
 }
 
 .ic-copy:not(.click-none):hover,
@@ -144,15 +112,13 @@ img.pokemon-sprite-battle {
 }
 
 .text-group-small {
-  position: absolute;
-  left: 5px;
-  font-weight: bold;
+  @apply tw-absolute tw-left-[5px] tw-font-bold;
 }
 
 .slot-active {
-  cursor: pointer;
-  border: 1px solid #198754;
   box-shadow: inset 0 0 4px 0.5px #19875480;
+
+  @apply tw-cursor-pointer tw-border tw-border-[#198754];
 }
 
 .move-badge {

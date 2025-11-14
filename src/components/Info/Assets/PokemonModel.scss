@@ -1,11 +1,9 @@
 .group-model {
-  padding: 15px;
+  @apply tw-p-[15px];
 }
 
 .model {
-  padding: 10px;
-  display: inline-block;
-  min-width: 50%;
+  @apply tw-p-2.5 tw-inline-block tw-min-w-[50%];
 }
 
 .sub-group-model .gender {

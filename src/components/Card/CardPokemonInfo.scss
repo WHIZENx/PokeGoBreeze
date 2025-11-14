@@ -1,16 +1,11 @@
 .pokemon-link {
-  padding: 8px;
+  @apply tw-p-2;
 }
 
 .no-released-pokemon {
-  position: absolute;
-  left: 5px;
-  top: 5px;
+  @apply tw-absolute tw-left-[5px] tw-top-[5px];
 }
 
 .shiny-pokemon {
-  position: absolute;
-  cursor: pointer;
-  right: 5px;
-  top: 5px;
+  @apply tw-absolute tw-cursor-pointer tw-right-[5px] tw-top-[5px];
 }
