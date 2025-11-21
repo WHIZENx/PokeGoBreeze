@@ -85,7 +85,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       ) : (
         <div className="tw-flex tw-flex-wrap">
           {pokeAssets.map((assets, index) => (
-            <div key={index} className="group-model tw-flex tw-w-fit tw-justify-center tw-flex-col tw-items-center">
+            <div key={index} className="group-model tw-flex tw-w-fit tw-flex-col tw-items-center">
               <div className="tw-flex tw-flex-wrap tw-w-full tw-items-center">
                 {assets.image.map((value, index) => (
                   <div
