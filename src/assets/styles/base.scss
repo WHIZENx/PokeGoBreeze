@@ -88,8 +88,7 @@ input[type="number"] {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  @apply tw-w-2.5 tw-h-2.5;
 }
 
 ::-webkit-scrollbar-track {
@@ -97,9 +96,10 @@ input[type="number"] {
 }
 
 ::-webkit-scrollbar-thumb {
-  border-radius: 5px;
   background-color: var(--background-paper);
-  
+
+  @apply tw-rounded-[5px];
+
   &:hover {
     background-color: var(--divider);
   }

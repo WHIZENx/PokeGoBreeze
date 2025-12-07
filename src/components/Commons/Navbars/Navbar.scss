@@ -26,13 +26,11 @@
 
 .nav-info,
 .nav-info-top {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply tw-flex tw-items-center tw-justify-center;
 }
 
 .text-version {
-  display: flex;
+  @apply tw-flex;
 }
 
 .nav-info-icon {
@@ -41,19 +39,19 @@
 
 @media (width >= 1200px) {
   .nav-info {
-    display: none;
+    @apply tw-hidden;
   }
 }
 
 @media (width <= 1200px) {
   .nav-info-top {
-    display: none;
+    @apply tw-hidden;
   }
 }
 
 @media (width <= 474px) {
   .text-version {
-    display: none;
+    @apply tw-hidden;
   }
 
   .nav-info-icon {

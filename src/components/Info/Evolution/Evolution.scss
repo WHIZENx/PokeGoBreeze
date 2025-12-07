@@ -1,36 +1,33 @@
 .evo-container {
-  text-align: center;
   white-space: initial !important;
+
+  @apply tw-text-center;
 }
 
 .ul-evo {
-  margin: 0;
-  padding: 0;
+  @apply tw-m-0 tw-p-0;
 }
 
 .li-evo {
-  margin-right: 0;
-  height: 100%;
+  @apply tw-mr-0 tw-h-full;
 }
 
 .select-evo {
-  margin-bottom: 10px;
-  height: 100%;
-  display: block;
+  @apply tw-mb-2.5 tw-h-full tw-block;
 }
 
 .select-evo p {
-  margin: 0;
-  height: 18px;
+  @apply tw-m-0 tw-h-[18px];
 }
 
 .select-evo:hover {
-  cursor: pointer;
+  @apply tw-cursor-pointer;
 }
 
 .select-evo b.link-title {
   color: #0d6efd !important;
-  text-decoration: underline;
+
+  @apply tw-underline;
 }
 
 .tooltips-info {
@@ -38,24 +35,19 @@
 }
 
 .info-evo span {
-  margin-bottom: 5px;
+  @apply tw-mb-[5px];
 }
 
 .info-evo span:last-child {
-  margin-bottom: 0;
+  @apply tw-mb-0;
 }
 
 .scroll-evolution {
-  position: relative;
-  white-space: nowrap;
-  overflow-x: auto;
+  @apply tw-relative tw-whitespace-nowrap tw-overflow-x-auto;
 }
 
 .img-evo-container {
-  position: relative;
-  display: inline-flex;
-  vertical-align: middle;
   -ms-flex-negative: 0;
-  flex-shrink: 0;
-  width: 96px;
+
+  @apply tw-relative tw-inline-flex tw-align-middle tw-flex-shrink-0 tw-w-24;
 }

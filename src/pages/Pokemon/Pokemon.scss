@@ -1,21 +1,17 @@
 .poke-container {
-  margin-bottom: 15px;
-  overflow: hidden;
+  @apply tw-mb-[15px] tw-overflow-hidden;
 }
 
 .img-desc {
-  width: 217px;
-  height: 217px;
-
-  @apply tw-p-1;
+  @apply tw-w-[217px] tw-h-[217px] tw-p-1;
 }
 
 .text-gen {
-  font-size: 16px;
+  @apply tw-text-[16px];
 }
 
 .img-form-group hr {
-  width: 350px;
+  @apply tw-w-[350px];
 }
 
 .title-evo {
@@ -34,37 +30,34 @@ a b.link-title,
 }
 
 .table-main thead tr th {
-  font-size: 16px;
-  padding: 5px 10px;
-  height: 35px;
+  @apply tw-text-[16px] tw-py-[5px] tw-px-2.5 tw-h-[35px];
 }
 
 td h5,
 td h6 {
-  margin: 0;
+  @apply tw-m-0;
 }
 
 .table-info tbody tr td:nth-child(1) {
-  width: 25%;
-  min-width: 180px;
+  @apply tw-w-1/4 tw-min-w-[180px];
 }
 
 .table-desc tbody tr td:nth-child(1) {
-  text-align: start;
   width: 25% !important;
-  min-width: 180px;
+
+  @apply tw-text-start tw-min-w-[180px];
 }
 
 .table-desc tbody tr:nth-child(odd) td {
-  text-align: start;
+  @apply tw-text-start;
 }
 
 .table-desc tbody tr td div.tw-h-full {
-  padding: 5px 10px;
+  @apply tw-py-[5px] tw-px-2.5;
 }
 
 .table-desc tbody tr:nth-child(even) td {
-  text-align: start;
+  @apply tw-text-start;
 }
 
 .table-desc.table-info tbody tr td:first-child {
@@ -72,36 +65,33 @@ td h6 {
 }
 
 .table-info tbody tr.tw-text-center td.table-sub-header:nth-child(2) {
-  font-weight: bolder;
+  @apply tw-font-bold;
 }
 
 .table-info tbody tr:nth-child(even) td:nth-child(2) {
-  text-align: start;
+  @apply tw-text-start;
 }
 
 .table-info tbody tr:nth-child(even) td:nth-child(2) div.row-extra {
-  padding: 5px 10px;
+  @apply tw-py-[5px] tw-px-2.5;
 }
 
 .text-navigate,
 .text-overflow {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
+  @apply tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis tw-w-full;
 }
 
 .prev-next-block {
   z-index: 3 !important;
   box-shadow: 0 5px 3px #0000004d;
-  margin: 0;
-  height: 62px;
+
+  @apply tw-m-0 tw-h-[62px];
 }
 
 .prev-block .text-navigate {
-  padding-right: 8%;
+  @apply tw-pr-[8%];
 }
 
 .next-block .text-navigate {
-  padding-left: 8%;
+  @apply tw-pl-[8%];
 }

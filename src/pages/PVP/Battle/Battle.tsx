@@ -1232,7 +1232,7 @@ const Battle = () => {
 
   return (
     <Error isError={!isFound}>
-      <div className="tw-container tw-mt-2 battle-body-container">
+      <div className="tw-container tw-mt-4 battle-body-container">
         <SelectMui
           fullWidth
           value={league}
@@ -1248,10 +1248,13 @@ const Battle = () => {
           ]}
         />
         <div className="row tw-mt-4 !tw-m-0">
-          <div className="lg:tw-w-1/4 !tw-my-2">
+          <div className="lg:tw-w-1/4 !tw-my-3">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
           </div>
-          <div className="lg:tw-w-1/2">
+          <Fragment>
+            {!pokemonCurr.pokemonData && !pokemonObj.pokemonData && <hr className="tw-block !tw-mt-4 lg:tw-hidden" />}
+          </Fragment>
+          <div className="lg:tw-w-1/2 tw-mt-0 lg:tw-mt-4">
             {pokemonCurr.pokemonData &&
               pokemonObj.pokemonData &&
               isNotEmpty(pokemonCurr.timeline) &&
@@ -1352,7 +1355,7 @@ const Battle = () => {
                 </Fragment>
               )}
           </div>
-          <div className="lg:tw-w-1/4 !tw-my-2">
+          <div className="lg:tw-w-1/4 !tw-my-3">
             {renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}
           </div>
         </div>

@@ -1,48 +1,29 @@
 .error-img {
-  width: 100%;
-  min-height: calc(100vh - 56px);
-  background-color: black;
+  @apply tw-w-full tw-min-h-[calc(100vh-56px)] tw-bg-black;
 }
 
 .img {
   background-image: url("../../assets/error.jpg");
   background-position-x: right;
   background-position-y: bottom;
-  background-size: cover;
-  background-repeat: no-repeat;
-  position: fixed;
-  max-width: 900px;
-  max-height: 564px;
-  width: 100%;
-  height: 100%;
-  right: 0;
-  bottom: 0;
+
+  @apply tw-bg-cover tw-bg-no-repeat tw-fixed tw-max-w-[900px] tw-max-h-[564px] tw-w-full tw-h-full tw-right-0 tw-bottom-0;
 }
 
 .error-desc {
-  width: 100%;
-  text-align: center;
+  @apply tw-w-full tw-text-center;
 }
 
 .error-desc .desc {
-  position: fixed;
-  top: 20%;
   transform: translateY(-20%);
-  color: white;
-  width: 100%;
-  padding: 10px;
+
+  @apply tw-fixed tw-top-[20%] tw-text-white tw-w-full tw-p-2.5;
 }
 
 .error-desc .desc .desc-head {
-  font-size: calc(5rem + 7vw);
-  color: indianred;
-  text-decoration: underline;
+  @apply tw-text-[calc(5rem+7vw)] tw-text-[#cd5c5c] tw-underline;
 }
 
 .error-img img {
-  position: fixed;
-  max-width: 900px;
-  width: 100%;
-  right: 0;
-  bottom: 0;
+  @apply tw-fixed tw-max-w-[900px] tw-w-full tw-right-0 tw-bottom-0;
 }

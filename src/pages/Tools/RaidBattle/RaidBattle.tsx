@@ -304,10 +304,12 @@ const RaidBattle = () => {
 
   const { showSnackbar } = useSnackbar();
 
-  const clearDataBoss = () => {
-    setResult([]);
-    setResultRaid(undefined);
-    setResultBoss(undefined);
+  const clearDataBoss = (isClear = true) => {
+    if (isClear) {
+      setResult([]);
+      setResultRaid(undefined);
+      setResultBoss(undefined);
+    }
   };
 
   const onCopyPokemon = (index: number) => {
@@ -577,7 +579,7 @@ const RaidBattle = () => {
       return;
     }
     if (!resultBoss) {
-      handleCalculate();
+      handleCalculate(false);
     }
     showSnackbar('Simulator battle raid successfully!', 'success');
 
@@ -677,10 +679,10 @@ const RaidBattle = () => {
     setDisableSearch(false);
   }, [options.enableTimeAllow, options.isReleased, options.isWeatherBoss, options.isWeatherCounter, timeAllow]);
 
-  const handleCalculate = () => {
+  const handleCalculate = (isClear = true) => {
     showSpinner();
     setTimeout(() => {
-      clearDataBoss();
+      clearDataBoss(isClear);
       calculateBossBattle();
     }, 500);
   };

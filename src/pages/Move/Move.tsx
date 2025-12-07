@@ -344,7 +344,7 @@ const Move = (props: IMovePage) => {
 
   const renderReward = (itemName: string) => (
     <div className="tw-flex tw-items-center tw-flex-col">
-      <div className="tw-w-[35px]">
+      <div className="tw-w-9">
         <img alt="Icon Item" className="sprite-type" src={getItemSpritePath(itemName)} />
       </div>
       <span className="caption">{splitAndCapitalize(itemName?.toString().replace('ITEM_', ''), '_', ' ')}</span>
