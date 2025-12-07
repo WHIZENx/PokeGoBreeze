@@ -1,56 +1,47 @@
 .contain-poke-best-league {
-  margin: 10px;
+  @apply tw-m-2.5;
 }
 
 .poke-best-league {
-  padding: 10px;
+  @apply tw-p-2.5;
 }
 
 .best-poke-desc {
-  padding: 13px;
+  @apply tw-p-[13px];
 }
 
 .best-name {
-  padding: 0 5px;
+  @apply tw-py-0 tw-px-2.5;
 }
 
 .list-best-league li {
-  padding-left: 2rem;
+  @apply tw-pl-8;
 }
 
 .evo-item-desc {
-  margin: 10px 5%;
+  @apply tw-my-2.5 tw-mx-[5%];
 }
 
 .form-header {
-  padding: 1rem 1.25rem;
-  text-align: start;
-  font-weight: bolder;
+  @apply tw-py-4 tw-px-5 tw-text-start tw-font-bold;
 }
 
 .rank-max {
-  color: red;
-  background-color: #ecc8c8;
+  @apply tw-text-red-600 tw-bg-[#ecc8c8];
 }
 
 .rank-excellent {
-  color: blueviolet;
-  background-color: #ecc8ec;
+  @apply tw-text-[#8a2be2] tw-bg-[#ecc8ec];
 }
 
 .rank-great {
-  color: green;
-  background-color: #c8ecc8;
+  @apply tw-text-green-600 tw-bg-[#c8ecc8];
 }
 
 .rank-nice {
-  color: orange;
-  background-color: #ececc8;
+  @apply tw-text-orange-600 tw-bg-[#ececc8];
 }
 
 .pokemon-best-league {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+  @apply tw-flex tw-justify-center tw-items-center tw-w-full;
 }

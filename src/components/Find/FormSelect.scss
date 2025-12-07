@@ -1,22 +1,21 @@
 .text-navigator {
   color: var(--bs-danger);
-  font-weight: bolder;
-  font-size: 1.5rem;
+
+  @apply tw-text-[1.5rem] tw-font-bold;
 }
 
 .tools {
-  z-index: 0;
-  margin-top: 40px;
   box-shadow: 0 4px 8px 0 black;
+
+  @apply tw-z-0 tw-mt-10;
 }
 
 
 .search-container {
-  margin-bottom: 15px;
+  @apply tw-mb-[15px];
 }
 
 
 .scroll-card .MuiButtonBase-root:not(:first-child) {
-  margin-left: 10px;
+  @apply tw-ml-2.5;
 }
-

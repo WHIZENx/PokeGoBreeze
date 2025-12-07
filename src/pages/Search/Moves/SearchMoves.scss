@@ -1,23 +1,17 @@
 .table-head {
-  font-size: 18px;
-  padding: 15px 0;
-  text-align: center;
   vertical-align: inherit;
-  font-weight: bold;
+
+  @apply tw-text-[18px] tw-py-[15px] tw-px-0 tw-text-center tw-font-bold;
 }
 
 .table-movesets-col {
-  position: relative;
-  overflow-y: auto;
-  height: auto;
+  @apply tw-relative tw-overflow-y-auto tw-h-auto;
 }
 
 td.data-table {
-  padding: 0;
+  @apply tw-p-0;
 }
 
 .type-icon-small {
-  padding: 5px 8px;
-  border-radius: 5px;
-  color: white;
+  @apply tw-py-[5px] tw-px-2 tw-rounded-[5px] tw-text-white;
 }

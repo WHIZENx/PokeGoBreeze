@@ -1,30 +1,23 @@
 .type-badge-container {
-  opacity: 1;
-  width: max-content;
+  @apply tw-opacity-100 tw-w-max;
 }
 
 .type-badge-container a:hover {
-  opacity: 0.8;
+  @apply tw-opacity-80;
 }
 
 .text-type-border {
-  margin-top: 5px;
-  margin-left: 42px;
-  margin-bottom: 1px;
+  @apply tw-mt-[5px] tw-ml-[42px] tw-mb-px;
 }
 
 .type-icon-border {
-  position: absolute;
-  left: 0;
-  border-radius: 50%;
-  padding: 8px;
+  @apply tw-absolute tw-left-0 tw-p-2 tw-rounded-full;
 }
 
 .type-badge-border {
-  position: absolute;
-  top: -14px;
-  right: -25px;
   transform: translate(5px, 5px);
+
+  @apply tw-absolute -tw-top-[14px] -tw-right-[25px];
 }
 
 .type-badge-border .type-icon-small {
@@ -32,18 +25,13 @@
 }
 
 .type-icon-border img {
-  border-radius: 50%;
+  @apply tw-rounded-full;
 }
 
 .type-border {
-  margin-left: 35px;
-  width: max-content;
-  padding: 8px;
-  color: white;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  @apply tw-ml-[35px] tw-w-max tw-p-2 tw-text-white tw-rounded-r-[10px];
 }
 
 .type-border span {
-  margin: 0 8px;
+  @apply tw-mx-2 tw-my-0;
 }

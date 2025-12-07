@@ -1,26 +1,18 @@
 .scroll-form {
-  position: relative;
-  white-space: nowrap;
-  overflow-x: auto;
+  @apply tw-relative tw-whitespace-nowrap tw-overflow-x-auto;
 }
 
 .img-form-gender-group {
-  vertical-align: top;
-  display: inline-block;
-  text-align: center;
-  margin-right: 5%;
-  width: 96px;
-  height: 130px;
+  @apply tw-align-top tw-inline-block tw-text-center tw-mr-[5%] tw-w-24 tw-h-[130px];
 
   .img-gender-group {
-    width: 100%;
-    height: 96px;
-    min-width: 96px;
+    @apply tw-w-full tw-h-24 tw-min-w-24;
   }
 }
 
 
 .btn-form:focus {
-  outline: none;
   box-shadow: 0 0 0 3px #64646466 !important;
+
+  @apply tw-outline-none;
 }

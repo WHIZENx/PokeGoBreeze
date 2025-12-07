@@ -1,56 +1,45 @@
 .pvp-container {
-  margin: 15px auto 5vh;
+  @apply tw-my-[15px] tw-mx-auto tw-mb-[5vh];
 }
 
 .pokemon-ranking-body hr {
-  color: white;
+  @apply tw-text-white;
 }
 
 .ranking-container {
-  max-height: 70vh;
-  overflow-y: auto;
+  @apply tw-max-h-[70vh] tw-overflow-y-auto;
 }
 
 .card-container {
-  width: 100%;
-  display: grid;
-  overflow-x: auto;
+  @apply tw-w-full tw-grid tw-overflow-x-auto;
 }
 
 .ranking-header {
-  position: sticky;
-  top: 0;
-  padding: 15px;
-  z-index: 4;
-  cursor: pointer;
+  @apply tw-sticky tw-top-0 tw-p-[15px] tw-z-[4] tw-cursor-pointer;
 }
 
 .ranking-header .ranking-selected {
-  text-decoration: underline;
+  @apply tw-underline;
 }
 
 .ranking-sort svg path {
-  display: none;
+  @apply tw-hidden;
 }
 
 .ranking-sort:hover svg path {
-  display: inline-block;
+  @apply tw-inline-block;
 }
 
 .ranking-selected.ranking-sort svg path {
-  display: inline-block;
+  @apply tw-inline-block;
 }
 
 .ranking-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @apply tw-flex tw-justify-between tw-items-center;
 }
 
 .ranking-score {
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-weight: bolder;
+  @apply tw-py-[5px] tw-px-2.5 tw-rounded-lg tw-font-bold;
 }
 
 .ranking-container .accordion-item:first-of-type {
@@ -67,44 +56,35 @@
 }
 
 .ranking-body {
-  padding: 1.25rem 0;
+  @apply tw-py-5 tw-px-0;
 }
 
 .ranking-info {
-  padding: 0 2rem;
+  @apply tw-py-0 tw-px-8;
 }
 
 .title-item-ranking {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0 0 1rem 1rem;
+  @apply tw-flex tw-justify-between tw-items-center tw-w-full tw-pt-0 tw-pr-0 tw-pb-4 tw-pl-4;
 
   h4 {
-    margin: 0;
+    @apply tw-m-0;
   }
 }
 
 .list-item-ranking {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 1rem 0.5rem;
-  align-items: center;
+  @apply tw-flex tw-justify-between tw-w-full tw-py-4 tw-px-2 tw-items-center;
 }
 
 .list-item-ranking:hover {
-  opacity: 0.9;
+  @apply tw-opacity-90;
 }
 
 .status-ranking {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  @apply tw-py-2.5;
 }
 
 .status-ranking div .progress {
-  min-width: 0;
+  @apply tw-min-w-0;
 }
 
 
@@ -116,7 +96,7 @@
 }
 
 .ranking-link-group button.active {
-  font-weight: bolder;
+  @apply tw-font-bold;
 }
 
 .ranking-link-group button:not(:first-of-type, :last-of-type) {
@@ -135,239 +115,179 @@
 }
 
 .moves-title {
-  padding: 8px 0;
-  font-weight: bolder;
-  text-align: center;
+  @apply tw-py-2 tw-px-0 tw-font-bold tw-text-center;
 }
 
 .type-rank-list {
-  max-height: 300px;
-  overflow-y: auto;
+  @apply tw-max-h-[300px] tw-overflow-y-auto;
 }
 
 .type-rank-item {
-  padding: 8px 10px;
-  border-radius: 5px;
-  margin: 5px 10px;
-  color: white;
+  @apply tw-py-2 tw-px-2.5 tw-rounded-[5px] tw-my-[5px] tw-mx-2.5 tw-text-white;
 }
 
 .stats-container {
-  border-radius: 8px;
+  @apply tw-rounded-lg;
 }
 
 @media screen and (min-width <= 1200px) {
   .stats-container {
-    margin: 0 10px;
+    @apply tw-my-0 tw-mx-2.5;
   }
 }
 
 .group-selected {
-  white-space: nowrap;
-  overflow-x: auto;
-  margin: 10px;
-  display: flex;
-  column-gap: 10px;
+  @apply tw-whitespace-nowrap tw-overflow-x-auto tw-m-2.5 tw-flex tw-gap-x-2.5;
 }
 
 .card-ranking {
-  padding: 10px;
+  @apply tw-p-2.5;
 }
 
 .view-pokemon {
-  opacity: 0.5;
-  cursor: pointer;
+  @apply tw-opacity-50 tw-cursor-pointer;
 }
 
 .view-pokemon:hover {
-  opacity: 1;
+  @apply tw-opacity-100;
 }
 
 .battle-bar {
-  height: 150px;
-  padding: 10px 0;
+  @apply tw-h-[150px] tw-py-2.5 tw-px-0;
 }
 
 .battle-bar .battle-bar-container {
-  overflow-x: auto;
+  @apply tw-overflow-x-auto;
 }
 
 .battle-bar .battle-bar-container,
 .fit-timeline .tw-relative {
-  width: calc(100% - 20px);
+  @apply tw-w-[calc(100%-20px)];
 }
 
 .battle-bar .battle-bar-container .tw-relative {
-  width: max-content;
+  @apply tw-w-max;
 }
 
 .fast-attack {
-  border-width: 1px;
-  border-style: solid;
-  width: 12px;
-  height: 12px;
+  @apply tw-border tw-border-solid tw-w-3 tw-h-3;
 }
 
 .charge-attack {
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 50%;
-  width: 12px;
-  height: 12px;
+  @apply tw-border tw-border-solid tw-rounded-full tw-w-3 tw-h-3;
 }
 
 .wait-attack {
-  width: 12px;
-  height: 12px;
+  @apply tw-w-3 tw-h-3;
 }
 
 .pokemon-battle-header {
-  padding: 10px;
+  @apply tw-p-2.5;
 }
 
 .battle-container {
-  overflow-y: auto;
-  max-height: 80vh;
+  @apply tw-overflow-y-auto tw-max-h-[80vh];
 }
 
 .battle-body-container {
-  position: absolute;
-  left: 50%;
   transform: translateX(-50%);
-  padding-bottom: 10px;
+
+  @apply tw-absolute tw-left-1/2 tw-pb-2.5;
 }
 
 .turn-battle {
-  display: flex;
   width: 100% !important;
+
+  @apply tw-flex;
 }
 
 .fast-attack-container {
-  display: flex;
-  align-items: center;
-  height: 80px;
+  @apply tw-flex tw-items-center tw-h-20;
 }
 
 .fast-attack-content {
-  width: fit-content;
-  padding: 10px;
-  border-radius: 5px;
+  @apply tw-w-fit tw-p-2.5 tw-rounded-[5px];
 }
 
 .wait-attack-container {
-  height: 80px;
-  min-width: 20px;
-  width: max-content;
+  @apply tw-h-20 tw-min-w-5 tw-w-max;
 }
 
 
 .block-attack-container {
-  width: 44px;
+  @apply tw-w-11;
 }
 
 .swipe-attack-container {
-  width: fit-content;
-  padding: 9px;
-  border-radius: 5px;
-  border-width: 1px;
-  border-style: solid;
+  @apply tw-w-fit tw-p-[9px] tw-rounded-[5px] tw-border tw-border-solid;
 }
 
 .charged-attack-container {
-  display: flex;
-  align-items: center;
-  height: 80px;
+  @apply tw-flex tw-items-center tw-h-20;
 }
 
 .charged-attack-content {
-  width: fit-content;
-  padding: 10px;
-  border-radius: 5px;
+  @apply tw-w-fit tw-p-2.5 tw-rounded-[5px];
 }
 
 .winner-container,
 .loser-container {
-  padding: 10px;
-  font-weight: bold;
-  width: 100%;
-  text-align: center;
+  @apply tw-p-2.5 tw-font-bold tw-w-full tw-text-center;
 }
 
 .dec-block {
-  font-size: 11px;
-  color: red;
+  @apply tw-text-[11px] tw-text-red-600;
 }
 
 .fit-timeline {
-  height: 150px;
-  padding: 10px 0;
+  @apply tw-h-[150px] tw-py-2.5 tw-px-0;
 }
 
 .fit-timeline .timeline-fit-container div {
-  display: inline-block;
-  position: absolute;
-  top: 50%;
   transform: translateY(-50%);
+
+  @apply tw-inline-block tw-absolute tw-top-1/2;
 }
 
 .bufs-container {
-  position: absolute;
-  right: -10px;
-  top: calc(50% + 15px);
   transform: translateY(-50%);
+
+  @apply tw-absolute -tw-right-2.5 tw-top-[calc(50%+15px)];
 }
 
 .icon-buff {
-  top: -20px;
-  left: 11px;
   transform: translateX(-50%);
+
+  @apply -tw-top-5 tw-left-[11px];
 }
 
 .icon-buff-timeline {
-  top: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 10px;
-  width: max-content;
-  text-align: center;
   display: flex !important;
-  gap: 5px;
-  font-weight: bold;
+  transform: translateX(-50%);
+
+  @apply -tw-top-px tw-left-1/2 tw-text-[10px] tw-w-max tw-text-center tw-gap-[5px] tw-font-bold;
 }
 
 .bg-ref-pokemon {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-  align-items: center;
+  @apply tw-p-2.5 tw-flex tw-flex-col tw-gap-y-2.5 tw-items-center;
 }
 
 .bg-type-moves {
-  display: flex;
-  justify-content: center;
-  column-gap: 20px;
+  @apply tw-flex tw-justify-center tw-gap-x-5;
 }
 
 .play-line {
-  width: 1px;
-  height: 100%;
-  position: absolute;
-  top: 50%;
-  transform: translate(0, -50%);
+  transform: translateY(-50%);
+
+  @apply tw-w-px tw-h-full tw-absolute tw-top-1/2;
 }
 
 .btn-collapse-battle {
-  background-color: white;
-  border-radius: 50%;
-  position: absolute;
-  right: -15px;
-  top: -15px;
-  cursor: pointer;
+  @apply tw-bg-white tw-rounded-full tw-absolute -tw-right-[15px] -tw-top-[15px] tw-cursor-pointer;
 }
 
 .battle-logo {
-  position: absolute;
-  left: 0;
   transform: scaleX(-1);
+
+  @apply tw-absolute tw-left-0;
 }

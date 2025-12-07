@@ -8,14 +8,14 @@ import { combineClasses } from '../../../utils/extension';
 const TypeBar = (props: ITypeBarComponent) => {
   return (
     <div className={combineClasses('tw-flex tw-items-center border-type', props.type?.toLowerCase())}>
-      <span className="tw-w-[35px]">
+      <span className="tw-w-9">
         <img
           className="sprite-type tw-p-1 tw-bg-black"
           alt="Pokémon GO Type Logo"
           src={APIService.getTypeHqSprite(props.type)}
         />
       </span>
-      <h3>{splitAndCapitalize(props.type?.toLowerCase(), '_', ' ')}</h3>
+      <h3 className="!tw-text-white">{splitAndCapitalize(props.type?.toLowerCase(), '_', ' ')}</h3>
     </div>
   );
 };

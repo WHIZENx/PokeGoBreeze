@@ -1,11 +1,9 @@
 .tab-body {
-  padding: 1.5rem;
+  @apply tw-p-6;
 }
 
 .table-raid-cal thead tr th {
-  font-size: 16px;
-  height: 35px;
-  padding: 5px 10px;
+  @apply tw-text-[16px] tw-h-[35px] tw-py-[5px] tw-px-2.5;
 }
 
 .table-raid-cal thead tr th:nth-child(1) {
@@ -19,35 +17,30 @@
 }
 
 .table-raid-cal tbody tr td:nth-child(1) {
-  width: auto;
-  min-width: auto;
-  text-align: center;
-  font-weight: bold;
+  @apply tw-w-auto tw-min-w-0 tw-text-center tw-font-bold;
 }
 
 .sticky-left {
-  position: sticky;
-  left: 0;
+  @apply tw-sticky tw-left-0;
 }
 
 .sticky-table-left tbody tr td:nth-child(1) {
-  position: sticky;
-  left: 0;
+  @apply tw-sticky tw-left-0;
 }
 
 .text-iv {
-  font-weight: initial;
   color: white !important;
   text-shadow: 1px 1px black;
+
+  @apply tw-font-normal;
 }
 
 .text-iv-bulk {
-  font-weight: initial;
+  @apply tw-font-normal;
 }
 
 .border-type-stat {
-  padding: 10px;
-  margin: 10px 0;
+  @apply tw-p-2.5 tw-my-2.5 tw-mx-0;
 }
 
 .bp-left-border {

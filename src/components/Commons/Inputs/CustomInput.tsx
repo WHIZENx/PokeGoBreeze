@@ -21,7 +21,7 @@ const CustomInput = <T,>(props: ICustomInputComponent<T>) => {
   };
 
   return (
-    <Paper className="tw-flex tw-items-center tw-w-full tw-h-full !tw-rounded-none">
+    <Paper className="tw-flex tw-items-center tw-w-full tw-h-full !tw-rounded-none tw-mb-px">
       {isNotEmpty(props.menuItems) && (
         <>
           <IconButton

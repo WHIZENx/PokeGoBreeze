@@ -3,12 +3,11 @@
 }
 
 .battle-game {
-  margin: 0;
-  padding: 10px;
+  @apply tw-m-0 tw-p-2.5;
 }
 
 .border-window {
-  padding: 15px;
+  @apply tw-p-[15px];
 }
 
 .result-move {
@@ -18,13 +17,14 @@
 
 .card-header {
   cursor: auto !important;
-  text-align: center;
+
+  @apply tw-text-center;
 }
 
 .caption-small {
-  font-size: 13px;
+  @apply tw-text-[13px];
 }
 
 .dropdown-caption {
-  margin-left: 10px;
+  @apply tw-mt-[15px];
 }

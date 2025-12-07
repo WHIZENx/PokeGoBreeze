@@ -43,7 +43,7 @@ const FillDmg = styled.div<Element>`
 
 const HpBar = (props: IHpBarComponent) => {
   return (
-    <div className="tw-flex tw-items-center tw-w-full tw-gap-y-1">
+    <div className="tw-flex tw-items-center tw-w-full tw-gap-1">
       {props.text && (
         <span>
           <b>{props.text}</b>

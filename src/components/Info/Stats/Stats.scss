@@ -1,31 +1,23 @@
 .progress {
-  min-width: 350px;
-  height: 30px;
-  margin: 10px 0;
+  @apply tw-min-w-[350px] tw-h-[30px] tw-my-2.5 tw-mx-0;
 }
 
 .progress-hover {
-  cursor: pointer;
+  @apply tw-cursor-pointer;
 }
 
 .stats-text {
-  align-items: center;
-  height: 30px;
-  margin-left: 1%;
+  @apply tw-items-center tw-h-[30px] tw-ml-[1%];
 }
 
 .box-text span {
-  padding: 3px;
-  background-color: #d3d3d3cc;
-  border-radius: 5px;
-  font-weight: bold;
+  @apply tw-p-[3px] tw-rounded-[5px] tw-font-bold tw-bg-[#d3d3d3cc];
 }
 
 .rank-text {
-  align-items: center;
-  height: 30px;
+  @apply tw-items-center tw-h-[30px];
 
   span {
-    margin-right: 1%;
+    @apply tw-mr-[1%];
   }
 }

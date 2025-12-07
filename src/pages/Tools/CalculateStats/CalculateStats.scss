@@ -1,39 +1,35 @@
 .table-info {
-  width: 100%;
+  @apply tw-w-full;
 }
 
 .table-info td:nth-child(1) {
-  width: 50%;
+  @apply tw-w-1/2;
 }
 
 .battle-league td:nth-child(1) {
-  width: 35%;
+  @apply tw-w-[35%];
 }
 
 .table-info thead tr {
-  font-weight: bold;
+  @apply tw-font-bold;
 }
 
 .table-info tbody tr td:nth-child(1) {
-  font-weight: bold;
+  @apply tw-font-bold;
 }
 
 .td-style {
-  height: 100%;
-  padding: 5px 10px;
+  @apply tw-h-full tw-py-[5px] tw-px-[10px];
 }
 
 .shadow-text {
-  color: #c184ec;
-  font-weight: 500;
+  @apply tw-text-[#c184ec] tw-font-medium;
 }
 
 .purified-text {
-  color: #74e1e6;
-  font-weight: 500;
+  @apply tw-text-[#74e1e6] tw-font-medium;
 }
 
 .buddy-text {
-  color: #f4e474;
-  font-weight: 500;
+  @apply tw-text-[#f4e474] tw-font-medium;
 }

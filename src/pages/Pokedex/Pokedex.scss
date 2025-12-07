@@ -1,4 +1,5 @@
 ul.pokemon-content {
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  padding: 0;
+
+  @apply tw-p-0;
 }

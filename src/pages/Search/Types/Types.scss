@@ -1,6 +1,3 @@
 .type-info-container {
-  border-width: 2px;
-  border-style: solid;
-  padding: 15px;
-  border-radius: 5px;
+  @apply tw-border-2 tw-border-solid tw-p-[15px] tw-rounded-[5px];
 }

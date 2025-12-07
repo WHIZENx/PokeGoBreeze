@@ -1,57 +1,43 @@
 .title-leagues {
-  text-decoration: underline;
-  font-weight: bolder;
+  @apply tw-underline tw-font-bold;
 }
 
 .league {
-  width: max-content;
-  height: max-content;
-  position: relative;
-  margin: auto;
+  @apply tw-w-max tw-h-max tw-relative tw-m-auto;
 }
 
 .season-league {
-  position: relative;
-  white-space: nowrap;
-  overflow-x: auto;
-  width: max-content;
+  @apply tw-relative tw-whitespace-nowrap tw-overflow-x-auto tw-w-max;
 }
 
 .group-rank-league {
-  display: inline-block;
+  @apply tw-inline-block;
 }
 
 .rank-header {
-  padding: 8px;
-  font-weight: bold;
+  @apply tw-p-2 tw-font-bold;
 }
 
 .reward-league {
-  position: sticky;
-  left: 0;
-  z-index: 2;
+  @apply tw-sticky tw-left-0 tw-z-2;
 }
 
 .badge-league {
-  position: absolute;
-  top: 65%;
-  right: 7%;
   transform: translateY(-65%);
-  border: 5px solid #b2b2b2;
-  border-radius: 50%;
+
+  @apply tw-absolute tw-top-[65%] tw-right-[7%] tw-border-[5px] tw-border-[#b2b2b2] tw-rounded-full;
 }
 
 .badge-league img {
-  padding: 5px;
+  @apply tw-p-[5px];
 }
 
 .sub-badge {
-  border-radius: 50%;
-  border: 3.5px solid white;
+  @apply tw-rounded-full tw-border-[3.5px] tw-border-white;
 }
 
 li.unique-type ul {
-  padding: 0;
+  @apply tw-p-0;
 }
 
 .great-league {
@@ -67,64 +53,48 @@ li.unique-type ul {
 }
 
 .img-link {
-  width: max-content;
   display: inline-block !important;
-  margin: 5px;
+
+  @apply tw-w-max tw-m-[5px];
 }
 
 .league-body.accordion-body div.sub-body {
-  padding: 1rem 1.25rem;
+  @apply tw-py-4 tw-px-5;
 }
 
 
 .combat-league {
-  display: inline-block;
-  width: 64px;
-  position: relative;
-  margin-right: 5px;
+  @apply tw-inline-block tw-w-16 tw-relative tw-mr-[5px];
 }
 
 .combat-league-info {
-  display: inline-block;
-  width: 96px;
-  position: relative;
-  margin-right: 5px;
+  @apply tw-inline-block tw-w-24 tw-relative tw-mr-[5px];
 }
 
 .combat-league img.main-combat-league {
-  width: 100%;
-  height: 64px;
-  object-fit: contain;
+  @apply tw-w-full tw-h-16 tw-object-contain;
 }
 
 .combat-league-info img.main-combat-league-info {
-  width: 100%;
-  height: 96px;
-  object-fit: contain;
+  @apply tw-w-full tw-h-24 tw-object-contain;
 }
 
 .combat-center-league {
-  position: absolute;
-  top: 38%;
-  left: 49%;
   transform: translate(-50%, -40%);
+
+  @apply tw-absolute tw-top-[38%] tw-left-[49%];
 }
 
 .combat-center-league-info {
-  position: absolute;
-  top: 45%;
-  left: 49%;
   transform: translate(-49%, -40%);
+
+  @apply tw-absolute tw-top-[45%] tw-left-[49%];
 }
 
 .combat-center-league-text {
-  position: absolute;
-  top: 30%;
-  left: 50%;
   transform: translate(-50%, -30%);
-  color: white;
-  font-weight: 500;
-  font-size: 20px;
+
+  @apply tw-absolute tw-top-[30%] tw-left-1/2 tw-text-white tw-font-medium tw-text-[20px];
 }
 
 .require-rank-info {
@@ -138,11 +108,9 @@ li.unique-type ul {
 }
 
 .combat-center-league-top {
-  position: absolute;
-  left: 50%;
   transform: translateX(-50%);
-  color: white;
-  font-size: 10px;
+
+  @apply tw-absolute tw-left-1/2 tw-text-white tw-text-[10px];
 }
 
 .reward-info {
