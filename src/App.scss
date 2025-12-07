@@ -48,6 +48,9 @@ img.pokemon-navigate-sprite {
   @apply tw-h-15 tw-object-contain;
 }
 
+img.pokemon-sprite-small {
+  @apply tw-w-full tw-h-4 tw-object-contain;
+}
 
 img.pokemon-sprite-medium {
   @apply tw-w-full tw-h-16 tw-object-contain;
@@ -154,5 +157,5 @@ ul {
 .popover-info {
   background-color: var(--custom-pop-over);
 
-  @apply tw-p-4 tw-rounded-lg;
+  @apply tw-p-4 tw-rounded-lg tw-text-default tw-shadow;
 }

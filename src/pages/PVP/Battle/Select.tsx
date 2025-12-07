@@ -186,7 +186,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         )}
         onRemove={() => removePokemon()}
       />
-      <h5>Fast Moves</h5>
+      <h5 className="tw-mt-3">Fast Moves</h5>
       <SelectCardMove
         isHideEmpty
         pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}
@@ -196,7 +196,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
           .filter((value) => value.id > 0)}
       />
-      <h5>Charged Moves Primary</h5>
+      <h5 className="tw-mt-3">Charged Moves Primary</h5>
       <div className="tw-flex tw-items-center tw-gap-x-2">
         <Checkbox
           checked={!props.pokemonBattle.disableCMovePri}
@@ -228,7 +228,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             .filter((value) => value.id > 0 && !isEqual(value.name, cMoveSec?.name))}
         />
       </div>
-      <h5>Charged Moves Secondary</h5>
+      <h5 className="tw-mt-3">Charged Moves Secondary</h5>
       <div className="tw-flex tw-items-center tw-gap-x-2">
         <Checkbox
           checked={!props.pokemonBattle.disableCMoveSec}
