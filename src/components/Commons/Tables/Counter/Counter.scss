@@ -1,26 +1,23 @@
 .table-counter-container {
-  height: 600px;
+  @apply tw-h-[600px];
 }
 
 .table-counter {
-  width: 100%;
-  height: 100%;
+  @apply tw-w-full tw-h-full;
 }
 
 .counter-none {
-  height: 550px;
+  @apply tw-h-[550px];
 }
 
 .group-pokemon-sprite {
-  width: 64px;
+  @apply tw-w-16;
 }
 
 .sub-header {
-  position: relative;
-  font-size: 16px;
-  padding: 10px;
+  @apply tw-text-[16px] tw-relative tw-text-base tw-p-2.5;
 
   span.sub-title {
-    font-weight: bold;
+    @apply tw-font-bold;
   }
 }

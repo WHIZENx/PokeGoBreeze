@@ -487,7 +487,7 @@ const Calculate = () => {
             </Box>
           </div>
           <div className="tw-flex tw-justify-center tw-mt-3">
-            <Box className="tw-w-4/5" sx={{ minWidth: 320 }}>
+            <Box className="tw-w-full md:tw-w-4/5 tw-overflow-x-auto" sx={{ minWidth: 320 }}>
               <div className="row">
                 <div className="col !tw-p-0">
                   <table className="table-info table-stats">

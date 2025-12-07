@@ -1,12 +1,7 @@
 .trainer-levelup {
-  width: 100%;
-  height: 100%;
+  @apply tw-w-full tw-h-full;
 
   .levelup-container {
-    padding: 1rem;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
+    @apply tw-p-4 tw-flex tw-gap-[15px] tw-items-center tw-flex-wrap;
   }
 }

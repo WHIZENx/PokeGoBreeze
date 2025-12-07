@@ -1,12 +1,9 @@
 .head-box {
-  height: 60px;
-  margin-top: 1rem;
-  margin-left: 2%;
-  gap: 15px;
+  @apply tw-h-15 tw-mt-4 tw-ml-[2%] tw-gap-[15px];
 }
 
 h1.text-move {
-  margin-bottom: 0;
+  @apply tw-mb-0;
 }
 
 .move-table td:nth-child(1) {
@@ -29,52 +26,43 @@ h1.text-move {
 }
 
 .buff-power {
-  font-size: 14px;
+  @apply tw-text-[14px];
 }
 
 .table-top-of-move {
-  max-width: 0;
-  overflow-x: auto;
+  @apply tw-max-w-0 tw-overflow-x-auto;
 }
 
 .table-sub-bonus.accordion-item {
-  border: none;
+  @apply tw-border-none;
 
   tr td:nth-child(1) {
     width: 25% !important;
-    vertical-align: middle;
+
+    @apply tw-align-middle;
   }
 
   tr td:nth-child(2),
   tr td:nth-child(3) {
     font-weight: lighter !important;
-    vertical-align: middle;
+
+    @apply tw-align-middle;
   }
 }
 
 .table-sub-bonus .accordion-button {
-  height: 35px;
-  border: none;
-  font-weight: bold;
-  box-shadow: none;
-  padding: 5px 10px;
-  font-size: 1rem;
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
 
+  @apply tw-h-[35px] tw-border-none tw-font-bold tw-shadow-none tw-py-[5px] tw-px-2.5 tw-text-[1rem];
+
   span {
-    width: 100%;
-    text-align: center;
-    margin-left: 20px;
+    @apply tw-w-full tw-text-center tw-ml-5;
   }
 }
 
 .table-bonus-cost {
-  display: inline-flex;
-  height: 100%;
-  width: 50%;
-  align-items: center;
-  gap: 5px;
+  @apply tw-inline-flex tw-h-full tw-w-1/2 tw-items-center tw-gap-[5px];
 }
 
 .table-sub-bonus .accordion-body {

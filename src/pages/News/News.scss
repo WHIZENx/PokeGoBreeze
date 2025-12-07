@@ -1,31 +1,16 @@
 .info-main-container {
-  display: flex;
-  flex-direction: column;
-  row-gap: 20px;
-  max-height: 90vh;
+  @apply tw-flex tw-flex-col tw-gap-y-5 tw-max-h-[90vh];
 }
 
 .info-container {
-  height: 256px;
-  width: 100%;
-  overflow: hidden;
-  text-align: center;
-  margin: 0 auto;
+  @apply tw-h-64 tw-w-full tw-overflow-hidden tw-text-center tw-my-0 tw-mx-auto;
 
   img.info-background {
-    height: max-content;
-    min-width: 100%;
-    max-width: none;
-    margin: 0 -100%;
-    opacity: 0.4;
+    @apply tw-h-max tw-min-w-full tw-max-w-none tw-my-0 tw-mx-[-100%] tw-opacity-40;
   }
 
   img.info-banner-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+    @apply tw-absolute tw-inset-0 tw-w-full tw-h-full tw-object-contain;
   }
 }
 

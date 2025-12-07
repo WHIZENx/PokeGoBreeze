@@ -1,29 +1,24 @@
 .text-not-encounter {
-  padding: 10px;
-  border-radius: 10px;
+  @apply tw-p-[10px] tw-rounded-[10px];
 }
 
 .circle-ring {
-  top: 50%;
   transform: translateY(-50%);
+
+  @apply tw-top-1/2;
 }
 
 .table-container {
-  min-width: 50%;
-  overflow-x: auto;
-  padding: 0 15px;
+  @apply tw-min-w-[50%] tw-overflow-x-auto tw-py-0 tw-px-[15px];
 }
 
 .table-catch-chance tbody td,
 .table-catch-chance thead th {
-  font-size: 1.8rem;
-  font-weight: lighter;
-  padding: 10px 20px;
-  text-align: center;
-  width: 25%;
+  @apply tw-text-[1.8rem] tw-font-light tw-py-[10px] tw-px-[20px] tw-text-center tw-w-[25%];
 }
 
 .table-catch-chance tbody td:not(.table-catch-chance tbody td:nth-child(1)) {
-  font-weight: 500;
   transition: 0.1ms;
+
+  @apply tw-font-medium;
 }

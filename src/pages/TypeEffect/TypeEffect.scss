@@ -1,48 +1,38 @@
 .card-input div h5 {
-  text-align: center;
-  margin-bottom: 10px;
+  @apply tw-text-center tw-mb-2.5;
 }
 
 .card-input {
-  width: 300px;
-  height: 86px;
+  @apply tw-w-[300px] tw-h-[86px];
 }
 
 .card-input:hover {
-  cursor: pointer;
+  @apply tw-cursor-pointer;
 }
 
 .card-select {
-  position: relative;
-  padding: 10px;
+  @apply tw-relative tw-p-2.5;
 }
 
 
 .result-type {
-  position: absolute;
-  z-index: 2;
   box-shadow: 0 4px 8px 0 #00000033;
-  width: 300px;
-  max-height: 50%;
-  overflow-y: auto;
+
+  @apply tw-absolute tw-z-2 tw-w-[300px] tw-max-h-[50%] tw-overflow-y-auto;
 }
 
 .type-title {
-  padding: 4px 6px;
-  border-radius: 5px;
+  @apply tw-py-1 tw-px-[6px] tw-rounded-[5px];
 }
 
 .weakness-title {
-  background-color: red;
-  color: white;
+  @apply tw-bg-red-600 tw-text-white;
 }
 
 .resistance-title {
-  background-color: green;
-  color: white;
+  @apply tw-bg-green-600 tw-text-white;
 }
 
 .neutral-title {
-  background-color: gray;
-  color: white;
+  @apply tw-bg-gray-500 tw-text-white;
 }

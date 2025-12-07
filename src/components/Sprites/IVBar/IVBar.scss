@@ -1,29 +1,26 @@
 .iv-bg-group {
-  width: 99%;
-  display: inline-flex;
-  column-gap: 5px;
+  @apply tw-w-[99%] tw-inline-flex tw-gap-x-[5px];
 }
 
 .iv {
-  width: 33%;
+  @apply tw-w-1/3;
 }
 
 .iv-bg-bar {
-  height: 13px;
+  @apply tw-h-[13px];
 }
 
 .iv-bar {
-  height: 13px;
   background-color: #ef911d;
+
+  @apply tw-h-[13px];
 }
 
 .iv-first-child div {
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
+  @apply tw-rounded-l-[8px];
 }
 
 .iv-last-child div {
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
+  @apply tw-rounded-r-[8px];
 }
 

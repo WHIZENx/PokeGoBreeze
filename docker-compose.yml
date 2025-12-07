@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - build_volume:/app/build
+      - build_volume:/app/dist
     environment:
       - NODE_ENV=production
     networks:

@@ -1,33 +1,28 @@
 .table-moves-col {
-  height: 10%;
-  max-height: 700px;
-  overflow-y: auto;
+  @apply tw-h-[10%] tw-max-h-[700px] tw-overflow-y-auto;
 }
 
 .table-moves {
-  width: 100%;
-  min-width: 250px;
   table-layout: -webkit-fixed;
   table-layout: fixed;
+
+  @apply tw-w-full tw-min-w-[250px];
 }
 
 .table-moves thead {
-  position: sticky;
-  top: 0;
+  @apply tw-sticky tw-top-0;
 }
 
 .table-moves thead tr th {
-  font-size: 16px;
-  padding: 5px 10px;
-  height: 35px;
+  @apply tw-text-[16px] tw-py-[5px] tw-px-2.5 tw-h-[35px];
 }
 
 .table-moves tbody tr td {
-  font-weight: bolder;
+  @apply tw-font-bold;
 }
 
 .main-move {
-  width: 40%;
+  @apply tw-w-2/5;
 }
 
 .text-origin {
@@ -35,5 +30,5 @@
 }
 
 .text-b-ic {
-  margin-right: 8px;
+  @apply tw-mr-2;
 }
