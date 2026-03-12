@@ -164,7 +164,7 @@ const Evolution = (props: IEvolutionComponent) => {
     const form =
       pokemon.id === 718 && !pokemon.form
         ? 'TEN_PERCENT'
-        : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${formStandard()}`, '');
+        : pokemon.form?.replace?.(/^STANDARD$/, '')?.replace?.(`_${formStandard()}`, '');
     const sprite =
       pokemon.id === 664 || pokemon.id === 665
         ? getValueOrDefault(String, pokemon.pokemonId?.toLowerCase(), pokemon.name)
@@ -219,7 +219,7 @@ const Evolution = (props: IEvolutionComponent) => {
     let evoList: IPokemonEvo[] = [];
     const pokemon = getFindPokemon((pokemon) =>
       pokemon.evoList?.some(
-        (evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.form?.replace(`_${formStandard()}`, ''))
+        (evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.form?.replace?.(`_${formStandard()}`, ''))
       )
     );
     if (!pokemon) {
