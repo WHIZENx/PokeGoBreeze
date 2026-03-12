@@ -54,6 +54,7 @@ import { calculateBaseCPM, calculateCPM } from '../core/cpm';
 import { maxIv, minIv } from '../utils/helpers/options-context.helpers';
 import { BASE_CPM } from '../utils/constants';
 import { useSnackbar } from '../contexts/snackbar.context';
+import pokemonEncounterData from '../data/pokemon_encounter.json';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -199,14 +200,8 @@ export const useDataStore = () => {
         try {
           const { data } = await APIService.getFetchNeon<PokemonEncounter[]>('tblpokemonencounter');
           pokemonEncounter.push(...data);
-        } catch (e) {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as Error).message,
-            })
-          );
-          return;
+        } catch {
+          pokemonEncounter.push(...pokemonEncounterData);
         }
 
         const pokemon = optionPokemonData(gm.data, pokemonEncounter);

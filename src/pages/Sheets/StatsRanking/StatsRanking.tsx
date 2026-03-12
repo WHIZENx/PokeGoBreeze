@@ -492,7 +492,7 @@ const StatsRanking = () => {
   const setFilterParams = (select: IPokemonStatsRanking) => {
     setSelect(select);
     searchParams.set(Params.Id, select.num.toString());
-    const form = select.form?.replace(formNormal(), '').toLowerCase().replaceAll('_', '-');
+    const form = select.form?.replace?.(formNormal(), '')?.toLowerCase()?.replaceAll('_', '-');
     if (form) {
       searchParams.set(Params.Form, form);
     } else {
