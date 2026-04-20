@@ -23,6 +23,9 @@
 # eslint crash
 .eslintcache
 
+# claude
+.claude
+
 # misc
 .env
 
