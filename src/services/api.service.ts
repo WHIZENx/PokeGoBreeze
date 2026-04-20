@@ -259,7 +259,7 @@ class APIService {
           '-'
         );
       }
-      return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${
+      return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(4, '0')}${
         form && id !== 201 ? `-${form}` : ''
       }.png`;
     }
