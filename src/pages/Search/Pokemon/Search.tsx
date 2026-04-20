@@ -1,7 +1,5 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 
-import '../../Tools/CalculateStats/CalculateStats.scss';
-
 import APIService from '../../../services/api.service';
 import Pokemon from '../../Pokemon/Pokemon';
 

@@ -10,6 +10,10 @@
   @apply tw-text-[16px];
 }
 
+.img-form-group hr {
+  @apply tw-w-[350px];
+}
+
 .title-evo {
   @apply tw-flex tw-items-center tw-gap-2;
 }

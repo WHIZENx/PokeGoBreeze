@@ -24,3 +24,37 @@
   }
 }
 
+.nav-info,
+.nav-info-top {
+  @apply tw-flex tw-items-center tw-justify-center;
+}
+
+.text-version {
+  @apply tw-flex;
+}
+
+.nav-info-icon {
+  display: none !important;
+}
+
+@media (width >= 1200px) {
+  .nav-info {
+    @apply tw-hidden;
+  }
+}
+
+@media (width <= 1200px) {
+  .nav-info-top {
+    @apply tw-hidden;
+  }
+}
+
+@media (width <= 474px) {
+  .text-version {
+    @apply tw-hidden;
+  }
+
+  .nav-info-icon {
+    display: block !important;
+  }
+}

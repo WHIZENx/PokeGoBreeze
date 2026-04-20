@@ -14,3 +14,8 @@
 .search-container {
   @apply tw-mb-[15px];
 }
+
+
+.scroll-card .MuiButtonBase-root:not(:first-child) {
+  @apply tw-ml-2.5;
+}
