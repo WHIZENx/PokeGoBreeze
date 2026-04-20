@@ -1217,7 +1217,7 @@ const setPokemonPermission = (
       currentPokemon.forms
         ?.filter((form) => !isEqual(form, 'FORM_UNSET'))
         .forEach((form) => {
-          form = form?.replace(`${currentPokemon.id}_`, '');
+          form = form?.replace?.(`${currentPokemon.id}_`, '');
           pokemonPermission.push(
             new PokemonPermission({
               id: item?.num,
@@ -1228,7 +1228,7 @@ const setPokemonPermission = (
           );
         });
     } else {
-      const form = getValueOrDefault(String, currentPokemon.form?.replace(`${currentPokemon.id}_`, ''), formNormal());
+      const form = getValueOrDefault(String, currentPokemon.form?.replace?.(`${currentPokemon.id}_`, ''), formNormal());
       pokemonPermission.push(
         new PokemonPermission({
           id: item?.num,
@@ -1393,7 +1393,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         result.id = toNumber(pokemon.find((item) => isEqual(item.pokemonId, poke.pokemonId))?.num);
         result.name = poke.pokemonId;
         if (poke.pokemonDisplay) {
-          result.form = poke.pokemonDisplay.form?.replace(`${poke.pokemonId}_`, '');
+          result.form = poke.pokemonDisplay.form?.replace?.(`${poke.pokemonId}_`, '');
         } else {
           result.form = formNormal();
         }
