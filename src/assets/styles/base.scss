@@ -23,31 +23,31 @@ p {
   @apply tw-mb-4 tw-mt-0;
 }
 
-.h1, h1 {
+h1 {
   @apply tw-text-[calc(1.375rem+1.5vw)] xl:tw-text-[2.5rem];
 }
 
-.h2, h2 {
+h2 {
   @apply tw-text-[calc(1.325rem+.9vw)] xl:tw-text-[2rem];
 }
 
-.h3, h3 {
+h3 {
   @apply tw-text-[calc(1.3rem+.6vw)] xl:tw-text-[1.75rem];
 }
 
-.h4, h4 {
+h4 {
   @apply tw-text-[calc(1.275rem+.3vw)] xl:tw-text-2xl;
 }
 
-.h5, h5 {
+h5 {
   @apply tw-text-xl;
 }
 
-.h6, h6 {
+h6 {
   @apply tw-text-base;
 }
 
-.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6 {
   @apply tw-font-medium tw-leading-small tw-mb-2 tw-mt-0 tw-text-default;
 }
 

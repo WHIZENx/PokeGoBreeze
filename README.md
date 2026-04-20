@@ -3,9 +3,10 @@
 <div align="center">
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Version](https://img.shields.io/badge/version-6.0.0-blue.svg)
 ![React](https://img.shields.io/badge/React-18.2.0-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-3178C6?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-5.4.21-646CFF?logo=vite)
+![Vite](https://img.shields.io/badge/Vite-6.4.2-646CFF?logo=vite)
 
 [Production](https://poke-go-breeze.vercel.app/) • [Staging](https://poke-go-breeze-stage.vercel.app/)
 
@@ -28,49 +29,55 @@ PokeGoBreeze is a comprehensive, feature-rich web application designed for Poké
 
 ### Frontend Framework
 - **Core**: React 18.2.0 with TypeScript 5.5.3
-- **Build Tool**: Vite 5.4.21 (migrated from Webpack for faster builds)
+- **Build Tool**: Vite 6.4.2 (migrated from Webpack for faster builds)
 - **State Management**: 
-  - Redux 4.2.0 with Redux Toolkit patterns
-  - Redux Thunk for async operations
-  - Redux Persist with encrypted storage
-- **Routing**: React Router v6.20.0
+  - Redux 4.2.0 with React-Redux 7.2.6
+  - Redux Thunk 2.4.1 for async operations
+  - Redux Persist 6.0.0 with encrypted storage
+- **Routing**: React Router DOM v6.20.0
+- **HTTP Client**: Axios 1.12.0
 
 ### UI & Styling
 - **Component Libraries**:
-  - Material UI (MUI) v5 - Primary UI framework
+  - Material UI (MUI) v5.6 - Primary UI framework
+  - MUI Icons Material 5.6.2
   - Styled Components 6.1.8
+  - Emotion (React & Styled) 11.11
 - **Styling System**:
   - SCSS/Sass 1.83.0 with modern @use syntax
   - Tailwind CSS 3.4.17 for utility classes
   - Custom theming system with dark/light modes
-  - PostCSS with Autoprefixer
+  - PostCSS with Autoprefixer 10.4
 - **Data Visualization**:
-  - React Data Table Component for data grids
-  - React XArrows for visual connections
+  - React Data Table Component 7.4.7 for data grids
+  - React XArrows 2.0.2 for visual connections
+- **Utilities**:
+  - Lodash 4.17.21 for data manipulation
+  - Moment 2.30.1 for date/time handling
+  - DOMPurify 3.2.6 for safe HTML rendering
+  - Immutability Helper 3.1.1 for state updates
+  - usehooks-ts 2.7.2 for reusable React hooks
+  - React Device Detect 2.2.3 for device-aware UI
 
 ### Storage & Security
-- **Client Storage**: LocalForage with IndexedDB (localStorage fallback)
-- **Encryption**: Crypto-js AES encryption for persisted state
+- **Client Storage**: LocalForage 1.10.0 with IndexedDB (localStorage fallback)
+- **Encryption**: Crypto-js 4.2.0 AES encryption for persisted state
 - **Data Persistence**: Redux Persist with encrypted serialization
 
 ### Development Tools
-- **Build System**: Vite with custom configuration
+- **Build System**: Vite 6 with custom configuration
   - Code splitting and lazy loading
   - Chunk optimization for vendor libraries
-  - Terser minification for production
-  - Node.js polyfills (crypto, stream, buffer, util)
+  - Node.js polyfills (crypto, stream, buffer, util, process, vm)
 - **Code Quality**:
-  - ESLint 8.57.0 with TypeScript support
+  - ESLint 8.57.0 with TypeScript support (@typescript-eslint 5.45)
   - Prettier 3.2.5 for code formatting
   - Stylelint 15.11.0 for SCSS/CSS linting
-  - Pre-commit hooks
-- **Testing**: 
-  - Jest with React Testing Library
-  - Testing Library User Event
+  - Vite ESLint & Stylelint plugins for real-time feedback
 - **TypeScript**:
-  - Strict type checking
+  - Strict type checking (TypeScript 5.5.3)
   - Custom type definitions
-  - Path aliases (@/ for src/)
+  - Separate app/node tsconfig files
 
 ### Performance Optimization
 - **Loading Strategies**:
@@ -103,28 +110,48 @@ PokeGoBreeze is a comprehensive, feature-rich web application designed for Poké
 /src
 ├── assets           # Static assets, images, global styles and theme definitions, and icons
 ├── components       # Reusable UI components
+│   ├── Card         # Card-based display components
+│   ├── Commons      # Shared layout & navigation components (e.g. navbars)
+│   ├── Effective    # Type effectiveness components
+│   ├── ErrorBoundary # Global error boundary
+│   ├── Find         # Find/search helper components
+│   ├── Info         # Info display components
+│   ├── Link         # Link-related components
+│   ├── Raid         # Raid-related components
+│   ├── Spinner      # Loading spinner
+│   └── Sprites      # Pokémon sprite components
+├── composables      # Reusable composition hooks (useTimestamp, useTheme, useDevice, useRouter, ...)
+├── contexts         # React contexts (options, snackbar, ...)
 ├── core             # Core functionality and utilities
 ├── data             # Static data files and game data
 ├── enums            # TypeScript enumerations
 ├── pages            # Application pages and routes
+│   ├── Error        # 404 / error page
 │   ├── Move         # Move details and information
 │   ├── News         # Game news and updates
-│   ├── PVP          # PVP battle simulator and rankings
+│   ├── PVP          # PVP battle simulator, rankings, teams, leagues
 │   ├── Pokedex      # Pokémon listing and information
 │   ├── Pokemon      # Individual Pokémon details
 │   ├── Search       # Search functionality for Pokémon/moves/types
-│   ├── Sheets       # Data sheets (DPS/TDO, rankings)
+│   ├── Sheets       # Data sheets (DPS/TDO, stats rankings)
 │   ├── Sticker      # Sticker collection
-│   ├── Tools        # Various calculators and tools
+│   ├── Tools        # Calculators: BattleDamage, CalculatePoint, CalculateStats,
+│   │                #              CatchChance, FindTable, RaidBattle,
+│   │                #              SearchBattle, StatsInfo
+│   ├── Trainer      # Trainer-related views
 │   ├── TypeEffect   # Type effectiveness charts
-│   └── Weather      # Weather boost information
+│   ├── Weather      # Weather boost information
+│   └── models       # Page-level models / types
 ├── services         # API services and data fetching
 ├── store            # Redux store configuration
 │   ├── actions      # Redux actions
-│   ├── effects      # Side effects and async logic
+│   ├── constants    # Action types and store constants
+│   ├── middleware   # Custom Redux middleware
+│   ├── models       # Store models / types
 │   ├── reducers     # State reducers
-│   └── selectors    # State selectors
-└── util             # Utility functions and helpers
+│   └── configure.ts # Store setup with persistence
+├── types            # Global TypeScript type definitions
+└── utils            # Utility functions, hooks, helpers, and configs
 ```
 
 ## Features
@@ -344,22 +371,21 @@ export REACT_APP_ENCRYPTION_SALT="your_encryption_salt"
 
 ### Development
 
-**Start the development server** (runs on `http://localhost:9000`):
+**Start the development server**:
 ```bash
 npm run develop
+# or
+npm start
 ```
 
 The development server includes:
-- ⚡ Hot Module Replacement (HMR)
+- ⚡ Hot Module Replacement (HMR) via Vite
 - 🔍 ESLint and Stylelint real-time checking
 - 🎨 SCSS preprocessing
 - 🔧 Source maps for debugging
 
 **Other development commands**:
 ```bash
-# Run tests
-npm test
-
 # Lint code (ESLint + Stylelint)
 npm run lint
 
@@ -401,7 +427,7 @@ npm run build     # Build and generate sitemap
 **Preview production build locally**:
 ```bash
 # After building, you can preview the production build
-npx vite preview --port 9000
+npx vite preview
 ```
 
 ### Docker Deployment
@@ -448,14 +474,20 @@ vercel --prod
 
 | Script | Description |
 |--------|-------------|
-| `npm start` | Start development server (legacy React Scripts) |
-| `npm run develop` | Start Vite development server on port 9000 |
+| `npm start` | Start Vite dev server (sources `config.sh` first) |
+| `npm run develop` | Alias for `npm start` |
 | `npm run build` | Build production bundle and generate sitemap |
-| `npm run deploy` | Lint, build, and prepare for deployment |
-| `npm test` | Run test suite with Jest |
+| `npm run build:vite` | Build production bundle only (no sitemap) |
+| `npm run prebuild` | Clean `dist/` folder before building |
+| `npm run deploy` | Lint, build, and generate sitemap for deployment |
 | `npm run lint` | Run ESLint and Stylelint |
+| `npm run lint:code` | Run ESLint only |
+| `npm run lint:style` | Run Stylelint only |
 | `npm run format` | Format code with Prettier and Stylelint |
+| `npm run format:code` | Run Prettier only |
+| `npm run format:style` | Run Stylelint --fix only |
 | `npm run generate:sitemap` | Generate sitemap.xml for SEO |
+| `npm run debug-vite` | Start Vite with `--debug --force` for diagnostics |
 
 ### Browser Support
 
@@ -469,10 +501,10 @@ vercel --prod
 
 **Port already in use**:
 ```bash
-# Kill process on port 9000 (macOS/Linux)
-lsof -ti:9000 | xargs kill -9
+# Identify and kill the process using the Vite dev-server port (macOS/Linux)
+lsof -ti:<port> | xargs kill -9
 
-# Or change port in vite.config.ts
+# Or change the port in vite.config.ts / via the --port flag
 ```
 
 **Clear Vite cache**:
@@ -519,7 +551,6 @@ Contributions are welcome and greatly appreciated! Whether you're fixing bugs, a
    ```bash
    npm run lint    # Check for linting errors
    npm run format  # Format code
-   npm test        # Run tests
    ```
 
 6. **Commit your changes**
@@ -550,7 +581,6 @@ Contributions are welcome and greatly appreciated! Whether you're fixing bugs, a
   - `refactor:` for code refactoring
   - `test:` for adding tests
   - `chore:` for maintenance tasks
-- **Testing**: Add tests for new features when applicable
 - **Documentation**: Update README and code comments as needed
 - **Branch Naming**: Use descriptive names like `feature/pvp-team-builder` or `fix/damage-calculator-bug`
 
@@ -588,12 +618,14 @@ When reporting issues, please include:
 - 🏆 **Community Features**: Share teams and strategies with other players
 
 ### Recent Updates
-- ⚡ Migrated from Webpack to Vite for faster builds
-- 🎨 Updated to modern SCSS @use syntax
+- 🚀 Upgraded Vite from v5 to v6 for faster builds and updated `.gitignore`
+- 🖼️ Fixed Pokémon sprite ID padding to 4 digits
+- 🛡️ Added Pokémon encounter fallback and guarded string replace errors
+- 🎨 Adjusted HP bar gap styling
+- ⚔️ Updated UI styling and fixed raid battle state management
+- 🎨 Migrated to modern SCSS `@use` syntax
 - 🔐 Enhanced security with encrypted storage
-- 📊 Improved Redux DevTools performance
-- 🚀 Optimized bundle size with better code splitting
-- 🎯 Enhanced TypeScript type safety
+- 🎯 Continued TypeScript type-safety improvements across composables and stores
 
 ## Performance & Optimization
 
@@ -617,7 +649,7 @@ PokeGoBreeze is built with performance in mind:
 
 ## Acknowledgments
 
-- **Pokémon GO**: © 2016-2024 Niantic, Inc. © 2016-2024 Pokémon. © 1995-2024 Nintendo/Creatures Inc./GAME FREAK inc.
+- **Pokémon GO**: © 2016-2026 Niantic, Inc. © 2016-2026 Pokémon. © 1995-2026 Nintendo/Creatures Inc./GAME FREAK inc.
 - **Data Sources**: Thanks to the Pokémon GO community for data contributions
 - **Open Source Libraries**: Built with amazing open-source tools and libraries
 - **Contributors**: Special thanks to all contributors who have helped improve this project

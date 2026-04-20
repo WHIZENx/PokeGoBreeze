@@ -92,10 +92,6 @@ img.pokemon-sprite-battle {
   @apply tw-py-[3px] tw-px-2 tw-rounded-full tw-cursor-pointer;
 }
 
-.ic-group-small {
-  @apply tw-absolute tw-right-[5px];
-}
-
 .ic-copy-small,
 .ic-remove-small {
   @apply tw-py-[3px] tw-px-2 tw-rounded-full tw-cursor-pointer;
@@ -109,10 +105,6 @@ img.pokemon-sprite-battle {
 .ic-remove:not(.click-none):hover,
 .ic-remove-small:not(.click-none):hover {
   background-color: #bb0707 !important;
-}
-
-.text-group-small {
-  @apply tw-absolute tw-left-[5px] tw-font-bold;
 }
 
 .slot-active {

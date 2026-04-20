@@ -12,8 +12,6 @@
 }
 
 // Selection classes
-.highlight-select-pokemon,
-.current-select-pokemon,
 .selected {
   @include theme-background(var(--custom-selected), true);
 }
@@ -32,8 +30,7 @@
 
 // Card classes with shared border
 .card-pokemon,
-.card-move,
-.card-pokemon-select {
+.card-move {
   @include theme-border(1px, top, var(--background-table-divided));
   @include hover-effect;
 }
@@ -46,48 +43,6 @@
 .moveset-error-msg {
   @include theme-background(var(--custom-default));
   @include theme-text(var(--error-main, #f44336));
-}
-
-// Button styling using CSS variables
-.types-select-btn {
-
-  button.btn-select-type {
-    @include theme-border(1px, top, var(--custom-btn-type-border));
-    @include theme-border(1px, bottom, var(--custom-btn-type-border));
-  }
-
-  div.col:first-child button.btn-select-type {
-    @include theme-border(1px, left, var(--custom-btn-type-border));
-  }
-  div.col:not(:first-child) button.btn-select-type {
-    @include theme-border(0.5px, left, var(--custom-btn-type-border));
-  }
-
-  div.col:last-child button.btn-select-type {
-    @include theme-border(1px, right, var(--custom-btn-type-border));
-  }
-  div.col:not(:last-child) button.btn-select-type {
-    @include theme-border(0.5px, right, var(--custom-btn-type-border));
-  }
-}
-
-.btn-select-type {
-  @include theme-background(var(--background-btn-type));
-  @include theme-text(var(--text-primary));
-  @include theme-transition;
-
-  &:hover:not(.select-type) {
-    @include theme-background(var(--background-table-hover));
-  }
-
-  &.select-type {
-    @include theme-background(var(--background-btn-type-select));
-    @include theme-border(1px, all, white);
-
-    span {
-      @include theme-text(white, true);
-    }
-  }
 }
 
 // Border input styling
@@ -111,11 +66,6 @@
 .sticker-container h5 {
   @include theme-background(var(--table-head));
   @include theme-border;
-}
-
-// Shadow classes
-.theme-shadow {
-  text-shadow: 1px 1px var(--shadow-custom);
 }
 
 a.pokemon-link:hover {
@@ -168,7 +118,6 @@ a.pokemon-link:hover {
 .reward-league.group-rank-league,
 .bg-ref-pokemon,
 .result-type ul,
-.result-weather ul,
 .result-move ul,
 .pokemon-content,
 .table-raid-cal thead tr th:nth-child(1),
@@ -214,34 +163,12 @@ a.pokemon-link:hover {
   @include info-table-style(true);
 }
 
-.ranking-link-group button {
-  @include info-table-style;
-}
-
 // Table classes with sub-header styles
 .table-info,
 .table-main,
 .table-moves {
   tbody tr td.table-sub-header {
     @include sub-head-style;
-  }
-}
-
-// Form button styling
-.btn-form {
-  @include theme-background(var(--custom-btn-form), true);
-  @include theme-text(var(--text-primary), true);
-
-  &:hover:not(.form-selected) {
-    @include theme-background(var(--custom-btn-form-hover));
-  }
-
-  &:focus {
-    @include theme-background(var(--custom-btn-form-focus));
-  }
-
-  &.form-selected {
-    @include theme-background(var(--custom-btn-form-selected), true);
   }
 }
 
@@ -255,7 +182,6 @@ a.pokemon-link:hover {
   @include theme-text(var(--body-color), true);
 }
 
-.pokemon-select-right,
 .select-down {
   @include theme-background(var(--body-color));
 }
@@ -296,23 +222,13 @@ td,
   @include theme-border(1px, right);
 }
 
-.card-ranking,
-.custom-border-left-2 {
+.card-ranking {
   @include theme-border(2px, left);
-}
-
-.card-ranking,
-.custom-border-right-2 {
   @include theme-border(2px, right);
-}
-
-.card-ranking,
-.custom-border-bottom-2 {
   @include theme-border(2px, bottom);
 }
 
-.card-ranking:first-of-type,
-.custom-border-top-2 {
+.card-ranking:first-of-type {
   @include theme-border(2px, top);
 }
 
@@ -328,7 +244,6 @@ td,
 }
 
 .border-types,
-.btn-form,
 .btn-default,
 .border-window,
 .count-pokemon,
@@ -349,7 +264,6 @@ td,
 
 .move-img-desc img,
 .img-desc,
-.border-box-battle,
 .stats-boss {
   @include thick-standard-border;
 }
@@ -377,10 +291,6 @@ td,
   @include theme-background(var(--custom-according-header));
 }
 
-.accordion-footer {
-  @include theme-background(var(--custom-according-footer));
-}
-
 .card-header {
   @include theme-background(var(--custom-dropdown-header), true);
 }
@@ -406,10 +316,6 @@ td,
 
 .play-line {
   @include theme-background(var(--background-revert));
-}
-
-.league-opened .accordion-button.collapsed {
-  @include theme-background(var(--custom-according-highlight));
 }
 
 .table-catch-chance tbody td:not(.table-catch-chance tbody td:nth-child(1)) {
@@ -442,14 +348,11 @@ td,
 }
 
 // Group elements with top bs-border
-.accordion-footer,
 .turn-battle {
   @include border-with-side(top);
 }
 
 // Group elements with identical hover border styling
-.btn-form:focus,
-.btn-form:hover:not(.form-selected),
 .list-item-ranking:hover {
   @include black-hover-border;
 }
@@ -481,10 +384,6 @@ td,
 
 .iv-bg-bar {
   @include theme-background(var(--custom-btn-form));
-}
-
-.impossible-encounter {
-  @include theme-background(var(--custom-background-unavailable));
 }
 
 .text-not-encounter {

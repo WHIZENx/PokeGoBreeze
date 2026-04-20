@@ -87,33 +87,6 @@
   @apply tw-min-w-0;
 }
 
-
-.ranking-link-group button {
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
-}
-
-.ranking-link-group button.active {
-  @apply tw-font-bold;
-}
-
-.ranking-link-group button:not(:first-of-type, :last-of-type) {
-  border-left: 0.5px solid black;
-  border-right: 0.5px solid black;
-}
-
-.ranking-link-group button:first-of-type {
-  border-left: 1px solid black;
-  border-right: 0.5px solid black;
-}
-
-.ranking-link-group button:last-of-type {
-  border-left: 0.5px solid black;
-  border-right: 1px solid black;
-}
-
 .moves-title {
   @apply tw-py-2 tw-px-0 tw-font-bold tw-text-center;
 }
