@@ -600,6 +600,32 @@ export const getBaseStatsByIVandLevel = (
   });
 };
 
+// Expands all IV combos for a single level. Returns the next seqId.
+const collectStatsProdForLevel = (
+  atk: number,
+  def: number,
+  sta: number,
+  level: number,
+  minCp: number,
+  maxCP: number,
+  startSeqId: number,
+  out: IBattleBaseStats[]
+): number => {
+  let seqId = startSeqId;
+  for (let atkIV = minIv(); atkIV <= maxIv(); ++atkIV) {
+    for (let defIV = minIv(); defIV <= maxIv(); ++defIV) {
+      for (let staIV = minIv(); staIV <= maxIv(); ++staIV) {
+        const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
+        if ((minCp === 0 || minCp <= cp) && (maxCP === 0 || cp <= maxCP)) {
+          out.push(getBaseStatsByIVandLevel(atk, def, sta, cp, seqId, level, atkIV, defIV, staIV));
+          seqId++;
+        }
+      }
+    }
+  }
+  return seqId;
+};
+
 export const calStatsProd = (atk: number, def: number, sta: number, minCp: number, maxCP: number, isPure = false) => {
   const dataList: IBattleBaseStats[] = [];
   if (atk === 0 || def === 0 || sta === 0) {
@@ -607,16 +633,44 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCp: numbe
   }
   let seqId = 0;
   for (let level = minLevel(); level <= maxLevel(); level += stepLevel()) {
-    for (let atkIV = minIv(); atkIV <= maxIv(); ++atkIV) {
-      for (let defIV = minIv(); defIV <= maxIv(); ++defIV) {
-        for (let staIV = minIv(); staIV <= maxIv(); ++staIV) {
-          const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
-          if ((minCp === 0 || minCp <= cp) && (maxCP === 0 || cp <= maxCP)) {
-            dataList.push(getBaseStatsByIVandLevel(atk, def, sta, cp, seqId, level, atkIV, defIV, staIV));
-            seqId++;
-          }
-        }
-      }
+    seqId = collectStatsProdForLevel(atk, def, sta, level, minCp, maxCP, seqId, dataList);
+  }
+
+  return isPure ? dataList : sortStatsProd(dataList);
+};
+
+const yieldToMain = () => new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+
+// Async variant: yields to the browser every few levels so the UI stays responsive
+// during the ~300k iteration sweep, and exits early on AbortSignal.
+export const calStatsProdAsync = async (
+  atk: number,
+  def: number,
+  sta: number,
+  minCp: number,
+  maxCP: number,
+  isPure = false,
+  signal?: AbortSignal
+): Promise<IBattleBaseStats[]> => {
+  const dataList: IBattleBaseStats[] = [];
+  if (atk === 0 || def === 0 || sta === 0) {
+    return dataList;
+  }
+  const maxLv = maxLevel();
+  const step = stepLevel();
+  const LEVELS_PER_YIELD = 4; // ~16k iterations per yield, fits a typical frame budget
+  let seqId = 0;
+  let levelsSinceYield = 0;
+
+  for (let level = minLevel(); level <= maxLv; level += step) {
+    if (signal?.aborted) {
+      throw new DOMException('aborted', 'AbortError');
+    }
+    seqId = collectStatsProdForLevel(atk, def, sta, level, minCp, maxCP, seqId, dataList);
+    levelsSinceYield++;
+    if (levelsSinceYield >= LEVELS_PER_YIELD && level + step <= maxLv) {
+      levelsSinceYield = 0;
+      await yieldToMain();
     }
   }
 
