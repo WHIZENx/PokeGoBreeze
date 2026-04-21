@@ -1,9 +1,9 @@
 import { Box } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { startTransition, useCallback, useEffect, useRef, useState } from 'react';
 import { TableColumn } from 'react-data-table-component';
 
 import { createDataRows, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
-import { calStatsProd, sortStatsProd } from '../../../utils/calculate';
+import { calStatsProdAsync, sortStatsProd } from '../../../utils/calculate';
 
 import Find from '../../../components/Find/Find';
 import { leaguesTeamBattle } from '../../../utils/constants';
@@ -14,7 +14,6 @@ import { isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { ColumnType } from '../../../enums/type.enum';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
-import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/options-context.helpers';
@@ -112,63 +111,53 @@ const StatsInfo = () => {
 
   const { showSnackbar } = useSnackbar();
 
+  // Memoize results by (atk, def, sta) so revisiting the same Pokemon is instant
+  const statsCacheRef = useRef(new Map<string, IBattleBaseStats[]>());
+
   useEffect(() => {
-    const controller = new AbortController();
+    const atk = toNumber(searchingToolCurrentDetails?.statsGO?.atk);
+    const def = toNumber(searchingToolCurrentDetails?.statsGO?.def);
+    const sta = toNumber(searchingToolCurrentDetails?.statsGO?.sta);
+    if (atk <= 0 || def <= 0 || sta <= 0) {
+      return;
+    }
+
+    const cacheKey = `${atk}:${def}:${sta}`;
+    const cached = statsCacheRef.current.get(cacheKey);
+    if (cached) {
+      setStatsBattle(cached);
+      return;
+    }
+
     if (isNotEmpty(statsBattle)) {
       setStatsBattle([]);
       setIsLoading(true);
     }
-    if (
-      toNumber(searchingToolCurrentDetails?.statsGO?.atk) > 0 &&
-      toNumber(searchingToolCurrentDetails?.statsGO?.def) > 0 &&
-      toNumber(searchingToolCurrentDetails?.statsGO?.sta) > 0
-    ) {
-      calculateStats(controller.signal)
+
+    const controller = new AbortController();
+    // Delay lets the spinner paint first and lets rapid Pokemon switches cancel
+    // the pending work before the chunked compute even starts.
+    const timeoutId = window.setTimeout(() => {
+      calStatsProdAsync(atk, def, sta, minCp(), BattleLeagueCPType.InsMaster, true, controller.signal)
         .then((data) => {
-          setStatsBattle(data);
+          statsCacheRef.current.set(cacheKey, data);
+          // The resulting table re-render is heavy — mark it interruptible
+          startTransition(() => setStatsBattle(data));
         })
-        .catch(() => setStatsBattle([]));
-    }
-    return () => controller.abort();
+        .catch(() => {
+          // AbortError — user switched Pokemon mid-compute. Ignore.
+        });
+    }, statsDelay());
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [
     searchingToolCurrentDetails?.statsGO?.atk,
     searchingToolCurrentDetails?.statsGO?.def,
     searchingToolCurrentDetails?.statsGO?.sta,
   ]);
-
-  const calculateStats = (signal: AbortSignal, delay = statsDelay()) => {
-    return new Promise<IBattleBaseStats[]>((resolve, reject) => {
-      let result: IBattleBaseStats[] = [];
-
-      const abortHandler = () => {
-        debouncedResolve.cancel();
-        reject();
-      };
-
-      const resolveHandler = () => {
-        if (signal instanceof AbortSignal) {
-          signal.removeEventListener('abort', abortHandler);
-        }
-        result = calStatsProd(
-          toNumber(searchingToolCurrentDetails?.statsGO?.atk),
-          toNumber(searchingToolCurrentDetails?.statsGO?.def),
-          toNumber(searchingToolCurrentDetails?.statsGO?.sta),
-          minCp(),
-          BattleLeagueCPType.InsMaster,
-          true
-        );
-        resolve(result);
-      };
-
-      const debouncedResolve = debounce(resolveHandler, delay);
-
-      debouncedResolve();
-
-      if (signal instanceof AbortSignal) {
-        signal.addEventListener('abort', abortHandler, { once: true });
-      }
-    });
-  };
 
   useEffect(() => {
     if (isNotEmpty(statsBattle)) {
