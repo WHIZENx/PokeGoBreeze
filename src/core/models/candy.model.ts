@@ -81,3 +81,19 @@ export interface ICandyModel {
   PrimaryColor: IColor;
   SecondaryColor: IColor;
 }
+
+export interface IFamilyMember {
+  id: number;
+  name: string;
+}
+
+export interface IUpstreamCandyColor {
+  FamilyId: number;
+  PrimaryColor: IColor;
+  SecondaryColor: IColor;
+}
+
+export interface IUpstreamCandyData {
+  m_Name: string;
+  CandyColors: IUpstreamCandyColor[];
+}

@@ -42,6 +42,7 @@ import {
   optionPokeSound,
   optionAssets,
   mappingReleasedPokemonGO,
+  initializeStaticData,
 } from '../core/options';
 import { APIUrl } from '../services/constants';
 import { APITreeRoot, APITree } from '../services/models/api.model';
@@ -54,7 +55,6 @@ import { calculateBaseCPM, calculateCPM } from '../core/cpm';
 import { maxIv, minIv } from '../utils/helpers/options-context.helpers';
 import { BASE_CPM } from '../utils/constants';
 import { useSnackbar } from '../contexts/snackbar.context';
-import pokemonEncounterData from '../data/pokemon_encounter.json';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -201,8 +201,11 @@ export const useDataStore = () => {
           const { data } = await APIService.getFetchNeon<PokemonEncounter[]>('tblpokemonencounter');
           pokemonEncounter.push(...data);
         } catch {
-          pokemonEncounter.push(...pokemonEncounterData);
+          const pokemonEncounterData = await import('../data/pokemon_encounter.json');
+          pokemonEncounter.push(...pokemonEncounterData.default);
         }
+
+        await initializeStaticData();
 
         const pokemon = optionPokemonData(gm.data, pokemonEncounter);
 
