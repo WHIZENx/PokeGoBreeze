@@ -1,5 +1,21 @@
+.table-info {
+  @apply tw-w-full;
+}
+
+.table-info td:nth-child(1) {
+  @apply tw-w-1/2;
+}
+
 .battle-league td:nth-child(1) {
   @apply tw-w-[35%];
+}
+
+.table-info thead tr {
+  @apply tw-font-bold;
+}
+
+.table-info tbody tr td:nth-child(1) {
+  @apply tw-font-bold;
 }
 
 .td-style {

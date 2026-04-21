@@ -6,6 +6,7 @@ import { calculateCP, predictCPList, predictStat } from '../../../utils/calculat
 import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
 import dataCPM from '../../../data/cp_multiplier.json';
 
+import '../../../components/Find/FormSelect.scss';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
 import './FindTable.scss';

@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../services/api.service';
 import FormSelect from './FormSelect';
-import './FormSelect.scss';
 
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
