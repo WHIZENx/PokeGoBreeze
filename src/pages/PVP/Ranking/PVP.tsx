@@ -374,7 +374,7 @@ const RankingPVP = (props: IStyleSheetData) => {
         {renderLeague()}
         <hr />
         <ToggleGroupMui
-          className="tw-flex tw-overflow-x-auto tw-mt-2"
+          className="tw-flex tw-overflow-x-auto tw-mt-2 tw-w-full"
           isNoneBorder
           color="primary"
           exclusive
