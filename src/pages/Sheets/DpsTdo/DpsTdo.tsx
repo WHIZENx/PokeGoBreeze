@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { startTransition, useEffect, useRef, useState } from 'react';
 
 import {
   LevelRating,
@@ -454,13 +454,51 @@ const DpsTdo = () => {
     });
   };
 
-  const calculateDPSTable = () => {
+  // Process filtered pokemon in chunks so the UI stays responsive during the
+  // heavy DPS sweep (~1,500 pokemon × many move combos × calculateAvgDPS math).
+  const DPS_CHUNK_SIZE = 150;
+  const yieldToMain = () => new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+
+  const calculateDPSTable = async (signal?: AbortSignal): Promise<PokemonSheetData[]> => {
     const dataList: PokemonSheetData[] = [];
-    getFilteredPokemons().forEach((pokemon) => {
-      addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
-    });
-    setIsShowSpinner(false);
+    const pokemons = getFilteredPokemons();
+    for (let i = 0; i < pokemons.length; i += DPS_CHUNK_SIZE) {
+      if (signal?.aborted) {
+        throw new DOMException('aborted', 'AbortError');
+      }
+      const end = Math.min(i + DPS_CHUNK_SIZE, pokemons.length);
+      for (let j = i; j < end; j++) {
+        addFPokeData(dataList, pokemons[j], getAllMoves(pokemons[j], TypeMove.Fast));
+      }
+      if (end < pokemons.length) {
+        await yieldToMain();
+      }
+    }
     return dataList;
+  };
+
+  // Holds the in-flight DPS controller so a new trigger can abort the previous one.
+  const dpsComputeRef = useRef<AbortController | null>(null);
+
+  const runDpsCompute = () => {
+    dpsComputeRef.current?.abort();
+    const controller = new AbortController();
+    dpsComputeRef.current = controller;
+    setIsShowSpinner(true);
+    calculateDPSTable(controller.signal)
+      .then((data) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+        // The resulting table re-render is heavy — mark it interruptible
+        startTransition(() => {
+          setDpsTable(data);
+          setIsShowSpinner(false);
+        });
+      })
+      .catch(() => {
+        // AbortError — a newer compute started. Ignore.
+      });
   };
 
   const filterBestOptions = (result: PokemonSheetData[], best: BestOptionType) => {
@@ -560,16 +598,15 @@ const DpsTdo = () => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(getFilteredPokemons())) {
-      setIsShowSpinner(true);
-      const debounced = debounce(() => {
-        setDpsTable(calculateDPSTable());
-      }, 300);
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
+    if (!isNotEmpty(getFilteredPokemons())) {
+      return;
     }
+    setIsShowSpinner(true);
+    const timeoutId = window.setTimeout(runDpsCompute, 300);
+    return () => {
+      window.clearTimeout(timeoutId);
+      dpsComputeRef.current?.abort();
+    };
   }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, getFilteredPokemons]);
 
   useEffect(() => {
@@ -656,10 +693,7 @@ const DpsTdo = () => {
 
   const onCalculateTable = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsShowSpinner(true);
-    setTimeout(() => {
-      setDpsTable(calculateDPSTable());
-    }, 300);
+    window.setTimeout(runDpsCompute, 300);
   };
 
   return (

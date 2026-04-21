@@ -15,7 +15,7 @@ import { getValueOrDefault, isUndefined, safeObjectEntries, toNumber, UniqValueI
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
 import { GlobalType, MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
 import { Species, Variety } from './API/species.model';
-import { minLevel, formNormal, defaultSpriteName } from '../../utils/helpers/options-context.helpers';
+import { minLevel, formNormal, defaultSpriteName, unownId } from '../../utils/helpers/options-context.helpers';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -589,7 +589,7 @@ export class PokemonData implements IPokemonData {
     obj.pokemonId = pokemon.pokemonId;
     obj.num = pokemon.id;
     obj.name = capitalize(name);
-    if (pokemon.id !== 201) {
+    if (pokemon.id !== unownId()) {
       obj.fullName =
         pokemon.form && pokemon.pokemonType !== PokemonType.Normal
           ? `${pokemon.pokemonId}_${pokemon.form}`
