@@ -9,10 +9,19 @@ import candy from '../data/pokemon_candy_color_data.json';
 import { maxLevel, minLevel, stepLevel } from './helpers/options-context.helpers';
 import { CostPowerUp } from './models/constants.model';
 
-export const levelList = Array.from(
-  { length: (maxLevel() - minLevel()) / stepLevel() + 1 },
-  (_, i) => 1 + i * stepLevel()
-);
+// Lazy-initialized list of Pokemon GO levels. Previously computed at module load,
+// which captured values from the level getters before config was guaranteed to be
+// set, and would go stale if config ever changed at runtime. Now computes on first
+// access and caches — always reflects the current config, still stable reference.
+let _levelList: number[] | undefined;
+
+export const getLevelList = (): number[] => {
+  if (!_levelList) {
+    const step = stepLevel();
+    _levelList = Array.from({ length: (maxLevel() - minLevel()) / step + 1 }, (_, i) => 1 + i * step);
+  }
+  return _levelList;
+};
 
 export const genRoman = (gen: number | string) => {
   switch (toNumber(gen)) {

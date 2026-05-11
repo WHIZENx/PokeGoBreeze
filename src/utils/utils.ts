@@ -426,7 +426,16 @@ export const getStyleSheet = (selector: string) => {
   return;
 };
 
-export const getStyleList = () => {
+// Cached result — the stylesheet list is effectively immutable per session
+// (theme toggles swap CSS custom properties, not stylesheet rules).
+// Walking document.styleSheets is synchronous and touches many DOM objects;
+// we do it once and reuse. Call `clearStyleListCache()` if an edge case needs it.
+let _styleListCache: IStyleData[] | null = null;
+
+export const getStyleList = (): IStyleData[] => {
+  if (_styleListCache) {
+    return _styleListCache;
+  }
   const result: IStyleData[] = [];
   const sheets = document.styleSheets;
   for (let i = 0, l = sheets.length; i < l; i++) {
@@ -444,7 +453,12 @@ export const getStyleList = () => {
       }
     }
   }
+  _styleListCache = result;
   return result;
+};
+
+export const clearStyleListCache = () => {
+  _styleListCache = null;
 };
 
 export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet) => {
@@ -550,23 +564,49 @@ export const convertFormGif = (name: string | undefined) => {
     .replace('-hero', '');
 };
 
+// WeakMap cache keyed by the ranking array reference. Redux state is immutable, so
+// the same `ranking` array is reused across renders — we build the Map once per
+// unique ranking array, then reuse O(1) lookups. Previously, each call to
+// checkRankAllAvailable did four O(n) `.find()` scans; now it's four O(1) `.get()`s.
+const rankLookupCache = new WeakMap<object, Map<number, number>>();
+
+const getRankLookup = <T extends { rank?: number }>(
+  ranking: T[] | undefined,
+  statKey: keyof T
+): Map<number, number> | undefined => {
+  if (!ranking) {
+    return undefined;
+  }
+  let lookup = rankLookupCache.get(ranking);
+  if (!lookup) {
+    lookup = new Map<number, number>();
+    for (const item of ranking) {
+      lookup.set(item[statKey] as unknown as number, toNumber(item.rank));
+    }
+    rankLookupCache.set(ranking, lookup);
+  }
+  return lookup;
+};
+
 export const checkRankAllAvailable = (pokemonStats: IStatsRank, stats: IStatsPokemonGO) => {
   const data = new StatsRankPokemonGO();
-  const checkRankAtk = pokemonStats.attack?.ranking?.find((item) => item.attack === stats.atk);
-  const checkRankDef = pokemonStats.defense?.ranking?.find((item) => item.defense === stats.def);
-  const checkRankSta = pokemonStats.stamina?.ranking?.find((item) => item.stamina === stats.sta);
-  const checkRankProd = pokemonStats.statProd?.ranking?.find((item) => item.product === stats.prod);
-  if (checkRankAtk) {
-    data.attackRank = checkRankAtk.rank;
+
+  const atkRank = getRankLookup(pokemonStats.attack?.ranking, 'attack')?.get(stats.atk);
+  const defRank = getRankLookup(pokemonStats.defense?.ranking, 'defense')?.get(stats.def);
+  const staRank = getRankLookup(pokemonStats.stamina?.ranking, 'stamina')?.get(stats.sta);
+  const prodRank = getRankLookup(pokemonStats.statProd?.ranking, 'product')?.get(stats.prod);
+
+  if (atkRank !== undefined) {
+    data.attackRank = atkRank;
   }
-  if (checkRankDef) {
-    data.defenseRank = checkRankDef.rank;
+  if (defRank !== undefined) {
+    data.defenseRank = defRank;
   }
-  if (checkRankSta) {
-    data.staminaRank = checkRankSta.rank;
+  if (staRank !== undefined) {
+    data.staminaRank = staRank;
   }
-  if (checkRankProd) {
-    data.statProdRank = checkRankProd.rank;
+  if (prodRank !== undefined) {
+    data.statProdRank = prodRank;
   }
 
   return data;
@@ -580,7 +620,10 @@ const mergeTableStyles = (custom: Partial<TableStyles>, defaults: TableStyles): 
     return { ...defaults };
   }
 
-  const result = JSON.parse(JSON.stringify(defaults)) as TableStyles;
+  // Shallow-copy the top-level + nested objects only for keys actually overridden.
+  // Replaces JSON.parse(JSON.stringify(defaults)) which deep-cloned the entire tree
+  // on every render.
+  const result: TableStyles = { ...defaults };
 
   for (const key in custom) {
     const customKey = key as keyof TableStyles;
@@ -590,16 +633,16 @@ const mergeTableStyles = (custom: Partial<TableStyles>, defaults: TableStyles): 
       continue;
     }
 
+    const defaultValue = defaults[customKey];
     if (
       customValue &&
-      result[customKey] &&
+      defaultValue &&
       typeof customValue === 'object' &&
-      typeof result[customKey] === 'object' &&
+      typeof defaultValue === 'object' &&
       !Array.isArray(customValue) &&
-      !Array.isArray(result[customKey])
+      !Array.isArray(defaultValue)
     ) {
-      const merged = Object.assign({}, result[customKey], customValue);
-      result[customKey] = merged as any;
+      result[customKey] = { ...defaultValue, ...customValue } as any;
     } else {
       result[customKey] = customValue as any;
     }
