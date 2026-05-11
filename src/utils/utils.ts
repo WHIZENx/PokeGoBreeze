@@ -368,7 +368,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
     .replace('-shaymin', '')
-    .replace('-altered', '');
+    .replace('-altered', '')
+    .replace('-armored', '-armor');
   if (isInclude(text, formStandard(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     form = `-${formStandard().toLowerCase()}`;
   }

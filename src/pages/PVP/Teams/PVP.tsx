@@ -84,7 +84,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     const speciesName = convertNameRankingToForm(speciesId);
     const name = convertNameRankingToOri(speciesId, speciesName);
     const pokemon = findPokemonBySlug(name);
-    const id = pokemon?.num;
+    const id = pokemon?.num || 0;
     const form = getAssetNameById(id, name, pokemon?.form);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
@@ -539,7 +539,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 <div className="ranking-group tw-w-full tw-gap-y-3">
                   <div>
                     <div className="tw-flex tw-items-center tw-gap-x-2">
-                      <b className="tw-text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
+                      <b className="tw-text-white text-shadow-black">{`#${value.id || 0} ${splitAndCapitalize(
                         value.name,
                         '-',
                         ' '
@@ -592,7 +592,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         </div>
         <hr />
         <h2>Top Team Pokémon</h2>
-        <div className="tw-grid ranking-container">
+        <div className="ranking-container card-container">
           <div className="ranking-group tw-w-full ranking-header tw-gap-y-3">
             <div className="ranking-score">Team</div>
             <div className="tw-flex tw-mr-5 tw-gap-x-15">
@@ -641,6 +641,7 @@ const TeamPVP = (props: IStyleSheetData) => {
             </div>
           </div>
           <AccordionMui
+            className="!tw-min-w-max"
             items={rankingData?.teams
               .sort((a, b) => setSortedPokemonTeam(a, b))
               .map((value: Teams, index: number) => {

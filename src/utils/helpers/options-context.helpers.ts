@@ -185,3 +185,6 @@ export const defaultSize = () => currentOptions.config.defaultSize;
 export const defaultPlusSize = () => currentOptions.config.defaultPlusSize;
 export const defaultAmount = () => currentOptions.config.defaultAmount;
 export const defaultBlock = () => currentOptions.config.defaultBlock;
+export const weatherBallMoveId = () => currentOptions.config.weatherBallMoveId;
+export const struggleEnergy = () => currentOptions.config.struggleEnergy;
+export const unownId = () => currentOptions.config.unownId;

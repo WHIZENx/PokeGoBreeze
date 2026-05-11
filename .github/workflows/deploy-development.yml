@@ -44,6 +44,10 @@ jobs:
           echo "📝 Commit SHA: ${{ github.sha }}"
           echo "✅ Will deploy: ${{ steps.set-env.outputs.should_deploy }}"
 
+      - name: Install mongosh
+        if: steps.set-env.outputs.should_deploy == 'true'
+        run: npm install -g mongosh
+
       - name: Make deploy script executable
         if: steps.set-env.outputs.should_deploy == 'true'
         run: chmod +x ./deploy.sh
@@ -58,6 +62,7 @@ jobs:
           NEON_REFRESH_TOKEN: ${{ secrets.NEON_REFRESH_TOKEN }}
           NEON_AUTH_USER_ID: ${{ secrets.NEON_AUTH_USER_ID }}
           APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Deploy with Edge Config updates
         if: steps.set-env.outputs.should_deploy == 'true'
@@ -73,6 +78,7 @@ jobs:
           NEON_REFRESH_TOKEN: ${{ secrets.NEON_REFRESH_TOKEN }}
           NEON_AUTH_USER_ID: ${{ secrets.NEON_AUTH_USER_ID }}
           APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Deployment Summary
         if: steps.set-env.outputs.should_deploy == 'true' && success()

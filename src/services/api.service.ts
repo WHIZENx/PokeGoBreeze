@@ -19,6 +19,7 @@ import {
   formPrimal,
   formStandard,
   pathAssetPokeGo,
+  unownId,
 } from '../utils/helpers/options-context.helpers';
 
 class APIService {
@@ -260,7 +261,7 @@ class APIService {
         );
       }
       return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(4, '0')}${
-        form && id !== 201 ? `-${form}` : ''
+        form && id !== unownId() ? `-${form}` : ''
       }.png`;
     }
     return this.getPokeFullAsset();

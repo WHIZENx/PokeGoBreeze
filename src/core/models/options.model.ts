@@ -635,6 +635,9 @@ export interface IConfig {
   defaultPlusSize: number;
   defaultAmount: number;
   defaultBlock: number;
+  weatherBallMoveId: number;
+  struggleEnergy: number;
+  unownId: number;
 }
 
 export class Config implements IConfig {
@@ -717,6 +720,9 @@ export class Config implements IConfig {
   defaultPlusSize = 0;
   defaultAmount = 0;
   defaultBlock = 0;
+  weatherBallMoveId = 0;
+  struggleEnergy = 0;
+  unownId = 0;
 }
 
 export interface IOptions {

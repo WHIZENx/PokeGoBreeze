@@ -147,20 +147,43 @@ export const useCalculate = () => {
     });
   };
 
-  const counterPokemon = (def: number, types: string[] | undefined) => {
+  // Process pokemon in chunks, yielding to the browser between batches so the UI
+  // can paint and respond to input. ~150 × ~10 move combos ≈ 1500 calculateAvgDPS
+  // calls per chunk — a typical frame budget on a modern device.
+  const COUNTER_CHUNK_SIZE = 150;
+  const yieldToMain = () => new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+
+  const counterPokemon = async (
+    def: number,
+    types: string[] | undefined,
+    signal?: AbortSignal
+  ): Promise<CounterModel[]> => {
     const dataList: IPokemonQueryCounter[] = [];
-    getFilteredPokemons().forEach((pokemon) => {
-      if (
-        checkMoveSetAvailable(pokemon) &&
-        !isInclude(pokemon.fullName, '_FEMALE') &&
-        !isEqual(pokemon.pokemonType, PokemonType.GMax)
-      ) {
-        const data = new QueryMovesCounterPokemon(pokemon, def, types, dataList);
-        const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
-        const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
-        setQueryMoveCounter(data, fastMoveSet, chargedMoveSet);
+    const pokemons = getFilteredPokemons();
+
+    for (let i = 0; i < pokemons.length; i += COUNTER_CHUNK_SIZE) {
+      if (signal?.aborted) {
+        throw new DOMException('aborted', 'AbortError');
       }
-    });
+      const end = Math.min(i + COUNTER_CHUNK_SIZE, pokemons.length);
+      for (let j = i; j < end; j++) {
+        const pokemon = pokemons[j];
+        if (
+          checkMoveSetAvailable(pokemon) &&
+          !isInclude(pokemon.fullName, '_FEMALE') &&
+          !isEqual(pokemon.pokemonType, PokemonType.GMax)
+        ) {
+          const data = new QueryMovesCounterPokemon(pokemon, def, types, dataList);
+          const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
+          const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
+          setQueryMoveCounter(data, fastMoveSet, chargedMoveSet);
+        }
+      }
+      if (end < pokemons.length) {
+        await yieldToMain();
+      }
+    }
+
     return dataList
       .sort((a, b) => b.dps - a.dps)
       .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / toNumber(dataList.at(0)?.dps, 1) }));

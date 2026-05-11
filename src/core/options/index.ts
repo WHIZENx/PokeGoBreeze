@@ -1,0 +1,11 @@
+export { initializeStaticData } from './_shared';
+export { optionSettings } from './settings';
+export { optionPokemonTypes, optionPokemonWeather } from './types';
+export { optionPokemonData, mappingReleasedPokemonGO, mappingMoveSetPokemonGO } from './pokemon';
+export { optionSticker } from './sticker';
+export { optionPokeImg, optionPokeSound, optionAssets } from './assets';
+export { optionCombat } from './combat';
+export { optionLeagues } from './leagues';
+export { optionEvolutionChain } from './evolution';
+export { optionInformation } from './information';
+export { optionTrainer } from './trainer';

@@ -1,6 +1,6 @@
 {
   "name": "pokego-breeze",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "main": "index.tsx",
   "license": "MIT",
   "description": "Web Application for Pokémon GO Tools&Information",
@@ -114,14 +114,14 @@
     "vm-browserify": "^1.1.2"
   },
   "peerDependencies": {
-    "postcss": "8.4.31"
+    "postcss": "8.5.14"
   },
   "overrides": {
     "typescript": "5.5.3",
     "cross-spawn": "6.0.6",
     "got": "11.8.5",
     "nth-check": "2.0.1",
-    "postcss": "8.4.31",
+    "postcss": "8.5.14",
     "semver-regex": "3.1.4",
     "ws": "8.17.1",
     "webpack-dev-server": "5.2.1",

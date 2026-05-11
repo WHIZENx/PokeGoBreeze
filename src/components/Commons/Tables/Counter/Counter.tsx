@@ -1,5 +1,5 @@
 import { Checkbox, Skeleton } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { startTransition, useEffect, useRef, useState } from 'react';
 import APIService from '../../../../services/api.service';
 import {
   convertPokemonDataName,
@@ -33,7 +33,6 @@ import { LinkToTop } from '../../../Link/LinkToTop';
 import PokemonIconType from '../../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../../utils/models/extension.model';
 import IconType from '../../../Sprites/Icon/Type/Type';
-import { debounce } from 'lodash';
 import CustomDataTable from '../CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../../utils/enums/string.enum';
 import { counterDelay } from '../../../../utils/helpers/options-context.helpers';
@@ -124,6 +123,9 @@ const Counter = (props: ICounterComponent) => {
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
   const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
   const [showFrame, setShowFrame] = useState(true);
+
+  // Memoize counter results by (def, types) so revisiting a Pokemon is instant
+  const counterCacheRef = useRef(new Map<string, ICounterModel[]>());
 
   const [options, setOptions] = useState(optionsCounter);
 
@@ -270,48 +272,44 @@ const Counter = (props: ICounterComponent) => {
   );
 
   useEffect(() => {
+    const types = props.pokemonData?.types;
+    if (isNullOrUndefined(props.pokemonData) || !types || !isNotEmpty(types)) {
+      return;
+    }
+
+    const def = toNumber(props.pokemonData.statsGO?.def);
+    const cacheKey = `${def}:${types.join(',')}`;
+
+    // Fast path: we've computed this (def, types) before in this session
+    const cached = counterCacheRef.current.get(cacheKey);
+    if (cached) {
+      setCounterList(cached);
+      return;
+    }
+
+    setCounterFilter([]);
+    setShowFrame(true);
+
     const controller = new AbortController();
-    if (isNotEmpty(counterList)) {
-      setCounterFilter([]);
-      setShowFrame(true);
-    }
-    if (!isNullOrUndefined(props.pokemonData) && isNotEmpty(props.pokemonData.types)) {
-      calculateCounter(controller.signal)
-        .then((data) => {
-          setCounterList(data);
+    // Delay lets the skeleton paint first and lets rapid Pokemon switches cancel
+    // the pending work before the chunked compute even starts.
+    const timeoutId = window.setTimeout(() => {
+      counterPokemon(def, types, controller.signal)
+        .then((result) => {
+          counterCacheRef.current.set(cacheKey, result);
+          // Mark the heavy table re-render as interruptible so UI stays responsive
+          startTransition(() => setCounterList(result));
         })
-        .catch(() => setShowFrame(true));
-    }
-    return () => controller.abort();
+        .catch(() => {
+          // AbortError — user switched Pokemon mid-compute. Ignore.
+        });
+    }, counterDelay());
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
-
-  const calculateCounter = (signal: AbortSignal, delay = counterDelay()) => {
-    return new Promise<ICounterModel[]>((resolve, reject) => {
-      let result: ICounterModel[] = [];
-
-      const resolveHandler = () => {
-        if (props.pokemonData) {
-          result = counterPokemon(toNumber(props.pokemonData.statsGO?.def), props.pokemonData.types);
-        }
-
-        if (signal instanceof AbortSignal) {
-          signal.removeEventListener('abort', abortHandler);
-        }
-        resolve(result);
-      };
-
-      const debouncedResolve = debounce(resolveHandler, delay);
-
-      const abortHandler = () => {
-        debouncedResolve.cancel();
-        reject();
-      };
-      if (signal instanceof AbortSignal) {
-        signal.addEventListener('abort', abortHandler, { once: true });
-      }
-      debouncedResolve();
-    });
-  };
 
   useEffect(() => {
     setCounterOptions(options);

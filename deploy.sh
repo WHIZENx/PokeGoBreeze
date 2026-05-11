@@ -26,6 +26,7 @@ NEON_SECRET_SERVER_KEY=${NEON_SECRET_SERVER_KEY:-$STACK_SECRET_SERVER_KEY}
 NEON_REFRESH_TOKEN=${NEON_REFRESH_TOKEN:-$NEON_REFRESH_TOKEN}
 NEON_AUTH_USER_ID=${NEON_AUTH_USER_ID:-$NEON_AUTH_USER_ID}
 APP_DEPLOYMENT_MODE=${APP_DEPLOYMENT_MODE:-${REACT_APP_DEPLOYMENT_MODE:-development}}
+MONGODB_URI=${MONGODB_URI:-$MONGODB_URI}
 
 YEAR_DIGIT=$(date +"%Y" | grep -o '.$')
 MONTH_DAY=$(date +"%m%d")
@@ -59,6 +60,24 @@ else
   echo "=== Edge Config Update Failed ==="
   echo "Error response: $RESPONSE_BODY"
   exit 1
+fi
+
+echo "=== Exporting version to MongoDB ==="
+if [[ -z "$MONGODB_URI" ]]; then
+  echo "=== MongoDB export skipped: MONGODB_URI is not set ==="
+else
+  TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+  MONGO_RESULT=$(mongosh "$MONGODB_URI" --quiet --eval \
+    "db.getSiblingDB('main').versions.insertOne({ version: '$VERSION', timestamp: '$TIMESTAMP', deployedAt: new Date() })" 2>&1)
+
+  if [[ $? -eq 0 ]]; then
+    echo "=== MongoDB version exported successfully ==="
+  else
+    echo "=== MongoDB export failed ==="
+    echo "$MONGO_RESULT"
+    exit 1
+  fi
 fi
 
 # echo "=== Exporting version to Neon ==="
