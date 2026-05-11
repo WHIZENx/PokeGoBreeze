@@ -62,6 +62,7 @@ jobs:
           NEON_REFRESH_TOKEN: ${{ secrets.NEON_REFRESH_TOKEN }}
           NEON_AUTH_USER_ID: ${{ secrets.NEON_AUTH_USER_ID }}
           APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+          REACT_APP_MONGODB_URI: ${{ secrets.REACT_APP_MONGODB_URI }}
 
       - name: Deploy with Edge Config updates
         if: steps.set-env.outputs.should_deploy == 'true'
