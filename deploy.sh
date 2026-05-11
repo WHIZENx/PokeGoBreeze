@@ -61,6 +61,21 @@ else
   exit 1
 fi
 
+echo "=== Exporting version to MongoDB ==="
+MONGO_URI=${REACT_APP_MONGODB_URI:-$MONGODB_URI}
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+MONGO_RESULT=$(mongosh "$MONGO_URI" --quiet --eval \
+  "db.versions.insertOne({ version: '$VERSION', timestamp: '$TIMESTAMP', deployedAt: new Date() })" 2>&1)
+
+if [[ $? -eq 0 ]]; then
+  echo "=== MongoDB version exported successfully ==="
+else
+  echo "=== MongoDB export failed ==="
+  echo "$MONGO_RESULT"
+  exit 1
+fi
+
 # echo "=== Exporting version to Neon ==="
 # NEW_TOKEN_RESPONSE=$(curl -s -X 'POST' "$NEON_AUTH_URL" \
 #   -H "Accept: application/json" \
