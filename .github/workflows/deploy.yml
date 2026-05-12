@@ -108,6 +108,20 @@ jobs:
           APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
+      - name: Set Vercel deploy flag (allow build)
+        run: |
+          echo "🔓 Setting VERCEL_DEPLOY_HOOK_ACTIVE=1 to allow Vercel build..."
+          for ENV_ID in \
+            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_PRODUCTION }}" \
+            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_PREVIEW }}" \
+            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_DEVELOPMENT }}"; do
+            curl -s -X PATCH \
+              "https://api.vercel.com/v10/projects/${{ secrets.VERCEL_PROJECT_ID }}/env/$ENV_ID" \
+              -H "Authorization: Bearer ${{ secrets.REACT_APP_EDGE_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d '{"value":"1"}' | jq -r '"Set " + .key + " [" + .id + "] = " + .value'
+          done
+
       - name: Trigger Vercel Deploy Hook
         run: |
           ENVIRONMENT="${{ needs.set-env.outputs.environment }}"
@@ -135,6 +149,21 @@ jobs:
             echo "❌ Deploy hook returned unexpected status: $RESPONSE"
             exit 1
           fi
+
+      - name: Reset Vercel deploy flag (block auto-deploys)
+        if: always()
+        run: |
+          echo "🔒 Resetting VERCEL_DEPLOY_HOOK_ACTIVE=0..."
+          for ENV_ID in \
+            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_PRODUCTION }}" \
+            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_PREVIEW }}" \
+            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_DEVELOPMENT }}"; do
+            curl -s -X PATCH \
+              "https://api.vercel.com/v10/projects/${{ secrets.VERCEL_PROJECT_ID }}/env/$ENV_ID" \
+              -H "Authorization: Bearer ${{ secrets.REACT_APP_EDGE_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d '{"value":"0"}' | jq -r '"Reset " + .key + " [" + .id + "] = " + .value'
+          done
 
       - name: Deployment Summary
         if: success()
