@@ -12,10 +12,8 @@ COPY . .
 RUN npm install --location=global npm@10.8.2
 
 # Try to run the build, but continue even if it fails
-RUN npm install && (npm run deploy || echo "Build failed but continuing")
+RUN npm install && npm run deploy
 
-# Ensure dist directory has at least a basic file
-RUN if [ ! -f /app/dist/index.html ]; then echo '<html><body><h1>Placeholder</h1></body></html>' > /app/dist/index.html; fi
 
 # production environment
 FROM nginx:alpine

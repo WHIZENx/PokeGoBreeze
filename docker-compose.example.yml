@@ -1,0 +1,65 @@
+version: '3.8'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PokeGoBreeze – Docker Compose Example
+# Copy this file to docker-compose.yml and update values to match your .env
+# docker-compose.yml is gitignored – do NOT commit it with real credentials
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  # Development service with hot-reloading (Vite dev server on :9000)
+  app-dev:
+    container_name: pokego-breeze-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - "9000:9000"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    # env_file loads variables from .env into the container at runtime.
+    # config.sh inside the container also reads .env directly.
+    env_file:
+      - .env
+    networks:
+      - pokego-network
+
+  # Production build service (compiles dist/ via Dockerfile)
+  app-build:
+    container_name: pokego-breeze-build
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - build_volume:/app/dist
+    environment:
+      - NODE_ENV=production
+    # .env is COPY'd into the build context by Dockerfile (COPY . .)
+    # so config.sh can read it during `npm run deploy` at build time.
+    networks:
+      - pokego-network
+
+  # Nginx reverse-proxy serving the production build on :8000
+  nginx:
+    container_name: pokego-breeze-nginx
+    image: nginx:alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - build_volume:/usr/share/nginx/html
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app-build
+    networks:
+      - pokego-network
+
+networks:
+  pokego-network:
+    driver: bridge
+
+volumes:
+  build_volume:
