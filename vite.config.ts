@@ -54,7 +54,6 @@ export default defineConfig(({ mode }) => {
         DEBUG: isDev,
       }),
       global: 'globalThis',
-      'process.browser': true,
     },
     resolve: {
       alias: {
@@ -71,7 +70,6 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'dist',
-      assetsDir: 'static',
       sourcemap: isDev,
       minify: isDev ? false : 'terser',
       target: 'es2015',
@@ -83,12 +81,9 @@ export default defineConfig(({ mode }) => {
           }
           warn(warning);
         },
-        input: {
-          main: resolve(__dirname, 'index.html'),
-        },
         output: {
           manualChunks: {
-            'react-vendor': ['react', 'react-dom'],
+            'react-vendor': ['react', 'react-dom', 'react/jsx-runtime'],
             'utility-vendor': ['lodash', 'moment'],
             'router-vendor': ['react-router-dom', 'history'],
             'redux-vendor': ['react-redux', 'redux', 'redux-persist', 'redux-thunk', '@redux-devtools/extension'],
@@ -121,7 +116,7 @@ export default defineConfig(({ mode }) => {
           safari10: true,
         },
       },
-      chunkSizeWarningLimit: 5000,
+      chunkSizeWarningLimit: 1000,
     },
     css: {
       preprocessorOptions: {
