@@ -48,12 +48,8 @@ jobs:
             FIREBASE_TARGET="pokego-breeze-stage"
           elif [ "$BRANCH_NAME" = "develop" ]; then
             ENVIRONMENT="development"
-            SHOULD_DEPLOY="true"
+            SHOULD_DEPLOY="false"
             FIREBASE_TARGET="pokego-breeze-develop"
-          elif [ "$BRANCH_NAME" = "update-patch" ]; then
-            ENVIRONMENT="preview"
-            SHOULD_DEPLOY="true"
-            FIREBASE_TARGET="pokego-breeze-preview"
           else
             ENVIRONMENT="preview"
             SHOULD_DEPLOY="false"
@@ -88,15 +84,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install mongosh
-        if: needs.set-env.outputs.environment != 'preview'
         run: npm install -g mongosh
 
       - name: Make deploy script executable
-        if: needs.set-env.outputs.environment != 'preview'
         run: chmod +x ./deploy.sh
 
       - name: Deploy with Edge Config updates
-        if: needs.set-env.outputs.environment != 'preview'
         run: ./deploy.sh
         env:
           VERCEL_TOKEN: ${{ secrets.REACT_APP_EDGE_TOKEN }}
