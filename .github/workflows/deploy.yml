@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || github.ref_name == 'develop' && 'development' || 'preview' }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -20,22 +21,17 @@ jobs:
           
           if [ "$BRANCH_NAME" = "main" ]; then
             ENVIRONMENT="production"
-            SHOULD_DEPLOY="false"
+            SHOULD_DEPLOY="true"
           elif [ "$BRANCH_NAME" = "stage" ]; then
+            ENVIRONMENT="staging"
+            SHOULD_DEPLOY="true"
+          elif [ "$BRANCH_NAME" = "develop" ]; then
             ENVIRONMENT="development"
             SHOULD_DEPLOY="true"
-          elif [ "$BRANCH_NAME" = "update-patch" ] || [ "$BRANCH_NAME" = "develop" ]; then
-            ENVIRONMENT="development"
-            SHOULD_DEPLOY="false"
           else
             ENVIRONMENT="preview"
             SHOULD_DEPLOY="false"
           fi
-          
-          echo "Environment: $ENVIRONMENT"
-          echo "Should deploy: $SHOULD_DEPLOY"
-          echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
-          echo "should_deploy=$SHOULD_DEPLOY" >> $GITHUB_OUTPUT
 
       - name: Display deployment info
         run: |
@@ -80,6 +76,35 @@ jobs:
           APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
+      - name: Trigger Vercel Deploy Hook
+        if: steps.set-env.outputs.should_deploy == 'true'
+        run: |
+          ENVIRONMENT="${{ steps.set-env.outputs.environment }}"
+          echo "🔗 Triggering Vercel deploy hook for environment: $ENVIRONMENT"
+
+          if [ "$ENVIRONMENT" = "production" ]; then
+            DEPLOY_HOOK_URL="${{ secrets.VERCEL_DEPLOY_HOOK_PRODUCTION }}"
+          elif [ "$ENVIRONMENT" = "staging" ]; then
+            DEPLOY_HOOK_URL="${{ secrets.VERCEL_DEPLOY_HOOK_STAGING }}"
+          elif [ "$ENVIRONMENT" = "development" ]; then
+            DEPLOY_HOOK_URL="${{ secrets.VERCEL_DEPLOY_HOOK_DEVELOPMENT }}"
+          elif [ "$ENVIRONMENT" = "preview" ]; then
+            DEPLOY_HOOK_URL="${{ secrets.VERCEL_DEPLOY_HOOK_PREVIEW }}"
+          else
+            echo "⚠️ No deploy hook configured for environment: $ENVIRONMENT"
+            exit 0
+          fi
+
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$DEPLOY_HOOK_URL")
+          echo "Deploy hook response status: $RESPONSE"
+
+          if [ "$RESPONSE" = "201" ]; then
+            echo "✅ Vercel deploy hook triggered successfully!"
+          else
+            echo "❌ Deploy hook returned unexpected status: $RESPONSE"
+            exit 1
+          fi
+
       - name: Deployment Summary
         if: steps.set-env.outputs.should_deploy == 'true' && success()
         run: |
@@ -91,4 +116,3 @@ jobs:
         if: steps.set-env.outputs.should_deploy == 'false'
         run: |
           echo "⏭️ Skipping deployment for branch: ${{ github.ref_name }}"
-          echo "Only stage branches are update version with environment variables"

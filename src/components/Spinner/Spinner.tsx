@@ -28,7 +28,7 @@ const Spinner = () => {
                 >
                   Retry Again
                 </p>
-                {spinnerMessage && process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
+                {spinnerMessage && process.env.REACT_APP_DEPLOYMENT_MODE !== 'production' && (
                   <p className="tw-text-red-600">{spinnerMessage}</p>
                 )}
               </Fragment>
