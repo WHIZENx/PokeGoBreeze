@@ -18,6 +18,7 @@ env:
   REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
   REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
   REACT_APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+  REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
@@ -104,8 +105,8 @@ jobs:
       - name: Build
         run: |
           npm run prebuild
-          bash -c 'source ./config.sh && npx vite build'
           npm run generate:sitemap
+          bash -c 'source ./config.sh && npx vite build'
 
       - name: Deploy to Firebase Hosting
         run: |
