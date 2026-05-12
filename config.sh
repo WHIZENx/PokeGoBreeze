@@ -29,8 +29,6 @@ else
 fi
 
 echo "Fetching version from Vercel Edge Config..."
-# Add a 30-second delay before fetching data
-sleep 30
 
 FETCHED_DATA=$(curl -s "https://edge-config.vercel.com/${EDGE_ID}/items" \
      -H "Authorization: Bearer $EDGE_READ_TOKEN")
