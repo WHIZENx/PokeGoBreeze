@@ -46,9 +46,9 @@ if command -v jq &>/dev/null; then
   REACT_APP_VERSION=$(echo "$FETCHED_DATA" | jq -r ".\"$VERSION_VAR\" // empty")
   REACT_APP_CONFIG=$(echo "$FETCHED_DATA"  | jq -c "del(.\"$VERSION_VAR\")")
 else
-  PARSED=$(echo "$FETCHED_DATA" | python3 - <<PYEOF "$VERSION_VAR"
-import json, sys
-data = json.load(sys.stdin)
+  PARSED=$(DATA="$FETCHED_DATA" python3 - "$VERSION_VAR" <<'PYEOF'
+import json, sys, os
+data = json.loads(os.environ['DATA'])
 key  = sys.argv[1]
 print(data.get(key, ''))
 cfg  = {k: v for k, v in data.items() if k != key}
