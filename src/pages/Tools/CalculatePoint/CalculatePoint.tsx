@@ -6,7 +6,7 @@ import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMo
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { findStabType } from '../../../utils/compute';
-import { levelList } from '../../../utils/compute';
+import { getLevelList } from '../../../utils/compute';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 
 import ATK_LOGO from '../../../assets/attack.png';
@@ -472,7 +472,7 @@ const CalculatePoint = () => {
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {levelList.map((level, i) => (
+                            {getLevelList().map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
                                 {[...Array(maxIv() + 1).keys()].map((_, index) => (
@@ -612,7 +612,7 @@ const CalculatePoint = () => {
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {levelList.map((level, i) => (
+                            {getLevelList().map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
                                 {[...Array(maxIv() + 1).keys()].map((_, index) => (
@@ -667,7 +667,7 @@ const CalculatePoint = () => {
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {levelList.map((level, i) => (
+                            {getLevelList().map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
                                 {[...Array(maxIv() + 1).keys()].map((_, index) => (
@@ -896,7 +896,7 @@ const CalculatePoint = () => {
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {levelList.map((level, i) => (
+                            {getLevelList().map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
                                 {resultBulkPointDef ? (

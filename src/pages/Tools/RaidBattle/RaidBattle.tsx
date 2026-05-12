@@ -94,7 +94,7 @@ import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
 import useSearch from '../../../composables/useSearch';
-import { levelList } from '../../../utils/compute';
+import { getLevelList } from '../../../utils/compute';
 import InputMui from '../../../components/Commons/Inputs/InputMui';
 import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
@@ -757,7 +757,7 @@ const RaidBattle = () => {
         value={filters.selected.level}
         fullWidth
         select
-        menuItems={levelList.map((value) => ({ value, label: value }))}
+        menuItems={getLevelList().map((value) => ({ value, label: value }))}
         onChange={(value) => setFilters({ ...filters, selected: { ...selected, level: toFloat(value) } })}
       />
       <label className="tw-mb-2">Pokémon IV</label>
@@ -962,7 +962,7 @@ const RaidBattle = () => {
             value={pokemon.stats?.level}
             fullWidth
             select
-            menuItems={levelList.map((value) => ({ value, label: value }))}
+            menuItems={getLevelList().map((value) => ({ value, label: value }))}
             onChange={(value) => {
               if (showSettingPokemon.pokemon?.stats) {
                 setShowSettingPokemon(
