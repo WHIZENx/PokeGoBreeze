@@ -19,6 +19,12 @@ import {
   IStatsPokemonGO,
 } from '../core/models/stats.model';
 import dataCPM from '../data/cp_multiplier.json';
+
+// O(1) level → multiplier lookup. Replaces repeated `dataCPM.find((i) => i.level === level)`
+// calls that appeared in hot paths (calculateCP, calculateCatchChance, calculateStatsBattle)
+// and ran millions of times during predictStat / calStatsProd sweeps.
+const CPM_MAP = new Map<number, number>(dataCPM.map((item: ICPM) => [item.level, item.multiplier]));
+const getCpmMultiplier = (level: number | undefined): number => toNumber(CPM_MAP.get(toNumber(level)));
 import { PokemonType, TypeAction } from '../enums/type.enum';
 import { IOptionOtherDPS, Specific } from '../store/models/options.model';
 import { findStabType, typeCostPowerUp } from './compute';
@@ -289,13 +295,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
 };
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) =>
-  Math.floor(
-    Math.max(
-      minCp(),
-      (atk * def ** 0.5 * sta ** 0.5 * toNumber(dataCPM.find((item: ICPM) => item.level === level)?.multiplier) ** 2) /
-        10
-    )
-  );
+  Math.floor(Math.max(minCp(), (atk * def ** 0.5 * sta ** 0.5 * getCpmMultiplier(level) ** 2) / 10));
 
 export const calculateRaidStat = (stat: number | undefined, tier: number) =>
   Math.floor((toNumber(stat) + maxIv()) * RAID_BOSS_TIER[tier].CPm);
@@ -310,17 +310,10 @@ export const calculateTankiness = (def: number, HP: number) => def * HP;
 export const calculateDuelAbility = (dmgOutput: number, tankiness: number) => dmgOutput * tankiness;
 
 export const calculateCatchChance = (baseCaptureRate: number | undefined, level: number, multiplier: number) =>
-  1 -
-  Math.pow(
-    Math.max(
-      0,
-      1 - toNumber(baseCaptureRate) / (2 * toNumber(dataCPM.find((item: ICPM) => item.level === level)?.multiplier))
-    ),
-    multiplier
-  );
+  1 - Math.pow(Math.max(0, 1 - toNumber(baseCaptureRate) / (2 * getCpmMultiplier(level))), multiplier);
 
-export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
-  const maxCP = toNumber(cp);
+// Resolves the scan window [minLV, maxLV] where the input stats can produce the target CP.
+const resolvePredictStatLevelWindow = (atk: number, def: number, sta: number, maxCP: number) => {
   let minLV = minLevel();
   let maxLV = minLV + 1;
   for (let level = minLV; level <= maxLevel(); level += stepLevel()) {
@@ -335,26 +328,75 @@ export const predictStat = (atk: number, def: number, sta: number, cp: string) =
       break;
     }
   }
+  return { minLV, maxLV };
+};
+
+// Expands all IV combos for a single level. Returns collected predictions.
+const collectPredictStatsForLevel = (
+  atk: number,
+  def: number,
+  sta: number,
+  level: number,
+  maxCP: number,
+  out: IPredictStatsModel[]
+) => {
+  for (let atkIV = minIv(); atkIV <= maxIv(); atkIV++) {
+    for (let defIV = minIv(); defIV <= maxIv(); defIV++) {
+      for (let staIV = minIv(); staIV <= maxIv(); staIV++) {
+        if (calculateCP(atk + atkIV, def + defIV, sta + staIV, level) === maxCP) {
+          out.push(
+            PredictStatsModel.create({
+              atk: atkIV,
+              def: defIV,
+              sta: staIV,
+              level,
+              percent: toFloat(((atkIV + defIV + staIV) * 100) / (maxIv() * 3), 2),
+              hp: Math.max(1, calculateStatsBattle(sta, staIV, level, true)),
+            })
+          );
+        }
+      }
+    }
+  }
+};
+
+export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
+  const maxCP = toNumber(cp);
+  const { minLV, maxLV } = resolvePredictStatLevelWindow(atk, def, sta, maxCP);
 
   const predictArr: IPredictStatsModel[] = [];
   for (let level = minLV; level <= maxLV; level += stepLevel()) {
-    for (let atkIV = minIv(); atkIV <= maxIv(); atkIV++) {
-      for (let defIV = minIv(); defIV <= maxIv(); defIV++) {
-        for (let staIV = minIv(); staIV <= maxIv(); staIV++) {
-          if (calculateCP(atk + atkIV, def + defIV, sta + staIV, level) === maxCP) {
-            predictArr.push(
-              PredictStatsModel.create({
-                atk: atkIV,
-                def: defIV,
-                sta: staIV,
-                level,
-                percent: toFloat(((atkIV + defIV + staIV) * 100) / (maxIv() * 3), 2),
-                hp: Math.max(1, calculateStatsBattle(sta, staIV, level, true)),
-              })
-            );
-          }
-        }
-      }
+    collectPredictStatsForLevel(atk, def, sta, level, maxCP, predictArr);
+  }
+  return new PredictStatsCalculate(maxCP, minLV, maxLV, predictArr);
+};
+
+// Async variant: yields to the browser every few levels so the UI stays responsive
+// during the up-to-2.6M-iteration sweep, and exits early on AbortSignal.
+export const predictStatAsync = async (
+  atk: number,
+  def: number,
+  sta: number,
+  cp: string,
+  signal?: AbortSignal
+): Promise<PredictStatsCalculate> => {
+  const maxCP = toNumber(cp);
+  const { minLV, maxLV } = resolvePredictStatLevelWindow(atk, def, sta, maxCP);
+
+  const step = stepLevel();
+  const LEVELS_PER_YIELD = 4;
+  const predictArr: IPredictStatsModel[] = [];
+  let levelsSinceYield = 0;
+
+  for (let level = minLV; level <= maxLV; level += step) {
+    if (signal?.aborted) {
+      throw new DOMException('aborted', 'AbortError');
+    }
+    collectPredictStatsForLevel(atk, def, sta, level, maxCP, predictArr);
+    levelsSinceYield++;
+    if (levelsSinceYield >= LEVELS_PER_YIELD && level + step <= maxLV) {
+      levelsSinceYield = 0;
+      await yieldToMain();
     }
   }
   return new PredictStatsCalculate(maxCP, minLV, maxLV, predictArr);
@@ -396,10 +438,7 @@ export const calculateStats = (
 };
 
 export const calculateStatsBattle = (base?: number, iv?: number, level?: number, floor = false, addition = 1) => {
-  const result =
-    (toNumber(base) + toNumber(iv)) *
-    toNumber(dataCPM.find((item: ICPM) => item.level === toNumber(level))?.multiplier) *
-    addition;
+  const result = (toNumber(base) + toNumber(iv)) * getCpmMultiplier(level) * addition;
   if (floor) {
     return Math.floor(result);
   }

@@ -11,7 +11,7 @@ import {
   isSpecialMegaFormType,
   createDataRows,
 } from '../../../utils/utils';
-import { levelList } from '../../../utils/compute';
+import { getLevelList } from '../../../utils/compute';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -1139,7 +1139,7 @@ const DpsTdo = () => {
                     })
                   }
                   select
-                  menuItems={levelList.map((value) => ({
+                  menuItems={getLevelList().map((value) => ({
                     value,
                     label: value,
                   }))}
