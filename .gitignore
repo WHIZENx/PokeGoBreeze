@@ -28,6 +28,7 @@
 
 # misc
 .env
+docker-compose.yml
 
 # logs
 npm-debug.log*
