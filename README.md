@@ -357,17 +357,28 @@ npm install
 
 3. **Set up environment variables**
 
-Create a `config.sh` file in the root directory (or set environment variables):
-```bash
-# config.sh
-export REACT_APP_POKEGO_BREEZE_DB_URL="your_database_url"
-export REACT_APP_TOKEN_PRIVATE_REPO="your_token"
-export REACT_APP_ENCRYPTION_KEY="your_encryption_key"
-export REACT_APP_ENCRYPTION_SALT="your_encryption_salt"
-# ... other environment variables
-```
+   Copy `.env.example` to `.env` and fill in your values:
+   ```bash
+   cp .env.example .env
+   ```
 
-**Note**: See `.env.example` for all required environment variables.
+   Key variables required:
+
+   | Variable | Purpose |
+   |---|---|
+   | `REACT_APP_TOKEN_PRIVATE_REPO` | GitHub token for private repo access |
+   | `REACT_APP_POKEGO_BREEZE_DB_URL` | Vercel Postgres connection URL |
+   | `NEON_API_URL` | Neon database API endpoint |
+   | `REACT_APP_EDGE_CONFIG` | Vercel Edge Config URL |
+   | `REACT_APP_EDGE_TOKEN` | Edge Config write token (deploy.sh) |
+   | `REACT_APP_EDGE_READ_TOKEN` | Edge Config read token (config.sh) |
+   | `REACT_APP_EDGE_ID` | Edge Config ID |
+   | `REACT_APP_ENCRYPTION_KEY` | AES encryption key (40+ chars) |
+   | `REACT_APP_ENCRYPTION_SALT` | AES encryption salt (40+ chars) |
+   | `REACT_APP_DEPLOYMENT_MODE` | `development` | `staging` | `production` |
+   | `MONGODB_URI` | MongoDB connection string |
+
+   > See `.env.example` for all required variables and descriptions.
 
 ### Development
 
@@ -432,18 +443,23 @@ npx vite preview
 
 ### Docker Deployment
 
-**Development with Docker**:
+**Development with Docker** (hot-reload on `localhost:9000`):
 ```bash
+# Copy the example config and set up your .env first
+cp docker-compose.example.yml docker-compose.yml
+cp .env.example .env  # fill in your values
+
 # Build and start development container
-docker-compose up
+docker-compose up app-dev
 ```
 
-**Production with Docker**:
+**Production with Docker** (Nginx on `localhost:8000`):
 ```bash
-# Build production image
-docker build -f Dockerfile -t pokego-breeze:latest .
+# Build and start production container (requires .env to be populated)
+docker-compose up --build app-build nginx
 
-# Run production container
+# Or build the image directly
+docker build -f Dockerfile -t pokego-breeze:latest .
 docker run -p 80:80 pokego-breeze:latest
 ```
 

@@ -11,4 +11,4 @@ RUN npm install
 
 EXPOSE 9000
 
-CMD ["npm", "run", "develop"]
+CMD ["bash", "-c", "source ./config.sh && VITE_CJS_IGNORE_WARNING=true vite --host 0.0.0.0 --port 9000"]
