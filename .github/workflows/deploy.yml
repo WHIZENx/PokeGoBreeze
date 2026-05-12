@@ -38,7 +38,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
       - name: Install mongosh
         run: npm install -g mongosh
@@ -87,6 +86,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@13.35.1
+
       - name: Set Firebase target
         id: config
         run: |
@@ -95,9 +97,6 @@ jobs:
             stage)   echo "target=pokego-breeze-stage" ;;
             develop) echo "target=pokego-breeze-develop" ;;
           esac >> $GITHUB_OUTPUT
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools@13.35.1
 
       - name: Lint
         run: npm run lint
@@ -111,6 +110,7 @@ jobs:
       - name: Deploy to Firebase Hosting
         run: |
           firebase deploy \
+            --project pokego-breeze \
             --only hosting:${{ steps.config.outputs.target }} \
             --non-interactive \
             --token ${{ secrets.FIREBASE_TOKEN }} \
@@ -132,6 +132,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      checks: write
     steps:
       - uses: actions/checkout@v4
 
