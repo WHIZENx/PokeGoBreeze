@@ -88,12 +88,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install mongosh
+        if: needs.set-env.outputs.environment != 'preview'
         run: npm install -g mongosh
 
       - name: Make deploy script executable
+        if: needs.set-env.outputs.environment != 'preview'
         run: chmod +x ./deploy.sh
 
       - name: Deploy with Edge Config updates
+        if: needs.set-env.outputs.environment != 'preview'
         run: ./deploy.sh
         env:
           VERCEL_TOKEN: ${{ secrets.REACT_APP_EDGE_TOKEN }}
@@ -107,24 +110,6 @@ jobs:
           NEON_AUTH_USER_ID: ${{ secrets.NEON_AUTH_USER_ID }}
           APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
-
-      - name: Set Vercel deploy flag (allow build)
-        run: |
-          echo "🔓 Setting VERCEL_DEPLOY_HOOK_ACTIVE=1 to allow Vercel build..."
-          for ENV_ID in \
-            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_PRODUCTION }}" \
-            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_PREVIEW }}" \
-            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_DEVELOPMENT }}"; do
-            RESULT=$(curl -s -X PATCH \
-              "https://api.vercel.com/v10/projects/${{ secrets.VERCEL_PROJECT_ID }}/env/$ENV_ID" \
-              -H "Authorization: Bearer ${{ secrets.REACT_APP_EDGE_TOKEN }}" \
-              -H "Content-Type: application/json" \
-              -d '{"value":"1"}')
-            echo "API response for [$ENV_ID]: $RESULT"
-            echo "$RESULT" | jq -r '"Set " + .key + " [" + .id + "] = " + .value' 2>/dev/null || echo "⚠️ Failed to parse response"
-          done
-          echo "⏳ Waiting 10s for flag to propagate before triggering hook..."
-          sleep 10
 
       - name: Trigger Vercel Deploy Hook
         run: |
@@ -154,20 +139,6 @@ jobs:
             exit 1
           fi
 
-      - name: Reset Vercel deploy flag (block auto-deploys)
-        if: always()
-        run: |
-          echo "🔒 Resetting VERCEL_DEPLOY_HOOK_ACTIVE=0..."
-          for ENV_ID in \
-            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_PRODUCTION }}" \
-            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_PREVIEW }}" \
-            "${{ secrets.VERCEL_ENV_ID_DEPLOY_FLAG_DEVELOPMENT }}"; do
-            curl -s -X PATCH \
-              "https://api.vercel.com/v10/projects/${{ secrets.VERCEL_PROJECT_ID }}/env/$ENV_ID" \
-              -H "Authorization: Bearer ${{ secrets.REACT_APP_EDGE_TOKEN }}" \
-              -H "Content-Type: application/json" \
-              -d '{"value":"0"}' | jq -r '"Reset " + .key + " [" + .id + "] = " + .value'
-          done
 
       - name: Deployment Summary
         if: success()
