@@ -28,6 +28,9 @@ jobs:
           elif [ "$BRANCH_NAME" = "develop" ]; then
             ENVIRONMENT="development"
             SHOULD_DEPLOY="true"
+          elif [ "$BRANCH_NAME" = "update-patch" ]; then
+            ENVIRONMENT="preview"
+            SHOULD_DEPLOY="true"
           else
             ENVIRONMENT="preview"
             SHOULD_DEPLOY="false"
