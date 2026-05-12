@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "target": "pokego-breeze-develop",
+      "target": "pokego-breeze",
       "public": "dist",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
@@ -23,7 +23,18 @@
       ]
     },
     {
-      "target": "deploy",
+      "target": "pokego-breeze-develop",
+      "public": "dist",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
+      "target": "pokego-breeze-preview",
       "public": "dist",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [

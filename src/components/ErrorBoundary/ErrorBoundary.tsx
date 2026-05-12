@@ -80,7 +80,7 @@ class ErrorBoundary extends Component<Props, IState> {
               label="Refresh Page"
             />
           </div>
-          {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
+          {process.env.REACT_APP_DEPLOYMENT_MODE !== 'production' && (
             <div className="tw-mt-4 tw-max-w-full tw-overflow-auto">
               <Typography variant="subtitle2" component="h3" gutterBottom>
                 Error Details:

@@ -26,17 +26,21 @@ NEON_SECRET_SERVER_KEY=${NEON_SECRET_SERVER_KEY:-$STACK_SECRET_SERVER_KEY}
 NEON_REFRESH_TOKEN=${NEON_REFRESH_TOKEN:-$NEON_REFRESH_TOKEN}
 NEON_AUTH_USER_ID=${NEON_AUTH_USER_ID:-$NEON_AUTH_USER_ID}
 APP_DEPLOYMENT_MODE=${APP_DEPLOYMENT_MODE:-${REACT_APP_DEPLOYMENT_MODE:-development}}
+MONGODB_URI=${MONGODB_URI:-$MONGODB_URI}
 
 YEAR_DIGIT=$(date +"%Y" | grep -o '.$')
 MONTH_DAY=$(date +"%m%d")
 HOUR_MINUTE=$(date +"%H%M")
 
-if [[ "$APP_DEPLOYMENT_MODE" == "development" ]]; then
-  VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR_MINUTE-develop"
-  VERSION_VAR="version-dev"
-else
+if [[ "$APP_DEPLOYMENT_MODE" == "production" ]]; then
   VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR_MINUTE"
   VERSION_VAR="version"
+elif [[ "$APP_DEPLOYMENT_MODE" == "staging" ]]; then
+  VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR_MINUTE-staging"
+  VERSION_VAR="version-staging"
+else
+  VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR_MINUTE-develop"
+  VERSION_VAR="version-dev"
 fi
 
 echo "=== Environment Information ==="
@@ -61,37 +65,20 @@ else
   exit 1
 fi
 
-# echo "=== Exporting version to Neon ==="
-# NEW_TOKEN_RESPONSE=$(curl -s -X 'POST' "$NEON_AUTH_URL" \
-#   -H "Accept: application/json" \
-#   -H "Content-Type: application/json" \
-#   -H "X-Stack-Access-Type: server" \
-#   -H "X-Stack-Project-Id: $NEON_PUBLIC_STACK_PROJECT_ID" \
-#   -H "X-Stack-Publishable-Client-Key: $NEON_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY" \
-#   -H "X-Stack-Secret-Server-Key: $NEON_SECRET_SERVER_KEY" \
-#   -H "x-stack-refresh-token: $NEON_REFRESH_TOKEN" \
-#   -d '{"description":"Deploy","expires_at_millis":3600,"is_public":1,"user_id":"'$NEON_AUTH_USER_ID'"}')
+echo "=== Exporting version to MongoDB ==="
+if [[ -z "$MONGODB_URI" ]]; then
+  echo "=== MongoDB export skipped: MONGODB_URI is not set ==="
+else
+  TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# NEON_API_KEY=$(echo "$NEW_TOKEN_RESPONSE" | grep -o '"access_token":"[^"]*' | sed 's/"access_token":"//')
+  MONGO_RESULT=$(mongosh "$MONGODB_URI" --quiet --eval \
+    "db.getSiblingDB('main').versions.insertOne({ version: '$VERSION', timestamp: '$TIMESTAMP', deployedAt: new Date() })" 2>&1)
 
-# if [[ -z "$NEON_API_KEY" ]]; then
-#   echo "=== Failed to refresh token ==="
-#   exit 1
-# fi
-
-# NEON_RESPONSE=$(curl -s -w "\n%{http_code}" -X 'POST' "$NEON_API_URL/versions" \
-#   -H "Accept: application/json" \
-#   -H "Content-Type: application/json" \
-#   -H "Authorization: Bearer $NEON_API_KEY" \
-#   -d '{"track":"'"$VERSION"'"}')
-
-# NEON_HTTP_STATUS=$(echo "$NEON_RESPONSE" | tail -n1)
-# NEON_RESPONSE_BODY=$(echo "$NEON_RESPONSE" | sed '$d')
-
-# if [[ $NEON_HTTP_STATUS -ge 200 && $NEON_HTTP_STATUS -lt 300 ]]; then
-#   echo "=== Neon exported version successfully ==="
-# else
-#   echo "=== Neon exported version failed ==="
-#   echo "Error response: $NEON_RESPONSE_BODY"
-#   exit 1
-# fi
+  if [[ $? -eq 0 ]]; then
+    echo "=== MongoDB version exported successfully ==="
+  else
+    echo "=== MongoDB export failed ==="
+    echo "$MONGO_RESULT"
+    exit 1
+  fi
+fi
