@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Page Not Found - PokéGo Breeze</title>
     <meta name="description" content="The page you're looking for doesn't exist. Return to PokéGo Breeze to continue exploring Pokémon GO data and tools.">
-    <link rel="icon" href="favicon.ico" />
-    
+    <link rel="icon" href="/favicon.ico" />
+
     <style media="screen">
       :root {
         --primary-color: #409ff1;
@@ -103,27 +103,10 @@
       }
     </style>
     
-    <!-- Script to handle SPA redirects for Vercel and Firebase compatibility -->
-    <script>
-      // This helps with SPA (Single Page Application) routing on both platforms
-      (function() {
-        // Single Page Apps for GitHub Pages/Vercel/Firebase
-        // MIT License https://github.com/rafgraph/spa-github-pages
-        var pathSegmentsToKeep = 0;
-        var l = window.location;
-        l.replace(
-          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-          l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-          l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-          l.hash
-        );
-      })();
-    </script>
   </head>
   <body>
     <div id="message">
-      <img src="%PUBLIC_URL%/assets/pokedex.png" alt="PokéGo Breeze" onerror="this.onerror=null; this.src='favicon.ico';">
+      <img src="/og-image.png" alt="PokéGo Breeze" onerror="this.onerror=null; this.src='/favicon.ico';">
       <h2>404</h2>
       <h1>Page Not Found</h1>
       <p>The Pokémon you're looking for has fled! The page you requested doesn't exist or has been moved.</p>
