@@ -14,7 +14,22 @@ if (!process.env.REACT_APP_CONFIG) {
 
 const config = JSON.parse(process.env.REACT_APP_CONFIG) as IConfig;
 
-// This variable will store the latest options from the context
+// This variable will store the latest options from the context.
+//
+// ⚠️ STALE-CLOSURE GOTCHA:
+// Every exported helper below (minLevel, maxLevel, formNormal, etc.) reads
+// `currentOptions` at *call time* — it is a module-level `let` with no reactive
+// tracking. Components stay in sync because `useOptionsObserver` calls
+// `updateCurrentOptions()` whenever Redux options change and triggers a re-render.
+//
+// If you capture a helper inside a `useMemo` / `useCallback` / ref whose dep
+// array does not include options, the enclosing closure will keep reading the
+// SAME `currentOptions` reference each time the helper is called — correct
+// behavior — BUT if you read a value from a helper and store it (e.g.
+// `const min = minLevel()` inside a memo), that captured value will not update
+// when options change. Either:
+//   • call the helper inside render (not in memo deps),
+//   • or add `getOptions()` to the memo deps so it re-evaluates on update.
 let currentOptions = defaultOptions;
 currentOptions.config = config;
 

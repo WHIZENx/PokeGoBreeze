@@ -354,8 +354,8 @@ const Move = (props: IMovePage) => {
   return (
     <div className={combineClasses('tw-pb-3 poke-container', props.id ? '' : 'tw-container')}>
       {move ? (
-        <>
-          <div className="tw-h-full head-box tw-flex tw-flex-wrap tw-items-center">
+        <div className="tw-flex tw-flex-col tw-gap-2">
+          <div className="!tw-h-full head-box tw-flex tw-flex-wrap tw-items-center">
             <h1 className="text-move">
               <b>{splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}</b>
             </h1>
@@ -385,7 +385,7 @@ const Move = (props: IMovePage) => {
                 }))}
             />
           )}
-        </>
+        </div>
       ) : (
         <div className="slide-container !tw-px-0 !tw-pb-0 !tw-w-full tw-h-18">
           <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full" />

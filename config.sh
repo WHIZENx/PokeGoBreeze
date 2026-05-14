@@ -1,56 +1,67 @@
 #!/bin/bash
+# config.sh – Fetches version + config from Vercel Edge Config and exports as env vars.
+# Sourced by npm scripts (start, develop, deploy) before vite build.
 
-# Load environment variables from .env file if they aren't already set
+set -euo pipefail
+
+# ─── Load .env for local runs (CI provides env vars directly) ─────────────────
 if [ -f .env ]; then
-  echo "Loading environment variables from .env file"
-  # Parse .env file and export variables
   while IFS='=' read -r key value || [ -n "$key" ]; do
-    # Skip empty lines and comments
-    if [[ -z "$key" || "$key" =~ ^# ]]; then
-      continue
-    fi
-    # Remove quotes if present
+    [[ -z "$key" || "$key" =~ ^# ]] && continue
     value=$(echo "$value" | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
     export "$key=$value"
   done < .env
 fi
 
-# Set Edge Config variables - use GitHub Actions env vars if available, otherwise use .env values
-EDGE_ID=${VERCEL_EDGE_CONFIG_ID:-$REACT_APP_EDGE_ID}
-EDGE_READ_TOKEN=${VERCEL_TOKEN:-$REACT_APP_EDGE_READ_TOKEN}
-APP_DEPLOYMENT_MODE=${APP_DEPLOYMENT_MODE:-${REACT_APP_DEPLOYMENT_MODE:-development}}
+# ─── Resolve required variables ────────────────────────────────────────────────
+EDGE_ID="${VERCEL_EDGE_CONFIG_ID:-${REACT_APP_EDGE_ID:-}}"
+EDGE_READ_TOKEN="${VERCEL_TOKEN:-${REACT_APP_EDGE_READ_TOKEN:-}}"
+APP_DEPLOYMENT_MODE="${APP_DEPLOYMENT_MODE:-${REACT_APP_DEPLOYMENT_MODE:-development}}"
 
-if [[ "$APP_DEPLOYMENT_MODE" == "production" ]]; then
-  VERSION_VAR="version"
-elif [[ "$APP_DEPLOYMENT_MODE" == "staging" ]]; then
-  VERSION_VAR="version-staging"
-else
-  VERSION_VAR="version-dev"
+if [[ -z "$EDGE_ID" ]]; then     echo "❌ Missing: VERCEL_EDGE_CONFIG_ID or REACT_APP_EDGE_ID"; exit 1; fi
+if [[ -z "$EDGE_READ_TOKEN" ]]; then echo "❌ Missing: VERCEL_TOKEN or REACT_APP_EDGE_READ_TOKEN"; exit 1; fi
+
+# ─── Resolve Edge Config key by deployment mode ────────────────────────────────
+case "$APP_DEPLOYMENT_MODE" in
+  production) VERSION_VAR="version" ;;
+  staging)    VERSION_VAR="version-staging" ;;
+  *)          VERSION_VAR="version-dev" ;;
+esac
+
+# ─── Fetch all Edge Config items in one request ────────────────────────────────
+FETCHED_DATA=$(curl -sf "https://edge-config.vercel.com/${EDGE_ID}/items" \
+  -H "Authorization: Bearer $EDGE_READ_TOKEN")
+
+if [[ -z "$FETCHED_DATA" ]]; then
+  echo "❌ Edge Config response was empty"
+  exit 1
 fi
 
-echo "Fetching version from Vercel Edge Config..."
-
-FETCHED_DATA=$(curl -s "https://edge-config.vercel.com/${EDGE_ID}/items" \
-     -H "Authorization: Bearer $EDGE_READ_TOKEN")
-
-if [ $? -eq 0 ] && [ -n "$FETCHED_DATA" ]; then
-  DATA=$(echo "$FETCHED_DATA" | sed -e 's/^"//' -e 's/"$//')
-  
-  VERSION=$(echo "$DATA" | grep -o '"'$VERSION_VAR'":"[^"]*"' | sed 's/"'$VERSION_VAR'":"//;s/"//')
-  export REACT_APP_VERSION="$VERSION"
-  echo "Successfully fetched version: $VERSION"
-
-  CONFIG=$(echo "$DATA" | sed -E '
-    # Case 1: {"$VERSION_VAR":"value",...} - version at start
-    s/\{[[:space:]]*"'$VERSION_VAR'":"[^"]*",[[:space:]]*/\{/g;
-    # Case 2: {...,"$VERSION_VAR":"value"} - version at end
-    s/,[[:space:]]*"'$VERSION_VAR'":"[^"]*"[[:space:]]*\}/\}/g;
-    # Case 3: {...,"$VERSION_VAR":"value",...} - version in middle
-    s/,[[:space:]]*"'$VERSION_VAR'":"[^"]*",[[:space:]]*/,/g;
-  ')
-  export REACT_APP_CONFIG="$CONFIG"
-  echo "Successfully exported config"
+# ─── Parse JSON: extract version + remaining config ────────────────────────────
+# Prefer jq (fast, always available on GitHub Actions / macOS with Homebrew).
+# Fall back to python3 for environments without jq.
+if command -v jq &>/dev/null; then
+  export REACT_APP_VERSION
+  export REACT_APP_CONFIG
+  REACT_APP_VERSION=$(echo "$FETCHED_DATA" | jq -r ".\"$VERSION_VAR\" // empty")
+  REACT_APP_CONFIG=$(echo "$FETCHED_DATA"  | jq -c "del(.\"$VERSION_VAR\")")
 else
-  echo "Error: Failed to fetch version from Vercel Edge Config or response was empty."
+  PARSED=$(DATA="$FETCHED_DATA" python3 - "$VERSION_VAR" <<'PYEOF'
+import json, sys, os
+data = json.loads(os.environ['DATA'])
+key  = sys.argv[1]
+print(data.get(key, ''))
+cfg  = {k: v for k, v in data.items() if k != key}
+print(json.dumps(cfg, separators=(',', ':')))
+PYEOF
+  )
+  export REACT_APP_VERSION
+  export REACT_APP_CONFIG
+  REACT_APP_VERSION=$(echo "$PARSED" | head -1)
+  REACT_APP_CONFIG=$(echo "$PARSED"  | tail -1)
+fi
+
+if [[ -z "$REACT_APP_VERSION" ]]; then
+  echo "❌ Version key '$VERSION_VAR' not found in Edge Config"
   exit 1
 fi

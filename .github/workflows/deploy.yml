@@ -2,15 +2,16 @@ name: Deploy
 
 on:
   push:
-    # Runs on any branch push
   pull_request:
-    # Runs on any pull request (for Firebase PR preview)
   workflow_dispatch:
-    # Also allows manual trigger from any branch
 
 env:
   CI: true
   NODE_OPTIONS: --max_old_space_size=4096
+  NODE_VERSION: '20'
+  # App env vars (available to all jobs via global env)
+  REACT_APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
+  APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
   REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
   REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
   REACT_APP_EDGE_CONFIG: ${{ secrets.REACT_APP_EDGE_CONFIG }}
@@ -18,183 +19,137 @@ env:
   REACT_APP_EDGE_READ_TOKEN: ${{ secrets.REACT_APP_EDGE_READ_TOKEN }}
   REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
   REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
-  REACT_APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+  REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
 
-# ─────────────────────────────────────────────────────────────────────────────
-# JOB 1 – Determine environment (shared between Vercel & Firebase push jobs)
-# ─────────────────────────────────────────────────────────────────────────────
 jobs:
-  set-env:
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    outputs:
-      environment: ${{ steps.detect.outputs.environment }}
-      should_deploy: ${{ steps.detect.outputs.should_deploy }}
-      firebase_target: ${{ steps.detect.outputs.firebase_target }}
-    steps:
-      - name: Detect environment from branch
-        id: detect
-        run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-
-          if [ "$BRANCH_NAME" = "main" ]; then
-            ENVIRONMENT="production"
-            SHOULD_DEPLOY="true"
-            FIREBASE_TARGET="pokego-breeze"
-          elif [ "$BRANCH_NAME" = "stage" ]; then
-            ENVIRONMENT="staging"
-            SHOULD_DEPLOY="true"
-            FIREBASE_TARGET="pokego-breeze-stage"
-          elif [ "$BRANCH_NAME" = "develop" ]; then
-            ENVIRONMENT="development"
-            SHOULD_DEPLOY="false"
-            FIREBASE_TARGET="pokego-breeze-develop"
-          else
-            ENVIRONMENT="preview"
-            SHOULD_DEPLOY="false"
-            FIREBASE_TARGET=""
-          fi
-
-          echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
-          echo "should_deploy=$SHOULD_DEPLOY" >> $GITHUB_OUTPUT
-          echo "firebase_target=$FIREBASE_TARGET" >> $GITHUB_OUTPUT
-
-# ─────────────────────────────────────────────────────────────────────────────
-# JOB 2 – Vercel: update Edge Config + trigger deploy hook
-# ─────────────────────────────────────────────────────────────────────────────
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 1 – Vercel: update Edge Config + trigger deploy hook
+  # Branches: main (production) | stage (staging)
+  # ─────────────────────────────────────────────────────────────────────────────
   deploy-vercel:
-    needs: set-env
-    if: needs.set-env.outputs.should_deploy == 'true'
+    if: |
+      github.event_name != 'pull_request' &&
+      (github.ref_name == 'main' || github.ref_name == 'stage')
     runs-on: ubuntu-latest
-    environment: ${{ needs.set-env.outputs.environment }}
+    permissions:
+      contents: read
+    environment: ${{ github.ref_name == 'main' && 'production' || 'stage' }}
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install mongosh
         run: npm install -g mongosh
 
-      - name: Make deploy script executable
-        run: chmod +x ./deploy.sh
-
-      - name: Deploy with Edge Config updates
-        run: ./deploy.sh
+      - name: Run Edge Config & version update
+        run: |
+          chmod +x ./deploy.sh
+          ./deploy.sh
         env:
           VERCEL_TOKEN: ${{ secrets.REACT_APP_EDGE_TOKEN }}
           VERCEL_EDGE_CONFIG_ID: ${{ secrets.REACT_APP_EDGE_ID }}
-          APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Trigger Vercel Deploy Hook
+        env:
+          DEPLOY_HOOK_URL: ${{ github.ref_name == 'main' && secrets.VERCEL_DEPLOY_HOOK_PRODUCTION || secrets.VERCEL_DEPLOY_HOOK_STAGING }}
         run: |
-          ENVIRONMENT="${{ needs.set-env.outputs.environment }}"
-          echo "🔗 Triggering Vercel deploy hook for environment: $ENVIRONMENT"
-
-          if [ "$ENVIRONMENT" = "production" ]; then
-            DEPLOY_HOOK_URL="${{ secrets.VERCEL_DEPLOY_HOOK_PRODUCTION }}"
-          elif [ "$ENVIRONMENT" = "staging" ]; then
-            DEPLOY_HOOK_URL="${{ secrets.VERCEL_DEPLOY_HOOK_STAGING }}"
-          elif [ "$ENVIRONMENT" = "development" ]; then
-            DEPLOY_HOOK_URL="${{ secrets.VERCEL_DEPLOY_HOOK_DEVELOPMENT }}"
-          elif [ "$ENVIRONMENT" = "preview" ]; then
-            DEPLOY_HOOK_URL="${{ secrets.VERCEL_DEPLOY_HOOK_PREVIEW }}"
-          else
-            echo "⚠️ No deploy hook configured for environment: $ENVIRONMENT"
-            exit 0
-          fi
-
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$DEPLOY_HOOK_URL")
-          echo "Deploy hook response status: $RESPONSE"
-
           if [ "$RESPONSE" = "201" ]; then
-            echo "✅ Vercel deploy hook triggered successfully!"
+            echo "✅ Vercel deploy hook triggered (HTTP $RESPONSE)"
           else
-            echo "❌ Deploy hook returned unexpected status: $RESPONSE"
+            echo "❌ Deploy hook failed (HTTP $RESPONSE)"
             exit 1
           fi
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# JOB 3 – Firebase Hosting: build & deploy on push
-# ─────────────────────────────────────────────────────────────────────────────
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 2 – Firebase Hosting: build & deploy on push
+  # Branches: main (production) | stage (staging) | develop (development)
+  # ─────────────────────────────────────────────────────────────────────────────
   deploy-firebase:
-    needs: set-env
-    if: needs.set-env.outputs.firebase_target != ''
+    if: |
+      github.event_name != 'pull_request' &&
+      (github.ref_name == 'main' || github.ref_name == 'stage' || github.ref_name == 'develop')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'stage' || 'development' }}
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.17.0'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Firebase tools
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@13.35.1
+
+      - name: Set Firebase target
+        id: config
         run: |
-          npm install -g firebase-tools@13.35.1
-          firebase use pokego-breeze --token ${{ secrets.FIREBASE_TOKEN }}
+          case "${{ github.ref_name }}" in
+            main)    echo "target=pokego-breeze" ;;
+            stage)   echo "target=pokego-breeze-stage" ;;
+            develop) echo "target=pokego-breeze-develop" ;;
+          esac >> $GITHUB_OUTPUT
 
-      - name: Run linting
+      - name: Lint
         run: npm run lint
-        continue-on-error: false
 
-      - name: Build website
-        env:
-          REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
-          REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
-          REACT_APP_EDGE_CONFIG: ${{ secrets.REACT_APP_EDGE_CONFIG }}
-          REACT_APP_EDGE_ID: ${{ secrets.REACT_APP_EDGE_ID }}
-          REACT_APP_EDGE_READ_TOKEN: ${{ secrets.REACT_APP_EDGE_READ_TOKEN }}
-          REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
-          REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
-          REACT_APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
+      - name: Build
         run: |
           npm run prebuild
-          bash -c 'source ./config.sh && npx vite build'
           npm run generate:sitemap
+          bash -c 'source ./config.sh && npx vite build'
 
       - name: Deploy to Firebase Hosting
         run: |
           firebase deploy \
-            --only hosting:${{ needs.set-env.outputs.firebase_target }} \
+            --project pokego-breeze \
+            --only hosting:${{ steps.config.outputs.target }} \
             --non-interactive \
             --token ${{ secrets.FIREBASE_TOKEN }} \
-            -m "Branch: ${{ github.ref_name }} | Env: ${{ needs.set-env.outputs.environment }} | RunID: ${{ github.run_id }} | Commit: ${{ github.sha }}"
+            -m "Branch: ${{ github.ref_name }} | RunID: ${{ github.run_id }} | SHA: ${{ github.sha }}"
 
-      - name: Archive build artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ github.ref_name }}-${{ github.sha }}
           path: dist
           retention-days: 7
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# JOB 4 – Firebase Hosting: PR preview (replaces firebase-hosting-pull-request.yml)
-# ─────────────────────────────────────────────────────────────────────────────
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 3 – Firebase Hosting: PR preview
+  # ─────────────────────────────────────────────────────────────────────────────
   firebase-pr-preview:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.17.0'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build website
-        run: npm run deploy
+      - name: Build
+        run: |
+          npm run prebuild
+          bash -c 'source ./config.sh && npx vite build'
 
       - name: Deploy PR Preview to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
@@ -202,4 +157,3 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_POKEGO_BREEZE }}'
           projectId: pokego-breeze
-          firebaseToolsVersion: '13.35.1'
