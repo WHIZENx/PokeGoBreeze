@@ -10,6 +10,8 @@ env:
   NODE_OPTIONS: --max_old_space_size=4096
   NODE_VERSION: '20'
   # App env vars (available to all jobs via global env)
+  REACT_APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
+  APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
   REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
   REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
   REACT_APP_EDGE_CONFIG: ${{ secrets.REACT_APP_EDGE_CONFIG }}
@@ -17,7 +19,6 @@ env:
   REACT_APP_EDGE_READ_TOKEN: ${{ secrets.REACT_APP_EDGE_READ_TOKEN }}
   REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
   REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
-  REACT_APP_DEPLOYMENT_MODE: ${{ secrets.REACT_APP_DEPLOYMENT_MODE }}
   REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
 
 jobs:
@@ -50,7 +51,6 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.REACT_APP_EDGE_TOKEN }}
           VERCEL_EDGE_CONFIG_ID: ${{ secrets.REACT_APP_EDGE_ID }}
-          APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Trigger Vercel Deploy Hook
@@ -104,8 +104,6 @@ jobs:
         run: npm run lint
 
       - name: Build
-        env:
-          APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
         run: |
           npm run prebuild
           npm run generate:sitemap
@@ -149,8 +147,6 @@ jobs:
         run: npm ci
 
       - name: Build
-        env:
-          APP_DEPLOYMENT_MODE: development
         run: |
           npm run prebuild
           bash -c 'source ./config.sh && npx vite build'
