@@ -26,6 +26,9 @@
 # claude
 .claude
 
+# generated files
+/public/sitemap.xml
+
 # misc
 .env
 docker-compose.yml

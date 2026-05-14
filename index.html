@@ -4,76 +4,52 @@
     <base href="/">
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/og-image.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/og-image.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#212529" />
+    <meta name="application-name" content="PokéGo Breeze" />
     <meta name="description" id="meta-description" content="Comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and simulation tools. Find the best Pokémon for battles, raids, and more." />
-    <meta name="keywords" id="meta-keywords" content="Pokemon, Pokémon, Pokémon GO, PokéGo, Pokémon database, PVP, raids, battle simulator, Pokémon stats, Pokémon moves, Pokémon counters, Pokemon, Pokemon GO, Pokemon Go Breeze, Pokemon Go Tools" />
+    <meta name="keywords" id="meta-keywords" content="Pokemon, Pokémon, Pokémon GO, PokéGo, Pokémon database, PVP, raids, battle simulator, Pokémon stats, Pokémon moves, Pokémon counters, Pokemon GO, Pokemon Go Breeze, Pokemon Go Tools" />
     <meta name="author" content="PokéGoBreeze" />
     <meta name="publisher" content="PokéGoBreeze" />
     <meta name="robots" content="index, follow" />
-    
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:url" id="og-url" content="https://poke-go-breeze.vercel.app/" />
-    <meta property="og:title" id="og-title" content="PokéGo Breeze - Comprehensive Pokémon GO Database & Tools" />
+    <meta property="og:title" id="og-title" content="PokéGo Breeze - Comprehensive Pokémon GO Database &amp; Tools" />
     <meta property="og:description" id="og-description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
-    <meta id="og-image" property="og:image" content="https://poke-go-breeze.vercel.app/og-image.png" />
-    <meta property="og:site_name" content="PokéGo Breeze">
-    
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" id="twitter-url" content="https://poke-go-breeze.vercel.app/" />
-    <meta property="twitter:title" id="twitter-title" content="PokéGo Breeze - Comprehensive Pokémon GO Database & Tools" />
-    <meta property="twitter:description" id="twitter-description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
-    <meta id="twitter-image" property="twitter:image" content="https://poke-go-breeze.vercel.app/og-image.png" />
+    <meta property="og:image" id="og-image" content="https://poke-go-breeze.vercel.app/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="PokéGo Breeze - Pokémon GO Database &amp; Tools" />
+    <meta property="og:site_name" content="PokéGo Breeze" />
 
-    <link rel="image_src" href="https://poke-go-breeze.vercel.app/og-image.png" />
-    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" id="twitter-url" content="https://poke-go-breeze.vercel.app/" />
+    <meta name="twitter:title" id="twitter-title" content="PokéGo Breeze - Comprehensive Pokémon GO Database &amp; Tools" />
+    <meta name="twitter:description" id="twitter-description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
+    <meta name="twitter:image" id="twitter-image" content="https://poke-go-breeze.vercel.app/og-image.png" />
+    <meta name="twitter:image:alt" content="PokéGo Breeze – Pokémon GO Database &amp; Tools" />
+
+    <link rel="image_src" id="image-src" href="https://poke-go-breeze.vercel.app/og-image.png" />
     <link rel="canonical" id="canonical-url" href="https://poke-go-breeze.vercel.app/" />
-    
     <link rel="manifest" href="/manifest.json" />
-    
-    <script>
-      (function() {
-        const origin = window.location.origin;
-        document.getElementById('og-url').setAttribute('content', origin + '/');
-        document.getElementById('twitter-url').setAttribute('content', origin + '/');
-        document.getElementById('canonical-url').setAttribute('href', origin + '/');
-        document.getElementById('og-image').setAttribute('content', origin + '/og-image.png');
-        document.getElementById('twitter-image').setAttribute('content', origin + '/og-image.png');
 
-        // Expose SEO helper functions for React components
-        window.SEO = {
-          setKeywords: function(keywords) {
-            if (typeof keywords === 'string') {
-              document.getElementById('meta-keywords').setAttribute('content', keywords);
-            } else if (Array.isArray(keywords)) {
-              document.getElementById('meta-keywords').setAttribute('content', keywords.join(', '));
-            }
-          },
-          addKeywords: function(newKeywords) {
-            const keywordsElement = document.getElementById('meta-keywords');
-            const currentKeywords = keywordsElement.getAttribute('content');
-            const keywordArray = Array.isArray(newKeywords) ? newKeywords : [newKeywords];
-            
-            const updatedKeywords = currentKeywords 
-              ? currentKeywords + ', ' + keywordArray.join(', ')
-              : keywordArray.join(', ');
-              
-            keywordsElement.setAttribute('content', updatedKeywords);
-          }
-        };
-      })();
-    </script>
-    <script type="application/ld+json">
+    <!-- Structured data: must be BEFORE the inline script so getElementById('ld-json') resolves -->
+    <script id="ld-json" type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "PokéGo Breeze",
-        "url": "/",
+        "url": "https://poke-go-breeze.vercel.app/",
         "description": "Comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and simulation tools.",
         "applicationCategory": "GameApplication",
-        "genre": "Pokémon, Gaming",
         "operatingSystem": "Web",
+        "inLanguage": "en",
         "offers": {
           "@type": "Offer",
           "price": "0",
@@ -89,12 +65,54 @@
         }
       }
     </script>
-    <title id="page-title">PokéGo Breeze - Pokémon GO Database & Tools</title>
+
+    <script>
+      (function () {
+        var origin = window.location.origin;
+        var imageUrl = origin + '/og-image.png';
+
+        // Update URL-dependent meta tags to reflect actual deployment origin
+        document.getElementById('og-url').setAttribute('content', origin + '/');
+        document.getElementById('twitter-url').setAttribute('content', origin + '/');
+        document.getElementById('canonical-url').setAttribute('href', origin + '/');
+        document.getElementById('og-image').setAttribute('content', imageUrl);
+        document.getElementById('twitter-image').setAttribute('content', imageUrl);
+        document.getElementById('image-src').setAttribute('href', imageUrl);
+
+        // Update JSON-LD structured data with correct absolute URLs
+        var ldScript = document.getElementById('ld-json');
+        if (ldScript) {
+          var ldData = JSON.parse(ldScript.textContent);
+          ldData.url = origin + '/';
+          ldData.publisher.logo.url = imageUrl;
+          ldScript.textContent = JSON.stringify(ldData);
+        }
+
+        // Expose SEO helpers for React components to update per-page meta tags
+        window.SEO = {
+          setKeywords: function (keywords) {
+            var content = Array.isArray(keywords) ? keywords.join(', ') : String(keywords);
+            document.getElementById('meta-keywords').setAttribute('content', content);
+          },
+          addKeywords: function (newKeywords) {
+            var el = document.getElementById('meta-keywords');
+            var current = el.getAttribute('content');
+            var added = Array.isArray(newKeywords) ? newKeywords.join(', ') : String(newKeywords);
+            el.setAttribute('content', current ? current + ', ' + added : added);
+          }
+        };
+      })();
+    </script>
+
+    <title id="page-title">PokéGo Breeze - Pokémon GO Database &amp; Tools</title>
   </head>
   <body>
     <noscript>
-      <h1>PokéGo Breeze</h1>
-      <p>PokéGoBreeze web application for searching Pokémon and Tools simulator in Pokémon GO. This application requires JavaScript to be enabled in your browser.</p>
+      <h1>PokéGo Breeze - Pokémon GO Database &amp; Tools</h1>
+      <p>
+        PokéGo Breeze is a comprehensive Pokémon GO database with stats, moves, counters, PVP rankings,
+        raid guides, and battle simulation tools. JavaScript must be enabled to use the application.
+      </p>
     </noscript>
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
