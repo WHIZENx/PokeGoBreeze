@@ -1,15 +1,24 @@
 {
+  "id": "/",
   "short_name": "PokéGo Breeze",
   "name": "Pokédex & Pokémon Go Tools Web",
+  "description": "Comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and simulation tools.",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    },
+    {
+      "src": "og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#222222",
+  "theme_color": "#212529",
   "background_color": "#fafafa"
 }

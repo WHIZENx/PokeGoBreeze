@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    environment: ${{ github.ref_name == 'main' && 'production' || 'stage' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -76,6 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'stage' || 'development' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -103,6 +104,8 @@ jobs:
         run: npm run lint
 
       - name: Build
+        env:
+          APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
         run: |
           npm run prebuild
           npm run generate:sitemap
@@ -146,6 +149,8 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          APP_DEPLOYMENT_MODE: development
         run: |
           npm run prebuild
           bash -c 'source ./config.sh && npx vite build'
