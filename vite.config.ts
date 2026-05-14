@@ -14,29 +14,29 @@ export default defineConfig(({ mode }) => {
       react({
         jsxRuntime: 'automatic',
       }),
-      eslint({
-        eslintOptions: {
-          cache: true,
-        },
-        shouldLint: (path) => {
-          return (
-            path.includes('/src/') &&
-            /\.(ts|tsx|js|jsx)$/.test(path) &&
-            !path.includes('node_modules') &&
-            !path.includes('dist') &&
-            !path.includes('build') &&
-            !path.includes('.spec.') &&
-            !path.includes('.test.')
-          );
-        },
-      }),
-      stylelint({
-        include: ['src/**/*.{css,scss}'],
-        exclude: ['node_modules', 'dist', 'build'],
-        build: false,
-        lintInWorker: false,
-        cache: false,
-      }),
+      // ESLint: dev-only — CI runs `npm run lint` as a dedicated step before build
+      ...(isDev
+        ? [
+            eslint({
+              eslintOptions: { cache: true },
+              shouldLint: (path) =>
+                path.includes('/src/') &&
+                /\.(ts|tsx|js|jsx)$/.test(path) &&
+                !path.includes('node_modules') &&
+                !path.includes('dist') &&
+                !path.includes('build') &&
+                !path.includes('.spec.') &&
+                !path.includes('.test.'),
+            }),
+            stylelint({
+              include: ['src/**/*.{css,scss}'],
+              exclude: ['node_modules', 'dist', 'build'],
+              build: false,
+              lintInWorker: false,
+              cache: true,
+            }),
+          ]
+        : []),
     ],
     define: {
       'process.env': JSON.stringify({
@@ -50,11 +50,10 @@ export default defineConfig(({ mode }) => {
         REACT_APP_CONFIG: env.REACT_APP_CONFIG,
         REACT_APP_BASE_URL: env.REACT_APP_BASE_URL,
         REACT_APP_NEON_API_URL: env.NEON_API_URL,
-        NODE_ENV: JSON.stringify(isDev ? 'development' : 'production'),
+        NODE_ENV: isDev ? 'development' : 'production',
         DEBUG: isDev,
       }),
       global: 'globalThis',
-      'process.browser': true,
     },
     resolve: {
       alias: {
@@ -71,7 +70,6 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'dist',
-      assetsDir: 'static',
       sourcemap: isDev,
       minify: isDev ? false : 'terser',
       target: 'es2015',
@@ -83,12 +81,9 @@ export default defineConfig(({ mode }) => {
           }
           warn(warning);
         },
-        input: {
-          main: resolve(__dirname, 'index.html'),
-        },
         output: {
           manualChunks: {
-            'react-vendor': ['react', 'react-dom'],
+            'react-vendor': ['react', 'react-dom', 'react/jsx-runtime'],
             'utility-vendor': ['lodash', 'moment'],
             'router-vendor': ['react-router-dom', 'history'],
             'redux-vendor': ['react-redux', 'redux', 'redux-persist', 'redux-thunk', '@redux-devtools/extension'],
@@ -121,7 +116,7 @@ export default defineConfig(({ mode }) => {
           safari10: true,
         },
       },
-      chunkSizeWarningLimit: 5000,
+      chunkSizeWarningLimit: 1000,
     },
     css: {
       preprocessorOptions: {

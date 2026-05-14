@@ -39,7 +39,7 @@
   },
   "scripts": {
     "start": "bash -c 'source ./config.sh && VITE_CJS_IGNORE_WARNING=true vite'",
-    "build": "VITE_CJS_IGNORE_WARNING=true vite build && npm run generate:sitemap",
+    "build": "npm run generate:sitemap && VITE_CJS_IGNORE_WARNING=true vite build",
     "format:code": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "format:style": "stylelint --fix \"src/**/*.{css,scss}\"",
     "lint:code": "eslint \"src/**/*.{ts,tsx,js,jsx}\"",
@@ -51,7 +51,7 @@
     "debug-vite": "VITE_CJS_IGNORE_WARNING=true vite --debug --force",
     "prebuild": "rimraf dist",
     "build:vite": "VITE_CJS_IGNORE_WARNING=true vite build",
-    "deploy": "bash -c 'source ./config.sh && npm run lint && VITE_CJS_IGNORE_WARNING=true vite build' && node sitemap/buildSitemap.js",
+    "deploy": "bash -c 'source ./config.sh && npm run lint && node sitemap/buildSitemap.js && VITE_CJS_IGNORE_WARNING=true vite build'",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
   "browserslist": {
