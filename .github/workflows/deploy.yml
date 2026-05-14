@@ -24,16 +24,16 @@ env:
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 1 – Vercel: update Edge Config + trigger deploy hook
-  # Branches: main (production) | stage (staging)
+  # Branches: main (production) | stage (staging) | develop (development)
   # ─────────────────────────────────────────────────────────────────────────────
   deploy-vercel:
     if: |
       github.event_name != 'pull_request' &&
-      (github.ref_name == 'main' || github.ref_name == 'stage')
+      (github.ref_name == 'main' || github.ref_name == 'stage' || github.ref_name == 'develop')
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    environment: ${{ github.ref_name == 'main' && 'production' || 'stage' }}
+    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'stage' || 'development' }}
     steps:
       - uses: actions/checkout@v4
 
