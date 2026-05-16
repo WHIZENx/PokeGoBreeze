@@ -1024,8 +1024,6 @@ export const replaceTempMovePvpName = (name: string) => {
     name = name = 'TECHNO_BLAST_DOUSE';
   } else if (isEqual(name, 'FUTURE_SIGHT')) {
     name = name = 'FUTURESIGHT';
-  } else if (isEqual(name, 'ROLLOUT')) {
-    name = 'ROLL_OUT';
   }
   return name;
 };
