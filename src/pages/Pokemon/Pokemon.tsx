@@ -503,18 +503,18 @@ const Pokemon = (props: IPokemonPage) => {
       const originForm = splitAndCapitalize(searchingMainForm.form?.formName, '-', '-');
       setOriginForm(originForm);
       if (params.id) {
+        const pokemonName = splitAndCapitalize(nameInfo, '-', ' ');
         setTitleProps({
-          title: `#${data.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`,
-          description: `Pokémon - #${data.id} ${splitAndCapitalize(nameInfo, '-', ' ')}`,
+          title: `${pokemonName} (#${data.id}) - Stats, Moves & PVP | PokéGO Breeze`,
+          description: `Complete Pokémon GO stats, movesets, and PVP analysis for ${pokemonName} (#${data.id}). View IV ranges, evolution chain, shadow/purified forms, and battle league rankings.`,
           keywords: [
-            'pokemon',
-            'Pokémon',
-            'PokéGO Breeze',
-            'Pokémon ID',
-            'Pokémon name',
-            'Pokémon form',
+            'Pokémon GO',
+            pokemonName,
             `#${data.id}`,
-            splitAndCapitalize(nameInfo, '-', ' '),
+            `${pokemonName} stats`,
+            `${pokemonName} moves`,
+            `${pokemonName} PVP`,
+            'PokéGO Breeze',
           ],
           image: APIService.getPokeFullSprite(
             dataStorePokemon?.current?.id,

@@ -145,7 +145,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
               {value.type === AttackType.Win && (
                 <div
                   className={combineClasses(
-                    'winner-container bg-success tw-text-white turn-battle',
+                    'winner-container !tw-bg-green-600 tw-text-white turn-battle',
                     end ? 'tw-justify-end' : ''
                   )}
                 >
@@ -155,7 +155,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
               {value.type === AttackType.Dead && (
                 <div
                   className={combineClasses(
-                    'loser-container bg-danger tw-text-white turn-battle',
+                    'loser-container !tw-bg-red-600 tw-text-white turn-battle',
                     end ? 'tw-justify-end' : ''
                   )}
                 >

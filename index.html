@@ -15,7 +15,7 @@
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" id="og-type" content="website" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" id="og-url" content="https://poke-go-breeze.vercel.app/" />
     <meta property="og:title" id="og-title" content="PokéGo Breeze - Comprehensive Pokémon GO Database &amp; Tools" />
@@ -24,7 +24,7 @@
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="PokéGo Breeze - Pokémon GO Database &amp; Tools" />
+    <meta property="og:image:alt" id="og-image-alt" content="PokéGo Breeze - Pokémon GO Database &amp; Tools" />
     <meta property="og:site_name" content="PokéGo Breeze" />
 
     <!-- Twitter Card -->
@@ -33,7 +33,7 @@
     <meta name="twitter:title" id="twitter-title" content="PokéGo Breeze - Comprehensive Pokémon GO Database &amp; Tools" />
     <meta name="twitter:description" id="twitter-description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
     <meta name="twitter:image" id="twitter-image" content="https://poke-go-breeze.vercel.app/og-image.png" />
-    <meta name="twitter:image:alt" content="PokéGo Breeze – Pokémon GO Database &amp; Tools" />
+    <meta name="twitter:image:alt" id="twitter-image-alt" content="PokéGo Breeze – Pokémon GO Database &amp; Tools" />
 
     <link rel="image_src" id="image-src" href="https://poke-go-breeze.vercel.app/og-image.png" />
     <link rel="canonical" id="canonical-url" href="https://poke-go-breeze.vercel.app/" />
@@ -99,6 +99,18 @@
             var current = el.getAttribute('content');
             var added = Array.isArray(newKeywords) ? newKeywords.join(', ') : String(newKeywords);
             el.setAttribute('content', current ? current + ', ' + added : added);
+          },
+          updateLdJson: function (data) {
+            var ldScript = document.getElementById('ld-json');
+            if (!ldScript) return;
+            try {
+              var ldData = JSON.parse(ldScript.textContent);
+              if (data.name) ldData.name = data.name;
+              if (data.description) ldData.description = data.description;
+              if (data.url) ldData.url = data.url;
+              if (data.image) ldData.image = data.image;
+              ldScript.textContent = JSON.stringify(ldData);
+            } catch (e) {}
           }
         };
       })();

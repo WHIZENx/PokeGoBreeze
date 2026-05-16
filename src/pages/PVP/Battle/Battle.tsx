@@ -149,7 +149,7 @@ const Battle = () => {
 
   const [isFound, setIsFound] = useState(true);
 
-  const battleAnimation = () => {
+  const battleAnimation = (retryCount = 0) => {
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
       showSnackbar('Something went wrong! Please try again.', 'error');
       return;
@@ -170,7 +170,8 @@ const Battle = () => {
 
     const battle = BattlePVP.create(pokemonCurr, pokemonObj);
 
-    while (battle.pokemon.hp > 0 && battle.pokemonOpponent.hp > 0) {
+    let iter = 0;
+    while (battle.pokemon.hp > 0 && battle.pokemonOpponent.hp > 0 && iter++ < 10000) {
       battle.updateBattle();
       if (!battle.config.charged && !battle.configOpponent.charged) {
         battle.chargeAttack();
@@ -223,8 +224,8 @@ const Battle = () => {
     if (battle.timeline.length === battle.timelineOpponent.length) {
       setPokemonCurr({ ...pokemonCurr, timeline: battle.timeline });
       setPokemonObj({ ...pokemonObj, timeline: battle.timelineOpponent });
-    } else {
-      battleAnimation();
+    } else if (retryCount < 10) {
+      battleAnimation(retryCount + 1);
     }
   };
 
@@ -234,7 +235,7 @@ const Battle = () => {
   };
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
-    title: 'PVP Battle Simulator',
+    title: 'PVP Battle Simulator | PokéGO Breeze',
     description:
       'Simulate Pokémon GO PVP battles between any Pokémon across different leagues. Test movesets, strategies, and optimize your team.',
     keywords: [
