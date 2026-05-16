@@ -15,11 +15,9 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
 
   const changePokemon = (value: IPokemonData) => {
-    if (props.defaultSetting) {
-      value.stats = props.defaultSetting;
-    }
+    const pokemonToPass = props.defaultSetting ? { ...value, stats: props.defaultSetting } : value;
     if (props.setCurrentPokemon) {
-      props.setCurrentPokemon(value);
+      props.setCurrentPokemon(pokemonToPass);
     }
     if (props.isSelected && props.setFMovePokemon) {
       props.setFMovePokemon(findMove(value, TypeMove.Fast));

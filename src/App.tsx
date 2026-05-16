@@ -59,8 +59,7 @@ const ColorModeContext = createContext({
 });
 
 function App() {
-  const { loadTimestamp } = useTimestamp();
-  const { timestampGameMaster } = useTimestamp();
+  const { loadTimestamp, timestampGameMaster } = useTimestamp();
   const { startProgress } = useSpinner();
   const { setDevice } = useDevice();
   const { loadTheme } = useThemeStore();
@@ -122,6 +121,7 @@ function App() {
       setStateVersion(currentVersion || '');
       loadData(controller.signal, isCurrentVersion);
     }
+    return () => controller.abort();
   }, [isLoaded]);
 
   useEffect(() => {

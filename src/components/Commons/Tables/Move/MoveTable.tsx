@@ -309,23 +309,20 @@ const TableMove = (props: ITableMoveComponent) => {
       type === TypeSorted.Charge ? o.charged : type === TypeSorted.Effective ? o.effective : o.fast
     );
     if (table === TableType.Offensive) {
+      const newOffensive = { ...offensive };
       if (offensive.sortBy === type) {
-        const prev = offensive[sortedColumn];
-        offensive[sortedColumn] = !prev;
+        newOffensive[sortedColumn] = !offensive[sortedColumn];
       }
-      offensive.sortBy = type;
+      newOffensive.sortBy = type;
+      return setStateSorted({ ...stateSorted, offensive: newOffensive });
     } else if (table === TableType.Defensive) {
+      const newDefensive = { ...defensive };
       if (defensive.sortBy === type) {
-        const prev = defensive[sortedColumn];
-        defensive[sortedColumn] = !prev;
+        newDefensive[sortedColumn] = !defensive[sortedColumn];
       }
-      defensive.sortBy = type;
+      newDefensive.sortBy = type;
+      return setStateSorted({ ...stateSorted, defensive: newDefensive });
     }
-    return setStateSorted({
-      ...stateSorted,
-      offensive,
-      defensive,
-    });
   };
 
   const sortFunc = (rowA: IPokemonQueryMove, rowB: IPokemonQueryMove, table: TableType) => {
