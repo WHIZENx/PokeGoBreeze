@@ -76,7 +76,7 @@ import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { getRandomNumber, overlappingPos, pushBoundingById } from '../utils/battle.utils';
+import { getRandomNumber, overlappingPosFromOffsets, pushOffsetById } from '../utils/battle.utils';
 import {
   battleDelay,
   battleMaxEnergy,
@@ -143,8 +143,6 @@ const Battle = () => {
   const timelineNormalContainer = useRef<HTMLDivElement>();
   const playLine = useRef<HTMLDivElement>();
 
-  let timelineInterval: NodeJS.Timeout;
-
   const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
@@ -169,11 +167,10 @@ const Battle = () => {
     arrBound.current = [];
     arrStore.current = [];
     resetTimeline();
-    clearInterval(timelineInterval);
 
     const battle = BattlePVP.create(pokemonCurr, pokemonObj);
 
-    timelineInterval = setInterval(() => {
+    while (battle.pokemon.hp > 0 && battle.pokemonOpponent.hp > 0) {
       battle.updateBattle();
       if (!battle.config.charged && !battle.configOpponent.charged) {
         battle.chargeAttack();
@@ -215,22 +212,20 @@ const Battle = () => {
           battle.delay -= battleDelay();
         }
       }
+    }
 
-      if (battle.pokemon.hp <= 0 || battle.pokemonOpponent.hp <= 0) {
-        clearInterval(timelineInterval);
-        if (battle.pokemon.hp <= 0) {
-          battle.result();
-        } else if (battle.pokemonOpponent.hp <= 0) {
-          battle.result(true);
-        }
-        if (battle.timeline.length === battle.timelineOpponent.length) {
-          setPokemonCurr({ ...pokemonCurr, timeline: battle.timeline });
-          setPokemonObj({ ...pokemonObj, timeline: battle.timelineOpponent });
-        } else {
-          battleAnimation();
-        }
-      }
-    }, 1);
+    if (battle.pokemon.hp <= 0) {
+      battle.result();
+    } else if (battle.pokemonOpponent.hp <= 0) {
+      battle.result(true);
+    }
+
+    if (battle.timeline.length === battle.timelineOpponent.length) {
+      setPokemonCurr({ ...pokemonCurr, timeline: battle.timeline });
+      setPokemonObj({ ...pokemonObj, timeline: battle.timelineOpponent });
+    } else {
+      battleAnimation();
+    }
   };
 
   const clearData = () => {
@@ -360,20 +355,45 @@ const Battle = () => {
   useEffect(() => {
     if (isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)) {
       stopTimeline();
-      arrBound.current = [];
-      arrStore.current = [];
       const elem = document.getElementById('play-line');
-      if (elem) {
-        elem.style.transform = 'translate(0px, -50%)';
-      }
-      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        pushBoundingById(arrBound.current, i);
-      }
-      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        pushBoundingById(arrStore.current, i);
+      if (timelineType === TimelineType.Fit) {
+        const oldWidth = xFit.current;
+        const newWidth = toNumber(timelineFit.current?.clientWidth);
+        // offsetLeft values change proportionally with container width in Fit mode — re-collect
+        arrStore.current = [];
+        for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+          pushOffsetById(arrStore.current, i);
+        }
+        if (elem) {
+          const oldX = getTranslation(elem);
+          const newX = oldWidth > 0 ? (oldX / oldWidth) * newWidth : 0;
+          elem.style.transform = `translate(${newX}px, -50%)`;
+          checkOverlap(arrStore.current, newX);
+        }
+        xFit.current = newWidth;
+      } else {
+        // Normal mode: offsetLeft values are stable regardless of window width
+        if (!isNotEmpty(arrBound.current)) {
+          for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+            pushOffsetById(arrBound.current, i);
+          }
+        }
+        if (elem) {
+          checkOverlap(arrBound.current, getTranslation(elem));
+        }
       }
     }
   }, [windowWidth]);
+
+  useEffect(() => {
+    if (!timelinePlay.current) {
+      return;
+    }
+    cancelAnimationFrame(timelinePlay.current);
+    timelinePlay.current = null;
+    start.current = 0;
+    playingTimeline();
+  }, [duration]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
@@ -400,9 +420,8 @@ const Battle = () => {
   const [playState, setPlayState] = useState(false);
   const scrollWidth = useRef(0);
   const xFit = useRef(0);
-  const xNormal = useRef<number | null>(null);
-  const arrBound = useRef<(DOMRect | undefined)[]>([]);
-  const arrStore = useRef<(DOMRect | undefined)[]>([]);
+  const arrBound = useRef<number[]>([]);
+  const arrStore = useRef<number[]>([]);
 
   const getTranslation = (elem: HTMLElement) =>
     elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
@@ -412,7 +431,6 @@ const Battle = () => {
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
-    const xPos = toNumber(xNormal.current);
     if (elem && x <= toNumber(timelineNormal.current?.clientWidth) - 2) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }
@@ -422,16 +440,10 @@ const Battle = () => {
       arrBound.current.length < pokemonCurr.timeline.length
     ) {
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        pushBoundingById(arrBound.current, i);
+        pushOffsetById(arrBound.current, i);
       }
     }
-    if (xPos <= 0) {
-      if (timelineNormalContainer.current) {
-        const rect = timelineNormalContainer.current.getBoundingClientRect();
-        xNormal.current = rect.left;
-      }
-    }
-    checkOverlap(arrBound.current, x + xPos);
+    checkOverlap(arrBound.current, x);
   };
 
   const onPlayLineFitMove = (e: TimelineEvent<HTMLDivElement>) => {
@@ -444,15 +456,15 @@ const Battle = () => {
     }
     if (
       (xFit.current !== e.currentTarget.clientWidth || !isNotEmpty(arrStore.current)) &&
-      isNotEmpty(pokemonCurr.timeline) &&
-      arrStore.current.length < pokemonCurr.timeline.length
+      isNotEmpty(pokemonCurr.timeline)
     ) {
       xFit.current = e.currentTarget.clientWidth;
+      arrStore.current = [];
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-        pushBoundingById(arrStore.current, i);
+        pushOffsetById(arrStore.current, i);
       }
     }
-    checkOverlap(arrStore.current, elem?.getBoundingClientRect().left);
+    checkOverlap(arrStore.current, x);
   };
 
   const playingTimeline = () => {
@@ -470,26 +482,22 @@ const Battle = () => {
         timelineNormalContainer.current?.scrollTo({
           left: Math.max(0, xCurrent - timelineNormalContainer.current?.clientWidth / 2),
         });
-        if (!xNormal.current) {
-          if (timelineNormalContainer.current) {
-            const rect = timelineNormalContainer.current.getBoundingClientRect();
-            xNormal.current = rect.left;
-          }
-        }
         if (!isNotEmpty(arrBound.current)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-            pushBoundingById(arrBound.current, i);
+            pushOffsetById(arrBound.current, i);
           }
         }
+        checkOverlap(arrBound.current, xCurrent);
       } else {
         const clientWidth = toNumber(timelineFit.current?.clientWidth);
         xCurrent = elem.style.transform ? (getTranslation(elem) >= clientWidth - 1 ? 0 : getTranslation(elem)) : 0;
         xFit.current = clientWidth;
         if (!isNotEmpty(arrStore.current)) {
           for (let i = 0; i < range; i++) {
-            pushBoundingById(arrStore.current, i);
+            pushOffsetById(arrStore.current, i);
           }
         }
+        checkOverlap(arrStore.current, xCurrent);
       }
     }
     if (!start.current) {
@@ -510,7 +518,7 @@ const Battle = () => {
         }
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
-          checkOverlap(arrBound.current, width + toNumber(xNormal.current));
+          checkOverlap(arrBound.current, width);
         }
         if (Math.min(width, clientWidthContainer / 2) === clientWidthContainer / 2) {
           timelineNormalContainer.current?.scrollTo({
@@ -527,7 +535,7 @@ const Battle = () => {
         const width = Math.min(clientWidth, xCurrent + durationFactor * clientWidth);
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
-          checkOverlap(arrStore.current, elem.getBoundingClientRect().left);
+          checkOverlap(arrStore.current, width);
         }
         if (width < clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
@@ -572,9 +580,9 @@ const Battle = () => {
     });
   };
 
-  const checkOverlap = (arr: (DOMRect | undefined)[], pos = 0, sound = false) => {
-    const index = overlappingPos(arr, pos);
-    if (index >= 0 && index < arr.length) {
+  const checkOverlap = (offsets: number[], pos = 0, sound = false) => {
+    const index = overlappingPosFromOffsets(offsets, pos);
+    if (index >= 0 && index < offsets.length) {
       updateTimeline(index, sound);
     }
   };
@@ -630,12 +638,12 @@ const Battle = () => {
       if (type === TimelineType.Normal) {
         if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-            pushBoundingById(arrBound.current, i);
+            pushOffsetById(arrBound.current, i);
           }
         }
         if (elem) {
           elem.style.transform = `translate(${transform}px, -50%)`;
-          checkOverlap(arrBound.current, elem.getBoundingClientRect().left);
+          checkOverlap(arrBound.current, transform);
         }
         timelineNormalContainer.current?.scrollTo({
           left: Math.min(transform, transform - timelineNormalContainer.current?.clientWidth / 2),
@@ -643,12 +651,12 @@ const Battle = () => {
       } else {
         if (!isNotEmpty(arrStore.current) && isNotEmpty(pokemonCurr.timeline)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-            pushBoundingById(arrStore.current, i);
+            pushOffsetById(arrStore.current, i);
           }
         }
         if (elem) {
           elem.style.transform = `translate(${transform}px, -50%)`;
-          checkOverlap(arrStore.current, elem.getBoundingClientRect().left);
+          checkOverlap(arrStore.current, transform);
         }
       }
     }, 100);
