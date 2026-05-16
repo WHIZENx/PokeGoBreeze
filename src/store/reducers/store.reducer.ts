@@ -118,9 +118,10 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
             isEqual(move.name, 'HIDDEN_POWER') ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name)
           )
         );
-        move.archetype = movePVP?.archetype;
-        move.abbreviation = movePVP?.abbreviation;
-        return move;
+        if (!movePVP) {
+          return move;
+        }
+        return { ...move, archetype: movePVP.archetype, abbreviation: movePVP.abbreviation };
       });
       return {
         ...state,

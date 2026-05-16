@@ -367,15 +367,12 @@ npm install
    | Variable | Purpose |
    |---|---|
    | `REACT_APP_TOKEN_PRIVATE_REPO` | GitHub token for private repo access |
-   | `REACT_APP_POKEGO_BREEZE_DB_URL` | Vercel Postgres connection URL |
-   | `NEON_API_URL` | Neon database API endpoint |
-   | `REACT_APP_EDGE_CONFIG` | Vercel Edge Config URL |
    | `REACT_APP_EDGE_TOKEN` | Edge Config write token (deploy.sh) |
    | `REACT_APP_EDGE_READ_TOKEN` | Edge Config read token (config.sh) |
    | `REACT_APP_EDGE_ID` | Edge Config ID |
    | `REACT_APP_ENCRYPTION_KEY` | AES encryption key (40+ chars) |
    | `REACT_APP_ENCRYPTION_SALT` | AES encryption salt (40+ chars) |
-   | `REACT_APP_DEPLOYMENT_MODE` | `development` | `staging` | `production` |
+   | `REACT_APP_DEPLOYMENT_MODE` | `development` \| `staging` \| `production` |
    | `MONGODB_URI` | MongoDB connection string |
 
    > See `.env.example` for all required variables and descriptions.

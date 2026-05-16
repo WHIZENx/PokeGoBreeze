@@ -194,14 +194,8 @@ export const useDataStore = () => {
           errorProgress({ isError: true });
           return;
         }
-        const pokemonEncounter: PokemonEncounter[] = [];
-        try {
-          const { data } = await APIService.getFetchNeon<PokemonEncounter[]>('tblpokemonencounter');
-          pokemonEncounter.push(...data);
-        } catch {
-          const pokemonEncounterData = await import('../data/pokemon_encounter.json');
-          pokemonEncounter.push(...pokemonEncounterData.default);
-        }
+        const pokemonEncounterData = await import('../data/pokemon_encounter.json');
+        const pokemonEncounter: PokemonEncounter[] = [...pokemonEncounterData.default];
 
         await initializeStaticData();
 
