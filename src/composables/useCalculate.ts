@@ -92,14 +92,14 @@ export const useCalculate = () => {
   };
 
   const queryMove = (data: QueryMovesPokemon, mf: ICombat, cMove: string[], fMoveType: MoveType) => {
+    const fMoveCopy = Combat.create({ ...mf, moveType: fMoveType });
     cMove.forEach((vc) => {
       const mc = combatsData.find((item) => isEqual(item.name, vc));
 
       if (mc) {
         const cMoveType = getMoveType(data.pokemon, vc);
         if (!isEqual(cMoveType, MoveType.Dynamax)) {
-          mf.moveType = fMoveType;
-          mc.moveType = cMoveType;
+          const mcCopy = Combat.create({ ...mc, moveType: cMoveType });
 
           const options = OptionOtherDPS.create({
             delay: Delay.create({
@@ -120,8 +120,8 @@ export const useCalculate = () => {
           const pokemonType = moveTypeToFormType(cMoveType);
 
           const offensive = calculateAvgDPS(
-            mf,
-            mc,
+            fMoveCopy,
+            mcCopy,
             statsAtkBattle,
             statsDefBattle,
             statsStaBattle,
@@ -129,8 +129,8 @@ export const useCalculate = () => {
             pokemonType
           );
           const defensive = calculateAvgDPS(
-            mf,
-            mc,
+            fMoveCopy,
+            mcCopy,
             statsAtkBattle,
             statsDefBattle,
             statsStaBattle,
@@ -140,7 +140,7 @@ export const useCalculate = () => {
           );
 
           data.dataList.push(
-            new PokemonQueryMove({ fMove: mf, cMove: mc, eDPS: EDPS.create({ offensive, defensive }) })
+            new PokemonQueryMove({ fMove: fMoveCopy, cMove: mcCopy, eDPS: EDPS.create({ offensive, defensive }) })
           );
         }
       }

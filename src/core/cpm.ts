@@ -27,10 +27,6 @@ export const calculateBaseCPM = (baseCPM: DynamicObj<number>, min: number, max: 
     const cpmHigh = toNumber(cpmList.find((cp) => cp.level === Math.ceil(i))?.multiplier);
     result.multiplier = Math.sqrt(Math.pow(cpmLow, 2) - Math.pow(cpmLow, 2) / 2 + Math.pow(cpmHigh, 2) / 2);
 
-    if (i > 0) {
-      result.step = result.multiplier - cpmList[i - 0]?.multiplier;
-    }
-
     cpmList.push(result);
   }
 

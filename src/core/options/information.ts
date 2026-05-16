@@ -71,7 +71,7 @@ const titleFromPgoParts = (descKey: string[]) => {
 
 const titleFromDescriptionFallback = (descriptionOverride: string | undefined) => {
   const parts = getValueOrDefault(Array, descriptionOverride?.split('_'));
-  return capitalize(parts[parts?.length - 1]);
+  return capitalize(parts[parts.length - 1]);
 };
 
 const titleFromEventBanner = (itemSettings: ItemSettings): string | undefined => {
@@ -131,8 +131,7 @@ const getInformationDesc = (itemSettings: ItemSettings | undefined) => {
   if (!textKey) {
     return;
   }
-  const result = getTextWithKey<string>(textEng, textKey);
-  return result;
+  return getTextWithKey<string>(textEng, textKey);
 };
 
 const getInformationDetails = (itemSettings: ItemSettings | undefined) => {
@@ -140,8 +139,7 @@ const getInformationDetails = (itemSettings: ItemSettings | undefined) => {
   if (!textKey) {
     return;
   }
-  const result = getTextWithKey<string>(textEng, textKey);
-  return result;
+  return getTextWithKey<string>(textEng, textKey);
 };
 
 export const optionInformation = (data: PokemonDataGM[], pokemonData: IPokemonData[]) =>

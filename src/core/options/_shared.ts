@@ -1,6 +1,6 @@
 import type pokemonStoreDataType from '../../data/pokemon.json';
 import type textEngType from '../../data/text_english.json';
-import { isInclude, isNotEmpty, safeObjectEntries, getValueOrDefault } from '../../utils/extension';
+import { isInclude, safeObjectEntries, getValueOrDefault } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import { formArmor, formGalarian, formShadow } from '../../utils/helpers/options-context.helpers';
 import { replacePokemonGoForm } from '../../utils/utils';
@@ -26,7 +26,7 @@ export const getTextWithKey = <T>(data: object, findKey: string | number) => {
   const result = safeObjectEntries(data).find(([key]) =>
     isInclude(key, findKey, IncludeMode.IncludeIgnoreCaseSensitive)
   );
-  return result && isNotEmpty(result) ? (result[1] as T) : undefined;
+  return result ? (result[1] as T) : undefined;
 };
 
 export const convertAndReplaceNameGO = (name: string | number, defaultName = ''): string => {
