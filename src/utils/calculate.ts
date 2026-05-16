@@ -19,12 +19,6 @@ import {
   IStatsPokemonGO,
 } from '../core/models/stats.model';
 import dataCPM from '../data/cp_multiplier.json';
-
-// O(1) level → multiplier lookup. Replaces repeated `dataCPM.find((i) => i.level === level)`
-// calls that appeared in hot paths (calculateCP, calculateCatchChance, calculateStatsBattle)
-// and ran millions of times during predictStat / calStatsProd sweeps.
-const CPM_MAP = new Map<number, number>(dataCPM.map((item: ICPM) => [item.level, item.multiplier]));
-const getCpmMultiplier = (level: number | undefined): number => toNumber(CPM_MAP.get(toNumber(level)));
 import { PokemonType, TypeAction } from '../enums/type.enum';
 import { IOptionOtherDPS, Specific } from '../store/models/options.model';
 import { findStabType, typeCostPowerUp } from './compute';
@@ -91,6 +85,12 @@ import {
   getTypeEffective as getTypeEffectiveScalar,
   getWeatherBoost,
 } from './helpers/options-context.helpers';
+
+// O(1) level → multiplier lookup. Replaces repeated `dataCPM.find((i) => i.level === level)`
+// calls that appeared in hot paths (calculateCP, calculateCatchChance, calculateStatsBattle)
+// and ran millions of times during predictStat / calStatsProd sweeps.
+const CPM_MAP = new Map<number, number>(dataCPM.map((item: ICPM) => [item.level, item.multiplier]));
+const getCpmMultiplier = (level: number | undefined): number => toNumber(CPM_MAP.get(toNumber(level)));
 
 const weatherMultiple = (weather: string | undefined, type: string | undefined) =>
   (getWeatherBoost() as unknown as DynamicObj<string[]>)[camelCase(weather)]?.find((item) =>
@@ -248,7 +248,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
   );
 
   const prodRanking = UniqValueInArray(
-    stats.sort((a, b) => a.statsGO.prod - b.statsGO.prod).map((item) => item.statsGO.prod)
+    [...stats].sort((a, b) => a.statsGO.prod - b.statsGO.prod).map((item) => item.statsGO.prod)
   );
 
   const minPROD = Math.min(...prodRanking);

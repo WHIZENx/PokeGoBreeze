@@ -25,7 +25,6 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
-  isNumber,
   isNullOrUndefined,
   isUndefined,
   toNumber,
@@ -193,7 +192,7 @@ export const camelCase = (str: string | undefined | null, defaultText = '') => {
   }
 
   const words = str
-    .replace(/(?=[A-Z])+/g, ' ')
+    .replace(/(?=[A-Z])/g, ' ')
     .replace(/[-_\s]+/g, ' ')
     .trim()
     .split(' ');
@@ -242,8 +241,7 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
   if (isNullOrUndefined(value)) {
     return value;
   }
-  const date = Moment(new Date(isNumber(value) ? toNumber(value) : value));
-  return date.format(notFull ? 'D MMMM YYYY' : 'HH:mm D MMMM YYYY');
+  return Moment(new Date(value)).format(notFull ? 'D MMMM YYYY' : 'HH:mm D MMMM YYYY');
 };
 
 export const convertSexName = (text: string | undefined) =>
@@ -418,7 +416,7 @@ export const getStyleSheet = (selector: string) => {
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
       const rule = sheet.cssRules[j] as CSSRuleSelector;
-      if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
+      if (rule.selectorText && rule.selectorText.split(',').includes(selector)) {
         return sheet;
       }
     }
@@ -470,7 +468,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
       const rule = sheet.cssRules[j] as CSSRuleSelector;
-      if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1 && rule.style) {
+      if (rule.selectorText && rule.selectorText.split(',').includes(selector) && rule.style) {
         return rule.style[style];
       }
     }
@@ -720,11 +718,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
       },
     },
   };
-  if (customStyles) {
-    const result = mergeTableStyles(customStyles, defaultData);
-    return result;
-  }
-  return defaultData;
+  return customStyles ? mergeTableStyles(customStyles, defaultData) : defaultData;
 };
 
 export const getDataWithKey = <T>(
@@ -741,15 +735,15 @@ export const getKeyWithData = <T>(data: object, findValue: T) => {
   return result && isNotEmpty(result) ? result[0] : undefined;
 };
 
-export const getKeysObj = (data: object) =>
-  Object.values(data)
-    .map((v) => getValueOrDefault<string>(String, v.toString()))
-    .filter((_, i) => i < Object.values(data).length / 2);
+export const getKeysObj = (data: object) => {
+  const values = Object.values(data);
+  return values.map((v) => getValueOrDefault<string>(String, v.toString())).filter((_, i) => i < values.length / 2);
+};
 
-export const getValuesObj = <T extends object>(data: T, divide = 2) =>
-  Object.keys(data)
-    .map((v) => v as unknown as T)
-    .filter((_, i) => i < Object.keys(data).length / divide);
+export const getValuesObj = <T extends object>(data: T, divide = 2) => {
+  const keys = Object.keys(data);
+  return keys.map((v) => v as unknown as T).filter((_, i) => i < keys.length / divide);
+};
 
 export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   if (!pokemon) {
@@ -805,20 +799,28 @@ export const formIconAssets = (value: IPokemonFormModify) =>
     : APIService.getPokeIconSprite(value.form.name);
 
 export const convertPokemonAPIDataFormName = (form: string | undefined | null, name: string | undefined | null) => {
-  if (isEqual(name, 'ZACIAN-CROWNED', EqualMode.IgnoreCaseSensitive)) {
-    form += '-SWORD';
-  } else if (isEqual(name, 'ZAMAZENTA-CROWNED', EqualMode.IgnoreCaseSensitive)) {
-    form += '-SHIELD';
-  } else if (isEqual(name, 'NECROZMA-DUSK', EqualMode.IgnoreCaseSensitive)) {
-    form += '-MANE';
-  } else if (isEqual(name, 'NECROZMA-DAWN', EqualMode.IgnoreCaseSensitive)) {
-    form += '-WINGS';
-  } else if (isEqual(name, 'CALYREX-ICE', EqualMode.IgnoreCaseSensitive)) {
-    form += '-RIDER';
-  } else if (isEqual(name, 'ZYGARDE-10', EqualMode.IgnoreCaseSensitive)) {
-    form = 'TEN-PERCENT';
-  } else if (isEqual(name, 'ZYGARDE-50', EqualMode.IgnoreCaseSensitive)) {
-    form = 'FIFTY-PERCENT';
+  switch (name?.toUpperCase()) {
+    case 'ZACIAN-CROWNED':
+      form += '-SWORD';
+      break;
+    case 'ZAMAZENTA-CROWNED':
+      form += '-SHIELD';
+      break;
+    case 'NECROZMA-DUSK':
+      form += '-MANE';
+      break;
+    case 'NECROZMA-DAWN':
+      form += '-WINGS';
+      break;
+    case 'CALYREX-ICE':
+      form += '-RIDER';
+      break;
+    case 'ZYGARDE-10':
+      form = 'TEN-PERCENT';
+      break;
+    case 'ZYGARDE-50':
+      form = 'FIFTY-PERCENT';
+      break;
   }
   return form?.toLowerCase();
 };
@@ -1021,9 +1023,9 @@ export const replaceTempMovePvpName = (name: string) => {
   if (isInclude(name, '_BLASTOISE')) {
     name = name.replace('_BLASTOISE', '');
   } else if (isEqual(name, 'TECHNO_BLAST_WATER')) {
-    name = name = 'TECHNO_BLAST_DOUSE';
+    name = 'TECHNO_BLAST_DOUSE';
   } else if (isEqual(name, 'FUTURE_SIGHT')) {
-    name = name = 'FUTURESIGHT';
+    name = 'FUTURESIGHT';
   }
   return name;
 };
@@ -1272,31 +1274,25 @@ export const getItemEvolutionType = (itemEvolution: ItemEvolutionType) => {
   }
 };
 
+const ITEM_SPRITE_MAP: Partial<Record<string, string>> = {
+  [ItemName.RaidTicket]: 'Item_1401',
+  [ItemName.RareCandy]: 'Item_1301',
+  [ItemName.XlRareCandy]: 'RareXLCandy_PSD',
+  [ItemName.PokeBall]: 'pokeball_sprite',
+  [ItemName.GreatBall]: 'greatball_sprite',
+  [ItemName.UltraBall]: 'ultraball_sprite',
+  [ItemName.MasterBall]: 'masterball_sprite',
+  [ItemName.RazzBerry]: 'Item_0701',
+  [ItemName.NanabBerry]: 'Item_0703',
+  [ItemName.PinapBerry]: 'Item_0705',
+  [ItemName.GoldenPinapBerry]: 'Item_0707',
+  [ItemName.LuckyEgg]: 'luckyegg',
+};
+
 export const getItemSpritePath = (itemName: string | null | undefined) => {
-  if (isEqual(itemName, ItemName.RaidTicket)) {
-    return APIService.getItemSprite('Item_1401');
-  } else if (isEqual(itemName, ItemName.RareCandy)) {
-    return APIService.getItemSprite('Item_1301');
-  } else if (isEqual(itemName, ItemName.XlRareCandy)) {
-    return APIService.getItemSprite('RareXLCandy_PSD');
-  } else if (isEqual(itemName, ItemName.PokeBall)) {
-    return APIService.getItemSprite('pokeball_sprite');
-  } else if (isEqual(itemName, ItemName.GreatBall)) {
-    return APIService.getItemSprite('greatball_sprite');
-  } else if (isEqual(itemName, ItemName.UltraBall)) {
-    return APIService.getItemSprite('ultraball_sprite');
-  } else if (isEqual(itemName, ItemName.MasterBall)) {
-    return APIService.getItemSprite('masterball_sprite');
-  } else if (isEqual(itemName, ItemName.RazzBerry)) {
-    return APIService.getItemSprite('Item_0701');
-  } else if (isEqual(itemName, ItemName.NanabBerry)) {
-    return APIService.getItemSprite('Item_0703');
-  } else if (isEqual(itemName, ItemName.PinapBerry)) {
-    return APIService.getItemSprite('Item_0705');
-  } else if (isEqual(itemName, ItemName.GoldenPinapBerry)) {
-    return APIService.getItemSprite('Item_0707');
-  } else if (isEqual(itemName, ItemName.LuckyEgg)) {
-    return APIService.getItemSprite('luckyegg');
+  const exactSprite = itemName ? ITEM_SPRITE_MAP[itemName] : undefined;
+  if (exactSprite) {
+    return APIService.getItemSprite(exactSprite);
   } else if (isInclude(itemName, ItemName.Troy)) {
     const itemLure = getLureItemType(itemName);
     return APIService.getItemTroy(itemLure);
