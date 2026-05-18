@@ -1240,7 +1240,7 @@ const Battle = () => {
   );
 
   return (
-    <Error isError={!isFound}>
+    <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-container tw-mt-4 battle-body-container">
         <SelectMui
           fullWidth

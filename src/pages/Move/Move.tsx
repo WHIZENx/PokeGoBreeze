@@ -257,7 +257,7 @@ const Move = (props: IMovePage) => {
             });
           }
         } else {
-          showSnackbar(`Move ID: ${id} Not found!`, 'error');
+          showSnackbar(`Move ID: ${id} not found!`, 'error');
           if (id) {
             setTitleProps({
               title: `#${id} - Not Found`,

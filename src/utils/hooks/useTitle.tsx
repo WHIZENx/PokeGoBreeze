@@ -13,7 +13,7 @@ export const useTitle = (props: TitleSEOProps) => {
     const type = props.type || 'website';
 
     // Browser tab title
-    if (isShowTitle !== false) {
+    if (isShowTitle) {
       document.title = title;
     }
 
@@ -68,7 +68,7 @@ export const useTitle = (props: TitleSEOProps) => {
     if (window.SEO?.updateLdJson) {
       window.SEO.updateLdJson({ name: title, description, url, image });
     }
-  }, [props]);
+  }, [props.isShowTitle, props.title]);
 };
 
 const setMeta = (id: string, content: string) => {
