@@ -57,7 +57,7 @@ const FormComponent = (props: IFormInfoComponent) => {
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
       getFormFromForms(stats, props.defaultId, searchingMainForm?.form?.formName, searchingMainForm?.form?.pokemonType),
-    [props.defaultId, searchingMainForm?.form?.formName]
+    [props.defaultId, searchingMainForm?.form?.formName, searchingMainForm?.form?.pokemonType]
   );
 
   useEffect(() => {

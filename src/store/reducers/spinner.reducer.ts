@@ -43,7 +43,7 @@ const SpinnerReducer = (state: SpinnerModel = initialize, action: SpinnerActions
       return {
         ...state,
         error: undefined,
-        isLoading: false || Boolean(state.error),
+        isLoading: Boolean(state.error),
       };
     case SpinnerActions.SpinnerActionTypes.setBar:
       return {

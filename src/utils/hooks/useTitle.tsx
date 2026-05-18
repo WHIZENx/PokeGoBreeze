@@ -1,103 +1,79 @@
 import { useEffect } from 'react';
 import { TitleSEOProps } from '../models/hook.model';
 
-/**
- * React hook to update document title and meta tags for SEO
- *
- * @param props - SEO props object
- *
- * @example
- * // Advanced usage with SEO props
- * useTitle({
- *   title: 'Pokémon - Search',
- *   description: 'Search for any Pokémon by name, type, or abilities',
- *   keywords: ['pokemon search', 'find pokemon', 'pokemon database'],
- *   image: 'https://example.com/pokemon-search.jpg'
- * });
- */
 export const useTitle = (props: TitleSEOProps) => {
   useEffect(() => {
     const path = window.location.pathname;
     const origin = window.location.origin;
     const fullPath = `${origin}${path}`;
 
-    const title = props.title;
-    const description = props.description;
+    const { title, description, keywords, isShowTitle } = props;
     const image = props.image || `${origin}/og-image.png`;
-    const keywords = props.keywords;
     const url = props.url || fullPath;
     const type = props.type || 'website';
 
-    if (props.isShowTitle !== false) {
+    // Browser tab title
+    if (isShowTitle !== false) {
       document.title = title;
     }
 
-    // Update page title
+    // <title id="page-title">
     const pageTitle = document.getElementById('page-title');
     if (pageTitle) {
       pageTitle.textContent = title;
     }
 
-    // Update meta description if provided
+    // Meta description
     if (description) {
-      updateMetaContent('meta-description', description);
-      updateMetaContent('og-description', description);
-      updateMetaContent('twitter-description', description);
+      setMeta('meta-description', description);
+      setMeta('og-description', description);
+      setMeta('twitter-description', description);
     }
 
-    // Update OpenGraph and Twitter titles
-    updateMetaContent('og-title', title);
-    updateMetaContent('twitter-title', title);
+    // Title tags
+    setMeta('og-title', title);
+    setMeta('twitter-title', title);
 
-    // Update OpenGraph and Twitter types
-    updateMetaContent('og-type', type);
-    updateMetaContent('twitter-type', type);
+    // og:type (Twitter Cards have no type field — twitter:card is static in HTML)
+    setMeta('og-type', type);
 
-    // Update OpenGraph and Twitter URLs
-    updateMetaContent('og-url', url);
-    updateMetaContent('twitter-url', url);
+    // URL tags
+    setMeta('og-url', url);
+    setMeta('twitter-url', url);
 
-    // Update keywords if provided
+    // Canonical URL
+    const canonical = document.getElementById('canonical-url');
+    if (canonical) {
+      canonical.setAttribute('href', fullPath);
+    }
+
+    // Keywords
     if (keywords && window.SEO) {
       window.SEO.setKeywords(keywords);
     }
 
-    // Update image if provided
-    if (image) {
-      const ogImage = document.getElementById('og-image');
-      const twitterImage = document.getElementById('twitter-image');
-
-      if (ogImage) {
-        ogImage.setAttribute('content', image);
-      }
-
-      if (twitterImage) {
-        twitterImage.setAttribute('content', image);
-      }
+    // Images — og-image and twitter-image use content attr; image-src link uses href
+    setMeta('og-image', image);
+    setMeta('twitter-image', image);
+    const imageSrc = document.getElementById('image-src');
+    if (imageSrc) {
+      imageSrc.setAttribute('href', image);
     }
 
-    // Update canonical URL to include the current path
-    updateCanonicalUrl(fullPath);
+    // Image alt text — use page title as a descriptive label for the image
+    setMeta('og-image-alt', title);
+    setMeta('twitter-image-alt', title);
+
+    // JSON-LD structured data — update per-page so Google rich results reflect current page
+    if (window.SEO?.updateLdJson) {
+      window.SEO.updateLdJson({ name: title, description, url, image });
+    }
   }, [props]);
 };
 
-/**
- * Helper function to update meta tag content
- */
-const updateMetaContent = (id: string, content: string) => {
-  const metaTag = document.getElementById(id);
-  if (metaTag) {
-    metaTag.setAttribute('content', content);
-  }
-};
-
-/**
- * Helper function to update the canonical URL
- * This ensures search engines understand the preferred URL for the current page
- */
-const updateCanonicalUrl = (path: string) => {
-  const canonicalUrl = document.getElementById('canonical-url');
-  if (canonicalUrl) {
-    canonicalUrl.setAttribute('href', path);
+const setMeta = (id: string, content: string) => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.setAttribute('content', content);
   }
 };

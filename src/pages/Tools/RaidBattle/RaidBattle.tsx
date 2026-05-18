@@ -465,16 +465,16 @@ const RaidBattle = () => {
       }
     });
     if (pokemonTarget) {
-      const sortedDPS = dataList.sort((a, b) => a.dpsAtk - b.dpsAtk);
-      const sortedTDO = dataList.sort((a, b) => a.tdoAtk - b.tdoAtk);
-      const sortedHP = dataList.sort((a, b) => toNumber(a.attackHpRemain) - toNumber(b.attackHpRemain));
+      const sortedDPS = [...dataList].sort((a, b) => a.dpsAtk - b.dpsAtk);
+      const sortedTDO = [...dataList].sort((a, b) => a.tdoAtk - b.tdoAtk);
+      const sortedHP = [...dataList].sort((a, b) => toNumber(a.attackHpRemain) - toNumber(b.attackHpRemain));
       const result = {
-        minDPS: sortedDPS[dataList.length - 1].dpsAtk,
-        maxDPS: toNumber(sortedDPS.at(0)?.dpsAtk),
+        minDPS: toNumber(sortedDPS.at(0)?.dpsAtk),
+        maxDPS: sortedDPS[sortedDPS.length - 1].dpsAtk,
         minTDO: toNumber(sortedTDO.at(0)?.tdoAtk),
-        maxTDO: sortedTDO[dataList.length - 1].tdoAtk,
+        maxTDO: sortedTDO[sortedTDO.length - 1].tdoAtk,
         minHP: toNumber(sortedHP.at(0)?.attackHpRemain),
-        maxHP: toNumber(sortedHP[dataList.length - 1].attackHpRemain),
+        maxHP: toNumber(sortedHP[sortedHP.length - 1].attackHpRemain),
       };
       setResultBoss(result);
       setDisableSearch(true);
@@ -505,8 +505,8 @@ const RaidBattle = () => {
     const cMoveCurrent = findMoveByName(pokemonRaid.cMoveTargetPokemon?.name);
 
     if (fMoveCurrent && cMoveCurrent) {
-      fMoveCurrent.moveType = pokemonRaid.fMoveTargetPokemon?.moveType;
-      cMoveCurrent.moveType = pokemonRaid.cMoveTargetPokemon?.moveType;
+      const fMoveWithType = { ...fMoveCurrent, moveType: pokemonRaid.fMoveTargetPokemon?.moveType };
+      const cMoveWithType = { ...cMoveCurrent, moveType: pokemonRaid.cMoveTargetPokemon?.moveType };
       const stats = calculateStatsByTag(
         pokemonRaid.dataTargetPokemon,
         pokemonRaid.dataTargetPokemon?.baseStats,
@@ -517,8 +517,8 @@ const RaidBattle = () => {
         atk: calculateStatsBattle(stats.atk, statsGO.iv.atkIV, statsGO.level),
         def: calculateStatsBattle(stats.def, statsGO.iv.defIV, statsGO.level),
         hp: calculateStatsBattle(stats?.sta, statsGO.iv.staIV, statsGO.level),
-        fMove: fMoveCurrent,
-        cMove: cMoveCurrent,
+        fMove: fMoveWithType,
+        cMove: cMoveWithType,
         types: pokemonRaid.dataTargetPokemon?.types,
         pokemonType: statsGO.pokemonType,
       });

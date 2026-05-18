@@ -159,26 +159,23 @@ export const raidEgg = (tier: number, pokemonType?: PokemonType, pokemonClass?: 
   }
 };
 
-export const computeCandyColor = (id: number | undefined) => {
-  const data = (candy as ICandy[]).find(
+const getCandyData = (id: number | undefined) =>
+  (candy as ICandy[]).find(
     (item) =>
       isIncludeList(
         item.familyGroup.map((value) => value.id),
         id
       ) || item.familyId === toNumber(id)
   );
+
+export const computeCandyColor = (id: number | undefined) => {
+  const data = getCandyData(id);
   const color = Color.createRgb(data?.primaryColor.r, data?.primaryColor.g, data?.primaryColor.b, data?.primaryColor.a);
   return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 };
 
 export const computeCandyBgColor = (id: number | undefined) => {
-  const data = (candy as ICandy[]).find(
-    (item) =>
-      isIncludeList(
-        item.familyGroup.map((value) => value.id),
-        id
-      ) || item.familyId === toNumber(id)
-  );
+  const data = getCandyData(id);
   const color = Color.createRgb(
     data?.secondaryColor.r,
     data?.secondaryColor.g,

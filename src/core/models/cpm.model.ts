@@ -45,9 +45,7 @@ export class CPMDetail implements ICPMDetail {
   sumXlCandy = 0;
 
   static create() {
-    const obj = new CPMDetail();
-    Object.assign(this, obj);
-    return obj;
+    return new CPMDetail();
   }
 
   static mapping(value: CPMData) {

@@ -59,9 +59,8 @@ const ColorModeContext = createContext({
 });
 
 function App() {
-  const { loadTimestamp } = useTimestamp();
-  const { timestampGameMaster } = useTimestamp();
-  const { setBar, setPercent } = useSpinner();
+  const { loadTimestamp, timestampGameMaster } = useTimestamp();
+  const { startProgress } = useSpinner();
   const { setDevice } = useDevice();
   const { loadTheme } = useThemeStore();
   const { routerData, routerAction } = useRouter();
@@ -116,13 +115,13 @@ function App() {
     if (!isLoaded) {
       const currentVersion = process.env.REACT_APP_VERSION;
       setCurrentVersion(currentVersion);
-      setBar(true);
-      setPercent(0);
+      startProgress();
       setIsLoaded(true);
       const isCurrentVersion = currentVersion === version;
       setStateVersion(currentVersion || '');
       loadData(controller.signal, isCurrentVersion);
     }
+    return () => controller.abort();
   }, [isLoaded]);
 
   useEffect(() => {

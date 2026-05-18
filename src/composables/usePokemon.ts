@@ -46,18 +46,21 @@ export const usePokemon = () => {
     (id: number | undefined) => {
       return getFindPokemon((pokemon) => pokemon.num === id);
     },
-    [pokemonsData]
+    [getFindPokemon]
   );
 
   const findPokemonBySlug = useCallback(
     (name: string | undefined) => {
       return getFindPokemon((pokemon) => isEqual(pokemon.slug, name));
     },
-    [pokemonsData]
+    [getFindPokemon]
   );
 
-  const checkPokemonGO = (id: number, name: string | undefined) =>
-    getFindPokemon((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
+  const checkPokemonGO = useCallback(
+    (id: number, name: string | undefined) =>
+      getFindPokemon((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO,
+    [getFindPokemon]
+  );
 
   const getDefaultPokemons = useCallback(
     () =>
@@ -65,12 +68,12 @@ export const usePokemon = () => {
         (pokemon) =>
           pokemon.form === formNormal() || (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form))
       ).sort((a, b) => a.num - b.num),
-    [pokemonsData]
+    [getFilteredPokemons]
   );
 
   const mappingPokemonName = useCallback(
     () => getDefaultPokemons().map((pokemon) => new PokemonSearching(pokemon)),
-    [pokemonsData]
+    [getDefaultPokemons]
   );
 
   const getPokemonById = useCallback(
@@ -86,13 +89,17 @@ export const usePokemon = () => {
       }
       return new PokemonModel(result.num, result.name);
     },
-    [pokemonsData]
+    [getFindPokemon]
   );
 
-  const checkPokemonIncludeShadowForm = (form: string) =>
-    getFilteredPokemons().some(
-      (p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), getValueOrDefault(String, p.fullName, p.name))
-    );
+  const checkPokemonIncludeShadowForm = useCallback(
+    (form: string) =>
+      getFilteredPokemons().some(
+        (p) =>
+          p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), getValueOrDefault(String, p.fullName, p.name))
+      ),
+    [getFilteredPokemons]
+  );
 
   const generatePokemonGoForms = (
     dataFormList: IPokemonFormDetail[][],
@@ -173,7 +180,7 @@ export const usePokemon = () => {
       }
       return new PokemonData();
     },
-    [pokemonsData]
+    [getFindPokemon]
   );
 
   return {

@@ -1,6 +1,6 @@
 import useDataStore from './useDataStore';
 import { getValueOrDefault, isEqual, isNotEmpty, isNullOrUndefined } from '../utils/extension';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Combat, ICombat } from '../core/models/combat.model';
 import { TypeMove } from '../enums/type.enum';
 import { EqualMode } from '../utils/enums/string.enum';
@@ -11,6 +11,8 @@ export const useCombats = () => {
   const { combatsData } = useDataStore();
   const { findPokemonById } = usePokemon();
 
+  const combatNames = useMemo(() => combatsData.map((item) => item.name), [combatsData]);
+
   const findMoveByName = useCallback(
     (move: string | undefined, pokemonId = 0) => {
       const result = combatsData.find((item) =>
@@ -18,11 +20,11 @@ export const useCombats = () => {
       );
       if (result && pokemonId) {
         const pokemon = findPokemonById(pokemonId);
-        result.moveType = getMoveType(pokemon, move);
+        return Combat.create({ ...result, moveType: getMoveType(pokemon, move) });
       }
       return result;
     },
-    [combatsData]
+    [combatsData, findPokemonById]
   );
 
   const findMoveById = useCallback(
@@ -32,11 +34,11 @@ export const useCombats = () => {
       );
       if (result && pokemonId) {
         const pokemon = findPokemonById(pokemonId);
-        result.moveType = getMoveType(pokemon, result.name);
+        return Combat.create({ ...result, moveType: getMoveType(pokemon, result.name) });
       }
       return result;
     },
-    [combatsData]
+    [combatsData, findPokemonById]
   );
 
   const findMoveByTag = useCallback(
@@ -57,23 +59,21 @@ export const useCombats = () => {
         }
       }
 
-      nameSet = findMoveTeam(
-        tag,
-        combatsData.map((item) => item.name),
-        true
-      );
+      const resolvedNames = findMoveTeam(tag, combatNames, true);
       move = combatsData.find(
         (item) =>
           (item.abbreviation && isEqual(item.abbreviation, tag)) ||
-          (isNotEmpty(nameSet) && !item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(nameSet[0])))
+          (isNotEmpty(resolvedNames) &&
+            !item.abbreviation &&
+            isEqual(item.name, reverseReplaceTempMovePvpName(resolvedNames[0])))
       );
       if (move && pokemonId) {
         const pokemon = findPokemonById(pokemonId);
-        move.moveType = getMoveType(pokemon, move.name);
+        return Combat.create({ ...move, moveType: getMoveType(pokemon, move.name) });
       }
       return move;
     },
-    [combatsData]
+    [combatsData, combatNames, findPokemonById]
   );
 
   const getCombatsByTypeMove = useCallback(

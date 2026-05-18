@@ -38,7 +38,7 @@ const Tools = (props: IToolsComponent) => {
         searchingToolCurrentData?.form?.form?.formName,
         searchingToolCurrentData?.form?.form?.pokemonType
       ),
-    [props.id, searchingToolCurrentData?.form?.form?.formName]
+    [props.id, searchingToolCurrentData?.form?.form?.formName, searchingToolCurrentData?.form?.form?.pokemonType]
   );
 
   useEffect(() => {

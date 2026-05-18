@@ -158,17 +158,16 @@ const MoveSet = (props: MoveSetComponent) => {
 
   const setMoves = (moves: PokemonRankingMove[] | undefined) => {
     return moves
-      ?.map((move) => {
-        move.moveId = replaceTempMovePvpName(move.moveId);
-        move.uses ??= 0;
-        return move;
-      })
+      ?.map((move) => ({ ...move, moveId: replaceTempMovePvpName(move.moveId), uses: move.uses ?? 0 }))
       .sort((a, b) => toNumber(b.uses) - toNumber(a.uses))
       .map((move) => {
         const combat = findMoveByName(move.moveId);
         if (combat) {
-          combat.moveType = getMoveType(props.pokemon, move.moveId);
-          return MoveSetModel.create({ ...combat, uses: toNumber(move.uses) });
+          return MoveSetModel.create({
+            ...combat,
+            moveType: getMoveType(props.pokemon, move.moveId),
+            uses: toNumber(move.uses),
+          });
         }
         return new MoveSetModel();
       })

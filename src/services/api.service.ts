@@ -61,10 +61,6 @@ class APIService {
     return await this.axios.get<T>(getValueOrDefault(String, url), options);
   }
 
-  async getFetchNeon<T>(path: string | null | undefined, options?: AxiosRequestConfig<any>) {
-    return await this.axios.get<T>(`${process.env.REACT_APP_NEON_API_URL}/${getValueOrDefault(String, path)}`, options);
-  }
-
   async getPokeSpices(value: number, options?: AxiosRequestConfig<any>) {
     return await this.getFetchUrl<Species>(this.getPokeAPI('pokemon-species', value), options);
   }
