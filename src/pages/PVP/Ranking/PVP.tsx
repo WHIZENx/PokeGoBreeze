@@ -368,7 +368,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   };
 
   return (
-    <Error isError={!isFound}>
+    <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-container pvp-container tw-pb-3">
         {renderLeague()}
         <hr />

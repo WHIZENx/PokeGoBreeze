@@ -164,7 +164,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           if (APIService.isCancel(e)) {
             return;
           }
-          showSnackbar(`Pokémon ID or name: ${id} Not found!`, 'error');
+          showSnackbar(`Pokémon ID or name: ${id} not found!`, 'error');
         });
     },
     [fetchMap]

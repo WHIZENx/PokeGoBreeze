@@ -250,7 +250,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   };
 
   return (
-    <Error isError={!isFound}>
+    <Error isError={!isFound} isShowTitle={!isFound}>
       <div
         className="tw-py-3"
         style={{

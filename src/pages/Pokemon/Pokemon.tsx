@@ -342,7 +342,7 @@ const Pokemon = (props: IPokemonPage) => {
           if (APIService.isCancel(e)) {
             return;
           }
-          showSnackbar(`Pokémon ID or name: ${id} Not found!`, 'error');
+          showSnackbar(`Pokémon ID or name: ${id} not found!`, 'error');
           if (params.id) {
             setIsFound(false);
           } else {
@@ -401,7 +401,7 @@ const Pokemon = (props: IPokemonPage) => {
       if (id <= 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemons)) {
         id = getPokemonIdByParam();
         if (id <= 0) {
-          showSnackbar(`Pokémon ID or name: ${params.id} Not found!`, 'error');
+          showSnackbar(`Pokémon ID or name: ${params.id} not found!`, 'error');
           setIsFound(false);
           return;
         }
@@ -601,7 +601,7 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   return (
-    <Error isError={!isFound}>
+    <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-w-full row prev-next-block tw-sticky tw-top-14">
         {params.id ? (
           <SearchBarMain data={dataStorePokemon} />
