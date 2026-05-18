@@ -537,17 +537,15 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
 // Post-processing helpers
 // ============================================================================
 
-const cleanPokemonDupForm = (result: IPokemonData[]) =>
-  result.filter((pokemon, _, r) => {
-    const hasOriginForm = r.filter((p) => p.num === pokemon.num).some((f) => isEqual(f.baseForme, f.form));
-    if (hasOriginForm) {
-      return (
-        pokemon.pokemonType !== PokemonType.Normal ||
-        (pokemon.pokemonType === PokemonType.Normal && isEqual(pokemon.form, pokemon.baseForme))
-      );
+const cleanPokemonDupForm = (result: IPokemonData[]) => {
+  const numsWithOriginForm = new Set(result.filter((p) => isEqual(p.baseForme, p.form)).map((p) => p.num));
+  return result.filter((pokemon) => {
+    if (!numsWithOriginForm.has(pokemon.num)) {
+      return true;
     }
-    return true;
+    return pokemon.pokemonType !== PokemonType.Normal || isEqual(pokemon.form, pokemon.baseForme);
   });
+};
 
 const addPokemonFormChangeMove = (result: IPokemonData[]) =>
   result

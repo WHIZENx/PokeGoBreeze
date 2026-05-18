@@ -121,7 +121,7 @@ export default defineConfig(({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use "${resolve(__dirname, 'src/assets/styles/variables.scss')}" as *;`,
+          additionalData: `@use "${resolve(__dirname, 'src/assets/styles/variables.scss').replace(/\\/g, '/')}" as *;`,
           // Modern Sass API
           sourceMap: isDev,
           quietDeps: true,

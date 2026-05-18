@@ -4,6 +4,7 @@ declare global {
     SEO?: {
       setKeywords: (keywords: string | string[]) => void;
       addKeywords: (keywords: string | string[]) => void;
+      updateLdJson: (data: { name?: string; description?: string; url?: string; image?: string }) => void;
     };
   }
 }

@@ -364,7 +364,7 @@ const Damage = () => {
                         label: (
                           <>
                             {capitalize(type)}
-                            <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>
+                            <span className={combineClasses('tw-ml-2 caption-small', labels[index].style)}>
                               x{value}
                             </span>
                           </>

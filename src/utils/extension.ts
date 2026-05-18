@@ -5,7 +5,19 @@ import { EqualMode, IncludeMode, PaddingMode } from './enums/string.enum';
 import { FloatPaddingOption } from './models/extension.model';
 
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
-type Constructor = typeof Number | typeof String | typeof Boolean | typeof Array | typeof Object | typeof Date;
+type Constructor =
+  | typeof Number
+  | typeof String
+  | typeof Boolean
+  | typeof BigInt
+  | typeof Symbol
+  | typeof Array
+  | typeof Object
+  | typeof Date
+  | typeof Map
+  | typeof Set
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | (new (...args: any[]) => any);
 
 /**
  * Returns the default value for the given type.
@@ -25,27 +37,36 @@ export const getValueOrDefault = <T>(
   type: Constructor,
   value: T | undefined | null,
   ...defaultValues: (T | null | undefined)[]
-) => {
-  if (isNullOrUndefined(value) || isEmpty(value?.toString())) {
-    const defaultValue = defaultValues.find((v) => !isNullOrUndefined(v));
-    switch (type) {
-      case Number:
-        return (defaultValue || 0) as T;
-      case String:
-        return (defaultValue || '') as T;
-      case Boolean:
-        return (defaultValue || false) as T;
-      case Array:
-        return (defaultValue || []) as T;
-      case Date:
-        return (defaultValue || new Date()) as T;
-      case Object:
-        return (defaultValue || new Object()) as T;
-      default:
-        return (defaultValue || value) as T;
-    }
+): T => {
+  const isBlank = isNullOrUndefined(value) || (type === String && isEmpty(value as unknown as string));
+  if (!isBlank) {
+    return value as T;
   }
-  return value;
+  const fallback = defaultValues.find((v) => !isNullOrUndefined(v));
+  switch (type) {
+    case Number:
+      return (fallback ?? 0) as T;
+    case String:
+      return (fallback ?? '') as T;
+    case Boolean:
+      return (fallback ?? false) as T;
+    case BigInt:
+      return (fallback ?? BigInt(0)) as T;
+    case Symbol:
+      return (fallback ?? Symbol()) as T;
+    case Array:
+      return (fallback ?? []) as T;
+    case Map:
+      return (fallback ?? new Map()) as T;
+    case Set:
+      return (fallback ?? new Set()) as T;
+    case Date:
+      return (fallback ?? new Date()) as T;
+    case Object:
+      return (fallback ?? {}) as T;
+    default:
+      return (fallback ?? value) as T;
+  }
 };
 
 export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => columns as TableColumn<T>[];

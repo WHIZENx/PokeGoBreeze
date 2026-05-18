@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { SpinnerState } from '../store/models/state.model';
 import { ShowSpinner, HideSpinner, ShowSpinnerMsg, SetBar, SetPercent } from '../store/actions/spinner.action';
 import { ErrorModel } from '../store/reducers/spinner.reducer';
+import { createProgressHelpers } from '../utils/helpers/progress-helpers';
 
 /**
  * Custom hook to access and update the spinner state from Redux store
@@ -51,6 +52,8 @@ export const useSpinner = () => {
     dispatch(SetPercent.create(percent));
   };
 
+  const { startProgress, setProgress, completeProgress, hideProgress, errorProgress } = createProgressHelpers(dispatch);
+
   const spinnerBar = spinnerData.bar;
   const spinnerPercent = spinnerData.bar.percent;
   const spinnerBarIsShow = spinnerData.bar.isShow;
@@ -65,6 +68,11 @@ export const useSpinner = () => {
     showSpinnerMsg,
     setBar,
     setPercent,
+    startProgress,
+    setProgress,
+    completeProgress,
+    hideProgress,
+    errorProgress,
     spinnerBar,
     spinnerPercent,
     spinnerMessage,

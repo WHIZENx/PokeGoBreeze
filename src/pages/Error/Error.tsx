@@ -12,18 +12,16 @@ import useSpinner from '../../composables/useSpinner';
 const Error = (props: IErrorPage) => {
   const location = useLocation() as unknown as Location<LocationState>;
   const { spinnerIsLoading, hideSpinner } = useSpinner();
-  if (props.isError && props.isShowTitle) {
-    useTitle({
-      title:
-        location.state?.url && location.state?.id
-          ? `PokéGO Breeze - #${location.state.id} Not Found`
-          : 'PokéGO Breeze - Page Not Found',
-      description: 'Error page - Something went wrong with your request. Please try again later.',
-      keywords: ['error page', 'Pokémon GO error', 'page not found', 'PokéGO Breeze error'],
-      type: 'website',
-      isShowTitle: props.isShowTitle,
-    });
-  }
+  useTitle({
+    title:
+      location.state?.url && location.state?.id
+        ? `PokéGO Breeze - #${location.state.id} Not Found`
+        : 'PokéGO Breeze - Page Not Found',
+    description: 'Error page - Something went wrong with your request. Please try again later.',
+    keywords: ['error page', 'Pokémon GO error', 'page not found', 'PokéGO Breeze error'],
+    type: 'website',
+    isShowTitle: props.isError && props.isShowTitle,
+  });
 
   useEffect(() => {
     if (spinnerIsLoading) {

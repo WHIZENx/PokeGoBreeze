@@ -217,12 +217,12 @@ const collectRankRewards = (data: PokemonDataGM[], rewards: Reward) => {
       if (!rewards.rank[lootData.rankLevel]) {
         rewards.rank[lootData.rankLevel] = RankRewardLeague.create(lootData.rankLevel);
       }
+      const bucket = lootData.rewardTrack
+        ? rewards.rank[lootData.rankLevel].premium
+        : rewards.rank[lootData.rankLevel].free;
       lootData.reward.slice(0, 5).forEach((reward, index) => {
         const classified = classifyRankReward(reward);
         classified.step = index + 1;
-        const bucket = lootData.rewardTrack
-          ? rewards.rank[lootData.rankLevel].premium
-          : rewards.rank[lootData.rankLevel].free;
         bucket?.push(classified);
       });
     });
@@ -251,6 +251,7 @@ const collectPokemonRewards = (data: PokemonDataGM[], rewards: Reward, pokemon: 
         result.form = poke.pokemonDisplay
           ? poke.pokemonDisplay.form?.replace?.(`${poke.pokemonId}_`, '')
           : formNormal();
+        result.pokemonType = getPokemonType(result.form);
 
         const isFree = isInclude(item.templateId, freeRewardType, IncludeMode.IncludeIgnoreCaseSensitive);
         const bucket = isFree

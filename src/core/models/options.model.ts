@@ -426,10 +426,6 @@ interface EvolutionGoal {
   target: number;
 }
 
-interface WithPokemonType {
-  pokemonType: string[];
-}
-
 interface WithThrowType {
   throwType: string;
 }

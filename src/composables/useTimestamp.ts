@@ -10,7 +10,7 @@ import {
 import { toNumber } from 'lodash';
 import { APIUrl } from '../services/constants';
 import { APITreeRoot } from '../services/models/api.model';
-import { SpinnerActions } from '../store/actions';
+import { createProgressHelpers } from '../utils/helpers/progress-helpers';
 import { isNotEmpty } from '../utils/extension';
 import APIService from '../services/api.service';
 import { useDataStore } from '../composables/useDataStore';
@@ -69,6 +69,8 @@ export const useTimestamp = () => {
     dispatch(SetTimestampPVP.create(newTimestamp));
   };
 
+  const { setProgress, completeProgress, errorProgress } = createProgressHelpers(dispatch);
+
   const loadTimestamp = async (isCurrentVersion: boolean) => {
     await Promise.all([
       APIService.getFetchUrl<string>(APIUrl.TIMESTAMP),
@@ -87,7 +89,7 @@ export const useTimestamp = () => {
             const url = iconRoot.data[0].url;
             loadPokeGOLogo(url, iconTimestamp);
           }
-          dispatch(SpinnerActions.SetPercent.create(15));
+          setProgress(15);
 
           const timestampLoaded: Timestamp = {
             isCurrentVersion,
@@ -98,26 +100,19 @@ export const useTimestamp = () => {
             assetsTimestamp: imageTimestamp,
             soundsTimestamp: soundTimestamp,
           };
-          dispatch(SpinnerActions.SetPercent.create(40));
+          setProgress(40);
 
           if (!timestampLoaded.isCurrentGameMaster || !timestampLoaded.isCurrentVersion) {
             await loadGameMaster(imageRoot.data, soundsRoot.data, timestampLoaded);
           } else if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
             await loadAssets(imageRoot.data, soundsRoot.data, getFilteredPokemons(), timestampLoaded);
           } else {
-            dispatch(SpinnerActions.SetPercent.create(100));
-            setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);
+            completeProgress();
           }
         }
       })
       .catch((e: ErrorEvent) => {
-        dispatch(SpinnerActions.SetBar.create(false));
-        dispatch(
-          SpinnerActions.ShowSpinnerMsg.create({
-            isError: true,
-            message: e.message,
-          })
-        );
+        errorProgress({ isError: true, message: e.message });
       });
   };
 

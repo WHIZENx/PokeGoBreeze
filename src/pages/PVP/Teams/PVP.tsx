@@ -151,7 +151,7 @@ const TeamPVP = (props: IStyleSheetData) => {
   }, [findMoveByName]);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
-    title: 'PVP Teams',
+    title: 'PVP Teams - Meta Team Compositions | PokéGO Breeze',
     description:
       'Explore top-performing Pokémon GO PVP teams across different leagues and formats. Find meta team compositions and counters.',
     keywords: ['Pokémon GO', 'PVP teams', 'meta teams', 'team compositions', 'battle teams', 'PokéGO Breeze'],
@@ -188,28 +188,25 @@ const TeamPVP = (props: IStyleSheetData) => {
             image: getPokemonBattleLeagueIcon(cp),
           });
         } else {
-          setTitleProps({
-            title: `PVP Teams - ${
-              params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
-            } ${splitAndCapitalize(params.serie, '-', ' ')}`,
-            description: `Explore top-performing ${
-              params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
-            } ${splitAndCapitalize(
-              params.serie,
-              '-',
-              ' '
-            )} teams in Pokémon GO PVP. Find optimal team compositions and counter strategies.`,
-            keywords: [
-              'Pokémon GO',
-              `${splitAndCapitalize(params.serie, '-', ' ')}`,
-              `${params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''}`,
-              'PVP teams',
-              'meta teams',
-              'team compositions',
-              'PokéGO Breeze',
-            ],
-            image: getPokemonBattleLeagueIcon(cp),
-          });
+          {
+            const leagueName = params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : '';
+            const serieName = splitAndCapitalize(params.serie, '-', ' ');
+            const leaguePrefix = leagueName ? `${leagueName} ` : '';
+            setTitleProps({
+              title: `PVP Teams - ${leaguePrefix}${serieName} | PokéGO Breeze`,
+              description: `Explore top-performing ${leaguePrefix}${serieName} teams in Pokémon GO PVP. Find optimal team compositions and counter strategies.`,
+              keywords: [
+                'Pokémon GO',
+                serieName,
+                ...(leagueName ? [leagueName] : []),
+                'PVP teams',
+                'meta teams',
+                'team compositions',
+                'PokéGO Breeze',
+              ],
+              image: getPokemonBattleLeagueIcon(cp),
+            });
+          }
         }
 
         const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);

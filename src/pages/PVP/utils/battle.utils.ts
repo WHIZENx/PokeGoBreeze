@@ -23,6 +23,11 @@ export const pushBoundingById = (arr: (DOMRect | undefined)[], id: number | stri
   arr.push(document.getElementById(id.toString())?.getBoundingClientRect());
 };
 
+export const pushOffsetById = (arr: number[], id: number | string) => {
+  const el = document.getElementById(id.toString());
+  arr.push(el ? el.offsetLeft : 0);
+};
+
 export const state = (timer: number, block: number, energy: number, hp: number, type?: AttackType) =>
   new TimelineModel({
     timer,
@@ -124,6 +129,31 @@ export const getOverlappingElements = (pos = 0, selectors = '[id]') => {
  * @param pos - The horizontal position (in pixels) to compare against. Defaults to 0
  * @returns The number of elements with left position ≤ specified position, or -1 if array is invalid
  */
+export const overlappingPosFromOffsets = (offsets: number[], pos: number) => {
+  if (!isNotEmpty(offsets)) {
+    return -1;
+  }
+  let left = 0;
+  let right = offsets.length - 1;
+  let index = 0;
+  if (pos < offsets[0]) {
+    index = 0;
+  } else if (pos >= offsets[offsets.length - 1]) {
+    index = offsets.length;
+  } else {
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      if (offsets[mid] <= pos) {
+        index = mid + 1;
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+  }
+  return index;
+};
+
 export const overlappingPos = (arr: (DOMRect | undefined)[], pos = 0) => {
   if (!isNotEmpty(arr)) {
     return -1;
