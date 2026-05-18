@@ -15,7 +15,7 @@ module.exports = {
   },
   ignorePatterns: ['**/*.css', '**/*.scss'],
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:react/recommended', 'prettier'],
-  plugins: ['@typescript-eslint', 'react', 'prettier', 'css', 'stylelint'],
+  plugins: ['@typescript-eslint', 'react', 'prettier', 'css'],
   rules: {
     '@typescript-eslint/no-explicit-any': 0,
     curly: 1,
@@ -74,7 +74,6 @@ module.exports = {
     },
     {
       files: ['*.scss'],
-      plugins: ['stylelint'],
       rules: {
         'prettier/prettier': [
           'warn',

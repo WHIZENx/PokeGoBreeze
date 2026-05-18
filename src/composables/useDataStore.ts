@@ -46,7 +46,8 @@ import {
 } from '../core/options';
 import { APIUrl } from '../services/constants';
 import { APITreeRoot, APITree } from '../services/models/api.model';
-import { SpinnerActions, StoreActions, StatsActions, TimestampActions } from '../store/actions';
+import { StoreActions, StatsActions, TimestampActions } from '../store/actions';
+import { createProgressHelpers } from '../utils/helpers/progress-helpers';
 import { DynamicObj, isInclude, isNotEmpty } from '../utils/extension';
 import APIService from '../services/api.service';
 import { Timestamp } from '../store/models/timestamp.model';
@@ -66,6 +67,7 @@ export const useDataStore = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const { showSnackbar } = useSnackbar();
+  const { setProgress, completeProgress, errorProgress } = createProgressHelpers(dispatch);
 
   /**
    * Update options in the store
@@ -189,21 +191,11 @@ export const useDataStore = () => {
       .then(async (gm) => {
         showSnackbar('Please waiting to load game master...', 'info');
         if (!gm || !isNotEmpty(gm.data)) {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-            })
-          );
+          errorProgress({ isError: true });
           return;
         }
-        const pokemonEncounter: PokemonEncounter[] = [];
-        try {
-          const { data } = await APIService.getFetchNeon<PokemonEncounter[]>('tblpokemonencounter');
-          pokemonEncounter.push(...data);
-        } catch {
-          const pokemonEncounterData = await import('../data/pokemon_encounter.json');
-          pokemonEncounter.push(...pokemonEncounterData.default);
-        }
+        const pokemonEncounterData = await import('../data/pokemon_encounter.json');
+        const pokemonEncounter: PokemonEncounter[] = [...pokemonEncounterData.default];
 
         await initializeStaticData();
 
@@ -214,7 +206,7 @@ export const useDataStore = () => {
         const typeEffective = optionPokemonTypes(gm.data);
         const weatherBoost = optionPokemonWeather(gm.data);
 
-        dispatch(SpinnerActions.SetPercent.create(60));
+        setProgress(60);
 
         const options = optionSettings(gm.data, typeEffective, weatherBoost);
         dispatch(StoreActions.SetOptions.create(options));
@@ -233,21 +225,14 @@ export const useDataStore = () => {
           await loadAssets(imageRoot, soundsRoot, pokemon, timestampLoaded);
         }
 
-        dispatch(SpinnerActions.SetPercent.create(90));
+        setProgress(90);
         dispatch(StatsActions.SetStats.create(pokemon));
 
         dispatch(TimestampActions.SetTimestampGameMaster.create(timestampLoaded.gamemasterTimestamp));
-        dispatch(SpinnerActions.SetPercent.create(100));
-        setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);
+        completeProgress();
       })
       .catch((e: ErrorEvent) => {
-        dispatch(SpinnerActions.SetBar.create(false));
-        dispatch(
-          SpinnerActions.ShowSpinnerMsg.create({
-            isError: true,
-            message: e.message,
-          })
-        );
+        errorProgress({ isError: true, message: e.message });
       });
   };
 
@@ -291,8 +276,7 @@ export const useDataStore = () => {
 
               dispatch(TimestampActions.SetTimestampAssets.create(timestamp.assetsTimestamp));
               dispatch(TimestampActions.SetTimestampSounds.create(timestamp.soundsTimestamp));
-              dispatch(SpinnerActions.SetPercent.create(100));
-              setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);
+              completeProgress();
             });
           }
         });

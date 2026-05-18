@@ -108,7 +108,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   }, []);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
-    title: 'PVP Ranking',
+    title: 'PVP Rankings - Great, Ultra & Master League | PokéGO Breeze',
     description:
       'View detailed rankings of the best Pokémon for PVP battles in Pokémon GO. Compare stats, movesets, and performance across all leagues.',
     keywords: ['Pokémon GO', 'PVP ranking', 'best PVP Pokémon', 'meta rankings', 'battle league', 'PokéGO Breeze'],
@@ -154,27 +154,26 @@ const RankingPVP = (props: IStyleSheetData) => {
             image: getPokemonBattleLeagueIcon(cp),
           });
         } else {
-          setTitleProps({
-            title: `PVP Ranking - ${
-              params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
-            } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(pvpType)})`,
-            description: `Top ranked Pokémon for ${
-              params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
-            } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(
-              pvpType
-            )}) battles in Pokémon GO. Find the best Pokémon with optimal stats and movesets.`,
-            keywords: [
-              'Pokémon GO',
-              `${splitAndCapitalize(params.serie, '-', ' ')}`,
-              `${params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''}`,
-              'PVP ranking',
-              `${capitalize(pvpType)} ranking`,
-              'best PVP Pokémon',
-              'meta rankings',
-              'PokéGO Breeze',
-            ],
-            image: getPokemonBattleLeagueIcon(cp),
-          });
+          {
+            const leagueName = params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : '';
+            const serieName = splitAndCapitalize(params.serie, '-', ' ');
+            const leaguePrefix = leagueName ? `${leagueName} ` : '';
+            setTitleProps({
+              title: `PVP Ranking - ${leaguePrefix}${serieName} (${capitalize(pvpType)}) | PokéGO Breeze`,
+              description: `Top ranked Pokémon for ${leaguePrefix}${serieName} (${capitalize(pvpType)}) battles in Pokémon GO. Find the best Pokémon with optimal stats and movesets.`,
+              keywords: [
+                'Pokémon GO',
+                serieName,
+                ...(leagueName ? [leagueName] : []),
+                'PVP ranking',
+                `${capitalize(pvpType)} ranking`,
+                'best PVP Pokémon',
+                'meta rankings',
+                'PokéGO Breeze',
+              ],
+              image: getPokemonBattleLeagueIcon(cp),
+            });
+          }
         }
         const filePVP = file.map((data) => {
           const name = convertNameRankingToOri(data.speciesId, data.speciesName);
@@ -369,7 +368,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   };
 
   return (
-    <Error isError={!isFound}>
+    <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-container pvp-container tw-pb-3">
         {renderLeague()}
         <hr />

@@ -202,8 +202,8 @@ export class PokemonRewardSetLeague implements IPokemonRewardSetLeague {
 
   static create(value: IPokemonRewardSetLeague) {
     const obj = new PokemonRewardSetLeague();
-    obj.pokemonType = getPokemonType(obj.form);
     Object.assign(obj, value);
+    obj.pokemonType = getPokemonType(obj.form);
     return obj;
   }
 }

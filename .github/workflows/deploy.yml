@@ -24,16 +24,18 @@ env:
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 1 – Vercel: update Edge Config + trigger deploy hook
-  # Branches: main (production) | stage (staging)
+  # Branches: main (production) | stage (staging) | develop (development)
   # ─────────────────────────────────────────────────────────────────────────────
   deploy-vercel:
     if: |
       github.event_name != 'pull_request' &&
-      (github.ref_name == 'main' || github.ref_name == 'stage')
+      (github.ref_name == 'main' || github.ref_name == 'stage' || github.ref_name == 'develop')
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    environment: ${{ github.ref_name == 'main' && 'production' || 'stage' }}
+    environment: ${{ github.ref_name == 'main' && 'production' || 
+      github.ref_name == 'stage' && 'stage' || 
+      github.ref_name == 'develop' && 'development' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -55,7 +57,9 @@ jobs:
 
       - name: Trigger Vercel Deploy Hook
         env:
-          DEPLOY_HOOK_URL: ${{ github.ref_name == 'main' && secrets.VERCEL_DEPLOY_HOOK_PRODUCTION || secrets.VERCEL_DEPLOY_HOOK_STAGING }}
+          DEPLOY_HOOK_URL: ${{ github.ref_name == 'main' && secrets.VERCEL_DEPLOY_HOOK_PRODUCTION || 
+            github.ref_name == 'stage' && secrets.VERCEL_DEPLOY_HOOK_STAGING || 
+            github.ref_name == 'develop' && secrets.VERCEL_DEPLOY_HOOK_DEVELOP }}
         run: |
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$DEPLOY_HOOK_URL")
           if [ "$RESPONSE" = "201" ]; then
@@ -76,7 +80,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'stage' || 'development' }}
+    environment: ${{ github.ref_name == 'main' && 'production' || 
+      github.ref_name == 'stage' && 'stage' || 
+      github.ref_name == 'develop' && 'development' }}
     steps:
       - uses: actions/checkout@v4
 

@@ -53,15 +53,16 @@ import { useTheme as useThemeStore } from './composables/useTheme';
 import useRouter from './composables/useRouter';
 import ResponsiveAppBar from './components/Commons/Navbars/ResponsiveAppBar';
 import { SnackbarProvider } from './contexts/snackbar.context';
+import { createProgressHelpers } from './utils/helpers/progress-helpers';
+import { useDispatch } from 'react-redux';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
 });
 
 function App() {
-  const { loadTimestamp } = useTimestamp();
-  const { timestampGameMaster } = useTimestamp();
-  const { setBar, setPercent } = useSpinner();
+  const { loadTimestamp, timestampGameMaster } = useTimestamp();
+  const { startProgress } = useSpinner();
   const { setDevice } = useDevice();
   const { loadTheme } = useThemeStore();
   const { routerData, routerAction } = useRouter();
@@ -71,7 +72,9 @@ function App() {
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
   const [version, setStateVersion] = useLocalStorage(LocalStorageConfig.Version, '');
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [, setIsLoaded] = useState(false);
+  const dispatch = useDispatch();
+  const { errorProgress } = createProgressHelpers(dispatch);
 
   const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
@@ -111,19 +114,22 @@ function App() {
     }
   }, [timestampGameMaster]);
 
+  // Run once on mount. [isLoaded] would abort the signal on every re-render caused by setIsLoaded(true).
   useEffect(() => {
     const controller = new AbortController();
-    if (!isLoaded) {
-      const currentVersion = process.env.REACT_APP_VERSION;
-      setCurrentVersion(currentVersion);
-      setBar(true);
-      setPercent(0);
-      setIsLoaded(true);
-      const isCurrentVersion = currentVersion === version;
-      setStateVersion(currentVersion || '');
-      loadData(controller.signal, isCurrentVersion);
-    }
-  }, [isLoaded]);
+    const currentVersion = process.env.REACT_APP_VERSION;
+    setCurrentVersion(currentVersion);
+    startProgress();
+    setIsLoaded(true);
+    const isCurrentVersion = currentVersion === version;
+    setStateVersion(currentVersion || '');
+    loadData(controller.signal, isCurrentVersion).catch((e: unknown) => {
+      if ((e as DOMException)?.name !== 'AbortError') {
+        errorProgress({ message: `Load data error: ${e}`, isError: true });
+      }
+    });
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     setDevice();
@@ -141,15 +147,15 @@ function App() {
       if (signal instanceof AbortSignal) {
         const abortHandler = () => {
           debouncedResolve.cancel();
-          reject();
+          reject(new DOMException('Aborted', 'AbortError'));
         };
 
         signal.addEventListener('abort', abortHandler, { once: true });
 
-        const originalResolve = debouncedResolve;
+        const originalCancel = debouncedResolve.cancel;
         debouncedResolve.cancel = () => {
           signal.removeEventListener('abort', abortHandler);
-          originalResolve.cancel();
+          originalCancel.call(debouncedResolve);
         };
       }
 

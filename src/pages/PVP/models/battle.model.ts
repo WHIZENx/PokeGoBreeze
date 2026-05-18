@@ -528,15 +528,19 @@ export class BattlePVP implements IBattlePVP {
       const randInt = toFloat(Math.random(), 3);
       if (isNotEmpty(move?.buffs) && randInt > 0 && randInt <= toNumber(move?.buffs[0].buffChance)) {
         move?.buffs.forEach((value) => {
-          this.updatePokemonStat(value, value.target === BuffType.Target);
+          // XOR: when isOpponent=false, Self→true updates this.pokemon; Target→false updates this.pokemonOpponent
+          // when isOpponent=true, Self→false updates this.pokemonOpponent; Target→true updates this.pokemon
+          this.updatePokemonStat(value, isOpponent === (value.target === BuffType.Target));
           if (value.target === BuffType.Target) {
             buffsTarget.push(value);
           } else {
             buffsAtk.push(value);
           }
         });
-        this.timeline[this.timer].buff = buffsAtk;
-        this.timelineOpponent[this.timer].buff = buffsTarget;
+        const attackerTimeline = isOpponent ? this.timelineOpponent : this.timeline;
+        const targetTimeline = isOpponent ? this.timeline : this.timelineOpponent;
+        attackerTimeline[this.timer].buff = buffsAtk;
+        targetTimeline[this.timer].buff = buffsTarget;
       }
       this.isDelay = true;
       this.delay = battleDelay();
@@ -560,8 +564,19 @@ export class BattlePVP implements IBattlePVP {
 
     playerOpponent.hp -= calculateMoveDmgActual(player, playerOpponent, player.fMove);
     if (playerOpponent.hp > 0) {
-      const lastTapPos = timeline.map((tl) => tl.isTap && !isUndefined(tl.type)).lastIndexOf(true);
-      const lastFastAtkPos = timeline.map((tl) => tl.type).lastIndexOf(AttackType.Fast);
+      let lastTapPos = -1;
+      let lastFastAtkPos = -1;
+      for (let i = timeline.length - 1; i >= 0; i--) {
+        if (lastFastAtkPos === -1 && timeline[i].type === AttackType.Fast) {
+          lastFastAtkPos = i;
+        }
+        if (lastTapPos === -1 && timeline[i].isTap && !isUndefined(timeline[i].type)) {
+          lastTapPos = i;
+        }
+        if (lastTapPos !== -1 && lastFastAtkPos !== -1) {
+          break;
+        }
+      }
       timeline[lastFastAtkPos > lastTapPos ? this.timer : lastTapPos].isDmgImmune = true;
     }
   }

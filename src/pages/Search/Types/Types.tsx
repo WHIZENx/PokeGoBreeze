@@ -231,15 +231,15 @@ const SearchTypes = (props: IStyleSheetData) => {
   useEffect(() => {
     if (currentType) {
       setTitleProps({
-        title: `Type - ${capitalize(currentType)}`,
-        description: `Detailed information about ${capitalize(
-          currentType
-        )} type Pokémon, moves, strengths, and weaknesses in Pokémon GO.`,
+        title: `${capitalize(currentType)} Type - Strengths, Weaknesses & Pokémon | PokéGO Breeze`,
+        description: `Complete ${capitalize(currentType)}-type guide for Pokémon GO: type effectiveness chart, best ${capitalize(currentType)}-type Pokémon, and all ${capitalize(currentType)}-type moves.`,
         keywords: [
           'Pokémon GO',
           `${currentType} type`,
           `${currentType} Pokémon`,
           `${currentType} moves`,
+          `${currentType} weakness`,
+          `${currentType} effectiveness`,
           'PokéGO Breeze',
         ],
         image: APIService.getTypeSprite(currentType),

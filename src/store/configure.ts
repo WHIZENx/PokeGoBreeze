@@ -80,7 +80,7 @@ const devTools =
             case StoreActions.StoreActionTypes.setLeagues:
               return {
                 ...action,
-                payload: `<<LEAGUES_DATA: ${action.payload.length} items>>`,
+                payload: `<<LEAGUES_DATA>>`,
               } as unknown as A;
             case StoreActions.StoreActionTypes.setSticker:
               return {

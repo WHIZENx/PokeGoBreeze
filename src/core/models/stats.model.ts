@@ -116,10 +116,6 @@ export class StatsPokemonGO implements IStatsPokemonGO {
   sta = 0;
   prod = 0;
 
-  constructor() {
-    this.prod = this.atk * this.def * this.sta;
-  }
-
   static create(atk?: number, def?: number, sta?: number, prod = 0) {
     const obj = new StatsPokemonGO();
     obj.atk = toNumber(atk);

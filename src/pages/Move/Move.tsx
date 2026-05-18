@@ -237,29 +237,27 @@ const Move = (props: IMovePage) => {
         }
         if (move) {
           setMove(move);
-          setTitleProps({
-            title: `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`,
-            description: `Detailed information about ${splitAndCapitalize(
-              move.name.toLowerCase(),
-              '_',
-              ' '
-            )}, a ${capitalize(move.type)} type ${
-              move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged'
-            } move in Pokémon GO. See power, energy, and DPS stats.`,
-            keywords: [
-              'Pokémon GO',
-              `${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`,
-              `${capitalize(move.type)} type`,
-              `${move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged'} move`,
-              'move stats',
-              'battle moves',
-              'combat power',
-              'PokéGO Breeze',
-            ],
-            image: APIService.getTypeHqSprite(move.type),
-          });
+          {
+            const moveName = splitAndCapitalize(move.name.toLowerCase(), '_', ' ');
+            const moveTypeName = capitalize(move.type);
+            const moveCategory = move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged';
+            setTitleProps({
+              title: `${moveName} - ${moveTypeName} ${moveCategory} Move | PokéGO Breeze`,
+              description: `${moveName} is a ${moveTypeName}-type ${moveCategory} move in Pokémon GO (#${move.track}). View power, energy cost, DPS, and which Pokémon can learn it.`,
+              keywords: [
+                'Pokémon GO',
+                moveName,
+                `${moveTypeName} type`,
+                `${moveCategory} move`,
+                'move stats',
+                'battle moves',
+                'PokéGO Breeze',
+              ],
+              image: APIService.getTypeHqSprite(move.type),
+            });
+          }
         } else {
-          showSnackbar(`Move ID: ${id} Not found!`, 'error');
+          showSnackbar(`Move ID: ${id} not found!`, 'error');
           if (id) {
             setTitleProps({
               title: `#${id} - Not Found`,
