@@ -1,10 +1,13 @@
-import { getValueOrDefault, isEqual, toNumber } from '../../utils/extension';
+import { getValueOrDefault, toNumber } from '../../utils/extension';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import { EvolutionChain, EvolutionInfo, IEvolutionInfo } from '../models/evolution-chain.model';
 import { EvolutionChainData, PokemonDataGM } from '../models/options.model';
 import { IPokemonData } from '../models/pokemon.model';
 
-const mappingPokemonEvoInfo = (pokemonData: EvolutionChainData[] | undefined, pokemon: IPokemonData[]) => {
+const mappingPokemonEvoInfo = (
+  pokemonData: EvolutionChainData[] | undefined,
+  pokemonMap: Map<string, IPokemonData>
+) => {
   const result: IEvolutionInfo[] = [];
   pokemonData?.forEach((item) => {
     const form = getValueOrDefault(
@@ -13,7 +16,7 @@ const mappingPokemonEvoInfo = (pokemonData: EvolutionChainData[] | undefined, po
       formNormal()
     );
     item.evolutionInfos.forEach((info) => {
-      const id = toNumber(pokemon.find((poke) => isEqual(poke.pokemonId, info.pokemon))?.num);
+      const id = toNumber(pokemonMap.get(info.pokemon)?.num);
       result.push(
         EvolutionInfo.create({
           id,
@@ -27,6 +30,9 @@ const mappingPokemonEvoInfo = (pokemonData: EvolutionChainData[] | undefined, po
 };
 
 export const optionEvolutionChain = (data: PokemonDataGM[], pokemon: IPokemonData[]) => {
+  const pokemonMap = new Map<string, IPokemonData>(
+    pokemon.filter((p) => typeof p.pokemonId === 'string').map((p) => [p.pokemonId as string, p])
+  );
   return data
     .filter((item) => /^EVOLUTION_V\d{4}_*/g.test(item.templateId))
     .map((item) => {
@@ -34,7 +40,7 @@ export const optionEvolutionChain = (data: PokemonDataGM[], pokemon: IPokemonDat
       return EvolutionChain.create({
         id,
         pokemonId: item.data.evolutionChainDisplaySettings.pokemon,
-        evolutionInfos: mappingPokemonEvoInfo(item.data.evolutionChainDisplaySettings.evolutionChains, pokemon),
+        evolutionInfos: mappingPokemonEvoInfo(item.data.evolutionChainDisplaySettings.evolutionChains, pokemonMap),
       });
     });
 };

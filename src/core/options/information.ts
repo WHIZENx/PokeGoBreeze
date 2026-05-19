@@ -6,7 +6,7 @@ import { IPokemonData } from '../models/pokemon.model';
 import { Information, ITicketReward, TicketReward } from '../models/information';
 import { getTextWithKey, textEng } from './_shared';
 
-const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData: IPokemonData[]) => {
+const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonMap: Map<string, IPokemonData>) => {
   const rewards: ITicketReward[] = [];
   if (ticket && isNotEmpty(ticket.iconRewards)) {
     ticket.iconRewards?.forEach((result) => {
@@ -27,7 +27,7 @@ const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData
           item: result.item.item.toString(),
         };
       } else if (result.pokemonEncounter) {
-        const id = pokemonData.find((poke) => poke.pokemonId === result.pokemonEncounter?.pokemonId)?.num;
+        const id = pokemonMap.get(result.pokemonEncounter.pokemonId)?.num;
         reward.pokemon = {
           id,
           pokemonId: result.pokemonEncounter.pokemonId,
@@ -37,7 +37,7 @@ const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData
           costume: result.pokemonEncounter.pokemonDisplay?.costume,
         };
       } else if (result.candy) {
-        const id = pokemonData.find((poke) => poke.pokemonId === result.candy?.pokemonId)?.num;
+        const id = pokemonMap.get(result.candy.pokemonId)?.num;
         reward.candy = {
           id,
           pokemonId: result.candy.pokemonId,
@@ -142,8 +142,11 @@ const getInformationDetails = (itemSettings: ItemSettings | undefined) => {
   return getTextWithKey<string>(textEng, textKey);
 };
 
-export const optionInformation = (data: PokemonDataGM[], pokemonData: IPokemonData[]) =>
-  data
+export const optionInformation = (data: PokemonDataGM[], pokemonData: IPokemonData[]) => {
+  const pokemonMap = new Map<string, IPokemonData>(
+    pokemonData.filter((p) => typeof p.pokemonId === 'string').map((p) => [p.pokemonId as string, p])
+  );
+  return data
     .filter(
       (item) =>
         item.templateId.startsWith('ITEM_') && item.data.itemSettings && item.data.itemSettings.globalEventTicket
@@ -162,6 +165,7 @@ export const optionInformation = (data: PokemonDataGM[], pokemonData: IPokemonDa
         giftAble: Boolean(item.data.itemSettings?.globalEventTicket.giftable),
         giftItem: item.data.itemSettings?.globalEventTicket.giftItem,
         detailsLink: getInformationDetails(item.data.itemSettings),
-        rewards: getInformationReward(item.data.itemSettings?.globalEventTicket, pokemonData),
+        rewards: getInformationReward(item.data.itemSettings?.globalEventTicket, pokemonMap),
       })
     );
+};
