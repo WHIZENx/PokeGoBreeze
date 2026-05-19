@@ -3,151 +3,141 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import './Hexagon.scss';
 import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
-import { DynamicObj, toFloatWithPadding, toNumber } from '../../../utils/extension';
+import { toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { AnimationType } from './enums/hexagon.enum';
 
-interface IPointer {
-  x: number;
-  y: number;
-}
-
-class Pointer implements IPointer {
-  x = 0;
-  y = 0;
-
-  constructor(x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
+// Resolve a CSS variable to its computed colour once, then cache it.
+// DOM access is done outside the RAF loop to avoid layout thrashing every frame.
+const cssVarCache = new Map<string, string>();
+const resolveColor = (color: string): string => {
+  if (!color.startsWith('var(')) {
+    return color;
   }
-}
+  const cached = cssVarCache.get(color);
+  if (cached) {
+    return cached;
+  }
+  const el = document.createElement('div');
+  el.style.color = color;
+  document.body.appendChild(el);
+  const resolved = getComputedStyle(el).color;
+  document.body.removeChild(el);
+  cssVarCache.set(color, resolved);
+  return resolved;
+};
+
+// Pure geometry helper — returns x/y directly instead of allocating a Pointer object.
+const hexCorner = (cx: number, cy: number, size: number, i: number): [number, number] => {
+  const angleRad = (Math.PI / 180) * (60 * i - 30);
+  return [cx + size * Math.cos(angleRad), cy + size * Math.sin(angleRad)];
+};
+
+const drawLineHex = (
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  percentage: number,
+  bgColor: string,
+  strokeColor: string,
+  isFill: boolean
+) => {
+  const [sx, sy] = hexCorner(cx, cy, percentage, 0);
+  ctx.beginPath();
+  ctx.moveTo(sx, sy);
+  for (let i = 1; i <= 6; i++) {
+    const [ex, ey] = hexCorner(cx, cy, percentage, i);
+    ctx.lineTo(ex, ey);
+  }
+  ctx.setLineDash([20, 15]);
+  if (isFill) {
+    ctx.fillStyle = bgColor;
+    ctx.fill();
+  }
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = strokeColor;
+  ctx.stroke();
+  ctx.closePath();
+};
+
+const drawStatsHex = (ctx: CanvasRenderingContext2D, cx: number, cy: number, halfSize: number, stat: IHexagonStats) => {
+  const pct = (v: number) => Math.min((halfSize * v) / 100, halfSize);
+  const sizes = [
+    pct(stat.switching),
+    pct(stat.charger),
+    pct(stat.closer),
+    pct(stat.cons),
+    pct(stat.atk),
+    pct(stat.lead),
+  ];
+  const [sx, sy] = hexCorner(cx, cy, sizes[0], 0);
+  ctx.beginPath();
+  ctx.moveTo(sx, sy);
+  for (let i = 1; i < sizes.length; i++) {
+    const [ex, ey] = hexCorner(cx, cy, sizes[i], i);
+    ctx.lineTo(ex, ey);
+  }
+  ctx.setLineDash([]);
+  ctx.lineTo(sx, sy);
+  ctx.lineWidth = 3;
+  ctx.fillStyle = '#a3eca380';
+  ctx.fill();
+  ctx.strokeStyle = 'green';
+  ctx.stroke();
+  ctx.closePath();
+};
+
+// Time-based easing step: covers the remaining distance at a fixed rate per second
+// (targetted to finish in ~400 ms regardless of frame rate).
+const ANIM_DURATION_MS = 400;
+const lerp = (current: number, target: number, dt: number): number => {
+  const step = (target / ANIM_DURATION_MS) * dt;
+  return target > current ? Math.min(current + step, target) : Math.max(current - step, target);
+};
+
+const statsEqual = (a: IHexagonStats, b: IHexagonStats | undefined): boolean =>
+  !!b &&
+  a.lead === b.lead &&
+  a.charger === b.charger &&
+  a.closer === b.closer &&
+  a.cons === b.cons &&
+  a.atk === b.atk &&
+  a.switching === b.switching;
 
 const Hexagon = (props: IHexagonComponent) => {
   const canvasHex = useRef<HTMLCanvasElement>();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(new HexagonStats());
 
-  const getHexConnerCord = (center: IPointer, size: number, i: number) => {
-    const angleDeg = 60 * i - 30;
-    const angleRad = (Math.PI / 180) * angleDeg;
-    const x = center.x + size * Math.cos(angleRad);
-    const y = center.y + size * Math.sin(angleRad);
-    return new Pointer(x, y);
-  };
+  const animationStatsRef = useRef<IHexagonStats>({ ...defaultStats });
+  const animateId = useRef<number>();
 
-  const drawLineHex = (
-    ctx: CanvasRenderingContext2D,
-    center: IPointer,
-    percentage: number,
-    bgColor: string,
-    strokeColor: string,
-    isFill: boolean
-  ) => {
-    const start = getHexConnerCord(center, percentage, 0);
-    ctx.beginPath();
-    ctx.moveTo(start.x, start.y);
-    for (let i = 1; i <= 6; i++) {
-      const end = getHexConnerCord(center, percentage, i);
-      ctx.lineTo(end.x, end.y);
-    }
-    ctx.setLineDash([20, 15]);
-    if (isFill) {
-      ctx.fillStyle = bgColor;
-      ctx.fill();
-    }
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = strokeColor;
-    ctx.stroke();
-    ctx.closePath();
-  };
-
-  const drawStatsHex = (ctx: CanvasRenderingContext2D, center: IPointer, stat: IHexagonStats) => {
-    const stats: DynamicObj<number> = {
-      '0': getPercentageBySize(stat.switching),
-      '1': getPercentageBySize(stat.charger),
-      '2': getPercentageBySize(stat.closer),
-      '3': getPercentageBySize(stat.cons),
-      '4': getPercentageBySize(stat.atk),
-      '5': getPercentageBySize(stat.lead),
-    };
-    const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
-    ctx.beginPath();
-    ctx.moveTo(start.x, start.y);
-    for (let i = 1; i <= Object.keys(stats).length; i++) {
-      const end = getHexConnerCord(center, Math.min(stats[i.toString()], 100), i);
-      ctx.lineTo(end.x, end.y);
-    }
-    ctx.setLineDash([]);
-    ctx.lineTo(start.x, start.y);
-    ctx.lineWidth = 3;
-    ctx.fillStyle = '#a3eca380';
-    ctx.fill();
-    ctx.strokeStyle = 'green';
-    ctx.stroke();
-    ctx.closePath();
-  };
-
-  const loop = (animationType: AnimationType, startStat: number | undefined, endStat: number | undefined) => {
-    startStat = toNumber(startStat);
-    endStat = toNumber(endStat);
-    return animationType === AnimationType.On
-      ? Math.min(startStat + endStat / 30, endStat)
-      : endStat > startStat
-        ? Math.min(startStat + endStat / 30, endStat)
-        : Math.max(startStat - endStat / 30, endStat);
-  };
-
-  const getPercentageBySize = (size: number, fullSize = props.size / 2) => (fullSize * size) / 100;
-
-  const getColorVar = (color: string) => {
-    if (color.startsWith('var(')) {
-      const tempElement = document.createElement('div');
-      tempElement.style.color = color;
-      document.body.appendChild(tempElement);
-      const computedColor = getComputedStyle(tempElement).color;
-      document.body.removeChild(tempElement);
-      return computedColor;
-    } else {
-      return color;
-    }
-  };
+  const getPercentageBySize = useCallback((size: number) => ((props.size / 2) * size) / 100, [props.size]);
 
   const drawHexagon = useCallback(
     (stats: IHexagonStats) => {
       const hexBorderSize = props.size;
       const hexSize = hexBorderSize / 2;
-
       const ctx = canvasHex.current?.getContext('2d');
-      if (ctx) {
-        const bgColor = getColorVar('var(--custom-gray)');
-        const strokeColor = getColorVar('var(--custom-table-border)');
-        ctx.beginPath();
-        ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
-        ctx.closePath();
-        const pointer = new Pointer(hexSize, (hexBorderSize + 4) / 2);
-        drawLineHex(ctx, pointer, hexSize, bgColor, strokeColor, true);
-        drawLineHex(ctx, pointer, getPercentageBySize(25), bgColor, strokeColor, false);
-        drawLineHex(ctx, pointer, getPercentageBySize(50), bgColor, strokeColor, false);
-        drawLineHex(ctx, pointer, getPercentageBySize(75), bgColor, strokeColor, false);
-        drawStatsHex(ctx, pointer, stats);
-        setInitHex(true);
+      if (!ctx) {
+        return;
       }
+      // Resolve colours once per draw (cached after first call per theme).
+      const bgColor = resolveColor('var(--custom-gray)');
+      const strokeColor = resolveColor('var(--custom-table-border)');
+
+      ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
+
+      const cx = hexSize;
+      const cy = (hexBorderSize + 4) / 2;
+
+      drawLineHex(ctx, cx, cy, hexSize, bgColor, strokeColor, true);
+      drawLineHex(ctx, cx, cy, getPercentageBySize(25), bgColor, strokeColor, false);
+      drawLineHex(ctx, cx, cy, getPercentageBySize(50), bgColor, strokeColor, false);
+      drawLineHex(ctx, cx, cy, getPercentageBySize(75), bgColor, strokeColor, false);
+      drawStatsHex(ctx, cx, cy, hexSize, stats);
     },
-    [props.size]
+    [props.size, getPercentageBySize]
   );
-
-  const equalStats = (initStats: HexagonStats) => {
-    return (
-      initStats.lead === props.stats?.lead &&
-      initStats.charger === props.stats.charger &&
-      initStats.closer === props.stats.closer &&
-      initStats.cons === props.stats.cons &&
-      initStats.atk === props.stats.atk &&
-      initStats.switching === props.stats.switching
-    );
-  };
-
-  const animationStatsRef = useRef({ ...defaultStats });
-  const animateId = useRef<number>();
 
   useEffect(() => {
     if (!props.animation) {
@@ -159,24 +149,35 @@ const Hexagon = (props: IHexagonComponent) => {
     animationStatsRef.current = { ...defaultStats };
 
     if (props.animation === AnimationType.On) {
-      animateId.current = requestAnimationFrame(function animate() {
+      let lastTime: number | undefined;
+      animateId.current = requestAnimationFrame(function animate(timestamp) {
+        const dt = lastTime !== undefined ? timestamp - lastTime : 16;
+        lastTime = timestamp;
+
+        const cur = animationStatsRef.current;
+        const tgt = props.stats;
         animationStatsRef.current = HexagonStats.render({
-          lead: loop(props.animation, animationStatsRef.current.lead, props.stats?.lead),
-          charger: loop(props.animation, animationStatsRef.current.charger, props.stats?.charger),
-          closer: loop(props.animation, animationStatsRef.current.closer, props.stats?.closer),
-          cons: loop(props.animation, animationStatsRef.current.cons, props.stats?.cons),
-          atk: loop(props.animation, animationStatsRef.current.atk, props.stats?.atk),
-          switching: loop(props.animation, animationStatsRef.current.switching, props.stats?.switching),
+          lead: lerp(cur.lead, toNumber(tgt?.lead), dt),
+          charger: lerp(cur.charger, toNumber(tgt?.charger), dt),
+          closer: lerp(cur.closer, toNumber(tgt?.closer), dt),
+          cons: lerp(cur.cons, toNumber(tgt?.cons), dt),
+          atk: lerp(cur.atk, toNumber(tgt?.atk), dt),
+          switching: lerp(cur.switching, toNumber(tgt?.switching), dt),
         });
 
         drawHexagon(animationStatsRef.current);
+        if (!initHex) {
+          setInitHex(true);
+        }
 
-        if (!equalStats(animationStatsRef.current)) {
+        if (!statsEqual(animationStatsRef.current, tgt)) {
           animateId.current = requestAnimationFrame(animate);
         }
       });
     } else {
-      drawHexagon(props.stats ?? defaultStats ?? new HexagonStats());
+      const s = props.stats ?? defaultStats ?? new HexagonStats();
+      drawHexagon(s);
+      setInitHex(true);
     }
 
     return () => {
@@ -193,25 +194,33 @@ const Hexagon = (props: IHexagonComponent) => {
       animateId.current = undefined;
     }
 
-    if (props.animation === AnimationType.On) {
-      let initStats = new HexagonStats();
-      animateId.current = requestAnimationFrame(function animate() {
-        initStats = HexagonStats.render({
-          lead: loop(props.animation, initStats.lead, props.stats?.lead),
-          charger: loop(props.animation, initStats.charger, props.stats?.charger),
-          closer: loop(props.animation, initStats.closer, props.stats?.closer),
-          cons: loop(props.animation, initStats.cons, props.stats?.cons),
-          atk: loop(props.animation, initStats.atk, props.stats?.atk),
-          switching: loop(props.animation, initStats.switching, props.stats?.switching),
-        });
-
-        drawHexagon(initStats);
-
-        if (!equalStats(initStats)) {
-          animateId.current = requestAnimationFrame(animate);
-        }
-      });
+    if (props.animation !== AnimationType.On) {
+      return;
     }
+
+    let lastTime: number | undefined;
+    let cur = new HexagonStats();
+
+    animateId.current = requestAnimationFrame(function animate(timestamp) {
+      const dt = lastTime !== undefined ? timestamp - lastTime : 16;
+      lastTime = timestamp;
+
+      const tgt = props.stats;
+      cur = HexagonStats.render({
+        lead: lerp(cur.lead, toNumber(tgt?.lead), dt),
+        charger: lerp(cur.charger, toNumber(tgt?.charger), dt),
+        closer: lerp(cur.closer, toNumber(tgt?.closer), dt),
+        cons: lerp(cur.cons, toNumber(tgt?.cons), dt),
+        atk: lerp(cur.atk, toNumber(tgt?.atk), dt),
+        switching: lerp(cur.switching, toNumber(tgt?.switching), dt),
+      });
+
+      drawHexagon(cur);
+
+      if (!statsEqual(cur, tgt)) {
+        animateId.current = requestAnimationFrame(animate);
+      }
+    });
   };
 
   return (
