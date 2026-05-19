@@ -40,16 +40,9 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       'process.env': JSON.stringify({
-        REACT_APP_TOKEN_PRIVATE_REPO: env.REACT_APP_TOKEN_PRIVATE_REPO,
-        REACT_APP_POKEGO_BREEZE_DB_URL: env.REACT_APP_POKEGO_BREEZE_DB_URL,
-        REACT_APP_EDGE_CONFIG: env.REACT_APP_EDGE_CONFIG,
-        REACT_APP_DEPLOYMENT_MODE: env.REACT_APP_DEPLOYMENT_MODE,
-        REACT_APP_ENCRYPTION_KEY: env.REACT_APP_ENCRYPTION_KEY,
-        REACT_APP_ENCRYPTION_SALT: env.REACT_APP_ENCRYPTION_SALT,
-        REACT_APP_VERSION: env.REACT_APP_VERSION,
-        REACT_APP_CONFIG: env.REACT_APP_CONFIG,
-        REACT_APP_BASE_URL: env.REACT_APP_BASE_URL,
-        REACT_APP_NEON_API_URL: env.NEON_API_URL,
+        // All REACT_APP_* keys from .env — add new vars to .env only, they are picked up automatically
+        ...Object.fromEntries(Object.entries(env).filter(([k]) => k.startsWith('REACT_APP_'))),
+        // Build-time constants derived from Vite mode — not user-configurable via .env
         NODE_ENV: isDev ? 'development' : 'production',
         DEBUG: isDev,
       }),
@@ -97,10 +90,11 @@ export default defineConfig(({ mode }) => {
           chunkFileNames: 'static/js/[name].[hash].js',
           entryFileNames: 'static/js/[name].[hash].js',
           assetFileNames: (assetInfo) => {
-            if (/\.(css)$/.test(assetInfo.name || '')) {
+            const name = assetInfo.names[0] ?? '';
+            if (/\.(css)$/.test(name)) {
               return 'static/css/[name].[hash].[ext]';
             }
-            if (/\.(png|jpe?g|gif|svg|ico|webp)$/.test(assetInfo.name || '')) {
+            if (/\.(png|jpe?g|gif|svg|ico|webp)$/.test(name)) {
               return 'static/media/[name].[hash].[ext]';
             }
             return 'static/[ext]/[name].[hash].[ext]';

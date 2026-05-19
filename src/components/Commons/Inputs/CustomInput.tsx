@@ -8,6 +8,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { ICustomInputComponent } from '../models/component.model';
 import { Menu, MenuItem } from '@mui/material';
 import { isNotEmpty } from '../../../utils/extension';
+import { BooleanType } from '../../../enums/type.enum';
 
 const CustomInput = <T,>(props: ICustomInputComponent<T>) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement>();
@@ -28,8 +29,8 @@ const CustomInput = <T,>(props: ICustomInputComponent<T>) => {
             className="tw-p-2"
             aria-label="menu"
             aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
+            aria-haspopup={BooleanType.True}
+            aria-expanded={open ? BooleanType.True : undefined}
             onClick={handleClick}
           >
             <MenuIcon />

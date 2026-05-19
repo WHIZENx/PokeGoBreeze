@@ -99,7 +99,7 @@ async function main() {
   console.log(`🔍 Fetching Edge Config (mode: ${mode})…`);
   const data = await fetchEdgeConfig(edgeId, token);
 
-  const version = data[versionKey];
+  const version = !process.env.REACT_APP_VERSION ? data[versionKey] : process.env.REACT_APP_VERSION;
   if (!version) {
     // eslint-disable-next-line no-console
     console.error(`❌ Version key '${versionKey}' not found in Edge Config`);
