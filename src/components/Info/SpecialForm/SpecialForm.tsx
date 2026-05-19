@@ -4,7 +4,7 @@ import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 import './SpecialForm.scss';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../utils/extension';
+import { isEqual, isNotEmpty, isUndefined } from '../../../utils/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../Link/LinkToTop';
@@ -75,7 +75,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     src={APIService.getPokeGifSprite(value.name)}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src = getValueOrDefault(String, value.sprites?.frontDefault);
+                      e.currentTarget.src = APIService.getPokeSprite();
                     }}
                   />
                   <div id="id-pokemon">
