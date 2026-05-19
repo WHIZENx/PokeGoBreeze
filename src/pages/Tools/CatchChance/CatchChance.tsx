@@ -18,7 +18,6 @@ import './CatchChance.scss';
 import {
   DynamicObj,
   getValueOrDefault,
-  isNotEmpty,
   isUndefined,
   safeObjectEntries,
   toFloatWithPadding,
@@ -67,6 +66,8 @@ import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 
+const throwsByType = new Map<ThrowType, ThrowThreshold>();
+
 const balls = createDataRows<PokeBallThreshold>(
   {
     name: 'Poké Ball',
@@ -93,6 +94,7 @@ const throws = createDataRows<ThrowThreshold>(
   { name: 'Great Throw', threshold: greatThrowIncChance(), throwType: ThrowType.Great },
   { name: 'Excellent Throw', threshold: excellentThrowIncChance(), throwType: ThrowType.Excellent }
 );
+throws.forEach((t) => throwsByType.set(t.throwType, t));
 
 const CatchChance = () => {
   const { searchingToolCurrentDetails } = useSearch();
@@ -314,11 +316,11 @@ const CatchChance = () => {
 
   const renderAdvThrow = () => {
     if (radius >= 70) {
-      return throws.find((t) => t.throwType === ThrowType.Nice);
+      return throwsByType.get(ThrowType.Nice);
     } else if (radius >= 30) {
-      return throws.find((t) => t.throwType === ThrowType.Great);
+      return throwsByType.get(ThrowType.Great);
     } else {
-      return throws.find((t) => t.throwType === ThrowType.Excellent);
+      return throwsByType.get(ThrowType.Excellent);
     }
   };
 
@@ -326,11 +328,11 @@ const CatchChance = () => {
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) /
       (medal.typeSec ? 2 : 1);
-    const pokeBall = safeObjectEntries<PokeBallThreshold>(balls).find((_, type) => type === ballType);
+    const pokeBall = balls[ballType];
     let result = 0;
-    if (pokeBall && isNotEmpty(pokeBall)) {
+    if (pokeBall) {
       const multiplier =
-        pokeBall[1].threshold *
+        pokeBall.threshold *
         threshold *
         medalChance *
         (isCurveBall && !disable ? curveIncChance() : 1) *
@@ -346,20 +348,20 @@ const CatchChance = () => {
   const calculateAdvance = () => {
     const threshold = isNormalThrow ? 1 : 1 + (100 - radius) / 100;
     const result = calculateProb(false, threshold);
-    const pokeBall = safeObjectEntries<PokeBallThreshold>(balls).find((_, index) => index === ballType);
+    const pokeBall = balls[ballType];
     let throwText = '';
     if (isNormalThrow) {
-      throwText = getValueOrDefault(String, throws.find((t) => t.throwType === ThrowType.Normal)?.name);
+      throwText = getValueOrDefault(String, throwsByType.get(ThrowType.Normal)?.name);
     } else if (advThrow) {
       throwText = advThrow.name;
     }
-    if (pokeBall && isNotEmpty(pokeBall)) {
+    if (pokeBall) {
       setDataAdv(
         DataAdvance.create({
           result,
-          ballName: pokeBall[1].name,
-          ballItemName: pokeBall[1].itemName,
-          pokeBallType: pokeBall[1].pokeBallType,
+          ballName: pokeBall.name,
+          ballItemName: pokeBall.itemName,
+          pokeBallType: pokeBall.pokeBallType,
           throwText,
           throwType: advThrow?.throwType ?? ThrowType.Normal,
         })

@@ -280,11 +280,24 @@ const FindTable = () => {
     const avgHP =
       Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.hp, 0) /
       toNumber(preIvArr?.result.length, 1);
-    const fourStar = preIvArr?.result.filter((item) => item.percent === 100).length;
-    const threeStar = preIvArr?.result.filter((item) => item.percent > 80 && item.percent < 100).length;
-    const twoStar = preIvArr?.result.filter((item) => item.percent > 64 && item.percent <= 80).length;
-    const oneStar = preIvArr?.result.filter((item) => item.percent > 51 && item.percent <= 64).length;
-    const zeroStar = preIvArr?.result.filter((item) => item.percent <= 51).length;
+    let fourStar = 0,
+      threeStar = 0,
+      twoStar = 0,
+      oneStar = 0,
+      zeroStar = 0;
+    for (const item of preIvArr?.result ?? []) {
+      if (item.percent === 100) {
+        fourStar++;
+      } else if (item.percent > 80) {
+        threeStar++;
+      } else if (item.percent > 64) {
+        twoStar++;
+      } else if (item.percent > 51) {
+        oneStar++;
+      } else {
+        zeroStar++;
+      }
+    }
     return (
       <Fragment>
         {isNotEmpty(preIvArr?.result) && (

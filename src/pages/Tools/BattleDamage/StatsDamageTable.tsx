@@ -1,5 +1,5 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   LevelSlider,
@@ -90,6 +90,33 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
     [props.setStatType, props.setStatLevel]
   );
 
+  const displayATK = useMemo(
+    () =>
+      calculateStatsBattle(
+        props.statATK,
+        maxIv(),
+        currStatLevel,
+        true,
+        getDmgMultiplyBonus(currStatType, TypeAction.Atk)
+      ),
+    [props.statATK, currStatLevel, currStatType]
+  );
+  const displayDEF = useMemo(
+    () =>
+      calculateStatsBattle(
+        props.statDEF,
+        maxIv(),
+        currStatLevel,
+        true,
+        getDmgMultiplyBonus(currStatType, TypeAction.Def)
+      ),
+    [props.statDEF, currStatLevel, currStatType]
+  );
+  const displaySTA = useMemo(
+    () => calculateStatsBattle(props.statSTA, maxIv(), currStatLevel, true),
+    [props.statSTA, currStatLevel]
+  );
+
   return (
     <div className="tw-container">
       <div>
@@ -163,15 +190,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>ATK</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">
-                  {calculateStatsBattle(
-                    props.statATK,
-                    maxIv(),
-                    currStatLevel,
-                    true,
-                    getDmgMultiplyBonus(currStatType, TypeAction.Atk)
-                  )}
-                </td>
+                <td className="!tw-text-center">{displayATK}</td>
               </tr>
               <tr>
                 <td>
@@ -180,15 +199,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>DEF</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">
-                  {calculateStatsBattle(
-                    props.statDEF,
-                    maxIv(),
-                    currStatLevel,
-                    true,
-                    getDmgMultiplyBonus(currStatType, TypeAction.Def)
-                  )}
-                </td>
+                <td className="!tw-text-center">{displayDEF}</td>
               </tr>
               <tr>
                 <td>
@@ -197,7 +208,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>HP</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">{calculateStatsBattle(props.statSTA, maxIv(), currStatLevel, true)}</td>
+                <td className="!tw-text-center">{displaySTA}</td>
               </tr>
             </tbody>
           </table>

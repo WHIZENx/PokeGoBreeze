@@ -103,6 +103,18 @@ import { useSnackbar } from '../../../contexts/snackbar.context';
 import DialogMui from '../../../components/Commons/Dialogs/Dialogs';
 import Tooltips from '../../../components/Commons/Tooltips/Tooltips';
 
+const SORT_MENU_ITEMS = [
+  { value: SortType.DPS, label: 'Damage Per Second' },
+  { value: SortType.TDO, label: 'Total Damage Output' },
+  { value: SortType.TTK, label: 'Time To Kill' },
+  { value: SortType.TANK, label: 'Tankiness' },
+];
+
+const PRIORITY_MENU_ITEMS = [
+  { value: SortDirectionType.ASC, label: 'Best' },
+  { value: SortDirectionType.DESC, label: 'Worst' },
+];
+
 const RaidBattle = () => {
   useTitle({
     title: 'Raid Battle - Tools',
@@ -868,12 +880,7 @@ const RaidBattle = () => {
         value={filters.selected.sortBy}
         fullWidth
         select
-        menuItems={[
-          { value: SortType.DPS, label: 'Damage Per Second' },
-          { value: SortType.TDO, label: 'Total Damage Output' },
-          { value: SortType.TTK, label: 'Time To Kill' },
-          { value: SortType.TANK, label: 'Tankiness' },
-        ]}
+        menuItems={SORT_MENU_ITEMS}
         onChange={(value) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(value) } })}
       />
       <InputMui
@@ -881,10 +888,7 @@ const RaidBattle = () => {
         value={filters.selected.sorted}
         fullWidth
         select
-        menuItems={[
-          { value: SortDirectionType.ASC, label: 'Best' },
-          { value: SortDirectionType.DESC, label: 'Worst' },
-        ]}
+        menuItems={PRIORITY_MENU_ITEMS}
         onChange={(value) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(value) } })}
       />
     </form>
@@ -1442,29 +1446,25 @@ const RaidBattle = () => {
           <div className="top-raid-group">
             {result
               .filter((obj) => {
-                if (!used.onlyReleasedGO) {
-                  return true;
-                }
-                if (obj.pokemon) {
+                if (used.onlyReleasedGO) {
+                  if (!obj.pokemon) {
+                    return false;
+                  }
                   const isReleasedGO = checkPokemonGO(
                     obj.pokemon.num,
                     getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId?.toString())
                   );
-                  return getValueOrDefault(Boolean, obj.pokemon.releasedGO, isReleasedGO);
+                  if (!getValueOrDefault(Boolean, obj.pokemon.releasedGO, isReleasedGO)) {
+                    return false;
+                  }
                 }
-                return false;
-              })
-              .filter((obj) => {
-                if (!used.onlyMega) {
-                  return true;
+                if (used.onlyMega && obj.pokemon?.pokemonType !== PokemonType.Mega) {
+                  return false;
                 }
-                return obj.pokemon?.pokemonType === PokemonType.Mega;
-              })
-              .filter((obj) => {
-                if (!used.onlyShadow) {
-                  return true;
+                if (used.onlyShadow && obj.pokemonType !== PokemonType.Shadow) {
+                  return false;
                 }
-                return obj.pokemonType === PokemonType.Shadow;
+                return true;
               })
               .slice(0, 10)
               .map((value, index) => (

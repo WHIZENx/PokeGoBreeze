@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
 import './CalculatePoint.scss';
@@ -342,6 +342,21 @@ const CalculatePoint = () => {
     return classes.join(' ');
   };
 
+  const ivIndices = useMemo(() => [...Array(maxIv() + 1).keys()], []);
+
+  const colorToneAtkMap = useMemo(
+    () => new Map(Object.values(resultBreakPointAtk?.colorTone ?? {}).map((t) => [t.number, t.color])),
+    [resultBreakPointAtk]
+  );
+  const colorToneDefMap = useMemo(
+    () => new Map(Object.values(resultBreakPointDef?.colorToneDef ?? {}).map((t) => [t.number, t.color])),
+    [resultBreakPointDef]
+  );
+  const colorToneStaMap = useMemo(
+    () => new Map(Object.values(resultBreakPointDef?.colorToneSta ?? {}).map((t) => [t.number, t.color])),
+    [resultBreakPointDef]
+  );
+
   return (
     <Fragment>
       <div className="row !tw-m-0 tw-overflow-x-hidden">
@@ -466,7 +481,7 @@ const CalculatePoint = () => {
                           <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
-                              {[...Array(maxIv() + 1).keys()].map((value, index) => (
+                              {ivIndices.map((value, index) => (
                                 <th key={index}>{value}</th>
                               ))}
                             </tr>
@@ -475,7 +490,7 @@ const CalculatePoint = () => {
                             {getLevelList().map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
-                                {[...Array(maxIv() + 1).keys()].map((_, index) => (
+                                {ivIndices.map((_, index) => (
                                   <td
                                     className={combineClasses(
                                       'text-iv',
@@ -483,11 +498,7 @@ const CalculatePoint = () => {
                                     )}
                                     style={{
                                       backgroundColor: resultBreakPointAtk
-                                        ? computeColor(
-                                            Object.values(resultBreakPointAtk.colorTone).find(
-                                              (item) => item.number === resultBreakPointAtk.data[i][index]
-                                            )?.color
-                                          )
+                                        ? computeColor(colorToneAtkMap.get(resultBreakPointAtk.data[i][index]))
                                         : '',
                                     }}
                                     key={index}
@@ -606,7 +617,7 @@ const CalculatePoint = () => {
                           <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
-                              {[...Array(maxIv() + 1).keys()].map((value, index) => (
+                              {ivIndices.map((value, index) => (
                                 <th key={index}>{value}</th>
                               ))}
                             </tr>
@@ -615,7 +626,7 @@ const CalculatePoint = () => {
                             {getLevelList().map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
-                                {[...Array(maxIv() + 1).keys()].map((_, index) => (
+                                {ivIndices.map((_, index) => (
                                   <td
                                     className={combineClasses(
                                       'text-iv',
@@ -623,11 +634,7 @@ const CalculatePoint = () => {
                                     )}
                                     style={{
                                       backgroundColor: resultBreakPointDef
-                                        ? computeColor(
-                                            Object.values(resultBreakPointDef.colorToneDef).find(
-                                              (item) => item.number === resultBreakPointDef.dataDef[i][index]
-                                            )?.color
-                                          )
+                                        ? computeColor(colorToneDefMap.get(resultBreakPointDef.dataDef[i][index]))
                                         : '',
                                     }}
                                     key={index}
@@ -661,7 +668,7 @@ const CalculatePoint = () => {
                           <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
-                              {[...Array(maxIv() + 1).keys()].map((value, index) => (
+                              {ivIndices.map((value, index) => (
                                 <th key={index}>{value}</th>
                               ))}
                             </tr>
@@ -670,7 +677,7 @@ const CalculatePoint = () => {
                             {getLevelList().map((level, i) => (
                               <tr key={i}>
                                 <td>{level}</td>
-                                {[...Array(maxIv() + 1).keys()].map((_, index) => (
+                                {ivIndices.map((_, index) => (
                                   <td
                                     className={combineClasses(
                                       'text-iv',
@@ -678,11 +685,7 @@ const CalculatePoint = () => {
                                     )}
                                     style={{
                                       backgroundColor: resultBreakPointDef
-                                        ? computeColor(
-                                            Object.values(resultBreakPointDef.colorToneSta).find(
-                                              (item) => item.number === resultBreakPointDef.dataSta[i][index]
-                                            )?.color
-                                          )
+                                        ? computeColor(colorToneStaMap.get(resultBreakPointDef.dataSta[i][index]))
                                         : '',
                                     }}
                                     key={index}
