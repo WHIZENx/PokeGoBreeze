@@ -49,7 +49,6 @@ import {
   isIncludeList,
   isNotEmpty,
   isUndefined,
-  sparseIndexOf,
   toFloat,
   toNumber,
   UniqValueInArray,
@@ -207,89 +206,93 @@ export const calBaseSTA = (stats: IStatsPokemon | undefined, nerf: boolean) => {
   }
 };
 
+const buildRankMap = (sortedUniq: number[]): Map<number, number> => {
+  const map = new Map<number, number>();
+  for (let i = 0; i < sortedUniq.length; i++) {
+    map.set(sortedUniq[i], i);
+  }
+  return map;
+};
+
 export const sortStatsPokemon = (stats: IArrayStats[]) => {
-  const attackRanking = UniqValueInArray(stats.map((item) => item.statsGO.atk)).sort((a, b) => a - b);
+  // Single pass to collect all four stat values
+  const atkValues: number[] = [];
+  const defValues: number[] = [];
+  const staValues: number[] = [];
+  const prodValues: number[] = [];
+  for (const item of stats) {
+    atkValues.push(item.statsGO.atk);
+    defValues.push(item.statsGO.def);
+    staValues.push(item.statsGO.sta);
+    prodValues.push(item.statsGO.prod);
+  }
 
-  const minATK = Math.min(...attackRanking);
-  const maxATK = Math.max(...attackRanking);
-  const attackStats = stats.map((item) =>
-    StatsAtk.create({
-      id: item.id,
-      form: item.form,
-      attack: item.statsGO?.atk,
-      rank: attackRanking.length - sparseIndexOf(attackRanking, item.statsGO?.atk),
-    })
-  );
+  const attackRanking = UniqValueInArray(atkValues).sort((a, b) => a - b);
+  const defenseRanking = UniqValueInArray(defValues).sort((a, b) => a - b);
+  const staminaRanking = UniqValueInArray(staValues).sort((a, b) => a - b);
+  const prodRanking = UniqValueInArray(prodValues).sort((a, b) => a - b);
 
-  const defenseRanking = UniqValueInArray(stats.map((item) => item.statsGO?.def)).sort((a, b) => a - b);
+  // Pre-build rank Maps for O(1) lookup instead of O(n) sparseIndexOf per item
+  const atkRankMap = buildRankMap(attackRanking);
+  const defRankMap = buildRankMap(defenseRanking);
+  const staRankMap = buildRankMap(staminaRanking);
+  const prodRankMap = buildRankMap(prodRanking);
 
-  const minDEF = Math.min(...defenseRanking);
-  const maxDEF = Math.max(...defenseRanking);
-  const defenseStats = stats.map((item) =>
-    StatsDef.create({
-      id: item.id,
-      form: item.form,
-      defense: item.statsGO.def,
-      rank: defenseRanking.length - sparseIndexOf(defenseRanking, item.statsGO.def, 0),
-    })
-  );
+  const atkLen = attackRanking.length;
+  const defLen = defenseRanking.length;
+  const staLen = staminaRanking.length;
+  const prodLen = prodRanking.length;
 
-  const staminaRanking = UniqValueInArray(stats.map((item) => item.statsGO.sta)).sort((a, b) => a - b);
+  const attackStats: ReturnType<typeof StatsAtk.create>[] = [];
+  const defenseStats: ReturnType<typeof StatsDef.create>[] = [];
+  const staminaStats: ReturnType<typeof StatsSta.create>[] = [];
+  const prodStats: ReturnType<typeof StatsProd.create>[] = [];
 
-  const minSTA = Math.min(...staminaRanking);
-  const maxSTA = Math.max(...staminaRanking);
-  const staminaStats = stats.map((item) =>
-    StatsSta.create({
-      id: item.id,
-      form: item.form,
-      stamina: item.statsGO.sta,
-      rank: staminaRanking.length - sparseIndexOf(staminaRanking, item.statsGO.sta, 0),
-    })
-  );
-
-  const prodRanking = UniqValueInArray(
-    [...stats].sort((a, b) => a.statsGO.prod - b.statsGO.prod).map((item) => item.statsGO.prod)
-  );
-
-  const minPROD = Math.min(...prodRanking);
-  const maxPROD = Math.max(...prodRanking);
-  const prodStats = stats.map((item) =>
-    StatsProd.create({
-      id: item.id,
-      form: item.form,
-      product: item.statsGO.prod,
-      rank: prodRanking.length - sparseIndexOf(prodRanking, item.statsGO.prod, 0),
-    })
-  );
+  // Single pass to build all four ranking arrays
+  for (const item of stats) {
+    const { atk, def, sta, prod } = item.statsGO;
+    attackStats.push(
+      StatsAtk.create({ id: item.id, form: item.form, attack: atk, rank: atkLen - (atkRankMap.get(atk) ?? 0) })
+    );
+    defenseStats.push(
+      StatsDef.create({ id: item.id, form: item.form, defense: def, rank: defLen - (defRankMap.get(def) ?? 0) })
+    );
+    staminaStats.push(
+      StatsSta.create({ id: item.id, form: item.form, stamina: sta, rank: staLen - (staRankMap.get(sta) ?? 0) })
+    );
+    prodStats.push(
+      StatsProd.create({ id: item.id, form: item.form, product: prod, rank: prodLen - (prodRankMap.get(prod) ?? 0) })
+    );
+  }
 
   return new StatsRank({
     attack: StatsRankAtk.create({
       ranking: attackStats,
       minRank: 1,
-      maxRank: attackRanking.length,
-      minStats: minATK,
-      maxStats: maxATK,
+      maxRank: atkLen,
+      minStats: attackRanking[0],
+      maxStats: attackRanking[atkLen - 1],
     }),
     defense: StatsRankDef.create({
       ranking: defenseStats,
       minRank: 1,
-      maxRank: defenseRanking.length,
-      minStats: minDEF,
-      maxStats: maxDEF,
+      maxRank: defLen,
+      minStats: defenseRanking[0],
+      maxStats: defenseRanking[defLen - 1],
     }),
     stamina: StatsRankSta.create({
       ranking: staminaStats,
       minRank: 1,
-      maxRank: staminaRanking.length,
-      minStats: minSTA,
-      maxStats: maxSTA,
+      maxRank: staLen,
+      minStats: staminaRanking[0],
+      maxStats: staminaRanking[staLen - 1],
     }),
     statProd: StatsRankProd.create({
       ranking: prodStats,
       minRank: 1,
-      maxRank: prodRanking.length,
-      minStats: minPROD,
-      maxStats: maxPROD,
+      maxRank: prodLen,
+      minStats: prodRanking[0],
+      maxStats: prodRanking[prodLen - 1],
     }),
   });
 };
