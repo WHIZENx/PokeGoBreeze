@@ -45,6 +45,7 @@ import {
   IPokemonData,
   IPokemonMoveData,
   IPokemonRaidModel,
+  PokemonData,
   PokemonDataStats,
   PokemonDPSBattle,
   PokemonMoveData,
@@ -1122,23 +1123,31 @@ const RaidBattle = () => {
     setHoverSlot(undefined);
   };
 
-  const onMovePokemon = (pokemonBattle: PokemonRaidModel) => {
-    if (showMovePokemon.pokemon?.pokemon) {
-      const stats = pokemonBattle.dataTargetPokemon?.stats ?? initPokemonStats;
-      pokemonBattle.dataTargetPokemon = showMovePokemon.pokemon.pokemon;
-      pokemonBattle.dataTargetPokemon.stats = new PokemonDataStats({
-        ...stats,
-        pokemonType: showMovePokemon.pokemon.pokemonType ?? PokemonType.None,
-      });
-      pokemonBattle.fMoveTargetPokemon = new SelectMoveModel(
-        showMovePokemon.pokemon.fMove?.name,
-        showMovePokemon.pokemon.fMoveType
-      );
-      pokemonBattle.cMoveTargetPokemon = new SelectMoveModel(
-        showMovePokemon.pokemon.cMove?.name,
-        showMovePokemon.pokemon.cMoveType
-      );
+  const onMovePokemon = (trainerIndex: number, slotIndex: number) => {
+    if (!showMovePokemon.pokemon?.pokemon) {
+      return;
     }
+    const src = showMovePokemon.pokemon;
+    setTrainerBattle((prev) => {
+      const trainer = prev[trainerIndex];
+      const slot = trainer.pokemons[slotIndex];
+      const stats = slot.dataTargetPokemon?.stats ?? initPokemonStats;
+      const dataTargetPokemon = PokemonData.copy(src.pokemon);
+      if (dataTargetPokemon) {
+        dataTargetPokemon.stats = new PokemonDataStats({
+          ...stats,
+          pokemonType: src.pokemonType ?? PokemonType.None,
+        });
+      }
+      const updatedSlot = PokemonRaidModel.create({
+        ...slot,
+        dataTargetPokemon,
+        fMoveTargetPokemon: new SelectMoveModel(src.fMove?.name, src.fMoveType),
+        cMoveTargetPokemon: new SelectMoveModel(src.cMove?.name, src.cMoveType),
+      });
+      return update(prev, { [trainerIndex]: { pokemons: { [slotIndex]: { $set: updatedSlot } } } });
+    });
+    handleCloseMovePokemon();
   };
 
   const modalMovePokemon = () => {
@@ -1171,7 +1180,7 @@ const RaidBattle = () => {
         </div>
         <p className="tw-mt-2">Select slot Pokémon that you want to replace.</p>
         <div className="tw-mt-2 tw-justify-center tw-px-2">
-          {trainerBattle.map((trainer) => (
+          {trainerBattle.map((trainer, trainerIndex) => (
             <div className="trainer-battle tw-flex tw-items-center tw-relative" key={trainer.trainerId}>
               <Badge
                 color="primary"
@@ -1200,7 +1209,7 @@ const RaidBattle = () => {
                       'pokemon-battle',
                       hoverSlot === `${trainer.trainerId}-${index}` ? 'slot-active' : ''
                     )}
-                    onClick={() => onMovePokemon(poke)}
+                    onClick={() => onMovePokemon(trainerIndex, index)}
                   >
                     {poke.dataTargetPokemon ? (
                       <span className="tw-relative">
