@@ -378,7 +378,6 @@ npm install
    | `REACT_APP_POKEGO_BREEZE_DB_URL` | Yes | PokeGoBreeze database URL |
    | `REACT_APP_NEON_API_URL` | Yes | Neon serverless Postgres API URL |
    | `REACT_APP_VERSION` | No | App version override (e.g. `1.0.0`) |
-   | `REACT_APP_CONFIG` | No | Remote config key/identifier |
    | `REACT_APP_REDUX_VERBOSE` | No | `true` = show full Redux store in DevTools (default `false`) |
    | `MONGODB_URI` | No | MongoDB connection string (deploy.sh version history) |
 
