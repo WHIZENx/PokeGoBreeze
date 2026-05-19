@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import APIService from '../../services/api.service';
 import FormSelect from './FormSelect';
 
@@ -44,21 +44,25 @@ const Find = (props: IFindComponent) => {
     setPokemonList(result);
   }, [mappingPokemonName]);
 
+  const debouncedFilter = useRef(
+    debounce((list: IPokemonSearching[], term: string) => {
+      const results = list.filter(
+        (item) => isInclude(item.name, term, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, term)
+      );
+      setPokemonListFilter(results);
+    }, 150)
+  );
+
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
-      const debouncedSearch = debounce(() => {
-        const results = pokemonList.filter(
-          (item) =>
-            isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
-        );
-        setPokemonListFilter(results);
-      });
-      debouncedSearch();
-      return () => {
-        debouncedSearch.cancel();
-      };
+      debouncedFilter.current(pokemonList, searchTerm);
     }
+    return () => {
+      debouncedFilter.current.cancel();
+    };
   }, [pokemonList, searchTerm]);
+
+  const currentPokemonName = useMemo(() => pokemonList.find((item) => item.id === id)?.name, [pokemonList, id]);
 
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -191,7 +195,7 @@ const Find = (props: IFindComponent) => {
             setForm={props.setForm}
             id={id}
             setName={props.setName}
-            name={pokemonList.find((item) => item.id === id)?.name}
+            name={currentPokemonName}
             onHandleSetStats={handleSetStats}
             onClearStats={props.clearStats}
             onSetPrev={() => modifyId(-1)}
