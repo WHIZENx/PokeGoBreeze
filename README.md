@@ -355,9 +355,21 @@ cd PokeGoBreeze
 npm install
 ```
 
-3. **Set up environment variables**
+3. **Set up configuration**
 
-   Copy `.env.example` to `.env` and fill in your values:
+   PokeGoBreeze loads its runtime config from one of two sources — use whichever fits your setup:
+
+   **Option A — `config.json` (recommended for local dev, no Vercel account needed)**
+
+   Copy the example file and fill in the values:
+   ```bash
+   cp config.example.json config.json
+   ```
+   Edit `config.json` with your values. This file is gitignored and takes precedence over Vercel Edge Config when present. No Edge Config credentials are required.
+
+   **Option B — Vercel Edge Config**
+
+   Copy `.env.example` to `.env` and supply at minimum the Edge Config credentials:
    ```bash
    cp .env.example .env
    ```
@@ -493,7 +505,7 @@ vercel --prod
 
 | Script | Description |
 |--------|-------------|
-| `npm start` | Start Vite dev server (sources `config.sh` first) |
+| `npm start` | Start Vite dev server (loads `config.json` if present, otherwise fetches Vercel Edge Config) |
 | `npm run develop` | Alias for `npm start` |
 | `npm run build` | Build production bundle and generate sitemap |
 | `npm run build:vite` | Build production bundle only (no sitemap) |
