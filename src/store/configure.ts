@@ -12,7 +12,7 @@ import localForage from 'localforage';
 import CryptoJS from 'crypto-js';
 import { LocalForageConfig } from './constants/local-forage';
 import { StoreState } from './models/state.model';
-import { persistKey, persistTimeout } from '../utils/helpers/options-context.helpers';
+import { persistKey } from '../utils/helpers/options-context.helpers';
 import { BooleanType } from '../enums/type.enum';
 
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY;
@@ -80,13 +80,6 @@ const sanitizeState = <S>(state: S): S => {
   return sanitized as S;
 };
 
-// Intercepts large payloads in the middleware chain before they reach the DevTools
-// extension message bus — this is the only way to suppress the serialization warning,
-// since DevTools fires it during its own connect() broadcast, before actionSanitizer runs.
-const devToolsPayloadMiddleware = REDUX_VERBOSE
-  ? null
-  : () => (next: (arg0: Action) => Action) => (action: Action) => next(sanitizeActionPayload(action));
-
 const UI_ACTIONS_DENYLIST = [
   SearchingActions.SearchingActionTypes.setPokemonMainSearch,
   SearchingActions.SearchingActionTypes.setPokemonToolSearch,
@@ -98,11 +91,7 @@ const UI_ACTIONS_DENYLIST = [
   SearchingActions.SearchingActionTypes.setToolObjectPokemonForm,
 ];
 
-const middlewareList = devToolsPayloadMiddleware
-  ? [thunk, devToolsPayloadMiddleware, createRouterMiddleware(createBrowserHistory())]
-  : [thunk, createRouterMiddleware(createBrowserHistory())];
-
-const middleware = applyMiddleware(...middlewareList);
+const middleware = applyMiddleware(thunk, createRouterMiddleware(createBrowserHistory()));
 
 const devTools =
   process.env.NODE_ENV === 'production'
@@ -110,7 +99,7 @@ const devTools =
     : composeWithDevTools({
         maxAge: 30,
         actionsDenylist: UI_ACTIONS_DENYLIST,
-        actionSanitizer: REDUX_VERBOSE ? sanitizeActionPayload : undefined,
+        actionSanitizer: sanitizeActionPayload,
         stateSanitizer: REDUX_VERBOSE ? undefined : sanitizeState,
         trace: false,
         traceLimit: 10,
@@ -190,7 +179,7 @@ const persistConfig = {
   storage: localForage,
   transforms: [sensitiveDataTransform, createEncryptionTransform()],
   whitelist: ['store', 'stats', 'timestamp'],
-  timeout: persistTimeout(),
+  timeout: 0,
 };
 
 const persistedReducer = persistReducer(persistConfig, combineReducers(rootReducer));
