@@ -8,6 +8,7 @@ import {
   getDmgMultiplyBonus,
   getKeyWithData,
   getMoveType,
+  getStatProd,
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
@@ -885,11 +886,11 @@ const Battle = () => {
                 <br />
                 {'Stats Prod: '}
                 <b>
-                  {Math.round(
-                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
-                      toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
-                      toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA) *
-                      getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Prod)
+                  {getStatProd(
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK),
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF),
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA),
+                    pokemon.pokemonType
                   )}
                 </b>
                 <br />

@@ -9,13 +9,11 @@ import { getDmgMultiplyBonus } from '../../utils/utils';
 import { StatsActions } from '../actions';
 import { StatsActionsUnion } from '../actions/stats.action';
 
-// Multipliers are fixed constants — compute once at module load, not per-pokemon
-const SHADOW_ATK_MULT = getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Atk);
-const SHADOW_DEF_MULT = getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Def);
-const PURIFIED_ATK_MULT = getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Atk);
-const PURIFIED_DEF_MULT = getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Def);
-
 const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData) => {
+  const shadowAtkBonus = getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Atk);
+  const shadowDefBonus = getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Def);
+  const purifiedAtkBonus = getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Atk);
+  const purifiedDefBonus = getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Def);
   result.push(
     new ArrayStats({
       id: value.num,
@@ -23,8 +21,8 @@ const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData) 
       form: formShadow(),
       baseStats: value.baseStats,
       statsGO: StatsPokemonGO.create(
-        Math.round(value.statsGO.atk * SHADOW_ATK_MULT),
-        Math.round(value.statsGO.def * SHADOW_DEF_MULT),
+        Math.round(value.statsGO.atk * shadowAtkBonus),
+        Math.round(value.statsGO.def * shadowDefBonus),
         value.statsGO.sta
       ),
     })
@@ -36,8 +34,8 @@ const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData) 
       form: formPurified(),
       baseStats: value.baseStats,
       statsGO: StatsPokemonGO.create(
-        Math.round(value.statsGO.atk * PURIFIED_ATK_MULT),
-        Math.round(value.statsGO.def * PURIFIED_DEF_MULT),
+        Math.round(value.statsGO.atk * purifiedAtkBonus),
+        Math.round(value.statsGO.def * purifiedDefBonus),
         value.statsGO.sta
       ),
     })
