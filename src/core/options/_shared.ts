@@ -1,40 +1,44 @@
 import type pokemonStoreDataType from '../../data/pokemon.json';
-import type textEngType from '../../data/text_english.json';
 import { isInclude, safeObjectEntries, getValueOrDefault } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import { formArmor, formGalarian, formShadow } from '../../utils/helpers/options-context.helpers';
 import { replacePokemonGoForm } from '../../utils/utils';
+import APIService from '../../services/api.service';
+import { APIUrl } from '../../services/constants';
 
 export let pokemonStoreData = {} as typeof pokemonStoreDataType;
-export let textEng = {} as typeof textEngType;
+export let textEng: Record<string, string> = {};
 
 let staticDataPromise: Promise<void> | undefined;
 
 // Case-insensitive lookup Map built once after textEng is loaded
-let _textEngMap: Map<string, unknown> | null = null;
+let _textEngMap: Map<string, string> | null = null;
 
-const getTextEngMap = (data: object): Map<string, unknown> => {
+const getTextEngMap = (data: Record<string, string>): Map<string, string> => {
   if (!_textEngMap || data !== textEng) {
-    _textEngMap = new Map(safeObjectEntries(data).map(([k, v]) => [k.toLowerCase(), v]));
+    _textEngMap = new Map(Object.entries(data).map(([k, v]) => [k.toLowerCase(), v]));
   }
   return _textEngMap;
 };
 
-export const initializeStaticData = () => {
+const getTextFileUrl = (lang: string) => `${APIUrl.TEXTFILE}i18n_${lang}.json`;
+
+export const initializeStaticData = (lang = 'english') => {
   if (!staticDataPromise) {
-    staticDataPromise = Promise.all([import('../../data/pokemon.json'), import('../../data/text_english.json')]).then(
-      ([pokemonMod, textMod]) => {
-        pokemonStoreData = pokemonMod.default;
-        textEng = textMod.default;
-        _textEngMap = null; // Invalidate cache when data reloads
-      }
-    );
+    staticDataPromise = Promise.all([
+      import('../../data/pokemon.json'),
+      APIService.getFetchUrl<Record<string, string>>(getTextFileUrl(lang)),
+    ]).then(([pokemonMod, textRes]) => {
+      pokemonStoreData = pokemonMod.default;
+      textEng = textRes.data;
+      _textEngMap = null;
+    });
   }
   return staticDataPromise;
 };
 
 export const getTextWithKey = <T>(data: object, findKey: string | number) => {
-  const map = getTextEngMap(data);
+  const map = getTextEngMap(data as Record<string, string>);
   const needle = String(findKey).toLowerCase();
   // Fast path: direct match
   if (map.has(needle)) {

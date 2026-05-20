@@ -76,9 +76,6 @@ export default defineConfig(({ mode }) => {
         },
         output: {
           manualChunks(id) {
-            if (id.includes('/data/text_english.json')) {
-              return 'text_english';
-            }
             if (id.includes('/data/pokemon.json')) {
               return 'pokemon';
             }
