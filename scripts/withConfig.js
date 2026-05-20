@@ -143,7 +143,9 @@ async function main() {
   console.log(`✅ REACT_APP_VERSION=${version}`);
 
   // ── 5. Spawn the requested command ──────────────────────────────────────────
-  const [cmd, ...args] = process.argv.slice(2);
+  const viteBuildMode = mode === 'production' ? 'production' : 'development';
+  const passedArgs = process.argv.slice(2);
+  const [cmd, ...args] = passedArgs.length ? passedArgs : ['npm', 'run', `_deploy:inner:${viteBuildMode}`];
   if (!cmd) {
     return;
   } // nothing to run – just export vars (shouldn't happen in practice)
