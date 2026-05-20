@@ -1187,6 +1187,7 @@ export const generateParamForm = (form: string | undefined, pokemonType = Pokemo
   if (form) {
     if (
       !IsNoneSpecialForm &&
+      isEqual(form, formNormal(), EqualMode.IgnoreCaseSensitive) &&
       (isEqual(form, formShadow(), EqualMode.IgnoreCaseSensitive) ||
         isEqual(form, formPurified(), EqualMode.IgnoreCaseSensitive))
     ) {

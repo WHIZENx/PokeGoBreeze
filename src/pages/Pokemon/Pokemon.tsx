@@ -154,9 +154,12 @@ const Pokemon = (props: IPokemonPage) => {
       if (!isInclude(formName, formType, IncludeMode.IncludeIgnoreCaseSensitive)) {
         return;
       }
-      [form] = getValueOrDefault(String, formName?.replaceAll('_', '-').toUpperCase()).split(
-        `-${formType.toUpperCase()}`
-      );
+      const normalizedName = getValueOrDefault(String, formName?.replaceAll('_', '-').toUpperCase());
+      const normalizedType = formType.toUpperCase();
+      if (normalizedName === normalizedType) {
+        return normalizedType;
+      }
+      [form] = normalizedName.split(`-${normalizedType}`);
     }
     const result = getPokemonFormWithNoneSpecialForm(form, pokemonType)
       ?.replace(`_${formStandard()}`, '')
@@ -557,10 +560,15 @@ const Pokemon = (props: IPokemonPage) => {
       } else if (routerAction === Action.Pop && searchingMainData && !params.id) {
         form = getValueOrDefault(String, searchingMainForm?.form?.formName);
       } else if (!isNullOrUndefined(formType)) {
-        form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
+        if (!isEqual(form, formType, EqualMode.IgnoreCaseSensitive)) {
+          form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
+        }
       }
       const flatForms = formList.flatMap((item) => item);
       let currentForm = flatForms.find((item) => {
+        if (formType && isEqual(form, formType, EqualMode.IgnoreCaseSensitive)) {
+          return isEqual(getKeyWithData(PokemonType, item.form.pokemonType), formType, EqualMode.IgnoreCaseSensitive);
+        }
         const result = convertPokemonForm(item.form.formName, formType, item.form.pokemonType);
         return isEqual(result, form, EqualMode.IgnoreCaseSensitive);
       });
