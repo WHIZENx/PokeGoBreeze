@@ -205,7 +205,6 @@ export default defineConfig(({ mode }) => {
         'events',
         'vm-browserify',
         'styled-components',
-        'shallowequal',
         'react-data-table-component',
         'react-xarrows',
       ],
