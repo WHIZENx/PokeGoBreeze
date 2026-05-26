@@ -47,7 +47,7 @@ import { CounterModel } from '../components/Commons/Tables/Counter/models/counte
 import { isEqual, isInclude, toNumber } from '../utils/extension';
 import usePokemon from './usePokemon';
 import useCombats from './useCombats';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { IEvolution } from '../core/models/evolution.model';
 import { IPokemonData, PokemonData } from '../core/models/pokemon.model';
 import { BattleLeagueCPType } from '../utils/enums/compute.enum';
@@ -57,6 +57,9 @@ export const useCalculate = () => {
   const { combatsData } = useDataStore();
   const { getFilteredPokemons, getFindPokemon } = usePokemon();
   const { findMoveByName } = useCombats();
+
+  // O(1) move name lookup shared by all query functions in this hook
+  const combatMap = useMemo(() => new Map(combatsData.map((c) => [c.name, c])), [combatsData]);
 
   const rankMove = (
     pokemon: Partial<IPokemonDetail> | undefined,
@@ -73,78 +76,92 @@ export const useCalculate = () => {
     const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
     setQueryMove(data, fastMoveSet, chargedMoveSet);
 
-    return PokemonQueryRankMove.create({
-      data: data.dataList,
-      maxOff: Math.max(...data.dataList.map((item) => item.eDPS.offensive)),
-      maxDef: Math.max(...data.dataList.map((item) => item.eDPS.defensive)),
-    });
+    let maxOff = 0;
+    let maxDef = 0;
+    for (const item of data.dataList) {
+      if (item.eDPS.offensive > maxOff) {
+        maxOff = item.eDPS.offensive;
+      }
+      if (item.eDPS.defensive > maxDef) {
+        maxDef = item.eDPS.defensive;
+      }
+    }
+    return PokemonQueryRankMove.create({ data: data.dataList, maxOff, maxDef });
   };
 
   const setQueryMove = (data: QueryMovesPokemon, fastMoveSet: string[], chargedMoveSet: string[]) => {
-    fastMoveSet.forEach((vf) => {
-      const fMove = combatsData.find((item) => isEqual(item.name, vf));
+    // Hoist constant options and stats outside the move-combo loop
+    const iv = maxIv();
+    const level = defaultPokemonLevel();
+    const options = OptionOtherDPS.create({
+      delay: Delay.create({ fTime: defaultEnemyAtkDelay(), cTime: defaultEnemyAtkDelay() }),
+      pokemonDefObj: defaultPokemonDefObj(),
+      ivAtk: iv,
+      ivDef: iv,
+      ivHp: iv,
+      pokemonLevel: level,
+    });
+    const statsAtkBattle = calculateStatsBattle(data.atk, iv, level, true);
+    const statsDefBattle = calculateStatsBattle(data.def, iv, level, true);
+    const statsStaBattle = calculateStatsBattle(data.sta, iv, level, true);
+
+    for (const vf of fastMoveSet) {
+      const fMove = combatMap.get(vf);
       if (!fMove) {
-        return;
+        continue;
       }
       const quickMoveType = getMoveType(data.pokemon, vf);
-      queryMove(data, fMove, chargedMoveSet, quickMoveType);
-    });
+      const fMoveCopy = Combat.create({ ...fMove, moveType: quickMoveType });
+      queryMove(data, fMoveCopy, chargedMoveSet, statsAtkBattle, statsDefBattle, statsStaBattle, options);
+    }
   };
 
-  const queryMove = (data: QueryMovesPokemon, mf: ICombat, cMove: string[], fMoveType: MoveType) => {
-    const fMoveCopy = Combat.create({ ...mf, moveType: fMoveType });
-    cMove.forEach((vc) => {
-      const mc = combatsData.find((item) => isEqual(item.name, vc));
-
-      if (mc) {
-        const cMoveType = getMoveType(data.pokemon, vc);
-        if (!isEqual(cMoveType, MoveType.Dynamax)) {
-          const mcCopy = Combat.create({ ...mc, moveType: cMoveType });
-
-          const options = OptionOtherDPS.create({
-            delay: Delay.create({
-              fTime: defaultEnemyAtkDelay(),
-              cTime: defaultEnemyAtkDelay(),
-            }),
-            pokemonDefObj: defaultPokemonDefObj(),
-            ivAtk: maxIv(),
-            ivDef: maxIv(),
-            ivHp: maxIv(),
-            pokemonLevel: defaultPokemonLevel(),
-          });
-
-          const statsAtkBattle = calculateStatsBattle(data.atk, options.ivAtk, options.pokemonLevel, true);
-          const statsDefBattle = calculateStatsBattle(data.def, options.ivDef, options.pokemonLevel, true);
-          const statsStaBattle = calculateStatsBattle(data.sta, options.ivHp, options.pokemonLevel, true);
-
-          const pokemonType = moveTypeToFormType(cMoveType);
-
-          const offensive = calculateAvgDPS(
-            fMoveCopy,
-            mcCopy,
-            statsAtkBattle,
-            statsDefBattle,
-            statsStaBattle,
-            data.types,
-            pokemonType
-          );
-          const defensive = calculateAvgDPS(
-            fMoveCopy,
-            mcCopy,
-            statsAtkBattle,
-            statsDefBattle,
-            statsStaBattle,
-            data.types,
-            pokemonType,
-            options
-          );
-
-          data.dataList.push(
-            new PokemonQueryMove({ fMove: fMoveCopy, cMove: mcCopy, eDPS: EDPS.create({ offensive, defensive }) })
-          );
-        }
+  const queryMove = (
+    data: QueryMovesPokemon,
+    fMoveCopy: ICombat,
+    cMove: string[],
+    statsAtkBattle: number,
+    statsDefBattle: number,
+    statsStaBattle: number,
+    options: OptionOtherDPS
+  ) => {
+    for (const vc of cMove) {
+      const mc = combatMap.get(vc);
+      if (!mc) {
+        continue;
       }
-    });
+      const cMoveType = getMoveType(data.pokemon, vc);
+      if (isEqual(cMoveType, MoveType.Dynamax)) {
+        continue;
+      }
+
+      const mcCopy = Combat.create({ ...mc, moveType: cMoveType });
+      const pokemonType = moveTypeToFormType(cMoveType);
+
+      const offensive = calculateAvgDPS(
+        fMoveCopy,
+        mcCopy,
+        statsAtkBattle,
+        statsDefBattle,
+        statsStaBattle,
+        data.types,
+        pokemonType
+      );
+      const defensive = calculateAvgDPS(
+        fMoveCopy,
+        mcCopy,
+        statsAtkBattle,
+        statsDefBattle,
+        statsStaBattle,
+        data.types,
+        pokemonType,
+        options
+      );
+
+      data.dataList.push(
+        new PokemonQueryMove({ fMove: fMoveCopy, cMove: mcCopy, eDPS: EDPS.create({ offensive, defensive }) })
+      );
+    }
   };
 
   // Process pokemon in chunks, yielding to the browser between batches so the UI
@@ -161,6 +178,19 @@ export const useCalculate = () => {
     const dataList: IPokemonQueryCounter[] = [];
     const pokemons = getFilteredPokemons();
 
+    // Hoist constant options shared across all pokemon in this counter run
+    const iv = maxIv();
+    const level = defaultPokemonLevel();
+    const defBattle = calculateStatsBattle(def, iv, level, true);
+    const baseOptions = OptionOtherDPS.create({
+      objTypes: types,
+      pokemonDefObj: defBattle,
+      ivAtk: iv,
+      ivDef: iv,
+      ivHp: iv,
+      pokemonLevel: level,
+    });
+
     for (let i = 0; i < pokemons.length; i += COUNTER_CHUNK_SIZE) {
       if (signal?.aborted) {
         throw new DOMException('aborted', 'AbortError');
@@ -176,7 +206,7 @@ export const useCalculate = () => {
           const data = new QueryMovesCounterPokemon(pokemon, def, types, dataList);
           const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
           const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
-          setQueryMoveCounter(data, fastMoveSet, chargedMoveSet);
+          setQueryMoveCounter(data, fastMoveSet, chargedMoveSet, baseOptions, iv, level);
         }
       }
       if (end < pokemons.length) {
@@ -184,65 +214,80 @@ export const useCalculate = () => {
       }
     }
 
-    return dataList
-      .sort((a, b) => b.dps - a.dps)
-      .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / toNumber(dataList.at(0)?.dps, 1) }));
+    dataList.sort((a, b) => b.dps - a.dps);
+    const topDps = toNumber(dataList[0]?.dps, 1);
+    return dataList.map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / topDps }));
   };
 
-  const setQueryMoveCounter = (data: QueryMovesCounterPokemon, fastMoveSet: string[], chargedMoveSet: string[]) => {
-    fastMoveSet.forEach((vf) => {
+  const setQueryMoveCounter = (
+    data: QueryMovesCounterPokemon,
+    fastMoveSet: string[],
+    chargedMoveSet: string[],
+    baseOptions: OptionOtherDPS,
+    iv: number,
+    level: number
+  ) => {
+    // Hoist per-pokemon battle stats outside the move-combo loop
+    const atkBattle = calculateStatsBattle(data.pokemon.statsGO.atk, iv, level, true);
+    const defBattle = calculateStatsBattle(data.pokemon.statsGO.def, iv, level, true);
+    const staBattle = calculateStatsBattle(data.pokemon.statsGO.sta, iv, level, true);
+
+    for (const vf of fastMoveSet) {
       const fMove = findMoveByName(vf);
       if (!fMove) {
-        return;
+        continue;
       }
       const fMoveType = getMoveType(data.pokemon, vf);
-      queryMoveCounter(data, fMove, chargedMoveSet, fMoveType);
-    });
+      const fMoveCopy = Combat.create({ ...fMove, moveType: fMoveType });
+      queryMoveCounter(data, fMoveCopy, chargedMoveSet, baseOptions, atkBattle, defBattle, staBattle);
+    }
   };
 
-  const queryMoveCounter = (data: QueryMovesCounterPokemon, mf: ICombat, cMove: string[], fMoveType: MoveType) => {
-    cMove.forEach((vc) => {
+  const queryMoveCounter = (
+    data: QueryMovesCounterPokemon,
+    fMoveCopy: ICombat,
+    cMove: string[],
+    baseOptions: OptionOtherDPS,
+    atkBattle: number,
+    defBattle: number,
+    staBattle: number
+  ) => {
+    for (const vc of cMove) {
       const mc = findMoveByName(vc);
-
-      if (mc) {
-        const cMoveType = getMoveType(data.pokemon, vc);
-        if (!isEqual(cMoveType, MoveType.Dynamax)) {
-          const options = OptionOtherDPS.create({
-            objTypes: data.types,
-            pokemonDefObj: calculateStatsBattle(data.def, maxIv(), defaultPokemonLevel(), true),
-            ivAtk: maxIv(),
-            ivDef: maxIv(),
-            ivHp: maxIv(),
-            pokemonLevel: defaultPokemonLevel(),
-          });
-
-          const pokemonType = moveTypeToFormType(cMoveType);
-
-          const dpsOff = calculateAvgDPS(
-            mf,
-            mc,
-            calculateStatsBattle(data.pokemon.statsGO.atk, options.ivAtk, options.pokemonLevel, true),
-            calculateStatsBattle(data.pokemon.statsGO.def, options.ivDef, options.pokemonLevel, true),
-            calculateStatsBattle(data.pokemon.statsGO.sta, options.ivHp, options.pokemonLevel, true),
-            data.pokemon.types,
-            pokemonType,
-            options
-          );
-
-          data.dataList.push(
-            new PokemonQueryCounter({
-              pokemonId: data.pokemon.num,
-              pokemonName: data.pokemon.name,
-              pokemonForm: data.pokemon.form,
-              releasedGO: data.pokemon.releasedGO,
-              dps: dpsOff,
-              fMove: Combat.create({ ...mf, moveType: fMoveType }),
-              cMove: Combat.create({ ...mc, moveType: cMoveType }),
-            })
-          );
-        }
+      if (!mc) {
+        continue;
       }
-    });
+      const cMoveType = getMoveType(data.pokemon, vc);
+      if (isEqual(cMoveType, MoveType.Dynamax)) {
+        continue;
+      }
+
+      const pokemonType = moveTypeToFormType(cMoveType);
+      const mcCopy = Combat.create({ ...mc, moveType: cMoveType });
+
+      const dpsOff = calculateAvgDPS(
+        fMoveCopy,
+        mcCopy,
+        atkBattle,
+        defBattle,
+        staBattle,
+        data.pokemon.types,
+        pokemonType,
+        baseOptions
+      );
+
+      data.dataList.push(
+        new PokemonQueryCounter({
+          pokemonId: data.pokemon.num,
+          pokemonName: data.pokemon.name,
+          pokemonForm: data.pokemon.form,
+          releasedGO: data.pokemon.releasedGO,
+          dps: dpsOff,
+          fMove: fMoveCopy,
+          cMove: mcCopy,
+        })
+      );
+    }
   };
 
   const queryTopMove = useCallback(

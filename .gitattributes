@@ -1,0 +1,3 @@
+# Force LF line endings for all text files to avoid CRLF issues on Windows
+# This ensures scripts run the same way on Windows and Linux/Mac
+* text=auto eol=lf

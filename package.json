@@ -49,8 +49,9 @@
     "debug-vite": "cross-env VITE_CJS_IGNORE_WARNING=true vite --debug --force",
     "prebuild": "rimraf dist",
     "build:vite": "cross-env VITE_CJS_IGNORE_WARNING=true vite build",
-    "deploy": "node scripts/withConfig.js npm run _deploy:inner",
-    "_deploy:inner": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build",
+    "deploy": "node scripts/withConfig.js",
+    "_deploy:inner:production": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode production",
+    "_deploy:inner:development": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode development",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
   "browserslist": {

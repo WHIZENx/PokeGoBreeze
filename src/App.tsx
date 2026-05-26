@@ -27,12 +27,11 @@ import PokemonPVP from './pages/PVP/Pokemon/Pokemon';
 import PVPHome from './pages/PVP/Home';
 import TeamPVP from './pages/PVP/Teams/PVP';
 import Battle from './pages/PVP/Battle/Battle';
-
-import Spinner from './components/Spinner/Spinner';
 import CatchChance from './pages/Tools/CatchChance/CatchChance';
-import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
+import Spinner from './components/Spinner/Spinner';
+import { useLocalStorage } from 'usehooks-ts';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './utils/models/overrides/themes.model';

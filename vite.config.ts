@@ -40,16 +40,9 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       'process.env': JSON.stringify({
-        REACT_APP_TOKEN_PRIVATE_REPO: env.REACT_APP_TOKEN_PRIVATE_REPO,
-        REACT_APP_POKEGO_BREEZE_DB_URL: env.REACT_APP_POKEGO_BREEZE_DB_URL,
-        REACT_APP_EDGE_CONFIG: env.REACT_APP_EDGE_CONFIG,
-        REACT_APP_DEPLOYMENT_MODE: env.REACT_APP_DEPLOYMENT_MODE,
-        REACT_APP_ENCRYPTION_KEY: env.REACT_APP_ENCRYPTION_KEY,
-        REACT_APP_ENCRYPTION_SALT: env.REACT_APP_ENCRYPTION_SALT,
-        REACT_APP_VERSION: env.REACT_APP_VERSION,
-        REACT_APP_CONFIG: env.REACT_APP_CONFIG,
-        REACT_APP_BASE_URL: env.REACT_APP_BASE_URL,
-        REACT_APP_NEON_API_URL: env.NEON_API_URL,
+        // All REACT_APP_* keys from .env — add new vars to .env only, they are picked up automatically
+        ...Object.fromEntries(Object.entries(env).filter(([k]) => k.startsWith('REACT_APP_'))),
+        // Build-time constants derived from Vite mode — not user-configurable via .env
         NODE_ENV: isDev ? 'development' : 'production',
         DEBUG: isDev,
       }),
@@ -71,7 +64,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       sourcemap: isDev,
-      minify: isDev ? false : 'terser',
+      minify: isDev ? false : 'esbuild',
       target: 'es2015',
       cssMinify: !isDev,
       rollupOptions: {
@@ -82,41 +75,80 @@ export default defineConfig(({ mode }) => {
           warn(warning);
         },
         output: {
-          manualChunks: {
-            'react-vendor': ['react', 'react-dom', 'react/jsx-runtime'],
-            'utility-vendor': ['lodash', 'moment'],
-            'router-vendor': ['react-router-dom', 'history'],
-            'redux-vendor': ['react-redux', 'redux', 'redux-persist', 'redux-thunk', '@redux-devtools/extension'],
-            'mui-vendor': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
-            'data-vendor': ['react-data-table-component', 'styled-components', 'react-xarrows'],
-            'storage-vendor': ['localforage', 'immutability-helper'],
-            'api-vendor': ['axios'],
-            'crypto-vendor': ['crypto-js', 'dompurify'],
-            'hooks-vendor': ['usehooks-ts', 'react-device-detect'],
+          manualChunks(id) {
+            if (id.includes('/data/pokemon.json')) {
+              return 'pokemon';
+            }
+            if (id.includes('/data/pokemon_candy_color_data.json')) {
+              return 'candy-data';
+            }
+            if (id.includes('/data/pokemon_encounter.json')) {
+              return 'encounter-data';
+            }
+            if (id.includes('react-dom') || id.includes('react/jsx-runtime') || id.includes('node_modules/react/')) {
+              return 'react-vendor';
+            }
+            if (id.includes('lodash') || id.includes('moment')) {
+              return 'utility-vendor';
+            }
+            if (id.includes('react-router-dom') || id.includes('/history/')) {
+              return 'router-vendor';
+            }
+            if (
+              id.includes('react-redux') ||
+              id.includes('/redux/') ||
+              id.includes('redux-persist') ||
+              id.includes('redux-thunk') ||
+              id.includes('@redux-devtools')
+            ) {
+              return 'redux-vendor';
+            }
+            if (
+              id.includes('@mui/material') ||
+              id.includes('@mui/icons-material') ||
+              id.includes('@emotion/react') ||
+              id.includes('@emotion/styled')
+            ) {
+              return 'mui-vendor';
+            }
+            if (
+              id.includes('react-data-table-component') ||
+              id.includes('styled-components') ||
+              id.includes('react-xarrows')
+            ) {
+              return 'data-vendor';
+            }
+            if (id.includes('localforage') || id.includes('immutability-helper')) {
+              return 'storage-vendor';
+            }
+            if (id.includes('/axios/')) {
+              return 'api-vendor';
+            }
+            if (id.includes('crypto-js') || id.includes('dompurify')) {
+              return 'crypto-vendor';
+            }
+            if (id.includes('usehooks-ts') || id.includes('react-device-detect')) {
+              return 'hooks-vendor';
+            }
           },
           chunkFileNames: 'static/js/[name].[hash].js',
           entryFileNames: 'static/js/[name].[hash].js',
           assetFileNames: (assetInfo) => {
-            if (/\.(css)$/.test(assetInfo.name || '')) {
+            const name = assetInfo.names[0] ?? '';
+            if (/\.(css)$/.test(name)) {
               return 'static/css/[name].[hash].[ext]';
             }
-            if (/\.(png|jpe?g|gif|svg|ico|webp)$/.test(assetInfo.name || '')) {
+            if (/\.(png|jpe?g|gif|svg|ico|webp)$/.test(name)) {
               return 'static/media/[name].[hash].[ext]';
             }
             return 'static/[ext]/[name].[hash].[ext]';
           },
         },
       },
-      terserOptions: {
-        compress: {
-          drop_console: !isDev,
-          drop_debugger: !isDev,
-        },
-        mangle: {
-          safari10: true,
-        },
+      esbuildOptions: {
+        drop: isDev ? [] : ['console', 'debugger'],
       },
-      chunkSizeWarningLimit: 1000,
+      chunkSizeWarningLimit: 4500,
     },
     css: {
       preprocessorOptions: {
@@ -173,7 +205,6 @@ export default defineConfig(({ mode }) => {
         'events',
         'vm-browserify',
         'styled-components',
-        'shallowequal',
         'react-data-table-component',
         'react-xarrows',
       ],

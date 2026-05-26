@@ -118,11 +118,14 @@ const applyShadowAndThirdMove = (optional: PokemonDataOptional, pokemonSettings:
   }
 };
 
-const resolveGenderRatio = (data: PokemonDataGM[], pokemonId: number, pokemonSettings: PokemonSettings) => {
+const resolveGenderRatio = (
+  spawnMap: Map<string, PokemonDataGM>,
+  pokemonId: number,
+  pokemonSettings: PokemonSettings
+) => {
   const goForm = replacePokemonGoForm(pokemonSettings.pokemonId);
-  const gender = data.find(
-    (item) => item.templateId === `SPAWN_V${pokemonId.toString().padStart(4, '0')}_POKEMON_${goForm}`
-  );
+  const key = `SPAWN_V${pokemonId.toString().padStart(4, '0')}_POKEMON_${goForm}`;
+  const gender = spawnMap.get(key);
   return PokemonGenderRatio.create(
     gender?.data.genderSettings.gender?.malePercent,
     gender?.data.genderSettings.gender?.femalePercent
@@ -167,7 +170,10 @@ const backfillBaseForme = (optional: PokemonDataOptional, result: IPokemonData[]
   }
 };
 
-const buildEvoQuestCondition = (evo: EvolutionBranchItem, data: PokemonDataGM[]): EvolutionQuest => {
+const buildEvoQuestCondition = (
+  evo: EvolutionBranchItem,
+  templateIdMap: Map<string, PokemonDataGM>
+): EvolutionQuest => {
   const quest = new EvolutionQuest();
   if (evo.genderRequirement) {
     quest.genderRequirement = evo.genderRequirement;
@@ -195,7 +201,7 @@ const buildEvoQuestCondition = (evo: EvolutionBranchItem, data: PokemonDataGM[])
   }
 
   const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
-  const template = data.find((template) => isEqual(template.templateId, questDisplay));
+  const template = templateIdMap.get(questDisplay);
   const goals = template?.data.evolutionQuestTemplate?.goals;
   const quests: IEvolutionQuestCondition[] = [];
   let target = 0;
@@ -232,24 +238,17 @@ const buildEvoQuestCondition = (evo: EvolutionBranchItem, data: PokemonDataGM[])
 };
 
 const resolveEvoTargetId = (
-  data: PokemonDataGM[],
+  pokemonSettingsMap: Map<string, PokemonDataGM>,
   pokemon: PokemonDataModel,
   evoToName: string,
   evoToForm: string
 ): number | undefined => {
-  const pokemonGO = data.find(
-    (i) =>
-      /^V\d{4}_POKEMON_*/g.test(i.templateId) &&
-      i.data.pokemonSettings &&
-      isEqual(i.data.pokemonSettings.pokemonId, evoToName) &&
-      isEqual(
-        convertAndReplaceNameGO(
-          getValueOrDefault(String, i.data.pokemonSettings.form?.toString(), pokemon.form?.toString(), formNormal()),
-          i.data.pokemonSettings.pokemonId?.toString()
-        ),
-        evoToForm
-      )
-  );
+  const key = `${evoToName}|${evoToForm}`;
+  let pokemonGO = pokemonSettingsMap.get(key);
+  if (!pokemonGO) {
+    // Fallback: try with the pokemon's own form (covers cases where evoToForm derives from parent)
+    pokemonGO = pokemonSettingsMap.get(`${evoToName}|${pokemon.form?.toString() ?? formNormal()}`);
+  }
   if (!pokemonGO) {
     return undefined;
   }
@@ -261,7 +260,7 @@ const buildEvoListEntry = (
   evo: EvolutionBranchItem,
   pokemon: PokemonDataModel,
   pokemonSettings: PokemonSettings,
-  data: PokemonDataGM[]
+  pokemonSettingsMap: Map<string, PokemonDataGM>
 ): { dataEvo: EvoList; name: string } => {
   const dataEvo = new EvoList();
   const name = getValueOrDefault(String, evo.evolution?.toString(), pokemon.name);
@@ -270,7 +269,7 @@ const buildEvoListEntry = (
     : getValueOrDefault(String, pokemon.form?.toString(), formNormal());
   dataEvo.evoToName = name.replace(`_${formNormal()}`, '');
 
-  const evoId = resolveEvoTargetId(data, pokemon, dataEvo.evoToName, dataEvo.evoToForm);
+  const evoId = resolveEvoTargetId(pokemonSettingsMap, pokemon, dataEvo.evoToName, dataEvo.evoToForm);
   if (evoId !== undefined) {
     dataEvo.evoToId = evoId;
   }
@@ -285,7 +284,7 @@ const buildEvoListEntry = (
     dataEvo.purificationEvoCandyCost = evo.candyCostPurified;
   }
 
-  dataEvo.quest = buildEvoQuestCondition(evo, data);
+  dataEvo.quest = buildEvoQuestCondition(evo, pokemonSettingsMap);
 
   const multiBranchRandom =
     !isNotEmpty(evo.questDisplay) &&
@@ -311,10 +310,10 @@ const processEvolutionBranch = (
   pokemonSettings: PokemonSettings,
   pokemon: PokemonDataModel,
   optional: PokemonDataOptional,
-  data: PokemonDataGM[]
+  pokemonSettingsMap: Map<string, PokemonDataGM>
 ) => {
   pokemonSettings.evolutionBranch?.forEach((evo) => {
-    const { dataEvo, name } = buildEvoListEntry(evo, pokemon, pokemonSettings, data);
+    const { dataEvo, name } = buildEvoListEntry(evo, pokemon, pokemonSettings, pokemonSettingsMap);
     if (evo.temporaryEvolution) {
       const tempEvo = {
         tempEvolutionName: name + evo.temporaryEvolution.split('TEMP_EVOLUTION').at(1),
@@ -365,6 +364,25 @@ export const optionPokemonData = (
   encounter: PokemonEncounter[],
   result: IPokemonData[] = []
 ) => {
+  // Pre-build Maps for O(1) lookup inside the per-pokemon loop
+  const spawnMap = new Map<string, PokemonDataGM>();
+  const pokemonSettingsMap = new Map<string, PokemonDataGM>();
+  for (const item of data) {
+    if (item.templateId.startsWith('SPAWN_V')) {
+      spawnMap.set(item.templateId, item);
+    } else if (/^V\d{4}_POKEMON_/g.test(item.templateId) && item.data.pokemonSettings) {
+      const ps = item.data.pokemonSettings;
+      const resolvedForm = convertAndReplaceNameGO(
+        getValueOrDefault(String, ps.form?.toString(), ps.pokemonId?.toString(), formNormal()),
+        ps.pokemonId?.toString()
+      );
+      pokemonSettingsMap.set(`${ps.pokemonId}|${resolvedForm}`, item);
+    } else {
+      // Quest templates and everything else — keyed by exact templateId
+      pokemonSettingsMap.set(item.templateId, item);
+    }
+  }
+
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
     if (isNumber(pokemonSettings.pokemonId) && !pokemonSettings.form) {
@@ -380,7 +398,7 @@ export const optionPokemonData = (
 
     const optional = new PokemonDataOptional({ baseStatsGO: true });
     applyShadowAndThirdMove(optional, pokemonSettings);
-    optional.genderRatio = resolveGenderRatio(data, pokemon.id, pokemonSettings);
+    optional.genderRatio = resolveGenderRatio(spawnMap, pokemon.id, pokemonSettings);
 
     const pokemonBaseData = findPokemonData(
       pokemon.id,
@@ -396,7 +414,7 @@ export const optionPokemonData = (
     }
 
     backfillBaseForme(optional, result, pokemon);
-    processEvolutionBranch(pokemonSettings, pokemon, optional, data);
+    processEvolutionBranch(pokemonSettings, pokemon, optional, pokemonSettingsMap);
     mergeShadowMovesIntoOrigin(pokemon, optional, result);
 
     if (pokemon.pokemonType !== PokemonType.Shadow) {

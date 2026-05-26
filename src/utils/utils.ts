@@ -1102,6 +1102,11 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction
   }
 };
 
+export const getStatProd = (statATK: number, statDEF: number, statSTA: number, form = PokemonType.Normal) =>
+  Math.floor(statATK * getDmgMultiplyBonus(form, TypeAction.Atk)) *
+  Math.floor(statDEF * getDmgMultiplyBonus(form, TypeAction.Def)) *
+  Math.round(statSTA);
+
 export const addSelectMovesByType = (
   pokemonData: IPokemonData,
   moveType: TypeMove,
@@ -1182,6 +1187,7 @@ export const generateParamForm = (form: string | undefined, pokemonType = Pokemo
   if (form) {
     if (
       !IsNoneSpecialForm &&
+      isEqual(form, formNormal(), EqualMode.IgnoreCaseSensitive) &&
       (isEqual(form, formShadow(), EqualMode.IgnoreCaseSensitive) ||
         isEqual(form, formPurified(), EqualMode.IgnoreCaseSensitive))
     ) {
@@ -1360,13 +1366,15 @@ export const getBonusType = (bonusType: string | number | BonusType | undefined)
 
 export const isPokemonNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) =>
   !isSpecialFormType(pokemonType) &&
-  (isInclude(form, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) ||
-    isInclude(form, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive));
+  !(
+    isInclude(form, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) ||
+    isInclude(form, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive)
+  );
 
 export const getPokemonFormWithNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) => {
   const IsNoneSpecialForm = isPokemonNoneSpecialForm(form, pokemonType);
   form = form?.toUpperCase().replaceAll('-', '_');
-  if (!IsNoneSpecialForm) {
+  if (IsNoneSpecialForm) {
     form = convertPokemonAPIDataName(form);
   }
   return form;

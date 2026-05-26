@@ -8,6 +8,7 @@ import {
   getDmgMultiplyBonus,
   getKeyWithData,
   getMoveType,
+  getStatProd,
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
@@ -885,11 +886,11 @@ const Battle = () => {
                 <br />
                 {'Stats Prod: '}
                 <b>
-                  {Math.round(
-                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
-                      toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
-                      toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA) *
-                      getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Prod)
+                  {getStatProd(
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK),
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF),
+                    toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA),
+                    pokemon.pokemonType
                   )}
                 </b>
                 <br />
@@ -1177,65 +1178,59 @@ const Battle = () => {
     );
   };
 
-  const CustomToggle = () => (
-    <div className="btn-collapse-battle">
-      {openBattle ? (
-        <RemoveCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="error" />
-      ) : (
-        <AddCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="primary" />
-      )}
-    </div>
-  );
-
   const renderHeader = (pokemonCurr: PokemonBattle, pokemonObj: PokemonBattle) => (
-    <div className="tw-relative tw-w-full">
-      <div className="tw-flex timeline-vertical">
-        <div className="tw-w-1/2">
-          <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-start tw-gap-2">
-            <div className="tw-relative filter-shadow tw-w-[35px]">
-              <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
-                <img
-                  alt="Image League"
-                  className="sprite-type"
-                  src={APIService.getPokemonModel(pokemonCurr.pokemonData?.form, pokemonCurr.pokemonData?.id)}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = getValidPokemonImgPath(
-                      e.currentTarget.src,
-                      pokemonCurr.pokemonData?.id,
-                      pokemonCurr.pokemonData?.form
-                    );
-                  }}
-                />
-              </PokemonIconType>
-            </div>
-            <b>{splitAndCapitalize(pokemonCurr.pokemonData?.name, '-', ' ')}</b>
+    <div className="tw-flex tw-w-full timeline-vertical">
+      <div className="tw-w-1/2">
+        <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-start tw-gap-2">
+          <div className="tw-relative filter-shadow tw-w-[35px]">
+            <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
+              <img
+                alt="Image League"
+                className="sprite-type"
+                src={APIService.getPokemonModel(pokemonCurr.pokemonData?.form, pokemonCurr.pokemonData?.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = getValidPokemonImgPath(
+                    e.currentTarget.src,
+                    pokemonCurr.pokemonData?.id,
+                    pokemonCurr.pokemonData?.form
+                  );
+                }}
+              />
+            </PokemonIconType>
           </div>
-        </div>
-        <div className="tw-w-1/2">
-          <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-end tw-gap-2">
-            <div className="tw-relative filter-shadow tw-w-[35px]">
-              <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
-                <img
-                  alt="Image League"
-                  className="sprite-type"
-                  src={APIService.getPokemonModel(pokemonObj.pokemonData?.form, pokemonObj.pokemonData?.id)}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = getValidPokemonImgPath(
-                      e.currentTarget.src,
-                      pokemonObj.pokemonData?.id,
-                      pokemonObj.pokemonData?.form
-                    );
-                  }}
-                />
-              </PokemonIconType>
-            </div>
-            <b>{splitAndCapitalize(pokemonObj.pokemonData?.name, '-', ' ')}</b>
-          </div>
+          <b>{splitAndCapitalize(pokemonCurr.pokemonData?.name, '-', ' ')}</b>
         </div>
       </div>
-      <CustomToggle />
+      <div className="tw-flex tw-items-center tw-justify-center tw-px-1 tw-cursor-pointer tw-bg-inherit">
+        {openBattle ? (
+          <RemoveCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="small" color="error" />
+        ) : (
+          <AddCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="small" color="primary" />
+        )}
+      </div>
+      <div className="tw-w-1/2">
+        <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-end tw-gap-2">
+          <div className="tw-relative filter-shadow tw-w-[35px]">
+            <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
+              <img
+                alt="Image League"
+                className="sprite-type"
+                src={APIService.getPokemonModel(pokemonObj.pokemonData?.form, pokemonObj.pokemonData?.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = getValidPokemonImgPath(
+                    e.currentTarget.src,
+                    pokemonObj.pokemonData?.id,
+                    pokemonObj.pokemonData?.form
+                  );
+                }}
+              />
+            </PokemonIconType>
+          </div>
+          <b>{splitAndCapitalize(pokemonObj.pokemonData?.name, '-', ' ')}</b>
+        </div>
+      </div>
     </div>
   );
 

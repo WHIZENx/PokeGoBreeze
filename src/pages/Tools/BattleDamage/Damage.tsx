@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
@@ -110,6 +110,21 @@ const Damage = () => {
   const [result, setResult] = useState(new PokemonDmgOption());
 
   const { showSnackbar } = useSnackbar();
+
+  const throwChargeMenuItems = useMemo(
+    () =>
+      safeObjectEntries(getThrowCharge()).map(([type, value], index) => ({
+        value: index,
+        label: (
+          <>
+            {capitalize(type)}
+            <span className={combineClasses('tw-ml-2 caption-small', labels[index].style)}>x{value}</span>
+          </>
+        ),
+        sx: { color: labels[index].color },
+      })),
+    []
+  );
 
   useEffect(() => {
     if (searchingToolCurrentData?.pokemon?.statsGO?.atk !== 0) {
@@ -359,18 +374,7 @@ const Damage = () => {
                       inputLabel="Charge ability"
                       value={battleState.throwLevel}
                       onChangeSelect={(throwLevel) => setBattleState({ ...battleState, throwLevel })}
-                      menuItems={safeObjectEntries(getThrowCharge()).map(([type, value], index) => ({
-                        value: index,
-                        label: (
-                          <>
-                            {capitalize(type)}
-                            <span className={combineClasses('tw-ml-2 caption-small', labels[index].style)}>
-                              x{value}
-                            </span>
-                          </>
-                        ),
-                        sx: { color: labels[index].color },
-                      }))}
+                      menuItems={throwChargeMenuItems}
                     />
                   </Box>
                   <ButtonMui
