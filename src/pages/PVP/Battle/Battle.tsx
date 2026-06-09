@@ -19,7 +19,7 @@ import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
 import TimelineVertical from './Timeline/TimelineVertical';
 
-import { Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { Checkbox, FormControlLabel, IconButton, Radio, RadioGroup, Slider } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -30,6 +30,9 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import VolumeDownIcon from '@mui/icons-material/VolumeDown';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
@@ -45,6 +48,7 @@ import { BattlePokemonData, IBattlePokemonData, RankingsPVP } from '../../../cor
 import { ICombat } from '../../../core/models/combat.model';
 import {
   IPokemonBattleData,
+  ITimeline,
   PokemonBattle,
   PokemonBattleData,
   IPokemonBattle,
@@ -107,6 +111,7 @@ interface OptionsBattle {
   timelineType: TimelineType;
   duration: number;
   league: number;
+  volume: number;
 }
 
 interface IBattleState {
@@ -118,6 +123,19 @@ class BattleState implements IBattleState {
   pokemonCurr = new PokemonBattleData();
   pokemonObj = new PokemonBattleData();
 }
+
+const stopAudio = (audio: HTMLAudioElement | undefined) => {
+  if (audio && !audio.paused) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+};
+
+const stopPokemonAudio = (pokemon: IPokemonBattle) => {
+  stopAudio(pokemon.audio?.fMove);
+  stopAudio(pokemon.audio?.cMovePri);
+  stopAudio(pokemon.audio?.cMoveSec);
+};
 
 const Battle = () => {
   const { findPokemonBySlug } = usePokemon();
@@ -136,8 +154,9 @@ const Battle = () => {
     timelineType: TimelineType.Normal,
     duration: 1,
     league: toNumber(params.cp, BattleLeagueCPType.Little),
+    volume: 0,
   });
-  const { showTap, timelineType, duration, league } = options;
+  const { showTap, timelineType, duration, league, volume } = options;
 
   const timelineFit = useRef<HTMLDivElement>();
   const timelineNormal = useRef<HTMLDivElement>();
@@ -231,6 +250,8 @@ const Battle = () => {
   };
 
   const clearData = () => {
+    stopPokemonAudio(pokemonCurr);
+    stopPokemonAudio(pokemonObj);
     setPokemonObj(new PokemonBattle());
     setPokemonCurr(new PokemonBattle());
   };
@@ -397,7 +418,45 @@ const Battle = () => {
     playingTimeline();
   }, [duration]);
 
+  useEffect(() => {
+    pokemonStateRef.current = { curr: pokemonCurr, obj: pokemonObj };
+  }, [pokemonCurr, pokemonObj]);
+
+  useEffect(() => {
+    const applyVol = (audio: HTMLAudioElement | undefined) => {
+      if (audio) {
+        audio.volume = volume;
+      }
+    };
+    applyVol(pokemonCurr.audio?.fMove);
+    applyVol(pokemonCurr.audio?.cMovePri);
+    applyVol(pokemonCurr.audio?.cMoveSec);
+    applyVol(pokemonObj.audio?.fMove);
+    applyVol(pokemonObj.audio?.cMovePri);
+    applyVol(pokemonObj.audio?.cMoveSec);
+  }, [volume, pokemonCurr.audio, pokemonObj.audio]);
+
+  const toggleMute = () => {
+    if (volume > 0) {
+      prevVolume.current = volume;
+      setOptions({ ...options, volume: 0 });
+    } else {
+      setOptions({ ...options, volume: prevVolume.current || 0.7 });
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timelinePlay.current) {
+        cancelAnimationFrame(timelinePlay.current);
+      }
+      stopPokemonAudio(pokemonStateRef.current.curr);
+      stopPokemonAudio(pokemonStateRef.current.obj);
+    };
+  }, []);
+
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
+    stopPokemonAudio(pokemonCurr);
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
     setPlayTimeline(new BattleState());
     if (removeCMoveSec) {
@@ -408,6 +467,7 @@ const Battle = () => {
   };
 
   const clearDataPokemonObj = (removeCMoveSec: boolean) => {
+    stopPokemonAudio(pokemonObj);
     setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, timeline: [] }));
     setPlayTimeline(new BattleState());
     if (removeCMoveSec) {
@@ -424,6 +484,9 @@ const Battle = () => {
   const xFit = useRef(0);
   const arrBound = useRef<number[]>([]);
   const arrStore = useRef<number[]>([]);
+  const lastSoundIndex = useRef(-1);
+  const pokemonStateRef = useRef({ curr: pokemonCurr, obj: pokemonObj });
+  const prevVolume = useRef(0);
 
   const getTranslation = (elem: HTMLElement) =>
     elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
@@ -471,6 +534,7 @@ const Battle = () => {
 
   const playingTimeline = () => {
     setPlayState(true);
+    lastSoundIndex.current = -1;
     const range = pokemonCurr.timeline.length;
     const elem = document.getElementById('play-line');
     let xCurrent = 0;
@@ -520,7 +584,7 @@ const Battle = () => {
         }
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
-          checkOverlap(arrBound.current, width);
+          checkOverlap(arrBound.current, width, true);
         }
         if (Math.min(width, clientWidthContainer / 2) === clientWidthContainer / 2) {
           timelineNormalContainer.current?.scrollTo({
@@ -537,7 +601,7 @@ const Battle = () => {
         const width = Math.min(clientWidth, xCurrent + durationFactor * clientWidth);
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
-          checkOverlap(arrStore.current, width);
+          checkOverlap(arrStore.current, width, true);
         }
         if (width < clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
@@ -556,6 +620,9 @@ const Battle = () => {
     cancelAnimationFrame(toNumber(timelinePlay.current));
     timelinePlay.current = null;
     start.current = 0;
+    lastSoundIndex.current = -1;
+    stopPokemonAudio(pokemonCurr);
+    stopPokemonAudio(pokemonObj);
     return;
   };
 
@@ -589,25 +656,32 @@ const Battle = () => {
     }
   };
 
-  const isPlaySound = (sound: HTMLAudioElement | undefined) =>
-    sound && sound.currentTime > 0 && !sound.paused && !sound.ended && sound.readyState > sound.HAVE_CURRENT_DATA;
+  const playMoveAudio = (pokemon: IPokemonBattle, entry: ITimeline | undefined) => {
+    if (!entry) {
+      return;
+    }
+    let audio: HTMLAudioElement | undefined;
+    if (entry.type === AttackType.Fast) {
+      audio = pokemon.audio?.fMove;
+    } else if (entry.type === AttackType.Charge) {
+      audio =
+        pokemon.cMoveSec && entry.move && entry.move.name === pokemon.cMoveSec.name
+          ? pokemon.audio?.cMoveSec
+          : pokemon.audio?.cMovePri;
+    }
+    if (audio) {
+      audio.currentTime = 0;
+      void audio.play();
+    }
+  };
 
   const updateTimeline = (index: number, sound = false) => {
     const pokeCurrData = pokemonCurr.timeline.at(index);
     const pokeObjData = pokemonObj.timeline.at(index);
-    if (sound && pokemonCurr.audio?.fMove && pokemonObj.audio?.fMove) {
-      if (!isPlaySound(pokemonCurr.audio.fMove) && pokeCurrData?.type === AttackType.Fast) {
-        pokemonCurr.audio.fMove.currentTime = 0;
-        pokemonCurr.audio.fMove.play();
-      } else if (isPlaySound(pokemonCurr.audio.fMove) && pokeCurrData?.type === AttackType.Fast) {
-        pokemonCurr.audio.fMove.pause();
-      }
-      if (!isPlaySound(pokemonObj.audio.fMove) && pokeObjData?.type === AttackType.Fast) {
-        pokemonObj.audio.fMove.currentTime = 0;
-        pokemonObj.audio.fMove.play();
-      } else if (isPlaySound(pokemonObj.audio.fMove) && pokeObjData?.type === AttackType.Fast) {
-        pokemonObj.audio.fMove.pause();
-      }
+    if (sound && index !== lastSoundIndex.current) {
+      lastSoundIndex.current = index;
+      playMoveAudio(pokemonCurr, pokeCurrData);
+      playMoveAudio(pokemonObj, pokeObjData);
     }
     setPlayTimeline({
       pokemonCurr: PokemonBattleData.setValue(pokeCurrData?.energy, pokeCurrData?.hp),
@@ -1305,7 +1379,7 @@ const Battle = () => {
                         )}
                       </Fragment>
                     )}
-                    <div className="tw-flex tw-justify-center">
+                    <div className="tw-flex tw-flex-wrap tw-justify-center tw-items-center">
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -1339,6 +1413,47 @@ const Battle = () => {
                           { value: 10, label: 'x10' },
                         ]}
                       />
+                      <div className="tw-flex tw-items-center tw-gap-x-4 tw-mx-2 tw-min-w-[160px]">
+                        <IconButton
+                          size="small"
+                          onClick={toggleMute}
+                          sx={{ transition: 'color 0.2s', color: volume === 0 ? 'text.disabled' : 'primary.main' }}
+                        >
+                          {volume === 0 ? (
+                            <VolumeOffIcon fontSize="small" />
+                          ) : volume < 0.5 ? (
+                            <VolumeDownIcon fontSize="small" />
+                          ) : (
+                            <VolumeUpIcon fontSize="small" />
+                          )}
+                        </IconButton>
+                        <Slider
+                          size="small"
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={volume}
+                          onChange={(_, val) => setOptions({ ...options, volume: val as number })}
+                          aria-label="Sound volume"
+                          sx={{
+                            width: 100,
+                            color: volume === 0 ? 'text.disabled' : 'primary.main',
+                            transition: 'color 0.2s',
+                            '& .MuiSlider-thumb': {
+                              width: 14,
+                              height: 14,
+                              transition: 'box-shadow 0.2s, width 0.2s, height 0.2s',
+                              '&:hover': { width: 18, height: 18 },
+                            },
+                          }}
+                        />
+                        <span
+                          className="tw-text-xs tw-w-8 tw-text-right tw-tabular-nums"
+                          style={{ color: volume === 0 ? 'var(--tw-color-gray-400, #9ca3af)' : undefined }}
+                        >
+                          {Math.round(volume * 100)}%
+                        </span>
+                      </div>
                     </div>
                     <div className="tw-flex tw-justify-center tw-gap-x-2">
                       <ButtonMui
