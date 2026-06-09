@@ -148,7 +148,7 @@ export default defineConfig(({ mode }) => {
       esbuildOptions: {
         drop: isDev ? [] : ['console', 'debugger'],
       },
-      chunkSizeWarningLimit: 4500,
+      chunkSizeWarningLimit: 2000,
     },
     css: {
       preprocessorOptions: {
