@@ -6,6 +6,7 @@ import './Trainer.scss';
 import { AwardItem } from '../../core/models/trainer.model';
 import useDataStore from '../../composables/useDataStore';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
+import { useTitle } from '../../utils/hooks/useTitle';
 
 interface TrainerLevelUp {
   levelUps: AwardItem[];
@@ -14,6 +15,20 @@ interface TrainerLevelUp {
 
 const Trainer = () => {
   const { trainersData } = useDataStore();
+
+  useTitle({
+    title: 'Trainer Level Rewards - PokéGO Breeze',
+    description:
+      'Browse all Pokémon GO trainer level-up rewards and item unlocks. See exactly which items and features are unlocked at every trainer level.',
+    keywords: [
+      'trainer level',
+      'level rewards',
+      'Pokémon GO trainer',
+      'level up items',
+      'item unlocks',
+      'PokéGO Breeze',
+    ],
+  });
 
   const [level, setLevel] = useState(2);
   const [data, setData] = useState<TrainerLevelUp>();
