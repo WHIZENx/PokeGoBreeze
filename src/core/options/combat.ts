@@ -105,10 +105,9 @@ const applyMoveStats = (result: Combat, move: Move) => {
   result.staminaLossScalar = move.staminaLossScalar;
 };
 
-const applyNonCombatBonus = (result: Combat, data: PokemonDataGM[]) => {
-  const item = data.find((item) =>
-    item.templateId.startsWith(`NON_COMBAT_V${result.id.toString().padStart(4, '0')}_MOVE`)
-  );
+const applyNonCombatBonus = (result: Combat, nonCombatMap: Map<string, PokemonDataGM>) => {
+  const key = `NON_COMBAT_V${result.id.toString().padStart(4, '0')}_MOVE`;
+  const item = nonCombatMap.get(key);
   const dataNonCombat = item?.data.nonCombatMoveSettings;
   if (!dataNonCombat) {
     return;
@@ -125,8 +124,16 @@ const applyNonCombatBonus = (result: Combat, data: PokemonDataGM[]) => {
   });
 };
 
-const processCombatMoves = (data: PokemonDataGM[], moves: Move[], sequence: Sequence[]): Combat[] =>
-  data
+const processCombatMoves = (
+  data: PokemonDataGM[],
+  moves: Move[],
+  sequence: Sequence[],
+  nonCombatMap: Map<string, PokemonDataGM>
+): Combat[] => {
+  const moveMap = new Map(moves.map((m) => [m.name, m]));
+  const sequenceMap = new Map(sequence.map((s) => [s.id, s]));
+
+  return data
     .filter((item) => /^COMBAT_V\d{4}_MOVE_*/g.test(item.templateId))
     .map((item) => {
       const result = new Combat();
@@ -146,13 +153,13 @@ const processCombatMoves = (data: PokemonDataGM[], moves: Move[], sequence: Sequ
 
       result.pvpPower = toNumber(item.data.combatMove.power);
       result.pvpEnergy = toNumber(item.data.combatMove.energyDelta);
-      result.sound = sequence.find((seq) => isEqual(seq.id, result.name))?.path;
+      result.sound = sequenceMap.get(result.name)?.path;
 
       if (item.data.combatMove.buffs) {
         result.buffs = processBuffs(item.data.combatMove.buffs);
       }
 
-      const move = moves.find((move) => isEqual(move.name, result.name));
+      const move = moveMap.get(result.name);
       result.name = replaceTempMoveName(result.name);
 
       if (isEqual(result.name, 'STRUGGLE')) {
@@ -162,10 +169,11 @@ const processCombatMoves = (data: PokemonDataGM[], moves: Move[], sequence: Sequ
       if (move) {
         applyMoveStats(result, move);
       }
-      applyNonCombatBonus(result, data);
+      applyNonCombatBonus(result, nonCombatMap);
 
       return result;
     });
+};
 
 const processGMaxMoves = (data: PokemonDataGM[], lastTrackId: number): Combat[] =>
   data
@@ -230,6 +238,16 @@ const processSpecialMoves = (data: PokemonDataGM[], moveSet: Combat[], types: IT
 export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel): ICombat[] => {
   const moves = extractBasicMoves(data);
   const sequence = extractMoveSequences(data);
-  const moveSet = processCombatMoves(data, moves, sequence);
+  // Key by "NON_COMBAT_V####_MOVE" prefix so applyNonCombatBonus can do O(1) lookup by move id
+  const nonCombatMap = new Map<string, PokemonDataGM>();
+  for (const item of data) {
+    if (item.templateId.startsWith('NON_COMBAT_V')) {
+      const match = item.templateId.match(/^(NON_COMBAT_V\d{4}_MOVE)/);
+      if (match) {
+        nonCombatMap.set(match[1], item);
+      }
+    }
+  }
+  const moveSet = processCombatMoves(data, moves, sequence, nonCombatMap);
   return processSpecialMoves(data, moveSet, types);
 };

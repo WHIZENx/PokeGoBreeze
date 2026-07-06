@@ -49,8 +49,9 @@
     "debug-vite": "cross-env VITE_CJS_IGNORE_WARNING=true vite --debug --force",
     "prebuild": "rimraf dist",
     "build:vite": "cross-env VITE_CJS_IGNORE_WARNING=true vite build",
-    "deploy": "node scripts/withConfig.js npm run _deploy:inner",
-    "_deploy:inner": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build",
+    "deploy": "node scripts/withConfig.js",
+    "_deploy:inner:production": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode production",
+    "_deploy:inner:development": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode development",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
   "browserslist": {
@@ -119,7 +120,7 @@
     "ws": "8.17.1",
     "webpack-dev-server": "5.2.1",
     "on-headers": "1.1.0",
-    "form-data": "4.0.4",
+    "form-data": "4.0.6",
     "esbuild": "0.25.0"
   }
 }

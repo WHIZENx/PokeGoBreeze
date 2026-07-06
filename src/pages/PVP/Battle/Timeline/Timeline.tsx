@@ -67,7 +67,7 @@ const Timeline = (
         </div>
       </div>
       <div
-        className="tw-flex tw-items-center tw-gap-x-2 tw-w-max"
+        className="tw-flex tw-items-center tw-gap-x-3 tw-w-max"
         style={{
           borderBottom: border ? 'var(--custom-table-border)' : 'none',
         }}

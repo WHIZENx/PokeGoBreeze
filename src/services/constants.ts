@@ -36,6 +36,7 @@ export class APIUrl {
 
   public static TIMESTAMP = 'https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/timestamp.txt';
   public static GAMEMASTER = 'https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json';
+  public static TEXTFILE = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Texts/Latest%20APK/JSON/';
   public static CANDY_DATA =
     'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Candy%20Color%20Data/PokemonCandyColorData.json';
 

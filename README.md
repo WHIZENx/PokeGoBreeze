@@ -355,27 +355,45 @@ cd PokeGoBreeze
 npm install
 ```
 
-3. **Set up environment variables**
+3. **Set up configuration**
 
-   Copy `.env.example` to `.env` and fill in your values:
+   PokeGoBreeze loads its runtime config from one of two sources — use whichever fits your setup:
+
+   **Option A — `config.json` (recommended for local dev, no Vercel account needed)**
+
+   Copy the example file and fill in the values:
+   ```bash
+   cp config.example.json config.json
+   ```
+   Edit `config.json` with your values. This file is gitignored and takes precedence over Vercel Edge Config when present. No Edge Config credentials are required.
+
+   **Option B — Vercel Edge Config**
+
+   Copy `.env.example` to `.env` and supply at minimum the Edge Config credentials:
    ```bash
    cp .env.example .env
    ```
 
    Key variables required:
 
-   | Variable | Purpose |
-   |---|---|
-   | `REACT_APP_TOKEN_PRIVATE_REPO` | GitHub token for private repo access |
-   | `REACT_APP_EDGE_TOKEN` | Edge Config write token (deploy.sh) |
-   | `REACT_APP_EDGE_READ_TOKEN` | Edge Config read token (config.sh) |
-   | `REACT_APP_EDGE_ID` | Edge Config ID |
-   | `REACT_APP_ENCRYPTION_KEY` | AES encryption key (40+ chars) |
-   | `REACT_APP_ENCRYPTION_SALT` | AES encryption salt (40+ chars) |
-   | `REACT_APP_DEPLOYMENT_MODE` | `development` \| `staging` \| `production` |
-   | `MONGODB_URI` | MongoDB connection string |
+   | Variable | Required | Purpose |
+   |---|---|---|
+   | `REACT_APP_TOKEN_PRIVATE_REPO` | No | Optional GitHub token for private repo access; public GitHub APIs do not need it |
+   | `REACT_APP_ENCRYPTION_KEY` | Yes | AES encryption key (40+ chars) |
+   | `REACT_APP_ENCRYPTION_SALT` | Yes | AES encryption salt (40+ chars) |
+   | `REACT_APP_DEPLOYMENT_MODE` | Yes | `development` \| `staging` \| `production` |
+   | `REACT_APP_BASE_URL` | Yes | Application base URL |
+   | `REACT_APP_EDGE_CONFIG` | Yes | Vercel Edge Config connection string |
+   | `REACT_APP_EDGE_TOKEN` | Yes | Edge Config write token (deploy.sh) |
+   | `REACT_APP_EDGE_READ_TOKEN` | Yes | Edge Config read token (config.sh) |
+   | `REACT_APP_EDGE_ID` | Yes | Edge Config ID (e.g. `ecfg_xxx`) |
+   | `REACT_APP_POKEGO_BREEZE_DB_URL` | Yes | PokeGoBreeze database URL |
+   | `REACT_APP_NEON_API_URL` | Yes | Neon serverless Postgres API URL |
+   | `REACT_APP_VERSION` | No | App version override (e.g. `1.0.0`) |
+   | `REACT_APP_REDUX_VERBOSE` | No | `true` = show full Redux store in DevTools (default `false`) |
+   | `MONGODB_URI` | No | MongoDB connection string (deploy.sh version history) |
 
-   > See `.env.example` for all required variables and descriptions.
+   > See [`.env.example`](.env.example) for all variables with descriptions and example values.
 
 ### Development
 
@@ -487,7 +505,7 @@ vercel --prod
 
 | Script | Description |
 |--------|-------------|
-| `npm start` | Start Vite dev server (sources `config.sh` first) |
+| `npm start` | Start Vite dev server (loads `config.json` if present, otherwise fetches Vercel Edge Config) |
 | `npm run develop` | Alias for `npm start` |
 | `npm run build` | Build production bundle and generate sitemap |
 | `npm run build:vite` | Build production bundle only (no sitemap) |

@@ -117,6 +117,7 @@ async function generateDynamicRoutes() {
       }
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[sitemap] Error generating dynamic routes:', error.message);
   }
 

@@ -34,12 +34,12 @@ type CombatLeagueData = NonNullable<PokemonDataGM['data']['combatLeague']>;
 type LeagueCondition = CombatLeagueData['pokemonCondition'][number];
 
 const setPokemonPermission = (
-  pokemonData: IPokemonData[],
+  pokemonMap: Map<string, IPokemonData>,
   pokemon: IPokemonPermission[] | undefined,
   pokemonPermission: IPokemonPermission[] = []
 ) => {
   pokemon?.forEach((currentPokemon) => {
-    const item = pokemonData.find((i) => isEqual(i.pokemonId, currentPokemon.id));
+    const item = pokemonMap.get(`${currentPokemon.id}`);
     if (isNotEmpty(currentPokemon.forms)) {
       currentPokemon.forms
         ?.filter((form) => !isEqual(form, 'FORM_UNSET'))
@@ -79,7 +79,7 @@ const resolveAllowedLeagues = (data: PokemonDataGM[]): string[] =>
       )
   );
 
-const applyLeagueCondition = (league: League, con: LeagueCondition, pokemon: IPokemonData[]) => {
+const applyLeagueCondition = (league: League, con: LeagueCondition, pokemonMap: Map<string, IPokemonData>) => {
   league.conditions.uniqueSelected = con.type === LeagueConditionType.UniquePokemon;
   switch (con.type) {
     case LeagueConditionType.CaughtTime:
@@ -103,10 +103,10 @@ const applyLeagueCondition = (league: League, con: LeagueCondition, pokemon: IPo
       league.conditions.maxCp = con.withPokemonCpLimit?.maxCp;
       break;
     case LeagueConditionType.WhiteList:
-      league.conditions.whiteList = setPokemonPermission(pokemon, con.pokemonWhiteList?.pokemon);
+      league.conditions.whiteList = setPokemonPermission(pokemonMap, con.pokemonWhiteList?.pokemon);
       break;
     case LeagueConditionType.BanList:
-      league.conditions.banned = setPokemonPermission(pokemon, con.pokemonBanList?.pokemon);
+      league.conditions.banned = setPokemonPermission(pokemonMap, con.pokemonBanList?.pokemon);
       break;
   }
 };
@@ -137,13 +137,13 @@ const deriveLeagueBadge = (
 const mergeBannedPokemon = (
   baseBanned: IPokemonPermission[],
   extraBanned: string[] | undefined,
-  pokemon: IPokemonData[]
+  pokemonMap: Map<string, IPokemonData>
 ): IPokemonPermission[] => {
   if (!extraBanned || !isNotEmpty(extraBanned)) {
     return baseBanned;
   }
   const additions = extraBanned.map((poke) => {
-    const item = pokemon.find((item) => isEqual(item.pokemonId, poke));
+    const item = pokemonMap.get(poke);
     return new PokemonPermission({
       id: item?.num,
       name: item?.pokemonId?.toString(),
@@ -154,7 +154,7 @@ const mergeBannedPokemon = (
   return baseBanned.concat(additions).sort((a, b) => toNumber(a.id) - toNumber(b.id));
 };
 
-const buildLeague = (item: PokemonDataGM, pokemon: IPokemonData[]): League => {
+const buildLeague = (item: PokemonDataGM, pokemonMap: Map<string, IPokemonData>): League => {
   const result = new League();
   result.id = item.templateId.replace(TemplateId.CombatLeague, '').replace('_VS_SEEKER_', '').replace('DEFAULT_', '');
   result.title = deriveLeagueTitle(item.data.combatLeague);
@@ -172,7 +172,7 @@ const buildLeague = (item: PokemonDataGM, pokemon: IPokemonData[]): League => {
     result.leagueType = leagueType;
   }
 
-  item.data.combatLeague?.pokemonCondition.forEach((con) => applyLeagueCondition(result, con, pokemon));
+  item.data.combatLeague?.pokemonCondition.forEach((con) => applyLeagueCondition(result, con, pokemonMap));
 
   result.leagueBattleType = getLeagueBattleType(toNumber(result.conditions.maxCp));
   result.iconUrl = item.data.combatLeague?.iconUrl
@@ -188,7 +188,7 @@ const buildLeague = (item: PokemonDataGM, pokemon: IPokemonData[]): League => {
     result.conditions.banned = mergeBannedPokemon(
       result.conditions.banned,
       item.data.combatLeague.bannedPokemon,
-      pokemon
+      pokemonMap
     );
   }
   return result;
@@ -228,7 +228,7 @@ const collectRankRewards = (data: PokemonDataGM[], rewards: Reward) => {
     });
 };
 
-const collectPokemonRewards = (data: PokemonDataGM[], rewards: Reward, pokemon: IPokemonData[]) => {
+const collectPokemonRewards = (data: PokemonDataGM[], rewards: Reward, pokemonMap: Map<string, IPokemonData>) => {
   const freeRewardType = getKeyWithData(LeagueRewardType, LeagueRewardType.Free);
   data
     .filter((item) => /VS_SEEKER_POKEMON_REWARDS_/.test(item.templateId))
@@ -246,7 +246,7 @@ const collectPokemonRewards = (data: PokemonDataGM[], rewards: Reward, pokemon: 
         } else {
           poke = value.pokemon;
         }
-        result.id = toNumber(pokemon.find((pk) => isEqual(pk.pokemonId, poke.pokemonId))?.num);
+        result.id = toNumber(pokemonMap.get(poke.pokemonId)?.num);
         result.name = poke.pokemonId;
         result.form = poke.pokemonDisplay
           ? poke.pokemonDisplay.form?.replace?.(`${poke.pokemonId}_`, '')
@@ -285,6 +285,10 @@ const buildSeason = (data: PokemonDataGM[], rewards: Reward): Season | undefined
 };
 
 export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) => {
+  const pokemonMap = new Map<string, IPokemonData>(
+    pokemon.filter((p) => typeof p.pokemonId === 'string').map((p) => [p.pokemonId as string, p])
+  );
+
   const result = new LeagueData();
   result.allowLeagues = resolveAllowedLeagues(data);
 
@@ -292,11 +296,11 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     .filter(
       (item) => item.templateId.startsWith(`${TemplateId.CombatLeague}_`) && !isInclude(item.templateId, 'SETTINGS')
     )
-    .map((item) => buildLeague(item, pokemon));
+    .map((item) => buildLeague(item, pokemonMap));
 
   const rewards = new Reward();
   collectRankRewards(data, rewards);
-  collectPokemonRewards(data, rewards, pokemon);
+  collectPokemonRewards(data, rewards, pokemonMap);
 
   const season = buildSeason(data, rewards);
   if (season) {
