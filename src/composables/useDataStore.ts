@@ -326,9 +326,14 @@ export const useDataStore = () => {
   const pvpData = dataStore.pvp;
   const optionsData = dataStore.options;
 
-  const getAuthorizationHeaders = {
-    headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
-  };
+  const githubToken = (process.env.REACT_APP_TOKEN_PRIVATE_REPO ?? '').trim();
+  const hasGithubToken =
+    githubToken && !['your_github_token_here', 'undefined', 'null'].includes(githubToken.toLowerCase());
+  const getAuthorizationHeaders = hasGithubToken
+    ? {
+        headers: { Authorization: `Bearer ${githubToken}` },
+      }
+    : undefined;
 
   return {
     dataStore,

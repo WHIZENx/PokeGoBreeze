@@ -378,7 +378,7 @@ npm install
 
    | Variable | Required | Purpose |
    |---|---|---|
-   | `REACT_APP_TOKEN_PRIVATE_REPO` | Yes | GitHub token for private repo access |
+   | `REACT_APP_TOKEN_PRIVATE_REPO` | No | Optional GitHub token for private repo access; public GitHub APIs do not need it |
    | `REACT_APP_ENCRYPTION_KEY` | Yes | AES encryption key (40+ chars) |
    | `REACT_APP_ENCRYPTION_SALT` | Yes | AES encryption salt (40+ chars) |
    | `REACT_APP_DEPLOYMENT_MODE` | Yes | `development` \| `staging` \| `production` |

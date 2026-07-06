@@ -163,6 +163,15 @@ const Battle = () => {
   const timelineNormalContainer = useRef<HTMLDivElement>();
   const playLine = useRef<HTMLDivElement>();
 
+  const levelCurrRef = useRef<HTMLInputElement>(null);
+  const atkIVCurrRef = useRef<HTMLInputElement>(null);
+  const defIVCurrRef = useRef<HTMLInputElement>(null);
+  const hpIVCurrRef = useRef<HTMLInputElement>(null);
+  const levelObjRef = useRef<HTMLInputElement>(null);
+  const atkIVObjRef = useRef<HTMLInputElement>(null);
+  const defIVObjRef = useRef<HTMLInputElement>(null);
+  const hpIVObjRef = useRef<HTMLInputElement>(null);
+
   const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
@@ -378,7 +387,7 @@ const Battle = () => {
   useEffect(() => {
     if (isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)) {
       stopTimeline();
-      const elem = document.getElementById('play-line');
+      const elem = playLine.current;
       if (timelineType === TimelineType.Fit) {
         const oldWidth = xFit.current;
         const newWidth = toNumber(timelineFit.current?.clientWidth);
@@ -441,7 +450,7 @@ const Battle = () => {
       prevVolume.current = volume;
       setOptions({ ...options, volume: 0 });
     } else {
-      setOptions({ ...options, volume: prevVolume.current || 0.7 });
+      setOptions({ ...options, volume: prevVolume.current || 0 });
     }
   };
 
@@ -493,7 +502,7 @@ const Battle = () => {
 
   const onPlayLineMove = (e: TimelineEvent<HTMLDivElement>) => {
     stopTimeline();
-    const elem = document.getElementById('play-line');
+    const elem = playLine.current;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
     if (elem && x <= toNumber(timelineNormal.current?.clientWidth) - 2) {
@@ -513,7 +522,7 @@ const Battle = () => {
 
   const onPlayLineFitMove = (e: TimelineEvent<HTMLDivElement>) => {
     stopTimeline();
-    const elem = document.getElementById('play-line');
+    const elem = playLine.current;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
     if (elem && x <= toNumber(timelineFit.current?.clientWidth)) {
@@ -536,7 +545,7 @@ const Battle = () => {
     setPlayState(true);
     lastSoundIndex.current = -1;
     const range = pokemonCurr.timeline.length;
-    const elem = document.getElementById('play-line');
+    const elem = playLine.current;
     let xCurrent = 0;
     if (elem) {
       if (timelineType === TimelineType.Normal) {
@@ -628,7 +637,7 @@ const Battle = () => {
 
   const resetTimeline = () => {
     stopTimeline();
-    const elem = document.getElementById('play-line');
+    const elem = playLine.current;
     if (timelineType === TimelineType.Normal && timelineNormalContainer.current) {
       timelineNormalContainer.current.scrollTo({
         left: 0,
@@ -695,7 +704,7 @@ const Battle = () => {
 
   const onChangeTimeline = (type: TimelineType) => {
     stopTimeline();
-    let elem = document.getElementById('play-line');
+    let elem = playLine.current;
     let xCurrent = 0,
       transform;
     if (elem) {
@@ -706,7 +715,7 @@ const Battle = () => {
     );
     setOptions({ ...options, timelineType: type });
     setTimeout(() => {
-      elem = document.getElementById('play-line');
+      elem = playLine.current;
       const currentWidth = toNumber(
         type === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
       );
@@ -776,14 +785,14 @@ const Battle = () => {
       showSnackbar('Pokémon not found.', 'error');
       return;
     }
-    const battleType = getKeyWithData(BattleType, type);
+    const isCurr = type === BattleType.Current;
     const atk = toNumber(pokemon.pokemonData.stats?.atk);
     const def = toNumber(pokemon.pokemonData.stats?.def);
     const sta = toNumber(pokemon.pokemonData.stats?.sta);
-    const atkIV = toNumber((document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value);
-    const defIV = toNumber((document.getElementById(`defIV${battleType}`) as HTMLInputElement).value);
-    const staIV = toNumber((document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value);
-    const level = toNumber((document.getElementById(`level${battleType}`) as HTMLInputElement).value);
+    const atkIV = toNumber((isCurr ? atkIVCurrRef : atkIVObjRef).current?.value);
+    const defIV = toNumber((isCurr ? defIVCurrRef : defIVObjRef).current?.value);
+    const staIV = toNumber((isCurr ? hpIVCurrRef : hpIVObjRef).current?.value);
+    const level = toNumber((isCurr ? levelCurrRef : levelObjRef).current?.value);
     const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
 
     const paramCP = toNumber(params?.cp);
@@ -851,23 +860,23 @@ const Battle = () => {
       stats = pokemon.pokemonData.bestStats;
     }
 
-    const battleType = getKeyWithData(BattleType, type);
-    (document.getElementById(`level${battleType}`) as HTMLInputElement).value = getValueOrDefault(
-      String,
-      stats?.level?.toString()
-    );
-    (document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(
-      String,
-      stats?.IV?.atkIV.toString()
-    );
-    (document.getElementById(`defIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(
-      String,
-      stats?.IV?.defIV.toString()
-    );
-    (document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(
-      String,
-      stats?.IV?.staIV.toString()
-    );
+    const isCurr = type === BattleType.Current;
+    const levelRef = isCurr ? levelCurrRef : levelObjRef;
+    const atkIVRef = isCurr ? atkIVCurrRef : atkIVObjRef;
+    const defIVRef = isCurr ? defIVCurrRef : defIVObjRef;
+    const hpIVRef = isCurr ? hpIVCurrRef : hpIVObjRef;
+    if (levelRef.current) {
+      levelRef.current.value = getValueOrDefault(String, stats?.level?.toString());
+    }
+    if (atkIVRef.current) {
+      atkIVRef.current.value = getValueOrDefault(String, stats?.IV?.atkIV.toString());
+    }
+    if (defIVRef.current) {
+      defIVRef.current.value = getValueOrDefault(String, stats?.IV?.defIV.toString());
+    }
+    if (hpIVRef.current) {
+      hpIVRef.current.value = getValueOrDefault(String, stats?.IV?.staIV.toString());
+    }
 
     setPokemon(
       PokemonBattle.create({
@@ -886,7 +895,11 @@ const Battle = () => {
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
   ) => {
-    const battleType = getKeyWithData(BattleType, type);
+    const isCurr = type === BattleType.Current;
+    const levelRef = isCurr ? levelCurrRef : levelObjRef;
+    const atkIVRef = isCurr ? atkIVCurrRef : atkIVObjRef;
+    const defIVRef = isCurr ? defIVCurrRef : defIVObjRef;
+    const hpIVRef = isCurr ? hpIVCurrRef : hpIVObjRef;
     return (
       <AccordionMui
         items={[
@@ -985,7 +998,7 @@ const Battle = () => {
                       required: true,
                     }}
                     placeholder="Enter Level"
-                    id={`level${battleType}`}
+                    inputRef={levelRef}
                     fullWidth
                   />
                   <InputMui
@@ -998,7 +1011,7 @@ const Battle = () => {
                       required: true,
                     }}
                     placeholder="Enter Attack IV"
-                    id={`atkIV${battleType}`}
+                    inputRef={atkIVRef}
                     fullWidth
                   />
                   <InputMui
@@ -1011,7 +1024,7 @@ const Battle = () => {
                       required: true,
                     }}
                     placeholder="Enter Defense IV"
-                    id={`defIV${battleType}`}
+                    inputRef={defIVRef}
                     fullWidth
                   />
                   <InputMui
@@ -1024,7 +1037,7 @@ const Battle = () => {
                       required: true,
                     }}
                     placeholder="Enter HP IV"
-                    id={`hpIV${battleType}`}
+                    inputRef={hpIVRef}
                     fullWidth
                   />
                   <div className="tw-w-full tw-mt-2">
