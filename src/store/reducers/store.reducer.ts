@@ -105,13 +105,19 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
         data: {
           ...state.data,
           pvp: {
-            rankings: convertPVPRankings(action.payload.rankings, state.data.leagues.data),
-            trains: convertPVPTrain(action.payload.trains, state.data.leagues.data),
+            rankings: convertPVPRankings(
+              action.payload.rankings,
+              Array.isArray(state.data.leagues?.data) ? state.data.leagues.data : []
+            ),
+            trains: convertPVPTrain(
+              action.payload.trains,
+              Array.isArray(state.data.leagues?.data) ? state.data.leagues.data : []
+            ),
           },
         },
       };
     case StoreActions.StoreActionTypes.setPVPMoves: {
-      const result = state.data.combats.map((move) => {
+      const result = (Array.isArray(state.data.combats) ? state.data.combats : []).map((move) => {
         const movePVP = action.payload.find((data) =>
           isEqual(
             data.moveId,

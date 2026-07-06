@@ -337,7 +337,7 @@ td,
   @include hover-border;
 }
 
-.timeline-vertical div:first-child .pokemon-battle-header {
+.timeline-vertical div .pokemon-battle-header {
   @include theme-border(1px, left, var(--custom-gray));
 }
 

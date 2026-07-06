@@ -26,6 +26,7 @@ class APIService {
   date: Date;
   axios: AxiosStatic;
   cancelToken: CancelTokenSource;
+  publicGitHubRepos = ['pokeminers/pogo_assets', 'pvpoke/pvpoke'];
 
   constructor() {
     this.date = new Date();
@@ -57,8 +58,29 @@ class APIService {
     return this.axios;
   }
 
+  isPublicGitHubRepoUrl(url: string) {
+    const apiUrl = url.toLowerCase();
+    return this.publicGitHubRepos.some((repo) => apiUrl.startsWith(`https://api.github.com/repos/${repo}`));
+  }
+
+  withoutPublicGitHubAuthorization(url: string, options?: AxiosRequestConfig<any>) {
+    if (!options?.headers || !this.isPublicGitHubRepoUrl(url)) {
+      return options;
+    }
+
+    const headers = { ...(options.headers as Record<string, string>) };
+    delete headers.Authorization;
+    delete headers.authorization;
+
+    return {
+      ...options,
+      headers,
+    };
+  }
+
   async getFetchUrl<T>(url: string | null | undefined, options?: AxiosRequestConfig<any>) {
-    return await this.axios.get<T>(getValueOrDefault(String, url), options);
+    const fetchUrl = getValueOrDefault(String, url);
+    return await this.axios.get<T>(fetchUrl, this.withoutPublicGitHubAuthorization(fetchUrl, options));
   }
 
   async getPokeSpices(value: number, options?: AxiosRequestConfig<any>) {

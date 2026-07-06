@@ -72,48 +72,50 @@ export const useTimestamp = () => {
   const { setProgress, completeProgress, errorProgress } = createProgressHelpers(dispatch);
 
   const loadTimestamp = async (isCurrentVersion: boolean) => {
-    await Promise.all([
-      APIService.getFetchUrl<string>(APIUrl.TIMESTAMP),
-      APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, getAuthorizationHeaders),
-      APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, getAuthorizationHeaders),
-      APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, getAuthorizationHeaders),
-    ])
-      .then(async ([GMtimestamp, iconRoot, imageRoot, soundsRoot]) => {
-        const timestampGameMaster = toNumber(GMtimestamp.data);
-        if (isNotEmpty(iconRoot.data) && isNotEmpty(imageRoot.data) && isNotEmpty(soundsRoot.data)) {
-          const iconTimestamp = new Date(iconRoot.data[0].commit.committer.date).getTime();
-          const imageTimestamp = new Date(imageRoot.data[0].commit.committer.date).getTime();
-          const soundTimestamp = new Date(soundsRoot.data[0].commit.committer.date).getTime();
+    try {
+      const [GMtimestamp, iconRoot, imageRoot, soundsRoot] = await Promise.all([
+        APIService.getFetchUrl<string>(APIUrl.TIMESTAMP),
+        APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, getAuthorizationHeaders),
+        APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, getAuthorizationHeaders),
+        APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, getAuthorizationHeaders),
+      ]);
 
-          if (timestamp.icon === 0 || timestamp.icon !== iconTimestamp) {
-            const url = iconRoot.data[0].url;
-            loadPokeGOLogo(url, iconTimestamp);
-          }
-          setProgress(15);
+      if (!isNotEmpty(iconRoot.data) || !isNotEmpty(imageRoot.data) || !isNotEmpty(soundsRoot.data)) {
+        return;
+      }
 
-          const timestampLoaded: Timestamp = {
-            isCurrentVersion,
-            isCurrentGameMaster: timestampGameMaster > 0 && timestamp.gamemaster === timestampGameMaster,
-            isCurrentImage: timestamp.assets > 0 && timestamp.assets === imageTimestamp,
-            isCurrentSound: timestamp.sounds > 0 && timestamp.sounds === soundTimestamp,
-            gamemasterTimestamp: timestampGameMaster,
-            assetsTimestamp: imageTimestamp,
-            soundsTimestamp: soundTimestamp,
-          };
-          setProgress(40);
+      const timestampGameMaster = toNumber(GMtimestamp.data);
+      const iconTimestamp = new Date(iconRoot.data[0].commit.committer.date).getTime();
+      const imageTimestamp = new Date(imageRoot.data[0].commit.committer.date).getTime();
+      const soundTimestamp = new Date(soundsRoot.data[0].commit.committer.date).getTime();
 
-          if (!timestampLoaded.isCurrentGameMaster || !timestampLoaded.isCurrentVersion) {
-            await loadGameMaster(imageRoot.data, soundsRoot.data, timestampLoaded);
-          } else if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
-            await loadAssets(imageRoot.data, soundsRoot.data, getFilteredPokemons(), timestampLoaded);
-          } else {
-            completeProgress();
-          }
-        }
-      })
-      .catch((e: ErrorEvent) => {
-        errorProgress({ isError: true, message: e.message });
-      });
+      // Fire-and-forget — logo fetch is non-blocking and independent of the main data load
+      if (timestamp.icon === 0 || timestamp.icon !== iconTimestamp) {
+        loadPokeGOLogo(iconRoot.data[0].url, iconTimestamp);
+      }
+      setProgress(15);
+
+      const timestampLoaded: Timestamp = {
+        isCurrentVersion,
+        isCurrentGameMaster: timestampGameMaster > 0 && timestamp.gamemaster === timestampGameMaster,
+        isCurrentImage: timestamp.assets > 0 && timestamp.assets === imageTimestamp,
+        isCurrentSound: timestamp.sounds > 0 && timestamp.sounds === soundTimestamp,
+        gamemasterTimestamp: timestampGameMaster,
+        assetsTimestamp: imageTimestamp,
+        soundsTimestamp: soundTimestamp,
+      };
+      setProgress(40);
+
+      if (!timestampLoaded.isCurrentGameMaster || !timestampLoaded.isCurrentVersion) {
+        await loadGameMaster(imageRoot.data, soundsRoot.data, timestampLoaded);
+      } else if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
+        await loadAssets(imageRoot.data, soundsRoot.data, getFilteredPokemons(), timestampLoaded);
+      } else {
+        completeProgress();
+      }
+    } catch (e) {
+      errorProgress({ isError: true, message: (e as ErrorEvent).message });
+    }
   };
 
   const timestampPVP = timestamp.pvp;

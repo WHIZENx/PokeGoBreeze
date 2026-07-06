@@ -29,7 +29,11 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   const [score, setScore] = useState(0);
 
   useEffect(() => {
-    setPokemon(props.data.find((value) => isEqual(value.speciesId, pokemon?.speciesId)));
+    setPokemon(undefined);
+    setFMove(undefined);
+    setCMovePri(undefined);
+    setCMoveSec(undefined);
+    setScore(0);
   }, [props.data]);
 
   const selectPokemon = (value: IBattlePokemonData) => {
@@ -150,6 +154,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     <Fragment>
       <h5>Pokémon</h5>
       <SelectCardPokemon
+        key={props.league}
         pokemonList={props.data}
         onSelect={(pokemon) => splitAndCapitalize(pokemon.name?.replaceAll('_', '-'), '-', ' ')}
         onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.id })}
@@ -188,6 +193,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       />
       <h5 className="tw-mt-3">Fast Moves</h5>
       <SelectCardMove
+        key={`fast-${props.league}`}
         isHideEmpty
         pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}
         move={fMove}
@@ -217,6 +223,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           }}
         />
         <SelectCardMove
+          key={`pri-${props.league}`}
           isHideEmpty
           style={{ width: 'calc(100% - 50px)' }}
           pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}
@@ -249,6 +256,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           }}
         />
         <SelectCardMove
+          key={`sec-${props.league}`}
           isHideEmpty
           style={{ width: 'calc(100% - 50px)' }}
           pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}

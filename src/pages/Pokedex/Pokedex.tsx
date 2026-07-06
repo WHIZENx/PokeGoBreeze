@@ -150,62 +150,57 @@ const Pokedex = (props: IStyleSheetData) => {
     setIsLoading(true);
     if (isNotEmpty(dataList)) {
       try {
-        const debounced = debounce(
-          () => {
-            try {
-              const result = dataList.filter((item) => {
-                const boolFilterType =
-                  !isNotEmpty(selectTypes) ||
-                  (item.types.every((item) =>
-                    isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)
-                  ) &&
-                    item.types.length === selectTypes.length);
-                const boolFilterPoke =
-                  isEmpty(searchTerm) ||
-                  (isMatch
-                    ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
-                    : isInclude(
-                        splitAndCapitalize(item.name, '-', ' '),
-                        searchTerm,
-                        IncludeMode.IncludeIgnoreCaseSensitive
-                      ) || isInclude(item.id, searchTerm));
-                const boolReleasedGO = releasedGO ? item.releasedGO : true;
-                const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
-                const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
-                const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
-                const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
-                const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
-                const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
+        const debounced = debounce(() => {
+          try {
+            const result = dataList.filter((item) => {
+              const boolFilterType =
+                !isNotEmpty(selectTypes) ||
+                (item.types.every((item) => isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)) &&
+                  item.types.length === selectTypes.length);
+              const boolFilterPoke =
+                isEmpty(searchTerm) ||
+                (isMatch
+                  ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
+                  : isInclude(
+                      splitAndCapitalize(item.name, '-', ' '),
+                      searchTerm,
+                      IncludeMode.IncludeIgnoreCaseSensitive
+                    ) || isInclude(item.id, searchTerm));
+              const boolReleasedGO = releasedGO ? item.releasedGO : true;
+              const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
+              const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
+              const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
+              const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
+              const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
+              const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
 
-                const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
-                const findVersion = item.version === -1 || isIncludeList(version, item.version);
-                return (
-                  boolFilterType &&
-                  boolFilterPoke &&
-                  boolReleasedGO &&
-                  findGen &&
-                  findVersion &&
-                  boolMega &&
-                  boolGMax &&
-                  boolPrimal &&
-                  boolLegend &&
-                  boolMythic &&
-                  boolUltra
-                );
-              });
-              scrollID.current = 0;
-              setResult(result);
-              setListOfPokemon(result.slice(0, subItem.current));
-              setIsLoading(false);
-            } catch (error) {
-              dispatch(
-                SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true })
+              const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
+              const findVersion = item.version === -1 || isIncludeList(version, item.version);
+              return (
+                boolFilterType &&
+                boolFilterPoke &&
+                boolReleasedGO &&
+                findGen &&
+                findVersion &&
+                boolMega &&
+                boolGMax &&
+                boolPrimal &&
+                boolLegend &&
+                boolMythic &&
+                boolUltra
               );
-              setIsLoading(false);
-            }
-          },
-          Math.max(300, listOfPokemon.length > result.length ? listOfPokemon.length : result.length)
-        );
+            });
+            scrollID.current = 0;
+            setResult(result);
+            setListOfPokemon(result.slice(0, subItem.current));
+            setIsLoading(false);
+          } catch (error) {
+            dispatch(
+              SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true })
+            );
+            setIsLoading(false);
+          }
+        }, 300);
         debounced();
         return () => {
           debounced.cancel();
@@ -233,46 +228,51 @@ const Pokedex = (props: IStyleSheetData) => {
     version,
   ]);
 
+  const resultRef = useRef<IPokemonHomeModel[]>([]);
+
   useEffect(() => {
-    if (isNotEmpty(listOfPokemon)) {
-      const onScroll = (e: ScrollModifyEvent) => {
-        try {
-          const scrollingElement = (e.target?.documentElement ||
-            e.target?.scrollingElement ||
-            document.scrollingElement) as HTMLElement;
+    resultRef.current = result;
+  }, [result]);
 
-          if (!scrollingElement) {
-            dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: 'No scrolling found', isError: true }));
-            return;
-          }
+  useEffect(() => {
+    const onScroll = (e: ScrollModifyEvent) => {
+      try {
+        const scrollingElement = (e.target?.documentElement ||
+          e.target?.scrollingElement ||
+          document.scrollingElement) as HTMLElement;
 
-          const scrollTop = toNumber(scrollingElement.scrollTop);
-          const fullHeight = toNumber(scrollingElement.offsetHeight);
-          const scrollHeight = toNumber(scrollingElement.scrollHeight);
-
-          if (scrollTop + fullHeight >= scrollHeight - 300) {
-            scrollID.current += 1;
-            setListOfPokemon((oldArr) => [
-              ...oldArr,
-              ...result.slice(scrollID.current * subItem.current, (scrollID.current + 1) * subItem.current),
-            ]);
-          }
-        } catch (error) {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({ message: `Error in scroll handler: ${error}`, isError: true })
-          );
+        if (!scrollingElement) {
+          dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: 'No scrolling found', isError: true }));
+          return;
         }
-      };
 
-      window.addEventListener('scroll', onScroll);
-      document.addEventListener('touchmove', onScroll);
+        const scrollTop = toNumber(scrollingElement.scrollTop);
+        const fullHeight = toNumber(scrollingElement.offsetHeight);
+        const scrollHeight = toNumber(scrollingElement.scrollHeight);
 
-      return () => {
-        window.removeEventListener('scroll', onScroll);
-        document.removeEventListener('touchmove', onScroll);
-      };
-    }
-  }, [listOfPokemon, result]);
+        if (scrollTop + fullHeight >= scrollHeight - 300) {
+          scrollID.current += 1;
+          const next = resultRef.current.slice(
+            scrollID.current * subItem.current,
+            (scrollID.current + 1) * subItem.current
+          );
+          if (next.length > 0) {
+            setListOfPokemon((oldArr) => [...oldArr, ...next]);
+          }
+        }
+      } catch (error) {
+        dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: `Error in scroll handler: ${error}`, isError: true }));
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('touchmove', onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('touchmove', onScroll);
+    };
+  }, [dispatch]);
 
   const handleChangeGen = (value: number[]) => {
     const isSelect = isIncludeList(value, -1);
@@ -549,9 +549,9 @@ const Pokedex = (props: IStyleSheetData) => {
       </BackdropMui>
       <div className="tw-text-center tw-bg-custom-default">
         <ul className="tw-grid pokemon-content">
-          {listOfPokemon.map((row, index) => (
+          {listOfPokemon.map((row) => (
             <CardPokemonInfo
-              key={index}
+              key={`${row.id}-${row.form ?? ''}`}
               name={row.name}
               form={row.form}
               isDefaultImg={isShiny}

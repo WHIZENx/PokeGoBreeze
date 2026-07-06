@@ -66,7 +66,7 @@ import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
-import { formStandard, keyLeft, keyRight } from '../../utils/helpers/options-context.helpers';
+import { formStandard } from '../../utils/helpers/options-context.helpers';
 import useIcon from '../../composables/useIcon';
 import useSpinner from '../../composables/useSpinner';
 import useRouter from '../../composables/useRouter';
@@ -132,7 +132,7 @@ const Pokemon = (props: IPokemonPage) => {
   const axiosSource = useRef(APIService.getCancelToken());
   const { showSnackbar } = useSnackbar();
 
-  const getPokemonIdByParam = () => {
+  const getPokemonIdByParam = useCallback(() => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
     if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(getFilteredPokemons())) {
       const pokemon = getFindPokemon((p) =>
@@ -141,7 +141,7 @@ const Pokemon = (props: IPokemonPage) => {
       id = toNumber(pokemon?.num);
     }
     return id;
-  };
+  }, [params.id, props.searchOption?.id, getFilteredPokemons, getFindPokemon]);
 
   const convertPokemonForm = (
     formName: string | undefined,
@@ -154,9 +154,12 @@ const Pokemon = (props: IPokemonPage) => {
       if (!isInclude(formName, formType, IncludeMode.IncludeIgnoreCaseSensitive)) {
         return;
       }
-      [form] = getValueOrDefault(String, formName?.replaceAll('_', '-').toUpperCase()).split(
-        `-${formType.toUpperCase()}`
-      );
+      const normalizedName = getValueOrDefault(String, formName?.replaceAll('_', '-').toUpperCase());
+      const normalizedType = formType.toUpperCase();
+      if (normalizedName === normalizedType) {
+        return normalizedType;
+      }
+      [form] = normalizedName.split(`-${normalizedType}`);
     }
     const result = getPokemonFormWithNoneSpecialForm(form, pokemonType)
       ?.replace(`_${formStandard()}`, '')
@@ -237,9 +240,11 @@ const Pokemon = (props: IPokemonPage) => {
       setOriginSoundCry(soundCries);
       setPokeData(dataPokeList);
 
-      if (
-        formListResult.flatMap((item) => item).filter((item) => item.form.pokemonType === PokemonType.GMax).length > 1
-      ) {
+      const gmaxCount = formListResult.reduce(
+        (n, item) => n + item.filter((p) => p.form.pokemonType === PokemonType.GMax).length,
+        0
+      );
+      if (gmaxCount > 1) {
         formListResult = formListResult.map((item) =>
           item.map((p) =>
             p.form.pokemonType === PokemonType.GMax
@@ -259,6 +264,7 @@ const Pokemon = (props: IPokemonPage) => {
       setFormList(formListResult);
 
       // Set Default Form
+      const flatForms = formListResult.flatMap((item) => item);
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
       let formParams = getValueOrDefault(String, searchParams.get(Params.Form))
         .toUpperCase()
@@ -268,20 +274,16 @@ const Pokemon = (props: IPokemonPage) => {
       if (!isNullOrUndefined(formTypeParams)) {
         formParams += isNotEmpty(formParams) && isNotEmpty(formTypeParams) ? `-${formTypeParams}` : formTypeParams;
       }
-      const defaultForm = formListResult.flatMap((item) => item).filter((item) => item.form.isDefault);
+      const defaultForm = flatForms.filter((item) => item.form.isDefault);
       if (routerAction === Action.Pop && searchingMainData && !params.id) {
-        currentForm = formListResult
-          .flatMap((form) => form)
-          .find((item) =>
-            isEqual(item.form.formName, searchingMainForm?.form?.formName, EqualMode.IgnoreCaseSensitive)
-          );
+        currentForm = flatForms.find((item) =>
+          isEqual(item.form.formName, searchingMainForm?.form?.formName, EqualMode.IgnoreCaseSensitive)
+        );
       } else if (isNotEmpty(formParams)) {
-        const defaultFormSearch = formListResult
-          .flatMap((form) => form)
-          .find((item) => {
-            const result = convertPokemonForm(item.form.formName, formTypeParams, item.form.pokemonType);
-            return isEqual(result, formParams, EqualMode.IgnoreCaseSensitive);
-          });
+        const defaultFormSearch = flatForms.find((item) => {
+          const result = convertPokemonForm(item.form.formName, formTypeParams, item.form.pokemonType);
+          return isEqual(result, formParams, EqualMode.IgnoreCaseSensitive);
+        });
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
         } else {
@@ -290,25 +292,23 @@ const Pokemon = (props: IPokemonPage) => {
           setSearchParams(searchParams);
         }
       } else if (props.isSearch && props.searchOption) {
-        currentForm = formListResult
-          .flatMap((form) => form)
-          .find(
-            (item) =>
-              item.defaultId === specie.id &&
-              (isEqual(
-                item.form.formName
-                  ?.toUpperCase()
-                  .replace(/^STANDARD$/, '')
-                  .replace(`-${formStandard()}`, ''),
-                props.searchOption?.form,
-                EqualMode.IgnoreCaseSensitive
-              ) ||
-                item.form.pokemonType === props.searchOption?.pokemonType)
-          );
+        currentForm = flatForms.find(
+          (item) =>
+            item.defaultId === specie.id &&
+            (isEqual(
+              item.form.formName
+                ?.toUpperCase()
+                .replace(/^STANDARD$/, '')
+                .replace(`-${formStandard()}`, ''),
+              props.searchOption?.form,
+              EqualMode.IgnoreCaseSensitive
+            ) ||
+              item.form.pokemonType === props.searchOption?.pokemonType)
+        );
       } else {
         currentForm = defaultForm.find((item) => item.defaultId === specie.id);
       }
-      currentForm ??= formListResult.flatMap((item) => item).find((item) => item.defaultId === specie.id);
+      currentForm ??= flatForms.find((item) => item.defaultId === specie.id);
       let defaultData = dataPokeList.find((value) => isEqual(value.name, currentForm?.form.name));
       defaultData ??= dataPokeList.find((value) => isEqual(value.name, currentForm?.name));
       if (defaultData) {
@@ -328,6 +328,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   const queryPokemon = useCallback(
     (id: number) => {
+      APIService.cancel(axiosSource.current);
       axiosSource.current = APIService.reNewCancelToken();
       const cancelToken = axiosSource.current.token;
 
@@ -412,9 +413,7 @@ const Pokemon = (props: IPokemonPage) => {
         queryPokemon(id);
       }
       return () => {
-        if (dataId > 0) {
-          APIService.cancel(axiosSource.current);
-        }
+        APIService.cancel(axiosSource.current);
       };
     }
   }, [params.id, props.searchOption?.id, getFilteredPokemons, data?.id, queryPokemon]);
@@ -433,18 +432,29 @@ const Pokemon = (props: IPokemonPage) => {
     const id = getPokemonIdByParam();
     if (id > 0 && isNotEmpty(getFilteredPokemons())) {
       const keyDownHandler = (event: KeyboardEvent) => {
-        if (!spinnerIsLoading) {
-          const currentPokemon = getPokemonById(id);
-          if (currentPokemon) {
-            const prev = getPokemonById(currentPokemon.id - 1);
-            const next = getPokemonById(currentPokemon.id + 1);
-            if (prev && event.keyCode === keyLeft()) {
-              event.preventDefault();
-              params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
-            } else if (next && event.keyCode === keyRight()) {
-              event.preventDefault();
-              params.id ? navigate(`/pokemon/${next.id}`, { replace: true }) : props.onIncId?.();
-            }
+        if (spinnerIsLoading) {
+          return;
+        }
+        const isLeft = event.key === 'ArrowLeft';
+        const isRight = event.key === 'ArrowRight';
+        if (!isLeft && !isRight) {
+          return;
+        }
+        const currentPokemon = getPokemonById(id);
+        if (!currentPokemon) {
+          return;
+        }
+        if (isLeft) {
+          const prev = getPokemonById(currentPokemon.id - 1);
+          if (prev) {
+            event.preventDefault();
+            params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
+          }
+        } else {
+          const next = getPokemonById(currentPokemon.id + 1);
+          if (next) {
+            event.preventDefault();
+            params.id ? navigate(`/pokemon/${next.id}`, { replace: true }) : props.onIncId?.();
           }
         }
       };
@@ -481,15 +491,19 @@ const Pokemon = (props: IPokemonPage) => {
       setGeneration(getValueOrDefault(String, data.generation.toString()));
       if (!params.id) {
         setRegion(regionList[data.generation]);
-      } else {
+      } else if (isNotEmpty(searchingMainForm.form?.formName)) {
         const currentRegion = Object.values(regionList).find((item) =>
           isInclude(searchingMainForm.form?.formName, item, IncludeMode.IncludeIgnoreCaseSensitive)
         );
-        if (isNotEmpty(searchingMainForm.form?.formName) && currentRegion) {
-          setRegion(!region || !isEqual(region, currentRegion) ? currentRegion : region);
-        } else {
-          setRegion(regionList[data.generation]);
-        }
+        setRegion(
+          currentRegion && (!region || !isEqual(region, currentRegion))
+            ? currentRegion
+            : currentRegion
+              ? region
+              : regionList[data.generation]
+        );
+      } else {
+        setRegion(regionList[data.generation]);
       }
       const nameInfo =
         routerAction === Action.Pop && searchingMainData && !params.id
@@ -546,21 +560,25 @@ const Pokemon = (props: IPokemonPage) => {
       } else if (routerAction === Action.Pop && searchingMainData && !params.id) {
         form = getValueOrDefault(String, searchingMainForm?.form?.formName);
       } else if (!isNullOrUndefined(formType)) {
-        form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
+        if (!isEqual(form, formType, EqualMode.IgnoreCaseSensitive)) {
+          form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
+        }
       }
-      let currentForm = formList
-        .flatMap((item) => item)
-        .find((item) => {
-          const result = convertPokemonForm(item.form.formName, formType, item.form.pokemonType);
-          return isEqual(result, form, EqualMode.IgnoreCaseSensitive);
-        });
+      const flatForms = formList.flatMap((item) => item);
+      let currentForm = flatForms.find((item) => {
+        if (formType && isEqual(form, formType, EqualMode.IgnoreCaseSensitive)) {
+          return isEqual(getKeyWithData(PokemonType, item.form.pokemonType), formType, EqualMode.IgnoreCaseSensitive);
+        }
+        const result = convertPokemonForm(item.form.formName, formType, item.form.pokemonType);
+        return isEqual(result, form, EqualMode.IgnoreCaseSensitive);
+      });
       let pokemonCurrentData = pokeData.find((item) => isEqual(currentForm?.form.name, item.name));
       if (!pokemonCurrentData) {
         pokemonCurrentData = pokeData.find((item) => item.isDefault);
         if (!currentForm && pokemonCurrentData) {
-          currentForm = formList
-            .flatMap((item) => item)
-            .find((item) => isEqual(item.form.name, pokemonCurrentData?.name, EqualMode.IgnoreCaseSensitive));
+          currentForm = flatForms.find((item) =>
+            isEqual(item.form.name, pokemonCurrentData?.name, EqualMode.IgnoreCaseSensitive)
+          );
         }
       }
       if (currentForm && pokemonCurrentData) {

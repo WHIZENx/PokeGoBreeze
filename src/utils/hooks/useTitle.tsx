@@ -12,8 +12,8 @@ export const useTitle = (props: TitleSEOProps) => {
     const url = props.url || fullPath;
     const type = props.type || 'website';
 
-    // Browser tab title
-    if (isShowTitle) {
+    // Default to true — only opt out explicitly (e.g. Error page when not in error state)
+    if (isShowTitle !== false) {
       document.title = title;
     }
 
@@ -68,7 +68,7 @@ export const useTitle = (props: TitleSEOProps) => {
     if (window.SEO?.updateLdJson) {
       window.SEO.updateLdJson({ name: title, description, url, image });
     }
-  }, [props.isShowTitle, props.title]);
+  }, [props.isShowTitle, props.title, props.description, props.image, props.url]);
 };
 
 const setMeta = (id: string, content: string) => {

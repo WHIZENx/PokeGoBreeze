@@ -10,51 +10,61 @@ import { StatsActions } from '../actions';
 import { StatsActionsUnion } from '../actions/stats.action';
 
 const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData) => {
-  const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Atk));
-  const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Def));
+  const shadowAtkBonus = getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Atk);
+  const shadowDefBonus = getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Def);
+  const purifiedAtkBonus = getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Atk);
+  const purifiedDefBonus = getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Def);
   result.push(
     new ArrayStats({
       id: value.num,
       name: value.slug,
       form: formShadow(),
       baseStats: value.baseStats,
-      statsGO: StatsPokemonGO.create(atkShadow, defShadow, value.statsGO.sta),
+      statsGO: StatsPokemonGO.create(
+        Math.round(value.statsGO.atk * shadowAtkBonus),
+        Math.round(value.statsGO.def * shadowDefBonus),
+        value.statsGO.sta
+      ),
     })
   );
-  const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Atk));
-  const defPurification = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Def));
   result.push(
     new ArrayStats({
       id: value.num,
       name: value.slug,
       form: formPurified(),
       baseStats: value.baseStats,
-      statsGO: StatsPokemonGO.create(atkPurification, defPurification, value.statsGO.sta),
+      statsGO: StatsPokemonGO.create(
+        Math.round(value.statsGO.atk * purifiedAtkBonus),
+        Math.round(value.statsGO.def * purifiedDefBonus),
+        value.statsGO.sta
+      ),
     })
   );
 };
+
+const FORM_NORMAL = formNormal();
 
 const StatsReducer = (state: IStatsRank | null = null, action: StatsActionsUnion) => {
   switch (action.type) {
     case StatsActions.StatsActionTypes.setStats: {
       const result: IArrayStats[] = [];
-      action.payload
-        .filter((pokemon) => pokemon.num > 0)
-        .forEach((value) => {
-          result.push(
-            new ArrayStats({
-              id: value.num,
-              name: value.slug,
-              form: getValueOrDefault(String, value.form, formNormal()),
-              baseStats: value.baseStats,
-              statsGO: value.statsGO,
-            })
-          );
-
-          if (value.hasShadowForm) {
-            addShadowPurificationForms(result, value);
-          }
-        });
+      for (const value of action.payload) {
+        if (value.num <= 0) {
+          continue;
+        }
+        result.push(
+          new ArrayStats({
+            id: value.num,
+            name: value.slug,
+            form: getValueOrDefault(String, value.form, FORM_NORMAL),
+            baseStats: value.baseStats,
+            statsGO: value.statsGO,
+          })
+        );
+        if (value.hasShadowForm) {
+          addShadowPurificationForms(result, value);
+        }
+      }
       return sortStatsPokemon(result);
     }
     case StatsActions.StatsActionTypes.resetStats:

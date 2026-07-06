@@ -15,6 +15,7 @@ async function buildSitemap() {
     fs.mkdirSync(publicPath, { recursive: true });
     fs.writeFileSync(path.join(publicPath, 'sitemap.xml'), sitemap);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[sitemap] Build failed:', error.message);
     process.exit(1);
   }

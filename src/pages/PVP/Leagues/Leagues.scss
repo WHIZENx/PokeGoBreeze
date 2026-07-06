@@ -24,16 +24,17 @@
 
 .badge-league {
   transform: translateY(-65%);
+  box-shadow: inset 0 0 0 3.5px white;
 
-  @apply tw-absolute tw-top-[65%] tw-right-[7%] tw-border-[5px] tw-border-[#b2b2b2] tw-rounded-full;
+  @apply tw-absolute tw-top-[65%] tw-right-[7%] tw-border-[5px] tw-border-[#b2b2b2] tw-rounded-full tw-inline-flex tw-overflow-hidden;
 }
 
 .badge-league img {
-  @apply tw-p-[5px];
+  @apply tw-p-2;
 }
 
 .sub-badge {
-  @apply tw-rounded-full tw-border-[3.5px] tw-border-white;
+  @apply tw-flex;
 }
 
 li.unique-type ul {

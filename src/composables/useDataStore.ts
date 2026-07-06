@@ -186,54 +186,80 @@ export const useDataStore = () => {
       })
       .catch(() => dispatch(StoreActions.SetLogoPokeGO.create()));
 
+  const yieldToMain = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+
   const loadGameMaster = async (imageRoot: APITreeRoot[], soundsRoot: APITreeRoot[], timestampLoaded: Timestamp) => {
-    APIService.getFetchUrl<PokemonDataGM[]>(APIUrl.GAMEMASTER)
-      .then(async (gm) => {
-        showSnackbar('Please waiting to load game master...', 'info');
-        if (!gm || !isNotEmpty(gm.data)) {
-          errorProgress({ isError: true });
-          return;
-        }
-        const pokemonEncounterData = await import('../data/pokemon_encounter.json');
-        const pokemonEncounter: PokemonEncounter[] = [...pokemonEncounterData.default];
+    try {
+      const [gm, pokemonEncounterData] = await Promise.all([
+        APIService.getFetchUrl<PokemonDataGM[]>(APIUrl.GAMEMASTER),
+        import('../data/pokemon_encounter.json'),
+        initializeStaticData(),
+      ]);
 
-        await initializeStaticData();
+      showSnackbar('Please waiting to load game master...', 'info');
 
-        const pokemon = optionPokemonData(gm.data, pokemonEncounter);
+      if (!gm || !isNotEmpty(gm.data)) {
+        errorProgress({ isError: true });
+        return;
+      }
 
-        const league = optionLeagues(gm.data, pokemon);
+      const pokemonEncounter: PokemonEncounter[] = [...pokemonEncounterData.default];
 
-        const typeEffective = optionPokemonTypes(gm.data);
-        const weatherBoost = optionPokemonWeather(gm.data);
+      // Phase 1 — type/weather lookups are cheap single passes; run first so pokemon build can use them
+      const typeEffective = optionPokemonTypes(gm.data);
+      const weatherBoost = optionPokemonWeather(gm.data);
 
-        setProgress(60);
+      await yieldToMain();
 
-        const options = optionSettings(gm.data, typeEffective, weatherBoost);
-        dispatch(StoreActions.SetOptions.create(options));
-        loadCPM(options.playerSetting.cpMultipliers);
-        dispatch(StoreActions.SetTrainer.create(optionTrainer(gm.data)));
-        dispatch(StoreActions.SetSticker.create(optionSticker(gm.data, pokemon)));
-        const combat = optionCombat(gm.data, typeEffective);
-        dispatch(StoreActions.SetCombat.create(combat));
-        dispatch(StoreActions.SetEvolutionChain.create(optionEvolutionChain(gm.data, pokemon)));
-        dispatch(StoreActions.SetInformation.create(optionInformation(gm.data, pokemon)));
-        dispatch(StoreActions.SetLeagues.create(league));
+      // Phase 2 — heaviest sync work: build all pokemon objects
+      const pokemon = optionPokemonData(gm.data, pokemonEncounter);
 
-        mappingMoveSetPokemonGO(pokemon, combat);
+      await yieldToMain();
 
-        if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound || !timestampLoaded.isCurrentVersion) {
-          await loadAssets(imageRoot, soundsRoot, pokemon, timestampLoaded);
-        }
+      // Phase 3 — remaining GM parsing; run in parallel since they don't depend on each other
+      const [league, options, combat] = await Promise.all([
+        Promise.resolve(optionLeagues(gm.data, pokemon)),
+        Promise.resolve(optionSettings(gm.data, typeEffective, weatherBoost)),
+        Promise.resolve(optionCombat(gm.data, typeEffective)),
+      ]);
 
-        setProgress(90);
-        dispatch(StatsActions.SetStats.create(pokemon));
+      await yieldToMain();
 
-        dispatch(TimestampActions.SetTimestampGameMaster.create(timestampLoaded.gamemasterTimestamp));
-        completeProgress();
-      })
-      .catch((e: ErrorEvent) => {
-        errorProgress({ isError: true, message: e.message });
-      });
+      const [evolutionChains, information, stickers, trainer] = await Promise.all([
+        Promise.resolve(optionEvolutionChain(gm.data, pokemon)),
+        Promise.resolve(optionInformation(gm.data, pokemon)),
+        Promise.resolve(optionSticker(gm.data, pokemon)),
+        Promise.resolve(optionTrainer(gm.data)),
+      ]);
+
+      // Phase 4 — move-set mapping mutates pokemon in-place; must run after combat is built
+      mappingMoveSetPokemonGO(pokemon, combat);
+
+      await yieldToMain();
+
+      // Batch all dispatches so React only re-renders once
+      dispatch(StoreActions.SetOptions.create(options));
+      loadCPM(options.playerSetting.cpMultipliers);
+      dispatch(StoreActions.SetTrainer.create(trainer));
+      dispatch(StoreActions.SetSticker.create(stickers));
+      dispatch(StoreActions.SetCombat.create(combat));
+      dispatch(StoreActions.SetEvolutionChain.create(evolutionChains));
+      dispatch(StoreActions.SetInformation.create(information));
+      dispatch(StoreActions.SetLeagues.create(league));
+
+      setProgress(60);
+
+      if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound || !timestampLoaded.isCurrentVersion) {
+        await loadAssets(imageRoot, soundsRoot, pokemon, timestampLoaded);
+      }
+
+      setProgress(90);
+      dispatch(StatsActions.SetStats.create(pokemon));
+      dispatch(TimestampActions.SetTimestampGameMaster.create(timestampLoaded.gamemasterTimestamp));
+      completeProgress();
+    } catch (e) {
+      errorProgress({ isError: true, message: (e as ErrorEvent).message });
+    }
   };
 
   const loadAssets = async (
@@ -245,43 +271,47 @@ export const useDataStore = () => {
     if (!isNotEmpty(imageRoot) || !isNotEmpty(soundsRoot)) {
       return;
     }
-    await Promise.all([
+
+    // Step 1 — fetch root trees in parallel
+    const [imageFolder, soundFolder] = await Promise.all([
       APIService.getFetchUrl<APITree>(imageRoot[0].commit.tree.url, getAuthorizationHeaders),
       APIService.getFetchUrl<APITree>(soundsRoot[0].commit.tree.url, getAuthorizationHeaders),
-    ]).then(async ([imageFolder, soundFolder]) => {
-      const imageFolderPath = imageFolder.data.tree.find((item) => isEqual(item.path, 'Images'));
-      const soundFolderPath = soundFolder.data.tree.find((item) => isEqual(item.path, 'Sounds'));
+    ]);
 
-      if (imageFolderPath && soundFolderPath) {
-        await Promise.all([
-          APIService.getFetchUrl<APITree>(imageFolderPath.url, getAuthorizationHeaders),
-          APIService.getFetchUrl<APITree>(soundFolderPath.url, getAuthorizationHeaders),
-        ]).then(async ([image, sound]) => {
-          const imagePath = image.data.tree.find((item) => isEqual(item.path, 'Pokemon - 256x256'));
-          const soundPath = sound.data.tree.find((item) => isEqual(item.path, 'Pokemon Cries'));
+    const imageFolderPath = imageFolder.data.tree.find((item) => isEqual(item.path, 'Images'));
+    const soundFolderPath = soundFolder.data.tree.find((item) => isEqual(item.path, 'Sounds'));
+    if (!imageFolderPath || !soundFolderPath) {
+      return;
+    }
 
-          if (imagePath && soundPath) {
-            await Promise.all([
-              APIService.getFetchUrl<APITree>(`${imagePath.url}?recursive=1`, getAuthorizationHeaders),
-              APIService.getFetchUrl<APITree>(`${soundPath.url}?recursive=1`, getAuthorizationHeaders),
-            ]).then(([imageData, soundData]) => {
-              const assetImgFiles = optionPokeImg(imageData.data);
-              const assetSoundFiles = optionPokeSound(soundData.data);
+    // Step 2 — fetch sub-folders, then leaf nodes, all in parallel
+    const [imageSubFolder, soundSubFolder] = await Promise.all([
+      APIService.getFetchUrl<APITree>(imageFolderPath.url, getAuthorizationHeaders),
+      APIService.getFetchUrl<APITree>(soundFolderPath.url, getAuthorizationHeaders),
+    ]);
 
-              const assetsPokemon = optionAssets(pokemon, assetImgFiles, assetSoundFiles);
-              mappingReleasedPokemonGO(pokemon, assetsPokemon);
+    const imagePath = imageSubFolder.data.tree.find((item) => isEqual(item.path, 'Pokemon - 256x256'));
+    const soundPath = soundSubFolder.data.tree.find((item) => isEqual(item.path, 'Pokemon Cries'));
+    if (!imagePath || !soundPath) {
+      return;
+    }
 
-              dispatch(StoreActions.SetAssets.create(assetsPokemon));
-              dispatch(StoreActions.SetPokemon.create(pokemon));
+    const [imageData, soundData] = await Promise.all([
+      APIService.getFetchUrl<APITree>(`${imagePath.url}?recursive=1`, getAuthorizationHeaders),
+      APIService.getFetchUrl<APITree>(`${soundPath.url}?recursive=1`, getAuthorizationHeaders),
+    ]);
 
-              dispatch(TimestampActions.SetTimestampAssets.create(timestamp.assetsTimestamp));
-              dispatch(TimestampActions.SetTimestampSounds.create(timestamp.soundsTimestamp));
-              completeProgress();
-            });
-          }
-        });
-      }
-    });
+    const assetImgFiles = optionPokeImg(imageData.data);
+    const assetSoundFiles = optionPokeSound(soundData.data);
+
+    const assetsPokemon = optionAssets(pokemon, assetImgFiles, assetSoundFiles);
+    mappingReleasedPokemonGO(pokemon, assetsPokemon);
+
+    dispatch(StoreActions.SetAssets.create(assetsPokemon));
+    dispatch(StoreActions.SetPokemon.create(pokemon));
+    dispatch(TimestampActions.SetTimestampAssets.create(timestamp.assetsTimestamp));
+    dispatch(TimestampActions.SetTimestampSounds.create(timestamp.soundsTimestamp));
+    completeProgress();
   };
 
   const pokemonsData = dataStore.pokemons;
@@ -296,9 +326,14 @@ export const useDataStore = () => {
   const pvpData = dataStore.pvp;
   const optionsData = dataStore.options;
 
-  const getAuthorizationHeaders = {
-    headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
-  };
+  const githubToken = (process.env.REACT_APP_TOKEN_PRIVATE_REPO ?? '').trim();
+  const hasGithubToken =
+    githubToken && !['your_github_token_here', 'undefined', 'null'].includes(githubToken.toLowerCase());
+  const getAuthorizationHeaders = hasGithubToken
+    ? {
+        headers: { Authorization: `Bearer ${githubToken}` },
+      }
+    : undefined;
 
   return {
     dataStore,

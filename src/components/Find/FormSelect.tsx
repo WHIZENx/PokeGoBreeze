@@ -111,27 +111,18 @@ const FormSelect = (props: IFormSelectComponent) => {
       setPokeData(dataPokeList);
       setFormList(formListResult);
 
-      const defaultForm = formListResult.flatMap((value) => value).filter((item) => item.form.isDefault);
+      const flatForms = formListResult.flatMap((value) => value);
+      const defaultForm = flatForms.filter((item) => item.form.isDefault);
       let currentForm = defaultForm.find((item) => item.form.id === specie.id);
       if (searchingToolData) {
-        const defaultFormSearch = formListResult
-          .flatMap((value) => value)
-          .find((item) =>
-            isEqual(
-              item.form.formName,
-              props.isObjective
-                ? searchingToolObjectData?.form?.form?.formName
-                : searchingToolCurrentData?.form?.form?.formName
-            )
-          );
-        if (defaultFormSearch) {
-          currentForm = defaultFormSearch;
-        } else {
-          currentForm = defaultForm.find((item) => item.form.id === specie.id);
-        }
+        const targetFormName = props.isObjective
+          ? searchingToolObjectData?.form?.form?.formName
+          : searchingToolCurrentData?.form?.form?.formName;
+        const defaultFormSearch = flatForms.find((item) => isEqual(item.form.formName, targetFormName));
+        currentForm = defaultFormSearch ?? defaultForm.find((item) => item.form.id === specie.id);
       }
       if (!currentForm) {
-        currentForm = formListResult.flatMap((item) => item).find((item) => item.form.id === specie.id);
+        currentForm = flatForms.find((item) => item.form.id === specie.id);
       }
       if (!currentForm && isNotEmpty(defaultForm)) {
         currentForm = defaultForm.at(0);
@@ -150,6 +141,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   const queryPokemon = useCallback(
     (id: number) => {
+      APIService.cancel(axiosSource.current);
       axiosSource.current = APIService.reNewCancelToken();
       const cancelToken = axiosSource.current.token;
 
@@ -185,9 +177,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       queryPokemon(id);
     }
     return () => {
-      if (data?.id) {
-        APIService.cancel(axiosSource.current);
-      }
+      APIService.cancel(axiosSource.current);
     };
   }, [props.id, data?.id, queryPokemon]);
 
@@ -246,26 +236,14 @@ const FormSelect = (props: IFormSelectComponent) => {
   };
 
   const changeForm = (value: IPokemonFormModify) => {
-    const isSelected = value.form.id === currentForm?.form.id;
-    const name = value.form.name;
-    if (isSelected) {
+    if (value.form.id === currentForm?.form.id) {
       return;
     }
-    setCurrentForm(undefined);
-    const findForm = formList.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
-    setCurrentForm(findForm);
-    if (findForm) {
-      dispatch(SearchingActions.SetToolPokemonForm.create(findForm));
-    }
-    if (props.onClearStats) {
-      props.onClearStats();
-    }
-    if (props.setName) {
-      props.setName(splitAndCapitalize(findForm?.form.name, '-', ' '));
-    }
-    if (props.setForm) {
-      props.setForm(findForm);
-    }
+    setCurrentForm(value);
+    dispatch(SearchingActions.SetToolPokemonForm.create(value));
+    props.onClearStats?.();
+    props.setName?.(splitAndCapitalize(value.form.name, '-', ' '));
+    props.setForm?.(value);
   };
 
   const onSetTier = (tier: number) => {

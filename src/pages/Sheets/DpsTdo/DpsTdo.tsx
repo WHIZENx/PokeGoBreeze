@@ -42,7 +42,6 @@ import { BestOptionType, SortDirectionType } from './enums/column-select-type.en
 import { SortOrderType, TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
-  DynamicObj,
   getPropertyName,
   getValueOrDefault,
   isEmpty,
@@ -357,101 +356,198 @@ const DpsTdo = () => {
     pokemon: IPokemonData,
     fMove: ICombat,
     fMoveType: MoveType,
+    // Pre-computed per-pokemon attacker stats — hoisted by addFPokeData
+    atkBattle: number,
+    defBattle: number,
+    hpBattle: number,
+    cp: number,
+    // Pre-computed target defender (undefined = use avgDPS path)
+    targetDefender: BattleCalculate | undefined,
     pokemonType = PokemonType.Normal
   ) => {
     movePoke?.forEach((vc: string) => {
       const cMove = findMoveByName(vc);
-
-      if (cMove) {
-        const cMoveType = getMoveType(pokemon, vc);
-        if (!isEqual(cMoveType, MoveType.Dynamax)) {
-          const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
-          const statsAttacker = new BattleCalculate({
-            atk: calculateStatsBattle(stats.atk, ivAtk, pokemonLevel),
-            def: calculateStatsBattle(stats.def, ivDef, pokemonLevel),
-            hp: calculateStatsBattle(stats.sta, ivHp, pokemonLevel),
-            fMove,
-            cMove,
-            types: pokemon.types,
-            pokemonType,
-            weatherBoosts: options.weatherBoosts,
-            isPokemonFriend: options.isTrainerFriend,
-            pokemonFriendLevel: options.pokemonFriendLevel,
-          });
-
-          let dps = 0;
-          let tdo = 0;
-          if (dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon) {
-            const statsDef = calculateStatsByTag(
-              dataTargetPokemon,
-              dataTargetPokemon.baseStats,
-              dataTargetPokemon.slug
-            );
-            const statsDefender = new BattleCalculate({
-              atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
-              def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
-              hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
-              fMove: findMoveByName(fMoveTargetPokemon.name),
-              cMove: findMoveByName(cMoveTargetPokemon.name),
-              types: dataTargetPokemon.types,
-              weatherBoosts: options.weatherBoosts,
-            });
-
-            const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
-            dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
-            tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
-          } else {
-            dps = calculateAvgDPS(
-              statsAttacker.fMove,
-              statsAttacker.cMove,
-              statsAttacker.atk,
-              statsAttacker.def,
-              statsAttacker.hp,
-              statsAttacker.types,
-              statsAttacker.pokemonType,
-              options
-            );
-            tdo = calculateTDO(statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
-          }
-          dataList.push({
-            pokemon,
-            fMove: statsAttacker.fMove,
-            cMove: statsAttacker.cMove,
-            dps,
-            tdo,
-            multiDpsTdo: Math.pow(dps, 3) * tdo,
-            cMoveType,
-            fMoveType,
-            pokemonType,
-            cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, stats.sta + ivHp, pokemonLevel),
-          });
-        }
+      if (!cMove) {
+        return;
       }
+      const cMoveType = getMoveType(pokemon, vc);
+      if (isEqual(cMoveType, MoveType.Dynamax)) {
+        return;
+      }
+
+      const statsAttacker = new BattleCalculate({
+        atk: atkBattle,
+        def: defBattle,
+        hp: hpBattle,
+        fMove,
+        cMove,
+        types: pokemon.types,
+        pokemonType,
+        weatherBoosts: options.weatherBoosts,
+        isPokemonFriend: options.isTrainerFriend,
+        pokemonFriendLevel: options.pokemonFriendLevel,
+      });
+
+      let dps = 0;
+      let tdo = 0;
+      if (targetDefender) {
+        const dpsDef = calculateBattleDPSDefender(statsAttacker, targetDefender);
+        dps = calculateBattleDPS(statsAttacker, targetDefender, dpsDef);
+        tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
+      } else {
+        dps = calculateAvgDPS(
+          statsAttacker.fMove,
+          statsAttacker.cMove,
+          statsAttacker.atk,
+          statsAttacker.def,
+          statsAttacker.hp,
+          statsAttacker.types,
+          statsAttacker.pokemonType,
+          options
+        );
+        tdo = calculateTDO(statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
+      }
+      dataList.push({
+        pokemon,
+        fMove: statsAttacker.fMove,
+        cMove: statsAttacker.cMove,
+        dps,
+        tdo,
+        multiDpsTdo: Math.pow(dps, 3) * tdo,
+        cMoveType,
+        fMoveType,
+        pokemonType,
+        cp,
+      });
     });
   };
 
-  const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[]) => {
-    movePoke.forEach((vf) => {
+  const addFPokeData = (
+    dataList: PokemonSheetData[],
+    pokemon: IPokemonData,
+    movePoke: string[],
+    targetDefender: BattleCalculate | undefined
+  ) => {
+    // Hoist per-pokemon constants outside the fast-move loop
+    const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+    const atkBattle = calculateStatsBattle(stats.atk, ivAtk, pokemonLevel);
+    const defBattle = calculateStatsBattle(stats.def, ivDef, pokemonLevel);
+    const hpBattle = calculateStatsBattle(stats.sta, ivHp, pokemonLevel);
+    const cp = calculateCP(stats.atk + ivAtk, stats.def + ivDef, stats.sta + ivHp, pokemonLevel);
+
+    for (const vf of movePoke) {
       const fMove = findMoveByName(vf);
       if (!fMove) {
-        return;
+        continue;
       }
       const fMoveType = getMoveType(pokemon, vf);
-      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType);
+      addCPokeData(
+        dataList,
+        pokemon.cinematicMoves,
+        pokemon,
+        fMove,
+        fMoveType,
+        atkBattle,
+        defBattle,
+        hpBattle,
+        cp,
+        targetDefender
+      );
       if (!pokemon.form || pokemon.hasShadowForm) {
         if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
+          addCPokeData(
+            dataList,
+            pokemon.cinematicMoves,
+            pokemon,
+            fMove,
+            fMoveType,
+            atkBattle,
+            defBattle,
+            hpBattle,
+            cp,
+            targetDefender,
+            PokemonType.Shadow
+          );
         }
-        addCPokeData(dataList, pokemon.shadowMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
-        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, fMove, fMoveType, PokemonType.Purified);
+        addCPokeData(
+          dataList,
+          pokemon.shadowMoves,
+          pokemon,
+          fMove,
+          fMoveType,
+          atkBattle,
+          defBattle,
+          hpBattle,
+          cp,
+          targetDefender,
+          PokemonType.Shadow
+        );
+        addCPokeData(
+          dataList,
+          pokemon.purifiedMoves,
+          pokemon,
+          fMove,
+          fMoveType,
+          atkBattle,
+          defBattle,
+          hpBattle,
+          cp,
+          targetDefender,
+          PokemonType.Purified
+        );
       }
       if ((!pokemon.form || !isSpecialMegaFormType(pokemon.pokemonType)) && isNotEmpty(pokemon.shadowMoves)) {
-        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
+        addCPokeData(
+          dataList,
+          pokemon.eliteCinematicMoves,
+          pokemon,
+          fMove,
+          fMoveType,
+          atkBattle,
+          defBattle,
+          hpBattle,
+          cp,
+          targetDefender,
+          PokemonType.Shadow
+        );
       }
-      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType);
-      addCPokeData(dataList, pokemon.specialMoves, pokemon, fMove, fMoveType);
-      addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, fMove, fMoveType);
-    });
+      addCPokeData(
+        dataList,
+        pokemon.eliteCinematicMoves,
+        pokemon,
+        fMove,
+        fMoveType,
+        atkBattle,
+        defBattle,
+        hpBattle,
+        cp,
+        targetDefender
+      );
+      addCPokeData(
+        dataList,
+        pokemon.specialMoves,
+        pokemon,
+        fMove,
+        fMoveType,
+        atkBattle,
+        defBattle,
+        hpBattle,
+        cp,
+        targetDefender
+      );
+      addCPokeData(
+        dataList,
+        pokemon.exclusiveMoves,
+        pokemon,
+        fMove,
+        fMoveType,
+        atkBattle,
+        defBattle,
+        hpBattle,
+        cp,
+        targetDefender
+      );
+    }
   };
 
   // Process filtered pokemon in chunks so the UI stays responsive during the
@@ -462,13 +558,29 @@ const DpsTdo = () => {
   const calculateDPSTable = async (signal?: AbortSignal): Promise<PokemonSheetData[]> => {
     const dataList: PokemonSheetData[] = [];
     const pokemons = getFilteredPokemons();
+
+    // Pre-compute the target defender once for the entire table run
+    let targetDefender: BattleCalculate | undefined;
+    if (dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon) {
+      const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
+      targetDefender = new BattleCalculate({
+        atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
+        def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
+        hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
+        fMove: findMoveByName(fMoveTargetPokemon.name),
+        cMove: findMoveByName(cMoveTargetPokemon.name),
+        types: dataTargetPokemon.types,
+        weatherBoosts: options.weatherBoosts,
+      });
+    }
+
     for (let i = 0; i < pokemons.length; i += DPS_CHUNK_SIZE) {
       if (signal?.aborted) {
         throw new DOMException('aborted', 'AbortError');
       }
       const end = Math.min(i + DPS_CHUNK_SIZE, pokemons.length);
       for (let j = i; j < end; j++) {
-        addFPokeData(dataList, pokemons[j], getAllMoves(pokemons[j], TypeMove.Fast));
+        addFPokeData(dataList, pokemons[j], getAllMoves(pokemons[j], TypeMove.Fast), targetDefender);
       }
       if (end < pokemons.length) {
         await yieldToMain();
@@ -505,17 +617,26 @@ const DpsTdo = () => {
     const bestType = getPropertyName<PokemonSheetData, 'multiDpsTdo' | 'dps' | 'tdo'>(result[0], (r) =>
       best === BestOptionType.dps ? r.dps : best === BestOptionType.tdo ? r.tdo : r.multiDpsTdo
     );
-    const group = result.reduce(
-      (res, obj) => {
-        (res[obj.pokemon.name] = getValueOrDefault(Array, res[obj.pokemon.name])).push(obj);
-        return res;
-      },
-      new Object() as DynamicObj<PokemonSheetData[]>
-    );
-    return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p[bestType] > c[bestType] ? p : c)));
+    const best1Map = new Map<string, PokemonSheetData>();
+    for (const obj of result) {
+      const cur = best1Map.get(obj.pokemon.name);
+      if (!cur || obj[bestType] > cur[bestType]) {
+        best1Map.set(obj.pokemon.name, obj);
+      }
+    }
+    return Array.from(best1Map.values());
   };
 
   const searchFilter = () => {
+    const isEnableOptions =
+      enableShadow ||
+      enableSpecial ||
+      enableMega ||
+      enableGMax ||
+      enablePrimal ||
+      enableLegendary ||
+      enableMythic ||
+      enableUltraBeast;
     let result = dpsTable.filter((item) => {
       const boolFilterType =
         !isNotEmpty(selectTypes) ||
@@ -555,15 +676,6 @@ const DpsTdo = () => {
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, isReleasedGO);
       }
-      const isEnableOptions =
-        enableShadow ||
-        enableSpecial ||
-        enableMega ||
-        enableGMax ||
-        enablePrimal ||
-        enableLegendary ||
-        enableMythic ||
-        enableUltraBeast;
       const isShowOptions =
         boolShowShadow ||
         boolShowElite ||
