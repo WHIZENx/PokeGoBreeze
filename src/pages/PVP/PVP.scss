@@ -282,10 +282,6 @@
   @apply tw-w-px tw-h-full tw-absolute tw-top-1/2;
 }
 
-.btn-collapse-battle {
-  @apply tw-bg-white tw-rounded-full tw-absolute -tw-right-[15px] -tw-top-[15px] tw-cursor-pointer;
-}
-
 .battle-logo {
   transform: scaleX(-1);
 

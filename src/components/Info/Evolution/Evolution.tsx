@@ -376,7 +376,7 @@ const Evolution = (props: IEvolutionComponent) => {
       item.evoList?.some(
         (value) =>
           (isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
-            (isPokemonNoneSpecialForm(form) && value.evoToForm === formNormal())) &&
+            (!isPokemonNoneSpecialForm(form) && value.evoToForm === formNormal())) &&
           value.evoToId === prevId
       )
     );
@@ -384,7 +384,7 @@ const Evolution = (props: IEvolutionComponent) => {
       return pokemon.evoList?.find(
         (item) =>
           (isInclude(item.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
-            (isPokemonNoneSpecialForm(form) && item.evoToForm === formNormal())) &&
+            (!isPokemonNoneSpecialForm(form) && item.evoToForm === formNormal())) &&
           item.evoToId === prevId
       );
     } else {

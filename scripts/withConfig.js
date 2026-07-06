@@ -9,9 +9,10 @@
  *
  * What it does:
  *  1. Reads .env (same logic as config.sh)
- *  2. Fetches all items from Vercel Edge Config
- *  3. Sets REACT_APP_VERSION, REACT_APP_CONFIG, VITE_CJS_IGNORE_WARNING
- *  4. Spawns <command> [args] with the enriched environment
+ *  2. If config.json exists, loads config from it (skips Vercel Edge Config fetch)
+ *  3. Otherwise fetches all items from Vercel Edge Config
+ *  4. Sets REACT_APP_VERSION, REACT_APP_CONFIG, VITE_CJS_IGNORE_WARNING
+ *  5. Spawns <command> [args] with the enriched environment
  */
 
 const https = require('https');
@@ -47,7 +48,22 @@ function loadEnv() {
   }
 }
 
-// ── 2. Fetch Edge Config ──────────────────────────────────────────────────────
+// ── 2. Load local config file (bypasses Edge Config) ─────────────────────────
+function loadLocalConfig() {
+  const localPath = path.join(process.cwd(), 'config.json');
+  if (!fs.existsSync(localPath)) {
+    return null;
+  }
+  try {
+    return JSON.parse(fs.readFileSync(localPath, 'utf8'));
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('❌ Failed to parse config.json:', e.message);
+    process.exit(1);
+  }
+}
+
+// ── 3. Fetch Edge Config ──────────────────────────────────────────────────────
 function fetchEdgeConfig(edgeId, token) {
   return new Promise((resolve, reject) => {
     const options = {
@@ -74,39 +90,49 @@ function fetchEdgeConfig(edgeId, token) {
   });
 }
 
-// ── 3. Main ───────────────────────────────────────────────────────────────────
+// ── 4. Main ───────────────────────────────────────────────────────────────────
 async function main() {
   loadEnv();
 
-  const edgeId = process.env.VERCEL_EDGE_CONFIG_ID || process.env.REACT_APP_EDGE_ID || '';
-  const token = process.env.VERCEL_TOKEN || process.env.REACT_APP_EDGE_READ_TOKEN || '';
   const mode = process.env.APP_DEPLOYMENT_MODE || process.env.REACT_APP_DEPLOYMENT_MODE || 'development';
-
-  if (!edgeId) {
-    // eslint-disable-next-line no-console
-    console.error('❌ Missing: VERCEL_EDGE_CONFIG_ID or REACT_APP_EDGE_ID');
-    process.exit(1);
-  }
-  if (!token) {
-    // eslint-disable-next-line no-console
-    console.error('❌ Missing: VERCEL_TOKEN or REACT_APP_EDGE_READ_TOKEN');
-    process.exit(1);
-  }
-
   const versionKey = mode === 'production' ? 'version' : mode === 'staging' ? 'version-staging' : 'version-dev';
 
-  // eslint-disable-next-line no-console
-  console.log(`🔍 Fetching Edge Config (mode: ${mode})…`);
-  const data = await fetchEdgeConfig(edgeId, token);
+  // ── Local config takes priority over Edge Config ───────────────────────────
+  const localData = loadLocalConfig();
+  let data;
 
-  const version = data[versionKey];
+  if (localData) {
+    // eslint-disable-next-line no-console
+    console.log('📁 Using config.json (Edge Config fetch skipped)');
+    data = localData;
+  } else {
+    const edgeId = process.env.VERCEL_EDGE_CONFIG_ID || process.env.REACT_APP_EDGE_ID || '';
+    const token = process.env.VERCEL_TOKEN || process.env.REACT_APP_EDGE_READ_TOKEN || '';
+
+    if (!edgeId) {
+      // eslint-disable-next-line no-console
+      console.error('❌ Missing: VERCEL_EDGE_CONFIG_ID or REACT_APP_EDGE_ID');
+      process.exit(1);
+    }
+    if (!token) {
+      // eslint-disable-next-line no-console
+      console.error('❌ Missing: VERCEL_TOKEN or REACT_APP_EDGE_READ_TOKEN');
+      process.exit(1);
+    }
+
+    // eslint-disable-next-line no-console
+    console.log(`🔍 Fetching Edge Config (mode: ${mode})…`);
+    data = await fetchEdgeConfig(edgeId, token);
+  }
+
+  const version = !process.env.REACT_APP_VERSION ? data[versionKey] : process.env.REACT_APP_VERSION;
   if (!version) {
     // eslint-disable-next-line no-console
-    console.error(`❌ Version key '${versionKey}' not found in Edge Config`);
+    console.error(`❌ Version key '${versionKey}' not found in config`);
     process.exit(1);
   }
 
-  const config = Object.fromEntries(Object.entries(data).filter(([k]) => k !== versionKey));
+  const config = Object.fromEntries(Object.entries(data).filter(([k]) => k !== versionKey && k !== '_comment'));
 
   // Export env vars so the spawned child process inherits them
   process.env.REACT_APP_VERSION = String(version);
@@ -116,8 +142,10 @@ async function main() {
   // eslint-disable-next-line no-console
   console.log(`✅ REACT_APP_VERSION=${version}`);
 
-  // ── 4. Spawn the requested command ──────────────────────────────────────────
-  const [cmd, ...args] = process.argv.slice(2);
+  // ── 5. Spawn the requested command ──────────────────────────────────────────
+  const viteBuildMode = mode === 'production' ? 'production' : 'development';
+  const passedArgs = process.argv.slice(2);
+  const [cmd, ...args] = passedArgs.length ? passedArgs : ['npm', 'run', `_deploy:inner:${viteBuildMode}`];
   if (!cmd) {
     return;
   } // nothing to run – just export vars (shouldn't happen in practice)

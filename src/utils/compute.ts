@@ -23,58 +23,19 @@ export const getLevelList = (): number[] => {
   return _levelList;
 };
 
-export const genRoman = (gen: number | string) => {
-  switch (toNumber(gen)) {
-    case 1:
-      return 'I';
-    case 2:
-      return 'II';
-    case 3:
-      return 'III';
-    case 4:
-      return 'IV';
-    case 5:
-      return 'V';
-    case 6:
-      return 'VI';
-    case 7:
-      return 'VII';
-    case 8:
-      return 'VIII';
-    case 9:
-      return 'IX';
-    default:
-      return '';
-  }
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'] as const;
+
+export const genRoman = (gen: number | string) => ROMAN[toNumber(gen)] ?? '';
+
+const COST_MULTIPLIERS: Partial<Record<PokemonType, { stardust: number; candy: number }>> = {
+  [PokemonType.Shadow]: { stardust: 1.2, candy: 1.2 },
+  [PokemonType.Purified]: { stardust: 0.9, candy: 0.9 },
+  [PokemonType.Lucky]: { stardust: 0.5, candy: 1 },
 };
 
 export const typeCostPowerUp = (type: PokemonType | undefined) => {
-  switch (type) {
-    case PokemonType.Shadow:
-      return CostPowerUp.create({
-        stardust: 1.2,
-        candy: 1.2,
-        type,
-      });
-    case PokemonType.Purified:
-      return CostPowerUp.create({
-        stardust: 0.9,
-        candy: 0.9,
-        type,
-      });
-    case PokemonType.Lucky:
-      return CostPowerUp.create({
-        stardust: 0.5,
-        candy: 1,
-        type,
-      });
-    default:
-      return CostPowerUp.create({
-        stardust: 1,
-        candy: 1,
-        type,
-      });
-  }
+  const multiplier = (type !== undefined && COST_MULTIPLIERS[type]) || { stardust: 1, candy: 1 };
+  return CostPowerUp.create({ ...multiplier, type });
 };
 
 export const priorityBadge = (priority: number) => {
@@ -84,18 +45,14 @@ export const priorityBadge = (priority: number) => {
   return APIService.getBadgeSprite(`Frames/badge_ring_${priority}`);
 };
 
-export const rankName = (rank: number) => {
-  switch (rank) {
-    case 21:
-      return 'Ace';
-    case 22:
-      return 'Veteran';
-    case 23:
-      return 'Expert';
-    case 24:
-      return 'Legend';
-  }
+const RANK_NAMES: Partial<Record<number, string>> = {
+  21: 'Ace',
+  22: 'Veteran',
+  23: 'Expert',
+  24: 'Legend',
 };
+
+export const rankName = (rank: number) => RANK_NAMES[rank];
 
 export const rankIconName = (rank: number | string) => {
   const rankNumber = toNumber(rank);
@@ -110,12 +67,12 @@ export const rankIconName = (rank: number | string) => {
       return APIService.getPokeOtherLeague('special_combat_rank_3');
     case 24:
       return APIService.getPokeOtherLeague('special_combat_rank_4');
-    default:
-      return APIService.getPokeOtherLeague(
-        `CombatRank${Math.floor(rankNumber / 5)
-          .toString()
-          .padStart(2, '0')}`
-      );
+    default: {
+      const tier = Math.floor(rankNumber / 5)
+        .toString()
+        .padStart(2, '0');
+      return APIService.getPokeOtherLeague(`CombatRank${tier}`);
+    }
   }
 };
 
@@ -159,30 +116,44 @@ export const raidEgg = (tier: number, pokemonType?: PokemonType, pokemonClass?: 
   }
 };
 
-const getCandyData = (id: number | undefined) =>
-  (candy as ICandy[]).find(
+const _candyCache = new Map<number, ICandy | undefined>();
+
+const getCandyData = (id: number | undefined): ICandy | undefined => {
+  const key = toNumber(id);
+  if (_candyCache.has(key)) {
+    return _candyCache.get(key);
+  }
+  const data = (candy as ICandy[]).find(
     (item) =>
       isIncludeList(
-        item.familyGroup.map((value) => value.id),
+        item.familyGroup.map((v) => v.id),
         id
-      ) || item.familyId === toNumber(id)
+      ) || item.familyId === key
   );
+  _candyCache.set(key, data);
+  return data;
+};
+
+const toRgba = (color: Color) => `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 
 export const computeCandyColor = (id: number | undefined) => {
   const data = getCandyData(id);
-  const color = Color.createRgb(data?.primaryColor.r, data?.primaryColor.g, data?.primaryColor.b, data?.primaryColor.a);
-  return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+  return toRgba(
+    Color.createRgb(data?.primaryColor.r, data?.primaryColor.g, data?.primaryColor.b, data?.primaryColor.a)
+  );
 };
 
 export const computeCandyBgColor = (id: number | undefined) => {
   const data = getCandyData(id);
-  const color = Color.createRgb(
-    data?.secondaryColor.r,
-    data?.secondaryColor.g,
-    data?.secondaryColor.b,
-    data?.secondaryColor.a
+  return toRgba(
+    Color.createRgb(data?.secondaryColor.r, data?.secondaryColor.g, data?.secondaryColor.b, data?.secondaryColor.a)
   );
-  return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+};
+
+const getTypeColor = (type: string, styleList: IStyleData[], defaultBg: string, opacity: number) => {
+  const style = styleList.find((s) => isIncludeList(s.style.split(','), `.${type.toLowerCase()}`));
+  const color = getValueOrDefault(String, style?.property?.['background-color'], defaultBg);
+  return `${color.split(')').at(0)}, ${opacity})`;
 };
 
 export const computeBgType = (
@@ -196,18 +167,10 @@ export const computeBgType = (
   if (defaultColor) {
     return `linear-gradient(to bottom right, ${defaultColor}, ${defaultColor})`;
   }
-  const colorsPalette: string[] = [];
   if (typeof types === 'string') {
-    const style = styleList.find((style) => isIncludeList(style.style.split(','), `.${types.toLowerCase()}`));
-    const color = getValueOrDefault(String, style?.property?.['background-color'], defaultBg);
-    return `${color.split(')').at(0)}, ${toNumber(opacity, 1)})`;
-  } else {
-    types?.forEach((type) => {
-      const style = styleList.find((style) => isIncludeList(style.style.split(','), `.${type.toLowerCase()}`));
-      const color = getValueOrDefault(String, style?.property?.['background-color'], defaultBg);
-      colorsPalette.push(`${color.split(')').at(0)}, ${toNumber(opacity, 1)})`);
-    });
+    return getTypeColor(types, styleList, defaultBg, opacity);
   }
+  const colorsPalette = (types ?? []).map((type) => getTypeColor(type, styleList, defaultBg, opacity));
   const [priColor, secTempColor] = colorsPalette;
   const secColor = getValueOrDefault(String, secTempColor, priColor);
   switch (pokemonType) {
@@ -223,18 +186,13 @@ export const computeBgType = (
 export const findStabType = (types: string[] | undefined, findType: string | undefined) =>
   getValueOrDefault(Array, types).some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
 
-export const getPokemonBattleLeagueName = (cp = BattleLeagueCPType.Master) => {
-  switch (cp) {
-    case BattleLeagueCPType.Little:
-      return 'Little Cup';
-    case BattleLeagueCPType.Great:
-      return 'Great League';
-    case BattleLeagueCPType.Ultra:
-      return 'Ultra League';
-    default:
-      return 'Master League';
-  }
+const LEAGUE_NAMES: Partial<Record<BattleLeagueCPType, string>> = {
+  [BattleLeagueCPType.Little]: 'Little Cup',
+  [BattleLeagueCPType.Great]: 'Great League',
+  [BattleLeagueCPType.Ultra]: 'Ultra League',
 };
+
+export const getPokemonBattleLeagueName = (cp = BattleLeagueCPType.Master) => LEAGUE_NAMES[cp] ?? 'Master League';
 
 export const getPokemonBattleLeagueIcon = (cp = BattleLeagueCPType.Master) => {
   switch (cp) {

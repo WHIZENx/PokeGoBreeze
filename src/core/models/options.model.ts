@@ -555,7 +555,6 @@ export interface IConfig {
   lightThemeBg: string;
   darkThemeBg: string;
   persistKey: string;
-  persistTimeout: number;
   battleDelay: number;
   loadDataDelay: number;
   counterDelay: number;
@@ -640,7 +639,6 @@ export class Config implements IConfig {
   lightThemeBg = '';
   darkThemeBg = '';
   persistKey = '';
-  persistTimeout = 0;
   battleDelay = 0;
   loadDataDelay = 0;
   counterDelay = 0;

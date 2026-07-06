@@ -137,3 +137,8 @@ export enum LabelType {
   Dropdown,
   SplitButton,
 }
+
+export enum BooleanType {
+  False = 'false',
+  True = 'true',
+}

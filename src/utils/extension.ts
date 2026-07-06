@@ -72,18 +72,18 @@ export const getValueOrDefault = <T>(
 export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => columns as TableColumn<T>[];
 
 export const combineClasses = <T>(...classes: (T | null | undefined)[]) =>
-  classes.filter((c) => !isNullOrUndefined(c) && isNotEmpty(c?.toString())).join(' ');
+  classes.filter((c) => c != null && c.toString() !== '').join(' ');
 
-export const isUndefined = <T>(value?: T | null) => typeof value === 'undefined' && value === undefined;
+export const isUndefined = <T>(value?: T | null): value is undefined => value === undefined;
 
-export const isNull = <T>(value?: T | null) => typeof value !== 'undefined' && value === null;
+export const isNull = <T>(value?: T | null): value is null => value === null;
 
 export const isEmpty = (value?: string | null) => typeof value === 'string' && value === '';
 
 export const isNotEmpty = <T>(value: string | T[] | null | undefined) =>
   Array.isArray(value) ? value.length > 0 : !isNullOrUndefined(value) && !isEmpty(value);
 
-export const isNullOrUndefined = <T>(value?: T | null) => isNull(value) || isUndefined(value);
+export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined => value == null;
 
 export const isNullOrEmpty = (value?: string | null) => isNull(value) || isEmpty(value);
 
@@ -119,13 +119,14 @@ export const toFloat = (value: string | number | null | undefined, fixedRounding
 export const padding = (num: number, plusLength: number, mode = PaddingMode.End, fillString = '0') => {
   let result = num.toString();
   const [integer, point] = result.split('.');
+  const hasDot = result.includes('.');
   if (mode === PaddingMode.Start) {
-    result = result.padStart(plusLength + (isInclude(result, '.') ? 1 + toNumber(point?.length) : 0), fillString);
+    result = result.padStart(plusLength + (hasDot ? 1 + toNumber(point?.length) : 0), fillString);
   } else if (mode === PaddingMode.End) {
-    if (!isInclude(result, '.')) {
+    if (!hasDot) {
       result += '.';
     }
-    result = result.padEnd(plusLength + (isInclude(result, '.') ? 1 + toNumber(integer?.length) : 0), fillString);
+    result = result.padEnd(plusLength + 1 + toNumber(integer?.length), fillString);
   }
   return result;
 };
@@ -203,8 +204,10 @@ export const isIncludeList = <T>(
   );
   const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
   switch (mode) {
-    case IncludeMode.IncludeIgnoreCaseSensitive:
-      return result.map((i) => i.toUpperCase()).includes(resultIncludesValue.toUpperCase());
+    case IncludeMode.IncludeIgnoreCaseSensitive: {
+      const upper = resultIncludesValue.toUpperCase();
+      return result.some((i) => i.toUpperCase() === upper);
+    }
     case IncludeMode.Include:
     default:
       return result.includes(resultIncludesValue);
@@ -257,28 +260,25 @@ export const getPropertyName = <T extends object, S extends string = ''>(
     return '' as S;
   }
   const res = new Object() as DynamicKeyObj<T>;
-  Object.keys(obj).map((k) => (res[k as keyof T] = k));
+  Object.keys(obj).forEach((k) => (res[k as keyof T] = k));
   return expression(res) as S;
 };
 
 export const sparseIndexOf = <T>(array: T[], value: T, defaultOutput = -1) => {
-  return toNumber(
-    Object.keys(array).find((k) => array[toNumber(k)] === value),
-    defaultOutput
-  );
+  const key = Object.keys(array).find((k) => array[+k] === value);
+  return key !== undefined ? +key : defaultOutput;
 };
 
-export const UniqValueInArray = <T>(array: (T | null | undefined)[] | null | undefined) => {
-  const seen = new Object() as DynamicObj<number>;
+export const UniqValueInArray = <T>(array: (T | null | undefined)[] | null | undefined): T[] => {
+  const seen = new Set<string>();
   const out: T[] = [];
-  array = getValueOrDefault(Array, array);
-  const len = array.length;
-  let j = 0;
-  for (let i = 0; i < len; i++) {
-    const item = array[i];
-    if (!isNullOrUndefined(item) && seen[`${item}`] !== 1) {
-      seen[`${item}`] = 1;
-      out[j++] = item;
+  for (const item of getValueOrDefault(Array, array)) {
+    if (item != null) {
+      const key = `${item}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        out.push(item as T);
+      }
     }
   }
   return out;

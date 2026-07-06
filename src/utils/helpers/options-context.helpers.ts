@@ -125,7 +125,6 @@ export const battleDelay = () => currentOptions.config.battleDelay;
 export const lightThemeBg = () => currentOptions.config.lightThemeBg;
 export const darkThemeBg = () => currentOptions.config.darkThemeBg;
 export const persistKey = () => currentOptions.config.persistKey;
-export const persistTimeout = () => currentOptions.config.persistTimeout;
 export const loadDataDelay = () => currentOptions.config.loadDataDelay;
 export const counterDelay = () => currentOptions.config.counterDelay;
 export const statsDelay = () => currentOptions.config.statsDelay;

@@ -226,7 +226,15 @@ const StatsRanking = () => {
   const { getFilteredPokemons, getFindPokemon } = usePokemon();
   const [pokemon, setPokemon] = useState<IPokemonDetail>();
 
-  const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
+  const addShadowPurificationForms = (
+    result: IPokemonStatsRanking[],
+    value: IPokemonData,
+    details: IPokemonData,
+    atkRankMap: Map<number, number>,
+    defRankMap: Map<number, number>,
+    staRankMap: Map<number, number>,
+    prodRankMap: Map<number, number>
+  ) => {
     const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Atk));
     const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Def));
     const sta = Math.round(value.statsGO.sta);
@@ -237,22 +245,10 @@ const StatsRanking = () => {
         releasedGO: details.releasedGO,
         pokemonType: PokemonType.Shadow,
         fullName: details.fullName,
-        atk: StatsAtk.create({
-          attack: atkShadow,
-          rank: statsData?.attack?.ranking?.find((stat) => stat.attack === atkShadow)?.rank,
-        }),
-        def: StatsDef.create({
-          defense: defShadow,
-          rank: statsData?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank,
-        }),
-        sta: StatsSta.create({
-          stamina: sta,
-          rank: statsData?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
-        }),
-        prod: StatsProd.create({
-          product: prodShadow,
-          rank: statsData?.statProd?.ranking?.find((stat) => stat.product === prodShadow)?.rank,
-        }),
+        atk: StatsAtk.create({ attack: atkShadow, rank: atkRankMap.get(atkShadow) }),
+        def: StatsDef.create({ defense: defShadow, rank: defRankMap.get(defShadow) }),
+        sta: StatsSta.create({ stamina: sta, rank: staRankMap.get(sta) }),
+        prod: StatsProd.create({ product: prodShadow, rank: prodRankMap.get(prodShadow) }),
       })
     );
     const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Atk));
@@ -263,29 +259,39 @@ const StatsRanking = () => {
         ...value,
         releasedGO: details.releasedGO,
         pokemonType: PokemonType.Purified,
-        atk: StatsAtk.create({
-          attack: atkPurification,
-          rank: statsData?.attack?.ranking?.find((stat) => stat.attack === atkPurification)?.rank,
-        }),
-        def: StatsDef.create({
-          defense: defPurification,
-          rank: statsData?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank,
-        }),
-        sta: StatsSta.create({
-          stamina: sta,
-          rank: statsData?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
-        }),
-        prod: StatsProd.create({
-          product: prodPurification,
-          rank: statsData?.statProd?.ranking?.find((stat) => stat.product === prodPurification)?.rank,
-        }),
+        atk: StatsAtk.create({ attack: atkPurification, rank: atkRankMap.get(atkPurification) }),
+        def: StatsDef.create({ defense: defPurification, rank: defRankMap.get(defPurification) }),
+        sta: StatsSta.create({ stamina: sta, rank: staRankMap.get(sta) }),
+        prod: StatsProd.create({ product: prodPurification, rank: prodRankMap.get(prodPurification) }),
       })
     );
   };
 
   const mappingData = () => {
+    // Build rank lookup Maps once — O(n) — instead of calling .find() O(n) per pokemon per stat
+    const atkRankMap = new Map<number, number>(
+      statsData?.attack?.ranking?.flatMap((s) =>
+        s.attack !== undefined && s.rank !== undefined ? [[s.attack, s.rank] as [number, number]] : []
+      )
+    );
+    const defRankMap = new Map<number, number>(
+      statsData?.defense?.ranking?.flatMap((s) =>
+        s.defense !== undefined && s.rank !== undefined ? [[s.defense, s.rank] as [number, number]] : []
+      )
+    );
+    const staRankMap = new Map<number, number>(
+      statsData?.stamina?.ranking?.flatMap((s) =>
+        s.stamina !== undefined && s.rank !== undefined ? [[s.stamina, s.rank] as [number, number]] : []
+      )
+    );
+    const prodRankMap = new Map<number, number>(
+      statsData?.statProd?.ranking?.flatMap((s) =>
+        s.product !== undefined && s.rank !== undefined ? [[s.product, s.rank] as [number, number]] : []
+      )
+    );
+
     const result: IPokemonStatsRanking[] = [];
-    getFilteredPokemons().forEach((data) => {
+    for (const data of getFilteredPokemons()) {
       const details = getPokemonDetails(data.num, data.fullName, data.pokemonType, true);
       if (isSpecialFormType(data.pokemonType)) {
         details.pokemonType = PokemonType.Normal;
@@ -296,29 +302,17 @@ const StatsRanking = () => {
           releasedGO: details.releasedGO,
           pokemonType: details.pokemonType,
           fullName: details.fullName,
-          atk: StatsAtk.create({
-            attack: details.statsGO.atk,
-            rank: statsData?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank,
-          }),
-          def: StatsDef.create({
-            defense: details.statsGO.def,
-            rank: statsData?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank,
-          }),
-          sta: StatsSta.create({
-            stamina: details.statsGO.sta,
-            rank: statsData?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank,
-          }),
-          prod: StatsProd.create({
-            product: details.statsGO.prod,
-            rank: statsData?.statProd?.ranking?.find((stat) => stat.product === details.statsGO.prod)?.rank,
-          }),
+          atk: StatsAtk.create({ attack: details.statsGO.atk, rank: atkRankMap.get(details.statsGO.atk) }),
+          def: StatsDef.create({ defense: details.statsGO.def, rank: defRankMap.get(details.statsGO.def) }),
+          sta: StatsSta.create({ stamina: details.statsGO.sta, rank: staRankMap.get(details.statsGO.sta) }),
+          prod: StatsProd.create({ product: details.statsGO.prod, rank: prodRankMap.get(details.statsGO.prod) }),
         })
       );
 
       if (data.hasShadowForm) {
-        addShadowPurificationForms(result, data, details);
+        addShadowPurificationForms(result, data, details, atkRankMap, defRankMap, staRankMap, prodRankMap);
       }
-    });
+    }
     return result;
   };
 

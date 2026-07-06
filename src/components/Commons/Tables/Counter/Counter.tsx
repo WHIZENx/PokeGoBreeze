@@ -123,6 +123,7 @@ const Counter = (props: ICounterComponent) => {
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
   const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
   const [showFrame, setShowFrame] = useState(true);
+  const [filterTrigger, setFilterTrigger] = useState(0);
 
   // Memoize counter results by (def, types) so revisiting a Pokemon is instant
   const counterCacheRef = useRef(new Map<string, ICounterModel[]>());
@@ -284,6 +285,7 @@ const Counter = (props: ICounterComponent) => {
     const cached = counterCacheRef.current.get(cacheKey);
     if (cached) {
       setCounterList(cached);
+      setFilterTrigger((t) => t + 1);
       return;
     }
 
@@ -335,7 +337,7 @@ const Counter = (props: ICounterComponent) => {
       );
       setShowFrame(false);
     }
-  }, [counterList, showMegaPrimal, releasedGO, enableBest]);
+  }, [counterList, filterTrigger, showMegaPrimal, releasedGO, enableBest]);
 
   const filterBestOptions = (result: ICounterModel[]) => {
     const group = result.reduce(

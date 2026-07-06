@@ -200,10 +200,18 @@ const collectFallbackCries = (result: Asset, sounds: string[]) => {
 };
 
 export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: string[]) => {
+  // Build pokemonId → num map once instead of O(n) find per family member
+  const pokemonNumMap = new Map<string | number, number>();
+  for (const p of pokemon) {
+    if (p.pokemonId !== undefined && !pokemonNumMap.has(p.pokemonId)) {
+      pokemonNumMap.set(p.pokemonId, toNumber(p.num));
+    }
+  }
+
   const family = UniqValueInArray(pokemon.map((item) => item.pokemonId));
   return family.map((item) => {
     const result = new Asset();
-    result.id = toNumber(pokemon.find((poke) => isEqual(poke.pokemonId, item))?.num);
+    result.id = pokemonNumMap.get(item) ?? 0;
     result.name = item.toString();
 
     collectPrimaryIcons(result, imgs);

@@ -759,22 +759,15 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   );
 };
 
-const convertNameEffort = (name: string) => {
-  switch (name) {
-    case 'attack':
-      return 'atk';
-    case 'defense':
-      return 'def';
-    case 'special-attack':
-      return 'spa';
-    case 'special-defense':
-      return 'spd';
-    case 'speed':
-      return 'spe';
-    default:
-      return name;
-  }
+const EFFORT_NAME_MAP: Partial<Record<string, string>> = {
+  attack: 'atk',
+  defense: 'def',
+  'special-attack': 'spa',
+  'special-defense': 'spd',
+  speed: 'spe',
 };
+
+const convertNameEffort = (name: string) => EFFORT_NAME_MAP[name] ?? name;
 
 export const convertStatsEffort = (stats: Stats[] | undefined) => {
   const result = new StatsPokemon() as unknown as DynamicObj<number>;
@@ -998,14 +991,11 @@ export const getFormFromForms = (
 ) => {
   const forms = stats?.filter((i) => i.id === id);
   form = getPokemonFormWithNoneSpecialForm(form, pokemonType);
-  let filterForm = forms?.find((item) => isEqual(item.form, getValueOrDefault(String, form, formNormal())));
-  if (!filterForm && isNotEmpty(forms)) {
-    filterForm = forms?.find((item) => item.form === formNormal());
-    if (!filterForm) {
-      filterForm = forms?.at(0);
-    }
-  }
-  return filterForm;
+  return (
+    forms?.find((item) => isEqual(item.form, getValueOrDefault(String, form, formNormal()))) ??
+    forms?.find((item) => item.form === formNormal()) ??
+    forms?.at(0)
+  );
 };
 
 export const replaceTempMoveName = (name: string | number) => {
@@ -1063,16 +1053,13 @@ export const getAllMoves = (
   }
 };
 
-export const moveTypeToFormType = (moveType?: MoveType) => {
-  switch (moveType) {
-    case MoveType.Shadow:
-      return PokemonType.Shadow;
-    case MoveType.Purified:
-      return PokemonType.Purified;
-    default:
-      return PokemonType.Normal;
-  }
+const MOVE_TO_FORM_TYPE: Partial<Record<MoveType, PokemonType>> = {
+  [MoveType.Shadow]: PokemonType.Shadow,
+  [MoveType.Purified]: PokemonType.Purified,
 };
+
+export const moveTypeToFormType = (moveType?: MoveType) =>
+  (moveType !== undefined && MOVE_TO_FORM_TYPE[moveType]) || PokemonType.Normal;
 
 export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction) => {
   switch (type) {
@@ -1102,23 +1089,31 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction
   }
 };
 
+export const getStatProd = (statATK: number, statDEF: number, statSTA: number, form = PokemonType.Normal) =>
+  Math.floor(statATK * getDmgMultiplyBonus(form, TypeAction.Atk)) *
+  Math.floor(statDEF * getDmgMultiplyBonus(form, TypeAction.Def)) *
+  Math.round(statSTA);
+
 export const addSelectMovesByType = (
   pokemonData: IPokemonData,
   moveType: TypeMove,
   selectMoves: ISelectMoveModel[] = []
 ) => {
+  const push = (moves: string[] | undefined, type: MoveType) =>
+    moves?.forEach((v) => selectMoves.push(new SelectMoveModel(v, type)));
+
   if (moveType === TypeMove.Fast || moveType === TypeMove.All) {
-    pokemonData.quickMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.None)));
-    pokemonData.eliteQuickMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Elite)));
+    push(pokemonData.quickMoves, MoveType.None);
+    push(pokemonData.eliteQuickMoves, MoveType.Elite);
   }
   if (moveType === TypeMove.Charge || moveType === TypeMove.All) {
-    pokemonData.cinematicMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.None)));
-    pokemonData.eliteCinematicMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Elite)));
-    pokemonData.shadowMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Shadow)));
-    pokemonData.purifiedMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Purified)));
-    pokemonData.specialMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Special)));
-    pokemonData.exclusiveMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Exclusive)));
-    pokemonData.dynamaxMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Dynamax)));
+    push(pokemonData.cinematicMoves, MoveType.None);
+    push(pokemonData.eliteCinematicMoves, MoveType.Elite);
+    push(pokemonData.shadowMoves, MoveType.Shadow);
+    push(pokemonData.purifiedMoves, MoveType.Purified);
+    push(pokemonData.specialMoves, MoveType.Special);
+    push(pokemonData.exclusiveMoves, MoveType.Exclusive);
+    push(pokemonData.dynamaxMoves, MoveType.Dynamax);
   }
   return selectMoves;
 };
@@ -1145,29 +1140,36 @@ export const getMoveType = (pokemonData?: Partial<IPokemonData | IPokemonDetail>
   return MoveType.None;
 };
 
-export const getPokemonType = (formName?: string | number | null, isMega = false, isShadow = true) => {
+export const getPokemonType = (formName?: string | number | null, isMega = false, isShadow = true): PokemonType => {
   if (isInclude(formName, formNormal(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonType.Normal;
-  } else if (isInclude(formName, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) && isShadow) {
+  }
+  if (isInclude(formName, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) && isShadow) {
     return PokemonType.Shadow;
-  } else if (isInclude(formName, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive)) {
+  }
+  if (isInclude(formName, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonType.Purified;
-  } else if (isInclude(formName, formGmax(), IncludeMode.IncludeIgnoreCaseSensitive)) {
+  }
+  if (isInclude(formName, formGmax(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonType.GMax;
-  } else if (isInclude(formName, formPrimal(), IncludeMode.IncludeIgnoreCaseSensitive)) {
+  }
+  if (isInclude(formName, formPrimal(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonType.Primal;
-  } else if (isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive) || isMega) {
+  }
+  if (isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive) || isMega) {
     return PokemonType.Mega;
   }
   return PokemonType.None;
 };
 
-export const getPokemonClass = (className?: string | number | null) => {
+export const getPokemonClass = (className?: string | number | null): PokemonClass => {
   if (isInclude(className, classLegendary(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonClass.Legendary;
-  } else if (isInclude(className, classMythic(), IncludeMode.IncludeIgnoreCaseSensitive)) {
+  }
+  if (isInclude(className, classMythic(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonClass.Mythic;
-  } else if (isInclude(className, classUltraBeast(), IncludeMode.IncludeIgnoreCaseSensitive)) {
+  }
+  if (isInclude(className, classUltraBeast(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonClass.UltraBeast;
   }
   return PokemonClass.None;
@@ -1182,6 +1184,7 @@ export const generateParamForm = (form: string | undefined, pokemonType = Pokemo
   if (form) {
     if (
       !IsNoneSpecialForm &&
+      isEqual(form, formNormal(), EqualMode.IgnoreCaseSensitive) &&
       (isEqual(form, formShadow(), EqualMode.IgnoreCaseSensitive) ||
         isEqual(form, formPurified(), EqualMode.IgnoreCaseSensitive))
     ) {
@@ -1201,78 +1204,63 @@ export const generateParamForm = (form: string | undefined, pokemonType = Pokemo
   return '';
 };
 
+type TypeEffectiveKey = keyof TypeEffectiveChart;
+
+const EFFECTIVE_THRESHOLDS: [EffectiveType, TypeEffectiveKey][] = [
+  [EffectiveType.VeryWeakness, 'veryWeak'],
+  [EffectiveType.Weakness, 'weak'],
+  [EffectiveType.Neutral, 'neutral'],
+  [EffectiveType.Resistance, 'resist'],
+  [EffectiveType.VeryResistance, 'veryResist'],
+  [EffectiveType.SuperResistance, 'superResist'],
+];
+
 export const getMultiplyTypeEffect = (data: TypeEffectiveChart, valueEffective: number, key: string) => {
-  if (valueEffective >= EffectiveType.VeryWeakness && !isIncludeList(data.veryWeak, key)) {
-    data.veryWeak?.push(key);
-  } else if (valueEffective >= EffectiveType.Weakness && !isIncludeList(data.weak, key)) {
-    data.weak?.push(key);
-  } else if (valueEffective >= EffectiveType.Neutral && !isIncludeList(data.neutral, key)) {
-    data.neutral?.push(key);
-  } else if (valueEffective >= EffectiveType.Resistance && !isIncludeList(data.resist, key)) {
-    data.resist?.push(key);
-  } else if (valueEffective >= EffectiveType.VeryResistance && !isIncludeList(data.veryResist, key)) {
-    data.veryResist?.push(key);
-  } else if (valueEffective >= EffectiveType.SuperResistance && !isIncludeList(data.superResist, key)) {
-    data.superResist?.push(key);
+  const entry = EFFECTIVE_THRESHOLDS.find(([threshold]) => valueEffective >= threshold);
+  if (entry && !isIncludeList(data[entry[1]], key)) {
+    data[entry[1]]?.push(key);
   }
 };
 
-export const getTicketRewardType = (type?: string | number | null) => {
-  if (isInclude(type, ItemTicketRewardType.Avatar, IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return TicketRewardType.Avatar;
-  } else if (isInclude(type, ItemTicketRewardType.Exp, IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return TicketRewardType.Exp;
-  } else if (isInclude(type, ItemTicketRewardType.Item, IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return TicketRewardType.Item;
-  } else if (isInclude(type, ItemTicketRewardType.PokeCoin, IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return TicketRewardType.PokeCoin;
-  } else if (isInclude(type, ItemTicketRewardType.Pokemon, IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return TicketRewardType.Pokemon;
-  } else if (isInclude(type, ItemTicketRewardType.Stardust, IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return TicketRewardType.Stardust;
-  } else if (isInclude(type, ItemTicketRewardType.Candy, IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return TicketRewardType.Candy;
-  }
-  return TicketRewardType.None;
+const TICKET_REWARD_CHECKS: [string, TicketRewardType][] = [
+  [ItemTicketRewardType.Avatar, TicketRewardType.Avatar],
+  [ItemTicketRewardType.Exp, TicketRewardType.Exp],
+  [ItemTicketRewardType.Item, TicketRewardType.Item],
+  [ItemTicketRewardType.PokeCoin, TicketRewardType.PokeCoin],
+  [ItemTicketRewardType.Pokemon, TicketRewardType.Pokemon],
+  [ItemTicketRewardType.Stardust, TicketRewardType.Stardust],
+  [ItemTicketRewardType.Candy, TicketRewardType.Candy],
+];
+
+export const getTicketRewardType = (type?: string | number | null): TicketRewardType => {
+  const match = TICKET_REWARD_CHECKS.find(([key]) => isInclude(type, key, IncludeMode.IncludeIgnoreCaseSensitive));
+  return match?.[1] ?? TicketRewardType.None;
 };
 
-export const getLureItemType = (lureItem: string | undefined | null) => {
-  switch (lureItem) {
-    case ItemLureType.Magnetic:
-      return ItemLureRequireType.Magnetic;
-    case ItemLureType.Mossy:
-      return ItemLureRequireType.Mossy;
-    case ItemLureType.Glacial:
-      return ItemLureRequireType.Glacial;
-    case ItemLureType.Rainy:
-      return ItemLureRequireType.Rainy;
-    case ItemLureType.Sparkly:
-      return ItemLureRequireType.Sparkly;
-  }
+const LURE_TYPE_MAP: Partial<Record<ItemLureType, ItemLureRequireType>> = {
+  [ItemLureType.Magnetic]: ItemLureRequireType.Magnetic,
+  [ItemLureType.Mossy]: ItemLureRequireType.Mossy,
+  [ItemLureType.Glacial]: ItemLureRequireType.Glacial,
+  [ItemLureType.Rainy]: ItemLureRequireType.Rainy,
+  [ItemLureType.Sparkly]: ItemLureRequireType.Sparkly,
 };
 
-export const getItemEvolutionType = (itemEvolution: ItemEvolutionType) => {
-  switch (itemEvolution) {
-    case ItemEvolutionType.SunStone:
-      return ItemEvolutionRequireType.SunStone;
-    case ItemEvolutionType.KingsRock:
-      return ItemEvolutionRequireType.KingsRock;
-    case ItemEvolutionType.MetalCoat:
-      return ItemEvolutionRequireType.MetalCoat;
-    case ItemEvolutionType.Gen4Stone:
-      return ItemEvolutionRequireType.Gen4Stone;
-    case ItemEvolutionType.DragonScale:
-      return ItemEvolutionRequireType.DragonScale;
-    case ItemEvolutionType.Upgrade:
-      return ItemEvolutionRequireType.Upgrade;
-    case ItemEvolutionType.Gen5Stone:
-      return ItemEvolutionRequireType.Gen5Stone;
-    case ItemEvolutionType.OtherStone:
-      return ItemEvolutionRequireType.OtherStone;
-    case ItemEvolutionType.Beans:
-      return ItemEvolutionRequireType.Beans;
-  }
+export const getLureItemType = (lureItem: string | undefined | null) =>
+  lureItem ? LURE_TYPE_MAP[lureItem as ItemLureType] : undefined;
+
+const ITEM_EVOLUTION_MAP: Partial<Record<ItemEvolutionType, ItemEvolutionRequireType>> = {
+  [ItemEvolutionType.SunStone]: ItemEvolutionRequireType.SunStone,
+  [ItemEvolutionType.KingsRock]: ItemEvolutionRequireType.KingsRock,
+  [ItemEvolutionType.MetalCoat]: ItemEvolutionRequireType.MetalCoat,
+  [ItemEvolutionType.Gen4Stone]: ItemEvolutionRequireType.Gen4Stone,
+  [ItemEvolutionType.DragonScale]: ItemEvolutionRequireType.DragonScale,
+  [ItemEvolutionType.Upgrade]: ItemEvolutionRequireType.Upgrade,
+  [ItemEvolutionType.Gen5Stone]: ItemEvolutionRequireType.Gen5Stone,
+  [ItemEvolutionType.OtherStone]: ItemEvolutionRequireType.OtherStone,
+  [ItemEvolutionType.Beans]: ItemEvolutionRequireType.Beans,
 };
+
+export const getItemEvolutionType = (itemEvolution: ItemEvolutionType) => ITEM_EVOLUTION_MAP[itemEvolution];
 
 const ITEM_SPRITE_MAP: Partial<Record<string, string>> = {
   [ItemName.RaidTicket]: 'Item_1401',
@@ -1289,43 +1277,33 @@ const ITEM_SPRITE_MAP: Partial<Record<string, string>> = {
   [ItemName.LuckyEgg]: 'luckyegg',
 };
 
+const ITEM_INCLUDE_SPRITES: [string, string][] = [
+  [ItemName.PaidRaidTicket, 'Item_1402'],
+  [ItemName.StarPice, 'starpiece'],
+  [ItemName.Poffin, 'Item_0704'],
+  [ItemName.EliteFastAttack, 'Item_1203'],
+  [ItemName.EliteSpecialAttack, 'Item_1204'],
+  [ItemName.IncubatorBasic, 'EggIncubatorIAP_Empty'],
+  [ItemName.IncubatorSuper, 'EggIncubatorSuper_Empty'],
+  [ItemName.Incense, 'Incense_0'],
+  [ItemName.Potion, 'Item_0101'],
+  [ItemName.SuperPotion, 'Item_0102'],
+  [ItemName.HyperPotion, 'Item_0103'],
+  [ItemName.MaxPotion, 'Item_0104'],
+  [ItemName.Revive, 'Item_0201'],
+  [ItemName.MaxRevive, 'Item_0202'],
+];
+
 export const getItemSpritePath = (itemName: string | null | undefined) => {
   const exactSprite = itemName ? ITEM_SPRITE_MAP[itemName] : undefined;
   if (exactSprite) {
     return APIService.getItemSprite(exactSprite);
-  } else if (isInclude(itemName, ItemName.Troy)) {
-    const itemLure = getLureItemType(itemName);
-    return APIService.getItemTroy(itemLure);
-  } else if (isInclude(itemName, ItemName.PaidRaidTicket)) {
-    return APIService.getItemSprite('Item_1402');
-  } else if (isInclude(itemName, ItemName.StarPice)) {
-    return APIService.getItemSprite('starpiece');
-  } else if (isInclude(itemName, ItemName.Poffin)) {
-    return APIService.getItemSprite('Item_0704');
-  } else if (isInclude(itemName, ItemName.EliteFastAttack)) {
-    return APIService.getItemSprite('Item_1203');
-  } else if (isInclude(itemName, ItemName.EliteSpecialAttack)) {
-    return APIService.getItemSprite('Item_1204');
-  } else if (isInclude(itemName, ItemName.IncubatorBasic)) {
-    return APIService.getItemSprite('EggIncubatorIAP_Empty');
-  } else if (isInclude(itemName, ItemName.IncubatorSuper)) {
-    return APIService.getItemSprite('EggIncubatorSuper_Empty');
-  } else if (isInclude(itemName, ItemName.Incense)) {
-    return APIService.getItemSprite('Incense_0');
-  } else if (isInclude(itemName, ItemName.Potion)) {
-    return APIService.getItemSprite('Item_0101');
-  } else if (isInclude(itemName, ItemName.SuperPotion)) {
-    return APIService.getItemSprite('Item_0102');
-  } else if (isInclude(itemName, ItemName.HyperPotion)) {
-    return APIService.getItemSprite('Item_0103');
-  } else if (isInclude(itemName, ItemName.MaxPotion)) {
-    return APIService.getItemSprite('Item_0104');
-  } else if (isInclude(itemName, ItemName.Revive)) {
-    return APIService.getItemSprite('Item_0201');
-  } else if (isInclude(itemName, ItemName.MaxRevive)) {
-    return APIService.getItemSprite('Item_0202');
   }
-  return APIService.getPokeSprite();
+  if (isInclude(itemName, ItemName.Troy)) {
+    return APIService.getItemTroy(getLureItemType(itemName));
+  }
+  const match = ITEM_INCLUDE_SPRITES.find(([key]) => isInclude(itemName, key));
+  return match ? APIService.getItemSprite(match[1]) : APIService.getPokeSprite();
 };
 
 export const getValidPokemonImgPath = (src: string | undefined | null, id?: number, form?: string | null) => {
@@ -1341,18 +1319,23 @@ export const getValidPokemonImgPath = (src: string | undefined | null, id?: numb
   return APIService.getPokeFullSprite();
 };
 
-export const getBonusType = (bonusType: string | number | BonusType | undefined) => {
+export const getBonusType = (bonusType: string | number | BonusType | undefined): BonusType => {
   if (bonusType === BonusType.AttackDefenseBonus || bonusType === BonusType.AttackDefenseBonus2) {
     return BonusType.AttackDefenseBonus;
-  } else if (bonusType === BonusType.SlowFreezeBonus || bonusType === BonusType.SlowFreezeBonus2) {
+  }
+  if (bonusType === BonusType.SlowFreezeBonus || bonusType === BonusType.SlowFreezeBonus2) {
     return BonusType.SlowFreezeBonus;
-  } else if (isEqual(bonusType, 'SPACE_BONUS') || bonusType === BonusType.SpaceBonus) {
+  }
+  if (isEqual(bonusType, 'SPACE_BONUS') || bonusType === BonusType.SpaceBonus) {
     return BonusType.SpaceBonus;
-  } else if (isEqual(bonusType, 'TIME_BONUS') || bonusType === BonusType.TimeBonus) {
+  }
+  if (isEqual(bonusType, 'TIME_BONUS') || bonusType === BonusType.TimeBonus) {
     return BonusType.TimeBonus;
-  } else if (isEqual(bonusType, 'DAY_BONUS') || bonusType === BonusType.DayBonus) {
+  }
+  if (isEqual(bonusType, 'DAY_BONUS') || bonusType === BonusType.DayBonus) {
     return BonusType.DayBonus;
-  } else if (isEqual(bonusType, 'NIGHT_BONUS') || bonusType === BonusType.NightBonus) {
+  }
+  if (isEqual(bonusType, 'NIGHT_BONUS') || bonusType === BonusType.NightBonus) {
     return BonusType.NightBonus;
   }
   return BonusType.None;
@@ -1360,13 +1343,15 @@ export const getBonusType = (bonusType: string | number | BonusType | undefined)
 
 export const isPokemonNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) =>
   !isSpecialFormType(pokemonType) &&
-  (isInclude(form, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) ||
-    isInclude(form, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive));
+  !(
+    isInclude(form, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) ||
+    isInclude(form, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive)
+  );
 
 export const getPokemonFormWithNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) => {
   const IsNoneSpecialForm = isPokemonNoneSpecialForm(form, pokemonType);
   form = form?.toUpperCase().replaceAll('-', '_');
-  if (!IsNoneSpecialForm) {
+  if (IsNoneSpecialForm) {
     form = convertPokemonAPIDataName(form);
   }
   return form;

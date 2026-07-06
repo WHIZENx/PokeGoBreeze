@@ -45,6 +45,7 @@ import {
   IPokemonData,
   IPokemonMoveData,
   IPokemonRaidModel,
+  PokemonData,
   PokemonDataStats,
   PokemonDPSBattle,
   PokemonMoveData,
@@ -102,6 +103,18 @@ import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import DialogMui from '../../../components/Commons/Dialogs/Dialogs';
 import Tooltips from '../../../components/Commons/Tooltips/Tooltips';
+
+const SORT_MENU_ITEMS = [
+  { value: SortType.DPS, label: 'Damage Per Second' },
+  { value: SortType.TDO, label: 'Total Damage Output' },
+  { value: SortType.TTK, label: 'Time To Kill' },
+  { value: SortType.TANK, label: 'Tankiness' },
+];
+
+const PRIORITY_MENU_ITEMS = [
+  { value: SortDirectionType.ASC, label: 'Best' },
+  { value: SortDirectionType.DESC, label: 'Worst' },
+];
 
 const RaidBattle = () => {
   useTitle({
@@ -457,13 +470,16 @@ const RaidBattle = () => {
       addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, fMove, fMoveType, pokemonTarget);
     });
 
-  const calculateTopBattle = (pokemonTarget: boolean) => {
-    let dataList: IPokemonMoveData[] = [];
-    getFilteredPokemons().forEach((pokemon) => {
-      if (pokemon.pokemonType !== PokemonType.GMax) {
-        addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast), pokemonTarget);
+  const calculateTopBattle = async (pokemonTarget: boolean) => {
+    const yieldToMain = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+    const pokemons = getFilteredPokemons().filter((p) => p.pokemonType !== PokemonType.GMax);
+    const dataList: IPokemonMoveData[] = [];
+    for (let i = 0; i < pokemons.length; i++) {
+      addFPokeData(dataList, pokemons[i], getAllMoves(pokemons[i], TypeMove.Fast), pokemonTarget);
+      if (i % 20 === 19) {
+        await yieldToMain();
       }
-    });
+    }
     if (pokemonTarget) {
       const sortedDPS = [...dataList].sort((a, b) => a.dpsAtk - b.dpsAtk);
       const sortedTDO = [...dataList].sort((a, b) => a.tdoAtk - b.tdoAtk);
@@ -487,17 +503,17 @@ const RaidBattle = () => {
         },
         new Object() as DynamicObj<IPokemonMoveData[]>
       );
-      dataList = Object.values(group)
+      const sorted = Object.values(group)
         .map((pokemon) => pokemon.reduce((p, c) => (p.dpsAtk > c.dpsAtk ? p : c)))
         .sort((a, b) => b.dpsAtk - a.dpsAtk);
-      setResult(dataList);
+      setResult(sorted);
       hideSpinner();
     }
   };
 
-  const calculateBossBattle = () => {
-    calculateTopBattle(true);
-    calculateTopBattle(false);
+  const calculateBossBattle = async () => {
+    await calculateTopBattle(true);
+    await calculateTopBattle(false);
   };
 
   const calculateDPSBattle = (pokemonRaid: IPokemonRaidModel, hpRemain: number, timer: number) => {
@@ -572,17 +588,8 @@ const RaidBattle = () => {
     return isNotEmpty(trainerNoPokemon);
   };
 
-  const calculateTrainerBattle = (trainerBattle: ITrainerBattle[]) => {
-    const trainer = trainerBattle.map((trainer) => trainer.pokemons);
-    if (disableRaidBattle(trainerBattle)) {
-      showSnackbar('Please select Pokémon to raid battle!', 'error');
-      return;
-    }
-    if (!resultBoss) {
-      handleCalculate(false);
-    }
-    showSnackbar('Simulator battle raid successfully!', 'success');
-
+  const runTrainerBattle = (trainerBattle: ITrainerBattle[], bossHpInit: number) => {
+    const trainer = trainerBattle.map((t) => t.pokemons);
     const turn: IPokemonRaidModel[][] = [];
     trainer.forEach((pokemons, trainerId) => {
       pokemons.forEach((_, index) => {
@@ -592,7 +599,7 @@ const RaidBattle = () => {
     });
     const result: IRaidResult[] = [];
     let timer = 0,
-      bossHp = statBossHP;
+      bossHp = bossHpInit;
     turn.forEach((group) => {
       const dataList = new RaidResult({
         pokemon: [],
@@ -636,25 +643,41 @@ const RaidBattle = () => {
         : TimeToKill(Math.floor(sumHp), dataList.summary.dpsDef);
       const timeKill = Math.min(ttkAtk, ttkDef);
 
+      const bossKilled = dataList.summary.tdoAtk >= Math.floor(dataList.summary.bossHp);
       bossHp -= dataList.summary.tdoAtk;
       timer += timeKill;
       dataList.summary.timer = timer;
 
       dataList.pokemon = dataList.pokemon.map((pokemon) => {
         const tdoAtk = (dataList.summary.tdoAtk / dataList.summary.dpsAtk) * pokemon.dpsAtk;
-        const ttkDef = toNumber(timeKill, pokemon.ttkDef);
+        const ttkDefPokemon = toNumber(timeKill, pokemon.ttkDef);
         return PokemonMoveData.create({
           ...pokemon,
           tdoAtk,
-          atkHpRemain:
-            dataList.summary.tdoAtk >= Math.floor(dataList.summary.bossHp)
-              ? Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.min(ttkDef) * pokemon.dpsDef)
-              : Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.max(ttkDef) * pokemon.dpsDef),
+          atkHpRemain: bossKilled
+            ? Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.min(ttkDefPokemon, timeKill) * pokemon.dpsDef)
+            : Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.max(ttkDefPokemon, timeKill) * pokemon.dpsDef),
         });
       });
       result.push(dataList);
     });
     setResultRaid(result);
+    showSnackbar('Simulator battle raid successfully!', 'success');
+  };
+
+  const calculateTrainerBattle = async (trainerBattle: ITrainerBattle[]) => {
+    if (disableRaidBattle(trainerBattle)) {
+      showSnackbar('Please select Pokémon to raid battle!', 'error');
+      return;
+    }
+    if (!resultBoss) {
+      showSpinner();
+      clearDataBoss(false);
+      await calculateBossBattle();
+      runTrainerBattle(trainerBattle, statBossHP);
+    } else {
+      runTrainerBattle(trainerBattle, statBossHP);
+    }
   };
 
   useEffect(() => {
@@ -679,12 +702,10 @@ const RaidBattle = () => {
     setDisableSearch(false);
   }, [options.enableTimeAllow, options.isReleased, options.isWeatherBoss, options.isWeatherCounter, timeAllow]);
 
-  const handleCalculate = (isClear = true) => {
+  const handleCalculate = async (isClear = true) => {
     showSpinner();
-    setTimeout(() => {
-      clearDataBoss(isClear);
-      calculateBossBattle();
-    }, 500);
+    clearDataBoss(isClear);
+    await calculateBossBattle();
   };
 
   const calculateHpBar = (bossHp: number, tdo: number, sumDps: number) => {
@@ -728,6 +749,9 @@ const RaidBattle = () => {
       </Fragment>
     );
   };
+
+  const calcSuggestedPlayers = (bossHp: number, tdoPerPokemon: number) =>
+    Math.max(1, Math.ceil(bossHp / (tdoPerPokemon * 6)));
 
   const resultBattle = (bossHp: number, timer: number) => {
     const status =
@@ -857,12 +881,7 @@ const RaidBattle = () => {
         value={filters.selected.sortBy}
         fullWidth
         select
-        menuItems={[
-          { value: SortType.DPS, label: 'Damage Per Second' },
-          { value: SortType.TDO, label: 'Total Damage Output' },
-          { value: SortType.TTK, label: 'Time To Kill' },
-          { value: SortType.TANK, label: 'Tankiness' },
-        ]}
+        menuItems={SORT_MENU_ITEMS}
         onChange={(value) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(value) } })}
       />
       <InputMui
@@ -870,10 +889,7 @@ const RaidBattle = () => {
         value={filters.selected.sorted}
         fullWidth
         select
-        menuItems={[
-          { value: SortDirectionType.ASC, label: 'Best' },
-          { value: SortDirectionType.DESC, label: 'Worst' },
-        ]}
+        menuItems={PRIORITY_MENU_ITEMS}
         onChange={(value) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(value) } })}
       />
     </form>
@@ -1107,23 +1123,31 @@ const RaidBattle = () => {
     setHoverSlot(undefined);
   };
 
-  const onMovePokemon = (pokemonBattle: PokemonRaidModel) => {
-    if (showMovePokemon.pokemon?.pokemon) {
-      const stats = pokemonBattle.dataTargetPokemon?.stats ?? initPokemonStats;
-      pokemonBattle.dataTargetPokemon = showMovePokemon.pokemon.pokemon;
-      pokemonBattle.dataTargetPokemon.stats = new PokemonDataStats({
-        ...stats,
-        pokemonType: showMovePokemon.pokemon.pokemonType ?? PokemonType.None,
-      });
-      pokemonBattle.fMoveTargetPokemon = new SelectMoveModel(
-        showMovePokemon.pokemon.fMove?.name,
-        showMovePokemon.pokemon.fMoveType
-      );
-      pokemonBattle.cMoveTargetPokemon = new SelectMoveModel(
-        showMovePokemon.pokemon.cMove?.name,
-        showMovePokemon.pokemon.cMoveType
-      );
+  const onMovePokemon = (trainerIndex: number, slotIndex: number) => {
+    if (!showMovePokemon.pokemon?.pokemon) {
+      return;
     }
+    const src = showMovePokemon.pokemon;
+    setTrainerBattle((prev) => {
+      const trainer = prev[trainerIndex];
+      const slot = trainer.pokemons[slotIndex];
+      const stats = slot.dataTargetPokemon?.stats ?? initPokemonStats;
+      const dataTargetPokemon = PokemonData.copy(src.pokemon);
+      if (dataTargetPokemon) {
+        dataTargetPokemon.stats = new PokemonDataStats({
+          ...stats,
+          pokemonType: src.pokemonType ?? PokemonType.None,
+        });
+      }
+      const updatedSlot = PokemonRaidModel.create({
+        ...slot,
+        dataTargetPokemon,
+        fMoveTargetPokemon: new SelectMoveModel(src.fMove?.name, src.fMoveType),
+        cMoveTargetPokemon: new SelectMoveModel(src.cMove?.name, src.cMoveType),
+      });
+      return update(prev, { [trainerIndex]: { pokemons: { [slotIndex]: { $set: updatedSlot } } } });
+    });
+    handleCloseMovePokemon();
   };
 
   const modalMovePokemon = () => {
@@ -1156,7 +1180,7 @@ const RaidBattle = () => {
         </div>
         <p className="tw-mt-2">Select slot Pokémon that you want to replace.</p>
         <div className="tw-mt-2 tw-justify-center tw-px-2">
-          {trainerBattle.map((trainer) => (
+          {trainerBattle.map((trainer, trainerIndex) => (
             <div className="trainer-battle tw-flex tw-items-center tw-relative" key={trainer.trainerId}>
               <Badge
                 color="primary"
@@ -1185,7 +1209,7 @@ const RaidBattle = () => {
                       'pokemon-battle',
                       hoverSlot === `${trainer.trainerId}-${index}` ? 'slot-active' : ''
                     )}
-                    onClick={() => onMovePokemon(poke)}
+                    onClick={() => onMovePokemon(trainerIndex, index)}
                   >
                     {poke.dataTargetPokemon ? (
                       <span className="tw-relative">
@@ -1431,29 +1455,25 @@ const RaidBattle = () => {
           <div className="top-raid-group">
             {result
               .filter((obj) => {
-                if (!used.onlyReleasedGO) {
-                  return true;
-                }
-                if (obj.pokemon) {
+                if (used.onlyReleasedGO) {
+                  if (!obj.pokemon) {
+                    return false;
+                  }
                   const isReleasedGO = checkPokemonGO(
                     obj.pokemon.num,
                     getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId?.toString())
                   );
-                  return getValueOrDefault(Boolean, obj.pokemon.releasedGO, isReleasedGO);
+                  if (!getValueOrDefault(Boolean, obj.pokemon.releasedGO, isReleasedGO)) {
+                    return false;
+                  }
                 }
-                return false;
-              })
-              .filter((obj) => {
-                if (!used.onlyMega) {
-                  return true;
+                if (used.onlyMega && obj.pokemon?.pokemonType !== PokemonType.Mega) {
+                  return false;
                 }
-                return obj.pokemon?.pokemonType === PokemonType.Mega;
-              })
-              .filter((obj) => {
-                if (!used.onlyShadow) {
-                  return true;
+                if (used.onlyShadow && obj.pokemonType !== PokemonType.Shadow) {
+                  return false;
                 }
-                return obj.pokemonType === PokemonType.Shadow;
+                return true;
               })
               .slice(0, 10)
               .map((value, index) => (
@@ -1668,23 +1688,23 @@ const RaidBattle = () => {
                   <div className="lg:tw-w-1/2 tw-flex tw-flex-wrap tw-justify-center tw-items-center tw-mb-3">
                     <h2 className="tw-text-center !tw-m-0">Suggested players</h2>
                     <hr className="tw-w-full" />
-                    <div className="tw-inline-block tw-text-center">
-                      <h3 className="tw-block !tw-m-0">
-                        {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP)))}
-                      </h3>
-                      {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP))) === 1 ? (
-                        <span className="caption !tw-text-green-600">Easy</span>
-                      ) : (
-                        <span className="caption !tw-text-red-600">Hard</span>
-                      )}
-                    </div>
-                    <h3 className="tw-mx-2 tw-mb-3"> - </h3>
-                    <div className="tw-inline-block tw-text-center">
-                      <h3 className="tw-block !tw-m-0">
-                        {Math.ceil(statBossHP / (statBossHP - Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)))}+
-                      </h3>
-                      <span className="caption !tw-text-green-600">Easy</span>
-                    </div>
+                    {(() => {
+                      const hardPlayers = calcSuggestedPlayers(statBossHP, resultBoss.maxTDO);
+                      const easyPlayers = calcSuggestedPlayers(statBossHP, resultBoss.minTDO);
+                      return (
+                        <div className="tw-flex tw-items-center tw-gap-3">
+                          <div className="tw-inline-block tw-text-center">
+                            <h3 className="tw-block !tw-m-0">{hardPlayers}</h3>
+                            <span className="caption !tw-text-red-600">Hard</span>
+                          </div>
+                          <h3 className="!tw-m-0">–</h3>
+                          <div className="tw-inline-block tw-text-center">
+                            <h3 className="tw-block !tw-m-0">{easyPlayers}</h3>
+                            <span className="caption !tw-text-green-600">Easy</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </Fragment>

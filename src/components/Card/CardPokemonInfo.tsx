@@ -138,4 +138,4 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   );
 };
 
-export default CardPokemonInfo;
+export default React.memo(CardPokemonInfo);
