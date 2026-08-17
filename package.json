@@ -5,6 +5,9 @@
   "license": "MIT",
   "description": "Web Application for Pokémon GO Tools&Information",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -110,14 +113,14 @@
     "vm-browserify": "^1.1.2"
   },
   "peerDependencies": {
-    "postcss": "8.5.14"
+    "postcss": "8.5.26"
   },
   "overrides": {
     "typescript": "5.5.3",
     "cross-spawn": "6.0.6",
     "got": "11.8.5",
     "nth-check": "2.0.1",
-    "postcss": "8.5.14",
+    "postcss": "8.5.26",
     "semver-regex": "3.1.4",
     "ws": "8.17.1",
     "webpack-dev-server": "5.2.1",
