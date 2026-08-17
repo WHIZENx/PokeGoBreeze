@@ -26,7 +26,7 @@ import usePokemon from './usePokemon';
 export const useTimestamp = () => {
   const dispatch = useDispatch();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
-  const { getAuthorizationHeaders, loadPokeGOLogo, loadGameMaster, loadAssets } = useDataStore();
+  const { getAuthorizationHeaders, loadPokeGOLogo, loadGameMaster, loadAssets, loadProcessedData } = useDataStore();
   const { getFilteredPokemons } = usePokemon();
 
   /**
@@ -73,6 +73,10 @@ export const useTimestamp = () => {
 
   const loadTimestamp = async (isCurrentVersion: boolean) => {
     try {
+      if (await loadProcessedData(isCurrentVersion)) {
+        return;
+      }
+
       const [GMtimestamp, iconRoot, imageRoot, soundsRoot] = await Promise.all([
         APIService.getFetchUrl<string>(APIUrl.TIMESTAMP),
         APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, getAuthorizationHeaders),

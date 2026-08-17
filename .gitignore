@@ -32,6 +32,9 @@
 # generated files
 /public/sitemap.xml
 
+# Standalone API repository staged locally next to the web source
+/PokeGoBreeze-api/
+
 # misc
 .env
 config.json

@@ -1,0 +1,40 @@
+# API processing audit
+
+## What moved off the browser main thread
+
+The API data generator reuses the existing functions in `src/core/options` to parse the upstream Game Master and asset trees. It emits independently cacheable JSON sections for options, Pokemon, combats, assets, leagues, evolution chains, information, stickers, and trainers.
+
+The web app uses the processed API when `REACT_APP_DATA_API_URL` is set. If the API is unavailable, the existing browser pipeline remains as a rollout fallback. The generated source data is split into lazy Vite chunks, so the large local JSON fallback is not downloaded on the successful API path.
+
+Measured on 2026-08-17, one generated snapshot contained:
+
+| Section | Records | Approximate size |
+| --- | ---: | ---: |
+| Pokemon | 1,522 | 2.0 MB |
+| Leagues | 1 document | 600 KB |
+| Assets | 1,026 | 332 KB |
+| Combats | 396 | 136 KB |
+| Stickers | 600 | 76 KB |
+| Evolution chains | 79 | 32 KB |
+| Trainers | 79 | 20 KB |
+| Information | 30 | 16 KB |
+| Options | 1 document | 16 KB |
+
+## Pages to migrate to server pagination next
+
+| Priority | Page or component | Reason | Recommended API behavior |
+| --- | --- | --- | --- |
+| P0 | `Sheets/StatsRanking` | Maps and ranks the complete Pokemon collection before rendering a data table. | Add a ranking endpoint with filter/sort/page parameters and return only display rows. |
+| P0 | `Sheets/DpsTdo` | Produces large derived attacker/move combinations and repeatedly sorts them. | Add a calculation endpoint keyed by boss, level, weather, friendship, and filters; cache normalized inputs. |
+| P0 | `Tools/FindTable` | Builds multiple table datasets from Pokemon and CP combinations. | Add a query endpoint for the selected search mode and paginate the derived result. |
+| P1 | `Search/Types` and `Search/Moves` | Filter and render full Pokemon or combat collections in several tables. | Use `/api/v1/data` immediately for basic search/sort/page; add typed filters as needed. |
+| P1 | `Pokedex` | Filters the complete Pokemon list and renders cards with a manual slice. | Replace the manual slice with API cursor/page loading and preserve filters in the URL. |
+| P1 | `PVP/Ranking` and `PVP/Teams` | Downloads and transforms additional large PvPoke trees/files in the browser. | Extend the scheduled generator with PvPoke sections and expose league-specific paged endpoints. |
+| P2 | `Tools/RaidBattle` and battle timelines | CPU-heavy, but calculations depend on rapidly changing interactive inputs. | Prefer a Web Worker first; use API only for shareable/cached simulations. |
+
+## Operational notes
+
+- The API repository is private, but its read-only HTTP endpoints are intentionally public because a browser cannot keep an API secret. CORS is an origin policy, not authentication.
+- Add Vercel Firewall rate limits for abuse protection instead of embedding a token in the frontend.
+- The scheduled workflow processes data every six hours and commits only changed output. Each changed push triggers Vercel through Git integration.
+- Runtime endpoints only read generated files. They do not call GitHub or process the Game Master, avoiding rate-limit and cold-start amplification.

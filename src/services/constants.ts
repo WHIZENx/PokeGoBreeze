@@ -1,4 +1,5 @@
 export class APIUrl {
+  public static POKEGO_BREEZE_API_URL = (process.env.REACT_APP_DATA_API_URL ?? '').replace(/\/$/, '');
   public static POKE_API_URL = 'https://pokeapi.co/api/v2/';
   public static POKE_ASSETS = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
   public static POGO_API_URL = 'https://pogoapi.net/api/v1/';
