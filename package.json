@@ -52,7 +52,8 @@
     "deploy": "node scripts/withConfig.js",
     "_deploy:inner:production": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode production",
     "_deploy:inner:development": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode development",
-    "generate:sitemap": "node sitemap/buildSitemap.js"
+    "generate:sitemap": "node sitemap/buildSitemap.js",
+    "generate:api-data": "tsx scripts/generateApiData.ts"
   },
   "browserslist": {
     "production": [
@@ -101,6 +102,7 @@
     "stylelint-scss": "^5.3.2",
     "stylelint-stylistic": "^0.4.5",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.20.5",
     "typescript": "5.5.3",
     "util": "^0.12.5",
     "vite": "^6.4.2",

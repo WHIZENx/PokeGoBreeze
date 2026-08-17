@@ -1,5 +1,5 @@
 {
-  "_comment": "Copy this file to config.json and fill in the values you want to override. config.json is gitignored and takes precedence over Vercel Edge Config when running locally.",
+  "_comment": "Copy this file to config.json and fill in the values you want to override. config.json is gitignored and takes precedence over Vercel Edge Config when running locally. Set REACT_APP_DATA_API_URL in .env to enable server-preprocessed data with automatic legacy fallback.",
   "battleDelay": 0,
   "bronzeIncChance": 0,
   "classLegendary": "",

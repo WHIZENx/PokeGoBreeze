@@ -83,7 +83,17 @@ class Mask {
   }
 }
 
-export const marks = [...Array(maxIv() + 1).keys()].map((n) => new Mask(n, n.toString()));
+// Avoid calling options-context helpers while this module is initializing. The
+// domain models import utility functions, so doing that here creates an ESM
+// circular-dependency failure in the server-side data generator.
+const configuredMaxIv = (() => {
+  try {
+    return Number(JSON.parse(process.env.REACT_APP_CONFIG ?? '{}').maxIv ?? 15);
+  } catch {
+    return 15;
+  }
+})();
+export const marks = [...Array(configuredMaxIv + 1).keys()].map((n) => new Mask(n, n.toString()));
 
 export const isInvalidIV = (value: number | null | undefined) =>
   isNullOrUndefined(value) || value < minIv() || value > maxIv();

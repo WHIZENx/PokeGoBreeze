@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { StoreState } from '../store/models/state.model';
+import { StoreState, TimestampState } from '../store/models/state.model';
 import {
   SetOptions,
   SetPokemon,
@@ -56,6 +56,7 @@ import { calculateBaseCPM, calculateCPM } from '../core/cpm';
 import { maxIv, minIv } from '../utils/helpers/options-context.helpers';
 import { BASE_CPM } from '../utils/constants';
 import { useSnackbar } from '../contexts/snackbar.context';
+import ProcessedDataService from '../services/processed-data.service';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -66,6 +67,7 @@ import { useSnackbar } from '../contexts/snackbar.context';
 export const useDataStore = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
+  const timestampState = useSelector((state: TimestampState) => state.timestamp);
   const { showSnackbar } = useSnackbar();
   const { setProgress, completeProgress, errorProgress } = createProgressHelpers(dispatch);
 
@@ -169,6 +171,68 @@ export const useDataStore = () => {
 
   const loadCPM = (cpmList: DynamicObj<number>) =>
     dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, minIv(), Object.keys(cpmList).length)));
+
+  /**
+   * Hydrates Redux from the server-preprocessed snapshot. Returning false lets
+   * useTimestamp transparently fall back to the legacy browser processor.
+   */
+  const loadProcessedData = async (isCurrentVersion: boolean) => {
+    if (!ProcessedDataService.isConfigured()) {
+      return false;
+    }
+
+    try {
+      const meta = await ProcessedDataService.getMeta();
+      const isCurrentSnapshot =
+        isCurrentVersion && timestampIsCurrent(meta.source.gameMaster, meta.source.assets, meta.source.sounds);
+      if (isCurrentSnapshot) {
+        completeProgress();
+        return true;
+      }
+
+      showSnackbar('Loading processed game data...', 'info');
+      setProgress(20);
+      const [processedOptions, pokemons, combats, assets, leagues, evolutionChains, information, stickers, trainers] =
+        await Promise.all([
+          ProcessedDataService.getSection<IOptions>('options'),
+          ProcessedDataService.getSection<IPokemonData[]>('pokemons'),
+          ProcessedDataService.getSection<ICombat[]>('combats'),
+          ProcessedDataService.getSection<IAsset[]>('assets'),
+          ProcessedDataService.getSection<LeagueData>('leagues'),
+          ProcessedDataService.getSection<IEvolutionChain[]>('evolutionChains'),
+          ProcessedDataService.getSection<IInformation[]>('information'),
+          ProcessedDataService.getSection<ISticker[]>('stickers'),
+          ProcessedDataService.getSection<ITrainerLevelUp[]>('trainers'),
+        ]);
+
+      setProgress(70);
+      dispatch(StoreActions.SetOptions.create(processedOptions));
+      loadCPM(processedOptions.playerSetting.cpMultipliers);
+      dispatch(StoreActions.SetPokemon.create(pokemons));
+      dispatch(StoreActions.SetCombat.create(combats));
+      dispatch(StoreActions.SetAssets.create(assets));
+      dispatch(StoreActions.SetLeagues.create(leagues));
+      dispatch(StoreActions.SetEvolutionChain.create(evolutionChains));
+      dispatch(StoreActions.SetInformation.create(information));
+      dispatch(StoreActions.SetSticker.create(stickers));
+      dispatch(StoreActions.SetTrainer.create(trainers));
+      dispatch(StatsActions.SetStats.create(pokemons));
+      dispatch(TimestampActions.SetTimestampGameMaster.create(meta.source.gameMaster));
+      dispatch(TimestampActions.SetTimestampAssets.create(meta.source.assets));
+      dispatch(TimestampActions.SetTimestampSounds.create(meta.source.sounds));
+      completeProgress();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const timestampIsCurrent = (gameMaster: number, assets: number, sounds: number) =>
+    dataStore.pokemons.length > 0 &&
+    dataStore.combats.length > 0 &&
+    timestampState.gamemaster === gameMaster &&
+    timestampState.assets === assets &&
+    timestampState.sounds === sounds;
 
   const loadPokeGOLogo = (url: string, iconTimestamp: number) =>
     APIService.getFetchUrl<Files>(url, getAuthorizationHeaders)
@@ -342,6 +406,7 @@ export const useDataStore = () => {
     loadPokeGOLogo,
     loadGameMaster,
     loadAssets,
+    loadProcessedData,
     pokemonsData,
     stickersData,
     combatsData,

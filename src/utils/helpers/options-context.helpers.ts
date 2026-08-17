@@ -1,8 +1,6 @@
-import { defaultOptions } from '../../contexts/options.context';
-import { IOptions } from '../../core/models/options.model';
+import { IOptions, Options } from '../../core/models/options.model';
 import { ThrowType } from '../../enums/type.enum';
 import { IConfig } from '../../core/models/options.model';
-import { getValuesObj } from '../utils';
 import { WeatherBoost } from '../../core/models/weather-boost.model';
 import { DynamicObj, isNotEmpty, safeObjectEntries } from '../extension';
 import { ITypeModel, TypeModel } from '../../core/models/type.model';
@@ -30,7 +28,12 @@ const config = JSON.parse(process.env.REACT_APP_CONFIG) as IConfig;
 // when options change. Either:
 //   • call the helper inside render (not in memo deps),
 //   • or add `getOptions()` to the memo deps so it re-evaluates on update.
-let currentOptions = defaultOptions;
+const getValuesObj = <T extends object>(data: T, divide = 2) => {
+  const keys = Object.keys(data);
+  return keys.map((value) => value as unknown as T).filter((_, index) => index < keys.length / divide);
+};
+
+let currentOptions: IOptions = new Options();
 currentOptions.config = config;
 
 // Function to update the current options (called from a React component)
