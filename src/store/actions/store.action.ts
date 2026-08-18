@@ -6,7 +6,7 @@ import { ISticker } from '../../core/models/sticker.model';
 import { ICombat } from '../../core/models/combat.model';
 import { IAsset } from '../../core/models/asset.model';
 import { LeagueData } from '../../core/models/league.model';
-import { PokemonPVPMove } from '../../core/models/pvp.model';
+import { IPVPDataModel } from '../../core/models/pvp.model';
 import { IEvolutionChain } from '../../core/models/evolution-chain.model';
 import { IInformation } from '../../core/models/information';
 import { ITrainerLevelUp } from '../../core/models/trainer.model';
@@ -25,7 +25,6 @@ export enum StoreActionTypes {
   setCPM = '[Store] SetCPM',
   setTrainers = '[Store] SetTrainers',
   setPVP = '[Store] SetPVP',
-  setPVPMoves = '[Store] SetPVPMoves',
   resetStore = '[Store] ResetStore',
 }
 
@@ -197,24 +196,10 @@ export class SetTrainer implements Action {
 export class SetPVP implements Action {
   readonly type = StoreActionTypes.setPVP;
 
-  constructor(public payload: { rankings: string[]; trains: string[] }) {}
+  constructor(public payload: IPVPDataModel) {}
 
-  static create(value: { rankings: string[]; trains: string[] }) {
+  static create(value: IPVPDataModel) {
     const { type, payload } = new SetPVP(value);
-    return {
-      type,
-      payload,
-    };
-  }
-}
-
-export class SetPVPMoves implements Action {
-  readonly type = StoreActionTypes.setPVPMoves;
-
-  constructor(public payload: PokemonPVPMove[]) {}
-
-  static create(value: PokemonPVPMove[]) {
-    const { type, payload } = new SetPVPMoves(value);
     return {
       type,
       payload,
@@ -247,5 +232,4 @@ export type StoreActionsUnion =
   | SetCPM
   | SetTrainer
   | SetPVP
-  | SetPVPMoves
   | ResetStore;

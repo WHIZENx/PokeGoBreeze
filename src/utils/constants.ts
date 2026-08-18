@@ -15,16 +15,6 @@ export class Params {
   public static LeagueType = 'leagueType';
 }
 
-export const BASE_CPM: DynamicObj<number> = {
-  1: 0.094,
-  10: 0.4225,
-  20: 0.5974,
-  30: 0.7317,
-  40: 0.7903,
-  50: 0.84029999,
-  60: 0.91736427,
-};
-
 export const RAID_BOSS_TIER: DynamicObj<ITier> = {
   1: Tier.create({
     level: 20,

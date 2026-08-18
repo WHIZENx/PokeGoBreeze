@@ -38,7 +38,6 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
-import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
@@ -50,9 +49,8 @@ import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
 const PokemonPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
   const { pvpData } = useDataStore();
-  const { isCombatsNoneArchetype, findMoveByName } = useCombats();
+  const { findMoveByName } = useCombats();
   const { getAssetNameById } = useAssets();
-  const { loadPVP, loadPVPMoves } = usePVP();
   const { findPokemonBySlug } = usePokemon();
   const { routerAction } = useRouter();
   const { statsData } = useStats();
@@ -64,10 +62,6 @@ const PokemonPVP = (props: IStyleSheetData) => {
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const [isFound, setIsFound] = useState(true);
-
-  useEffect(() => {
-    loadPVP();
-  }, []);
 
   const setPokemonPVPTitle = (isNotFound = false) => {
     if (isNotFound) {
@@ -212,9 +206,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
       await fetchPokemonInfo();
     };
     if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
-      if (isCombatsNoneArchetype()) {
-        loadPVPMoves();
-      } else if (routerAction) {
+      if (routerAction) {
         fetchPokemon();
       }
     }

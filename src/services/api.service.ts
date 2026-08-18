@@ -424,15 +424,23 @@ class APIService {
   }
 
   getRankingFile(serie: string | undefined, cp: number, type: string | undefined) {
-    return `${APIUrl.POKE_PV_API_URL}rankings/${getValueOrDefault(String, serie)}/${getValueOrDefault(
-      String,
-      type,
-      getKeyWithData(ScoreType, ScoreType.Overall)
-    ).toLowerCase()}/rankings-${cp}.json`;
+    const query = new URLSearchParams({
+      kind: 'ranking',
+      series: getValueOrDefault(String, serie),
+      cp: String(cp),
+      type: getValueOrDefault(String, type, getKeyWithData(ScoreType, ScoreType.Overall)).toLowerCase(),
+    });
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp?${query}`;
   }
 
   getTeamFile(type: string, serie: string | undefined, cp: number) {
-    return `${APIUrl.POKE_PV_API_URL}training/${type}/${getValueOrDefault(String, serie)}/${cp}.json`;
+    const query = new URLSearchParams({
+      kind: 'team',
+      series: getValueOrDefault(String, serie),
+      cp: String(cp),
+      type,
+    });
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp?${query}`;
   }
 
   getTypeIcon(type: string | null | undefined) {

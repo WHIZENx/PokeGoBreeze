@@ -94,7 +94,6 @@ import {
   minLevel,
   stepLevel,
 } from '../../../utils/helpers/options-context.helpers';
-import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
@@ -139,7 +138,6 @@ const stopPokemonAudio = (pokemon: IPokemonBattle) => {
 
 const Battle = () => {
   const { findPokemonBySlug } = usePokemon();
-  const { loadPVPMoves } = usePVP();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
   const { isMobile } = useDevice();
@@ -367,10 +365,6 @@ const Battle = () => {
       hideSpinner();
     };
   }, [fetchPokemonBattle, league]);
-
-  useEffect(() => {
-    loadPVPMoves();
-  }, []);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

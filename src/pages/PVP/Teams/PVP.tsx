@@ -50,7 +50,6 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
-import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
@@ -62,10 +61,9 @@ import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 const TeamPVP = (props: IStyleSheetData) => {
   const { pvpData } = useDataStore();
   const { findPokemonBySlug } = usePokemon();
-  const { findMoveByName, findMoveByTag, isCombatsNoneArchetype } = useCombats();
+  const { findMoveByTag } = useCombats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
   const { getAssetNameById } = useAssets();
-  const { loadPVP, loadPVPMoves } = usePVP();
   const { statsData } = useStats();
   const params = useParams();
 
@@ -139,16 +137,6 @@ const TeamPVP = (props: IStyleSheetData) => {
     });
     return result;
   };
-
-  useEffect(() => {
-    loadPVP();
-  }, []);
-
-  useEffect(() => {
-    if (isCombatsNoneArchetype()) {
-      loadPVPMoves();
-    }
-  }, [findMoveByName]);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PVP Teams - Meta Team Compositions | PokéGO Breeze',

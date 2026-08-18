@@ -22,25 +22,9 @@ export class APIUrl {
   public static POKE_TYPES_API_URL =
     'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/';
 
-  public static POKE_PV_API_URL = 'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/';
   public static POKE_ASSETS_URL = `https://raw.githubusercontent.com/WHIZENx/pokemon-assets/master/`;
 
-  // Fetch Data
-  public static FETCH_POKEGO_IMAGES_ICON_SHA =
-    'https://api.github.com/repos/PokeMiners/pogo_assets/commits?path=Images/App%20Icons&page=1&per_page=1';
-  public static FETCH_POKEGO_IMAGES_POKEMON_SHA =
-    'https://api.github.com/repos/PokeMiners/pogo_assets/commits?path=Images/Pokemon%20-%20256x256&page=1&per_page=1';
-  public static FETCH_POKEGO_IMAGES_SOUND_SHA =
-    'https://api.github.com/repos/PokeMiners/pogo_assets/commits?path=Sounds/Pokemon%20Cries&page=1&per_page=1';
-
-  public static FETCH_PVP_DATA = 'https://api.github.com/repos/pvpoke/pvpoke/commits?path=src/data&page=1&per_page=1';
-
-  public static TIMESTAMP = 'https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/timestamp.txt';
-  public static GAMEMASTER = 'https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json';
   public static TEXTFILE = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Texts/Latest%20APK/JSON/';
   public static CANDY_DATA =
     'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Candy%20Color%20Data/PokemonCandyColorData.json';
-
-  public static FETCH_PVP_MOVES =
-    'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/gamemaster/moves.json';
 }

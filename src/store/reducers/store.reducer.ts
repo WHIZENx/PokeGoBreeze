@@ -1,9 +1,6 @@
-import { convertPVPRankings, convertPVPTrain } from '../../core/pvp';
-import { replaceTempMovePvpName } from '../../utils/utils';
 import { Store } from '../models/store.model';
 import { StoreActions } from '../actions';
 import { StoreActionsUnion } from '../actions/store.action';
-import { isEqual } from '../../utils/extension';
 
 const initialize = new Store();
 
@@ -104,39 +101,9 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
         ...state,
         data: {
           ...state.data,
-          pvp: {
-            rankings: convertPVPRankings(
-              action.payload.rankings,
-              Array.isArray(state.data.leagues?.data) ? state.data.leagues.data : []
-            ),
-            trains: convertPVPTrain(
-              action.payload.trains,
-              Array.isArray(state.data.leagues?.data) ? state.data.leagues.data : []
-            ),
-          },
+          pvp: action.payload,
         },
       };
-    case StoreActions.StoreActionTypes.setPVPMoves: {
-      const result = (Array.isArray(state.data.combats) ? state.data.combats : []).map((move) => {
-        const movePVP = action.payload.find((data) =>
-          isEqual(
-            data.moveId,
-            isEqual(move.name, 'HIDDEN_POWER') ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name)
-          )
-        );
-        if (!movePVP) {
-          return move;
-        }
-        return { ...move, archetype: movePVP.archetype, abbreviation: movePVP.abbreviation };
-      });
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          combats: result,
-        },
-      };
-    }
     case StoreActions.StoreActionTypes.resetStore:
       return {
         ...initialize,

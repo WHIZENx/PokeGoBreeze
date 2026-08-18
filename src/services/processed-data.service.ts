@@ -9,6 +9,7 @@ export interface ProcessedDataMeta {
     gameMaster: number;
     assets: number;
     sounds: number;
+    pvp: number;
   };
   sections: Record<string, number>;
 }
