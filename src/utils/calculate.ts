@@ -2,22 +2,7 @@ import { Stats } from '../core/models/API/info.model';
 import { ICombat } from '../core/models/combat.model';
 import { CPMData, CPMDetail, ICPM } from '../core/models/cpm.model';
 import { IPokemonData } from '../core/models/pokemon.model';
-import {
-  IStatsPokemon,
-  StatsRank,
-  StatsPokemon,
-  StatsRankAtk,
-  StatsRankDef,
-  StatsRankSta,
-  StatsRankProd,
-  StatsProd,
-  StatsAtk,
-  StatsDef,
-  StatsSta,
-  StatsIV,
-  StatsPokemonGO,
-  IStatsPokemonGO,
-} from '../core/models/stats.model';
+import { IStatsPokemon, StatsPokemon, StatsIV, StatsPokemonGO } from '../core/models/stats.model';
 import dataCPM from '../data/cp_multiplier.json';
 import { PokemonType, TypeAction } from '../enums/type.enum';
 import { IOptionOtherDPS, Specific } from '../store/models/options.model';
@@ -42,21 +27,9 @@ import {
   CalculateDPS,
   StatsBaseCalculate,
 } from './models/calculate.model';
-import {
-  DynamicObj,
-  isEqual,
-  isInclude,
-  isIncludeList,
-  isNotEmpty,
-  isUndefined,
-  toFloat,
-  toNumber,
-  UniqValueInArray,
-} from './extension';
+import { DynamicObj, isEqual, isInclude, isIncludeList, isNotEmpty, isUndefined, toFloat, toNumber } from './extension';
 import { IBattleState } from '../core/models/damage.model';
-import { IArrayStats } from './models/util.model';
 import { EqualMode, IncludeMode } from './enums/string.enum';
-import { BattleLeagueCPType } from './enums/compute.enum';
 import {
   battleStab,
   combatMaxEnergy,
@@ -78,7 +51,6 @@ import {
   defaultPokemonDefObj,
   defaultTrainerFriend,
   defaultEnemyAtkDelay,
-  cpDiffRatio,
   minCp,
   stepLevel,
   getTypeEffective as getTypeEffectiveScalar,
@@ -204,97 +176,6 @@ export const calBaseSTA = (stats: IStatsPokemon | undefined, nerf: boolean) => {
   } else {
     return baseSTA;
   }
-};
-
-const buildRankMap = (sortedUniq: number[]): Map<number, number> => {
-  const map = new Map<number, number>();
-  for (let i = 0; i < sortedUniq.length; i++) {
-    map.set(sortedUniq[i], i);
-  }
-  return map;
-};
-
-export const sortStatsPokemon = (stats: IArrayStats[]) => {
-  // Single pass to collect all four stat values
-  const atkValues: number[] = [];
-  const defValues: number[] = [];
-  const staValues: number[] = [];
-  const prodValues: number[] = [];
-  for (const item of stats) {
-    atkValues.push(item.statsGO.atk);
-    defValues.push(item.statsGO.def);
-    staValues.push(item.statsGO.sta);
-    prodValues.push(item.statsGO.prod);
-  }
-
-  const attackRanking = UniqValueInArray(atkValues).sort((a, b) => a - b);
-  const defenseRanking = UniqValueInArray(defValues).sort((a, b) => a - b);
-  const staminaRanking = UniqValueInArray(staValues).sort((a, b) => a - b);
-  const prodRanking = UniqValueInArray(prodValues).sort((a, b) => a - b);
-
-  // Pre-build rank Maps for O(1) lookup instead of O(n) sparseIndexOf per item
-  const atkRankMap = buildRankMap(attackRanking);
-  const defRankMap = buildRankMap(defenseRanking);
-  const staRankMap = buildRankMap(staminaRanking);
-  const prodRankMap = buildRankMap(prodRanking);
-
-  const atkLen = attackRanking.length;
-  const defLen = defenseRanking.length;
-  const staLen = staminaRanking.length;
-  const prodLen = prodRanking.length;
-
-  const attackStats: ReturnType<typeof StatsAtk.create>[] = [];
-  const defenseStats: ReturnType<typeof StatsDef.create>[] = [];
-  const staminaStats: ReturnType<typeof StatsSta.create>[] = [];
-  const prodStats: ReturnType<typeof StatsProd.create>[] = [];
-
-  // Single pass to build all four ranking arrays
-  for (const item of stats) {
-    const { atk, def, sta, prod } = item.statsGO;
-    attackStats.push(
-      StatsAtk.create({ id: item.id, form: item.form, attack: atk, rank: atkLen - (atkRankMap.get(atk) ?? 0) })
-    );
-    defenseStats.push(
-      StatsDef.create({ id: item.id, form: item.form, defense: def, rank: defLen - (defRankMap.get(def) ?? 0) })
-    );
-    staminaStats.push(
-      StatsSta.create({ id: item.id, form: item.form, stamina: sta, rank: staLen - (staRankMap.get(sta) ?? 0) })
-    );
-    prodStats.push(
-      StatsProd.create({ id: item.id, form: item.form, product: prod, rank: prodLen - (prodRankMap.get(prod) ?? 0) })
-    );
-  }
-
-  return new StatsRank({
-    attack: StatsRankAtk.create({
-      ranking: attackStats,
-      minRank: 1,
-      maxRank: atkLen,
-      minStats: attackRanking[0],
-      maxStats: attackRanking[atkLen - 1],
-    }),
-    defense: StatsRankDef.create({
-      ranking: defenseStats,
-      minRank: 1,
-      maxRank: defLen,
-      minStats: defenseRanking[0],
-      maxStats: defenseRanking[defLen - 1],
-    }),
-    stamina: StatsRankSta.create({
-      ranking: staminaStats,
-      minRank: 1,
-      maxRank: staLen,
-      minStats: staminaRanking[0],
-      maxStats: staminaRanking[staLen - 1],
-    }),
-    statProd: StatsRankProd.create({
-      ranking: prodStats,
-      minRank: 1,
-      maxRank: prodLen,
-      minStats: prodRanking[0],
-      maxStats: prodRanking[prodLen - 1],
-    }),
-  });
 };
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) =>
@@ -673,42 +554,6 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCp: numbe
 
 const yieldToMain = () => new Promise<void>((resolve) => window.setTimeout(resolve, 0));
 
-// Async variant: yields to the browser every few levels so the UI stays responsive
-// during the ~300k iteration sweep, and exits early on AbortSignal.
-export const calStatsProdAsync = async (
-  atk: number,
-  def: number,
-  sta: number,
-  minCp: number,
-  maxCP: number,
-  isPure = false,
-  signal?: AbortSignal
-): Promise<IBattleBaseStats[]> => {
-  const dataList: IBattleBaseStats[] = [];
-  if (atk === 0 || def === 0 || sta === 0) {
-    return dataList;
-  }
-  const maxLv = maxLevel();
-  const step = stepLevel();
-  const LEVELS_PER_YIELD = 4; // ~16k iterations per yield, fits a typical frame budget
-  let seqId = 0;
-  let levelsSinceYield = 0;
-
-  for (let level = minLevel(); level <= maxLv; level += step) {
-    if (signal?.aborted) {
-      throw new DOMException('aborted', 'AbortError');
-    }
-    seqId = collectStatsProdForLevel(atk, def, sta, level, minCp, maxCP, seqId, dataList);
-    levelsSinceYield++;
-    if (levelsSinceYield >= LEVELS_PER_YIELD && level + step <= maxLv) {
-      levelsSinceYield = 0;
-      await yieldToMain();
-    }
-  }
-
-  return isPure ? dataList : sortStatsProd(dataList);
-};
-
 export const calculateStatsByTag = (
   pokemon: IPokemonData | undefined,
   baseStats: IStatsPokemon | undefined,
@@ -1042,35 +887,3 @@ export const calculateBattleDPS = (attacker: IBattleCalculate, defender: IBattle
 };
 
 export const TimeToKill = (hp: number, dpsDef: number) => hp / dpsDef;
-
-export const calculateStatsTopRank = (
-  stats: IStatsPokemonGO | undefined,
-  id: number,
-  maxCP: number,
-  level = maxLevel()
-) => {
-  if (!stats) {
-    stats = new StatsPokemonGO();
-  }
-  const atk = stats.atk;
-  const def = stats.def;
-  const sta = stats.sta;
-  if (maxCP > BattleLeagueCPType.Ultra) {
-    const maxPokeCP = calculateCP(atk + maxIv(), def + maxIv(), sta + maxIv(), level);
-    return getBaseStatsByIVandLevel(atk, def, sta, maxPokeCP, id, level);
-  } else {
-    let allStats: IBattleBaseStats[] = [];
-    let i = 1;
-    let cp = minCp();
-    while (cp >= minCp() && !isNotEmpty(allStats)) {
-      cp = maxCP - cpDiffRatio() * i;
-      allStats = calStatsProd(atk, def, sta, cp, maxCP);
-      maxCP = cp;
-      i++;
-    }
-    if (!isNotEmpty(allStats)) {
-      return BattleBaseStats.create({ id });
-    }
-    return BattleBaseStats.create(allStats[allStats.length - 1]);
-  }
-};

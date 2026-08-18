@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
-import { Species } from '../core/models/API/species.model';
+import type { PokemonBundle } from '../core/models/API/pokemon-bundle.model';
 import { getValueOrDefault, isEqual, isInclude } from '../utils/extension';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
@@ -83,16 +83,16 @@ class APIService {
     return await this.axios.get<T>(fetchUrl, this.withoutPublicGitHubAuthorization(fetchUrl, options));
   }
 
-  async getPokeSpices(value: number, options?: AxiosRequestConfig<any>) {
-    return await this.getFetchUrl<Species>(this.getPokeAPI('pokemon-species', value), options);
+  async getPokemonBundle(value: number, options?: AxiosRequestConfig<any>) {
+    const query = new URLSearchParams({ id: String(value) });
+    return await this.getFetchUrl<{ data: PokemonBundle }>(
+      `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pokemon?${query}`,
+      options
+    );
   }
 
-  async getPokeJSON(path: string, options?: AxiosRequestConfig<any>) {
-    return await this.getFetchUrl(`${APIUrl.POGO_API_URL}${path}`, options);
-  }
-
-  getPokeAPI(path: string, value: number) {
-    return `${APIUrl.POKE_API_URL}${path}/${value}`;
+  async getCandyData<T>(options?: AxiosRequestConfig<any>) {
+    return await this.getFetchUrl<{ data: T }>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/candy`, options);
   }
 
   setPokemonModel(item: string) {
@@ -424,15 +424,97 @@ class APIService {
   }
 
   getRankingFile(serie: string | undefined, cp: number, type: string | undefined) {
-    return `${APIUrl.POKE_PV_API_URL}rankings/${getValueOrDefault(String, serie)}/${getValueOrDefault(
-      String,
-      type,
-      getKeyWithData(ScoreType, ScoreType.Overall)
-    ).toLowerCase()}/rankings-${cp}.json`;
+    const query = new URLSearchParams({
+      kind: 'ranking',
+      series: getValueOrDefault(String, serie),
+      cp: String(cp),
+      type: getValueOrDefault(String, type, getKeyWithData(ScoreType, ScoreType.Overall)).toLowerCase(),
+    });
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp?${query}`;
   }
 
   getTeamFile(type: string, serie: string | undefined, cp: number) {
-    return `${APIUrl.POKE_PV_API_URL}training/${type}/${getValueOrDefault(String, serie)}/${cp}.json`;
+    const query = new URLSearchParams({
+      kind: 'team',
+      series: getValueOrDefault(String, serie),
+      cp: String(cp),
+      type,
+    });
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp?${query}`;
+  }
+
+  getPvpPokemon(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('pvp-pokemon', params);
+  }
+
+  getIvRank(params: Record<string, string | number>) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => query.set(key, String(value)));
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/iv-rank?${query}`;
+  }
+
+  getTopRank(query: URLSearchParams) {
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/top-rank?${query}`;
+  }
+
+  getCounters(params: Record<string, string | number | boolean>) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => query.set(key, String(value)));
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/counters?${query}`;
+  }
+
+  getDpsTdo(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('dps-tdo', params);
+  }
+
+  getPokedex(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('pokedex', params);
+  }
+
+  getTypesData(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('types', params);
+  }
+
+  getFindCalculation(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('find', params);
+  }
+
+  getBattleLeagueStats(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('battle-league-stats', params);
+  }
+
+  getBattleLeagues() {
+    return this.getInternalQueryUrl('battle-leagues', {});
+  }
+
+  getNews() {
+    return this.getInternalQueryUrl('news', {});
+  }
+
+  getBreakpoints(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('breakpoints', params);
+  }
+
+  getMoveDetails(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('move', params);
+  }
+
+  getStickers(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('stickers', params);
+  }
+
+  getStatsRanking(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('stats-ranking', params);
+  }
+
+  private getInternalQueryUrl(path: string, params: Record<string, string | number | boolean | undefined>) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== '') {
+        query.set(key, String(value));
+      }
+    });
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/${path}?${query}`;
   }
 
   getTypeIcon(type: string | null | undefined) {

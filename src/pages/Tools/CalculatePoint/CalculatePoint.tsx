@@ -7,7 +7,7 @@ import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { findStabType } from '../../../utils/compute';
 import { getLevelList } from '../../../utils/compute';
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
+import { getTypeEffective } from '../../../utils/calculate';
 
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
@@ -16,7 +16,6 @@ import { TypeAction, TypeMove } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { BattleState } from '../../../core/models/damage.model';
 import {
   combineClasses,
   DynamicObj,
@@ -32,6 +31,7 @@ import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
 import { useSnackbar } from '../../../contexts/snackbar.context';
+import type { BreakpointApiResult } from '../../../services/models/tools-api.model';
 
 const CalculatePoint = () => {
   useTitle({
@@ -100,69 +100,79 @@ const CalculatePoint = () => {
     }
   };
 
-  const calculateBreakpointAtk = () => {
+  const moveParams = (
+    pokemon: Partial<IPokemonFormModify> | undefined,
+    attacker: Partial<IPokemonFormModify> | undefined,
+    selectedMove: ICombat | undefined,
+    prefix = ''
+  ) => ({
+    [`${prefix}effective`]: getTypeEffective(selectedMove?.type, pokemon?.form?.types),
+    [`${prefix}stab`]: findStabType(attacker?.form?.types, selectedMove?.type),
+  });
+
+  const commonParams = () => ({
+    minLevel: minLevel(),
+    maxLevel: maxLevel(),
+    step: stepLevel(),
+    minIv: minIv(),
+    maxIv: maxIv(),
+    weather: (!pvpDmg || isRaid) && weatherBoosts,
+  });
+
+  const movePower = (selectedMove: ICombat | undefined) =>
+    toNumber(!isRaid && pvpDmg ? selectedMove?.pvpPower : selectedMove?.pvePower);
+
+  const calculateBreakpointAtk = async () => {
     setResultBreakPointAtk(undefined);
-    const dataList: number[][] = [];
-    const group: number[] = [];
-    let level = 0;
-    for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
-      dataList[level] = getValueOrDefault(Array, dataList[level]);
-      for (let j = minIv(); j <= maxIv(); j += 1) {
-        const atk = calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.atk, j, i, true);
-        const result = getMoveDamagePVE(
-          atk,
-          toNumber(searchingToolObjectData?.pokemon?.statsGO?.def, 1),
-          searchingToolObjectData?.form,
-          searchingToolCurrentData?.form,
-          move
-        );
-        dataList[level].push(result);
-        group.push(result);
+    try {
+      const response = await APIService.getFetchUrl<{ data: BreakpointApiResult }>(
+        APIService.getBreakpoints({
+          mode: 'attacker',
+          atk: toNumber(searchingToolCurrentData?.pokemon?.statsGO?.atk),
+          targetDef: toNumber(searchingToolObjectData?.pokemon?.statsGO?.def),
+          power: movePower(move),
+          ...moveParams(searchingToolObjectData?.form, searchingToolCurrentData?.form, move),
+          ...commonParams(),
+        })
+      );
+      if (response.data.data.mode !== 'attacker') {
+        return;
       }
-      level++;
+      const dataList = response.data.data.data;
+      const group = dataList.flat();
+      const colorTone = computeColorTone(UniqValueInArray(group).sort((a, b) => a - b));
+      setResultBreakPointAtk({ data: dataList, colorTone });
+      showSnackbar('Calculate breakpoint attacker successfully!', 'success');
+    } catch {
+      showSnackbar('Breakpoint API is unavailable.', 'error');
     }
-    const colorTone = computeColorTone(UniqValueInArray(group).sort((a, b) => a - b));
-    setResultBreakPointAtk({ data: dataList, colorTone });
-    showSnackbar('Calculate breakpoint attacker successfully!', 'success');
   };
 
-  const calculateBreakpointDef = () => {
+  const calculateBreakpointDef = async () => {
     setResultBreakPointDef(undefined);
-    const dataListDef: number[][] = [];
-    const groupDef: number[] = [];
-    const dataListSta: number[][] = [];
-    const groupSta: number[] = [];
-    let level = 0;
-    for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
-      dataListDef[level] ??= [];
-      dataListSta[level] ??= [];
-      for (let j = minIv(); j <= maxIv(); j += 1) {
-        const def = calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.def, j, i, true);
-        const resultDef = getMoveDamagePVE(
-          toNumber(searchingToolObjectData?.pokemon?.statsGO?.atk, 1),
-          def,
-          searchingToolCurrentData?.form,
-          searchingToolObjectData?.form,
-          moveDef
-        );
-        dataListDef[level].push(resultDef);
-        groupDef.push(resultDef);
-        const resultSta = calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.sta, j, i, true);
-        dataListSta[level].push(resultSta);
-        groupSta.push(resultSta);
+    try {
+      const response = await APIService.getFetchUrl<{ data: BreakpointApiResult }>(
+        APIService.getBreakpoints({
+          mode: 'defender',
+          def: toNumber(searchingToolCurrentData?.pokemon?.statsGO?.def),
+          sta: toNumber(searchingToolCurrentData?.pokemon?.statsGO?.sta),
+          targetAtk: toNumber(searchingToolObjectData?.pokemon?.statsGO?.atk),
+          power: movePower(moveDef),
+          ...moveParams(searchingToolCurrentData?.form, searchingToolObjectData?.form, moveDef),
+          ...commonParams(),
+        })
+      );
+      if (response.data.data.mode !== 'defender') {
+        return;
       }
-      level++;
+      const { dataDef, dataSta } = response.data.data;
+      const colorToneDef = computeColorTone(UniqValueInArray(dataDef.flat()).sort((a, b) => b - a));
+      const colorToneSta = computeColorTone(UniqValueInArray(dataSta.flat()).sort((a, b) => a - b));
+      setResultBreakPointDef({ dataDef, dataSta, colorToneDef, colorToneSta });
+      showSnackbar('Calculate breakpoint defender successfully!', 'success');
+    } catch {
+      showSnackbar('Breakpoint API is unavailable.', 'error');
     }
-
-    const colorToneDef = computeColorTone(UniqValueInArray(groupDef).sort((a, b) => b - a));
-    const colorToneSta = computeColorTone(UniqValueInArray(groupSta).sort((a, b) => a - b));
-    setResultBreakPointDef({
-      dataDef: dataListDef,
-      dataSta: dataListSta,
-      colorToneDef,
-      colorToneSta,
-    });
-    showSnackbar('Calculate breakpoint defender successfully!', 'success');
   };
 
   const computeColorTone = (data: number[]) => {
@@ -191,70 +201,32 @@ const CalculatePoint = () => {
     return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
   };
 
-  const getMoveDamagePVE = (
-    atk: number,
-    def: number,
-    pokemon: Partial<IPokemonFormModify> | undefined,
-    pokemonDef: Partial<IPokemonFormModify> | undefined,
-    move: ICombat | undefined
-  ) => {
-    return calculateDamagePVE(
-      atk,
-      def,
-      toNumber(!isRaid && pvpDmg ? move?.pvpPower : move?.pvePower),
-      BattleState.create({
-        effective: getTypeEffective(move?.type, pokemon?.form?.types),
-        isStab: findStabType(pokemonDef?.form?.types, move?.type),
-        isWb: (!pvpDmg || isRaid) && weatherBoosts,
-      }),
-      false
-    );
-  };
-
-  const computeBulk = (count: number, level: number) => {
-    const def = calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.def, DEFIv, level, true);
-    return Math.max(
-      0,
-      Math.ceil(
-        (calculateStatsBattle(searchingToolCurrentData?.pokemon?.statsGO?.sta, STAIv, level, true) -
-          count *
-            getMoveDamagePVE(
-              toNumber(searchingToolObjectData?.pokemon?.statsGO?.atk),
-              def,
-              searchingToolCurrentData?.form,
-              searchingToolObjectData?.form,
-              cMove
-            )) /
-          getMoveDamagePVE(
-            toNumber(searchingToolObjectData?.pokemon?.statsGO?.atk),
-            def,
-            searchingToolCurrentData?.form,
-            searchingToolObjectData?.form,
-            fMove
-          )
-      )
-    );
-  };
-
-  const calculateBulkPointDef = () => {
+  const calculateBulkPointDef = async () => {
     setResultBulkPointDef(undefined);
-    let dataList: number[][] = [];
-    let level = 0;
-    for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
-      let count = 0;
-      dataList[level] ??= [];
-      let result = computeBulk(count, i);
-      while (result > 0) {
-        dataList[level].push(result);
-        count++;
-        result = computeBulk(count, i);
+    try {
+      const response = await APIService.getFetchUrl<{ data: BreakpointApiResult }>(
+        APIService.getBreakpoints({
+          mode: 'bulk',
+          def: toNumber(searchingToolCurrentData?.pokemon?.statsGO?.def),
+          sta: toNumber(searchingToolCurrentData?.pokemon?.statsGO?.sta),
+          targetAtk: toNumber(searchingToolObjectData?.pokemon?.statsGO?.atk),
+          defIv: DEFIv,
+          staIv: STAIv,
+          fastPower: movePower(fMove),
+          chargedPower: movePower(cMove),
+          ...moveParams(searchingToolCurrentData?.form, searchingToolObjectData?.form, fMove, 'fast'),
+          ...moveParams(searchingToolCurrentData?.form, searchingToolObjectData?.form, cMove, 'charged'),
+          ...commonParams(),
+        })
+      );
+      if (response.data.data.mode !== 'bulk') {
+        return;
       }
-      level++;
+      setResultBulkPointDef({ data: response.data.data.data, maxLength: response.data.data.maxLength });
+      showSnackbar('Calculate bulkpoint defender successfully!', 'success');
+    } catch {
+      showSnackbar('Breakpoint API is unavailable.', 'error');
     }
-    const maxLength = Math.max(...dataList.map((item) => item.length));
-    dataList = dataList.map((item) => item.concat(Array(maxLength - item.length).fill(0)));
-    setResultBulkPointDef({ data: dataList, maxLength });
-    showSnackbar('Calculate bulkpoint defender successfully!', 'success');
   };
 
   const getIconBattle = (action: TypeAction, form: Partial<IPokemonFormModify> | undefined) => (

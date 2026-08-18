@@ -8,13 +8,12 @@ import {
   Form,
   IFormSoundCry,
   FormSoundCry,
-  PokemonForm,
   IPokemonFormModify,
   PokemonFormModify,
   PokemonFormDetail,
   IPokemonFormDetail,
 } from '../../core/models/API/form.model';
-import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
+import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfoEvo } from '../../core/models/API/info.model';
 import {
   IPokemonSpecie,
   OptionsPokemon,
@@ -23,6 +22,7 @@ import {
   PokemonSpecie,
 } from '../../core/models/pokemon.model';
 import APIService from '../../services/api.service';
+import type { PokemonBundleVariety, PokemonMoveRanking } from '../../core/models/API/pokemon-bundle.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {
   convertPokemonImageName,
@@ -125,7 +125,8 @@ const Pokemon = (props: IPokemonPage) => {
   const [isFound, setIsFound] = useState(true);
 
   const [costModifier, setCostModifier] = useState<ITypeCost>();
-  const [urlEvolutionChain, setUrlEvolutionChain] = useState<string>();
+  const [evolutionChain, setEvolutionChain] = useState<PokemonInfoEvo>();
+  const [moveRankings, setMoveRankings] = useState<PokemonMoveRanking[]>([]);
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
@@ -169,34 +170,29 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   const fetchMap = useCallback(
-    async (specie: IPokemonSpecie) => {
+    (
+      specie: IPokemonSpecie,
+      varieties: PokemonBundleVariety[],
+      bundledEvolutionChain: PokemonInfoEvo | null,
+      bundledMoveRankings: PokemonMoveRanking[] = []
+    ) => {
       const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
       const soundCries: IFormSoundCry[] = [];
-      const cancelToken = axiosSource.current.token;
-      await Promise.all(
-        specie.varieties.map(async (value) => {
-          const { data: pokeInfo } = await APIService.getFetchUrl<PokemonInfo>(value.path, { cancelToken });
-          const pokeForm = await Promise.all(
-            pokeInfo.forms.map(async (item) => {
-              const { data: form } = await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken });
-              return PokemonFormDetail.setDetails(form);
-            })
-          );
-          pokeInfo.isIncludeShadow = checkPokemonIncludeShadowForm(pokeInfo.name);
-          const pokeDetail = PokemonDetailInfo.setDetails(pokeInfo);
-          soundCries.push(new FormSoundCry(pokeDetail));
-          dataPokeList.push(pokeDetail);
-          dataFormList.push(pokeForm);
-        })
-      ).catch(() => {
-        return;
+      varieties.forEach(({ pokemon: pokeInfo, forms }) => {
+        const pokeForm = forms.map((form) => PokemonFormDetail.setDetails(form));
+        pokeInfo.isIncludeShadow = checkPokemonIncludeShadowForm(pokeInfo.name);
+        const pokeDetail = PokemonDetailInfo.setDetails(pokeInfo);
+        soundCries.push(new FormSoundCry(pokeDetail));
+        dataPokeList.push(pokeDetail);
+        dataFormList.push(pokeForm);
       });
 
       if (!isNotEmpty(dataPokeList) || !isNotEmpty(dataFormList)) {
         return;
       }
-      setUrlEvolutionChain(specie.evolutionChainPath);
+      setEvolutionChain(bundledEvolutionChain ?? undefined);
+      setMoveRankings(bundledMoveRankings);
 
       const pokemon = getFindPokemon((item) => item.num === specie.id);
       setCostModifier(
@@ -332,11 +328,11 @@ const Pokemon = (props: IPokemonPage) => {
       axiosSource.current = APIService.reNewCancelToken();
       const cancelToken = axiosSource.current.token;
 
-      APIService.getPokeSpices(id, { cancelToken })
-        .then(async (res) => {
-          if (res.data) {
-            const result = PokemonSpecie.create(res.data);
-            await fetchMap(result);
+      APIService.getPokemonBundle(id, { cancelToken })
+        .then((res) => {
+          if (res.data.data) {
+            const result = PokemonSpecie.create(res.data.data.species);
+            fetchMap(result, res.data.data.varieties, res.data.data.evolutionChain, res.data.data.moveRankings ?? []);
           }
         })
         .catch((e: AxiosError) => {
@@ -370,6 +366,7 @@ const Pokemon = (props: IPokemonPage) => {
       setFormList([]);
       setPokeData([]);
       setCostModifier(undefined);
+      setMoveRankings([]);
     }
   };
 
@@ -744,7 +741,8 @@ const Pokemon = (props: IPokemonPage) => {
           pokeData={pokeData}
           setSearchOption={props.setSearchOption}
           defaultId={dataStorePokemon?.current?.id}
-          urlEvolutionChain={urlEvolutionChain}
+          evolutionChain={evolutionChain}
+          moveRankings={moveRankings}
           isLoadedForms={progress.isLoadedForms}
         />
         <PokemonAssetComponent originSoundCry={originSoundCry} isLoadedForms={progress.isLoadedForms} />

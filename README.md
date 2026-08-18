@@ -98,7 +98,7 @@ PokeGoBreeze is a comprehensive, feature-rich web application designed for Poké
 - **Containerization**: Docker support with docker-compose
 - **CI/CD**:
   - GitHub Actions for automated workflows
-  - Vercel integration for preview deployments
+  - A push to `develop`, `stage`, or `main` deploys that branch from this repository
 - **Analytics**:
   - Vercel Analytics
   - Vercel Speed Insights
@@ -392,6 +392,11 @@ npm install
    | `REACT_APP_VERSION` | No | App version override (e.g. `1.0.0`) |
    | `REACT_APP_REDUX_VERBOSE` | No | `true` = show full Redux store in DevTools (default `false`) |
    | `MONGODB_URI` | No | MongoDB connection string (deploy.sh version history) |
+
+   GitHub Actions deployment also requires the `VERCEL_TOKEN` Actions secret
+   and the `VERCEL_ORG_ID` plus `VERCEL_PROJECT_ID` Actions variables. Branches
+   map to Vercel as follows: `develop` → Preview develop, `stage` → Preview
+   stage, and `main` → Production. The workspace is not part of this deployment.
 
    > See [`.env.example`](.env.example) for all variables with descriptions and example values.
 

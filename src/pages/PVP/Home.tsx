@@ -5,10 +5,8 @@ import { useTitle } from '../../utils/hooks/useTitle';
 import { getTime } from '../../utils/utils';
 import { isEqual, isNotEmpty } from '../../utils/extension';
 import useDataStore from '../../composables/useDataStore';
-import usePVP from '../../composables/usePVP';
 import useSpinner from '../../composables/useSpinner';
 import useTimestamp from '../../composables/useTimestamp';
-import useCombats from '../../composables/useCombats';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
 import ButtonGroupLeague from '../../components/Commons/Buttons/ButtonGroupLeague';
 import { Skeleton } from '@mui/material';
@@ -37,8 +35,6 @@ const PVPHome = () => {
     keywords: ['PVP simulator', 'Pokémon GO battles', 'battle simulator', 'PVP team builder', 'battle strategies'],
   });
   const { pvpData } = useDataStore();
-  const { isCombatsNoneArchetype } = useCombats();
-  const { loadPVP, loadPVPMoves } = usePVP();
   const { spinnerIsLoading, hideSpinner } = useSpinner();
   const { timestampPVP } = useTimestamp();
 
@@ -47,17 +43,10 @@ const PVPHome = () => {
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP();
-  }, []);
-
-  useEffect(() => {
-    if (isCombatsNoneArchetype()) {
-      loadPVPMoves();
-    }
     if (spinnerIsLoading) {
       hideSpinner();
     }
-  }, [spinnerIsLoading, isCombatsNoneArchetype]);
+  }, [spinnerIsLoading, hideSpinner]);
 
   useEffect(() => {
     if (!rank && !team && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {

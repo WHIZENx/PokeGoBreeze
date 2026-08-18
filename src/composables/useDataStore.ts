@@ -1,9 +1,8 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { StoreState, TimestampState } from '../store/models/state.model';
+import { StatsState, StoreState, TimestampState } from '../store/models/state.model';
 import {
   SetOptions,
   SetPokemon,
-  SetSticker,
   SetCombat,
   SetEvolutionChain,
   SetInformation,
@@ -12,11 +11,9 @@ import {
   SetCPM,
   SetTrainer,
   SetPVP,
-  SetPVPMoves,
 } from '../store/actions/store.action';
-import { IOptions, PokemonDataGM } from '../core/models/options.model';
-import { IPokemonData, PokemonEncounter } from '../core/models/pokemon.model';
-import { ISticker } from '../core/models/sticker.model';
+import { IOptions } from '../core/models/options.model';
+import { IPokemonData } from '../core/models/pokemon.model';
 import { ICombat } from '../core/models/combat.model';
 import { IEvolutionChain } from '../core/models/evolution-chain.model';
 import { IInformation } from '../core/models/information';
@@ -24,37 +21,10 @@ import { IAsset } from '../core/models/asset.model';
 import { LeagueData } from '../core/models/league.model';
 import { ICPM } from '../core/models/cpm.model';
 import { ITrainerLevelUp } from '../core/models/trainer.model';
-import { PokemonPVPMove } from '../core/models/pvp.model';
-import { isEqual } from 'lodash';
-import {
-  optionPokemonData,
-  optionLeagues,
-  optionPokemonTypes,
-  optionPokemonWeather,
-  optionSettings,
-  optionTrainer,
-  optionSticker,
-  optionCombat,
-  optionEvolutionChain,
-  optionInformation,
-  mappingMoveSetPokemonGO,
-  optionPokeImg,
-  optionPokeSound,
-  optionAssets,
-  mappingReleasedPokemonGO,
-  initializeStaticData,
-} from '../core/options';
-import { APIUrl } from '../services/constants';
-import { APITreeRoot, APITree } from '../services/models/api.model';
+import { IPVPDataModel } from '../core/models/pvp.model';
+import { IStatsRank } from '../core/models/stats.model';
 import { StoreActions, StatsActions, TimestampActions } from '../store/actions';
 import { createProgressHelpers } from '../utils/helpers/progress-helpers';
-import { DynamicObj, isInclude, isNotEmpty } from '../utils/extension';
-import APIService from '../services/api.service';
-import { Timestamp } from '../store/models/timestamp.model';
-import { Files } from '../store/models/store.model';
-import { calculateBaseCPM, calculateCPM } from '../core/cpm';
-import { maxIv, minIv } from '../utils/helpers/options-context.helpers';
-import { BASE_CPM } from '../utils/constants';
 import { useSnackbar } from '../contexts/snackbar.context';
 import ProcessedDataService from '../services/processed-data.service';
 
@@ -68,8 +38,9 @@ export const useDataStore = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const timestampState = useSelector((state: TimestampState) => state.timestamp);
+  const statsState = useSelector((state: StatsState) => state.stats);
   const { showSnackbar } = useSnackbar();
-  const { setProgress, completeProgress, errorProgress } = createProgressHelpers(dispatch);
+  const { setProgress, completeProgress } = createProgressHelpers(dispatch);
 
   /**
    * Update options in the store
@@ -85,14 +56,6 @@ export const useDataStore = () => {
    */
   const setPokemons = (pokemons: IPokemonData[]) => {
     dispatch(SetPokemon.create(pokemons));
-  };
-
-  /**
-   * Update sticker data in the store
-   * @param stickers - The new sticker data to be set
-   */
-  const setStickers = (stickers: ISticker[]) => {
-    dispatch(SetSticker.create(stickers));
   };
 
   /**
@@ -155,26 +118,12 @@ export const useDataStore = () => {
    * Update PVP data in the store
    * @param pvpData - The new PVP data to be set
    */
-  const setPVP = (pvpData: { rankings: string[]; trains: string[] }) => {
+  const setPVP = (pvpData: IPVPDataModel) => {
     dispatch(SetPVP.create(pvpData));
   };
 
   /**
-   * Update PVP moves data in the store
-   * @param pvpMoves - The new PVP moves data to be set
-   */
-  const setPVPMoves = (pvpMoves: PokemonPVPMove[]) => {
-    dispatch(SetPVPMoves.create(pvpMoves));
-  };
-
-  const loadBaseCPM = () => dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, minIv(), maxIv())));
-
-  const loadCPM = (cpmList: DynamicObj<number>) =>
-    dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, minIv(), Object.keys(cpmList).length)));
-
-  /**
-   * Hydrates Redux from the server-preprocessed snapshot. Returning false lets
-   * useTimestamp transparently fall back to the legacy browser processor.
+   * Hydrates Redux exclusively from the server-preprocessed snapshot.
    */
   const loadProcessedData = async (isCurrentVersion: boolean) => {
     if (!ProcessedDataService.isConfigured()) {
@@ -184,7 +133,9 @@ export const useDataStore = () => {
     try {
       const meta = await ProcessedDataService.getMeta();
       const isCurrentSnapshot =
-        isCurrentVersion && timestampIsCurrent(meta.source.gameMaster, meta.source.assets, meta.source.sounds);
+        isCurrentVersion &&
+        timestampState.snapshotGeneratedAt === meta.generatedAt &&
+        timestampIsCurrent(meta.source.gameMaster, meta.source.assets, meta.source.sounds, meta.source.pvp);
       if (isCurrentSnapshot) {
         completeProgress();
         return true;
@@ -192,34 +143,34 @@ export const useDataStore = () => {
 
       showSnackbar('Loading processed game data...', 'info');
       setProgress(20);
-      const [processedOptions, pokemons, combats, assets, leagues, evolutionChains, information, stickers, trainers] =
+      const [processedOptions, cpm, pvp, statsRankings, pokemons, combats, assets, evolutionChains, trainers] =
         await Promise.all([
           ProcessedDataService.getSection<IOptions>('options'),
+          ProcessedDataService.getSection<ICPM[]>('cpm'),
+          ProcessedDataService.getSection<IPVPDataModel>('pvp'),
+          ProcessedDataService.getSection<IStatsRank>('statsRankings'),
           ProcessedDataService.getSection<IPokemonData[]>('pokemons'),
           ProcessedDataService.getSection<ICombat[]>('combats'),
           ProcessedDataService.getSection<IAsset[]>('assets'),
-          ProcessedDataService.getSection<LeagueData>('leagues'),
           ProcessedDataService.getSection<IEvolutionChain[]>('evolutionChains'),
-          ProcessedDataService.getSection<IInformation[]>('information'),
-          ProcessedDataService.getSection<ISticker[]>('stickers'),
           ProcessedDataService.getSection<ITrainerLevelUp[]>('trainers'),
         ]);
 
       setProgress(70);
       dispatch(StoreActions.SetOptions.create(processedOptions));
-      loadCPM(processedOptions.playerSetting.cpMultipliers);
+      dispatch(StoreActions.SetCPM.create(cpm));
+      dispatch(StoreActions.SetPVP.create(pvp));
       dispatch(StoreActions.SetPokemon.create(pokemons));
       dispatch(StoreActions.SetCombat.create(combats));
       dispatch(StoreActions.SetAssets.create(assets));
-      dispatch(StoreActions.SetLeagues.create(leagues));
       dispatch(StoreActions.SetEvolutionChain.create(evolutionChains));
-      dispatch(StoreActions.SetInformation.create(information));
-      dispatch(StoreActions.SetSticker.create(stickers));
       dispatch(StoreActions.SetTrainer.create(trainers));
-      dispatch(StatsActions.SetStats.create(pokemons));
+      dispatch(StatsActions.SetStats.create(statsRankings));
+      dispatch(TimestampActions.SetSnapshotGeneratedAt.create(meta.generatedAt));
       dispatch(TimestampActions.SetTimestampGameMaster.create(meta.source.gameMaster));
       dispatch(TimestampActions.SetTimestampAssets.create(meta.source.assets));
       dispatch(TimestampActions.SetTimestampSounds.create(meta.source.sounds));
+      dispatch(TimestampActions.SetTimestampPVP.create(meta.source.pvp));
       completeProgress();
       return true;
     } catch {
@@ -227,159 +178,18 @@ export const useDataStore = () => {
     }
   };
 
-  const timestampIsCurrent = (gameMaster: number, assets: number, sounds: number) =>
+  const timestampIsCurrent = (gameMaster: number, assets: number, sounds: number, pvp: number) =>
     dataStore.pokemons.length > 0 &&
     dataStore.combats.length > 0 &&
+    dataStore.cpm.length > 0 &&
+    dataStore.pvp.rankings.length > 0 &&
+    statsState !== null &&
     timestampState.gamemaster === gameMaster &&
     timestampState.assets === assets &&
-    timestampState.sounds === sounds;
-
-  const loadPokeGOLogo = (url: string, iconTimestamp: number) =>
-    APIService.getFetchUrl<Files>(url, getAuthorizationHeaders)
-      .then((file) => {
-        if (file?.data) {
-          const files = file.data.files;
-          if (isNotEmpty(files)) {
-            const res = files.find((item) => isInclude(item.filename, 'Images/App Icons/'));
-            if (res) {
-              dispatch(StoreActions.SetLogoPokeGO.create(res.filename));
-              dispatch(TimestampActions.SetTimestampIcon.create(iconTimestamp));
-            }
-          }
-        }
-      })
-      .catch(() => dispatch(StoreActions.SetLogoPokeGO.create()));
-
-  const yieldToMain = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
-
-  const loadGameMaster = async (imageRoot: APITreeRoot[], soundsRoot: APITreeRoot[], timestampLoaded: Timestamp) => {
-    try {
-      const [gm, pokemonEncounterData] = await Promise.all([
-        APIService.getFetchUrl<PokemonDataGM[]>(APIUrl.GAMEMASTER),
-        import('../data/pokemon_encounter.json'),
-        initializeStaticData(),
-      ]);
-
-      showSnackbar('Please waiting to load game master...', 'info');
-
-      if (!gm || !isNotEmpty(gm.data)) {
-        errorProgress({ isError: true });
-        return;
-      }
-
-      const pokemonEncounter: PokemonEncounter[] = [...pokemonEncounterData.default];
-
-      // Phase 1 — type/weather lookups are cheap single passes; run first so pokemon build can use them
-      const typeEffective = optionPokemonTypes(gm.data);
-      const weatherBoost = optionPokemonWeather(gm.data);
-
-      await yieldToMain();
-
-      // Phase 2 — heaviest sync work: build all pokemon objects
-      const pokemon = optionPokemonData(gm.data, pokemonEncounter);
-
-      await yieldToMain();
-
-      // Phase 3 — remaining GM parsing; run in parallel since they don't depend on each other
-      const [league, options, combat] = await Promise.all([
-        Promise.resolve(optionLeagues(gm.data, pokemon)),
-        Promise.resolve(optionSettings(gm.data, typeEffective, weatherBoost)),
-        Promise.resolve(optionCombat(gm.data, typeEffective)),
-      ]);
-
-      await yieldToMain();
-
-      const [evolutionChains, information, stickers, trainer] = await Promise.all([
-        Promise.resolve(optionEvolutionChain(gm.data, pokemon)),
-        Promise.resolve(optionInformation(gm.data, pokemon)),
-        Promise.resolve(optionSticker(gm.data, pokemon)),
-        Promise.resolve(optionTrainer(gm.data)),
-      ]);
-
-      // Phase 4 — move-set mapping mutates pokemon in-place; must run after combat is built
-      mappingMoveSetPokemonGO(pokemon, combat);
-
-      await yieldToMain();
-
-      // Batch all dispatches so React only re-renders once
-      dispatch(StoreActions.SetOptions.create(options));
-      loadCPM(options.playerSetting.cpMultipliers);
-      dispatch(StoreActions.SetTrainer.create(trainer));
-      dispatch(StoreActions.SetSticker.create(stickers));
-      dispatch(StoreActions.SetCombat.create(combat));
-      dispatch(StoreActions.SetEvolutionChain.create(evolutionChains));
-      dispatch(StoreActions.SetInformation.create(information));
-      dispatch(StoreActions.SetLeagues.create(league));
-
-      setProgress(60);
-
-      if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound || !timestampLoaded.isCurrentVersion) {
-        await loadAssets(imageRoot, soundsRoot, pokemon, timestampLoaded);
-      }
-
-      setProgress(90);
-      dispatch(StatsActions.SetStats.create(pokemon));
-      dispatch(TimestampActions.SetTimestampGameMaster.create(timestampLoaded.gamemasterTimestamp));
-      completeProgress();
-    } catch (e) {
-      errorProgress({ isError: true, message: (e as ErrorEvent).message });
-    }
-  };
-
-  const loadAssets = async (
-    imageRoot: APITreeRoot[],
-    soundsRoot: APITreeRoot[],
-    pokemon: IPokemonData[],
-    timestamp: Timestamp
-  ) => {
-    if (!isNotEmpty(imageRoot) || !isNotEmpty(soundsRoot)) {
-      return;
-    }
-
-    // Step 1 — fetch root trees in parallel
-    const [imageFolder, soundFolder] = await Promise.all([
-      APIService.getFetchUrl<APITree>(imageRoot[0].commit.tree.url, getAuthorizationHeaders),
-      APIService.getFetchUrl<APITree>(soundsRoot[0].commit.tree.url, getAuthorizationHeaders),
-    ]);
-
-    const imageFolderPath = imageFolder.data.tree.find((item) => isEqual(item.path, 'Images'));
-    const soundFolderPath = soundFolder.data.tree.find((item) => isEqual(item.path, 'Sounds'));
-    if (!imageFolderPath || !soundFolderPath) {
-      return;
-    }
-
-    // Step 2 — fetch sub-folders, then leaf nodes, all in parallel
-    const [imageSubFolder, soundSubFolder] = await Promise.all([
-      APIService.getFetchUrl<APITree>(imageFolderPath.url, getAuthorizationHeaders),
-      APIService.getFetchUrl<APITree>(soundFolderPath.url, getAuthorizationHeaders),
-    ]);
-
-    const imagePath = imageSubFolder.data.tree.find((item) => isEqual(item.path, 'Pokemon - 256x256'));
-    const soundPath = soundSubFolder.data.tree.find((item) => isEqual(item.path, 'Pokemon Cries'));
-    if (!imagePath || !soundPath) {
-      return;
-    }
-
-    const [imageData, soundData] = await Promise.all([
-      APIService.getFetchUrl<APITree>(`${imagePath.url}?recursive=1`, getAuthorizationHeaders),
-      APIService.getFetchUrl<APITree>(`${soundPath.url}?recursive=1`, getAuthorizationHeaders),
-    ]);
-
-    const assetImgFiles = optionPokeImg(imageData.data);
-    const assetSoundFiles = optionPokeSound(soundData.data);
-
-    const assetsPokemon = optionAssets(pokemon, assetImgFiles, assetSoundFiles);
-    mappingReleasedPokemonGO(pokemon, assetsPokemon);
-
-    dispatch(StoreActions.SetAssets.create(assetsPokemon));
-    dispatch(StoreActions.SetPokemon.create(pokemon));
-    dispatch(TimestampActions.SetTimestampAssets.create(timestamp.assetsTimestamp));
-    dispatch(TimestampActions.SetTimestampSounds.create(timestamp.soundsTimestamp));
-    completeProgress();
-  };
+    timestampState.sounds === sounds &&
+    timestampState.pvp === pvp;
 
   const pokemonsData = dataStore.pokemons;
-  const stickersData = dataStore.stickers;
   const combatsData = dataStore.combats;
   const evolutionChainsData = dataStore.evolutionChains;
   const informationData = dataStore.information;
@@ -390,25 +200,10 @@ export const useDataStore = () => {
   const pvpData = dataStore.pvp;
   const optionsData = dataStore.options;
 
-  const githubToken = (process.env.REACT_APP_TOKEN_PRIVATE_REPO ?? '').trim();
-  const hasGithubToken =
-    githubToken && !['your_github_token_here', 'undefined', 'null'].includes(githubToken.toLowerCase());
-  const getAuthorizationHeaders = hasGithubToken
-    ? {
-        headers: { Authorization: `Bearer ${githubToken}` },
-      }
-    : undefined;
-
   return {
     dataStore,
-    loadBaseCPM,
-    loadCPM,
-    loadPokeGOLogo,
-    loadGameMaster,
-    loadAssets,
     loadProcessedData,
     pokemonsData,
-    stickersData,
     combatsData,
     evolutionChainsData,
     informationData,
@@ -420,7 +215,6 @@ export const useDataStore = () => {
     optionsData,
     setOptions,
     setPokemons,
-    setStickers,
     setCombats,
     setEvolutionChains,
     setInformation,
@@ -429,8 +223,6 @@ export const useDataStore = () => {
     setCPM,
     setTrainers,
     setPVP,
-    setPVPMoves,
-    getAuthorizationHeaders,
   };
 };
 

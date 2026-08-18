@@ -1,26 +1,22 @@
 import { Checkbox, Skeleton } from '@mui/material';
-import React, { startTransition, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../../services/api.service';
 import {
-  convertPokemonDataName,
   createDataRows,
   generateParamForm,
   getKeyWithData,
   getValidPokemonImgPath,
-  isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../../utils/utils';
 
 import './Counter.scss';
 import { TableStyles } from 'react-data-table-component';
-import { ICounterModel } from './models/counter.model';
+import { CounterModel, ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../../models/component.model';
 import { ColumnType, MoveType, PokemonType } from '../../../../enums/type.enum';
 import { TableColumnModify } from '../../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
-  DynamicObj,
-  getValueOrDefault,
   isEqual,
   isInclude,
   isNotEmpty,
@@ -34,15 +30,23 @@ import PokemonIconType from '../../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../../utils/models/extension.model';
 import IconType from '../../../Sprites/Icon/Type/Type';
 import CustomDataTable from '../CustomDataTable/CustomDataTable';
+import useSkipStalePageRequest from '../../../../utils/hooks/useSkipStalePageRequest';
 import { IncludeMode } from '../../../../utils/enums/string.enum';
-import { counterDelay } from '../../../../utils/helpers/options-context.helpers';
+import {
+  battleStab,
+  defaultDamageConst,
+  defaultDamageMultiply,
+  defaultEnergyPerHpLost,
+  defaultPokemonLevel,
+  defaultPokemonShadow,
+  maxIv,
+} from '../../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../../composables/useAssets';
 import useOptionStore from '../../../../composables/useOptions';
-import usePokemon from '../../../../composables/usePokemon';
-import useCalculate from '../../../../composables/useCalculate';
 import InputReleased from '../../Inputs/InputReleased';
 import FormControlMui from '../../Forms/FormControlMui';
 import { IMenuItem } from '../../models/menu.model';
+import { ProcessedDataPage } from '../../../../services/processed-data.service';
 
 const customStyles: TableStyles = {
   head: {
@@ -117,20 +121,46 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 const Counter = (props: ICounterComponent) => {
   const { findAssetForm } = useAssets();
   const { optionsCounter, setCounterOptions } = useOptionStore();
-  const { checkPokemonGO } = usePokemon();
-  const { counterPokemon } = useCalculate();
-
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
-  const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
   const [showFrame, setShowFrame] = useState(true);
-  const [filterTrigger, setFilterTrigger] = useState(0);
-
-  // Memoize counter results by (def, types) so revisiting a Pokemon is instant
-  const counterCacheRef = useRef(new Map<string, ICounterModel[]>());
+  const [totalRows, setTotalRows] = useState(0);
+  const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+  const latestRequestRef = useRef(0);
+  const searchTermRef = useRef('');
 
   const [options, setOptions] = useState(optionsCounter);
 
   const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
+  const defense = toNumber(props.pokemonData?.statsGO?.def);
+  const typesKey = props.pokemonData?.types?.join(',') ?? '';
+
+  const resetPagination = useCallback(() => {
+    setPage(1);
+    setResetPaginationToggle((value) => !value);
+  }, []);
+
+  const handleSearchTermChange = useCallback(
+    (value: string) => {
+      if (searchTermRef.current === value) {
+        return;
+      }
+      searchTermRef.current = value;
+      setSearchTerm(value);
+      resetPagination();
+    },
+    [resetPagination]
+  );
+
+  useEffect(() => {
+    resetPagination();
+  }, [defense, typesKey, showMegaPrimal, releasedGO, enableBest, isSearchId, isMatch, resetPagination]);
+
+  const skipStalePageRequest = useSkipStalePageRequest(
+    page,
+    `${defense}|${typesKey}|${showMegaPrimal}|${releasedGO}|${enableBest}|${isSearchId}|${isMatch}`
+  );
 
   const menuItems = createDataRows<IMenuItem<ICounterModel>>(
     {
@@ -273,82 +303,80 @@ const Counter = (props: ICounterComponent) => {
   );
 
   useEffect(() => {
-    const types = props.pokemonData?.types;
-    if (isNullOrUndefined(props.pokemonData) || !types || !isNotEmpty(types)) {
+    if (skipStalePageRequest) {
+      return;
+    }
+    const requestId = ++latestRequestRef.current;
+    if (isNullOrUndefined(props.pokemonData) || !typesKey) {
       return;
     }
 
-    const def = toNumber(props.pokemonData.statsGO?.def);
-    const cacheKey = `${def}:${types.join(',')}`;
-
-    // Fast path: we've computed this (def, types) before in this session
-    const cached = counterCacheRef.current.get(cacheKey);
-    if (cached) {
-      setCounterList(cached);
-      setFilterTrigger((t) => t + 1);
+    if (defense <= 0) {
+      setCounterList([]);
+      setTotalRows(0);
+      setShowFrame(true);
       return;
     }
-
-    setCounterFilter([]);
     setShowFrame(true);
-
+    setCounterList([]);
     const controller = new AbortController();
-    // Delay lets the skeleton paint first and lets rapid Pokemon switches cancel
-    // the pending work before the chunked compute even starts.
-    const timeoutId = window.setTimeout(() => {
-      counterPokemon(def, types, controller.signal)
-        .then((result) => {
-          counterCacheRef.current.set(cacheKey, result);
-          // Mark the heavy table re-render as interruptible so UI stays responsive
-          startTransition(() => setCounterList(result));
-        })
-        .catch(() => {
-          // AbortError — user switched Pokemon mid-compute. Ignore.
-        });
-    }, counterDelay());
+    APIService.getFetchUrl<ProcessedDataPage<ICounterModel>>(
+      APIService.getCounters({
+        def: defense,
+        types: typesKey,
+        iv: maxIv(),
+        level: defaultPokemonLevel(),
+        stab: battleStab(),
+        damageMultiply: defaultDamageMultiply(),
+        damageConst: defaultDamageConst(),
+        energyPerHpLost: defaultEnergyPerHpLost(),
+        forceShadow: defaultPokemonShadow(),
+        showMegaPrimal,
+        released: releasedGO,
+        best: enableBest,
+        searchId: isSearchId,
+        matchId: isMatch,
+        q: searchTerm,
+        page,
+        limit: 100,
+      }),
+      { signal: controller.signal }
+    )
+      .then(({ data }) => {
+        if (requestId !== latestRequestRef.current) {
+          return;
+        }
+        setCounterList(data.data.map((row) => new CounterModel(row)));
+        setTotalRows(data.meta.total);
+        setShowFrame(false);
+      })
+      .catch((error) => {
+        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+          setCounterList([]);
+          setTotalRows(0);
+          setShowFrame(false);
+        }
+      });
 
     return () => {
-      window.clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [props.pokemonData, props.pokemonData?.pokemonType]);
+  }, [
+    defense,
+    typesKey,
+    showMegaPrimal,
+    releasedGO,
+    enableBest,
+    isSearchId,
+    isMatch,
+    searchTerm,
+    page,
+    skipStalePageRequest,
+  ]);
 
   useEffect(() => {
     setCounterOptions(options);
-    if (isNotEmpty(counterList)) {
-      const result = enableBest ? filterBestOptions(counterList) : counterList;
-      setCounterFilter(
-        result
-          .filter((pokemon) => {
-            if (showMegaPrimal) {
-              return true;
-            }
-            return !isSpecialMegaFormType(pokemon.pokemonType);
-          })
-          .filter((pokemon) => {
-            if (!releasedGO) {
-              return true;
-            }
-            if (!pokemon.releasedGO) {
-              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName));
-            }
-            return pokemon.releasedGO;
-          })
-      );
-      setShowFrame(false);
-    }
-  }, [counterList, filterTrigger, showMegaPrimal, releasedGO, enableBest]);
-
-  const filterBestOptions = (result: ICounterModel[]) => {
-    const group = result.reduce(
-      (res, obj) => {
-        (res[obj.pokemonName] = getValueOrDefault(Array, res[obj.pokemonName])).push(obj);
-        return res;
-      },
-      new Object() as DynamicObj<ICounterModel[]>
-    );
-    return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p.ratio > c.ratio ? p : c)));
-  };
+  }, [options]);
 
   const modalOptions = () => (
     <form>
@@ -404,6 +432,13 @@ const Counter = (props: ICounterComponent) => {
           (isSearchId && (isMatch ? isEqual(item.pokemonId, searchTerm) : isInclude(item.pokemonId, searchTerm)))
         }
         pagination
+        paginationServer
+        paginationTotalRows={totalRows}
+        onChangePage={setPage}
+        paginationDefaultPage={1}
+        paginationResetDefaultPage={resetPaginationToggle}
+        onSearchTermChange={handleSearchTermChange}
+        debounceTime={300}
         customDataStyles={customStyles}
         inputPlaceholder="Search Pokémon"
         fixedHeader
@@ -414,7 +449,7 @@ const Counter = (props: ICounterComponent) => {
         paginationPerPage={100}
         progressPending={showFrame}
         progressComponent={<CounterLoader />}
-        data={counterFilter}
+        data={counterList}
         isXFixed
         isShowModalOptions
         titleModalOptions="Pokémon counter options"

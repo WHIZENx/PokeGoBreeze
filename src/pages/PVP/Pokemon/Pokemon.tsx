@@ -1,28 +1,22 @@
 import '../PVP.scss';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   capitalize,
-  convertNameRankingToOri,
   getKeysObj,
   getKeyWithData,
   getValidPokemonImgPath,
-  replaceTempMovePvpName,
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import APIService from '../../../services/api.service';
-import { calculateStatsByTag } from '../../../utils/calculate';
 import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 
 import Error from '../../Error/Error';
 import { Params } from '../../../utils/constants';
-import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
-import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../utils/extension';
-import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
-import { LeagueBattleType } from '../../../core/enums/league.enum';
-import { PokemonType } from '../../../enums/type.enum';
+import { isEqual, toNumber } from '../../../utils/extension';
+import { EqualMode } from '../../../utils/enums/string.enum';
 import HeaderPVP from '../components/HeaderPVP';
 import BodyPVP from '../components/BodyPVP';
 import MoveSet from '../components/MoveSet';
@@ -30,32 +24,18 @@ import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { HexagonStats } from '../../../core/models/stats.model';
 import { getValueOrDefault } from '../../../utils/extension';
 import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { formShadow } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../composables/useDataStore';
-import usePVP from '../../../composables/usePVP';
-import useAssets from '../../../composables/useAssets';
-import useRouter from '../../../composables/useRouter';
-import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
-import useCombats from '../../../composables/useCombats';
-import usePokemon from '../../../composables/usePokemon';
 import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
+import { IPVPInfo } from '../../../core/models/pvp.model';
+import { PvpPokemonApiResponse } from '../../../core/models/API/pvp-pokemon.model';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
-  const { pvpData } = useDataStore();
-  const { isCombatsNoneArchetype, findMoveByName } = useCombats();
-  const { getAssetNameById } = useAssets();
-  const { loadPVP, loadPVPMoves } = usePVP();
-  const { findPokemonBySlug } = usePokemon();
-  const { routerAction } = useRouter();
-  const { statsData } = useStats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
   const [searchParams] = useSearchParams();
@@ -63,11 +43,9 @@ const PokemonPVP = (props: IStyleSheetData) => {
   const params = useParams();
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
+  const [league, setLeague] = useState<IPVPInfo>();
   const [isFound, setIsFound] = useState(true);
-
-  useEffect(() => {
-    loadPVP();
-  }, []);
+  const requestController = useRef<AbortController>();
 
   const setPokemonPVPTitle = (isNotFound = false) => {
     if (isNotFound) {
@@ -96,136 +74,90 @@ const PokemonPVP = (props: IStyleSheetData) => {
   useTitle(titleProps);
 
   const fetchPokemonInfo = useCallback(async () => {
-    if (
-      statsData?.attack?.ranking &&
-      statsData?.defense?.ranking &&
-      statsData?.stamina?.ranking &&
-      statsData?.statProd?.ranking
-    ) {
-      showSpinner();
-      try {
-        const cp = toNumber(params.cp);
-        const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase().replace('clodsiresb', 'clodsire');
-        const overall = getValueOrDefault(String, getKeyWithData(ScoreType, ScoreType.Overall));
-        const type = getValueOrDefault(String, searchParams.get(Params.LeagueType), overall);
-        const { data } = await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, type));
+    requestController.current?.abort();
+    const controller = new AbortController();
+    requestController.current = controller;
+    showSpinner();
+    try {
+      const cp = toNumber(params.cp);
+      const overall = getValueOrDefault(String, getKeyWithData(ScoreType, ScoreType.Overall));
+      const type = getValueOrDefault(String, searchParams.get(Params.LeagueType), overall).toLowerCase();
+      const response = await APIService.getFetchUrl<{ data: PvpPokemonApiResponse }>(
+        APIService.getPvpPokemon({
+          series: params.serie,
+          cp,
+          type,
+          name: params.pokemon,
+        }),
+        { signal: controller.signal }
+      );
+      const result = response.data.data;
+      const { id, name, form } = result;
+      if (!result?.data || !name) {
+        setTitleProps(setPokemonPVPTitle(true));
+        return;
+      }
 
-        if (!data) {
-          setTitleProps(setPokemonPVPTitle(true));
-          return;
-        }
-
-        const pokemonData = data.find((pokemon) => isEqual(pokemon.speciesId, paramName));
-        if (!pokemonData) {
-          setTitleProps(setPokemonPVPTitle(true));
-          return;
-        }
-
-        const name = convertNameRankingToOri(pokemonData.speciesId, pokemonData.speciesName);
-        const pokemon = findPokemonBySlug(name);
-        const id = pokemon?.num;
-        const form = getAssetNameById(id, name, pokemon?.form);
-        setTitleProps({
-          title: `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
-            cp
-          )} (${capitalize(params.serie)})`,
-          description: `PVP analysis and battle stats for ${splitAndCapitalize(
-            name,
-            '-',
-            ' '
-          )} in ${getPokemonBattleLeagueName(cp)} ${capitalize(
-            params.serie
-          )}. Find optimal movesets, counters, and performance metrics.`,
-          keywords: [
-            'Pokémon GO',
-            `${splitAndCapitalize(name, '-', ' ')}`,
-            `${getPokemonBattleLeagueName(cp)}`,
-            `${capitalize(params.serie)}`,
-            'PVP stats',
-            'best movesets',
-            'battle performance',
-            'PokéGO Breeze',
-          ],
-          image: APIService.getPokemonModel(form, id),
+      setIsFound(true);
+      setLeague(result.league);
+      setRankingPoke(new PokemonBattleRanking(result));
+      setTitleProps({
+        title: `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
+          cp
+        )} (${capitalize(params.serie)})`,
+        description: `PVP analysis and battle stats for ${splitAndCapitalize(
+          name,
+          '-',
+          ' '
+        )} in ${getPokemonBattleLeagueName(cp)} ${capitalize(
+          params.serie
+        )}. Find optimal movesets, counters, and performance metrics.`,
+        keywords: [
+          'Pokémon GO',
+          `${splitAndCapitalize(name, '-', ' ')}`,
+          `${getPokemonBattleLeagueName(cp)}`,
+          `${capitalize(params.serie)}`,
+          'PVP stats',
+          'best movesets',
+          'battle performance',
+          'PokéGO Breeze',
+        ],
+        image: APIService.getPokemonModel(form, id),
+      });
+    } catch (e) {
+      if (controller.signal.aborted) {
+        return;
+      }
+      if ((e as AxiosError)?.response?.status === 404) {
+        setRankingPoke(undefined);
+        setLeague(undefined);
+        setTitleProps(setPokemonPVPTitle(true));
+      } else {
+        showSpinnerMsg({
+          isError: true,
+          message: (e as AxiosError).message,
         });
-
-        const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
-
-        const [fMoveData] = pokemonData.moveset;
-        let [, cMoveDataPri, cMoveDataSec] = pokemonData.moveset;
-        cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
-        cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
-
-        const fMove = findMoveByName(fMoveData);
-        const cMovePri = findMoveByName(cMoveDataPri);
-        let cMoveSec;
-        if (cMoveDataSec) {
-          cMoveSec = findMoveByName(cMoveDataSec);
-        }
-
-        let pokemonType = PokemonType.Normal;
-        if (isInclude(pokemonData.speciesName, `(${formShadow()})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
-          pokemonType = PokemonType.Shadow;
-        } else if (
-          isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
-          isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)
-        ) {
-          pokemonType = PokemonType.Purified;
-        }
-
-        pokemonData.scorePVP = HexagonStats.create(pokemonData.scores);
-
-        setRankingPoke(
-          new PokemonBattleRanking({
-            data: pokemonData,
-            id,
-            name,
-            pokemon,
-            form,
-            stats,
-            atk: statsData.attack.ranking.find((i) => i.attack === stats.atk),
-            def: statsData.defense.ranking.find((i) => i.defense === stats.def),
-            sta: statsData.stamina.ranking.find((i) => i.stamina === stats.sta),
-            prod: statsData.statProd.ranking.find((i) => i.product === stats.atk * stats.def * stats.sta),
-            fMove,
-            cMovePri,
-            cMoveSec,
-            pokemonType,
-          })
-        );
+      }
+    } finally {
+      if (requestController.current === controller) {
         hideSpinner();
-      } catch (e) {
-        if ((e as AxiosError)?.status === 404) {
-          setTitleProps(setPokemonPVPTitle(true));
-        } else {
-          showSpinnerMsg({
-            isError: true,
-            message: (e as AxiosError).message,
-          });
-        }
       }
     }
-  }, [params.serie, params.pokemon, params.cp, searchParams, statsData, findMoveByName, findPokemonBySlug]);
+  }, [params.serie, params.pokemon, params.cp, searchParams]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
     };
-    if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
-      if (isCombatsNoneArchetype()) {
-        loadPVPMoves();
-      } else if (routerAction) {
-        fetchPokemon();
-      }
-    }
+    fetchPokemon();
     return () => {
+      requestController.current?.abort();
       hideSpinner();
     };
-  }, [fetchPokemonInfo, pvpData.rankings, pvpData.trains, routerAction]);
+  }, [fetchPokemonInfo]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvpData.rankings.find((item) => item.id === LeagueBattleType.All && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -238,7 +170,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
             />
             <h2 className="!tw-text-white">
               <b>
-                {isEqual(league.name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)
+                {isEqual(league.name, 'all', EqualMode.IgnoreCaseSensitive)
                   ? getPokemonBattleLeagueName(cp)
                   : league.name}
               </b>

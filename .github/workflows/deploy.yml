@@ -2,13 +2,13 @@ name: Deploy
 
 on:
   push:
+    branches: [main, stage, develop]
   pull_request:
-  workflow_dispatch:
 
 env:
   CI: true
   NODE_OPTIONS: --max_old_space_size=4096
-  NODE_VERSION: '20'
+  NODE_VERSION: '24'
   # App env vars (available to all jobs via global env)
   REACT_APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
   APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
@@ -23,7 +23,7 @@ env:
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
-  # JOB 1 – Vercel: update Edge Config + trigger deploy hook
+  # JOB 1 – Vercel: update Edge Config + deploy the pushed branch
   # Branches: main (production) | stage (staging) | develop (development)
   # ─────────────────────────────────────────────────────────────────────────────
   deploy-vercel:
@@ -55,19 +55,29 @@ jobs:
           VERCEL_EDGE_CONFIG_ID: ${{ secrets.REACT_APP_EDGE_ID }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
-      - name: Trigger Vercel Deploy Hook
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Deploy pushed branch to Vercel
         env:
-          DEPLOY_HOOK_URL: ${{ github.ref_name == 'main' && secrets.VERCEL_DEPLOY_HOOK_PRODUCTION || 
-            github.ref_name == 'stage' && secrets.VERCEL_DEPLOY_HOOK_STAGING || 
-            github.ref_name == 'develop' && secrets.VERCEL_DEPLOY_HOOK_DEVELOP }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
         run: |
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$DEPLOY_HOOK_URL")
-          if [ "$RESPONSE" = "201" ]; then
-            echo "✅ Vercel deploy hook triggered (HTTP $RESPONSE)"
+          CLI_TOKEN="$VERCEL_TOKEN"
+          unset VERCEL_TOKEN
+          if [[ "$GITHUB_REF_NAME" == "main" ]]; then
+            vercel pull --yes --environment=production --token="$CLI_TOKEN"
+            vercel build --prod --token="$CLI_TOKEN"
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$CLI_TOKEN")
+            ALIAS=poke-go-breeze.vercel.app
           else
-            echo "❌ Deploy hook failed (HTTP $RESPONSE)"
-            exit 1
+            vercel pull --yes --environment=preview --git-branch="$GITHUB_REF_NAME" --token="$CLI_TOKEN"
+            vercel build --token="$CLI_TOKEN"
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$CLI_TOKEN")
+            ALIAS="poke-go-breeze-${GITHUB_REF_NAME}.vercel.app"
           fi
+          vercel alias set "$DEPLOYMENT_URL" "$ALIAS" --token="$CLI_TOKEN"
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 2 – Firebase Hosting: build & deploy on push

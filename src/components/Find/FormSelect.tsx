@@ -1,5 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../services/api.service';
+import type { PokemonBundleVariety } from '../../core/models/API/pokemon-bundle.model';
 import Tools from './Tools';
 
 import {
@@ -17,13 +18,12 @@ import { useDispatch } from 'react-redux';
 import { IPokemonName, IPokemonSpecie, PokemonSpecie } from '../../core/models/pokemon.model';
 import {
   Form,
-  PokemonForm,
   IPokemonFormModify,
   PokemonFormModify,
   PokemonFormDetail,
   IPokemonFormDetail,
 } from '../../core/models/API/form.model';
-import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
+import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo } from '../../core/models/API/info.model';
 import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
 import { PokemonType, TypeRaid } from '../../enums/type.enum';
@@ -63,27 +63,16 @@ const FormSelect = (props: IFormSelectComponent) => {
   const { showSnackbar } = useSnackbar();
 
   const fetchMap = useCallback(
-    async (specie: IPokemonSpecie) => {
+    (specie: IPokemonSpecie, varieties: PokemonBundleVariety[]) => {
       setFormList([]);
       setPokeData([]);
       const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
-      const cancelToken = axiosSource.current.token;
-      await Promise.all(
-        specie.varieties.map(async (value) => {
-          const { data: pokeInfo } = await APIService.getFetchUrl<PokemonInfo>(value.path, { cancelToken });
-          const pokeForm = await Promise.all(
-            pokeInfo.forms.map(async (item) => {
-              const { data: form } = await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken });
-              return PokemonFormDetail.setDetails(form);
-            })
-          );
-          const pokeDetail = PokemonDetailInfo.setDetails(pokeInfo);
-          dataPokeList.push(pokeDetail);
-          dataFormList.push(pokeForm);
-        })
-      ).catch(() => {
-        return;
+      varieties.forEach(({ pokemon: pokeInfo, forms }) => {
+        const pokeForm = forms.map((form) => PokemonFormDetail.setDetails(form));
+        const pokeDetail = PokemonDetailInfo.setDetails(pokeInfo);
+        dataPokeList.push(pokeDetail);
+        dataFormList.push(pokeForm);
       });
 
       const pokemon = findPokemonById(specie.id);
@@ -145,11 +134,11 @@ const FormSelect = (props: IFormSelectComponent) => {
       axiosSource.current = APIService.reNewCancelToken();
       const cancelToken = axiosSource.current.token;
 
-      APIService.getPokeSpices(id, { cancelToken })
-        .then(async (res) => {
-          if (res.data) {
-            const result = PokemonSpecie.create(res.data);
-            await fetchMap(result);
+      APIService.getPokemonBundle(id, { cancelToken })
+        .then((res) => {
+          if (res.data.data) {
+            const result = PokemonSpecie.create(res.data.data.species);
+            fetchMap(result, res.data.data.varieties);
           }
         })
         .catch((e: AxiosError) => {

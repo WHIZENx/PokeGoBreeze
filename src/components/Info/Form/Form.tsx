@@ -47,6 +47,12 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
   const [genderRatio, setGenderRatio] = useState(new PokemonGenderRatio());
+  const moveRanking = props.moveRankings.find(
+    (item) =>
+      item.pokemonType === (searchingMainDetails?.pokemonType ?? PokemonType.Normal) &&
+      ((item.fullName && isEqual(item.fullName, searchingMainDetails?.fullName)) ||
+        isEqual(item.form, searchingMainDetails?.form))
+  );
 
   useEffect(() => {
     if (searchingMainDetails?.fullName && searchingMainDetails.genderRatio) {
@@ -142,7 +148,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       id={props.defaultId}
       setSearchOption={props.setSearchOption}
       isLoadedForms={props.isLoadedForms}
-      urlEvolutionChain={props.urlEvolutionChain}
+      evolutionChain={props.evolutionChain}
     />
   );
 
@@ -213,7 +219,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           )}
         </div>
         <div className="md:tw-w-7/12 !tw-p-0">
-          <TableMove pokemonData={searchingMainDetails} />
+          <TableMove pokemonData={searchingMainDetails} rankMoveData={moveRanking?.bestMoves} />
           <Counter pokemonData={searchingMainDetails} />
         </div>
       </div>

@@ -10,7 +10,7 @@ declare global {
 }
 
 String.prototype.isEmpty = function () {
-  return typeof this === 'string' && this === '';
+  return String(this) === '';
 };
 
 String.prototype.isNull = function () {
@@ -22,15 +22,15 @@ String.prototype.isUndefined = function () {
 };
 
 String.prototype.isEqual = function (value: string) {
-  return this === value;
+  return String(this) === value;
 };
 
 String.prototype.isEqualWithIgnoreCase = function (value: string) {
-  return this.toUpperCase() === value.toUpperCase();
+  return String(this).toUpperCase() === value.toUpperCase();
 };
 
 String.prototype.includesWithIgnoreCase = function (searchElement: string) {
-  return this.toUpperCase().includes(searchElement.toUpperCase());
+  return String(this).toUpperCase().includes(searchElement.toUpperCase());
 };
 
 export {};

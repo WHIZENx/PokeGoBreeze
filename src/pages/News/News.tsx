@@ -29,7 +29,6 @@ import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.mo
 import { LinkToTop } from '../../components/Link/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
-import { useDataStore } from '../../composables/useDataStore';
 import useAssets from '../../composables/useAssets';
 import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
 import { Divider, Skeleton } from '@mui/material';
@@ -49,17 +48,45 @@ const News = () => {
       'upcoming features',
     ],
   });
-  const { informationData } = useDataStore();
   const { findAssetsById } = useAssets();
 
+  const [information, setInformation] = useState<IInformation[]>([]);
   const [data, setData] = useState<INewsModel[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string>();
 
   useEffect(() => {
-    if (informationData.isLoaded && !isNotEmpty(data)) {
-      const result = mapDataInformation(informationData.data);
-      setData(result);
+    const controller = new AbortController();
+    let active = true;
+    setIsLoading(true);
+    setLoadError(undefined);
+    APIService.getFetchUrl<{ data: IInformation[] }>(APIService.getNews(), { signal: controller.signal })
+      .then(({ data }) => {
+        if (active) {
+          setInformation(data.data);
+        }
+      })
+      .catch((error) => {
+        if (active && !APIService.isCancel(error)) {
+          setLoadError(`Unable to load News: ${error}`);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setIsLoading(false);
+        }
+      });
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isNotEmpty(information)) {
+      setData(mapDataInformation(information));
     }
-  }, [informationData, data]);
+  }, [information, findAssetsById]);
 
   const mapDataInformation = (information: IInformation[]) =>
     information.map((info) =>
@@ -220,7 +247,10 @@ const News = () => {
   );
 
   const reload = (element: JSX.Element) => {
-    if (informationData.isLoaded) {
+    if (!isLoading) {
+      if (loadError) {
+        return <div className="tw-p-3 tw-text-center tw-text-red-600">{loadError}</div>;
+      }
       return element;
     }
     return (
