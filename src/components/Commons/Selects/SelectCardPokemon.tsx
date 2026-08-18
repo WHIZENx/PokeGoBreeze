@@ -25,7 +25,9 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
   const resultsContainerRef = useRef<HTMLDivElement>(null);
   const scrollDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const pokemonListFilterSlice = pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex);
+  const pokemonListFilterSlice = props.isRemoteSearch
+    ? pokemonListFilter
+    : pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex);
 
   useEffect(() => {
     setPokemonIcon(props.sprite);
@@ -33,6 +35,10 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
   }, [props.sprite, props.value]);
 
   useEffect(() => {
+    if (props.isRemoteSearch) {
+      setPokemonListFilter(props.pokemonList);
+      return;
+    }
     if (isNotEmpty(props.pokemonList)) {
       const debounced = debounce(() => {
         const results = props.pokemonList.filter((item) => {
@@ -55,7 +61,11 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
         debounced.cancel();
       };
     }
-  }, [props.pokemonList, search]);
+  }, [props.isRemoteSearch, props.pokemonList, search]);
+
+  useEffect(() => {
+    setStartIndex(0);
+  }, [search]);
 
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollingElement = ele.currentTarget;
@@ -69,7 +79,13 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
       }
 
       scrollDebounceRef.current = setTimeout(() => {
-        setStartIndex((prevIndex) => prevIndex + 1);
+        if (props.isRemoteSearch) {
+          if (props.hasMore) {
+            props.onLoadMore?.();
+          }
+        } else {
+          setStartIndex((prevIndex) => prevIndex + 1);
+        }
       }, 100);
     }
   };

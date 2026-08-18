@@ -616,7 +616,7 @@ const Move = (props: IMovePage) => {
                 <td>Sound</td>
                 <td colSpan={2}>
                   {move?.sound ? (
-                    <audio className="tw-flex tw-w-full tw-h-[30px]" controls>
+                    <audio className="tw-flex tw-w-full tw-h-[30px]" controls preload="none">
                       <source src={APIService.getSoundMove(move.sound)} type="audio/wav" />
                       Your browser does not support the audio element.
                     </audio>

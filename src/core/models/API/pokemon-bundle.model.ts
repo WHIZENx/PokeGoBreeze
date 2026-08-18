@@ -2,6 +2,8 @@ import type { IPokemonQueryRankMove } from '../../../utils/models/pokemon-top-mo
 import type { PokemonForm } from './form.model';
 import type { PokemonInfo, PokemonInfoEvo } from './info.model';
 import type { Species } from './species.model';
+import type { IAsset } from '../asset.model';
+import type { IEvolutionChain } from '../evolution-chain.model';
 
 export interface PokemonBundleVariety {
   pokemon: PokemonInfo;
@@ -21,4 +23,8 @@ export interface PokemonBundle {
   varieties: PokemonBundleVariety[];
   evolutionChain: PokemonInfoEvo | null;
   moveRankings?: PokemonMoveRanking[];
+  pokemonGo?: {
+    asset: IAsset | null;
+    evolutionChains: IEvolutionChain[];
+  };
 }
