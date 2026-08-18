@@ -8,7 +8,7 @@ import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
 import { Checkbox, FormControlLabel, ListItemText, Skeleton, Switch } from '@mui/material';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
-import { IPokemonData } from '../../core/models/pokemon.model';
+import { PokedexApiResponse } from '../../core/models/API/pokedex.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
@@ -17,7 +17,6 @@ import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
 import useIcon from '../../composables/useIcon';
-import useAssets from '../../composables/useAssets';
 import InputMuiSearch from '../../components/Commons/Inputs/InputMuiSearch';
 import InputReleased from '../../components/Commons/Inputs/InputReleased';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
@@ -86,8 +85,6 @@ const Pokedex = (props: IStyleSheetData) => {
 
   const dispatch = useDispatch();
   const { iconData } = useIcon();
-  const { queryAssetForm } = useAssets();
-
   const [selectTypes, setSelectTypes] = useState<string[]>([]);
   const [listOfPokemon, setListOfPokemon] = useState<IPokemonHomeModel[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -187,7 +184,7 @@ const Pokedex = (props: IStyleSheetData) => {
           ? PokemonClass.UltraBeast
           : undefined;
     setIsLoading(true);
-    APIService.getFetchUrl<{ data: IPokemonData[]; meta: { pages: number } }>(
+    APIService.getFetchUrl<PokedexApiResponse>(
       APIService.getPokedex({
         q: debouncedSearch,
         match: isMatch,
@@ -206,7 +203,7 @@ const Pokedex = (props: IStyleSheetData) => {
         if (requestId !== latestRequestRef.current) {
           return;
         }
-        const rows = data.data.map((item) => new PokemonHomeModel(item, queryAssetForm(item.num, item.form)));
+        const rows = data.data.map((item) => new PokemonHomeModel(item, item.assetForm));
         setPages(data.meta.pages);
         setListOfPokemon((current) => (page === 1 ? rows : [...current, ...rows]));
       })

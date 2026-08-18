@@ -88,4 +88,9 @@ export class GoForwardAction {
 }
 
 export type RouterActionsUnion =
-  LocationChangeAction | PushAction | ReplaceAction | GoAction | GoBackAction | GoForwardAction;
+  | LocationChangeAction
+  | PushAction
+  | ReplaceAction
+  | GoAction
+  | GoBackAction
+  | GoForwardAction;

@@ -39,7 +39,7 @@ export const useDataStore = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const timestampState = useSelector((state: TimestampState) => state.timestamp);
   const statsState = useSelector((state: StatsState) => state.stats);
-  const { showSnackbar } = useSnackbar();
+  const { showSnackbar, closeSnackbar } = useSnackbar();
   const { setProgress, completeProgress } = createProgressHelpers(dispatch);
 
   /**
@@ -130,6 +130,8 @@ export const useDataStore = () => {
       return false;
     }
 
+    const loadingMessage = 'Loading processed game data...';
+    let loadingNotificationShown = false;
     try {
       const meta = await ProcessedDataService.getMeta();
       const isCurrentSnapshot =
@@ -141,7 +143,8 @@ export const useDataStore = () => {
         return true;
       }
 
-      showSnackbar('Loading processed game data...', 'info');
+      showSnackbar(loadingMessage, 'info');
+      loadingNotificationShown = true;
       setProgress(20);
       const [processedOptions, cpm, pvp, statsRankings, pokemons, combats, assets, evolutionChains, trainers] =
         await Promise.all([
@@ -175,6 +178,10 @@ export const useDataStore = () => {
       return true;
     } catch {
       return false;
+    } finally {
+      if (loadingNotificationShown) {
+        closeSnackbar(loadingMessage);
+      }
     }
   };
 
