@@ -1,13 +1,4 @@
-import {
-  Badge,
-  Button,
-  CircularProgress,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from '@mui/material';
+import { Badge, CircularProgress, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 
@@ -50,6 +41,7 @@ const Sticker = () => {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const latestRequestRef = useRef(0);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -87,6 +79,23 @@ const Sticker = () => {
       });
     return () => controller.abort();
   }, [id, shopType, page]);
+
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (!target) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !loading && pokemonStickerFilter.length < total) {
+          setPage((current) => current + 1);
+        }
+      },
+      { rootMargin: '400px 0px' }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [loading, pokemonStickerFilter.length, total]);
 
   return (
     <div className="tw-container tw-p-3">
@@ -172,17 +181,9 @@ const Sticker = () => {
             </Fragment>
           )}
         </div>
-        {pokemonStickerFilter.length < total && (
-          <div className="tw-flex tw-justify-center tw-mt-3">
-            <Button variant="contained" disabled={loading} onClick={() => setPage((current) => current + 1)}>
-              {loading ? (
-                <CircularProgress size={22} color="inherit" />
-              ) : (
-                `Load more (${pokemonStickerFilter.length}/${total})`
-              )}
-            </Button>
-          </div>
-        )}
+        <div ref={loadMoreRef} className="tw-flex tw-justify-center tw-items-center tw-min-h-10 tw-mt-3">
+          {loading && isNotEmpty(pokemonStickerFilter) && <CircularProgress size={26} />}
+        </div>
       </div>
     </div>
   );
