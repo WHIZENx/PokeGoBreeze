@@ -63,7 +63,7 @@ const ColorModeContext = createContext({
 
 function App() {
   const { loadTimestamp, timestampGameMaster } = useTimestamp();
-  const { startProgress } = useSpinner();
+  const { startProgress, completeProgress } = useSpinner();
   const { setDevice } = useDevice();
   const { loadTheme } = useThemeStore();
   const { routerData, routerAction } = useRouter();
@@ -76,6 +76,8 @@ function App() {
   const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
   const [, setStateVersion] = useLocalStorage(LocalStorageConfig.Version, '');
   const [isBootstrapLoaded, setIsBootstrapLoaded] = useState(false);
+  const [loadedRoutePath, setLoadedRoutePath] = useState('');
+  const routeDataRequestRef = useRef(0);
   const dispatch = useDispatch();
   const { errorProgress } = createProgressHelpers(dispatch);
 
@@ -138,13 +140,25 @@ function App() {
     if (!isBootstrapLoaded) {
       return;
     }
+    const requestId = ++routeDataRequestRef.current;
     const sections = getProcessedDataSectionsForRoute(pathname);
     if (sections.length === 0) {
+      setLoadedRoutePath(pathname);
       return;
     }
-    loadProcessedSections(sections).catch((e: unknown) => {
-      errorProgress({ message: `Load page data error: ${e}`, isError: true });
-    });
+    startProgress();
+    loadProcessedSections(sections)
+      .then(() => {
+        if (requestId === routeDataRequestRef.current) {
+          setLoadedRoutePath(pathname);
+          completeProgress();
+        }
+      })
+      .catch((e: unknown) => {
+        if (requestId === routeDataRequestRef.current) {
+          errorProgress({ message: `Load page data error: ${e}`, isError: true });
+        }
+      });
   }, [isBootstrapLoaded, pathname]);
 
   useEffect(() => {
@@ -182,36 +196,38 @@ function App() {
   return (
     <Box className="tw-min-h-full" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
       <ResponsiveAppBar toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
-      <Routes>
-        <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
-        <Route path="/news" element={<News />} />
-        <Route path="/type-effective" element={<TypeEffect />} />
-        <Route path="/weather-boosts" element={<Weather />} />
-        <Route path="/search-pokemon" element={<SearchPokemon />} />
-        <Route path="/pokemon/:id" element={<Pokemon />} />
-        <Route path="/search-moves" element={<SearchMove />} />
-        <Route path="/move/:id" element={<Move />} />
-        <Route path="/search-types" element={<SearchTypes styleSheet={styleSheet.current} />} />
-        <Route path="/find-cp-iv" element={<FindTable />} />
-        <Route path="/calculate-stats" element={<CalculateStats />} />
-        <Route path="/search-battle-stats" element={<SearchBattle />} />
-        <Route path="/stats-table" element={<StatsInfo />} />
-        <Route path="/damage-calculate" element={<Damage />} />
-        <Route path="/raid-battle" element={<RaidBattle />} />
-        <Route path="/calculate-point" element={<CalculatePoint />} />
-        <Route path="/calculate-catch-chance" element={<CatchChance />} />
-        <Route path="/dps-tdo-sheets" element={<DpsTdo />} />
-        <Route path="/stats-ranking" element={<StatsRanking />} />
-        <Route path="/pvp" element={<PVPHome />} />
-        <Route path="/pvp/rankings/:serie/:cp" element={<RankingPVP styleSheet={styleSheet.current} />} />
-        <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP styleSheet={styleSheet.current} />} />
-        <Route path="/pvp/battle" element={<Battle />} />
-        <Route path="/pvp/battle/:cp" element={<Battle />} />
-        <Route path="/pvp/:cp/:serie/:pokemon" element={<PokemonPVP styleSheet={styleSheet.current} />} />
-        <Route path="/battle-leagues" element={<Leagues />} />
-        <Route path="/stickers" element={<Sticker />} />
-        <Route path="*" element={<Error />} />
-      </Routes>
+      {isBootstrapLoaded && loadedRoutePath === pathname && (
+        <Routes>
+          <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/type-effective" element={<TypeEffect />} />
+          <Route path="/weather-boosts" element={<Weather />} />
+          <Route path="/search-pokemon" element={<SearchPokemon />} />
+          <Route path="/pokemon/:id" element={<Pokemon />} />
+          <Route path="/search-moves" element={<SearchMove />} />
+          <Route path="/move/:id" element={<Move />} />
+          <Route path="/search-types" element={<SearchTypes styleSheet={styleSheet.current} />} />
+          <Route path="/find-cp-iv" element={<FindTable />} />
+          <Route path="/calculate-stats" element={<CalculateStats />} />
+          <Route path="/search-battle-stats" element={<SearchBattle />} />
+          <Route path="/stats-table" element={<StatsInfo />} />
+          <Route path="/damage-calculate" element={<Damage />} />
+          <Route path="/raid-battle" element={<RaidBattle />} />
+          <Route path="/calculate-point" element={<CalculatePoint />} />
+          <Route path="/calculate-catch-chance" element={<CatchChance />} />
+          <Route path="/dps-tdo-sheets" element={<DpsTdo />} />
+          <Route path="/stats-ranking" element={<StatsRanking />} />
+          <Route path="/pvp" element={<PVPHome />} />
+          <Route path="/pvp/rankings/:serie/:cp" element={<RankingPVP styleSheet={styleSheet.current} />} />
+          <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP styleSheet={styleSheet.current} />} />
+          <Route path="/pvp/battle" element={<Battle />} />
+          <Route path="/pvp/battle/:cp" element={<Battle />} />
+          <Route path="/pvp/:cp/:serie/:pokemon" element={<PokemonPVP styleSheet={styleSheet.current} />} />
+          <Route path="/battle-leagues" element={<Leagues />} />
+          <Route path="/stickers" element={<Sticker />} />
+          <Route path="*" element={<Error />} />
+        </Routes>
+      )}
       <Spinner />
     </Box>
   );
