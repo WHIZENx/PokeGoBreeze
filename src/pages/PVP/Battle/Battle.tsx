@@ -138,7 +138,7 @@ const stopPokemonAudio = (pokemon: IPokemonBattle) => {
 };
 
 const Battle = () => {
-  const { pokemonsData, assetsData } = useDataStore();
+  const { pokemonsData, combatsData, assetsData } = useDataStore();
   const { findPokemonBySlug } = usePokemon();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
@@ -363,7 +363,7 @@ const Battle = () => {
   );
 
   useEffect(() => {
-    if (!isNotEmpty(pokemonsData) || !isNotEmpty(assetsData)) {
+    if (!isNotEmpty(pokemonsData) || !isNotEmpty(combatsData) || !isNotEmpty(assetsData)) {
       return;
     }
     const controller = new AbortController();
@@ -372,7 +372,7 @@ const Battle = () => {
       controller.abort();
       hideSpinner();
     };
-  }, [assetsData, fetchPokemonBattle, league, pokemonsData]);
+  }, [assetsData, combatsData, fetchPokemonBattle, league, pokemonsData]);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

@@ -17,23 +17,29 @@ export const getProcessedDataSectionsForRoute = (pathname: string): ProcessedDat
   if (pathname === '/search-pokemon' || pathname.startsWith('/pokemon/')) {
     return pokemonDetails;
   }
-  if (pathname === '/find-cp-iv' || pathname === '/calculate-stats' || pathname === '/calculate-point') {
+  if (pathname === '/find-cp-iv' || pathname === '/calculate-stats') {
     return ['pokemons', 'cpm', 'statsRankings'];
+  }
+  if (pathname === '/calculate-point') {
+    return ['pokemons', 'combats', 'cpm', 'statsRankings'];
   }
   if (pathname === '/search-battle-stats' || pathname === '/raid-battle') {
     return ['pokemons', 'combats', 'assets', 'cpm', 'statsRankings'];
   }
   if (pathname === '/damage-calculate') {
-    return ['pokemons', 'combats', 'cpm'];
+    return ['pokemons', 'combats', 'cpm', 'statsRankings'];
   }
   if (pathname === '/calculate-catch-chance') {
-    return ['pokemons'];
+    return ['pokemons', 'statsRankings'];
+  }
+  if (pathname === '/stats-table') {
+    return ['pokemons', 'statsRankings'];
   }
   if (pathname === '/dps-tdo-sheets') {
     return ['pokemons', 'combats', 'assets'];
   }
   if (pathname === '/stats-ranking') {
-    return ['pokemons'];
+    return ['pokemons', 'combats', 'statsRankings'];
   }
   if (pathname === '/pvp') {
     return ['pvp'];
