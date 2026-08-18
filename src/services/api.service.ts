@@ -443,6 +443,10 @@ class APIService {
     return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp?${query}`;
   }
 
+  getPvpPokemon(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('pvp-pokemon', params);
+  }
+
   getIvRank(params: Record<string, string | number>) {
     const query = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => query.set(key, String(value)));
