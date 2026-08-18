@@ -69,7 +69,7 @@ export const useTimestamp = () => {
         errorProgress({ isError: true, message: 'Processed data API is unavailable.' });
       }
     } catch (e) {
-      errorProgress({ isError: true, message: (e as ErrorEvent).message });
+      errorProgress({ isError: true, message: e instanceof Error ? e.message : String(e) });
     }
   };
 
