@@ -68,13 +68,11 @@ jobs:
           unset VERCEL_TOKEN
           if [[ "$GITHUB_REF_NAME" == "main" ]]; then
             vercel pull --yes --environment=production --token="$CLI_TOKEN"
-            vercel build --prod --token="$CLI_TOKEN"
-            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --prod --force --token="$CLI_TOKEN")
             ALIAS=poke-go-breeze.vercel.app
           else
             vercel pull --yes --environment=preview --git-branch="$GITHUB_REF_NAME" --token="$CLI_TOKEN"
-            vercel build --token="$CLI_TOKEN"
-            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --force --token="$CLI_TOKEN")
             ALIAS="poke-go-breeze-${GITHUB_REF_NAME}.vercel.app"
           fi
           vercel alias set "$DEPLOYMENT_URL" "$ALIAS" --token="$CLI_TOKEN"
