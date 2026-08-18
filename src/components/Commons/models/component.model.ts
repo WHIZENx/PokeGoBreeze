@@ -301,6 +301,7 @@ export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
   customStyles?: TableStyles;
   inputPlaceholder?: string;
   searchFunction?: (item: T, searchTerm: string) => boolean;
+  onSearchTermChange?: (searchTerm: string) => void;
   debounceTime?: number;
   isShowModalOptions?: boolean;
   titleModalOptions?: string;

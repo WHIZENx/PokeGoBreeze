@@ -1,9 +1,8 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import {
   capitalize,
-  convertPokemonDataName,
   createDataRows,
   generateParamForm,
   getItemSpritePath,
@@ -35,7 +34,6 @@ import {
   combineClasses,
   getValueOrDefault,
   isEqual,
-  isInclude,
   isIncludeList,
   isNotEmpty,
   safeObjectEntries,
@@ -53,15 +51,26 @@ import CustomDataTable from '../../components/Commons/Tables/CustomDataTable/Cus
 import { IMenuItem } from '../../components/Commons/models/menu.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
-import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/options-context.helpers';
-import usePokemon from '../../composables/usePokemon';
-import useCombats from '../../composables/useCombats';
-import useCalculate from '../../composables/useCalculate';
+import {
+  battleStab,
+  defaultDamageConst,
+  defaultDamageMultiply,
+  defaultPokemonDefObj,
+  defaultPokemonLevel,
+  getTypes,
+  getWeatherBoost,
+  maxIv,
+} from '../../utils/helpers/options-context.helpers';
 import InputReleased from '../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
 import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
 import { useSnackbar } from '../../contexts/snackbar.context';
+
+interface MoveApiResponse {
+  data: { move: ICombat; topPokemon: IPokemonTopMove[] };
+  meta: { total: number; resolvedType: string };
+}
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -149,19 +158,25 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
 );
 
 const Move = (props: IMovePage) => {
-  const { checkPokemonGO } = usePokemon();
-  const { findMoveByName, findMoveById, getCombatsById } = useCombats();
-  const { queryTopMove } = useCalculate();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [move, setMove] = useState<ICombat>();
   const [releasedGO, setReleaseGO] = useState(true);
   const [isMatch, setIsMatch] = useState(false);
-  const [topList, setTopList] = useState<IPokemonTopMove[]>([]);
   const [topListFilter, setTopListFilter] = useState<IPokemonTopMove[]>([]);
-  const [moveType, setMoveType] = useState<string>();
+  const [moveType, setMoveType] = useState<string | undefined>(
+    searchParams.get(Params.MoveType)?.toLowerCase() ?? undefined
+  );
   const [progress, setProgress] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [sort, setSort] = useState({ field: 'dps', order: 'desc' as 'asc' | 'desc' });
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+  const latestRequestRef = useRef(0);
 
   const { showSnackbar } = useSnackbar();
 
@@ -216,112 +231,94 @@ const Move = (props: IMovePage) => {
 
   useTitle(titleProps);
 
-  const queryMoveData = useCallback(
-    (id: number) => {
-      const moves = getCombatsById(id);
-      if (isNotEmpty(moves)) {
-        let move = moves.find((item) => item.id === id);
-        if (move?.isMultipleWithType) {
-          let type = searchParams.get(Params.MoveType);
-          if (type) {
-            searchParams.set(Params.MoveType, type.toLowerCase());
-            move = moves.find((item) => isEqual(item.type, type, EqualMode.IgnoreCaseSensitive));
-          } else {
-            type = getValueOrDefault(String, move.type).toLowerCase();
-            searchParams.set(Params.MoveType, type);
-          }
-          setSearchParams(searchParams);
-          setMoveType(type.toLowerCase());
-        } else if (!isEqual(move?.moveType, MoveType.Dynamax)) {
-          move = moves.find((item) => item.track === id);
-        }
-        if (move) {
-          setMove(move);
-          {
-            const moveName = splitAndCapitalize(move.name.toLowerCase(), '_', ' ');
-            const moveTypeName = capitalize(move.type);
-            const moveCategory = move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged';
-            setTitleProps({
-              title: `${moveName} - ${moveTypeName} ${moveCategory} Move | PokéGO Breeze`,
-              description: `${moveName} is a ${moveTypeName}-type ${moveCategory} move in Pokémon GO (#${move.track}). View power, energy cost, DPS, and which Pokémon can learn it.`,
-              keywords: [
-                'Pokémon GO',
-                moveName,
-                `${moveTypeName} type`,
-                `${moveCategory} move`,
-                'move stats',
-                'battle moves',
-                'PokéGO Breeze',
-              ],
-              image: APIService.getTypeHqSprite(move.type),
-            });
-          }
-        } else {
-          showSnackbar(`Move ID: ${id} not found!`, 'error');
-          if (id) {
-            setTitleProps({
-              title: `#${id} - Not Found`,
-              description: 'The requested move could not be found. Please check the move ID and try again.',
-              keywords: ['Pokémon GO', 'move not found', 'error', 'PokéGO Breeze'],
-            });
-          }
-        }
-      }
-    },
-    [getCombatsById]
-  );
-
-  const getMoveIdByParam = () => {
-    let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
-    if (id === 0 && params.id && isNotEmpty(params.id)) {
-      const move = findMoveByName(params.id);
-      if (move) {
-        id = move.id;
-      }
-    }
-    return id;
-  };
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   useEffect(() => {
-    if (!move) {
-      const id = getMoveIdByParam();
-      if (id > 0) {
-        queryMoveData(id);
-      }
+    setPage(1);
+    setResetPaginationToggle((value) => !value);
+  }, [params.id, props.id, moveType, releasedGO, isMatch, debouncedSearch]);
+
+  useEffect(() => {
+    const key = String(params.id ?? props.id ?? '').trim();
+    if (!key) {
+      return;
     }
-  }, [params.id, props.id, queryMoveData, move, findMoveByName]);
+    const requestId = ++latestRequestRef.current;
+    const controller = new AbortController();
+    setProgress(false);
+    APIService.getFetchUrl<MoveApiResponse>(
+      APIService.getMoveDetails({
+        key,
+        type: moveType,
+        released: releasedGO,
+        match: isMatch,
+        q: debouncedSearch,
+        iv: maxIv(),
+        level: defaultPokemonLevel(),
+        pokemonDefObj: defaultPokemonDefObj(),
+        damageMultiply: defaultDamageMultiply(),
+        damageConst: defaultDamageConst(),
+        sort: sort.field,
+        order: sort.order,
+        page,
+        limit: rowsPerPage,
+      }),
+      { signal: controller.signal }
+    )
+      .then(({ data }) => {
+        if (requestId !== latestRequestRef.current) {
+          return;
+        }
+        setMove(data.data.move);
+        setMoveType(data.data.move.isMultipleWithType ? data.meta.resolvedType : undefined);
+        setTopListFilter(data.data.topPokemon);
+        setTotalRows(data.meta.total);
+      })
+      .catch((error) => {
+        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+          setMove(undefined);
+          setTopListFilter([]);
+          setTotalRows(0);
+          showSnackbar(`Move ${key} not found or API unavailable`, 'error');
+          setTitleProps({
+            title: `#${key} - Not Found`,
+            description: 'The requested move could not be found. Please check the move ID and try again.',
+            keywords: ['Pokémon GO', 'move not found', 'error', 'PokéGO Breeze'],
+          });
+        }
+      })
+      .finally(() => {
+        if (requestId === latestRequestRef.current) {
+          setProgress(true);
+        }
+      });
+    return () => controller.abort();
+  }, [params.id, props.id, moveType, releasedGO, isMatch, debouncedSearch, sort, page, rowsPerPage]);
 
   useEffect(() => {
     if (move) {
-      const result = queryTopMove(move);
-      setTopList(result);
-      setProgress(true);
+      const moveName = splitAndCapitalize(move.name.toLowerCase(), '_', ' ');
+      const moveTypeName = capitalize(move.type);
+      const moveCategory = move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged';
+      setTitleProps({
+        title: `${moveName} - ${moveTypeName} ${moveCategory} Move | PokéGO Breeze`,
+        description: `${moveName} is a ${moveTypeName}-type ${moveCategory} move in Pokémon GO (#${move.track}). View power, energy cost, DPS, and which Pokémon can learn it.`,
+        keywords: [
+          'Pokémon GO',
+          moveName,
+          `${moveTypeName} type`,
+          `${moveCategory} move`,
+          'move stats',
+          'battle moves',
+          'PokéGO Breeze',
+        ],
+        image: APIService.getTypeHqSprite(move.type),
+      });
     }
-  }, [move, queryTopMove]);
-
-  useEffect(() => {
-    setTopListFilter(
-      topList.filter((pokemon) => {
-        if (!releasedGO) {
-          return true;
-        }
-        if (!pokemon.releasedGO) {
-          return checkPokemonGO(pokemon.num, convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')));
-        }
-        return pokemon.releasedGO;
-      })
-    );
-  }, [topList, releasedGO]);
-
-  useEffect(() => {
-    const type = searchParams.get(Params.MoveType);
-    if (move?.isMultipleWithType && type) {
-      searchParams.set(Params.MoveType, type.toLowerCase());
-      setSearchParams(searchParams);
-      setMove(findMoveById(move.track, type));
-      setMoveType(type.toLowerCase());
-    }
-  }, [move?.isMultipleWithType, searchParams, findMoveById]);
+  }, [move]);
 
   const renderBonus = (bonusType: BonusType | undefined, value: string | number | string[]) => {
     if (
@@ -364,8 +361,10 @@ const Move = (props: IMovePage) => {
               formClassName="tw-mt-2"
               formSx={{ width: 250 }}
               onChangeSelect={(value) => {
-                searchParams.set(Params.MoveType, value.toLowerCase());
+                const type = value.toLowerCase();
+                searchParams.set(Params.MoveType, type);
                 setSearchParams(searchParams);
+                setMoveType(type);
               }}
               value={moveType}
               menuItems={getTypes()
@@ -799,8 +798,31 @@ const Move = (props: IMovePage) => {
                     customColumns={columns}
                     data={topListFilter}
                     pagination
+                    paginationServer
+                    paginationTotalRows={totalRows}
+                    paginationResetDefaultPage={resetPaginationToggle}
+                    paginationPerPage={rowsPerPage}
                     defaultSortFieldId={ColumnType.DPS}
                     defaultSortAsc={false}
+                    sortServer
+                    onSort={(column, direction) => {
+                      const field =
+                        column.id === ColumnType.Id
+                          ? 'num'
+                          : column.id === ColumnType.Name
+                            ? 'name'
+                            : column.id === ColumnType.TDO
+                              ? 'tdo'
+                              : 'dps';
+                      setSort({ field, order: direction === 'asc' ? 'asc' : 'desc' });
+                      setPage(1);
+                      setResetPaginationToggle((value) => !value);
+                    }}
+                    onChangePage={setPage}
+                    onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
+                      setRowsPerPage(currentRowsPerPage);
+                      setPage(currentPage);
+                    }}
                     highlightOnHover
                     striped
                     fixedHeader
@@ -808,16 +830,10 @@ const Move = (props: IMovePage) => {
                     progressPending={!progress}
                     progressComponent={<CircularProgressTable />}
                     isShowSearch
-                    isAutoSearch
                     inputPlaceholder="Search Pokémon Name or ID"
+                    onSearchTermChange={setSearchTerm}
+                    debounceTime={300}
                     menuItems={menuItems}
-                    searchFunction={(pokemon, search) =>
-                      isInclude(
-                        splitAndCapitalize(pokemon.name, '-', ' '),
-                        search,
-                        IncludeMode.IncludeIgnoreCaseSensitive
-                      ) || (isMatch ? isEqual(pokemon.num, search) : isInclude(pokemon.num, search))
-                    }
                   />
                 </td>
               </tr>

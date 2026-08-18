@@ -142,7 +142,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       id={props.defaultId}
       setSearchOption={props.setSearchOption}
       isLoadedForms={props.isLoadedForms}
-      urlEvolutionChain={props.urlEvolutionChain}
+      evolutionChain={props.evolutionChain}
     />
   );
 

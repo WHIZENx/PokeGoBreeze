@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { capitalize, createDataRows, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './SearchMoves.scss';
@@ -6,45 +6,19 @@ import { ColumnType, TypeMove } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
-import {
-  combineClasses,
-  getValueOrDefault,
-  isEqual,
-  isInclude,
-  toFloat,
-  toFloatWithPadding,
-  toNumber,
-} from '../../../utils/extension';
+import { combineClasses, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { SelectType } from './enums/select-type.enum';
-import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
+import { EqualMode } from '../../../utils/enums/string.enum';
 import { Params } from '../../../utils/constants';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
-import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { PokemonTypeBadge } from '../../../core/enums/pokemon-type.enum';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
-import useCombats from '../../../composables/useCombats';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import InputMui from '../../../components/Commons/Inputs/InputMui';
-
-const nameSort = (rowA: ICombat, rowB: ICombat) => {
-  const a = rowA.name.toLowerCase();
-  const b = rowB.name.toLowerCase();
-  return a === b ? 0 : a > b ? 1 : -1;
-};
-
-const moveSort = (rowA: ICombat, rowB: ICombat) => {
-  const a = getValueOrDefault(String, rowA.type?.toLowerCase());
-  const b = getValueOrDefault(String, rowB.type?.toLowerCase());
-  return a === b ? 0 : a > b ? 1 : -1;
-};
-
-const numSortDps = (rowA: ICombat, rowB: ICombat) => {
-  const a = toFloat(rowA.pvePower / (rowA.durationMs / 1000));
-  const b = toFloat(rowB.pvePower / (rowB.durationMs / 1000));
-  return a - b;
-};
+import ProcessedDataService from '../../../services/processed-data.service';
+import APIService from '../../../services/api.service';
 
 const columns = createDataRows<TableColumnModify<ICombat>>(
   {
@@ -60,7 +34,6 @@ const columns = createDataRows<TableColumnModify<ICombat>>(
       <div className={combineClasses('type-icon-small', row.type?.toLowerCase())}>{capitalize(row.type)}</div>
     ),
     sortable: true,
-    sortFunction: moveSort,
   },
   {
     id: ColumnType.Name,
@@ -73,7 +46,6 @@ const columns = createDataRows<TableColumnModify<ICombat>>(
       </LinkToTop>
     ),
     sortable: true,
-    sortFunction: nameSort,
     width: '180px',
   },
   {
@@ -87,10 +59,107 @@ const columns = createDataRows<TableColumnModify<ICombat>>(
     id: ColumnType.DPS,
     name: 'DPS',
     selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
-    sortFunction: numSortDps,
     sortable: true,
   }
 );
+
+type MoveSortField = 'track' | 'type' | 'name' | 'power' | 'dps';
+type MoveTableRow = ICombat & { tableKey: string };
+
+const getMoveSortField = (columnId: string | number | undefined): MoveSortField => {
+  switch (toNumber(columnId)) {
+    case ColumnType.Id:
+      return 'track';
+    case ColumnType.Type:
+      return 'type';
+    case ColumnType.Power:
+      return 'power';
+    case ColumnType.DPS:
+      return 'dps';
+    default:
+      return 'name';
+  }
+};
+
+const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
+  const [data, setData] = useState<MoveTableRow[]>([]);
+  const [totalRows, setTotalRows] = useState(0);
+  const [page, setPage] = useState(1);
+  const [debouncedName, setDebouncedName] = useState(name);
+  const [sort, setSort] = useState<{ field: MoveSortField; order: 'asc' | 'desc' }>({
+    field: 'name',
+    order: 'asc',
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+  const latestRequestRef = useRef(0);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => setDebouncedName(name.trim()), 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [name]);
+
+  useEffect(() => {
+    setPage(1);
+    setResetPaginationToggle((value) => !value);
+  }, [category, type, debouncedName]);
+
+  useEffect(() => {
+    const requestId = ++latestRequestRef.current;
+    const controller = new AbortController();
+    const moveType = type === SelectType.All ? undefined : getKeyWithData(PokemonTypeBadge, type)?.toLocaleLowerCase();
+
+    setIsLoading(true);
+    setData([]);
+    ProcessedDataService.getPage<ICombat>(
+      'combats',
+      {
+        typeMove: category,
+        type: moveType,
+        q: debouncedName,
+        page,
+        limit: 50,
+        sort: sort.field,
+        order: sort.order,
+      },
+      { signal: controller.signal }
+    )
+      .then((result) => {
+        if (requestId !== latestRequestRef.current) {
+          return;
+        }
+        setData(
+          result.data.map((move, index) => ({
+            ...move,
+            tableKey: `${move.track}:${move.id}:${move.type}:${move.typeMove}:${index}`,
+          }))
+        );
+        setTotalRows(result.meta.total);
+      })
+      .catch((error) => {
+        if (requestId !== latestRequestRef.current || APIService.isCancel(error)) {
+          return;
+        }
+        setData([]);
+        setTotalRows(0);
+      })
+      .finally(() => {
+        if (requestId === latestRequestRef.current) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [category, type, debouncedName, page, sort]);
+
+  const changeSort = (columnId: string | number | undefined, order: 'asc' | 'desc') => {
+    setSort({ field: getMoveSortField(columnId), order });
+    setPage(1);
+    setResetPaginationToggle((value) => !value);
+  };
+
+  return { data, totalRows, page, setPage, changeSort, isLoading, resetPaginationToggle };
+};
 
 interface IFilter {
   fMoveType: SelectType;
@@ -119,54 +188,12 @@ const Search = () => {
       'Search and filter Pokémon GO moves by type, power, energy, and more. Find the best moves for your Pokémon in battles and raids.',
     keywords: ['Pokémon moves', 'move search', 'best moves', 'PVP moves', 'raid moves', 'Pokémon GO attacks'],
   });
-  const { getCombatsByTypeMove } = useCombats();
-
   const [filters, setFilters] = useState(new Filter());
 
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
-  const [combatFMoves, setCombatFMoves] = useState<ICombat[]>([]);
-  const [resultFMove, setResultFMove] = useState<ICombat[]>([]);
-  const [fMoveIsLoad, setFMoveIsLoad] = useState(false);
-  const [combatCMoves, setCombatCMoves] = useState<ICombat[]>([]);
-  const [resultCMove, setResultCMove] = useState<ICombat[]>([]);
-  const [cMoveIsLoad, setCMoveIsLoad] = useState(false);
-
-  useEffect(() => {
-    setCombatFMoves(getCombatsByTypeMove(TypeMove.Fast));
-    setCombatCMoves(getCombatsByTypeMove(TypeMove.Charge));
-  }, [getCombatsByTypeMove]);
-
-  useEffect(() => {
-    const debounced = debounce(() => {
-      setResultFMove(searchMove(combatFMoves, fMoveType, fMoveName));
-      setFMoveIsLoad(true);
-    });
-    debounced();
-    return () => {
-      debounced.cancel();
-    };
-  }, [combatFMoves, fMoveType, fMoveName]);
-
-  useEffect(() => {
-    const debounced = debounce(() => {
-      setResultCMove(searchMove(combatCMoves, cMoveType, cMoveName));
-      setCMoveIsLoad(true);
-    });
-    debounced();
-    return () => {
-      debounced.cancel();
-    };
-  }, [combatCMoves, cMoveType, cMoveName]);
-
-  const searchMove = (combat: ICombat[], type: SelectType | PokemonTypeBadge, name: string) =>
-    combat.filter(
-      (move) =>
-        (isInclude(splitAndCapitalize(move.name, '_', ' '), name, IncludeMode.IncludeIgnoreCaseSensitive) ||
-          isInclude(move.track, name)) &&
-        (type === SelectType.All ||
-          isEqual(getKeyWithData(PokemonTypeBadge, type), move.type, EqualMode.IgnoreCaseSensitive))
-    );
+  const fastMoves = useMoveResults(TypeMove.Fast, fMoveType, fMoveName);
+  const chargedMoves = useMoveResults(TypeMove.Charge, cMoveType, cMoveName);
 
   const setMoveByType = (category: TypeMove, value: SelectType) => {
     if (category === TypeMove.Fast) {
@@ -184,7 +211,7 @@ const Search = () => {
     }
   };
 
-  const moveList = (data: ICombat[], type: SelectType, name: string, moveLoad: boolean, category: TypeMove) => {
+  const moveList = (result: ReturnType<typeof useMoveResults>, type: SelectType, name: string, category: TypeMove) => {
     return (
       <div className="xl:tw-flex-1 table-movesets-col !tw-p-0">
         <table className="table-info table-movesets">
@@ -235,11 +262,22 @@ const Search = () => {
               <td className="data-table">
                 <CustomDataTable
                   customColumns={columns}
-                  data={data}
+                  data={result.data}
+                  keyField="tableKey"
                   defaultSortFieldId={ColumnType.Name}
+                  sortServer
+                  onSort={(column, direction) => result.changeSort(column.id, direction === 'desc' ? 'desc' : 'asc')}
+                  pagination
+                  paginationServer
+                  paginationTotalRows={result.totalRows}
+                  paginationDefaultPage={1}
+                  paginationResetDefaultPage={result.resetPaginationToggle}
+                  paginationPerPage={50}
+                  paginationComponentOptions={{ noRowsPerPage: true }}
+                  onChangePage={result.setPage}
                   fixedHeader
                   fixedHeaderScrollHeight="70vh"
-                  progressPending={!moveLoad}
+                  progressPending={result.isLoading}
                   progressComponent={<CircularProgressTable />}
                 />
               </td>
@@ -254,8 +292,8 @@ const Search = () => {
     <div className="tw-container tw-my-4">
       <div className="table-head">Moveset list in Pokémon GO</div>
       <div className="row tw-w-full !tw-m-0">
-        {moveList(resultFMove, fMoveType, fMoveName, fMoveIsLoad, TypeMove.Fast)}
-        {moveList(resultCMove, cMoveType, cMoveName, cMoveIsLoad, TypeMove.Charge)}
+        {moveList(fastMoves, fMoveType, fMoveName, TypeMove.Fast)}
+        {moveList(chargedMoves, cMoveType, cMoveName, TypeMove.Charge)}
       </div>
     </div>
   );

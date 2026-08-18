@@ -1,6 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
 import { Species } from '../core/models/API/species.model';
+import { PokemonForm } from '../core/models/API/form.model';
+import { PokemonInfo, PokemonInfoEvo } from '../core/models/API/info.model';
 import { getValueOrDefault, isEqual, isInclude } from '../utils/extension';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
@@ -21,6 +23,17 @@ import {
   pathAssetPokeGo,
   unownId,
 } from '../utils/helpers/options-context.helpers';
+
+export interface PokemonBundleVariety {
+  pokemon: PokemonInfo;
+  forms: PokemonForm[];
+}
+
+export interface PokemonBundle {
+  species: Species;
+  varieties: PokemonBundleVariety[];
+  evolutionChain: PokemonInfoEvo | null;
+}
 
 class APIService {
   date: Date;
@@ -83,16 +96,16 @@ class APIService {
     return await this.axios.get<T>(fetchUrl, this.withoutPublicGitHubAuthorization(fetchUrl, options));
   }
 
-  async getPokeSpices(value: number, options?: AxiosRequestConfig<any>) {
-    return await this.getFetchUrl<Species>(this.getPokeAPI('pokemon-species', value), options);
+  async getPokemonBundle(value: number, options?: AxiosRequestConfig<any>) {
+    const query = new URLSearchParams({ id: String(value) });
+    return await this.getFetchUrl<{ data: PokemonBundle }>(
+      `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pokemon?${query}`,
+      options
+    );
   }
 
-  async getPokeJSON(path: string, options?: AxiosRequestConfig<any>) {
-    return await this.getFetchUrl(`${APIUrl.POGO_API_URL}${path}`, options);
-  }
-
-  getPokeAPI(path: string, value: number) {
-    return `${APIUrl.POKE_API_URL}${path}/${value}`;
+  async getCandyData<T>(options?: AxiosRequestConfig<any>) {
+    return await this.getFetchUrl<{ data: T }>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/candy`, options);
   }
 
   setPokemonModel(item: string) {
@@ -441,6 +454,56 @@ class APIService {
       type,
     });
     return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp?${query}`;
+  }
+
+  getIvRank(params: Record<string, string | number>) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => query.set(key, String(value)));
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/iv-rank?${query}`;
+  }
+
+  getTopRank(query: URLSearchParams) {
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/top-rank?${query}`;
+  }
+
+  getCounters(params: Record<string, string | number | boolean>) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => query.set(key, String(value)));
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/counters?${query}`;
+  }
+
+  getDpsTdo(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('dps-tdo', params);
+  }
+
+  getPokedex(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('pokedex', params);
+  }
+
+  getTypesData(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('types', params);
+  }
+
+  getFindCalculation(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('find', params);
+  }
+
+  getMoveDetails(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('move', params);
+  }
+
+  getStickers(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('stickers', params);
+  }
+
+  private getInternalQueryUrl(path: string, params: Record<string, string | number | boolean | undefined>) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== '') {
+        query.set(key, String(value));
+      }
+    });
+    return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/${path}?${query}`;
   }
 
   getTypeIcon(type: string | null | undefined) {

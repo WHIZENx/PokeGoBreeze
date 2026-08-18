@@ -7,7 +7,6 @@ import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import IVBar from '../../../components/Sprites/IVBar/IVBar';
 import { IPokemonAllStats, PokemonAllStats } from '../models/over-all-stats.model';
-import { calculateStatsTopRank } from '../../../utils/calculate';
 import { BattleBaseStats } from '../../../utils/models/calculate.model';
 import { getKeyWithData } from '../../../utils/utils';
 import { ScoreType } from '../../../utils/enums/constants.enum';
@@ -15,18 +14,20 @@ import { EqualMode } from '../../../utils/enums/string.enum';
 import { AnimationType } from '../../../components/Sprites/Hexagon/enums/hexagon.enum';
 import { IStatsPokemonGO } from '../../../core/models/stats.model';
 import { maxLevel, maxIv } from '../../../utils/helpers/options-context.helpers';
+import StatsCalculationService from '../../../services/stats-calculation.service';
+import APIService from '../../../services/api.service';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();
 
-  const setPokemonStats = (stats: IStatsPokemonGO | undefined, id: number | undefined) => {
+  const setPokemonStats = async (stats: IStatsPokemonGO | undefined, id: number | undefined, signal: AbortSignal) => {
     const maxCP = toNumber(props.cp);
     id = toNumber(id);
     let prevCurrentStats = new BattleBaseStats();
     if (maxCP > BattleLeagueCPType.Ultra) {
-      prevCurrentStats = calculateStatsTopRank(stats, id, maxCP, maxLevel() - 1);
+      prevCurrentStats = await StatsCalculationService.getTopRank(stats, id, maxCP, maxLevel() - 1, signal);
     }
-    const currentStats = calculateStatsTopRank(stats, id, maxCP);
+    const currentStats = await StatsCalculationService.getTopRank(stats, id, maxCP, maxLevel(), signal);
     const level = toNumber(currentStats?.level);
 
     return PokemonAllStats.create({ prevCurrentStats, currentStats, maxCP, level, id });
@@ -34,17 +35,25 @@ const OverAllStats = (props: OverAllStatsComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.data?.id);
-    if (id > 0 && pokemonAllStats && pokemonAllStats.id !== id) {
+    if (id > 0 && pokemonAllStats && (pokemonAllStats.id !== id || pokemonAllStats.maxCP !== toNumber(props.cp))) {
       setPokemonAllStats(undefined);
     }
-  }, [pokemonAllStats, props.data?.id]);
+  }, [pokemonAllStats, props.data?.id, props.cp]);
 
   useEffect(() => {
     const id = toNumber(props.data?.id);
     if (id > 0 && !pokemonAllStats && props.data?.stats) {
-      setPokemonAllStats(setPokemonStats(props.data.stats, id));
+      const controller = new AbortController();
+      setPokemonStats(props.data.stats, id, controller.signal)
+        .then(setPokemonAllStats)
+        .catch((error) => {
+          if (!APIService.isCancel(error)) {
+            setPokemonAllStats(undefined);
+          }
+        });
+      return () => controller.abort();
     }
-  }, [pokemonAllStats, props.data?.stats, props.data?.id]);
+  }, [pokemonAllStats, props.data?.stats, props.data?.id, props.cp]);
 
   const renderTopStats = (data: IPokemonAllStats | undefined) => (
     <ul className="tw-mt-2">

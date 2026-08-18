@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { StatsState } from '../store/models/state.model';
 import { SetStats } from '../store/actions/stats.action';
-import { IPokemonData } from '../core/models/pokemon.model';
+import { IStatsRank } from '../core/models/stats.model';
 
 /**
  * Custom hook to access and update the stats state from Redux store
@@ -17,7 +17,7 @@ export const useStats = () => {
    * Update stats state in the store
    * @param stats - The new stats state
    */
-  const setStats = (stats: IPokemonData[]) => {
+  const setStats = (stats: IStatsRank) => {
     dispatch(SetStats.create(stats));
   };
 

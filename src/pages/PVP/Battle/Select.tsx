@@ -1,8 +1,8 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/api.service';
 
 import { getKeyWithData, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
-import { calculateStatsByTag, calculateStatsTopRank } from '../../../utils/calculate';
+import { calculateStatsByTag } from '../../../utils/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
 import { Checkbox } from '@mui/material';
 import { Combat, ICombat } from '../../../core/models/combat.model';
@@ -16,10 +16,14 @@ import useCombats from '../../../composables/useCombats';
 import SelectCardPokemon from '../../../components/Commons/Selects/SelectCardPokemon';
 import { SelectMovePokemonModel } from '../../../components/Commons/Inputs/models/select-move.model';
 import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
+import StatsCalculationService from '../../../services/stats-calculation.service';
+import { useSnackbar } from '../../../contexts/snackbar.context';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const { findMoveByName } = useCombats();
   const { showSpinner, hideSpinner } = useSpinner();
+  const { showSnackbar } = useSnackbar();
+  const topRankController = useRef<AbortController>();
 
   const [pokemon, setPokemon] = useState<IBattlePokemonData>();
   const [fMove, setFMove] = useState<ICombat>();
@@ -29,6 +33,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   const [score, setScore] = useState(0);
 
   useEffect(() => {
+    topRankController.current?.abort();
     setPokemon(undefined);
     setFMove(undefined);
     setCMovePri(undefined);
@@ -36,7 +41,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setScore(0);
   }, [props.data]);
 
-  const selectPokemon = (value: IBattlePokemonData) => {
+  const selectPokemon = async (value: IBattlePokemonData) => {
     if (!isNotEmpty(value.moveset) || !value.pokemon) {
       return;
     }
@@ -57,7 +62,25 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
-    const bestStats = calculateStatsTopRank(stats, value.pokemon.num, props.league);
+    topRankController.current?.abort();
+    topRankController.current = new AbortController();
+    let bestStats;
+    try {
+      bestStats = await StatsCalculationService.getTopRank(
+        stats,
+        value.pokemon.num,
+        props.league,
+        undefined,
+        topRankController.current.signal
+      );
+    } catch (error) {
+      if (APIService.isCancel(error)) {
+        return;
+      }
+      showSnackbar('Unable to load the server-calculated PvP rank.', 'error');
+      hideSpinner();
+      return;
+    }
 
     setScore(value.score);
     props.setPokemonBattle(
@@ -131,6 +154,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   };
 
   const removePokemon = useCallback(() => {
+    topRankController.current?.abort();
     props.clearData(false);
     setPokemon(undefined);
     setFMove(undefined);

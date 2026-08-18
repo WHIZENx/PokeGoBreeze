@@ -22,7 +22,7 @@ import {
 } from '../../core/models/stats.model';
 import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ISelectMoveModel } from '../Commons/Inputs/models/select-move.model';
-import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
+import { IPokemonDetail, IPokemonDetailInfo, PokemonInfoEvo } from '../../core/models/API/info.model';
 import { CardType, MoveType, PokemonType, TypeAction, TypeSex } from '../../enums/type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
@@ -156,7 +156,7 @@ export interface IEvolutionComponent {
   id: number | undefined;
   setSearchOption?: (searchOption: SearchOption) => void;
   isLoadedForms: boolean;
-  urlEvolutionChain?: string;
+  evolutionChain?: PokemonInfoEvo;
 }
 
 export interface IFormInfoComponent {
@@ -164,7 +164,7 @@ export interface IFormInfoComponent {
   formList: IPokemonFormModify[][];
   setSearchOption?: (searchOption: SearchOption) => void;
   defaultId: number | undefined;
-  urlEvolutionChain?: string;
+  evolutionChain?: PokemonInfoEvo;
   isLoadedForms: boolean;
 }
 

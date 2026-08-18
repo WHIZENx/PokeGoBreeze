@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { StyleSheetManager } from 'styled-components';
 import { ICustomDataTableProps } from '../../models/component.model';
 import { convertColumnDataType, isIncludeList } from '../../../../utils/extension';
 import { getCustomThemeDataTable } from '../../../../utils/utils';
-import { isNotEmpty } from '../../../../utils/extension';
 import { debounce } from 'lodash';
 import CustomInput from '../../Inputs/CustomInput';
 import { StyleSheetConfig } from '../../../../utils/configs/style-sheet.config';
@@ -15,12 +14,13 @@ import DialogMui from '../../Dialogs/Dialogs';
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [pokemonListFilter, setPokemonListFilter] = useState<T[]>([]);
+  const onSearchTermChangeRef = useRef(props.onSearchTermChange);
 
   const [showOption, setShowOption] = useState(false);
 
   const setSearchData = (isAutoSearch = false) => {
     const results = props.data?.filter((item) => {
-      if (!props.searchFunction || !isAutoSearch) {
+      if (props.paginationServer || !props.searchFunction || !isAutoSearch) {
         return true;
       }
       return props.searchFunction(item, searchTerm);
@@ -29,16 +29,24 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(props.data)) {
-      const debouncedSearch = debounce(() => {
-        setSearchData(props.isAutoSearch);
-      }, props.debounceTime || 0);
-      debouncedSearch();
-      return () => {
-        debouncedSearch.cancel();
-      };
-    }
+    const debouncedSearch = debounce(() => {
+      setSearchData(props.isAutoSearch);
+    }, props.debounceTime || 0);
+    debouncedSearch();
+    return () => {
+      debouncedSearch.cancel();
+    };
   }, [props.data, props.searchFunction, searchTerm]);
+
+  useEffect(() => {
+    onSearchTermChangeRef.current = props.onSearchTermChange;
+  }, [props.onSearchTermChange]);
+
+  useEffect(() => {
+    const notifySearch = debounce(() => onSearchTermChangeRef.current?.(searchTerm), props.debounceTime || 0);
+    notifySearch();
+    return () => notifySearch.cancel();
+  }, [props.debounceTime, searchTerm]);
 
   const handleShowOption = () => {
     setShowOption(true);
@@ -103,7 +111,9 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
                 setSearchData={() => setSearchData(true)}
                 inputPlaceholder={props.inputPlaceholder}
                 defaultValue={searchTerm}
-                setSearchTerm={setSearchTerm}
+                setSearchTerm={(value) => {
+                  setSearchTerm(value);
+                }}
                 onOptionsClick={handleShowOption}
                 optionsIcon={props.isShowModalOptions ? <SettingsIcon className="tw-text-xl" /> : undefined}
               />
@@ -111,7 +121,7 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
           }
           columns={(props.customColumns ? convertColumnDataType(props.customColumns) : props.columns) || []}
           customStyles={getCustomThemeDataTable(setCustomStyle())}
-          data={pokemonListFilter}
+          data={props.paginationServer ? props.data || [] : pokemonListFilter}
         />
       </StyleSheetManager>
 

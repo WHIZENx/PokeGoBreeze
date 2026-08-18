@@ -2,6 +2,7 @@ import { TimestampActions } from '../actions';
 import { TimestampActionsUnion } from '../actions/timestamp.action';
 
 export interface TimestampModel {
+  snapshotGeneratedAt: string;
   gamemaster: number;
   icon: number;
   assets: number;
@@ -10,6 +11,7 @@ export interface TimestampModel {
 }
 
 const initialize: TimestampModel = {
+  snapshotGeneratedAt: '',
   gamemaster: 0,
   icon: 0,
   assets: 0,
@@ -19,6 +21,11 @@ const initialize: TimestampModel = {
 
 const TimestampReducer = (state: TimestampModel = initialize, action: TimestampActionsUnion) => {
   switch (action.type) {
+    case TimestampActions.TimestampActionTypes.setSnapshotGeneratedAt:
+      return {
+        ...state,
+        snapshotGeneratedAt: action.payload,
+      };
     case TimestampActions.TimestampActionTypes.setTimestampGameMaster:
       return {
         ...state,

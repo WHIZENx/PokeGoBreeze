@@ -1,11 +1,9 @@
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { createDataRows, HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
-import { calculateCP, predictCPList, predictStat } from '../../../utils/calculate';
+import APIService from '../../../services/api.service';
 
 import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
-import dataCPM from '../../../data/cp_multiplier.json';
-
 import '../../../components/Find/FormSelect.scss';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
@@ -22,7 +20,7 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { ColumnType } from '../../../enums/type.enum';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
-import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/options-context.helpers';
+import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import InputMui from '../../../components/Commons/Inputs/InputMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
@@ -188,29 +186,48 @@ const FindTable = () => {
 
   const [preIvArr, setPreIvArr] = useState<IPredictStatsCalculate>();
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
+  const [minMaxRows, setMinMaxRows] = useState<IFindCP[]>([]);
 
   const { showSnackbar } = useSnackbar();
 
-  const findStatsIv = useCallback(() => {
+  const calculationParams = useCallback(
+    () => ({
+      atk: toNumber(searchingToolCurrentDetails?.statsGO?.atk),
+      def: toNumber(searchingToolCurrentDetails?.statsGO?.def),
+      sta: toNumber(searchingToolCurrentDetails?.statsGO?.sta),
+      minLevel: minLevel(),
+      maxLevel: maxLevel(),
+      step: stepLevel(),
+      minIv: minIv(),
+      maxIv: maxIv(),
+      minCp: minCp(),
+    }),
+    [searchingToolCurrentDetails]
+  );
+
+  const findStatsIv = useCallback(async () => {
     if (!searchingToolCurrentDetails) {
       return;
     }
     if (toNumber(searchCP) < minCp()) {
       return showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
     }
-    const result = predictStat(
-      toNumber(searchingToolCurrentDetails.statsGO?.atk),
-      toNumber(searchingToolCurrentDetails.statsGO?.def),
-      toNumber(searchingToolCurrentDetails.statsGO?.sta),
-      searchCP
-    );
-    if (!isNotEmpty(result.result)) {
+    try {
+      const { data } = await APIService.getFetchUrl<{ data: IPredictStatsCalculate }>(
+        APIService.getFindCalculation({ ...calculationParams(), mode: 'iv', cp: searchCP })
+      );
+      const result = data.data;
+      if (!isNotEmpty(result.result)) {
+        setPreIvArr(undefined);
+        const name = splitAndCapitalize(searchingToolCurrentDetails.fullName, '_', ' ');
+        return showSnackbar(`At CP: ${result.CP} impossible found in ${name}`, 'error');
+      }
+      setPreIvArr(result);
+    } catch (error) {
       setPreIvArr(undefined);
-      const name = splitAndCapitalize(searchingToolCurrentDetails.fullName, '_', ' ');
-      return showSnackbar(`At CP: ${result.CP} impossible found in ${name}`, 'error');
+      showSnackbar(`Unable to calculate IV: ${error}`, 'error');
     }
-    setPreIvArr(result);
-  }, [searchingToolCurrentDetails, searchCP]);
+  }, [searchingToolCurrentDetails, searchCP, calculationParams]);
 
   const onFindStats = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -229,7 +246,7 @@ const FindTable = () => {
     setSearchSTAIv(0);
   };
 
-  const findStatsCP = useCallback(() => {
+  const findStatsCP = useCallback(async () => {
     if (!searchingToolCurrentDetails) {
       return;
     }
@@ -237,16 +254,41 @@ const FindTable = () => {
       showSnackbar(`Please input IV between ${minIv()} - ${maxIv()}.`, 'error');
       return;
     }
-    const result = predictCPList(
-      toNumber(searchingToolCurrentDetails.statsGO?.atk),
-      toNumber(searchingToolCurrentDetails.statsGO?.def),
-      toNumber(searchingToolCurrentDetails.statsGO?.sta),
-      searchATKIv,
-      searchDEFIv,
-      searchSTAIv
-    );
-    setPreCpArr(result);
-  }, [searchingToolCurrentDetails, searchATKIv, searchDEFIv, searchSTAIv]);
+    try {
+      const { data } = await APIService.getFetchUrl<{ data: IPredictCPCalculate }>(
+        APIService.getFindCalculation({
+          ...calculationParams(),
+          mode: 'cp',
+          atkIv: searchATKIv,
+          defIv: searchDEFIv,
+          staIv: searchSTAIv,
+        })
+      );
+      setPreCpArr(data.data);
+    } catch (error) {
+      setPreCpArr(undefined);
+      showSnackbar(`Unable to calculate CP: ${error}`, 'error');
+    }
+  }, [searchingToolCurrentDetails, searchATKIv, searchDEFIv, searchSTAIv, calculationParams]);
+
+  useEffect(() => {
+    if (!searchingToolCurrentDetails) {
+      setMinMaxRows([]);
+      return;
+    }
+    const controller = new AbortController();
+    APIService.getFetchUrl<{ data: { result: IFindCP[] } }>(
+      APIService.getFindCalculation({ ...calculationParams(), mode: 'minmax' }),
+      { signal: controller.signal }
+    )
+      .then(({ data }) => setMinMaxRows(data.data.result.map((row) => new FindCP(row))))
+      .catch((error) => {
+        if (!APIService.isCancel(error)) {
+          setMinMaxRows([]);
+        }
+      });
+    return () => controller.abort();
+  }, [searchingToolCurrentDetails, calculationParams]);
 
   const onFindCP = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -369,24 +411,11 @@ const FindTable = () => {
     if (!searchingToolCurrentDetails) {
       return;
     }
-    const statATK = toNumber(searchingToolCurrentDetails.statsGO?.atk);
-    const statDEF = toNumber(searchingToolCurrentDetails.statsGO?.def);
-    const statSTA = toNumber(searchingToolCurrentDetails.statsGO?.sta);
-    const dataTable = dataCPM
-      .filter((item) => item.level >= minLevel() && item.level <= maxLevel())
-      .map((item) => {
-        return new FindCP({
-          level: item.level,
-          minCP: calculateCP(statATK, statDEF, statSTA, item.level),
-          maxCP: calculateCP(statATK + maxIv(), statDEF + maxIv(), statSTA + maxIv(), item.level),
-        });
-      });
-
     return (
       <CustomDataTable
         title="Pokémon MIN/MAX CP"
         columns={columns}
-        data={dataTable}
+        data={minMaxRows}
         pagination
         defaultSortFieldId={ColumnType.Level}
         striped

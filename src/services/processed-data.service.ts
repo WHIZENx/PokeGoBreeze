@@ -1,5 +1,6 @@
 import APIService from './api.service';
 import { APIUrl } from './constants';
+import type { AxiosRequestConfig } from 'axios';
 
 export interface ProcessedDataMeta {
   schemaVersion: number;
@@ -43,7 +44,16 @@ class ProcessedDataService {
 
   async getPage<T>(
     section: string,
-    params: { page?: number; limit?: number; q?: string; sort?: string; order?: 'asc' | 'desc' } = {}
+    params: {
+      page?: number;
+      limit?: number;
+      q?: string;
+      sort?: string;
+      order?: 'asc' | 'desc';
+      type?: string;
+      typeMove?: number;
+    } = {},
+    options?: AxiosRequestConfig
   ) {
     const query = new URLSearchParams({ section });
     Object.entries(params).forEach(([key, value]) => {
@@ -51,7 +61,7 @@ class ProcessedDataService {
         query.set(key, String(value));
       }
     });
-    return (await APIService.getFetchUrl<ProcessedDataPage<T>>(`${endpoint('data')}?${query}`)).data;
+    return (await APIService.getFetchUrl<ProcessedDataPage<T>>(`${endpoint('data')}?${query}`, options)).data;
   }
 }
 

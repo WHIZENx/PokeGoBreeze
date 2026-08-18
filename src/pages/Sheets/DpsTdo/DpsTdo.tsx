@@ -1,27 +1,14 @@
-import React, { startTransition, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   LevelRating,
   splitAndCapitalize,
   capitalize,
   getKeyWithData,
-  getMoveType,
   generateParamForm,
-  getAllMoves,
-  isSpecialMegaFormType,
   createDataRows,
 } from '../../../utils/utils';
 import { getLevelList } from '../../../utils/compute';
-import {
-  calculateAvgDPS,
-  calculateCP,
-  calculateStatsByTag,
-  calculateTDO,
-  calculateBattleDPS,
-  TimeToKill,
-  calculateBattleDPSDefender,
-  calculateStatsBattle,
-} from '../../../utils/calculate';
 
 import APIService from '../../../services/api.service';
 
@@ -36,32 +23,30 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Commons/Inputs/models/select-move.model';
 import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
-import { BattleCalculate } from '../../../utils/models/calculate.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
 import { SortOrderType, TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
-  getPropertyName,
   getValueOrDefault,
-  isEmpty,
   isEqual,
-  isInclude,
   isIncludeList,
   isNotEmpty,
   toFloat,
   toFloatWithPadding,
   toNumber,
 } from '../../../utils/extension';
-import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
-import { debounce } from 'lodash';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import {
   defaultSheetPage,
   defaultSheetRow,
+  defaultDamageConst,
+  defaultDamageMultiply,
+  defaultEnergyPerHpLost,
+  defaultEnemyAtkDelay,
   getWeatherTypes,
   maxIv,
   minIv,
@@ -69,8 +54,6 @@ import {
 } from '../../../utils/helpers/options-context.helpers';
 import useOptionStore from '../../../composables/useOptions';
 import useRouter from '../../../composables/useRouter';
-import usePokemon from '../../../composables/usePokemon';
-import useCombats from '../../../composables/useCombats';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 import InputMui from '../../../components/Commons/Inputs/InputMui';
 import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
@@ -80,6 +63,7 @@ import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../../components/Commons/Buttons/ToggleType';
 import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
 import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
+import { ProcessedDataPage } from '../../../services/processed-data.service';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -282,15 +266,16 @@ const DpsTdo = () => {
       'Analyze Pokémon GO DPS (Damage Per Second) and TDO (Total Damage Output) with our comprehensive sheets. Optimize your raid counters and battle teams.',
     keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
   });
-  const { getFilteredPokemons } = usePokemon();
-  const { findMoveByName } = useCombats();
   const { optionsDpsSheet, setDpsSheetOptions } = useOptionStore();
   const { routerAction } = useRouter();
-  const { checkPokemonGO } = usePokemon();
 
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
-  const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
+  const [totalRows, setTotalRows] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [requestVersion, setRequestVersion] = useState(0);
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+  const latestRequestRef = useRef(0);
 
   const [dataTargetPokemon, setDataTargetPokemon] = useState<IPokemonData | undefined>(
     optionsDpsSheet?.dataTargetPokemon
@@ -350,403 +335,116 @@ const DpsTdo = () => {
   const [isShowSpinner, setIsShowSpinner] = useState(false);
   const [selectTypes, setSelectTypes] = useState(getValueOrDefault(Array, optionsDpsSheet?.selectTypes));
 
-  const addCPokeData = (
-    dataList: PokemonSheetData[],
-    movePoke: string[] | undefined,
-    pokemon: IPokemonData,
-    fMove: ICombat,
-    fMoveType: MoveType,
-    // Pre-computed per-pokemon attacker stats — hoisted by addFPokeData
-    atkBattle: number,
-    defBattle: number,
-    hpBattle: number,
-    cp: number,
-    // Pre-computed target defender (undefined = use avgDPS path)
-    targetDefender: BattleCalculate | undefined,
-    pokemonType = PokemonType.Normal
-  ) => {
-    movePoke?.forEach((vc: string) => {
-      const cMove = findMoveByName(vc);
-      if (!cMove) {
-        return;
-      }
-      const cMoveType = getMoveType(pokemon, vc);
-      if (isEqual(cMoveType, MoveType.Dynamax)) {
-        return;
-      }
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [searchTerm]);
 
-      const statsAttacker = new BattleCalculate({
-        atk: atkBattle,
-        def: defBattle,
-        hp: hpBattle,
-        fMove,
-        cMove,
-        types: pokemon.types,
-        pokemonType,
-        weatherBoosts: options.weatherBoosts,
-        isPokemonFriend: options.isTrainerFriend,
-        pokemonFriendLevel: options.pokemonFriendLevel,
-      });
-
-      let dps = 0;
-      let tdo = 0;
-      if (targetDefender) {
-        const dpsDef = calculateBattleDPSDefender(statsAttacker, targetDefender);
-        dps = calculateBattleDPS(statsAttacker, targetDefender, dpsDef);
-        tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
-      } else {
-        dps = calculateAvgDPS(
-          statsAttacker.fMove,
-          statsAttacker.cMove,
-          statsAttacker.atk,
-          statsAttacker.def,
-          statsAttacker.hp,
-          statsAttacker.types,
-          statsAttacker.pokemonType,
-          options
-        );
-        tdo = calculateTDO(statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
-      }
-      dataList.push({
-        pokemon,
-        fMove: statsAttacker.fMove,
-        cMove: statsAttacker.cMove,
-        dps,
-        tdo,
-        multiDpsTdo: Math.pow(dps, 3) * tdo,
-        cMoveType,
-        fMoveType,
-        pokemonType,
-        cp,
-      });
-    });
-  };
-
-  const addFPokeData = (
-    dataList: PokemonSheetData[],
-    pokemon: IPokemonData,
-    movePoke: string[],
-    targetDefender: BattleCalculate | undefined
-  ) => {
-    // Hoist per-pokemon constants outside the fast-move loop
-    const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
-    const atkBattle = calculateStatsBattle(stats.atk, ivAtk, pokemonLevel);
-    const defBattle = calculateStatsBattle(stats.def, ivDef, pokemonLevel);
-    const hpBattle = calculateStatsBattle(stats.sta, ivHp, pokemonLevel);
-    const cp = calculateCP(stats.atk + ivAtk, stats.def + ivDef, stats.sta + ivHp, pokemonLevel);
-
-    for (const vf of movePoke) {
-      const fMove = findMoveByName(vf);
-      if (!fMove) {
-        continue;
-      }
-      const fMoveType = getMoveType(pokemon, vf);
-      addCPokeData(
-        dataList,
-        pokemon.cinematicMoves,
-        pokemon,
-        fMove,
-        fMoveType,
-        atkBattle,
-        defBattle,
-        hpBattle,
-        cp,
-        targetDefender
-      );
-      if (!pokemon.form || pokemon.hasShadowForm) {
-        if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(
-            dataList,
-            pokemon.cinematicMoves,
-            pokemon,
-            fMove,
-            fMoveType,
-            atkBattle,
-            defBattle,
-            hpBattle,
-            cp,
-            targetDefender,
-            PokemonType.Shadow
-          );
-        }
-        addCPokeData(
-          dataList,
-          pokemon.shadowMoves,
-          pokemon,
-          fMove,
-          fMoveType,
-          atkBattle,
-          defBattle,
-          hpBattle,
-          cp,
-          targetDefender,
-          PokemonType.Shadow
-        );
-        addCPokeData(
-          dataList,
-          pokemon.purifiedMoves,
-          pokemon,
-          fMove,
-          fMoveType,
-          atkBattle,
-          defBattle,
-          hpBattle,
-          cp,
-          targetDefender,
-          PokemonType.Purified
-        );
-      }
-      if ((!pokemon.form || !isSpecialMegaFormType(pokemon.pokemonType)) && isNotEmpty(pokemon.shadowMoves)) {
-        addCPokeData(
-          dataList,
-          pokemon.eliteCinematicMoves,
-          pokemon,
-          fMove,
-          fMoveType,
-          atkBattle,
-          defBattle,
-          hpBattle,
-          cp,
-          targetDefender,
-          PokemonType.Shadow
-        );
-      }
-      addCPokeData(
-        dataList,
-        pokemon.eliteCinematicMoves,
-        pokemon,
-        fMove,
-        fMoveType,
-        atkBattle,
-        defBattle,
-        hpBattle,
-        cp,
-        targetDefender
-      );
-      addCPokeData(
-        dataList,
-        pokemon.specialMoves,
-        pokemon,
-        fMove,
-        fMoveType,
-        atkBattle,
-        defBattle,
-        hpBattle,
-        cp,
-        targetDefender
-      );
-      addCPokeData(
-        dataList,
-        pokemon.exclusiveMoves,
-        pokemon,
-        fMove,
-        fMoveType,
-        atkBattle,
-        defBattle,
-        hpBattle,
-        cp,
-        targetDefender
-      );
-    }
-  };
-
-  // Process filtered pokemon in chunks so the UI stays responsive during the
-  // heavy DPS sweep (~1,500 pokemon × many move combos × calculateAvgDPS math).
-  const DPS_CHUNK_SIZE = 150;
-  const yieldToMain = () => new Promise<void>((resolve) => window.setTimeout(resolve, 0));
-
-  const calculateDPSTable = async (signal?: AbortSignal): Promise<PokemonSheetData[]> => {
-    const dataList: PokemonSheetData[] = [];
-    const pokemons = getFilteredPokemons();
-
-    // Pre-compute the target defender once for the entire table run
-    let targetDefender: BattleCalculate | undefined;
-    if (dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon) {
-      const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
-      targetDefender = new BattleCalculate({
-        atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
-        def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
-        hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
-        fMove: findMoveByName(fMoveTargetPokemon.name),
-        cMove: findMoveByName(cMoveTargetPokemon.name),
-        types: dataTargetPokemon.types,
-        weatherBoosts: options.weatherBoosts,
-      });
-    }
-
-    for (let i = 0; i < pokemons.length; i += DPS_CHUNK_SIZE) {
-      if (signal?.aborted) {
-        throw new DOMException('aborted', 'AbortError');
-      }
-      const end = Math.min(i + DPS_CHUNK_SIZE, pokemons.length);
-      for (let j = i; j < end; j++) {
-        addFPokeData(dataList, pokemons[j], getAllMoves(pokemons[j], TypeMove.Fast), targetDefender);
-      }
-      if (end < pokemons.length) {
-        await yieldToMain();
-      }
-    }
-    return dataList;
-  };
-
-  // Holds the in-flight DPS controller so a new trigger can abort the previous one.
-  const dpsComputeRef = useRef<AbortController | null>(null);
-
-  const runDpsCompute = () => {
-    dpsComputeRef.current?.abort();
+  useEffect(() => {
+    const requestId = ++latestRequestRef.current;
     const controller = new AbortController();
-    dpsComputeRef.current = controller;
+    const sort =
+      defaultSorted.selectedColumn === ColumnType.Id
+        ? 'id'
+        : defaultSorted.selectedColumn === ColumnType.Name
+          ? 'name'
+          : defaultSorted.selectedColumn === ColumnType.FastMove
+            ? 'fast'
+            : defaultSorted.selectedColumn === ColumnType.ChargedMove
+              ? 'charged'
+              : defaultSorted.selectedColumn === ColumnType.DPS
+                ? 'dps'
+                : defaultSorted.selectedColumn === ColumnType.TDO
+                  ? 'tdo'
+                  : defaultSorted.selectedColumn === ColumnType.CP
+                    ? 'cp'
+                    : 'multiDpsTdo';
+    const bestBy = bestOf === BestOptionType.dps ? 'dps' : bestOf === BestOptionType.tdo ? 'tdo' : 'multiDpsTdo';
     setIsShowSpinner(true);
-    calculateDPSTable(controller.signal)
-      .then((data) => {
-        if (controller.signal.aborted) {
+    APIService.getFetchUrl<ProcessedDataPage<PokemonSheetData>>(
+      APIService.getDpsTdo({
+        ivAtk,
+        ivDef,
+        ivHp,
+        level: pokemonLevel,
+        pokemonDefObj,
+        damageMultiply: defaultDamageMultiply(),
+        damageConst: defaultDamageConst(),
+        energyPerHpLost: defaultEnergyPerHpLost(),
+        enemyDelay: defaultEnemyAtkDelay(),
+        delayF: options.delay?.fTime,
+        delayC: options.delay?.cTime,
+        weather: weatherBoosts,
+        friend: isTrainerFriend,
+        friendLevel: pokemonFriendLevel,
+        targetId: dataTargetPokemon?.num,
+        targetForm: dataTargetPokemon?.fullName,
+        targetFast: fMoveTargetPokemon?.name,
+        targetCharged: cMoveTargetPokemon?.name,
+        q: debouncedSearch,
+        match: isMatch,
+        types: selectTypes.join(','),
+        showShadow,
+        showSpecial: showSpecialMove,
+        showMega,
+        showGMax,
+        showPrimal,
+        showLegendary,
+        showMythic,
+        showUltra: showUltraBeast,
+        enableShadow,
+        enableSpecial,
+        enableMega,
+        enableGMax,
+        enablePrimal,
+        enableLegendary,
+        enableMythic,
+        enableUltra: enableUltraBeast,
+        best: enableBest,
+        bestBy,
+        released: releasedGO,
+        sort,
+        order: defaultSorted.sortDirection === SortDirectionType.ASC ? 'asc' : 'desc',
+        page: defaultPage,
+        limit: defaultRowPerPage,
+        requestVersion,
+      }),
+      { signal: controller.signal }
+    )
+      .then(({ data }) => {
+        if (requestId !== latestRequestRef.current) {
           return;
         }
-        // The resulting table re-render is heavy — mark it interruptible
-        startTransition(() => {
-          setDpsTable(data);
-          setIsShowSpinner(false);
-        });
+        setDpsTable(data.data);
+        setTotalRows(data.meta.total);
       })
-      .catch(() => {
-        // AbortError — a newer compute started. Ignore.
+      .catch((error) => {
+        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+          setDpsTable([]);
+          setTotalRows(0);
+        }
+      })
+      .finally(() => {
+        if (requestId === latestRequestRef.current) {
+          setIsShowSpinner(false);
+        }
       });
-  };
-
-  const filterBestOptions = (result: PokemonSheetData[], best: BestOptionType) => {
-    const bestType = getPropertyName<PokemonSheetData, 'multiDpsTdo' | 'dps' | 'tdo'>(result[0], (r) =>
-      best === BestOptionType.dps ? r.dps : best === BestOptionType.tdo ? r.tdo : r.multiDpsTdo
-    );
-    const best1Map = new Map<string, PokemonSheetData>();
-    for (const obj of result) {
-      const cur = best1Map.get(obj.pokemon.name);
-      if (!cur || obj[bestType] > cur[bestType]) {
-        best1Map.set(obj.pokemon.name, obj);
-      }
-    }
-    return Array.from(best1Map.values());
-  };
-
-  const searchFilter = () => {
-    const isEnableOptions =
-      enableShadow ||
-      enableSpecial ||
-      enableMega ||
-      enableGMax ||
-      enablePrimal ||
-      enableLegendary ||
-      enableMythic ||
-      enableUltraBeast;
-    let result = dpsTable.filter((item) => {
-      const boolFilterType =
-        !isNotEmpty(selectTypes) ||
-        (isIncludeList(selectTypes, item.fMove?.type, IncludeMode.IncludeIgnoreCaseSensitive) &&
-          isIncludeList(selectTypes, item.cMove?.type, IncludeMode.IncludeIgnoreCaseSensitive));
-      const boolFilterPoke =
-        isEmpty(searchTerm) ||
-        (isMatch
-          ? isEqual(item.pokemon.name.replaceAll('-', ' '), searchTerm, EqualMode.IgnoreCaseSensitive) ||
-            isEqual(item.pokemon.num, searchTerm)
-          : isInclude(item.pokemon.name.replaceAll('-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
-            isInclude(item.pokemon.num, searchTerm));
-
-      const boolShowShadow = !showShadow && item.pokemonType === PokemonType.Shadow;
-      const boolShowElite = !showSpecialMove && (item.fMoveType !== MoveType.None || item.cMoveType !== MoveType.None);
-      const boolShowMega = !showMega && item.pokemon.pokemonType === PokemonType.Mega;
-      const boolShowGMax = !showGMax && item.pokemon.pokemonType === PokemonType.GMax;
-      const boolShowPrimal = !showPrimal && item.pokemon.pokemonType === PokemonType.Primal;
-      const boolShowLegend = !showLegendary && item.pokemon.pokemonClass === PokemonClass.Legendary;
-      const boolShowMythic = !showMythic && item.pokemon.pokemonClass === PokemonClass.Mythic;
-      const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === PokemonClass.UltraBeast;
-
-      const boolOnlyShadow = enableShadow && item.pokemonType === PokemonType.Shadow;
-      const boolOnlyElite = enableSpecial && (item.fMoveType !== MoveType.None || item.cMoveType !== MoveType.None);
-      const boolOnlyMega = enableMega && item.pokemon.pokemonType === PokemonType.Mega;
-      const boolOnlyGMax = enableGMax && item.pokemon.pokemonType === PokemonType.GMax;
-      const boolOnlyPrimal = enablePrimal && item.pokemon.pokemonType === PokemonType.Primal;
-      const boolOnlyLegend = enableLegendary && item.pokemon.pokemonClass === PokemonClass.Legendary;
-      const boolOnlyMythic = enableMythic && item.pokemon.pokemonClass === PokemonClass.Mythic;
-      const boolOnlyUltra = enableUltraBeast && item.pokemon.pokemonClass === PokemonClass.UltraBeast;
-
-      let boolReleaseGO = true;
-      if (releasedGO) {
-        const isReleasedGO = checkPokemonGO(
-          item.pokemon.num,
-          getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId?.toString())
-        );
-        boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, isReleasedGO);
-      }
-      const isShowOptions =
-        boolShowShadow ||
-        boolShowElite ||
-        boolShowMega ||
-        boolShowGMax ||
-        boolShowPrimal ||
-        boolShowLegend ||
-        boolShowMythic ||
-        boolShowUltra;
-      const isOnlyOptions =
-        boolOnlyShadow ||
-        boolOnlyElite ||
-        boolOnlyMega ||
-        boolOnlyGMax ||
-        boolOnlyPrimal ||
-        boolOnlyLegend ||
-        boolOnlyMythic ||
-        boolOnlyUltra;
-      return (
-        boolFilterType &&
-        boolFilterPoke &&
-        boolReleaseGO &&
-        !isShowOptions &&
-        (!isEnableOptions || (boolReleaseGO && isOnlyOptions))
-      );
-    });
-    if (isNotEmpty(result) && enableBest) {
-      result = filterBestOptions(result, bestOf);
-    }
-    setIsShowSpinner(false);
-    return result;
-  };
-
-  useEffect(() => {
-    if (!isNotEmpty(getFilteredPokemons())) {
-      return;
-    }
-    setIsShowSpinner(true);
-    const timeoutId = window.setTimeout(runDpsCompute, 300);
-    return () => {
-      window.clearTimeout(timeoutId);
-      dpsComputeRef.current?.abort();
-    };
-  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, getFilteredPokemons]);
-
-  useEffect(() => {
-    if (isNotEmpty(dpsTable)) {
-      setIsShowSpinner(true);
-      const debounced = debounce(() => {
-        setDataFilter(searchFilter());
-      }, 500);
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
-    }
-  }, [dpsTable, searchTerm]);
-
-  useEffect(() => {
-    if (isNotEmpty(dpsTable)) {
-      setIsShowSpinner(true);
-      const debounced = debounce(() => {
-        setDataFilter(searchFilter());
-      }, 100);
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
-    }
+    return () => controller.abort();
   }, [
-    dpsTable,
+    ivAtk,
+    ivDef,
+    ivHp,
+    pokemonLevel,
+    pokemonDefObj,
+    options.delay?.fTime,
+    options.delay?.cTime,
+    weatherBoosts,
+    isTrainerFriend,
+    pokemonFriendLevel,
+    dataTargetPokemon,
+    fMoveTargetPokemon,
+    cMoveTargetPokemon,
+    debouncedSearch,
     isMatch,
     selectTypes,
     showShadow,
@@ -757,8 +455,8 @@ const DpsTdo = () => {
     showLegendary,
     showMythic,
     showUltraBeast,
-    enableSpecial,
     enableShadow,
+    enableSpecial,
     enableMega,
     enableGMax,
     enablePrimal,
@@ -768,6 +466,10 @@ const DpsTdo = () => {
     enableBest,
     bestOf,
     releasedGO,
+    defaultPage,
+    defaultRowPerPage,
+    defaultSorted,
+    requestVersion,
   ]);
 
   useEffect(() => {
@@ -805,7 +507,9 @@ const DpsTdo = () => {
 
   const onCalculateTable = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    window.setTimeout(runDpsCompute, 300);
+    setDefaultPage(1);
+    setResetPaginationToggle((value) => !value);
+    setRequestVersion((value) => value + 1);
   };
 
   return (
@@ -1349,9 +1053,13 @@ const DpsTdo = () => {
         <BackdropMui open={isShowSpinner && isNotEmpty(dpsTable)} isShowOnAbove={false} />
         <CustomDataTable
           customColumns={columns}
-          data={dataFilter}
+          data={dpsTable}
           noDataComponent={null}
           pagination
+          paginationServer
+          paginationTotalRows={totalRows}
+          paginationResetDefaultPage={resetPaginationToggle}
+          sortServer
           defaultSortFieldId={defaultSorted.selectedColumn}
           defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC}
           highlightOnHover
@@ -1366,6 +1074,8 @@ const DpsTdo = () => {
             setDefaultRowPerPage(currentRowsPerPage);
           }}
           onSort={(selectedColumn, sortDirection) => {
+            setDefaultPage(1);
+            setResetPaginationToggle((value) => !value);
             setDefaultSorted(
               OptionDPSSort.create({
                 selectedColumn: toNumber(selectedColumn.id, ColumnType.Id),

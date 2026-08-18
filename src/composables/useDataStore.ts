@@ -1,9 +1,8 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { StoreState, TimestampState } from '../store/models/state.model';
+import { StatsState, StoreState, TimestampState } from '../store/models/state.model';
 import {
   SetOptions,
   SetPokemon,
-  SetSticker,
   SetCombat,
   SetEvolutionChain,
   SetInformation,
@@ -15,7 +14,6 @@ import {
 } from '../store/actions/store.action';
 import { IOptions } from '../core/models/options.model';
 import { IPokemonData } from '../core/models/pokemon.model';
-import { ISticker } from '../core/models/sticker.model';
 import { ICombat } from '../core/models/combat.model';
 import { IEvolutionChain } from '../core/models/evolution-chain.model';
 import { IInformation } from '../core/models/information';
@@ -24,6 +22,7 @@ import { LeagueData } from '../core/models/league.model';
 import { ICPM } from '../core/models/cpm.model';
 import { ITrainerLevelUp } from '../core/models/trainer.model';
 import { IPVPDataModel } from '../core/models/pvp.model';
+import { IStatsRank } from '../core/models/stats.model';
 import { StoreActions, StatsActions, TimestampActions } from '../store/actions';
 import { createProgressHelpers } from '../utils/helpers/progress-helpers';
 import { useSnackbar } from '../contexts/snackbar.context';
@@ -39,6 +38,7 @@ export const useDataStore = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const timestampState = useSelector((state: TimestampState) => state.timestamp);
+  const statsState = useSelector((state: StatsState) => state.stats);
   const { showSnackbar } = useSnackbar();
   const { setProgress, completeProgress } = createProgressHelpers(dispatch);
 
@@ -56,14 +56,6 @@ export const useDataStore = () => {
    */
   const setPokemons = (pokemons: IPokemonData[]) => {
     dispatch(SetPokemon.create(pokemons));
-  };
-
-  /**
-   * Update sticker data in the store
-   * @param stickers - The new sticker data to be set
-   */
-  const setStickers = (stickers: ISticker[]) => {
-    dispatch(SetSticker.create(stickers));
   };
 
   /**
@@ -142,6 +134,7 @@ export const useDataStore = () => {
       const meta = await ProcessedDataService.getMeta();
       const isCurrentSnapshot =
         isCurrentVersion &&
+        timestampState.snapshotGeneratedAt === meta.generatedAt &&
         timestampIsCurrent(meta.source.gameMaster, meta.source.assets, meta.source.sounds, meta.source.pvp);
       if (isCurrentSnapshot) {
         completeProgress();
@@ -154,25 +147,25 @@ export const useDataStore = () => {
         processedOptions,
         cpm,
         pvp,
+        statsRankings,
         pokemons,
         combats,
         assets,
         leagues,
         evolutionChains,
         information,
-        stickers,
         trainers,
       ] = await Promise.all([
         ProcessedDataService.getSection<IOptions>('options'),
         ProcessedDataService.getSection<ICPM[]>('cpm'),
         ProcessedDataService.getSection<IPVPDataModel>('pvp'),
+        ProcessedDataService.getSection<IStatsRank>('statsRankings'),
         ProcessedDataService.getSection<IPokemonData[]>('pokemons'),
         ProcessedDataService.getSection<ICombat[]>('combats'),
         ProcessedDataService.getSection<IAsset[]>('assets'),
         ProcessedDataService.getSection<LeagueData>('leagues'),
         ProcessedDataService.getSection<IEvolutionChain[]>('evolutionChains'),
         ProcessedDataService.getSection<IInformation[]>('information'),
-        ProcessedDataService.getSection<ISticker[]>('stickers'),
         ProcessedDataService.getSection<ITrainerLevelUp[]>('trainers'),
       ]);
 
@@ -186,9 +179,9 @@ export const useDataStore = () => {
       dispatch(StoreActions.SetLeagues.create(leagues));
       dispatch(StoreActions.SetEvolutionChain.create(evolutionChains));
       dispatch(StoreActions.SetInformation.create(information));
-      dispatch(StoreActions.SetSticker.create(stickers));
       dispatch(StoreActions.SetTrainer.create(trainers));
-      dispatch(StatsActions.SetStats.create(pokemons));
+      dispatch(StatsActions.SetStats.create(statsRankings));
+      dispatch(TimestampActions.SetSnapshotGeneratedAt.create(meta.generatedAt));
       dispatch(TimestampActions.SetTimestampGameMaster.create(meta.source.gameMaster));
       dispatch(TimestampActions.SetTimestampAssets.create(meta.source.assets));
       dispatch(TimestampActions.SetTimestampSounds.create(meta.source.sounds));
@@ -205,13 +198,13 @@ export const useDataStore = () => {
     dataStore.combats.length > 0 &&
     dataStore.cpm.length > 0 &&
     dataStore.pvp.rankings.length > 0 &&
+    statsState !== null &&
     timestampState.gamemaster === gameMaster &&
     timestampState.assets === assets &&
     timestampState.sounds === sounds &&
     timestampState.pvp === pvp;
 
   const pokemonsData = dataStore.pokemons;
-  const stickersData = dataStore.stickers;
   const combatsData = dataStore.combats;
   const evolutionChainsData = dataStore.evolutionChains;
   const informationData = dataStore.information;
@@ -226,7 +219,6 @@ export const useDataStore = () => {
     dataStore,
     loadProcessedData,
     pokemonsData,
-    stickersData,
     combatsData,
     evolutionChainsData,
     informationData,
@@ -238,7 +230,6 @@ export const useDataStore = () => {
     optionsData,
     setOptions,
     setPokemons,
-    setStickers,
     setCombats,
     setEvolutionChains,
     setInformation,
