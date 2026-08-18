@@ -68,7 +68,7 @@ import { Skeleton } from '@mui/material';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
-  const { pvpData } = useDataStore();
+  const { pvpData, pokemonsData, combatsData, assetsData } = useDataStore();
   const { findPokemonBySlug } = usePokemon();
   const { findMoveByName } = useCombats();
   const { getAssetNameById } = useAssets();
@@ -238,19 +238,27 @@ const RankingPVP = (props: IStyleSheetData) => {
     statsData?.statProd?.ranking,
     findMoveByName,
     findPokemonBySlug,
+    getAssetNameById,
   ]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonRanking();
     };
-    if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
+    if (
+      statsData &&
+      isNotEmpty(pvpData.rankings) &&
+      isNotEmpty(pvpData.trains) &&
+      isNotEmpty(pokemonsData) &&
+      isNotEmpty(combatsData) &&
+      isNotEmpty(assetsData)
+    ) {
       fetchPokemon();
     }
     return () => {
       hideSpinner();
     };
-  }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains]);
+  }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains, pokemonsData, combatsData, assetsData]);
 
   const renderHeader = (data: IPokemonBattleRanking) => (
     <div className="tw-flex tw-items-center tw-w-full tw-gap-3">

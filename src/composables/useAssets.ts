@@ -36,54 +36,63 @@ export const useAssets = () => {
     [assetsData]
   );
 
-  const getAssetNameById = (
-    id: number | undefined,
-    name: string | undefined | null,
-    formName: string | undefined | null,
-    formType = FormType.Default
-  ) => {
-    const formAsset = convertPokemonAPIDataFormName(formName, name);
-    return findAssetForm(id, formAsset, formType);
-  };
-
-  const findAssetForm = (id: number | undefined, formName = formNormal(), formType = FormType.Default) => {
-    if (isEqual(formName, formGmax(), EqualMode.IgnoreCaseSensitive)) {
-      return;
-    }
-    const form = queryAssetForm(id, formName);
-    if (form) {
-      switch (formType) {
-        case FormType.Shiny:
-          return form.shiny;
-        case FormType.Default:
-        default:
-          return form.default;
+  const queryAssetForm = useCallback(
+    (id: number | undefined, formName = formNormal()) => {
+      const pokemonAssets = findAssetsById(id);
+      if (!pokemonAssets) {
+        return;
       }
-    }
-    return;
-  };
-
-  const queryAssetForm = (id: number | undefined, formName = formNormal()) => {
-    const pokemonAssets = findAssetsById(id);
-    if (!pokemonAssets) {
-      return;
-    }
-    formName = formName.replaceAll('-', '_');
-    const asset = selectAssetForm(pokemonAssets.image, formName);
-    if (asset) {
-      return asset;
-    } else if (
-      isNotEmpty(pokemonAssets.image) &&
-      !isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive)
-    ) {
-      const formOrigin = selectAssetForm(pokemonAssets.image, formNormal());
-      if (!formOrigin) {
-        return pokemonAssets.image[0];
+      formName = formName.replaceAll('-', '_');
+      const asset = selectAssetForm(pokemonAssets.image, formName);
+      if (asset) {
+        return asset;
+      } else if (
+        isNotEmpty(pokemonAssets.image) &&
+        !isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive)
+      ) {
+        const formOrigin = selectAssetForm(pokemonAssets.image, formNormal());
+        if (!formOrigin) {
+          return pokemonAssets.image[0];
+        }
+        return formOrigin;
       }
-      return formOrigin;
-    }
-    return;
-  };
+      return;
+    },
+    [findAssetsById]
+  );
+
+  const findAssetForm = useCallback(
+    (id: number | undefined, formName = formNormal(), formType = FormType.Default) => {
+      if (isEqual(formName, formGmax(), EqualMode.IgnoreCaseSensitive)) {
+        return;
+      }
+      const form = queryAssetForm(id, formName);
+      if (form) {
+        switch (formType) {
+          case FormType.Shiny:
+            return form.shiny;
+          case FormType.Default:
+          default:
+            return form.default;
+        }
+      }
+      return;
+    },
+    [queryAssetForm]
+  );
+
+  const getAssetNameById = useCallback(
+    (
+      id: number | undefined,
+      name: string | undefined | null,
+      formName: string | undefined | null,
+      formType = FormType.Default
+    ) => {
+      const formAsset = convertPokemonAPIDataFormName(formName, name);
+      return findAssetForm(id, formAsset, formType);
+    },
+    [findAssetForm]
+  );
 
   return {
     findAssetsById,
