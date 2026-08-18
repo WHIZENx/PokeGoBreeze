@@ -1,8 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
-import { Species } from '../core/models/API/species.model';
-import { PokemonForm } from '../core/models/API/form.model';
-import { PokemonInfo, PokemonInfoEvo } from '../core/models/API/info.model';
+import type { PokemonBundle } from '../core/models/API/pokemon-bundle.model';
 import { getValueOrDefault, isEqual, isInclude } from '../utils/extension';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
@@ -23,17 +21,6 @@ import {
   pathAssetPokeGo,
   unownId,
 } from '../utils/helpers/options-context.helpers';
-
-export interface PokemonBundleVariety {
-  pokemon: PokemonInfo;
-  forms: PokemonForm[];
-}
-
-export interface PokemonBundle {
-  species: Species;
-  varieties: PokemonBundleVariety[];
-  evolutionChain: PokemonInfoEvo | null;
-}
 
 class APIService {
   date: Date;
@@ -494,6 +481,10 @@ class APIService {
 
   getStickers(params: Record<string, string | number | boolean | undefined>) {
     return this.getInternalQueryUrl('stickers', params);
+  }
+
+  getStatsRanking(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('stats-ranking', params);
   }
 
   private getInternalQueryUrl(path: string, params: Record<string, string | number | boolean | undefined>) {

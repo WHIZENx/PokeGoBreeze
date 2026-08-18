@@ -1,5 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import APIService, { PokemonBundleVariety } from '../../services/api.service';
+import APIService from '../../services/api.service';
+import type { PokemonBundleVariety } from '../../core/models/API/pokemon-bundle.model';
 import Tools from './Tools';
 
 import {

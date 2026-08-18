@@ -21,7 +21,8 @@ import {
   PokemonProgress,
   PokemonSpecie,
 } from '../../core/models/pokemon.model';
-import APIService, { PokemonBundleVariety } from '../../services/api.service';
+import APIService from '../../services/api.service';
+import type { PokemonBundleVariety, PokemonMoveRanking } from '../../core/models/API/pokemon-bundle.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {
   convertPokemonImageName,
@@ -125,6 +126,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   const [costModifier, setCostModifier] = useState<ITypeCost>();
   const [evolutionChain, setEvolutionChain] = useState<PokemonInfoEvo>();
+  const [moveRankings, setMoveRankings] = useState<PokemonMoveRanking[]>([]);
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
@@ -168,7 +170,12 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   const fetchMap = useCallback(
-    (specie: IPokemonSpecie, varieties: PokemonBundleVariety[], bundledEvolutionChain: PokemonInfoEvo | null) => {
+    (
+      specie: IPokemonSpecie,
+      varieties: PokemonBundleVariety[],
+      bundledEvolutionChain: PokemonInfoEvo | null,
+      bundledMoveRankings: PokemonMoveRanking[] = []
+    ) => {
       const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
       const soundCries: IFormSoundCry[] = [];
@@ -185,6 +192,7 @@ const Pokemon = (props: IPokemonPage) => {
         return;
       }
       setEvolutionChain(bundledEvolutionChain ?? undefined);
+      setMoveRankings(bundledMoveRankings);
 
       const pokemon = getFindPokemon((item) => item.num === specie.id);
       setCostModifier(
@@ -324,7 +332,7 @@ const Pokemon = (props: IPokemonPage) => {
         .then((res) => {
           if (res.data.data) {
             const result = PokemonSpecie.create(res.data.data.species);
-            fetchMap(result, res.data.data.varieties, res.data.data.evolutionChain);
+            fetchMap(result, res.data.data.varieties, res.data.data.evolutionChain, res.data.data.moveRankings ?? []);
           }
         })
         .catch((e: AxiosError) => {
@@ -358,6 +366,7 @@ const Pokemon = (props: IPokemonPage) => {
       setFormList([]);
       setPokeData([]);
       setCostModifier(undefined);
+      setMoveRankings([]);
     }
   };
 
@@ -733,6 +742,7 @@ const Pokemon = (props: IPokemonPage) => {
           setSearchOption={props.setSearchOption}
           defaultId={dataStorePokemon?.current?.id}
           evolutionChain={evolutionChain}
+          moveRankings={moveRankings}
           isLoadedForms={progress.isLoadedForms}
         />
         <PokemonAssetComponent originSoundCry={originSoundCry} isLoadedForms={progress.isLoadedForms} />

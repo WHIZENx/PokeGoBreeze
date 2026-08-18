@@ -120,11 +120,12 @@ const TableMove = (props: ITableMoveComponent) => {
       dynamaxMoves: filterUnknownMove(pokemon.dynamaxMoves),
     });
     setMove(
-      setRankMove({
-        ...pokemon,
-        purifiedMoves: pokemon.pokemonType === PokemonType.Shadow ? [] : pokemon.purifiedMoves,
-        shadowMoves: pokemon.pokemonType === PokemonType.Purified ? [] : pokemon.shadowMoves,
-      })
+      props.rankMoveData ??
+        setRankMove({
+          ...pokemon,
+          purifiedMoves: pokemon.pokemonType === PokemonType.Shadow ? [] : pokemon.purifiedMoves,
+          shadowMoves: pokemon.pokemonType === PokemonType.Purified ? [] : pokemon.shadowMoves,
+        })
     );
   };
 
@@ -140,7 +141,7 @@ const TableMove = (props: ITableMoveComponent) => {
         filterMoveType(props.pokemonData);
       }
     }
-  }, [props.pokemonData, props.pokemonData?.pokemonType]);
+  }, [props.pokemonData, props.pokemonData?.pokemonType, props.rankMoveData]);
 
   const renderTable = (table: TableType) => {
     const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>

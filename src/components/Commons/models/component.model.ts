@@ -27,6 +27,7 @@ import { PVPInfo } from '../../../core/models/pvp.model';
 import React from 'react';
 import { IAppMenuItem, IMenuItem } from './menu.model';
 import { IStatsRankAtk, IStatsRankDef, IStatsRankSta, IStatsRankProd } from '../../../core/models/stats.model';
+import { IPokemonQueryRankMove } from '../../../utils/models/pokemon-top-move.model';
 
 export interface IResponsiveAppBarComponent {
   version?: string;
@@ -311,6 +312,7 @@ export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
 
 export interface ITableMoveComponent {
   pokemonData: Partial<IPokemonDetail> | undefined;
+  rankMoveData?: IPokemonQueryRankMove;
   maxHeight?: number | string;
 }
 

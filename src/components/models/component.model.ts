@@ -27,6 +27,7 @@ import { CardType, MoveType, PokemonType, TypeAction, TypeSex } from '../../enum
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
+import type { PokemonMoveRanking } from '../../core/models/API/pokemon-bundle.model';
 import { IStyleData } from '../../utils/models/util.model';
 import { PaletteMode } from '@mui/material';
 import React from 'react';
@@ -165,6 +166,7 @@ export interface IFormInfoComponent {
   setSearchOption?: (searchOption: SearchOption) => void;
   defaultId: number | undefined;
   evolutionChain?: PokemonInfoEvo;
+  moveRankings: PokemonMoveRanking[];
   isLoadedForms: boolean;
 }
 

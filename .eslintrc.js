@@ -1,6 +1,7 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    tsconfigRootDir: __dirname,
     ecmaVersion: 2020,
     sourceType: 'module',
     ecmaFeatures: {

@@ -25,20 +25,21 @@ Measured on 2026-08-17, one generated snapshot contained:
 
 ## Calculation hot-path scan
 
-| Priority | Function or flow                               | Browser cost before migration                                                   | Status                                                          |
-| -------- | ---------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| P0       | `calStatsProdAsync` in Stats Battle Table      | Roughly 300k–450k IV/level combinations plus full-array sorting per Pokemon     | Moved to cached `/api/v1/iv-rank` with server pagination        |
-| P0       | Global `sortStatsPokemon` Redux initialization | Builds and sorts four rankings on every Web hydration                           | Moved to generated `statsRankings` API section                  |
-| P0       | `calculateStatsTopRank` in PvP views           | Can invoke full IV-product sweeps repeatedly                                    | Moved to cached `/api/v1/top-rank`                              |
-| P0       | `counterPokemon` / Pokémon counters            | Pokemon × fast moves × charged moves, then global sort                          | Moved to cached, paginated `/api/v1/counters`                   |
-| P1       | DPS/TDO sheets                                 | Expands every eligible Pokemon and move-set combination before table pagination | Moved to cached `/api/v1/dps-tdo` with server pagination        |
-| P1       | PvP ranking files                              | Downloads complete ranking arrays before local enrichment/filtering             | API pagination/search available; Web incremental migration next |
-| P1       | Types and Moves search pages                   | Filters and sorts complete hydrated collections                                 | Moves use `/api/v1/data`; Types uses paginated `/api/v1/types`  |
-| P1       | Pokédex                                        | Filters the full Pokémon snapshot and manually slices cards in the browser      | Moved to filtered, paginated `/api/v1/pokedex`                  |
-| P1       | Find Table                                     | Repeats CP/IV calculations over CPM levels and IV combinations                  | Moved to `/api/v1/find` for IV, CP, and min/max modes           |
-| P1       | Move details                                   | Resolves move variants and calculates matching Pokémon DPS/TDO in the browser   | Moved to paginated `/api/v1/move` bundle                        |
-| P1       | Stickers                                       | Hydrates and filters the complete sticker collection in every browser session   | Moved to paginated `/api/v1/stickers`; removed global hydration |
-| P2       | Single battle/damage interactions              | Small calculations with rapidly changing inputs                                 | Keep local or move to a Web Worker                              |
+| Priority | Function or flow                               | Browser cost before migration                                                   | Status                                                           |
+| -------- | ---------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| P0       | `calStatsProdAsync` in Stats Battle Table      | Roughly 300k–450k IV/level combinations plus full-array sorting per Pokemon     | Moved to cached `/api/v1/iv-rank` with server pagination         |
+| P0       | Global `sortStatsPokemon` Redux initialization | Builds and sorts four rankings on every Web hydration                           | Moved to generated `statsRankings` API section                   |
+| P0       | `calculateStatsTopRank` in PvP views           | Can invoke full IV-product sweeps repeatedly                                    | Moved to cached `/api/v1/top-rank`                               |
+| P0       | `counterPokemon` / Pokémon counters            | Pokemon × fast moves × charged moves, then global sort                          | Moved to cached, paginated `/api/v1/counters`                    |
+| P1       | DPS/TDO sheets                                 | Expands every eligible Pokemon and move-set combination before table pagination | Moved to cached `/api/v1/dps-tdo` with server pagination         |
+| P1       | PvP ranking files                              | Downloads complete ranking arrays before local enrichment/filtering             | API pagination/search available; Web incremental migration next  |
+| P1       | Types and Moves search pages                   | Filters and sorts complete hydrated collections                                 | Moves use `/api/v1/data`; Types uses paginated `/api/v1/types`   |
+| P1       | Pokédex                                        | Filters the full Pokémon snapshot and manually slices cards in the browser      | Moved to filtered, paginated `/api/v1/pokedex`                   |
+| P1       | Find Table                                     | Repeats CP/IV calculations over CPM levels and IV combinations                  | Moved to `/api/v1/find` for IV, CP, and min/max modes            |
+| P1       | Move details                                   | Resolves move variants and calculates matching Pokémon DPS/TDO in the browser   | Moved to paginated `/api/v1/move` bundle                         |
+| P1       | Stickers                                       | Hydrates and filters the complete sticker collection in every browser session   | Moved to paginated `/api/v1/stickers`; removed global hydration  |
+| P1       | Stats Ranking                                  | Joins ranking maps with all Pokémon and synthetic Shadow/Purified rows locally  | Moved to paginated `/api/v1/stats-ranking` with deep-link lookup |
+| P2       | Single battle/damage interactions              | Small calculations with rapidly changing inputs                                 | Keep local or move to a Web Worker                               |
 
 ## Parity verification against `web/main`
 
@@ -68,7 +69,7 @@ Intentional UI differences are limited to server pagination, request cancellatio
 
 ## Operational notes
 
-- Pokémon details and reusable Pokémon selectors now call `/api/v1/pokemon` once. The API fans out to PokeAPI for species, varieties, forms, and the evolution chain, deduplicates and normalizes the result, and caches both completed and in-flight requests. Candy color data also passes through `/api/v1/candy`; current Web data requests no longer call external JSON APIs directly.
+- Pokémon details and reusable Pokémon selectors now call `/api/v1/pokemon` once. The API fans out to PokeAPI for species, varieties, forms, and the evolution chain, adds cached Pokémon GO offensive/defensive move rankings for every form, deduplicates and normalizes the result, and caches both completed and in-flight requests. Candy color data also passes through `/api/v1/candy`; current Web data requests no longer call external JSON APIs directly.
 - Image, animation, and sound URLs intentionally remain CDN URLs. They are browser assets rather than application data and proxying them would add API bandwidth and latency.
 - The API repository is private, but its read-only HTTP endpoints are intentionally public because a browser cannot keep an API secret. CORS is an origin policy, not authentication.
 - Add Vercel Firewall rate limits for abuse protection instead of embedding a token in the frontend.
