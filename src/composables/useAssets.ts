@@ -5,6 +5,26 @@ import { formNormal, formGmax, formMega } from '../utils/helpers/options-context
 import { isEqual, isInclude, isNotEmpty } from '../utils/extension';
 import { useCallback } from 'react';
 import { convertPokemonAPIDataFormName } from '../utils/utils';
+import { GenderType } from '../core/enums/asset.enum';
+import { IImage } from '../core/models/asset.model';
+
+const genderRank = (gender: GenderType | undefined) =>
+  gender === GenderType.Male ? 0 : gender === GenderType.GenderLess ? 1 : 2;
+
+const selectAssetForm = (images: IImage[], formName: string) => {
+  const candidates = images.filter((image) => isEqual(formName, image.form, EqualMode.IgnoreCaseSensitive));
+  const selected = candidates
+    .filter((image) => image.default.endsWith('.icon') && !image.default.endsWith('.s.icon'))
+    .sort((left, right) => genderRank(left.gender) - genderRank(right.gender))[0];
+  if (!selected) {
+    return;
+  }
+  const shiny = selected.shiny?.endsWith('.s.icon')
+    ? selected.shiny
+    : (candidates.find((image) => image.gender === selected.gender && image.default.endsWith('.s.icon'))?.default ??
+      candidates.find((image) => image.default.endsWith('.s.icon'))?.default);
+  return { ...selected, shiny };
+};
 
 export const useAssets = () => {
   const { assetsData } = useDataStore();
@@ -49,14 +69,14 @@ export const useAssets = () => {
       return;
     }
     formName = formName.replaceAll('-', '_');
-    const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
+    const asset = selectAssetForm(pokemonAssets.image, formName);
     if (asset) {
       return asset;
     } else if (
       isNotEmpty(pokemonAssets.image) &&
       !isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive)
     ) {
-      const formOrigin = pokemonAssets.image.find((img) => img.form === formNormal());
+      const formOrigin = selectAssetForm(pokemonAssets.image, formNormal());
       if (!formOrigin) {
         return pokemonAssets.image[0];
       }
