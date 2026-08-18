@@ -63,9 +63,9 @@ export const useTimestamp = () => {
 
   const { errorProgress } = createProgressHelpers(dispatch);
 
-  const loadTimestamp = async (isCurrentVersion: boolean) => {
+  const loadTimestamp = async () => {
     try {
-      if (!(await loadProcessedData(isCurrentVersion))) {
+      if (!(await loadProcessedData())) {
         errorProgress({ isError: true, message: 'Processed data API is unavailable.' });
       }
     } catch (e) {
