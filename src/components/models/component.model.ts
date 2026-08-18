@@ -1,5 +1,6 @@
 import { IFormSoundCry, IPokemonFormModify, IPokemonSprite } from '../../core/models/API/form.model';
-import { IImage } from '../../core/models/asset.model';
+import { IAsset, IImage } from '../../core/models/asset.model';
+import { IEvolutionChain } from '../../core/models/evolution-chain.model';
 import { ICombat } from '../../core/models/combat.model';
 import {
   IPokemonData,
@@ -148,6 +149,7 @@ export interface IToolsComponent {
 }
 
 export interface IAssetPokemonModelComponent {
+  asset?: IAsset;
   originSoundCry: IFormSoundCry[];
   isLoadedForms: boolean;
 }
@@ -158,6 +160,7 @@ export interface IEvolutionComponent {
   setSearchOption?: (searchOption: SearchOption) => void;
   isLoadedForms: boolean;
   evolutionChain?: PokemonInfoEvo;
+  pokemonGoEvolutionChains?: IEvolutionChain[];
 }
 
 export interface IFormInfoComponent {
@@ -166,11 +169,14 @@ export interface IFormInfoComponent {
   setSearchOption?: (searchOption: SearchOption) => void;
   defaultId: number | undefined;
   evolutionChain?: PokemonInfoEvo;
+  pokemonGoAsset?: IAsset;
+  pokemonGoEvolutionChains?: IEvolutionChain[];
   moveRankings: PokemonMoveRanking[];
   isLoadedForms: boolean;
 }
 
 export interface IFromChangeComponent {
+  asset?: IAsset;
   pokemonData: Partial<IPokemonDetail> | undefined;
   currentId: number | undefined;
 }

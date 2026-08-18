@@ -361,6 +361,9 @@ export interface ISelectCardMoveComponent<T> {
 
 export interface ISelectCardPokemonComponent<T> {
   pokemonList: T[];
+  isRemoteSearch?: boolean;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
   value?: string;
   placeholder?: string;
   isShowPokemon?: boolean;
