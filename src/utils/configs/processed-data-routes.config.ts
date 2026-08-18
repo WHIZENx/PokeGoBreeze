@@ -1,6 +1,6 @@
 import type { ProcessedDataSection } from '../../services/processed-data.service';
 
-const pokemonDetails: ProcessedDataSection[] = ['pokemons', 'combats', 'cpm', 'statsRankings'];
+const pokemonDetails: ProcessedDataSection[] = ['pokemons', 'combats', 'assets', 'cpm', 'statsRankings'];
 const pvpDetails: ProcessedDataSection[] = ['pvp', 'pokemons', 'combats', 'assets', 'statsRankings'];
 
 /**
