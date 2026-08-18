@@ -26,20 +26,52 @@ export interface ProcessedDataPage<T> {
   };
 }
 
+export type ProcessedDataSection =
+  | 'options'
+  | 'cpm'
+  | 'pvp'
+  | 'statsRankings'
+  | 'pokemons'
+  | 'combats'
+  | 'assets'
+  | 'evolutionChains'
+  | 'trainers';
+
 const endpoint = (path: string) => `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/${path}`;
 
 class ProcessedDataService {
+  private sectionRequests = new Map<ProcessedDataSection, Promise<unknown>>();
+  private generatedAt?: string;
+
   isConfigured() {
     return Boolean(APIUrl.POKEGO_BREEZE_API_URL);
   }
 
   async getMeta() {
-    return (await APIService.getFetchUrl<ProcessedDataMeta>(endpoint('meta'))).data;
+    const meta = (await APIService.getFetchUrl<ProcessedDataMeta>(endpoint('meta'))).data;
+    if (this.generatedAt && this.generatedAt !== meta.generatedAt) {
+      this.sectionRequests.clear();
+    }
+    this.generatedAt = meta.generatedAt;
+    return meta;
   }
 
-  async getSection<T>(name: string) {
-    return (await APIService.getFetchUrl<{ data: T }>(`${endpoint('section')}?name=${encodeURIComponent(name)}`)).data
-      .data;
+  getSection<T>(name: ProcessedDataSection) {
+    const cachedRequest = this.sectionRequests.get(name) as Promise<T> | undefined;
+    if (cachedRequest) {
+      return cachedRequest;
+    }
+
+    const request = APIService.getFetchUrl<{ data: T }>(`${endpoint('section')}?name=${encodeURIComponent(name)}`)
+      .then(({ data }) => data.data)
+      .catch((error: unknown) => {
+        if (this.sectionRequests.get(name) === request) {
+          this.sectionRequests.delete(name);
+        }
+        throw error;
+      });
+    this.sectionRequests.set(name, request);
+    return request;
   }
 
   async getPage<T>(
