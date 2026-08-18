@@ -13,9 +13,9 @@ import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { combineClasses, isNotEmpty, safeObjectEntries, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 import { useIcon } from '../../../composables/useIcon';
-import { useAssets } from '../../../composables/useAssets';
 import { useSearch } from '../../../composables/useSearch';
 import { Skeleton } from '@mui/material';
+import { useAssets } from '../../../composables/useAssets';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const { iconData } = useIcon();
@@ -27,7 +27,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const [asset, setAsset] = useState<IAsset>();
 
   const getImageList = (id: number | undefined, genderRatio: IPokemonGenderRatio) => {
-    const pokemonAsset = findAssetsById(id);
+    const pokemonAsset = props.asset?.id === id ? props.asset : findAssetsById(id);
     setAsset(pokemonAsset);
     setGender({
       malePercent: genderRatio.M,
@@ -44,7 +44,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
     if (searchingMainDetails?.fullName && searchingMainDetails.genderRatio) {
       setPokeAssets(getImageList(searchingMainDetails.id, searchingMainDetails.genderRatio));
     }
-  }, [searchingMainDetails]);
+  }, [props.asset, searchingMainDetails]);
 
   const renderGender = (asset: string, id: number | undefined, tag: string) => (
     <div className="tw-flex tw-flex-col tw-w-full tw-justify-center tw-items-center">
@@ -161,7 +161,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                           {v && (
                             <li className="tw-list-circle">
                               <h6>Type: {capitalize(k)}</h6>
-                              <audio src={v} className="tw-w-full tw-h-8" controls>
+                              <audio src={v} className="tw-w-full tw-h-8" controls preload="none">
                                 <source type="audio/ogg" />
                                 Your browser does not support the audio element.
                               </audio>
@@ -193,7 +193,12 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
               {asset?.sound.cry.map((value, index) => (
                 <li key={index} className="tw-list-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
-                  <audio src={APIService.getSoundPokemonGO(value.path)} className="tw-w-full tw-h-8" controls>
+                  <audio
+                    src={APIService.getSoundPokemonGO(value.path)}
+                    className="tw-w-full tw-h-8"
+                    controls
+                    preload="none"
+                  >
                     <source type="audio/wav" />
                     Your browser does not support the audio element.
                   </audio>

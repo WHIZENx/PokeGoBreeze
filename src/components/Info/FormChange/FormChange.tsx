@@ -21,14 +21,13 @@ import { useAssets } from '../../../composables/useAssets';
 
 const FromChange = (props: IFromChangeComponent) => {
   const { findAssetsById } = useAssets();
-
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const [dataSrc, setDataSrc] = useState<string>();
 
   const [pokemon, setPokemon] = useState<Partial<IPokemonDetail>>();
 
   const getImageList = (id: number | undefined) => {
-    const model = findAssetsById(id);
+    const model = props.asset?.id === id ? props.asset : findAssetsById(id);
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
       (value) => new PokemonModelComponent(value, model?.image)
     );
@@ -45,7 +44,7 @@ const FromChange = (props: IFromChangeComponent) => {
     if (toNumber(props.currentId) > 0) {
       setPokeAssets(getImageList(props.currentId));
     }
-  }, [props.currentId, props.pokemonData]);
+  }, [props.asset, props.currentId, props.pokemonData]);
 
   useEffect(() => {
     if (isNotEmpty(pokeAssets) && props.pokemonData?.fullName) {

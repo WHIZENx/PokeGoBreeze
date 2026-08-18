@@ -15,6 +15,7 @@ import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
 import SelectCardPokemon from '../../../components/Commons/Selects/SelectCardPokemon';
 import { useTitle } from '../../../utils/hooks/useTitle';
+import type { PokedexApiPokemon, PokedexApiResponse } from '../../../core/models/API/pokedex.model';
 
 const Search = () => {
   useTitle({
@@ -24,7 +25,7 @@ const Search = () => {
     keywords: ['Pokémon search', 'find Pokémon', 'Pokémon filter', 'Pokémon GO search', 'Pokémon database'],
   });
   const { routerAction } = useRouter();
-  const { getPokemonById, getDefaultPokemons } = usePokemon();
+  const { getPokemonById } = usePokemon();
   const { searchingMainData } = useSearch();
 
   const [searchOption, setSearchOption] = useState<SearchOption>({
@@ -35,6 +36,12 @@ const Search = () => {
   const [selectId, setSelectId] = useState(
     routerAction === Action.Pop && searchingMainData ? toNumber(searchingMainData.pokemon?.id, 1) : 1
   );
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchPage, setSearchPage] = useState(1);
+  const [searchPages, setSearchPages] = useState(1);
+  const [searchResults, setSearchResults] = useState<PokedexApiPokemon[]>([]);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const latestSearchRequest = useRef(0);
 
   const resultsContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -42,6 +49,53 @@ const Search = () => {
   useEffect(() => {
     setSelectId(searchOption.id);
   }, [searchOption.id]);
+
+  useEffect(() => {
+    const requestId = ++latestSearchRequest.current;
+    const controller = new AbortController();
+    const delay = searchPage === 1 ? 250 : 0;
+    const timeout = window.setTimeout(() => {
+      setIsSearchLoading(true);
+      APIService.getFetchUrl<PokedexApiResponse>(
+        APIService.getPokedex({
+          q: searchQuery.trim(),
+          defaultOnly: true,
+          page: searchPage,
+          limit: 100,
+        }),
+        { signal: controller.signal }
+      )
+        .then(({ data }) => {
+          if (requestId !== latestSearchRequest.current) {
+            return;
+          }
+          setSearchPages(data.meta.pages);
+          setSearchResults((current) => {
+            if (searchPage === 1) {
+              return data.data;
+            }
+            const existingIds = new Set(current.map((pokemon) => pokemon.num));
+            return [...current, ...data.data.filter((pokemon) => !existingIds.has(pokemon.num))];
+          });
+        })
+        .catch((error) => {
+          if (requestId === latestSearchRequest.current && !APIService.isCancel(error)) {
+            setSearchResults([]);
+            setSearchPages(1);
+          }
+        })
+        .finally(() => {
+          if (requestId === latestSearchRequest.current) {
+            setIsSearchLoading(false);
+          }
+        });
+    }, delay);
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [searchPage, searchQuery]);
 
   const getInfoPoke = (id: number) => {
     setSearchOption({ id });
@@ -124,7 +178,19 @@ const Search = () => {
         </h1>
         <SelectCardPokemon
           inputRef={inputRef}
-          pokemonList={getDefaultPokemons()}
+          pokemonList={searchResults}
+          isRemoteSearch
+          hasMore={searchPage < searchPages}
+          onLoadMore={() => {
+            if (!isSearchLoading && searchPage < searchPages) {
+              setSearchPage((page) => page + 1);
+            }
+          }}
+          onSetSearch={(value) => {
+            setSearchQuery(value);
+            setSearchPage(1);
+            setSearchResults([]);
+          }}
           onChangeSelect={onChangeSelect}
           onSetPokemon={(pokemon) => getInfoPoke(pokemon.num)}
           isFit

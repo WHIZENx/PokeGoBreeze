@@ -149,6 +149,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       setSearchOption={props.setSearchOption}
       isLoadedForms={props.isLoadedForms}
       evolutionChain={props.evolutionChain}
+      pokemonGoEvolutionChains={props.pokemonGoEvolutionChains}
     />
   );
 
@@ -238,7 +239,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         renderEvolution()
       )}
       {isNotEmpty(searchingMainDetails?.formChange) && (
-        <FromChange currentId={props.defaultId} pokemonData={searchingMainDetails} />
+        <FromChange asset={props.pokemonGoAsset} currentId={props.defaultId} pokemonData={searchingMainDetails} />
       )}
     </Fragment>
   );

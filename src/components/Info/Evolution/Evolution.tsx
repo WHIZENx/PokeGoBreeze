@@ -50,8 +50,8 @@ import IconType from '../../Sprites/Icon/Type/Type';
 import { APIUrl } from '../../../services/constants';
 import { formNormal, formStandard } from '../../../utils/helpers/options-context.helpers';
 import usePokemon from '../../../composables/usePokemon';
-import useEvolution from '../../../composables/useEvolution';
 import Tooltips from '../../Commons/Tooltips/Tooltips';
+import useEvolution from '../../../composables/useEvolution';
 
 interface IPokemonEvo {
   prev?: string;
@@ -94,11 +94,16 @@ class PokemonEvo implements IPokemonEvo {
 }
 
 const Evolution = (props: IEvolutionComponent) => {
-  const { findEvoChainsById } = useEvolution();
+  const { findEvoChainsById: findFallbackEvoChainById } = useEvolution();
   const { getFilteredPokemons, getFindPokemon, getPokemonById } = usePokemon();
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const [idEvoChain, setIdEvoChain] = useState(0);
+
+  const findEvoChainsById = (id: number | undefined) =>
+    props.pokemonGoEvolutionChains?.find(
+      (chain) => chain.id === id || chain.evolutionInfos.some((pokemon) => pokemon.id === id)
+    ) ?? findFallbackEvoChainById(id);
 
   const recursiveEvoChain = (chain: IInfoEvoChain, evos: IInfoEvoChain[], result: IPokemonEvo[][]) => {
     const currentId = chain.id;
