@@ -58,7 +58,6 @@ else
     "db.getSiblingDB('main').versions.insertOne({version:'$VERSION',timestamp:'$TIMESTAMP',deployedAt:new Date()})"; then
     echo "✅ MongoDB version logged"
   else
-    echo "❌ MongoDB log failed"
-    exit 1
+    echo "⚠️  MongoDB version log failed; continuing deployment"
   fi
 fi
