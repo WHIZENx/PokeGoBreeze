@@ -25,7 +25,10 @@ import { IPVPDataModel } from '../core/models/pvp.model';
 import { IStatsRank } from '../core/models/stats.model';
 import { StoreActions, StatsActions, TimestampActions } from '../store/actions';
 import { createProgressHelpers } from '../utils/helpers/progress-helpers';
-import ProcessedDataService, { ProcessedDataSection } from '../services/processed-data.service';
+import ProcessedDataService, {
+  ProcessedDataSection,
+  UnsupportedProcessedDataSchemaError,
+} from '../services/processed-data.service';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -172,11 +175,16 @@ export const useDataStore = () => {
       dispatch(TimestampActions.SetSnapshotGeneratedAt.create(meta.generatedAt));
       dispatch(TimestampActions.SetTimestampGameMaster.create(meta.source.gameMaster));
       dispatch(TimestampActions.SetTimestampAssets.create(meta.source.assets));
+      dispatch(StoreActions.SetLogoPokeGO.create(meta.appIcon ?? ''));
+      dispatch(TimestampActions.SetTimestampIcon.create(meta.source.icon ?? 0));
       dispatch(TimestampActions.SetTimestampSounds.create(meta.source.sounds));
       dispatch(TimestampActions.SetTimestampPVP.create(meta.source.pvp));
       completeProgress();
       return true;
-    } catch {
+    } catch (error) {
+      if (error instanceof UnsupportedProcessedDataSchemaError) {
+        throw error;
+      }
       return false;
     }
   };
