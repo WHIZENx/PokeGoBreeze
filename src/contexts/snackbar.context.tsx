@@ -17,7 +17,7 @@ interface SnackbarContextType {
   // Methods to control the snackbar
   setSnackbar: (options?: SnackbarProps) => void;
   showSnackbar: (message: string, severity?: AlertColor, variant?: 'standard' | 'filled' | 'outlined') => void;
-  closeSnackbar: () => void;
+  closeSnackbar: (message?: string) => void;
 }
 
 // Create the context with default values
@@ -73,19 +73,12 @@ export const SnackbarProvider: React.FC<ISnackbarProps> = (props: ISnackbarProps
 
   // Method to show snackbar
   const showSnackbar = (message: string, severity?: AlertColor, variant?: 'standard' | 'filled' | 'outlined') => {
-    if (option.open) {
-      closeSnackbar();
-      setTimeout(() => {
-        setOption((option) => ({ ...option, message, severity, variant, open: true }));
-      }, 100);
-    } else {
-      setOption((option) => ({ ...option, message, severity, variant, open: true }));
-    }
+    setOption((option) => ({ ...option, message, severity, variant, open: true }));
   };
 
   // Method to close snackbar
-  const closeSnackbar = () => {
-    setOption((option) => ({ ...option, open: false }));
+  const closeSnackbar = (message?: string) => {
+    setOption((option) => (message && option.message !== message ? option : { ...option, open: false }));
   };
 
   // Handle close event
