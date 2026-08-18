@@ -2,37 +2,22 @@ import { IPokemonDetail } from '../core/models/API/info.model';
 import { Combat, ICombat } from '../core/models/combat.model';
 import { MoveType, TypeMove } from '../enums/type.enum';
 import { OptionOtherDPS, Delay } from '../store/models/options.model';
-import {
-  calculateStatsBattle,
-  calculateAvgDPS,
-  calculateStatsByTag,
-  calculateBetweenLevel,
-  calStatsProd,
-  findCPforLeague,
-  sortStatsProd,
-} from '../utils/calculate';
+import { calculateStatsBattle, calculateAvgDPS } from '../utils/calculate';
 import {
   defaultEnemyAtkDelay,
   defaultPokemonDefObj,
   maxIv,
   defaultPokemonLevel,
-  minCp,
 } from '../utils/helpers/options-context.helpers';
-import { BattleBaseStats, BattleLeague, QueryMovesPokemon, QueryStatesEvoChain } from '../utils/models/calculate.model';
+import { QueryMovesPokemon } from '../utils/models/calculate.model';
 import { PokemonQueryMove, EDPS, PokemonQueryRankMove } from '../utils/models/pokemon-top-move.model';
 import { getMoveType, moveTypeToFormType, getAllMoves } from '../utils/utils';
 import useDataStore from './useDataStore';
-import { isEqual, isInclude, toNumber } from '../utils/extension';
-import usePokemon from './usePokemon';
+import { isEqual } from '../utils/extension';
 import { useMemo } from 'react';
-import { IEvolution } from '../core/models/evolution.model';
-import { IPokemonData, PokemonData } from '../core/models/pokemon.model';
-import { BattleLeagueCPType } from '../utils/enums/compute.enum';
-import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 
 export const useCalculate = () => {
   const { combatsData } = useDataStore();
-  const { getFindPokemon } = usePokemon();
 
   // O(1) move name lookup shared by all query functions in this hook
   const combatMap = useMemo(() => new Map(combatsData.map((c) => [c.name, c])), [combatsData]);
@@ -140,187 +125,8 @@ export const useCalculate = () => {
     }
   };
 
-  const queryStatesEvoChain = (item: IEvolution, level: number, atkIV: number, defIV: number, staIV: number) => {
-    let pokemon: IPokemonData | undefined = new PokemonData();
-    if (!item.form) {
-      pokemon = getFindPokemon(
-        (value) => value.num === item.id && isEqual(value.slug, item.name, EqualMode.IgnoreCaseSensitive)
-      );
-    } else {
-      pokemon = getFindPokemon(
-        (value) => value.num === item.id && isInclude(value.slug, item.form, IncludeMode.IncludeIgnoreCaseSensitive)
-      );
-    }
-    if (!pokemon) {
-      pokemon = getFindPokemon((value) => value.num === item.id);
-    }
-    const pokemonStats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
-    const dataLittle = findCPforLeague(
-      pokemonStats.atk,
-      pokemonStats.def,
-      pokemonStats.sta,
-      atkIV,
-      defIV,
-      staIV,
-      level,
-      BattleLeagueCPType.Little
-    );
-    const dataGreat = findCPforLeague(
-      pokemonStats.atk,
-      pokemonStats.def,
-      pokemonStats.sta,
-      atkIV,
-      defIV,
-      staIV,
-      level,
-      BattleLeagueCPType.Great
-    );
-    const dataUltra = findCPforLeague(
-      pokemonStats.atk,
-      pokemonStats.def,
-      pokemonStats.sta,
-      atkIV,
-      defIV,
-      staIV,
-      level,
-      BattleLeagueCPType.Ultra
-    );
-    const dataMaster = findCPforLeague(
-      pokemonStats.atk,
-      pokemonStats.def,
-      pokemonStats.sta,
-      atkIV,
-      defIV,
-      staIV,
-      level
-    );
-
-    const statsProd = calStatsProd(
-      pokemonStats.atk,
-      pokemonStats.def,
-      pokemonStats.sta,
-      minCp(),
-      BattleLeagueCPType.Master,
-      true
-    );
-    const ultraStatsProd = sortStatsProd(statsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Ultra));
-    const greatStatsProd = sortStatsProd(
-      ultraStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Great)
-    );
-    const littleStatsProd = sortStatsProd(
-      greatStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Little)
-    );
-
-    const little = littleStatsProd.find(
-      (item) =>
-        item.level === dataLittle.level &&
-        item.CP === dataLittle.CP &&
-        item.IV &&
-        item.IV.atkIV === atkIV &&
-        item.IV.defIV === defIV &&
-        item.IV.staIV === staIV
-    );
-    const great = greatStatsProd.find(
-      (item) =>
-        item.level === dataGreat.level &&
-        item.CP === dataGreat.CP &&
-        item.IV &&
-        item.IV.atkIV === atkIV &&
-        item.IV.defIV === defIV &&
-        item.IV.staIV === staIV
-    );
-    const ultra = ultraStatsProd.find(
-      (item) =>
-        item.level === dataUltra.level &&
-        item.CP === dataUltra.CP &&
-        item.IV &&
-        item.IV.atkIV === atkIV &&
-        item.IV.defIV === defIV &&
-        item.IV.staIV === staIV
-    );
-    const master = sortStatsProd(statsProd).find(
-      (item) =>
-        item.level === dataMaster.level &&
-        item.CP === dataMaster.CP &&
-        item.IV &&
-        item.IV.atkIV === atkIV &&
-        item.IV.defIV === defIV &&
-        item.IV.staIV === staIV
-    );
-
-    const battleLeague = new BattleLeague();
-
-    if (little) {
-      battleLeague.little = BattleBaseStats.create({
-        ...little,
-        ...calculateBetweenLevel(
-          pokemonStats.atk,
-          pokemonStats.def,
-          pokemonStats.sta,
-          atkIV,
-          defIV,
-          staIV,
-          level,
-          little.level
-        ),
-      });
-    }
-    if (great) {
-      battleLeague.great = BattleBaseStats.create({
-        ...great,
-        ...calculateBetweenLevel(
-          pokemonStats.atk,
-          pokemonStats.def,
-          pokemonStats.sta,
-          atkIV,
-          defIV,
-          staIV,
-          level,
-          great.level
-        ),
-      });
-    }
-    if (ultra) {
-      battleLeague.ultra = BattleBaseStats.create({
-        ...ultra,
-        ...calculateBetweenLevel(
-          pokemonStats.atk,
-          pokemonStats.def,
-          pokemonStats.sta,
-          atkIV,
-          defIV,
-          staIV,
-          level,
-          ultra.level
-        ),
-      });
-    }
-    if (master) {
-      battleLeague.master = BattleBaseStats.create({
-        ...master,
-        ...calculateBetweenLevel(
-          pokemonStats.atk,
-          pokemonStats.def,
-          pokemonStats.sta,
-          atkIV,
-          defIV,
-          staIV,
-          level,
-          master.level
-        ),
-      });
-    }
-    return new QueryStatesEvoChain({
-      ...item,
-      battleLeague,
-      maxCP: battleLeague.master.CP,
-      form: pokemon?.form,
-    });
-  };
-
   return {
     rankMove,
-    queryStatesEvoChain,
   };
 };
 export default useCalculate;

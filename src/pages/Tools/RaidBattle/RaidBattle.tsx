@@ -6,9 +6,7 @@ import Find from '../../../components/Find/Find';
 import {
   addSelectMovesByType,
   generateParamForm,
-  getAllMoves,
   getKeyWithData,
-  getMoveType,
   getValidPokemonImgPath,
   isInvalidIV,
   isSpecialMegaFormType,
@@ -64,7 +62,6 @@ import {
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
-  isEqual,
   isNotEmpty,
   toFloat,
   toFloatWithPadding,
@@ -103,6 +100,7 @@ import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import DialogMui from '../../../components/Commons/Dialogs/Dialogs';
 import Tooltips from '../../../components/Commons/Tooltips/Tooltips';
+import type { RaidApiResponse } from '../../../services/models/tools-api.model';
 
 const SORT_MENU_ITEMS = [
   { value: SortType.DPS, label: 'Damage Per Second' },
@@ -360,160 +358,54 @@ const RaidBattle = () => {
     }
   };
 
-  const addCPokeData = (
-    dataList: IPokemonMoveData[],
-    movePoke: string[] | undefined,
-    value: IPokemonData | undefined,
-    fMove: ICombat,
-    fMoveType: MoveType,
-    pokemonTarget: boolean,
-    pokemonType = PokemonType.Normal
-  ) =>
-    movePoke?.forEach((vc) => {
-      const cMoveCurrent = findMoveByName(vc);
-      if (cMoveCurrent) {
-        const cMoveType = getMoveType(value, vc);
-        if (!isEqual(cMoveType, MoveType.Dynamax)) {
-          const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
-          const statsAttackerTemp = new BattleCalculate({
-            atk: calculateStatsBattle(stats.atk, used.iv.atkIV, used.level),
-            def: calculateStatsBattle(stats.def, used.iv.defIV, used.level),
-            hp: calculateStatsBattle(stats.sta, used.iv.staIV, used.level),
-            fMove,
-            cMove: cMoveCurrent,
-            types: value?.types,
-            pokemonType,
-          });
-          let statsDefender = new BattleCalculate({
-            atk: statBossATK,
-            def: statBossDEF,
-            hp: statBossHP,
-            fMove: findMoveByName(fMove?.name),
-            cMove: findMoveByName(cMove?.name),
-            types: searchingToolCurrentData?.form?.form?.types,
-            isStab: isWeatherBoss,
-          });
-          const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
-          if (pokemonTarget) {
-            statsDefender = statsAttackerTemp;
-          }
-
-          if (!statsAttacker || !statsDefender) {
-            showSnackbar('Something went wrong!', 'error');
-            return;
-          }
-
-          const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
-          const dpsAtk = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
-
-          const ttkAtk = TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
-          const ttkDef = TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
-
-          const tdoAtk = dpsAtk * ttkDef;
-          const tdoDef = dpsDef * ttkAtk;
-
-          dataList.push({
-            pokemon: value,
-            fMove: statsAttacker.fMove,
-            cMove: statsAttacker.cMove,
-            dpsDef,
-            dpsAtk,
-            tdoAtk,
-            tdoDef,
-            multiDpsTdo: Math.pow(dpsAtk, 3) * tdoAtk,
-            ttkAtk,
-            ttkDef,
-            attackHpRemain: Math.floor(toNumber(statsAttacker.hp)) - Math.min(timeAllow, ttkDef) * dpsDef,
-            defendHpRemain: Math.floor(toNumber(statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
-            death: Math.floor(toNumber(statsDefender.hp) / tdoAtk),
-            pokemonType,
-            fMoveType,
-            cMoveType,
-          });
-        }
-      }
-    });
-
-  const addFPokeData = (
-    dataList: IPokemonMoveData[],
-    pokemon: IPokemonData,
-    movePoke: string[],
-    pokemonTarget: boolean
-  ) =>
-    movePoke.forEach((vf) => {
-      const fMove = findMoveByName(vf);
-      if (!fMove) {
-        return;
-      }
-      const fMoveType = getMoveType(pokemon, vf);
-      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType, pokemonTarget);
-      if (!pokemon.form || pokemon.hasShadowForm) {
-        if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
-        }
-        addCPokeData(dataList, pokemon.shadowMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
-        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Purified);
-      }
-      if (!pokemon.form || (!isSpecialMegaFormType(pokemon.pokemonType) && isNotEmpty(pokemon.shadowMoves))) {
-        addCPokeData(
-          dataList,
-          pokemon.eliteCinematicMoves,
-          pokemon,
-          fMove,
-          fMoveType,
-          pokemonTarget,
-          PokemonType.Shadow
-        );
-      }
-      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, pokemonTarget);
-      addCPokeData(dataList, pokemon.specialMoves, pokemon, fMove, fMoveType, pokemonTarget);
-      addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, fMove, fMoveType, pokemonTarget);
-    });
-
-  const calculateTopBattle = async (pokemonTarget: boolean) => {
-    const yieldToMain = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
-    const pokemons = getFilteredPokemons().filter((p) => p.pokemonType !== PokemonType.GMax);
-    const dataList: IPokemonMoveData[] = [];
-    for (let i = 0; i < pokemons.length; i++) {
-      addFPokeData(dataList, pokemons[i], getAllMoves(pokemons[i], TypeMove.Fast), pokemonTarget);
-      if (i % 20 === 19) {
-        await yieldToMain();
-      }
-    }
-    if (pokemonTarget) {
-      const sortedDPS = [...dataList].sort((a, b) => a.dpsAtk - b.dpsAtk);
-      const sortedTDO = [...dataList].sort((a, b) => a.tdoAtk - b.tdoAtk);
-      const sortedHP = [...dataList].sort((a, b) => toNumber(a.attackHpRemain) - toNumber(b.attackHpRemain));
-      const result = {
-        minDPS: toNumber(sortedDPS.at(0)?.dpsAtk),
-        maxDPS: sortedDPS[sortedDPS.length - 1].dpsAtk,
-        minTDO: toNumber(sortedTDO.at(0)?.tdoAtk),
-        maxTDO: sortedTDO[sortedTDO.length - 1].tdoAtk,
-        minHP: toNumber(sortedHP.at(0)?.attackHpRemain),
-        maxHP: toNumber(sortedHP[sortedHP.length - 1].attackHpRemain),
-      };
-      setResultBoss(result);
-      setDisableSearch(true);
-    } else {
-      const group = dataList.reduce(
-        (result, obj) => {
-          const name = getValueOrDefault(String, obj.pokemon?.name);
-          (result[name] = getValueOrDefault(Array, result[name])).push(obj);
-          return result;
-        },
-        new Object() as DynamicObj<IPokemonMoveData[]>
+  const calculateBossBattle = async () => {
+    try {
+      const response = await APIService.getFetchUrl<RaidApiResponse>(
+        APIService.getDpsTdo({
+          raid: true,
+          best: true,
+          bestBy: 'dps',
+          sort: 'dps',
+          order: 'desc',
+          page: 1,
+          limit: 250,
+          released: false,
+          showGMax: false,
+          ivAtk: used.iv.atkIV,
+          ivDef: used.iv.defIV,
+          ivHp: used.iv.staIV,
+          level: used.level,
+          targetId: searchingToolCurrentData?.form?.defaultId,
+          targetForm: searchingToolCurrentData?.pokemon?.fullName,
+          targetFast: fMove?.name,
+          targetCharged: cMove?.name,
+          targetAtk: statBossATK,
+          targetDef: statBossDEF,
+          targetHp: statBossHP,
+          bossBoost: options.isWeatherBoss,
+          counterBoost: options.isWeatherCounter,
+          timeAllow,
+        })
       );
-      const sorted = Object.values(group)
-        .map((pokemon) => pokemon.reduce((p, c) => (p.dpsAtk > c.dpsAtk ? p : c)))
-        .sort((a, b) => b.dpsAtk - a.dpsAtk);
-      setResult(sorted);
+      const summary = response.data.meta.raidSummary;
+      if (!summary?.dps || !summary.tdo || !summary.hp) {
+        throw new Error('invalid_raid_summary');
+      }
+      setResult(response.data.data);
+      setResultBoss({
+        minDPS: summary.dps.min,
+        maxDPS: summary.dps.max,
+        minTDO: summary.tdo.min,
+        maxTDO: summary.tdo.max,
+        minHP: summary.hp.min,
+        maxHP: summary.hp.max,
+      });
+      setDisableSearch(true);
+    } catch {
+      showSnackbar('Raid Battle API is unavailable.', 'error');
+    } finally {
       hideSpinner();
     }
-  };
-
-  const calculateBossBattle = async () => {
-    await calculateTopBattle(true);
-    await calculateTopBattle(false);
   };
 
   const calculateDPSBattle = (pokemonRaid: IPokemonRaidModel, hpRemain: number, timer: number) => {

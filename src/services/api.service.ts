@@ -475,6 +475,14 @@ class APIService {
     return this.getInternalQueryUrl('find', params);
   }
 
+  getBattleLeagueStats(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('battle-league-stats', params);
+  }
+
+  getBreakpoints(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('breakpoints', params);
+  }
+
   getMoveDetails(params: Record<string, string | number | boolean | undefined>) {
     return this.getInternalQueryUrl('move', params);
   }
