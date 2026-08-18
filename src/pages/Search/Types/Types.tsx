@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import APIService from '../../../services/api.service';
 import {
   camelCase,
@@ -10,35 +10,24 @@ import {
 } from '../../../utils/utils';
 import './Types.scss';
 import { computeBgType } from '../../../utils/compute';
-import { calculateStatsByTag } from '../../../utils/calculate';
-import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
+import { ColumnType, PokemonType } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
-import {
-  combineClasses,
-  getPropertyName,
-  getValueOrDefault,
-  isInclude,
-  isIncludeList,
-  isNotEmpty,
-  toNumber,
-} from '../../../utils/extension';
+import { combineClasses, getPropertyName, getValueOrDefault, toNumber } from '../../../utils/extension';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { IStyleSheetData } from '../../models/page.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
-import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { getTypeEffective } from '../../../utils/helpers/options-context.helpers';
-import useCombats from '../../../composables/useCombats';
-import usePokemon from '../../../composables/usePokemon';
 import SelectTypeComponent from '../../../components/Commons/Selects/SelectType';
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
+import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -99,21 +88,21 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonData>>(
   {
     id: ColumnType.Atk,
     name: 'ATK',
-    selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).atk,
+    selector: (row) => row.statsGO.atk,
     sortable: true,
     width: '100px',
   },
   {
     id: ColumnType.Def,
     name: 'DEF',
-    selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).def,
+    selector: (row) => row.statsGO.def,
     sortable: true,
     width: '100px',
   },
   {
     id: ColumnType.Sta,
     name: 'STA',
-    selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).sta,
+    selector: (row) => row.statsGO.sta,
     sortable: true,
     width: '100px',
   }
@@ -173,52 +162,133 @@ const columnMove = createDataRows<TableColumnModify<ICombat>>(
   }
 );
 
-interface IPokemonTypeMove {
-  pokemonList: IPokemonData[];
-  fastMove: ICombat[];
-  chargedMove: ICombat[];
-}
+type TypeResultKind = 'pokemon-single' | 'pokemon-dual' | 'fast' | 'charged';
 
-class PokemonTypeMove implements IPokemonTypeMove {
-  pokemonList: IPokemonData[] = [];
-  fastMove: ICombat[] = [];
-  chargedMove: ICombat[] = [];
-
-  static create(value: IPokemonTypeMove) {
-    const obj = new PokemonTypeMove();
-    Object.assign(obj, value);
-    return obj;
-  }
-}
-
-interface IPokemonTypeData {
+interface TypeCounts {
   pokemon: number;
-  fastMoves: number | undefined;
-  chargedMoves: number | undefined;
+  typedPokemon: number;
+  singlePokemon: number;
+  dualPokemon: number;
+  fastMoves: number;
+  typedFastMoves: number;
+  chargedMoves: number;
+  typedChargedMoves: number;
 }
 
-class PokemonTypeData implements IPokemonTypeData {
-  pokemon = 0;
-  fastMoves: number | undefined;
-  chargedMoves: number | undefined;
+interface TypePage<T> {
+  data: T[];
+  meta: { total: number; counts: TypeCounts };
+}
 
-  static create(value: IPokemonTypeData) {
-    const obj = new PokemonTypeData();
-    Object.assign(obj, value);
-    return obj;
+const typeSortField = (kind: TypeResultKind, columnId: string | number | undefined) => {
+  switch (Number(columnId)) {
+    case ColumnType.Id:
+      return kind.startsWith('pokemon') ? 'num' : 'id';
+    case ColumnType.Type:
+      return kind.startsWith('pokemon') ? 'name' : 'id';
+    case ColumnType.Atk:
+      return 'atk';
+    case ColumnType.Def:
+      return 'def';
+    case ColumnType.Sta:
+      return 'sta';
+    case ColumnType.PowerPVE:
+      return 'pvePower';
+    case ColumnType.PowerPVP:
+      return 'pvpPower';
+    case ColumnType.EnergyPVE:
+      return 'pveEnergy';
+    case ColumnType.EnergyPVP:
+      return 'pvpEnergy';
+    default:
+      return 'name';
   }
-}
+};
+
+const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean) => {
+  const [data, setData] = useState<T[]>([]);
+  const [total, setTotal] = useState(0);
+  const [counts, setCounts] = useState<TypeCounts>();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [sort, setSort] = useState({ field: 'name', order: 'asc' as 'asc' | 'desc' });
+  const [loading, setLoading] = useState(true);
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+  const latestRequestRef = useRef(0);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [search]);
+
+  useEffect(() => {
+    setPage(1);
+    setResetPaginationToggle((value) => !value);
+  }, [kind, type, released, debouncedSearch]);
+
+  const skipStalePageRequest = useSkipStalePageRequest(page, JSON.stringify([kind, type, released, debouncedSearch]));
+
+  useEffect(() => {
+    if (skipStalePageRequest) {
+      return;
+    }
+    const requestId = ++latestRequestRef.current;
+    const controller = new AbortController();
+    setLoading(true);
+    APIService.getFetchUrl<TypePage<T>>(
+      APIService.getTypesData({
+        kind,
+        type,
+        released,
+        q: debouncedSearch,
+        page,
+        limit: 50,
+        sort: sort.field,
+        order: sort.order,
+      }),
+      { signal: controller.signal }
+    )
+      .then(({ data: result }) => {
+        if (requestId !== latestRequestRef.current) {
+          return;
+        }
+        setData(result.data);
+        setTotal(result.meta.total);
+        setCounts(result.meta.counts);
+      })
+      .catch((error) => {
+        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+          setData([]);
+          setTotal(0);
+        }
+      })
+      .finally(() => {
+        if (requestId === latestRequestRef.current) {
+          setLoading(false);
+        }
+      });
+    return () => controller.abort();
+  }, [kind, type, released, debouncedSearch, page, sort, skipStalePageRequest]);
+
+  const onSort = (columnId: string | number | undefined, order: 'asc' | 'desc') => {
+    setSort({ field: typeSortField(kind, columnId), order });
+    setPage(1);
+    setResetPaginationToggle((value) => !value);
+  };
+  return { data, total, counts, page, setPage, setSearch, loading, onSort, resetPaginationToggle };
+};
 
 const SearchTypes = (props: IStyleSheetData) => {
   const typesEffective = getTypeEffective();
-  const { getFilteredPokemons } = usePokemon();
-  const { getCombatsByTypeMove, getCombatsByTypeAndTypeMove } = useCombats();
-
   const [releasedGO, setReleaseGO] = useState(true);
 
   const [currentType, setCurrentType] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
-  const [result, setResult] = useState(new PokemonTypeMove());
-  const [allData, setAllData] = useState<IPokemonTypeData>();
+  const singlePokemon = useTypeResult<IPokemonData>('pokemon-single', currentType, releasedGO);
+  const dualPokemon = useTypeResult<IPokemonData>('pokemon-dual', currentType, releasedGO);
+  const fastMoves = useTypeResult<ICombat>('fast', currentType, releasedGO);
+  const chargedMoves = useTypeResult<ICombat>('charged', currentType, releasedGO);
+  const counts = singlePokemon.counts ?? dualPokemon.counts ?? fastMoves.counts ?? chargedMoves.counts;
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PokéGO Breeze - Type',
@@ -247,34 +317,6 @@ const SearchTypes = (props: IStyleSheetData) => {
     }
   }, [currentType]);
 
-  useEffect(() => {
-    if (isNotEmpty(getFilteredPokemons())) {
-      setAllData(
-        PokemonTypeData.create({
-          pokemon: getFilteredPokemons((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-          fastMoves: getCombatsByTypeMove(TypeMove.Fast).length,
-          chargedMoves: getCombatsByTypeMove(TypeMove.Charge).length,
-        })
-      );
-    }
-  }, [releasedGO, getCombatsByTypeMove, getFilteredPokemons]);
-
-  useEffect(() => {
-    if (isNotEmpty(getFilteredPokemons())) {
-      setResult(
-        PokemonTypeMove.create({
-          pokemonList: getFilteredPokemons(
-            (pokemon) =>
-              (releasedGO ? pokemon.releasedGO : true) &&
-              isIncludeList(pokemon.types, currentType, IncludeMode.IncludeIgnoreCaseSensitive)
-          ),
-          fastMove: getCombatsByTypeAndTypeMove(currentType, TypeMove.Fast),
-          chargedMove: getCombatsByTypeAndTypeMove(currentType, TypeMove.Charge),
-        })
-      );
-    }
-  }, [currentType, releasedGO, getFilteredPokemons, getCombatsByTypeAndTypeMove]);
-
   return (
     <div className="tw-container tw-mt-2">
       <div className="tw-flex tw-justify-end">
@@ -290,7 +332,7 @@ const SearchTypes = (props: IStyleSheetData) => {
         releasedGO={releasedGO}
         setReleaseGO={(check) => setReleaseGO(check)}
         isAvailable={releasedGO}
-        label={<b>{`Filter from ${allData?.pokemon} Pokémon`}</b>}
+        label={<b>{`Filter from ${toNumber(counts?.pokemon)} Pokémon`}</b>}
       />
       <div className="row">
         <div className="xl:tw-w-1/3 !tw-mt-2">
@@ -325,44 +367,36 @@ const SearchTypes = (props: IStyleSheetData) => {
             </span>
             <span className="tw-mt-2 tw-text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={getItemSpritePath(ItemName.PokeBall)} />
-              <b>{` Pokémon: ${result.pokemonList.length} (${
-                isNotEmpty(result.pokemonList) &&
-                toNumber(allData?.pokemon) > 0 &&
-                Math.round((result.pokemonList.length * 100) / toNumber(allData?.pokemon, 1))
+              <b>{` Pokémon: ${toNumber(counts?.typedPokemon)} (${
+                toNumber(counts?.typedPokemon) > 0 &&
+                toNumber(counts?.pokemon) > 0 &&
+                Math.round((toNumber(counts?.typedPokemon) * 100) / toNumber(counts?.pokemon, 1))
               }%)`}</b>
               <ul className="list-style-disc">
                 <li>
-                  <b>{`Legacy Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length} (${
-                    isNotEmpty(result.pokemonList) &&
-                    toNumber(allData?.pokemon) > 0 &&
-                    Math.round(
-                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) /
-                        toNumber(allData?.pokemon, 1)
-                    )
+                  <b>{`Legacy Type: ${toNumber(counts?.singlePokemon)} (${
+                    toNumber(counts?.typedPokemon) > 0 &&
+                    Math.round((toNumber(counts?.singlePokemon) * 100) / toNumber(counts?.pokemon, 1))
                   }%)`}</b>
                 </li>
                 <li>
-                  <b>{`Include Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length} (${
-                    isNotEmpty(result.pokemonList) &&
-                    toNumber(allData?.pokemon) > 0 &&
-                    Math.round(
-                      (result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) /
-                        toNumber(allData?.pokemon, 1)
-                    )
+                  <b>{`Include Type: ${toNumber(counts?.dualPokemon)} (${
+                    toNumber(counts?.typedPokemon) > 0 &&
+                    Math.round((toNumber(counts?.dualPokemon) * 100) / toNumber(counts?.pokemon, 1))
                   }%)`}</b>
                 </li>
               </ul>
             </span>
             <span className="tw-mt-2 tw-text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1201')} />
-              <b>{` Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
-                (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
+              <b>{` Fast Moves: ${toNumber(counts?.typedFastMoves)}/${toNumber(counts?.fastMoves)} (${Math.round(
+                (toNumber(counts?.typedFastMoves) * 100) / toNumber(counts?.fastMoves, 1)
               )}%)`}</b>
             </span>
             <span className="tw-mt-2 tw-text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1202')} />
-              <b>{` Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
-                (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)
+              <b>{` Charged Moves: ${toNumber(counts?.typedChargedMoves)}/${toNumber(counts?.chargedMoves)} (${Math.round(
+                (toNumber(counts?.typedChargedMoves) * 100) / toNumber(counts?.chargedMoves, 1)
               )}%)`}</b>
             </span>
           </div>
@@ -375,23 +409,25 @@ const SearchTypes = (props: IStyleSheetData) => {
                 children: (
                   <CustomDataTable
                     customColumns={columnPokemon}
-                    data={result.pokemonList.filter((pokemon) => pokemon.types.length === 1)}
+                    data={singlePokemon.data}
                     pagination
+                    paginationServer
+                    paginationTotalRows={singlePokemon.total}
+                    paginationResetDefaultPage={singlePokemon.resetPaginationToggle}
+                    paginationPerPage={50}
+                    paginationComponentOptions={{ noRowsPerPage: true }}
+                    onChangePage={singlePokemon.setPage}
+                    sortServer
+                    onSort={(column, direction) => singlePokemon.onSort(column.id, direction)}
                     defaultSortFieldId={ColumnType.Name}
                     highlightOnHover
                     striped
-                    progressPending={!isNotEmpty(result.pokemonList)}
+                    progressPending={singlePokemon.loading}
                     progressComponent={<CircularProgressTable />}
                     isShowSearch
-                    isAutoSearch
                     inputPlaceholder="Search Pokémon Name or ID"
-                    searchFunction={(pokemon, searchTerm) =>
-                      isInclude(
-                        splitAndCapitalize(pokemon.name, '-', ' '),
-                        searchTerm,
-                        IncludeMode.IncludeIgnoreCaseSensitive
-                      ) || isInclude(pokemon.num, searchTerm)
-                    }
+                    onSearchTermChange={singlePokemon.setSearch}
+                    debounceTime={300}
                   />
                 ),
               },
@@ -400,23 +436,25 @@ const SearchTypes = (props: IStyleSheetData) => {
                 children: (
                   <CustomDataTable
                     customColumns={columnPokemon}
-                    data={result.pokemonList.filter((pokemon) => pokemon.types.length > 1)}
+                    data={dualPokemon.data}
                     pagination
+                    paginationServer
+                    paginationTotalRows={dualPokemon.total}
+                    paginationResetDefaultPage={dualPokemon.resetPaginationToggle}
+                    paginationPerPage={50}
+                    paginationComponentOptions={{ noRowsPerPage: true }}
+                    onChangePage={dualPokemon.setPage}
+                    sortServer
+                    onSort={(column, direction) => dualPokemon.onSort(column.id, direction)}
                     defaultSortFieldId={ColumnType.Name}
                     highlightOnHover
                     striped
-                    progressPending={!isNotEmpty(result.pokemonList)}
+                    progressPending={dualPokemon.loading}
                     progressComponent={<CircularProgressTable />}
                     isShowSearch
-                    isAutoSearch
                     inputPlaceholder="Search Pokémon Name or ID"
-                    searchFunction={(pokemon, searchTerm) =>
-                      isInclude(
-                        splitAndCapitalize(pokemon.name, '-', ' '),
-                        searchTerm,
-                        IncludeMode.IncludeIgnoreCaseSensitive
-                      ) || isInclude(pokemon.num, searchTerm)
-                    }
+                    onSearchTermChange={dualPokemon.setSearch}
+                    debounceTime={300}
                   />
                 ),
               },
@@ -425,23 +463,25 @@ const SearchTypes = (props: IStyleSheetData) => {
                 children: (
                   <CustomDataTable
                     customColumns={columnMove}
-                    data={result.fastMove}
+                    data={fastMoves.data}
                     pagination
+                    paginationServer
+                    paginationTotalRows={fastMoves.total}
+                    paginationResetDefaultPage={fastMoves.resetPaginationToggle}
+                    paginationPerPage={50}
+                    paginationComponentOptions={{ noRowsPerPage: true }}
+                    onChangePage={fastMoves.setPage}
+                    sortServer
+                    onSort={(column, direction) => fastMoves.onSort(column.id, direction)}
                     defaultSortFieldId={ColumnType.Name}
                     highlightOnHover
                     striped
-                    progressPending={!isNotEmpty(result.pokemonList)}
+                    progressPending={fastMoves.loading}
                     progressComponent={<CircularProgressTable />}
                     isShowSearch
-                    isAutoSearch
                     inputPlaceholder="Search Move Name or ID"
-                    searchFunction={(move, searchTerm) =>
-                      isInclude(
-                        splitAndCapitalize(move.name, '_', ' '),
-                        searchTerm,
-                        IncludeMode.IncludeIgnoreCaseSensitive
-                      ) || isInclude(move.id, searchTerm)
-                    }
+                    onSearchTermChange={fastMoves.setSearch}
+                    debounceTime={300}
                   />
                 ),
               },
@@ -450,23 +490,25 @@ const SearchTypes = (props: IStyleSheetData) => {
                 children: (
                   <CustomDataTable
                     customColumns={columnMove}
-                    data={result.chargedMove}
+                    data={chargedMoves.data}
                     pagination
+                    paginationServer
+                    paginationTotalRows={chargedMoves.total}
+                    paginationResetDefaultPage={chargedMoves.resetPaginationToggle}
+                    paginationPerPage={50}
+                    paginationComponentOptions={{ noRowsPerPage: true }}
+                    onChangePage={chargedMoves.setPage}
+                    sortServer
+                    onSort={(column, direction) => chargedMoves.onSort(column.id, direction)}
                     defaultSortFieldId={ColumnType.Name}
                     highlightOnHover
                     striped
-                    progressPending={!isNotEmpty(result.pokemonList)}
+                    progressPending={chargedMoves.loading}
                     progressComponent={<CircularProgressTable />}
                     isShowSearch
-                    isAutoSearch
                     inputPlaceholder="Search Move Name or ID"
-                    searchFunction={(move, searchTerm) =>
-                      isInclude(
-                        splitAndCapitalize(move.name, '_', ' '),
-                        searchTerm,
-                        IncludeMode.IncludeIgnoreCaseSensitive
-                      ) || isInclude(move.id, searchTerm)
-                    }
+                    onSearchTermChange={chargedMoves.setSearch}
+                    debounceTime={300}
                   />
                 ),
               },

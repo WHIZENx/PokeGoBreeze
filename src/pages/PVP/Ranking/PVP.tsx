@@ -56,9 +56,7 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
-import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
-import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
@@ -70,12 +68,10 @@ import { Skeleton } from '@mui/material';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
-  const { pvpData } = useDataStore();
+  const { pvpData, pokemonsData, combatsData, assetsData } = useDataStore();
   const { findPokemonBySlug } = usePokemon();
-  const { findMoveByName, isCombatsNoneArchetype } = useCombats();
+  const { findMoveByName } = useCombats();
   const { getAssetNameById } = useAssets();
-  const { loadPVP, loadPVPMoves } = usePVP();
-  const { routerAction } = useRouter();
   const { statsData } = useStats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
@@ -102,10 +98,6 @@ const RankingPVP = (props: IStyleSheetData) => {
       setStartIndex(startIndex + 1);
     }
   };
-
-  useEffect(() => {
-    loadPVP();
-  }, []);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PVP Rankings - Great, Ultra & Master League | PokéGO Breeze',
@@ -246,23 +238,27 @@ const RankingPVP = (props: IStyleSheetData) => {
     statsData?.statProd?.ranking,
     findMoveByName,
     findPokemonBySlug,
+    getAssetNameById,
   ]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonRanking();
     };
-    if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
-      if (isCombatsNoneArchetype()) {
-        loadPVPMoves();
-      } else if (routerAction) {
-        fetchPokemon();
-      }
+    if (
+      statsData &&
+      isNotEmpty(pvpData.rankings) &&
+      isNotEmpty(pvpData.trains) &&
+      isNotEmpty(pokemonsData) &&
+      isNotEmpty(combatsData) &&
+      isNotEmpty(assetsData)
+    ) {
+      fetchPokemon();
     }
     return () => {
       hideSpinner();
     };
-  }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains, routerAction]);
+  }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains, pokemonsData, combatsData, assetsData]);
 
   const renderHeader = (data: IPokemonBattleRanking) => (
     <div className="tw-flex tw-items-center tw-w-full tw-gap-3">

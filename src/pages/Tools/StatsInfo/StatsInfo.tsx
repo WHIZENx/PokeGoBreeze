@@ -1,26 +1,27 @@
 import { Box } from '@mui/material';
-import React, { startTransition, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TableColumn } from 'react-data-table-component';
 
 import { createDataRows, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
-import { calStatsProdAsync, sortStatsProd } from '../../../utils/calculate';
-
 import Find from '../../../components/Find/Find';
 import { leaguesTeamBattle } from '../../../utils/constants';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Commons/Inputs/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
+import { isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { ColumnType } from '../../../enums/type.enum';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
-import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/options-context.helpers';
+import { maxIv, maxLevel, minCp, minIv, minLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import ButtonGroupLeague from '../../../components/Commons/Buttons/ButtonGroupLeague';
 import { useSnackbar } from '../../../contexts/snackbar.context';
+import APIService from '../../../services/api.service';
+import { ProcessedDataPage } from '../../../services/processed-data.service';
+import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -105,75 +106,108 @@ const StatsInfo = () => {
   const [battleLeague, setBattleLeague] = useState(BattleLeagueCPType.Little);
 
   const [statsBattle, setStatsBattle] = useState<IBattleBaseStats[]>([]);
-  const [filterStatsBattle, setFilterStatsBattle] = useState<IBattleBaseStats[]>([]);
+  const [totalRows, setTotalRows] = useState(0);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(100);
+  const [submittedSearch, setSubmittedSearch] = useState<{
+    cp: number;
+    atkIv: number;
+    defIv: number;
+    staIv: number;
+  }>();
 
   const [isLoading, setIsLoading] = useState(true);
+  const latestRequestRef = useRef(0);
 
   const { showSnackbar } = useSnackbar();
 
-  // Memoize results by (atk, def, sta) so revisiting the same Pokemon is instant
-  const statsCacheRef = useRef(new Map<string, IBattleBaseStats[]>());
-
   useEffect(() => {
-    const atk = toNumber(searchingToolCurrentDetails?.statsGO?.atk);
-    const def = toNumber(searchingToolCurrentDetails?.statsGO?.def);
-    const sta = toNumber(searchingToolCurrentDetails?.statsGO?.sta);
-    if (atk <= 0 || def <= 0 || sta <= 0) {
-      return;
-    }
-
-    const cacheKey = `${atk}:${def}:${sta}`;
-    const cached = statsCacheRef.current.get(cacheKey);
-    if (cached) {
-      setStatsBattle(cached);
-      return;
-    }
-
-    if (isNotEmpty(statsBattle)) {
-      setStatsBattle([]);
-      setIsLoading(true);
-    }
-
-    const controller = new AbortController();
-    // Delay lets the spinner paint first and lets rapid Pokemon switches cancel
-    // the pending work before the chunked compute even starts.
-    const timeoutId = window.setTimeout(() => {
-      calStatsProdAsync(atk, def, sta, minCp(), BattleLeagueCPType.InsMaster, true, controller.signal)
-        .then((data) => {
-          statsCacheRef.current.set(cacheKey, data);
-          // The resulting table re-render is heavy — mark it interruptible
-          startTransition(() => setStatsBattle(data));
-        })
-        .catch(() => {
-          // AbortError — user switched Pokemon mid-compute. Ignore.
-        });
-    }, statsDelay());
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      controller.abort();
-    };
+    setPage(1);
+    setSubmittedSearch(undefined);
   }, [
     searchingToolCurrentDetails?.statsGO?.atk,
     searchingToolCurrentDetails?.statsGO?.def,
     searchingToolCurrentDetails?.statsGO?.sta,
   ]);
 
+  const skipStalePageRequest = useSkipStalePageRequest(
+    page,
+    `${searchingToolCurrentDetails?.statsGO?.atk}|${searchingToolCurrentDetails?.statsGO?.def}|${searchingToolCurrentDetails?.statsGO?.sta}`
+  );
+
   useEffect(() => {
-    if (isNotEmpty(statsBattle)) {
-      setIsLoading(true);
-      setTimeout(() => {
-        const result = statsBattle.filter((stats) => toNumber(stats.CP) <= battleLeague);
-        setFilterStatsBattle(sortStatsProd(result));
-        setIsLoading(false);
-      }, 500);
+    if (skipStalePageRequest) {
+      return;
     }
-  }, [statsBattle, battleLeague]);
+    const requestId = ++latestRequestRef.current;
+    const atk = toNumber(searchingToolCurrentDetails?.statsGO?.atk);
+    const def = toNumber(searchingToolCurrentDetails?.statsGO?.def);
+    const sta = toNumber(searchingToolCurrentDetails?.statsGO?.sta);
+    if (atk <= 0 || def <= 0 || sta <= 0) {
+      setStatsBattle([]);
+      setTotalRows(0);
+      setIsLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    setIsLoading(true);
+    const params: Record<string, string | number> = {
+      atk,
+      def,
+      sta,
+      minCp: minCp(),
+      maxCp: battleLeague || BattleLeagueCPType.InsMaster,
+      minLevel: minLevel(),
+      maxLevel: maxLevel(),
+      step: stepLevel(),
+      minIv: minIv(),
+      maxIv: maxIv(),
+      page,
+      limit: rowsPerPage,
+      ...(submittedSearch ?? {}),
+    };
+    APIService.getFetchUrl<ProcessedDataPage<IBattleBaseStats>>(APIService.getIvRank(params), {
+      signal: controller.signal,
+    })
+      .then(({ data }) => {
+        if (requestId !== latestRequestRef.current) {
+          return;
+        }
+        setStatsBattle(data.data);
+        setTotalRows(data.meta.total);
+      })
+      .catch((error) => {
+        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+          showSnackbar('Unable to load server-calculated IV rankings.', 'error');
+        }
+      })
+      .finally(() => {
+        if (requestId === latestRequestRef.current) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [
+    searchingToolCurrentDetails?.statsGO?.atk,
+    searchingToolCurrentDetails?.statsGO?.def,
+    searchingToolCurrentDetails?.statsGO?.sta,
+    battleLeague,
+    page,
+    rowsPerPage,
+    submittedSearch,
+    skipStalePageRequest,
+  ]);
 
   const clearStats = () => {
     setIsLoading(true);
     setStatsBattle([]);
-    setFilterStatsBattle([]);
+    setTotalRows(0);
+    setPage(1);
+    setSubmittedSearch(undefined);
     setSearchCP('');
     setATKIv(0);
     setDEFIv(0);
@@ -184,27 +218,18 @@ const StatsInfo = () => {
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (!isNumber(searchCP)) {
-        const result = statsBattle.filter((stats) => toNumber(stats.CP) <= battleLeague);
-        setFilterStatsBattle(result);
+        setSubmittedSearch(undefined);
+        setPage(1);
         return;
       }
       if (toNumber(searchCP) < minCp()) {
         showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
         return;
       }
-      if (isNotEmpty(statsBattle)) {
-        const result = statsBattle.filter(
-          (stats) =>
-            toNumber(stats.CP) === toNumber(searchCP) &&
-            stats.IV &&
-            stats.IV.atkIV === ATKIv &&
-            stats.IV.defIV === DEFIv &&
-            stats.IV.staIV === STAIv
-        );
-        setFilterStatsBattle(result);
-      }
+      setSubmittedSearch({ cp: toNumber(searchCP), atkIv: ATKIv, defIv: DEFIv, staIv: STAIv });
+      setPage(1);
     },
-    [searchCP, statsBattle, ATKIv, DEFIv, STAIv]
+    [searchCP, ATKIv, DEFIv, STAIv, showSnackbar]
   );
 
   return (
@@ -224,7 +249,10 @@ const StatsInfo = () => {
                 .filter((value) => value.cp.length > 0)
                 .map((value) => value.cp)
                 .flat()}
-              onClick={(value) => setBattleLeague(value)}
+              onClick={(value) => {
+                setBattleLeague(value);
+                setPage(1);
+              }}
               value={battleLeague}
             />
           </div>
@@ -315,9 +343,18 @@ const StatsInfo = () => {
       <CustomDataTable
         title={`Stat Battle for ${splitAndCapitalize(searchingToolCurrentDetails?.fullName, '_', ' ')}`}
         columns={columnsStats}
-        data={filterStatsBattle}
+        data={statsBattle}
         pagination
-        defaultSortFieldId={ColumnType.Level}
+        paginationServer
+        paginationTotalRows={totalRows}
+        paginationPerPage={rowsPerPage}
+        paginationRowsPerPageOptions={[25, 50, 100, 250]}
+        onChangePage={setPage}
+        onChangeRowsPerPage={(value) => {
+          setRowsPerPage(value);
+          setPage(1);
+        }}
+        defaultSortFieldId={ColumnType.Ranking}
         striped
         highlightOnHover
         progressPending={isLoading}

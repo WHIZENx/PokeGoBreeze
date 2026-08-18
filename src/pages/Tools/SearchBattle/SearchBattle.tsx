@@ -14,7 +14,7 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { calculateStats } from '../../../utils/calculate';
+import { calculateBetweenLevel, calculateStats, calculateStatsByTag } from '../../../utils/calculate';
 
 import { marks, PokeGoSlider } from '../../../utils/utils';
 import Candy from '../../../components/Sprites/Candy/Candy';
@@ -44,15 +44,23 @@ import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
-import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
+import {
+  formNormal,
+  maxIv,
+  maxLevel,
+  minCp,
+  minIv,
+  minLevel,
+  stepLevel,
+} from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
-import useCalculate from '../../../composables/useCalculate';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
+import type { BattleLeagueApiItem } from '../../../services/models/tools-api.model';
 
 const FindBattle = () => {
   useTitle({
@@ -69,7 +77,6 @@ const FindBattle = () => {
     ],
   });
   const { getFilteredPokemons, getFindPokemon } = usePokemon();
-  const { queryStatesEvoChain } = useCalculate();
   const { getAssetNameById } = useAssets();
   const { hideSpinner, showSpinner } = useSpinner();
   const { searchingToolCurrentData } = useSearch();
@@ -187,28 +194,95 @@ const FindBattle = () => {
   );
 
   const searchStatsPoke = useCallback(
-    (level: number) => {
-      const arr: IQueryStatesEvoChain[][] = [];
-      getEvoChain(toNumber(searchingToolCurrentData?.form?.defaultId)).forEach((item) => {
-        const tempArr: IQueryStatesEvoChain[] = [];
-        item.forEach((value) => {
-          const data = queryStatesEvoChain(value, level, ATKIv, DEFIv, STAIv);
-          if (data.id === searchingToolCurrentData?.form?.defaultId) {
-            setMaxCP(data.maxCP);
-          }
-          tempArr.push(data);
-        });
-        arr.push(tempArr.sort((a, b) => toNumber(a.maxCP) - toNumber(b.maxCP)));
-      });
-      setEvoChain(arr);
-      let currBastStats: IBattleBaseStats | undefined;
-      const evoBaseStats: IBattleBaseStats[] = [];
-      arr.forEach((item) => {
-        item.forEach((value) => {
-          if (value.id !== searchingToolCurrentData?.form?.defaultId) {
-            evoBaseStats.push(
-              BattleBaseStats.create({
-                ...Object.values(value.battleLeague).reduce((a: IBattleBaseStats, b: IBattleBaseStats) =>
+    async (level: number) => {
+      try {
+        const sourceChains = getEvoChain(toNumber(searchingToolCurrentData?.form?.defaultId));
+        const requestChains = sourceChains.map((chain) =>
+          chain.map((value) => {
+            const pokemon = getFindPokemon(
+              (item) => item.num === value.id && (!value.form || isInclude(item.form, value.form))
+            );
+            const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+            return { id: value.id, name: value.name, form: value.form, atk: stats.atk, def: stats.def, sta: stats.sta };
+          })
+        );
+        const response = await APIService.getFetchUrl<{ data: BattleLeagueApiItem[][] }>(
+          APIService.getBattleLeagueStats({
+            chains: JSON.stringify(requestChains),
+            level,
+            atkIv: ATKIv,
+            defIv: DEFIv,
+            staIv: STAIv,
+            minLevel: minLevel(),
+            maxLevel: maxLevel(),
+            step: stepLevel(),
+            minIv: minIv(),
+            maxIv: maxIv(),
+            minCp: minCp(),
+          })
+        );
+        const arr: IQueryStatesEvoChain[][] = response.data.data.map((chain, chainIndex) =>
+          chain.map((value) => {
+            const source = sourceChains[chainIndex]?.find(
+              (item) => item.id === value.id && (!value.form || isEqual(item.form, value.form))
+            );
+            const battleLeague = Object.fromEntries(
+              Object.entries(value.battleLeague).map(([name, battle]) => [
+                name,
+                battle.rank
+                  ? {
+                      ...battle,
+                      ...calculateBetweenLevel(
+                        value.atk,
+                        value.def,
+                        value.sta,
+                        ATKIv,
+                        DEFIv,
+                        STAIv,
+                        level,
+                        battle.level
+                      ),
+                    }
+                  : battle,
+              ])
+            ) as unknown as IQueryStatesEvoChain['battleLeague'];
+            return { ...source, ...value, battleLeague } as IQueryStatesEvoChain;
+          })
+        );
+        const current = arr.flat().find((item) => item.id === searchingToolCurrentData?.form?.defaultId);
+        if (current) {
+          setMaxCP(toNumber(current.maxCP));
+        }
+        setEvoChain(arr);
+        let currBastStats: IBattleBaseStats | undefined;
+        const evoBaseStats: IBattleBaseStats[] = [];
+        arr.forEach((item) => {
+          item.forEach((value) => {
+            if (value.id !== searchingToolCurrentData?.form?.defaultId) {
+              evoBaseStats.push(
+                BattleBaseStats.create({
+                  ...Object.values(value.battleLeague).reduce((a: IBattleBaseStats, b: IBattleBaseStats) =>
+                    !a ? b : !b ? a : toNumber(a.ratio) > toNumber(b.ratio) ? a : b
+                  ),
+                  id: value.id,
+                  name: value.name,
+                  form: value.form,
+                  maxCP: value.maxCP,
+                  league: Object.keys(value.battleLeague).reduce((a, b) =>
+                    !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]
+                      ? b
+                      : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
+                        ? a
+                        : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
+                            toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
+                          ? a
+                          : b
+                  ),
+                })
+              );
+            } else {
+              currBastStats = BattleBaseStats.create({
+                ...Object.values(value.battleLeague).reduce((a, b) =>
                   !a ? b : !b ? a : toNumber(a.ratio) > toNumber(b.ratio) ? a : b
                 ),
                 id: value.id,
@@ -225,57 +299,40 @@ const FindBattle = () => {
                         ? a
                         : b
                 ),
-              })
-            );
-          } else {
-            currBastStats = BattleBaseStats.create({
-              ...Object.values(value.battleLeague).reduce((a, b) =>
-                !a ? b : !b ? a : toNumber(a.ratio) > toNumber(b.ratio) ? a : b
-              ),
-              id: value.id,
-              name: value.name,
-              form: value.form,
-              maxCP: value.maxCP,
-              league: Object.keys(value.battleLeague).reduce((a, b) =>
-                !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]
-                  ? b
-                  : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
-                    ? a
-                    : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
-                        toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
-                      ? a
-                      : b
-              ),
-            });
-          }
+              });
+            }
+          });
         });
-      });
-      if (currBastStats) {
-        const ratio = toNumber(currBastStats.ratio);
-        let bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
-        bestLeague = bestLeague.filter(
-          (item) =>
-            (item.league === LeagueBattleType.Master && toNumber(item.CP) > BattleLeagueCPType.Ultra) ||
-            (item.league === LeagueBattleType.Ultra && toNumber(item.CP) > BattleLeagueCPType.Great) ||
-            (item.league === LeagueBattleType.Great && toNumber(item.CP) > BattleLeagueCPType.Little)
-        );
-        if (!isNotEmpty(bestLeague)) {
-          bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
+        if (currBastStats) {
+          const ratio = toNumber(currBastStats.ratio);
+          let bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
+          bestLeague = bestLeague.filter(
+            (item) =>
+              (item.league === LeagueBattleType.Master && toNumber(item.CP) > BattleLeagueCPType.Ultra) ||
+              (item.league === LeagueBattleType.Ultra && toNumber(item.CP) > BattleLeagueCPType.Great) ||
+              (item.league === LeagueBattleType.Great && toNumber(item.CP) > BattleLeagueCPType.Little)
+          );
+          if (!isNotEmpty(bestLeague)) {
+            bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
+          }
+          if (!isNotEmpty(bestLeague)) {
+            hideSpinner();
+            return setBestInLeague([currBastStats]);
+          }
+          if (ratio >= 90) {
+            bestLeague.push(currBastStats);
+          }
+          setBestInLeague(bestLeague.sort((a, b) => toNumber(a.maxCP) - toNumber(b.maxCP)));
+        } else {
+          setTimeout(() => showSnackbar(`Error! Something went wrong.`, 'error'), 300);
         }
-        if (!isNotEmpty(bestLeague)) {
-          hideSpinner();
-          return setBestInLeague([currBastStats]);
-        }
-        if (ratio >= 90) {
-          bestLeague.push(currBastStats);
-        }
-        setBestInLeague(bestLeague.sort((a, b) => toNumber(a.maxCP) - toNumber(b.maxCP)));
-      } else {
-        setTimeout(() => showSnackbar(`Error! Something went wrong.`, 'error'), 300);
+        hideSpinner();
+      } catch {
+        hideSpinner();
+        showSnackbar('Battle League API is unavailable.', 'error');
       }
-      hideSpinner();
     },
-    [ATKIv, DEFIv, STAIv, getEvoChain, searchingToolCurrentData?.form?.defaultId]
+    [ATKIv, DEFIv, STAIv, getEvoChain, getFindPokemon, searchingToolCurrentData?.form?.defaultId]
   );
 
   const onSearchStatsPoke = useCallback(

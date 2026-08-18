@@ -3,31 +3,20 @@ import { useDispatch } from 'react-redux';
 
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
-import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
+import { getKeyWithData } from '../../utils/utils';
 import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
 import { Checkbox, FormControlLabel, ListItemText, Skeleton, Switch } from '@mui/material';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
+import { PokedexApiResponse } from '../../core/models/API/pokedex.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
-import {
-  combineClasses,
-  isEmpty,
-  isEqual,
-  isInclude,
-  isIncludeList,
-  isNotEmpty,
-  toNumber,
-} from '../../utils/extension';
-import { IncludeMode } from '../../utils/enums/string.enum';
+import { combineClasses, isEqual, isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
 import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
-import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
 import useIcon from '../../composables/useIcon';
-import useAssets from '../../composables/useAssets';
-import usePokemon from '../../composables/usePokemon';
 import InputMuiSearch from '../../components/Commons/Inputs/InputMuiSearch';
 import InputReleased from '../../components/Commons/Inputs/InputReleased';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
@@ -35,6 +24,7 @@ import ButtonMui from '../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../components/Commons/Buttons/ToggleType';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import BackdropMui from '../../components/Commons/Backdrops/BackdropMui';
+import useSkipStalePageRequest from '../../utils/hooks/useSkipStalePageRequest';
 
 interface IFilter {
   isMatch: boolean;
@@ -95,17 +85,15 @@ const Pokedex = (props: IStyleSheetData) => {
 
   const dispatch = useDispatch();
   const { iconData } = useIcon();
-  const { getFilteredPokemons } = usePokemon();
-  const { queryAssetForm } = useAssets();
-
-  const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
   const [selectTypes, setSelectTypes] = useState<string[]>([]);
   const [listOfPokemon, setListOfPokemon] = useState<IPokemonHomeModel[]>([]);
-  const [result, setResult] = useState<IPokemonHomeModel[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const scrollID = useRef(0);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
   const subItem = useRef(100);
+  const latestRequestRef = useRef(0);
 
   const [filters, setFilters] = useState(
     Filter.setFilterGenAndVersion(
@@ -135,86 +123,15 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    const filteredPokemons = getFilteredPokemons();
-    setDataList(
-      filteredPokemons
-        .map((item) => {
-          const assetForm = queryAssetForm(item.num, item.form);
-          return new PokemonHomeModel(item, assetForm);
-        })
-        .sort((a, b) => a.id - b.id)
-    );
-  }, [getFilteredPokemons]);
+    const timeoutId = window.setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   useEffect(() => {
-    setIsLoading(true);
-    if (isNotEmpty(dataList)) {
-      try {
-        const debounced = debounce(() => {
-          try {
-            const result = dataList.filter((item) => {
-              const boolFilterType =
-                !isNotEmpty(selectTypes) ||
-                (item.types.every((item) => isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)) &&
-                  item.types.length === selectTypes.length);
-              const boolFilterPoke =
-                isEmpty(searchTerm) ||
-                (isMatch
-                  ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
-                  : isInclude(
-                      splitAndCapitalize(item.name, '-', ' '),
-                      searchTerm,
-                      IncludeMode.IncludeIgnoreCaseSensitive
-                    ) || isInclude(item.id, searchTerm));
-              const boolReleasedGO = releasedGO ? item.releasedGO : true;
-              const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
-              const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
-              const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
-              const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
-              const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
-              const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
-
-              const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
-              const findVersion = item.version === -1 || isIncludeList(version, item.version);
-              return (
-                boolFilterType &&
-                boolFilterPoke &&
-                boolReleasedGO &&
-                findGen &&
-                findVersion &&
-                boolMega &&
-                boolGMax &&
-                boolPrimal &&
-                boolLegend &&
-                boolMythic &&
-                boolUltra
-              );
-            });
-            scrollID.current = 0;
-            setResult(result);
-            setListOfPokemon(result.slice(0, subItem.current));
-            setIsLoading(false);
-          } catch (error) {
-            dispatch(
-              SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true })
-            );
-            setIsLoading(false);
-          }
-        }, 300);
-        debounced();
-        return () => {
-          debounced.cancel();
-        };
-      } catch (error) {
-        dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true }));
-        setIsLoading(false);
-      }
-    } else {
-      setIsLoading(false);
-    }
+    setPage(1);
+    setListOfPokemon([]);
   }, [
-    dataList,
-    searchTerm,
+    debouncedSearch,
     selectTypes,
     isMatch,
     releasedGO,
@@ -228,11 +145,96 @@ const Pokedex = (props: IStyleSheetData) => {
     version,
   ]);
 
-  const resultRef = useRef<IPokemonHomeModel[]>([]);
+  const skipStalePageRequest = useSkipStalePageRequest(
+    page,
+    JSON.stringify([
+      debouncedSearch,
+      selectTypes,
+      isMatch,
+      releasedGO,
+      isMega,
+      isGMax,
+      isPrimal,
+      isLegendary,
+      isMythic,
+      isUltraBeast,
+      gen,
+      version,
+    ])
+  );
 
   useEffect(() => {
-    resultRef.current = result;
-  }, [result]);
+    if (skipStalePageRequest) {
+      return;
+    }
+    const requestId = ++latestRequestRef.current;
+    const controller = new AbortController();
+    const pokemonType = isMega
+      ? PokemonType.Mega
+      : isGMax
+        ? PokemonType.GMax
+        : isPrimal
+          ? PokemonType.Primal
+          : undefined;
+    const pokemonClass = isLegendary
+      ? PokemonClass.Legendary
+      : isMythic
+        ? PokemonClass.Mythic
+        : isUltraBeast
+          ? PokemonClass.UltraBeast
+          : undefined;
+    setIsLoading(true);
+    APIService.getFetchUrl<PokedexApiResponse>(
+      APIService.getPokedex({
+        q: debouncedSearch,
+        match: isMatch,
+        released: releasedGO,
+        types: selectTypes.join(','),
+        generations: gen.map((value) => value + 1).join(','),
+        versions: version.map((value) => versionList[value]).join(','),
+        pokemonType,
+        pokemonClass,
+        page,
+        limit: subItem.current,
+      }),
+      { signal: controller.signal }
+    )
+      .then(({ data }) => {
+        if (requestId !== latestRequestRef.current) {
+          return;
+        }
+        const rows = data.data.map((item) => new PokemonHomeModel(item, item.assetForm));
+        setPages(data.meta.pages);
+        setListOfPokemon((current) => (page === 1 ? rows : [...current, ...rows]));
+      })
+      .catch((error) => {
+        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+          dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: `Error loading Pokédex: ${error}`, isError: true }));
+        }
+      })
+      .finally(() => {
+        if (requestId === latestRequestRef.current) {
+          setIsLoading(false);
+        }
+      });
+    return () => controller.abort();
+  }, [
+    page,
+    debouncedSearch,
+    selectTypes,
+    isMatch,
+    releasedGO,
+    isMega,
+    isGMax,
+    isPrimal,
+    isLegendary,
+    isMythic,
+    isUltraBeast,
+    gen,
+    version,
+    dispatch,
+    skipStalePageRequest,
+  ]);
 
   useEffect(() => {
     const onScroll = (e: ScrollModifyEvent) => {
@@ -250,15 +252,8 @@ const Pokedex = (props: IStyleSheetData) => {
         const fullHeight = toNumber(scrollingElement.offsetHeight);
         const scrollHeight = toNumber(scrollingElement.scrollHeight);
 
-        if (scrollTop + fullHeight >= scrollHeight - 300) {
-          scrollID.current += 1;
-          const next = resultRef.current.slice(
-            scrollID.current * subItem.current,
-            (scrollID.current + 1) * subItem.current
-          );
-          if (next.length > 0) {
-            setListOfPokemon((oldArr) => [...oldArr, ...next]);
-          }
+        if (scrollTop + fullHeight >= scrollHeight - 300 && !isLoading && page < pages) {
+          setPage((current) => current + 1);
         }
       } catch (error) {
         dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: `Error in scroll handler: ${error}`, isError: true }));
@@ -272,7 +267,7 @@ const Pokedex = (props: IStyleSheetData) => {
       window.removeEventListener('scroll', onScroll);
       document.removeEventListener('touchmove', onScroll);
     };
-  }, [dispatch]);
+  }, [dispatch, isLoading, page, pages]);
 
   const handleChangeGen = (value: number[]) => {
     const isSelect = isIncludeList(value, -1);
@@ -317,7 +312,7 @@ const Pokedex = (props: IStyleSheetData) => {
   return (
     <div className="tw-relative">
       <div className="tw-relative tw-text-center tw-w-full">
-        {!isNotEmpty(dataList) && (
+        {!isNotEmpty(listOfPokemon) && isLoading && (
           <div className="slide-container !tw-p-0 !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
             <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
           </div>

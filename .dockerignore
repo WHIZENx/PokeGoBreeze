@@ -1,6 +1,9 @@
 .dockerignore
 .git
 .gitignore
+.env
+.env.*
+config.json
 .vs
 .vscode
 docker-compose.yml

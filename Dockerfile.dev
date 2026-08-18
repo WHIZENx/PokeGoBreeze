@@ -1,14 +1,12 @@
-FROM node:18.17.0-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
-# Install Python, bash, and build dependencies
-RUN apk add --no-cache python3 make g++ gcc curl bash
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
-RUN npm install --location=global npm@10.8.2
-RUN npm install
 
 EXPOSE 9000
 
-CMD ["bash", "-c", "source ./config.sh && VITE_CJS_IGNORE_WARNING=true vite --host 0.0.0.0 --port 9000"]
+CMD ["npm", "run", "develop", "--", "--host", "0.0.0.0"]

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useMemo } from 'react';
 import { BodyComponent } from '../models/component.model';
 import { BackgroundType } from '../enums/model-type.enum';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -23,60 +23,51 @@ import PokemonIconType from '../../../components/Sprites/PokemonIconType/Pokemon
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
+import useDataStore from '../../../composables/useDataStore';
 import usePokemon from '../../../composables/usePokemon';
 
 const BodyPVP = (props: BodyComponent) => {
   const { findPokemonBySlug } = usePokemon();
   const { getAssetNameById } = useAssets();
-  const [matchups, setMatchups] = useState<IBody[]>();
-  const [counters, setCounters] = useState<IBody[]>();
+  const { pokemonsData, assetsData } = useDataStore();
 
-  const setPokemonBody = (data: PokemonVersus[] | undefined) => {
-    return data
-      ?.sort((a, b) => a.rating - b.rating)
-      .map((versus) => {
-        const speciesId = versus.opponent;
-        const speciesName = convertNameRankingToForm(speciesId);
-        const name = convertNameRankingToOri(speciesId, speciesName);
-        const pokemon = findPokemonBySlug(name);
-        const id = pokemon?.num;
-        const form = getAssetNameById(id, name, pokemon?.form);
-        let pokemonType;
-        if (isInclude(versus.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
-          pokemonType = PokemonType.Shadow;
-        } else {
-          pokemonType = getPokemonType(versus.opponent);
-        }
+  const mapPokemonBody = useCallback(
+    (data: PokemonVersus[] | undefined) => {
+      if (!isNotEmpty(pokemonsData) || !isNotEmpty(assetsData) || !data) {
+        return;
+      }
+      return [...data]
+        .sort((a, b) => a.rating - b.rating)
+        .map((versus) => {
+          const speciesId = versus.opponent;
+          const speciesName = convertNameRankingToForm(speciesId);
+          const name = convertNameRankingToOri(speciesId, speciesName);
+          const pokemon = findPokemonBySlug(name);
+          const id = pokemon?.num;
+          const form = getAssetNameById(id, name, pokemon?.form);
+          let pokemonType;
+          if (isInclude(versus.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+            pokemonType = PokemonType.Shadow;
+          } else {
+            pokemonType = getPokemonType(versus.opponent);
+          }
 
-        return BodyModel.create({
-          name,
-          pokemon,
-          id,
-          form,
-          opponent: versus.opponent,
-          rating: versus.rating,
-          pokemonType,
+          return BodyModel.create({
+            name,
+            pokemon,
+            id,
+            form,
+            opponent: versus.opponent,
+            rating: versus.rating,
+            pokemonType,
+          });
         });
-      });
-  };
+    },
+    [pokemonsData, assetsData, findPokemonBySlug, getAssetNameById]
+  );
 
-  useEffect(() => {
-    if (isNotEmpty(matchups) && isNotEmpty(props.data?.matchups)) {
-      setMatchups([]);
-    }
-    if (isNotEmpty(counters) && isNotEmpty(props.data?.counters)) {
-      setCounters([]);
-    }
-  }, [props.serie, props.type, props.data?.matchups, props.data?.counters]);
-
-  useEffect(() => {
-    if (!isNotEmpty(matchups) && isNotEmpty(props.data?.matchups)) {
-      setMatchups(setPokemonBody(props.data?.matchups));
-    }
-    if (!isNotEmpty(counters) && isNotEmpty(props.data?.counters)) {
-      setCounters(setPokemonBody(props.data?.counters));
-    }
-  }, [matchups, counters, props.data?.matchups, props.data?.counters]);
+  const matchups = useMemo(() => mapPokemonBody(props.data?.matchups), [props.data?.matchups, mapPokemonBody]);
+  const counters = useMemo(() => mapPokemonBody(props.data?.counters), [props.data?.counters, mapPokemonBody]);
 
   const renderItemList = (data: IBody, bgType: BackgroundType) => (
     <LinkToTop

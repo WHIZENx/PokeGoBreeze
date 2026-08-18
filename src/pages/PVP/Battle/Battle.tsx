@@ -94,12 +94,12 @@ import {
   minLevel,
   stepLevel,
 } from '../../../utils/helpers/options-context.helpers';
-import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useSpinner from '../../../composables/useSpinner';
 import usePokemon from '../../../composables/usePokemon';
 import { Params } from '../../../utils/constants';
 import useDevice from '../../../composables/useDevice';
+import useDataStore from '../../../composables/useDataStore';
 import InputMui from '../../../components/Commons/Inputs/InputMui';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
@@ -138,8 +138,8 @@ const stopPokemonAudio = (pokemon: IPokemonBattle) => {
 };
 
 const Battle = () => {
+  const { pokemonsData, assetsData } = useDataStore();
   const { findPokemonBySlug } = usePokemon();
-  const { loadPVPMoves } = usePVP();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
   const { isMobile } = useDevice();
@@ -283,12 +283,13 @@ const Battle = () => {
   useTitle(titleProps);
 
   const fetchPokemonBattle = useCallback(
-    async (league: number) => {
+    async (league: number, signal: AbortSignal) => {
       showSpinner();
       try {
         clearData();
         const { data: file } = await APIService.getFetchUrl<RankingsPVP[]>(
-          APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
+          APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall)),
+          { signal }
         );
         if (!isNotEmpty(file)) {
           setIsFound(false);
@@ -345,6 +346,9 @@ const Battle = () => {
         setData(result);
         hideSpinner();
       } catch (e) {
+        if (APIService.isCancel(e)) {
+          return;
+        }
         if ((e as AxiosError)?.status === 404) {
           setIsFound(false);
         } else {
@@ -359,18 +363,16 @@ const Battle = () => {
   );
 
   useEffect(() => {
-    const fetchPokemon = async (league: number) => {
-      await fetchPokemonBattle(league);
-    };
-    fetchPokemon(league);
+    if (!isNotEmpty(pokemonsData) || !isNotEmpty(assetsData)) {
+      return;
+    }
+    const controller = new AbortController();
+    fetchPokemonBattle(league, controller.signal);
     return () => {
+      controller.abort();
       hideSpinner();
     };
-  }, [fetchPokemonBattle, league]);
-
-  useEffect(() => {
-    loadPVPMoves();
-  }, []);
+  }, [assetsData, fetchPokemonBattle, league, pokemonsData]);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

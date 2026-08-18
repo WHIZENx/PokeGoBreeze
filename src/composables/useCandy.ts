@@ -3,7 +3,6 @@ import { IPokemonData } from '../core/models/pokemon.model';
 import { PokemonType } from '../enums/type.enum';
 import { isEqual, isNotEmpty } from '../utils/extension';
 import { EqualMode } from '../utils/enums/string.enum';
-import { APIUrl } from '../services/constants';
 import APIService from '../services/api.service';
 import candyColorData from '../data/pokemon_candy_color_data.json';
 import useDataStore from './useDataStore';
@@ -115,8 +114,8 @@ export const useCandy = () => {
   );
 
   const fetchAndConvert = useCallback(async (): Promise<ICandy[]> => {
-    const { data } = await APIService.getFetchUrl<IUpstreamCandyData>(APIUrl.CANDY_DATA);
-    return convertCandyColorData(data);
+    const { data } = await APIService.getCandyData<IUpstreamCandyData>();
+    return convertCandyColorData(data.data);
   }, [convertCandyColorData]);
 
   return {

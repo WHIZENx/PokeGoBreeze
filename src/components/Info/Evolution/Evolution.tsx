@@ -25,7 +25,6 @@ import {
   generateFormName,
   generateParamForm,
   getDataWithKey,
-  getGenerationPokemon,
   getItemSpritePath,
   isPokemonNoneSpecialForm,
   isSpecialMegaFormType,
@@ -44,7 +43,6 @@ import {
   IPokemonDetail,
   IPokemonDetailEvoChain,
   PokemonDetailEvoChain,
-  PokemonInfoEvo,
 } from '../../../core/models/API/info.model';
 import { ItemName } from '../../../pages/News/enums/item-type.enum';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
@@ -141,17 +139,6 @@ const Evolution = (props: IEvolutionComponent) => {
     recursiveEvoChain(data.chain, data.chain.evolvesTo, result);
     setArrEvoList(result);
   };
-
-  const queryPokemonEvolutionChain = (url: string, idUrlChain: number, result: IPokemonEvo[][]) =>
-    APIService.getFetchUrl<PokemonInfoEvo>(url)
-      .then((res) => {
-        if (res.data) {
-          setIdEvoChain(idUrlChain);
-          const data = PokemonDetailEvoChain.mapping(res.data);
-          fetchEvoChain(data, result);
-        }
-      })
-      .catch();
 
   const pokeSetName = (name: string) => name.replace(`_${formNormal()}`, '').replaceAll('_', '-').replace('MR', 'MR.');
 
@@ -322,15 +309,11 @@ const Evolution = (props: IEvolutionComponent) => {
     if (pokemon.prevEvo && result.length === 1 && result[0].length === 1) {
       getCombineEvoChainFromPokeGo(result, pokemon.id, form);
     }
-    if (
-      props.urlEvolutionChain &&
-      result.length === 1 &&
-      result[0].length === 1 &&
-      isEqual(pokemon.form, formNormal())
-    ) {
-      const idUrlChain = getGenerationPokemon(props.urlEvolutionChain);
+    if (props.evolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.form, formNormal())) {
+      const idUrlChain = props.evolutionChain.id;
       if (idUrlChain !== idEvoChain) {
-        queryPokemonEvolutionChain(props.urlEvolutionChain, idUrlChain, result);
+        setIdEvoChain(idUrlChain);
+        fetchEvoChain(PokemonDetailEvoChain.mapping(props.evolutionChain), result);
       } else {
         setArrEvoList(result);
       }
