@@ -48,18 +48,14 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     props.clearData(false);
     const [fMove] = getValueOrDefault(Array, value.moveset);
     let [, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
-    setPokemon(value);
 
     const fMoveCombat = findMoveByName(fMove);
-    setFMove(fMoveCombat);
     cMovePri = replaceTempMovePvpName(cMovePri);
 
     const cMovePriCombat = findMoveByName(cMovePri);
-    setCMovePri(cMovePriCombat);
     cMoveSec = replaceTempMovePvpName(cMoveSec);
 
     const cMoveSecCombat = findMoveByName(cMoveSec);
-    setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
     topRankController.current?.abort();
@@ -82,6 +78,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       return;
     }
 
+    setPokemon(value);
+    setFMove(fMoveCombat);
+    setCMovePri(cMovePriCombat);
+    setCMoveSec(cMoveSecCombat);
     setScore(value.score);
     props.setPokemonBattle(
       PokemonBattle.create({
