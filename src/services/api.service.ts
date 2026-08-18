@@ -479,6 +479,14 @@ class APIService {
     return this.getInternalQueryUrl('battle-league-stats', params);
   }
 
+  getBattleLeagues() {
+    return this.getInternalQueryUrl('battle-leagues', {});
+  }
+
+  getNews() {
+    return this.getInternalQueryUrl('news', {});
+  }
+
   getBreakpoints(params: Record<string, string | number | boolean | undefined>) {
     return this.getInternalQueryUrl('breakpoints', params);
   }

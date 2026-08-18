@@ -25,6 +25,7 @@ import {
   PokemonRewardSetLeague,
   RankRewardSetLeague,
   SettingLeague,
+  LeagueData as LeagueDataModel,
 } from '../../../core/models/league.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import {
@@ -43,14 +44,13 @@ import { PokemonType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import { debounce } from 'lodash';
-import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 import DialogMui from '../../../components/Commons/Dialogs/Dialogs';
 
-interface LeagueData {
+interface RewardDialogData {
   data: IPokemonRewardSetLeague[];
   step: number;
   track: LeagueRewardType;
@@ -64,16 +64,47 @@ const Leagues = () => {
       'Complete list of all battle leagues in Pokémon GO. Find information about CP limits, rules, and available Pokémon for each league.',
     keywords: ['battle leagues', 'PVP leagues', 'Pokémon GO battles', 'Great League', 'Ultra League', 'Master League'],
   });
-  const { leaguesData } = useDataStore();
   const { findAssetForm } = useAssets();
 
+  const [leaguesData, setLeaguesData] = useState(() => new LeagueDataModel());
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string>();
   const [leagues, setLeagues] = useState<ILeague[]>([]);
   const [openedLeague, setOpenedLeague] = useState<ILeague[]>([]);
   const [leagueFilter, setLeagueFilter] = useState<ILeague[]>([]);
   const [search, setSearch] = useState('');
   const [rank, setRank] = useState(1);
   const [setting, setSetting] = useState<SettingLeague>();
-  const [showData, setShowData] = useState<LeagueData>();
+  const [showData, setShowData] = useState<RewardDialogData>();
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let active = true;
+    setIsLoading(true);
+    setLoadError(undefined);
+    APIService.getFetchUrl<{ data: LeagueDataModel }>(APIService.getBattleLeagues(), {
+      signal: controller.signal,
+    })
+      .then(({ data }) => {
+        if (active) {
+          setLeaguesData(data.data);
+        }
+      })
+      .catch((error) => {
+        if (active && !APIService.isCancel(error)) {
+          setLoadError(`Unable to load Battle Leagues: ${error}`);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setIsLoading(false);
+        }
+      });
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, []);
 
   useEffect(() => {
     const leagues = leaguesData;
@@ -558,9 +589,13 @@ const Leagues = () => {
             )}
           </div>
         </Fragment>
-      ) : (
+      ) : isLoading ? (
         <div className="slide-container !tw-mt-2">
           <Skeleton variant="rectangular" animation="wave" height={450} className="!tw-px-0" />
+        </div>
+      ) : (
+        <div className="tw-p-3 tw-text-center tw-text-red-600">
+          {loadError ?? 'Battle Leagues data is unavailable.'}
         </div>
       )}
       <div className="input-group tw-w-fit">

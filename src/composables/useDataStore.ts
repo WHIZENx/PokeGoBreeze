@@ -143,31 +143,18 @@ export const useDataStore = () => {
 
       showSnackbar('Loading processed game data...', 'info');
       setProgress(20);
-      const [
-        processedOptions,
-        cpm,
-        pvp,
-        statsRankings,
-        pokemons,
-        combats,
-        assets,
-        leagues,
-        evolutionChains,
-        information,
-        trainers,
-      ] = await Promise.all([
-        ProcessedDataService.getSection<IOptions>('options'),
-        ProcessedDataService.getSection<ICPM[]>('cpm'),
-        ProcessedDataService.getSection<IPVPDataModel>('pvp'),
-        ProcessedDataService.getSection<IStatsRank>('statsRankings'),
-        ProcessedDataService.getSection<IPokemonData[]>('pokemons'),
-        ProcessedDataService.getSection<ICombat[]>('combats'),
-        ProcessedDataService.getSection<IAsset[]>('assets'),
-        ProcessedDataService.getSection<LeagueData>('leagues'),
-        ProcessedDataService.getSection<IEvolutionChain[]>('evolutionChains'),
-        ProcessedDataService.getSection<IInformation[]>('information'),
-        ProcessedDataService.getSection<ITrainerLevelUp[]>('trainers'),
-      ]);
+      const [processedOptions, cpm, pvp, statsRankings, pokemons, combats, assets, evolutionChains, trainers] =
+        await Promise.all([
+          ProcessedDataService.getSection<IOptions>('options'),
+          ProcessedDataService.getSection<ICPM[]>('cpm'),
+          ProcessedDataService.getSection<IPVPDataModel>('pvp'),
+          ProcessedDataService.getSection<IStatsRank>('statsRankings'),
+          ProcessedDataService.getSection<IPokemonData[]>('pokemons'),
+          ProcessedDataService.getSection<ICombat[]>('combats'),
+          ProcessedDataService.getSection<IAsset[]>('assets'),
+          ProcessedDataService.getSection<IEvolutionChain[]>('evolutionChains'),
+          ProcessedDataService.getSection<ITrainerLevelUp[]>('trainers'),
+        ]);
 
       setProgress(70);
       dispatch(StoreActions.SetOptions.create(processedOptions));
@@ -176,9 +163,7 @@ export const useDataStore = () => {
       dispatch(StoreActions.SetPokemon.create(pokemons));
       dispatch(StoreActions.SetCombat.create(combats));
       dispatch(StoreActions.SetAssets.create(assets));
-      dispatch(StoreActions.SetLeagues.create(leagues));
       dispatch(StoreActions.SetEvolutionChain.create(evolutionChains));
-      dispatch(StoreActions.SetInformation.create(information));
       dispatch(StoreActions.SetTrainer.create(trainers));
       dispatch(StatsActions.SetStats.create(statsRankings));
       dispatch(TimestampActions.SetSnapshotGeneratedAt.create(meta.generatedAt));
