@@ -19,6 +19,7 @@ import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import InputMui from '../../../components/Commons/Inputs/InputMui';
 import ProcessedDataService from '../../../services/processed-data.service';
 import APIService from '../../../services/api.service';
+import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 
 const columns = createDataRows<TableColumnModify<ICombat>>(
   {
@@ -104,7 +105,12 @@ const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
     setResetPaginationToggle((value) => !value);
   }, [category, type, debouncedName]);
 
+  const skipStalePageRequest = useSkipStalePageRequest(page, JSON.stringify([category, type, debouncedName]));
+
   useEffect(() => {
+    if (skipStalePageRequest) {
+      return;
+    }
     const requestId = ++latestRequestRef.current;
     const controller = new AbortController();
     const moveType = type === SelectType.All ? undefined : getKeyWithData(PokemonTypeBadge, type)?.toLocaleLowerCase();
@@ -150,7 +156,7 @@ const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
       });
 
     return () => controller.abort();
-  }, [category, type, debouncedName, page, sort]);
+  }, [category, type, debouncedName, page, sort, skipStalePageRequest]);
 
   const changeSort = (columnId: string | number | undefined, order: 'asc' | 'desc') => {
     setSort({ field: getMoveSortField(columnId), order });

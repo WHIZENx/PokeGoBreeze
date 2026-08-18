@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import APIService from '../../../services/api.service';
 
@@ -59,7 +59,7 @@ import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 
 const TeamPVP = (props: IStyleSheetData) => {
-  const { pvpData } = useDataStore();
+  const { pvpData, pokemonsData, combatsData, assetsData } = useDataStore();
   const { findPokemonBySlug } = usePokemon();
   const { findMoveByTag } = useCombats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
@@ -68,6 +68,7 @@ const TeamPVP = (props: IStyleSheetData) => {
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<TeamsPVP>();
+  const latestRequestRef = useRef(0);
   const [search, setSearch] = useState('');
   const [sortedBy, setSortedBy] = useState(SortType.TeamScore);
   const [sorted, setSorted] = useState(SortDirectionType.DESC);
@@ -148,13 +149,19 @@ const TeamPVP = (props: IStyleSheetData) => {
   useTitle(titleProps);
 
   useEffect(() => {
+    const requestId = ++latestRequestRef.current;
+    const controller = new AbortController();
     const fetchPokemon = async () => {
       showSpinner();
       try {
         const cp = toNumber(params.cp);
         const { data: file } = await APIService.getFetchUrl<TeamsPVP>(
-          APIService.getTeamFile('analysis', params.serie, cp)
+          APIService.getTeamFile('analysis', params.serie, cp),
+          { signal: controller.signal }
         );
+        if (requestId !== latestRequestRef.current) {
+          return;
+        }
         if (!file) {
           setIsFound(false);
           return;
@@ -220,6 +227,9 @@ const TeamPVP = (props: IStyleSheetData) => {
         setRankingData(file);
         hideSpinner();
       } catch (e) {
+        if (requestId !== latestRequestRef.current || APIService.isCancel(e)) {
+          return;
+        }
         if ((e as AxiosError)?.status === 404) {
           setIsFound(false);
         } else {
@@ -230,24 +240,31 @@ const TeamPVP = (props: IStyleSheetData) => {
         }
       }
     };
-    if (
-      !rankingData &&
+    const isReady =
+      isNotEmpty(pokemonsData) &&
+      isNotEmpty(combatsData) &&
+      isNotEmpty(assetsData) &&
       isNotEmpty(pvpData.rankings) &&
       isNotEmpty(pvpData.trains) &&
       statsData?.attack?.ranking &&
       statsData?.defense?.ranking &&
       statsData?.stamina?.ranking &&
-      statsData?.statProd?.ranking
-    ) {
+      statsData?.statProd?.ranking;
+    if (isReady) {
+      setRankingData(undefined);
+      setIsFound(true);
       fetchPokemon();
     }
     return () => {
+      controller.abort();
       hideSpinner();
     };
   }, [
     params.cp,
     params.serie,
-    rankingData,
+    pokemonsData,
+    combatsData,
+    assetsData,
     pvpData.rankings,
     pvpData.trains,
     statsData?.attack?.ranking,

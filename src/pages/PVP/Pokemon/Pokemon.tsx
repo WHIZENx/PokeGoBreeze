@@ -29,7 +29,6 @@ import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import useRouter from '../../../composables/useRouter';
 import useSpinner from '../../../composables/useSpinner';
 import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
 import { IPVPInfo } from '../../../core/models/pvp.model';
@@ -37,7 +36,6 @@ import { PvpPokemonApiResponse } from '../../../core/models/API/pvp-pokemon.mode
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
-  const { routerAction } = useRouter();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
   const [searchParams] = useSearchParams();
@@ -151,14 +149,12 @@ const PokemonPVP = (props: IStyleSheetData) => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
     };
-    if (routerAction) {
-      fetchPokemon();
-    }
+    fetchPokemon();
     return () => {
       requestController.current?.abort();
       hideSpinner();
     };
-  }, [fetchPokemonInfo, routerAction]);
+  }, [fetchPokemonInfo]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);

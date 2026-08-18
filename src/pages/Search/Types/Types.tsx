@@ -27,6 +27,7 @@ import { getTypeEffective } from '../../../utils/helpers/options-context.helpers
 import SelectTypeComponent from '../../../components/Commons/Selects/SelectType';
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
+import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -226,7 +227,12 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
     setResetPaginationToggle((value) => !value);
   }, [kind, type, released, debouncedSearch]);
 
+  const skipStalePageRequest = useSkipStalePageRequest(page, JSON.stringify([kind, type, released, debouncedSearch]));
+
   useEffect(() => {
+    if (skipStalePageRequest) {
+      return;
+    }
     const requestId = ++latestRequestRef.current;
     const controller = new AbortController();
     setLoading(true);
@@ -263,7 +269,7 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
         }
       });
     return () => controller.abort();
-  }, [kind, type, released, debouncedSearch, page, sort]);
+  }, [kind, type, released, debouncedSearch, page, sort, skipStalePageRequest]);
 
   const onSort = (columnId: string | number | undefined, order: 'asc' | 'desc') => {
     setSort({ field: typeSortField(kind, columnId), order });

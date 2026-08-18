@@ -33,6 +33,7 @@ import PokemonIconType from '../../../components/Sprites/PokemonIconType/Pokemon
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
+import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../../components/Commons/models/menu.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
@@ -199,6 +200,7 @@ const StatsRanking = () => {
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const latestRequestRef = useRef(0);
   const locatedRouteRef = useRef('');
+  const skipSyncedPageRequestRef = useRef(false);
   const { isMatch, releasedGO } = filters;
 
   const paramId = searchParams.get(Params.Id) ?? '';
@@ -226,7 +228,16 @@ const StatsRanking = () => {
     setResetPaginationToggle((value) => !value);
   }, [debouncedSearch, isMatch, releasedGO]);
 
+  const skipStalePageRequest = useSkipStalePageRequest(page, JSON.stringify([debouncedSearch, isMatch, releasedGO]));
+
   useEffect(() => {
+    if (skipSyncedPageRequestRef.current) {
+      skipSyncedPageRequestRef.current = false;
+      return;
+    }
+    if (skipStalePageRequest) {
+      return;
+    }
     const requestId = ++latestRequestRef.current;
     const controller = new AbortController();
     const locate = Boolean(paramId) && locatedRouteRef.current !== routeTarget;
@@ -257,6 +268,7 @@ const StatsRanking = () => {
         setRows(data.data);
         setTotalRows(data.meta.total);
         if (data.meta.page !== page) {
+          skipSyncedPageRequestRef.current = true;
           setPage(data.meta.page);
           setResetPaginationToggle((value) => !value);
         }
@@ -290,6 +302,7 @@ const StatsRanking = () => {
     paramForm,
     paramFormType,
     routeTarget,
+    skipStalePageRequest,
   ]);
 
   const setFilterParams = (row: IPokemonStatsRanking) => {

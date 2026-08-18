@@ -30,6 +30,7 @@ import PokemonIconType from '../../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../../utils/models/extension.model';
 import IconType from '../../../Sprites/Icon/Type/Type';
 import CustomDataTable from '../CustomDataTable/CustomDataTable';
+import useSkipStalePageRequest from '../../../../utils/hooks/useSkipStalePageRequest';
 import { IncludeMode } from '../../../../utils/enums/string.enum';
 import {
   battleStab,
@@ -155,6 +156,11 @@ const Counter = (props: ICounterComponent) => {
   useEffect(() => {
     resetPagination();
   }, [defense, typesKey, showMegaPrimal, releasedGO, enableBest, isSearchId, isMatch, resetPagination]);
+
+  const skipStalePageRequest = useSkipStalePageRequest(
+    page,
+    `${defense}|${typesKey}|${showMegaPrimal}|${releasedGO}|${enableBest}|${isSearchId}|${isMatch}`
+  );
 
   const menuItems = createDataRows<IMenuItem<ICounterModel>>(
     {
@@ -297,6 +303,9 @@ const Counter = (props: ICounterComponent) => {
   );
 
   useEffect(() => {
+    if (skipStalePageRequest) {
+      return;
+    }
     const requestId = ++latestRequestRef.current;
     if (isNullOrUndefined(props.pokemonData) || !typesKey) {
       return;
@@ -352,7 +361,18 @@ const Counter = (props: ICounterComponent) => {
     return () => {
       controller.abort();
     };
-  }, [defense, typesKey, showMegaPrimal, releasedGO, enableBest, isSearchId, isMatch, searchTerm, page]);
+  }, [
+    defense,
+    typesKey,
+    showMegaPrimal,
+    releasedGO,
+    enableBest,
+    isSearchId,
+    isMatch,
+    searchTerm,
+    page,
+    skipStalePageRequest,
+  ]);
 
   useEffect(() => {
     setCounterOptions(options);

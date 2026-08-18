@@ -21,6 +21,7 @@ import ButtonGroupLeague from '../../../components/Commons/Buttons/ButtonGroupLe
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import APIService from '../../../services/api.service';
 import { ProcessedDataPage } from '../../../services/processed-data.service';
+import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -129,7 +130,15 @@ const StatsInfo = () => {
     searchingToolCurrentDetails?.statsGO?.sta,
   ]);
 
+  const skipStalePageRequest = useSkipStalePageRequest(
+    page,
+    `${searchingToolCurrentDetails?.statsGO?.atk}|${searchingToolCurrentDetails?.statsGO?.def}|${searchingToolCurrentDetails?.statsGO?.sta}`
+  );
+
   useEffect(() => {
+    if (skipStalePageRequest) {
+      return;
+    }
     const requestId = ++latestRequestRef.current;
     const atk = toNumber(searchingToolCurrentDetails?.statsGO?.atk);
     const def = toNumber(searchingToolCurrentDetails?.statsGO?.def);
@@ -190,6 +199,7 @@ const StatsInfo = () => {
     page,
     rowsPerPage,
     submittedSearch,
+    skipStalePageRequest,
   ]);
 
   const clearStats = () => {

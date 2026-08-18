@@ -29,6 +29,7 @@ import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
 import { IMovePage } from '../models/page.model';
+import useSkipStalePageRequest from '../../utils/hooks/useSkipStalePageRequest';
 import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -177,6 +178,7 @@ const Move = (props: IMovePage) => {
   const [sort, setSort] = useState({ field: 'dps', order: 'desc' as 'asc' | 'desc' });
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const latestRequestRef = useRef(0);
+  const skipResolvedMoveTypeRequestRef = useRef(false);
 
   const { showSnackbar } = useSnackbar();
 
@@ -241,7 +243,19 @@ const Move = (props: IMovePage) => {
     setResetPaginationToggle((value) => !value);
   }, [params.id, props.id, moveType, releasedGO, isMatch, debouncedSearch]);
 
+  const skipStalePageRequest = useSkipStalePageRequest(
+    page,
+    JSON.stringify([params.id, props.id, moveType, releasedGO, isMatch, debouncedSearch])
+  );
+
   useEffect(() => {
+    if (skipResolvedMoveTypeRequestRef.current) {
+      skipResolvedMoveTypeRequestRef.current = false;
+      return;
+    }
+    if (skipStalePageRequest) {
+      return;
+    }
     const key = String(params.id ?? props.id ?? '').trim();
     if (!key) {
       return;
@@ -273,7 +287,11 @@ const Move = (props: IMovePage) => {
           return;
         }
         setMove(data.data.move);
-        setMoveType(data.data.move.isMultipleWithType ? data.meta.resolvedType : undefined);
+        const resolvedMoveType = data.data.move.isMultipleWithType ? data.meta.resolvedType : undefined;
+        if (moveType !== resolvedMoveType) {
+          skipResolvedMoveTypeRequestRef.current = true;
+          setMoveType(resolvedMoveType);
+        }
         setTopListFilter(data.data.topPokemon);
         setTotalRows(data.meta.total);
       })
@@ -296,7 +314,18 @@ const Move = (props: IMovePage) => {
         }
       });
     return () => controller.abort();
-  }, [params.id, props.id, moveType, releasedGO, isMatch, debouncedSearch, sort, page, rowsPerPage]);
+  }, [
+    params.id,
+    props.id,
+    moveType,
+    releasedGO,
+    isMatch,
+    debouncedSearch,
+    sort,
+    page,
+    rowsPerPage,
+    skipStalePageRequest,
+  ]);
 
   useEffect(() => {
     if (move) {

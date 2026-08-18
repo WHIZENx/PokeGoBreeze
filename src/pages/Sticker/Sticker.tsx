@@ -15,6 +15,7 @@ import { ShopType } from './enums/sticker-type.enum';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
 import Tooltips from '../../components/Commons/Tooltips/Tooltips';
 import { useSnackbar } from '../../contexts/snackbar.context';
+import useSkipStalePageRequest from '../../utils/hooks/useSkipStalePageRequest';
 
 interface PokemonStickerModel {
   id?: number;
@@ -49,7 +50,12 @@ const Sticker = () => {
     setPokemonStickerFilter([]);
   }, [id, shopType]);
 
+  const skipStalePageRequest = useSkipStalePageRequest(page, `${id}|${shopType}`);
+
   useEffect(() => {
+    if (skipStalePageRequest) {
+      return;
+    }
     const requestId = ++latestRequestRef.current;
     const controller = new AbortController();
     setLoading(true);
@@ -78,7 +84,7 @@ const Sticker = () => {
         }
       });
     return () => controller.abort();
-  }, [id, shopType, page]);
+  }, [id, shopType, page, skipStalePageRequest]);
 
   useEffect(() => {
     const target = loadMoreRef.current;

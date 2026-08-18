@@ -25,6 +25,7 @@ import ButtonMui from '../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../components/Commons/Buttons/ToggleType';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import BackdropMui from '../../components/Commons/Backdrops/BackdropMui';
+import useSkipStalePageRequest from '../../utils/hooks/useSkipStalePageRequest';
 
 interface IFilter {
   isMatch: boolean;
@@ -147,7 +148,28 @@ const Pokedex = (props: IStyleSheetData) => {
     version,
   ]);
 
+  const skipStalePageRequest = useSkipStalePageRequest(
+    page,
+    JSON.stringify([
+      debouncedSearch,
+      selectTypes,
+      isMatch,
+      releasedGO,
+      isMega,
+      isGMax,
+      isPrimal,
+      isLegendary,
+      isMythic,
+      isUltraBeast,
+      gen,
+      version,
+    ])
+  );
+
   useEffect(() => {
+    if (skipStalePageRequest) {
+      return;
+    }
     const requestId = ++latestRequestRef.current;
     const controller = new AbortController();
     const pokemonType = isMega
@@ -214,6 +236,7 @@ const Pokedex = (props: IStyleSheetData) => {
     gen,
     version,
     dispatch,
+    skipStalePageRequest,
   ]);
 
   useEffect(() => {

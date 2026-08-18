@@ -57,7 +57,6 @@ import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
-import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
 import useCombats from '../../../composables/useCombats';
@@ -73,7 +72,6 @@ const RankingPVP = (props: IStyleSheetData) => {
   const { findPokemonBySlug } = usePokemon();
   const { findMoveByName } = useCombats();
   const { getAssetNameById } = useAssets();
-  const { routerAction } = useRouter();
   const { statsData } = useStats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
@@ -247,14 +245,12 @@ const RankingPVP = (props: IStyleSheetData) => {
       await fetchPokemonRanking();
     };
     if (statsData && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
-      if (routerAction) {
-        fetchPokemon();
-      }
+      fetchPokemon();
     }
     return () => {
       hideSpinner();
     };
-  }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains, routerAction]);
+  }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains]);
 
   const renderHeader = (data: IPokemonBattleRanking) => (
     <div className="tw-flex tw-items-center tw-w-full tw-gap-3">
