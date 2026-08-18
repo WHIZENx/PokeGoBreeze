@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { StatsState, StoreState, TimestampState } from '../store/models/state.model';
+import { StoreState } from '../store/models/state.model';
 import {
   SetOptions,
   SetPokemon,
@@ -25,8 +25,7 @@ import { IPVPDataModel } from '../core/models/pvp.model';
 import { IStatsRank } from '../core/models/stats.model';
 import { StoreActions, StatsActions, TimestampActions } from '../store/actions';
 import { createProgressHelpers } from '../utils/helpers/progress-helpers';
-import { useSnackbar } from '../contexts/snackbar.context';
-import ProcessedDataService from '../services/processed-data.service';
+import ProcessedDataService, { ProcessedDataSection } from '../services/processed-data.service';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -37,9 +36,6 @@ import ProcessedDataService from '../services/processed-data.service';
 export const useDataStore = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
-  const timestampState = useSelector((state: TimestampState) => state.timestamp);
-  const statsState = useSelector((state: StatsState) => state.stats);
-  const { showSnackbar, closeSnackbar } = useSnackbar();
   const { setProgress, completeProgress } = createProgressHelpers(dispatch);
 
   /**
@@ -125,50 +121,54 @@ export const useDataStore = () => {
   /**
    * Hydrates Redux exclusively from the server-preprocessed snapshot.
    */
-  const loadProcessedData = async (isCurrentVersion: boolean) => {
+  const applyProcessedSection = (section: ProcessedDataSection, data: unknown) => {
+    switch (section) {
+      case 'options':
+        dispatch(StoreActions.SetOptions.create(data as IOptions));
+        break;
+      case 'cpm':
+        dispatch(StoreActions.SetCPM.create(data as ICPM[]));
+        break;
+      case 'pvp':
+        dispatch(StoreActions.SetPVP.create(data as IPVPDataModel));
+        break;
+      case 'statsRankings':
+        dispatch(StatsActions.SetStats.create(data as IStatsRank));
+        break;
+      case 'pokemons':
+        dispatch(StoreActions.SetPokemon.create(data as IPokemonData[]));
+        break;
+      case 'combats':
+        dispatch(StoreActions.SetCombat.create(data as ICombat[]));
+        break;
+      case 'assets':
+        dispatch(StoreActions.SetAssets.create(data as IAsset[]));
+        break;
+      case 'evolutionChains':
+        dispatch(StoreActions.SetEvolutionChain.create(data as IEvolutionChain[]));
+        break;
+      case 'trainers':
+        dispatch(StoreActions.SetTrainer.create(data as ITrainerLevelUp[]));
+        break;
+    }
+  };
+
+  const loadProcessedSections = async (sections: ProcessedDataSection[]) => {
+    const uniqueSections = [...new Set(sections)];
+    const values = await Promise.all(uniqueSections.map((section) => ProcessedDataService.getSection(section)));
+    uniqueSections.forEach((section, index) => applyProcessedSection(section, values[index]));
+  };
+
+  const loadProcessedData = async () => {
     if (!ProcessedDataService.isConfigured()) {
       return false;
     }
 
-    const loadingMessage = 'Loading processed game data...';
-    let loadingNotificationShown = false;
     try {
       const meta = await ProcessedDataService.getMeta();
-      const isCurrentSnapshot =
-        isCurrentVersion &&
-        timestampState.snapshotGeneratedAt === meta.generatedAt &&
-        timestampIsCurrent(meta.source.gameMaster, meta.source.assets, meta.source.sounds, meta.source.pvp);
-      if (isCurrentSnapshot) {
-        completeProgress();
-        return true;
-      }
-
-      showSnackbar(loadingMessage, 'info');
-      loadingNotificationShown = true;
       setProgress(20);
-      const [processedOptions, cpm, pvp, statsRankings, pokemons, combats, assets, evolutionChains, trainers] =
-        await Promise.all([
-          ProcessedDataService.getSection<IOptions>('options'),
-          ProcessedDataService.getSection<ICPM[]>('cpm'),
-          ProcessedDataService.getSection<IPVPDataModel>('pvp'),
-          ProcessedDataService.getSection<IStatsRank>('statsRankings'),
-          ProcessedDataService.getSection<IPokemonData[]>('pokemons'),
-          ProcessedDataService.getSection<ICombat[]>('combats'),
-          ProcessedDataService.getSection<IAsset[]>('assets'),
-          ProcessedDataService.getSection<IEvolutionChain[]>('evolutionChains'),
-          ProcessedDataService.getSection<ITrainerLevelUp[]>('trainers'),
-        ]);
-
+      await loadProcessedSections(['options']);
       setProgress(70);
-      dispatch(StoreActions.SetOptions.create(processedOptions));
-      dispatch(StoreActions.SetCPM.create(cpm));
-      dispatch(StoreActions.SetPVP.create(pvp));
-      dispatch(StoreActions.SetPokemon.create(pokemons));
-      dispatch(StoreActions.SetCombat.create(combats));
-      dispatch(StoreActions.SetAssets.create(assets));
-      dispatch(StoreActions.SetEvolutionChain.create(evolutionChains));
-      dispatch(StoreActions.SetTrainer.create(trainers));
-      dispatch(StatsActions.SetStats.create(statsRankings));
       dispatch(TimestampActions.SetSnapshotGeneratedAt.create(meta.generatedAt));
       dispatch(TimestampActions.SetTimestampGameMaster.create(meta.source.gameMaster));
       dispatch(TimestampActions.SetTimestampAssets.create(meta.source.assets));
@@ -178,23 +178,8 @@ export const useDataStore = () => {
       return true;
     } catch {
       return false;
-    } finally {
-      if (loadingNotificationShown) {
-        closeSnackbar(loadingMessage);
-      }
     }
   };
-
-  const timestampIsCurrent = (gameMaster: number, assets: number, sounds: number, pvp: number) =>
-    dataStore.pokemons.length > 0 &&
-    dataStore.combats.length > 0 &&
-    dataStore.cpm.length > 0 &&
-    dataStore.pvp.rankings.length > 0 &&
-    statsState !== null &&
-    timestampState.gamemaster === gameMaster &&
-    timestampState.assets === assets &&
-    timestampState.sounds === sounds &&
-    timestampState.pvp === pvp;
 
   const pokemonsData = dataStore.pokemons;
   const combatsData = dataStore.combats;
@@ -210,6 +195,7 @@ export const useDataStore = () => {
   return {
     dataStore,
     loadProcessedData,
+    loadProcessedSections,
     pokemonsData,
     combatsData,
     evolutionChainsData,

@@ -37,9 +37,9 @@ jobs:
       github.ref_name == 'stage' && 'stage' || 
       github.ref_name == 'develop' && 'development' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -94,9 +94,9 @@ jobs:
       github.ref_name == 'stage' && 'stage' || 
       github.ref_name == 'develop' && 'development' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -135,7 +135,7 @@ jobs:
             -m "Branch: ${{ github.ref_name }} | RunID: ${{ github.run_id }} | SHA: ${{ github.sha }}"
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: build-${{ github.ref_name }}-${{ github.sha }}
           path: dist
@@ -152,9 +152,9 @@ jobs:
       pull-requests: write
       checks: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'

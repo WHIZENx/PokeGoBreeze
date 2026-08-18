@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 import './App.scss';
 
@@ -54,6 +54,8 @@ import ResponsiveAppBar from './components/Commons/Navbars/ResponsiveAppBar';
 import { SnackbarProvider } from './contexts/snackbar.context';
 import { createProgressHelpers } from './utils/helpers/progress-helpers';
 import { useDispatch } from 'react-redux';
+import useDataStore from './composables/useDataStore';
+import { getProcessedDataSectionsForRoute } from './utils/configs/processed-data-routes.config';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -65,13 +67,15 @@ function App() {
   const { setDevice } = useDevice();
   const { loadTheme } = useThemeStore();
   const { routerData, routerAction } = useRouter();
+  const { pathname } = useLocation();
+  const { loadProcessedSections } = useDataStore();
 
   const colorMode = useContext(ColorModeContext);
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
-  const [version, setStateVersion] = useLocalStorage(LocalStorageConfig.Version, '');
-  const [, setIsLoaded] = useState(false);
+  const [, setStateVersion] = useLocalStorage(LocalStorageConfig.Version, '');
+  const [isBootstrapLoaded, setIsBootstrapLoaded] = useState(false);
   const dispatch = useDispatch();
   const { errorProgress } = createProgressHelpers(dispatch);
 
@@ -119,26 +123,39 @@ function App() {
     const currentVersion = process.env.REACT_APP_VERSION;
     setCurrentVersion(currentVersion);
     startProgress();
-    setIsLoaded(true);
-    const isCurrentVersion = currentVersion === version;
     setStateVersion(currentVersion || '');
-    loadData(controller.signal, isCurrentVersion).catch((e: unknown) => {
-      if ((e as DOMException)?.name !== 'AbortError') {
-        errorProgress({ message: `Load data error: ${e}`, isError: true });
-      }
-    });
+    loadData(controller.signal)
+      .then(() => setIsBootstrapLoaded(true))
+      .catch((e: unknown) => {
+        if ((e as DOMException)?.name !== 'AbortError') {
+          errorProgress({ message: `Load data error: ${e}`, isError: true });
+        }
+      });
     return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    if (!isBootstrapLoaded) {
+      return;
+    }
+    const sections = getProcessedDataSectionsForRoute(pathname);
+    if (sections.length === 0) {
+      return;
+    }
+    loadProcessedSections(sections).catch((e: unknown) => {
+      errorProgress({ message: `Load page data error: ${e}`, isError: true });
+    });
+  }, [isBootstrapLoaded, pathname]);
 
   useEffect(() => {
     setDevice();
     loadTheme(stateTheme, setStateTheme);
   }, []);
 
-  const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = loadDataDelay()) => {
+  const loadData = (signal: AbortSignal, delay = loadDataDelay()) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
-        resolve(await loadTimestamp(isCurrentVersion));
+        resolve(await loadTimestamp());
       };
 
       const debouncedResolve = debounce(resolveHandler, delay);
