@@ -2,13 +2,27 @@ import APIService from './api.service';
 import { APIUrl } from './constants';
 import type { AxiosRequestConfig } from 'axios';
 
+export const PROCESSED_DATA_SCHEMA_VERSION = 3;
+
+export class UnsupportedProcessedDataSchemaError extends Error {
+  constructor(actualVersion: unknown) {
+    super(
+      `Processed data schema ${String(actualVersion ?? 'unknown')} is not supported. ` +
+        `This web version requires schema ${PROCESSED_DATA_SCHEMA_VERSION}.`
+    );
+    this.name = 'UnsupportedProcessedDataSchemaError';
+  }
+}
+
 export interface ProcessedDataMeta {
   schemaVersion: number;
   webVersion: string | null;
   generatedAt: string;
+  appIcon?: string;
   source: {
     gameMaster: number;
     assets: number;
+    icon?: number;
     sounds: number;
     pvp: number;
   };
@@ -49,6 +63,9 @@ class ProcessedDataService {
 
   async getMeta() {
     const meta = (await APIService.getFetchUrl<ProcessedDataMeta>(endpoint('meta'))).data;
+    if (meta.schemaVersion !== PROCESSED_DATA_SCHEMA_VERSION) {
+      throw new UnsupportedProcessedDataSchemaError(meta.schemaVersion);
+    }
     if (this.generatedAt && this.generatedAt !== meta.generatedAt) {
       this.sectionRequests.clear();
     }
