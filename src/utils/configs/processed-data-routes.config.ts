@@ -27,7 +27,7 @@ export const getProcessedDataSectionsForRoute = (pathname: string): ProcessedDat
     return ['pokemons', 'combats', 'assets', 'cpm', 'statsRankings'];
   }
   if (pathname === '/damage-calculate') {
-    return ['pokemons', 'combats', 'cpm', 'statsRankings'];
+    return ['pokemons', 'combats', 'statsRankings'];
   }
   if (pathname === '/calculate-catch-chance') {
     return ['pokemons', 'statsRankings'];

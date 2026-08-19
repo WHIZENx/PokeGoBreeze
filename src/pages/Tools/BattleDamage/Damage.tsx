@@ -1,8 +1,7 @@
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useMemo, useState } from 'react';
 
-import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
+import { capitalize, getKeyWithData, LevelRating } from '../../../utils/utils';
 
 import './Damage.scss';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -17,7 +16,7 @@ import StatsDamageTable from './StatsDamageTable';
 import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMove';
 import { findStabType } from '../../../utils/compute';
 import { ICombat } from '../../../core/models/combat.model';
-import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
+import { ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import {
   combineClasses,
@@ -27,12 +26,20 @@ import {
   safeObjectEntries,
   toNumber,
 } from '../../../utils/extension';
-import { PokemonType, ThrowType, TypeAction, TypeMove } from '../../../enums/type.enum';
-import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
+import { PokemonType, ThrowType, TypeMove } from '../../../enums/type.enum';
+import {
+  defaultMegaMultiply,
+  defaultTrainerMultiply,
+  getMultiplyFriendship,
+  getThrowCharge,
+  maxIv,
+} from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
+import APIService from '../../../services/api.service';
+import useSpinner from '../../../composables/useSpinner';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -93,13 +100,8 @@ const Damage = () => {
 
   const [move, setMove] = useState<ICombat>();
 
-  const [statLvATK, setStatLvATK] = useState(0);
-
   const [statLevel, setStatLevel] = useState(1);
   const [statType, setStatType] = useState(PokemonType.Normal);
-
-  const [statLvDEFObj, setStatLvDEFObj] = useState(0);
-  const [statLvSTAObj, setStatLvSTAObj] = useState(0);
 
   const [statLevelObj, setStatLevelObj] = useState(1);
   const [statTypeObj, setStatTypeObj] = useState(PokemonType.Normal);
@@ -110,6 +112,7 @@ const Damage = () => {
   const [result, setResult] = useState(new PokemonDmgOption());
 
   const { showSnackbar } = useSnackbar();
+  const { showSpinner, hideSpinner } = useSpinner();
 
   const throwChargeMenuItems = useMemo(
     () =>
@@ -126,45 +129,6 @@ const Damage = () => {
     []
   );
 
-  useEffect(() => {
-    if (searchingToolCurrentData?.pokemon?.statsGO?.atk !== 0) {
-      setStatLvATK(
-        calculateStatsBattle(
-          searchingToolCurrentData?.pokemon?.statsGO?.atk,
-          maxIv(),
-          statLevel,
-          false,
-          getDmgMultiplyBonus(statType, TypeAction.Atk)
-        )
-      );
-    }
-    if (searchingToolObjectData?.pokemon?.statsGO?.def !== 0) {
-      setStatLvDEFObj(
-        calculateStatsBattle(
-          searchingToolObjectData?.pokemon?.statsGO?.def,
-          maxIv(),
-          statLevelObj,
-          false,
-          getDmgMultiplyBonus(statType, TypeAction.Def)
-        )
-      );
-    }
-    if (searchingToolObjectData?.pokemon?.statsGO?.sta !== 0) {
-      setStatLvSTAObj(calculateStatsBattle(searchingToolObjectData?.pokemon?.statsGO?.sta, maxIv(), statLevelObj));
-    }
-  }, [
-    searchingToolCurrentData?.pokemon?.statsGO?.atk,
-    statLevel,
-    statType,
-    searchingToolObjectData?.pokemon?.statsGO?.atk,
-    searchingToolCurrentData?.pokemon?.statsGO?.def,
-    searchingToolObjectData?.pokemon?.statsGO?.def,
-    statLevelObj,
-    searchingToolCurrentData?.pokemon?.statsGO?.sta,
-    searchingToolObjectData?.pokemon?.statsGO?.sta,
-    statTypeObj,
-  ]);
-
   const clearData = () => {
     setResult(new PokemonDmgOption());
   };
@@ -175,26 +139,59 @@ const Damage = () => {
   };
 
   const onCalculateDamagePoke = useCallback(
-    (e: React.SyntheticEvent<HTMLFormElement>) => {
+    async (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (move) {
-        const eff = BattleState.create({
-          isStab: findStabType(searchingToolCurrentData?.form?.form?.types, move.type),
-          isWb: battleState.isWeather,
-          isDodge: battleState.isDodge,
-          isMega: searchingToolCurrentData?.form?.form?.pokemonType === PokemonType.Mega,
-          isTrainer: battleState.isTrainer,
-          friendshipLevel: enableFriend ? battleState.friendshipLevel : 0,
-          throwLevel: battleState.throwLevel,
-          effective: getTypeEffective(move.type, searchingToolObjectData?.form?.form?.types),
+      if (!move) {
+        showSnackbar('Please select move for pokémon!', 'error');
+        return;
+      }
+      const attacker = searchingToolCurrentData?.pokemon?.statsGO;
+      const defender = searchingToolObjectData?.pokemon?.statsGO;
+      if (!attacker || !defender) {
+        showSnackbar('Please select attacker and defender Pokémon!', 'error');
+        return;
+      }
+      showSpinner();
+      try {
+        const response = await APIService.postDamageSimulator({
+          mode: 'damage',
+          attacker: {
+            base: attacker,
+            level: statLevel,
+            pokemonType: statType,
+            types: searchingToolCurrentData?.form?.form?.types ?? [],
+          },
+          defender: {
+            base: defender,
+            level: statLevelObj,
+            pokemonType: statTypeObj,
+            types: searchingToolObjectData?.form?.form?.types ?? [],
+          },
+          move: { type: getValueOrDefault(String, move.type), power: move.pvePower },
+          battle: {
+            isWb: battleState.isWeather,
+            isDodge: battleState.isDodge,
+            isTrainer: battleState.isTrainer,
+            friendshipLevel: enableFriend ? battleState.friendshipLevel : 0,
+            throwLevel: battleState.throwLevel,
+            isMega: searchingToolCurrentData?.form?.form?.pokemonType === PokemonType.Mega,
+          },
+          config: {
+            iv: maxIv(),
+            trainerMultiplier: defaultTrainerMultiply(),
+            megaMultiplier: defaultMegaMultiply(),
+          },
         });
-        setResult((r) =>
+        const data = response.data.data;
+        if (data.mode !== 'damage') {
+          return;
+        }
+        setResult(
           PokemonDmgOption.create({
-            ...r,
-            battleState: eff,
+            battleState: data.battleState,
             move,
-            damage: calculateDamagePVE(statLvATK, statLvDEFObj, move.pvePower, eff),
-            hp: statLvSTAObj,
+            damage: data.damage,
+            hp: data.hp,
             currPoke: searchingToolCurrentData?.form,
             objPoke: searchingToolObjectData?.form,
             type: statType,
@@ -203,8 +200,11 @@ const Damage = () => {
             objLevel: statLevelObj,
           })
         );
-      } else {
-        showSnackbar('Please select move for pokémon!', 'error');
+      } catch {
+        clearData();
+        showSnackbar('Damage Simulator API is unavailable.', 'error');
+      } finally {
+        hideSpinner();
       }
     },
     [
@@ -213,13 +213,13 @@ const Damage = () => {
       move,
       searchingToolCurrentData?.form,
       searchingToolObjectData?.form,
-      statLvATK,
-      statLvDEFObj,
-      statLvSTAObj,
       statType,
       statTypeObj,
       statLevel,
       statLevelObj,
+      showSnackbar,
+      showSpinner,
+      hideSpinner,
     ]
   );
 
@@ -236,7 +236,6 @@ const Damage = () => {
         <div className="lg:tw-flex-1 border-window">
           <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
           <StatsDamageTable
-            setStatLvATK={setStatLvATK}
             setStatLevel={setStatLevel}
             setStatType={setStatType}
             statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
@@ -248,8 +247,6 @@ const Damage = () => {
         <div className="lg:tw-flex-1 border-window">
           <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
           <StatsDamageTable
-            setStatLvDEF={setStatLvDEFObj}
-            setStatLvSTA={setStatLvSTAObj}
             setStatLevel={setStatLevelObj}
             setStatType={setStatTypeObj}
             statATK={searchingToolObjectData?.pokemon?.statsGO?.atk}

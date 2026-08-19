@@ -9,13 +9,6 @@ import {
   splitAndCapitalize,
   TypeRadioGroup,
 } from '../../../utils/utils';
-import {
-  calculateBattleLeague,
-  calculateBetweenLevel,
-  calculateStats,
-  calculateStatsBattle,
-} from '../../../utils/calculate';
-
 import { Box, FormControlLabel, Radio } from '@mui/material';
 
 import APIService from '../../../services/api.service';
@@ -28,7 +21,7 @@ import HP_LOGO from '../../../assets/hp.png';
 import Find from '../../../components/Find/Find';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
-import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
+import { IBattleLeagueCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Commons/Inputs/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { isUndefined, toNumber } from '../../../utils/extension';
@@ -40,6 +33,8 @@ import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../uti
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
+import useSpinner from '../../../composables/useSpinner';
+import type { CalculateStatsLevelResult } from '../../../services/models/tools-api.model';
 
 const Calculate = () => {
   useTitle({
@@ -67,7 +62,8 @@ const Calculate = () => {
 
   const [pokeStats, setPokeStats] = useState<IStatsCalculate>();
   const [statLevel, setStatLevel] = useState(1);
-  const [statData, setStatData] = useState<IBetweenLevelCalculate>();
+  const [statData, setStatData] = useState<CalculateStatsLevelResult>();
+  const [levelResults, setLevelResults] = useState<Array<{ level: number; data: CalculateStatsLevelResult }>>([]);
 
   const [dataLittleLeague, setDataLittleLeague] = useState<IBattleLeagueCalculate>();
   const [dataGreatLeague, setDataGreatLeague] = useState<IBattleLeagueCalculate>();
@@ -75,12 +71,14 @@ const Calculate = () => {
   const [dataMasterLeague, setDataMasterLeague] = useState<IBattleLeagueCalculate>();
 
   const { showSnackbar } = useSnackbar();
+  const { showSpinner, hideSpinner } = useSpinner();
 
   const clearArrStats = () => {
     setSearchCP('');
     setPokeStats(undefined);
     setStatLevel(1);
     setStatData(undefined);
+    setLevelResults([]);
     setATKIv(0);
     setDEFIv(0);
     setSTAIv(0);
@@ -90,87 +88,77 @@ const Calculate = () => {
     setDataMasterLeague(undefined);
   };
 
-  const calculateStatsPoke = useCallback(() => {
+  const calculateStatsPoke = useCallback(async () => {
     if (toNumber(searchCP) < minCp()) {
       showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
       return;
     }
-    const statATK = toNumber(searchingToolCurrentDetails?.statsGO?.atk);
-    const statDEF = toNumber(searchingToolCurrentDetails?.statsGO?.def);
-    const statSTA = toNumber(searchingToolCurrentDetails?.statsGO?.sta);
+    const pokemonId = toNumber(searchingToolCurrentDetails?.id);
     const name = splitAndCapitalize(searchingToolCurrentDetails?.fullName, '_', ' ');
-    const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
-    if (!result.level) {
-      showSnackbar(
-        `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} impossible found in ${name}`,
-        'error'
-      );
+    if (!pokemonId) {
+      showSnackbar('Please select a Pokémon before calculating stats', 'error');
       return;
     }
-    showSnackbar(
-      `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} found in ${typePoke} ${name}`,
-      'success'
-    );
-    setPokeStats(result);
-    setStatLevel(result.level);
-    setStatData(
-      calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke)
-    );
-    setDataLittleLeague(
-      calculateBattleLeague(
-        statATK,
-        statDEF,
-        statSTA,
-        ATKIv,
-        DEFIv,
-        STAIv,
-        result.level,
-        result.CP,
-        typePoke,
-        BattleLeagueCPType.Little
-      )
-    );
-    setDataGreatLeague(
-      calculateBattleLeague(
-        statATK,
-        statDEF,
-        statSTA,
-        ATKIv,
-        DEFIv,
-        STAIv,
-        result.level,
-        result.CP,
-        typePoke,
-        BattleLeagueCPType.Great
-      )
-    );
-    setDataUltraLeague(
-      calculateBattleLeague(
-        statATK,
-        statDEF,
-        statSTA,
-        ATKIv,
-        DEFIv,
-        STAIv,
-        result.level,
-        result.CP,
-        typePoke,
-        BattleLeagueCPType.Ultra
-      )
-    );
-    setDataMasterLeague(
-      calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke)
-    );
+    showSpinner();
+    try {
+      const response = await APIService.postCalculateStats({
+        id: pokemonId,
+        form: searchingToolCurrentDetails?.fullName,
+        cp: toNumber(searchCP),
+        pokemonType: typePoke,
+        iv: { atk: ATKIv, def: DEFIv, sta: STAIv },
+        config: { minCp: minCp(), minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
+      });
+      const result = response.data.data;
+      if (!result.possible) {
+        setPokeStats(undefined);
+        setStatData(undefined);
+        setLevelResults([]);
+        setDataLittleLeague(undefined);
+        setDataGreatLeague(undefined);
+        setDataUltraLeague(undefined);
+        setDataMasterLeague(undefined);
+        showSnackbar(
+          `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} impossible found in ${name}`,
+          'error'
+        );
+        return;
+      }
+      showSnackbar(
+        `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} found in ${typePoke} ${name}`,
+        'success'
+      );
+      setPokeStats(result.stats);
+      setStatLevel(result.stats.level);
+      setStatData(result.current);
+      setLevelResults(result.levels);
+      setDataLittleLeague(result.leagues.little);
+      setDataGreatLeague(result.leagues.great);
+      setDataUltraLeague(result.leagues.ultra);
+      setDataMasterLeague(result.leagues.master);
+    } catch {
+      setPokeStats(undefined);
+      setStatData(undefined);
+      setLevelResults([]);
+      setDataLittleLeague(undefined);
+      setDataGreatLeague(undefined);
+      setDataUltraLeague(undefined);
+      setDataMasterLeague(undefined);
+      showSnackbar('Calculate Stats API is unavailable', 'error');
+    } finally {
+      hideSpinner();
+    }
   }, [
-    searchingToolCurrentDetails?.statsGO?.atk,
-    searchingToolCurrentDetails?.statsGO?.def,
-    searchingToolCurrentDetails?.statsGO?.sta,
+    searchingToolCurrentDetails?.id,
     ATKIv,
     DEFIv,
     STAIv,
     searchCP,
     searchingToolCurrentDetails?.fullName,
     typePoke,
+    showSnackbar,
+    showSpinner,
+    hideSpinner,
   ]);
 
   const onCalculateStatsPoke = useCallback(
@@ -182,14 +170,10 @@ const Calculate = () => {
   );
 
   const onHandleLevel = (level: number) => {
-    if (pokeStats) {
+    const result = levelResults.find((item) => item.level === level)?.data;
+    if (pokeStats && result) {
       setStatLevel(level);
-      const statATK = toNumber(searchingToolCurrentDetails?.statsGO?.atk);
-      const statDEF = toNumber(searchingToolCurrentDetails?.statsGO?.def);
-      const statSTA = toNumber(searchingToolCurrentDetails?.statsGO?.sta);
-      setStatData(
-        calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, level, typePoke)
-      );
+      setStatData(result);
     }
   };
 
@@ -406,6 +390,7 @@ const Calculate = () => {
               onChange={(e) => {
                 setPokeStats(undefined);
                 setStatData(undefined);
+                setLevelResults([]);
                 setStatLevel(0);
                 setDataLittleLeague(undefined);
                 setDataGreatLeague(undefined);
@@ -640,12 +625,7 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(
-                                toNumber(searchingToolCurrentDetails?.statsGO?.atk),
-                                pokeStats?.IV.atkIV,
-                                statLevel,
-                                true
-                              )
+                              statData.stats.atk
                             ) : (
                               <Fragment>
                                 {statData.atkStat}
@@ -669,12 +649,7 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(
-                                toNumber(searchingToolCurrentDetails?.statsGO?.def),
-                                pokeStats?.IV.defIV,
-                                statLevel,
-                                true
-                              )
+                              statData.stats.def
                             ) : (
                               <Fragment>
                                 {statData.defStat}
@@ -695,16 +670,7 @@ const Calculate = () => {
                             <span>HP</span>
                           </div>
                         </td>
-                        <td>
-                          {statData
-                            ? calculateStatsBattle(
-                                toNumber(searchingToolCurrentDetails?.statsGO?.sta),
-                                pokeStats?.IV.staIV,
-                                statLevel,
-                                true
-                              )
-                            : '-'}
-                        </td>
+                        <td>{statData ? statData.stats.sta : '-'}</td>
                       </tr>
                     </tbody>
                   </table>
