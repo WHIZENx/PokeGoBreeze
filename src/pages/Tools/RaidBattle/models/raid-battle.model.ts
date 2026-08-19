@@ -1,9 +1,4 @@
-import {
-  PokemonRaidModel,
-  PokemonMoveData,
-  IPokemonData,
-  IPokemonMoveData,
-} from '../../../../core/models/pokemon.model';
+import { PokemonRaidModel, IPokemonData, IPokemonMoveData } from '../../../../core/models/pokemon.model';
 import { IStatsIV, StatsIV } from '../../../../core/models/stats.model';
 import { PokemonType } from '../../../../enums/type.enum';
 import { minLevel } from '../../../../utils/helpers/options-context.helpers';
@@ -29,10 +24,15 @@ export class TrainerBattle implements ITrainerBattle {
 export interface BattleResult {
   minDPS: number;
   maxDPS: number;
+  averageDPS: number;
   minTDO: number;
   maxTDO: number;
+  averageTDO: number;
   minHP: number;
   maxHP: number;
+  averageHP: number;
+  hardPlayers: number;
+  easyPlayers: number;
 }
 
 interface IRaidSummary {
@@ -60,12 +60,12 @@ export class RaidSummary implements IRaidSummary {
 }
 
 export interface IRaidResult {
-  pokemon: PokemonMoveData[];
+  pokemon: IPokemonMoveData[];
   summary: RaidSummary;
 }
 
 export class RaidResult implements IRaidResult {
-  pokemon: PokemonMoveData[] = [];
+  pokemon: IPokemonMoveData[] = [];
   summary = new RaidSummary();
 
   constructor({ ...props }: IRaidResult) {

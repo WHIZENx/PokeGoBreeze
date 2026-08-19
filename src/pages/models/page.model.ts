@@ -63,7 +63,4 @@ export interface IStatsDamageTableComponent {
   statATK: number | undefined;
   statDEF: number | undefined;
   statSTA: number | undefined;
-  setStatLvATK?: React.Dispatch<React.SetStateAction<number>>;
-  setStatLvDEF?: React.Dispatch<React.SetStateAction<number>>;
-  setStatLvSTA?: React.Dispatch<React.SetStateAction<number>>;
 }
