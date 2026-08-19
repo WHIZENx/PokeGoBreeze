@@ -1,14 +1,7 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  LevelSlider,
-  TypeRadioGroup,
-  getDmgMultiplyBonus,
-  getKeyWithData,
-  isSpecialMegaFormType,
-} from '../../../utils/utils';
-import { calculateStatsBattle } from '../../../utils/calculate';
+import { LevelSlider, TypeRadioGroup, getKeyWithData, isSpecialMegaFormType } from '../../../utils/utils';
 
 import APIService from '../../../services/api.service';
 
@@ -16,13 +9,15 @@ import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import { IStatsDamageTableComponent } from '../../models/page.model';
-import { PokemonType, TypeAction } from '../../../enums/type.enum';
+import { PokemonType } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
 import { maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
+import type { DamageCalculatedStats } from '../../../services/models/tools-api.model';
 
 const StatsDamageTable = (props: IStatsDamageTableComponent) => {
   const [currStatLevel, setCurrStatLevel] = useState(1);
   const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
+  const [calculatedStats, setCalculatedStats] = useState<DamageCalculatedStats[]>([]);
 
   useEffect(() => {
     if (props.setStatType && currStatType === PokemonType.Shadow && isSpecialMegaFormType(props.pokemonType)) {
@@ -31,49 +26,42 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
     }
   }, [props.setStatType, currStatType, props.pokemonType]);
 
+  useEffect(() => {
+    if (props.statATK === undefined || props.statDEF === undefined || props.statSTA === undefined) {
+      setCalculatedStats([]);
+      return;
+    }
+    let active = true;
+    APIService.postDamageSimulator({
+      mode: 'stats',
+      base: { atk: props.statATK, def: props.statDEF, sta: props.statSTA },
+      pokemonType: currStatType,
+      iv: maxIv(),
+      config: { minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
+    })
+      .then((response) => {
+        if (active && response.data.data.mode === 'stats') {
+          setCalculatedStats(response.data.data.levels);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setCalculatedStats([]);
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, [props.statATK, props.statDEF, props.statSTA, currStatType]);
+
   const onHandleLevel = useCallback(
     (v: number) => {
       if (props.setStatLevel) {
         props.setStatLevel(v);
       }
-      if (props.setStatLvATK) {
-        props.setStatLvATK(
-          calculateStatsBattle(
-            props.statATK,
-            maxIv(),
-            currStatLevel,
-            false,
-            getDmgMultiplyBonus(currStatType, TypeAction.Atk)
-          )
-        );
-      }
-      if (props.setStatLvDEF) {
-        props.setStatLvDEF(
-          calculateStatsBattle(
-            props.statDEF,
-            maxIv(),
-            currStatLevel,
-            false,
-            getDmgMultiplyBonus(currStatType, TypeAction.Def)
-          )
-        );
-      }
-      if (props.setStatLvSTA) {
-        props.setStatLvSTA(calculateStatsBattle(props.statSTA, maxIv(), currStatLevel));
-      }
       setCurrStatLevel(v);
     },
-    [
-      props.setStatLevel,
-      props.setStatLvATK,
-      props.setStatLvDEF,
-      props.setStatLvSTA,
-      props.statATK,
-      props.statDEF,
-      props.statSTA,
-      currStatType,
-      currStatLevel,
-    ]
+    [props.setStatLevel]
   );
 
   const onHandleType = useCallback(
@@ -90,31 +78,9 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
     [props.setStatType, props.setStatLevel]
   );
 
-  const displayATK = useMemo(
-    () =>
-      calculateStatsBattle(
-        props.statATK,
-        maxIv(),
-        currStatLevel,
-        true,
-        getDmgMultiplyBonus(currStatType, TypeAction.Atk)
-      ),
-    [props.statATK, currStatLevel, currStatType]
-  );
-  const displayDEF = useMemo(
-    () =>
-      calculateStatsBattle(
-        props.statDEF,
-        maxIv(),
-        currStatLevel,
-        true,
-        getDmgMultiplyBonus(currStatType, TypeAction.Def)
-      ),
-    [props.statDEF, currStatLevel, currStatType]
-  );
-  const displaySTA = useMemo(
-    () => calculateStatsBattle(props.statSTA, maxIv(), currStatLevel, true),
-    [props.statSTA, currStatLevel]
+  const displayStats = useMemo(
+    () => calculatedStats.find((stats) => stats.level === currStatLevel),
+    [calculatedStats, currStatLevel]
   );
 
   return (
@@ -190,7 +156,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>ATK</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">{displayATK}</td>
+                <td className="!tw-text-center">{displayStats ? Math.floor(displayStats.atk) : '-'}</td>
               </tr>
               <tr>
                 <td>
@@ -199,7 +165,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>DEF</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">{displayDEF}</td>
+                <td className="!tw-text-center">{displayStats ? Math.floor(displayStats.def) : '-'}</td>
               </tr>
               <tr>
                 <td>
@@ -208,7 +174,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>HP</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">{displaySTA}</td>
+                <td className="!tw-text-center">{displayStats ? Math.floor(displayStats.sta) : '-'}</td>
               </tr>
             </tbody>
           </table>

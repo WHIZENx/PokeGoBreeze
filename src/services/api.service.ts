@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
 import type { PokemonBundle } from '../core/models/API/pokemon-bundle.model';
 import { getValueOrDefault, isEqual, isInclude } from '../utils/extension';
@@ -21,11 +21,22 @@ import {
   pathAssetPokeGo,
   unownId,
 } from '../utils/helpers/options-context.helpers';
+import type {
+  CalculateStatsApiResponse,
+  CalculateStatsRequest,
+  BattleLeagueSearchApiResponse,
+  BattleLeagueSearchRequest,
+  DamageSimulatorApiResponse,
+  DamageSimulatorRequest,
+  RaidBattleApiResponse,
+  RaidBattleRequest,
+} from './models/tools-api.model';
 
 class APIService {
   date: Date;
   axios: AxiosStatic;
   cancelToken: CancelTokenSource;
+  damageStatsCache = new Map<string, Promise<AxiosResponse<DamageSimulatorApiResponse>>>();
   publicGitHubRepos = ['pokeminers/pogo_assets', 'pvpoke/pvpoke'];
 
   constructor() {
@@ -465,6 +476,43 @@ class APIService {
 
   getDpsTdo(params: Record<string, string | number | boolean | undefined>) {
     return this.getInternalQueryUrl('dps-tdo', params);
+  }
+
+  postRaidBattle(payload: RaidBattleRequest) {
+    return this.axios.post<RaidBattleApiResponse>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/raid-battle`, payload);
+  }
+
+  postCalculateStats(payload: CalculateStatsRequest) {
+    return this.axios.post<CalculateStatsApiResponse>(
+      `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/calculate-stats`,
+      payload
+    );
+  }
+
+  postBattleLeagueSearch(payload: BattleLeagueSearchRequest) {
+    return this.axios.post<BattleLeagueSearchApiResponse>(
+      `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/battle-league-search`,
+      payload
+    );
+  }
+
+  postDamageSimulator(payload: DamageSimulatorRequest) {
+    const request = () =>
+      this.axios.post<DamageSimulatorApiResponse>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/damage-simulator`, payload);
+    if (payload.mode !== 'stats') {
+      return request();
+    }
+    const cacheKey = JSON.stringify(payload);
+    const cached = this.damageStatsCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+    const pending = request().catch((error) => {
+      this.damageStatsCache.delete(cacheKey);
+      throw error;
+    });
+    this.damageStatsCache.set(cacheKey, pending);
+    return pending;
   }
 
   getPokedex(params: Record<string, string | number | boolean | undefined>) {

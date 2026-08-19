@@ -515,7 +515,7 @@ const DpsTdo = () => {
   return (
     <div className="tw-relative">
       <div className="tw-relative tw-text-center tw-w-full">
-        {!isNotEmpty(dpsTable) && (
+        {isShowSpinner && !isNotEmpty(dpsTable) && (
           <div className="slide-container !tw-p-0 !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
             <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
           </div>
@@ -1054,7 +1054,7 @@ const DpsTdo = () => {
         <CustomDataTable
           customColumns={columns}
           data={dpsTable}
-          noDataComponent={null}
+          noDataComponent={<div className="tw-p-6 tw-text-center">No Pokémon match the selected filters.</div>}
           pagination
           paginationServer
           paginationTotalRows={totalRows}
