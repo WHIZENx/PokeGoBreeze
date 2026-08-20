@@ -28,6 +28,8 @@ import type {
   BattleLeagueSearchRequest,
   DamageSimulatorApiResponse,
   DamageSimulatorRequest,
+  PvpBattleSimulatorApiResponse,
+  PvpBattleSimulatorRequest,
   RaidBattleApiResponse,
   RaidBattleRequest,
 } from './models/tools-api.model';
@@ -513,6 +515,13 @@ class APIService {
     });
     this.damageStatsCache.set(cacheKey, pending);
     return pending;
+  }
+
+  postPvpBattleSimulator(payload: PvpBattleSimulatorRequest) {
+    return this.axios.post<PvpBattleSimulatorApiResponse>(
+      `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp-battle-simulator`,
+      payload
+    );
   }
 
   getPokedex(params: Record<string, string | number | boolean | undefined>) {

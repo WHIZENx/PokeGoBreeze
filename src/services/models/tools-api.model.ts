@@ -6,6 +6,8 @@ import type {
   IStatsCalculate,
 } from '../../utils/models/calculate.model';
 import type { IPokemonMoveData } from '../../core/models/pokemon.model';
+import type { ICombat } from '../../core/models/combat.model';
+import type { ITimeline } from '../../pages/PVP/models/battle.model';
 
 export interface BattleLeagueApiItem extends Omit<IQueryStatesEvoChain, 'battleLeague'> {
   atk: number;
@@ -218,4 +220,44 @@ type DamageBattleResponse = {
 export interface DamageSimulatorApiResponse {
   data: DamageStatsResponse | DamageBattleResponse;
   meta: { section: 'damageSimulator' };
+}
+
+export interface PvpBattlePokemonRequest {
+  stats: { atk: number; def: number; sta: number };
+  current: {
+    level: number;
+    iv: { atk: number; def: number; sta: number };
+    hp: number;
+  };
+  types: string[];
+  pokemonType: number;
+  fastMove: ICombat;
+  primaryMove?: ICombat;
+  secondaryMove?: ICombat;
+  energy: number;
+  block: number;
+  chargeSlot: number;
+  disablePrimary: boolean;
+  disableSecondary: boolean;
+}
+
+export interface PvpBattleSimulatorRequest {
+  pokemon: PvpBattlePokemonRequest;
+  opponent: PvpBattlePokemonRequest;
+  config: {
+    battleDelay: number;
+    defaultSize: number;
+    defaultPlusSize: number;
+    defaultAmount: number;
+    minLevel: number;
+  };
+}
+
+export interface PvpBattleSimulatorApiResponse {
+  data: {
+    timeline: ITimeline[];
+    timelineOpponent: ITimeline[];
+    turns: number;
+  };
+  meta: { section: 'pvpBattleSimulator' };
 }
