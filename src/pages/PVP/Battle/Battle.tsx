@@ -53,8 +53,8 @@ import {
   PokemonBattleData,
   IPokemonBattle,
   ChargeType,
-  BattlePVP,
 } from '../models/battle.model';
+import type { PvpBattlePokemonRequest } from '../../../services/models/tools-api.model';
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
@@ -85,7 +85,10 @@ import { getRandomNumber, overlappingPosFromOffsets, pushOffsetById } from '../u
 import {
   battleDelay,
   battleMaxEnergy,
+  defaultAmount,
   defaultBlock,
+  defaultPlusSize,
+  defaultSize,
   formShadow,
   maxIv,
   maxLevel,
@@ -178,13 +181,46 @@ const Battle = () => {
 
   const [isFound, setIsFound] = useState(true);
 
-  const battleAnimation = (retryCount = 0) => {
+  const createBattleRequest = (pokemon: IPokemonBattle): PvpBattlePokemonRequest => {
+    const pokemonData = pokemon.pokemonData;
+    const currentStats = pokemonData?.currentStats;
+    return {
+      stats: {
+        atk: toNumber(pokemonData?.stats?.atk),
+        def: toNumber(pokemonData?.stats?.def),
+        sta: toNumber(pokemonData?.stats?.sta),
+      },
+      current: {
+        level: toNumber(currentStats?.level, minLevel()),
+        iv: {
+          atk: toNumber(currentStats?.IV?.atkIV),
+          def: toNumber(currentStats?.IV?.defIV),
+          sta: toNumber(currentStats?.IV?.staIV),
+        },
+        hp: toNumber(currentStats?.stats?.statSTA),
+      },
+      types: pokemonData?.pokemon?.types ?? [],
+      pokemonType: pokemon.pokemonType,
+      fastMove: pokemon.fMove as ICombat,
+      primaryMove: pokemon.cMovePri,
+      secondaryMove: pokemon.cMoveSec,
+      energy: pokemon.energy,
+      block: pokemon.block,
+      chargeSlot: pokemon.chargeSlot,
+      disablePrimary: pokemon.disableCMovePri,
+      disableSecondary: pokemon.disableCMoveSec,
+    };
+  };
+
+  const battleAnimation = async () => {
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
       showSnackbar('Something went wrong! Please try again.', 'error');
       return;
     }
 
     if (
+      !pokemonCurr.fMove ||
+      !pokemonObj.fMove ||
       (!pokemonCurr.disableCMoveSec && !pokemonCurr.cMoveSec) ||
       (!pokemonObj.disableCMoveSec && !pokemonObj.cMoveSec) ||
       (!pokemonCurr.disableCMovePri && !pokemonCurr.cMovePri) ||
@@ -196,66 +232,35 @@ const Battle = () => {
     arrBound.current = [];
     arrStore.current = [];
     resetTimeline();
-
-    const battle = BattlePVP.create(pokemonCurr, pokemonObj);
-
-    let iter = 0;
-    while (battle.pokemon.hp > 0 && battle.pokemonOpponent.hp > 0 && iter++ < 10000) {
-      battle.updateBattle();
-      if (!battle.config.charged && !battle.configOpponent.charged) {
-        battle.chargeAttack();
-        battle.chargeAttack(true);
-
-        battle.preCharge();
-        battle.preCharge(true);
-      } else {
-        battle.charging();
-        battle.charging(true);
-
-        battle.timeline[battle.timer].isTap = false;
-        battle.timelineOpponent[battle.timer].isTap = false;
-      }
-
-      if (!battle.isDelay) {
-        if (battle.config.charged) {
-          battle.turnChargeAttack();
-        } else if (battle.config.preCharge) {
-          battle.turnPreCharge();
-        } else if (battle.configOpponent.charged) {
-          battle.turnChargeAttack(true);
-        } else if (battle.configOpponent.preCharge) {
-          battle.turnPreCharge(true);
-        }
-      } else {
-        if (battle.delay <= 0) {
-          battle.isDelay = false;
-          battle.clearCharge();
-          battle.clearCharge(true);
-          if (battle.config.immune) {
-            battle.immuneChargeAttack();
-          } else if (battle.configOpponent.immune) {
-            battle.immuneChargeAttack(true);
-          }
-          battle.config.immune = false;
-          battle.configOpponent.immune = false;
-        } else {
-          battle.delay -= battleDelay();
-        }
-      }
+    showSpinner();
+    try {
+      const response = await APIService.postPvpBattleSimulator({
+        pokemon: createBattleRequest(pokemonCurr),
+        opponent: createBattleRequest(pokemonObj),
+        config: {
+          battleDelay: battleDelay(),
+          defaultSize: defaultSize(),
+          defaultPlusSize: defaultPlusSize(),
+          defaultAmount: defaultAmount(),
+          minLevel: minLevel(),
+        },
+      });
+      setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, timeline: response.data.data.timeline }));
+      setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: response.data.data.timelineOpponent }));
+    } catch (error) {
+      const axiosError = error as AxiosError<{ error?: string }>;
+      showSnackbar(axiosError.response?.data?.error ?? axiosError.message, 'error');
+    } finally {
+      hideSpinner();
     }
+  };
 
-    if (battle.pokemon.hp <= 0) {
-      battle.result();
-    } else if (battle.pokemonOpponent.hp <= 0) {
-      battle.result(true);
-    }
-
-    if (battle.timeline.length === battle.timelineOpponent.length) {
-      setPokemonCurr({ ...pokemonCurr, timeline: battle.timeline });
-      setPokemonObj({ ...pokemonObj, timeline: battle.timelineOpponent });
-    } else if (retryCount < 10) {
-      battleAnimation(retryCount + 1);
-    }
+  const clearBattleResult = () => {
+    arrBound.current = [];
+    arrStore.current = [];
+    resetTimeline();
+    setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, timeline: [] }));
+    setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
   };
 
   const clearData = () => {
@@ -1512,7 +1517,11 @@ const Battle = () => {
                   ? 'Reset Battle'
                   : 'Battle Simulator'
               }
-              onClick={() => battleAnimation()}
+              onClick={() =>
+                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)
+                  ? clearBattleResult()
+                  : void battleAnimation()
+              }
             />
           </div>
         )}
