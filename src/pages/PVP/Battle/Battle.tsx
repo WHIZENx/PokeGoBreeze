@@ -442,6 +442,10 @@ const Battle = () => {
     const applyVol = (audio: HTMLAudioElement | undefined) => {
       if (audio) {
         audio.volume = volume;
+        audio.muted = volume === 0;
+        if (volume === 0) {
+          stopAudio(audio);
+        }
       }
     };
     applyVol(pokemonCurr.audio?.fMove);
@@ -501,8 +505,9 @@ const Battle = () => {
   const arrBound = useRef<number[]>([]);
   const arrStore = useRef<number[]>([]);
   const lastSoundIndex = useRef(-1);
+  const lastTimelineIndex = useRef(-1);
   const pokemonStateRef = useRef({ curr: pokemonCurr, obj: pokemonObj });
-  const prevVolume = useRef(0);
+  const prevVolume = useRef(1);
 
   const getTranslation = (elem: HTMLElement) =>
     elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
@@ -551,6 +556,7 @@ const Battle = () => {
   const playingTimeline = () => {
     setPlayState(true);
     lastSoundIndex.current = -1;
+    lastTimelineIndex.current = -1;
     const range = pokemonCurr.timeline.length;
     const elem = playLine.current;
     let xCurrent = 0;
@@ -644,6 +650,7 @@ const Battle = () => {
 
   const resetTimeline = () => {
     stopTimeline();
+    lastTimelineIndex.current = -1;
     const elem = playLine.current;
     if (timelineType === TimelineType.Normal && timelineNormalContainer.current) {
       timelineNormalContainer.current.scrollTo({
@@ -673,7 +680,7 @@ const Battle = () => {
   };
 
   const playMoveAudio = (pokemon: IPokemonBattle, entry: ITimeline | undefined) => {
-    if (!entry) {
+    if (!entry || volume === 0) {
       return;
     }
     let audio: HTMLAudioElement | undefined;
@@ -686,8 +693,10 @@ const Battle = () => {
           : pokemon.audio?.cMovePri;
     }
     if (audio) {
+      audio.muted = false;
+      audio.volume = volume;
       audio.currentTime = 0;
-      void audio.play();
+      void audio.play().catch(() => undefined);
     }
   };
 
@@ -699,6 +708,10 @@ const Battle = () => {
       playMoveAudio(pokemonCurr, pokeCurrData);
       playMoveAudio(pokemonObj, pokeObjData);
     }
+    if (index === lastTimelineIndex.current) {
+      return;
+    }
+    lastTimelineIndex.current = index;
     setPlayTimeline({
       pokemonCurr: PokemonBattleData.setValue(pokeCurrData?.energy, pokeCurrData?.hp),
       pokemonObj: PokemonBattleData.setValue(pokeObjData?.energy, pokeObjData?.hp),
