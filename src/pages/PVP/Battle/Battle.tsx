@@ -539,9 +539,12 @@ const Battle = () => {
   const prevVolume = useRef(1);
   const moveAudioContext = useRef<AudioContext>();
   const moveAudioGain = useRef<GainNode>();
+  const moveAudioData = useRef(new Map<string, ArrayBuffer>());
   const moveAudioBuffers = useRef(new Map<string, AudioBuffer>());
-  const moveAudioPending = useRef(new Map<string, Promise<void>>());
+  const moveAudioPending = useRef(new Map<string, Promise<ArrayBuffer | undefined>>());
+  const moveAudioDecodePending = useRef(new Map<string, Promise<void>>());
   const activeMoveAudio = useRef(new Set<AudioBufferSourceNode>());
+  const preparingMoveAudio = useRef(false);
 
   const getMoveAudioContext = useCallback(() => {
     if (!moveAudioContext.current) {
@@ -559,35 +562,98 @@ const Battle = () => {
     return moveAudioContext.current;
   }, []);
 
-  const preloadMoveAudio = useCallback(
-    (audio: HTMLAudioElement | undefined) => {
+  const preloadMoveAudio = useCallback((audio: HTMLAudioElement | undefined) => {
+    const url = audio?.src;
+    if (!url) {
+      return Promise.resolve(undefined);
+    }
+    const cached = moveAudioData.current.get(url);
+    if (cached) {
+      return Promise.resolve(cached);
+    }
+    const inProgress = moveAudioPending.current.get(url);
+    if (inProgress) {
+      return inProgress;
+    }
+    const pending = fetch(url, { cache: 'force-cache' })
+      .then((response) => {
+        if (!response.ok) {
+          throw new globalThis.Error(`Unable to load move audio: ${response.status}`);
+        }
+        return response.arrayBuffer();
+      })
+      .then((data) => {
+        moveAudioData.current.set(url, data);
+        return data;
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        moveAudioPending.current.delete(url);
+      });
+    moveAudioPending.current.set(url, pending);
+    return pending;
+  }, []);
+
+  const decodeMoveAudio = useCallback(
+    (audio: HTMLAudioElement | undefined, context: AudioContext) => {
       const url = audio?.src;
-      if (!url || moveAudioBuffers.current.has(url) || moveAudioPending.current.has(url)) {
-        return;
+      if (!url || moveAudioBuffers.current.has(url)) {
+        return Promise.resolve();
       }
-      const context = getMoveAudioContext();
-      if (!context) {
-        return;
+      const inProgress = moveAudioDecodePending.current.get(url);
+      if (inProgress) {
+        return inProgress;
       }
-      const pending = fetch(url, { cache: 'force-cache' })
-        .then((response) => {
-          if (!response.ok) {
-            throw new globalThis.Error(`Unable to load move audio: ${response.status}`);
+      const pending = preloadMoveAudio(audio)
+        .then(async (data) => {
+          if (!data || moveAudioBuffers.current.has(url)) {
+            return;
           }
-          return response.arrayBuffer();
-        })
-        .then((data) => context.decodeAudioData(data))
-        .then((buffer) => {
+          const buffer = await context.decodeAudioData(data.slice(0));
           moveAudioBuffers.current.set(url, buffer);
         })
         .catch(() => undefined)
         .finally(() => {
-          moveAudioPending.current.delete(url);
+          moveAudioDecodePending.current.delete(url);
         });
-      moveAudioPending.current.set(url, pending);
+      moveAudioDecodePending.current.set(url, pending);
+      return pending;
     },
-    [getMoveAudioContext]
+    [preloadMoveAudio]
   );
+
+  const getMoveAudio = useCallback(
+    () => [
+      pokemonCurr.audio?.fMove,
+      pokemonCurr.audio?.cMovePri,
+      pokemonCurr.audio?.cMoveSec,
+      pokemonObj.audio?.fMove,
+      pokemonObj.audio?.cMovePri,
+      pokemonObj.audio?.cMoveSec,
+    ],
+    [pokemonCurr.audio, pokemonObj.audio]
+  );
+
+  const prepareMoveAudioPlayback = useCallback(async () => {
+    const context = getMoveAudioContext();
+    if (!context) {
+      return;
+    }
+    const gain = moveAudioGain.current;
+    if (gain) {
+      gain.gain.setValueAtTime(volume, context.currentTime);
+    }
+
+    // iOS Safari requires resume/start to happen synchronously inside the Play gesture.
+    const resume = context.state === 'suspended' ? context.resume() : Promise.resolve();
+    const unlock = context.createBufferSource();
+    unlock.buffer = context.createBuffer(1, 1, context.sampleRate);
+    unlock.connect(context.destination);
+    unlock.start(0);
+
+    await resume;
+    await Promise.all(getMoveAudio().map((audio) => decodeMoveAudio(audio, context)));
+  }, [decodeMoveAudio, getMoveAudio, getMoveAudioContext, volume]);
 
   const stopDecodedMoveAudio = useCallback(() => {
     activeMoveAudio.current.forEach((source) => {
@@ -601,16 +667,8 @@ const Battle = () => {
   }, []);
 
   useEffect(() => {
-    const audio = [
-      pokemonCurr.audio?.fMove,
-      pokemonCurr.audio?.cMovePri,
-      pokemonCurr.audio?.cMoveSec,
-      pokemonObj.audio?.fMove,
-      pokemonObj.audio?.cMovePri,
-      pokemonObj.audio?.cMoveSec,
-    ];
-    audio.forEach(preloadMoveAudio);
-  }, [pokemonCurr.audio, pokemonObj.audio, preloadMoveAudio]);
+    getMoveAudio().forEach((audio) => void preloadMoveAudio(audio));
+  }, [getMoveAudio, preloadMoveAudio]);
 
   useEffect(() => {
     const context = moveAudioContext.current;
@@ -680,13 +738,21 @@ const Battle = () => {
     checkOverlap(arrStore.current, x);
   };
 
-  const playingTimeline = () => {
+  const playingTimeline = async () => {
+    if (preparingMoveAudio.current) {
+      return;
+    }
+    if (volume > 0) {
+      preparingMoveAudio.current = true;
+      try {
+        await prepareMoveAudioPlayback();
+      } finally {
+        preparingMoveAudio.current = false;
+      }
+    }
     setPlayState(true);
     lastSoundIndex.current = -1;
     lastTimelineIndex.current = -1;
-    if (volume > 0) {
-      void getMoveAudioContext()?.resume();
-    }
     const range = pokemonCurr.timeline.length;
     const elem = playLine.current;
     let xCurrent = 0;
@@ -828,7 +894,7 @@ const Battle = () => {
       const buffer = moveAudioBuffers.current.get(audio.src);
       if (context) {
         if (!buffer) {
-          preloadMoveAudio(audio);
+          void decodeMoveAudio(audio, context);
           return;
         }
         const source = context.createBufferSource();
