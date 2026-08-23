@@ -129,6 +129,12 @@ type AudioContextWindow = Window & {
   webkitAudioContext?: AudioContextConstructor;
 };
 
+const isIOSAudioDevice =
+  /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const audioContextWindow = window as AudioContextWindow;
+const shouldUseHTMLAudioPlayback =
+  isIOSAudioDevice || !(audioContextWindow.AudioContext ?? audioContextWindow.webkitAudioContext);
+
 class BattleState implements IBattleState {
   pokemonCurr = new PokemonBattleData();
   pokemonObj = new PokemonBattleData();
@@ -548,7 +554,6 @@ const Battle = () => {
 
   const getMoveAudioContext = useCallback(() => {
     if (!moveAudioContext.current) {
-      const audioContextWindow = window as AudioContextWindow;
       const AudioContextClass = audioContextWindow.AudioContext ?? audioContextWindow.webkitAudioContext;
       if (!AudioContextClass) {
         return undefined;
@@ -633,6 +638,24 @@ const Battle = () => {
     ],
     [pokemonCurr.audio, pokemonObj.audio]
   );
+
+  const prepareHTMLMoveAudioPlayback = useCallback(async () => {
+    const audio = getMoveAudio().filter((item): item is HTMLAudioElement => Boolean(item));
+    const unlock = audio.map((item) => {
+      item.preload = 'auto';
+      item.muted = true;
+      item.load();
+      return item
+        .play()
+        .then(() => {
+          stopAudio(item);
+          item.volume = volume;
+          item.muted = volume === 0;
+        })
+        .catch(() => undefined);
+    });
+    await Promise.all(unlock);
+  }, [getMoveAudio, volume]);
 
   const prepareMoveAudioPlayback = useCallback(async () => {
     const context = getMoveAudioContext();
@@ -745,7 +768,11 @@ const Battle = () => {
     if (volume > 0) {
       preparingMoveAudio.current = true;
       try {
-        await prepareMoveAudioPlayback();
+        if (shouldUseHTMLAudioPlayback) {
+          await prepareHTMLMoveAudioPlayback();
+        } else {
+          await prepareMoveAudioPlayback();
+        }
       } finally {
         preparingMoveAudio.current = false;
       }
@@ -890,6 +917,13 @@ const Battle = () => {
           : pokemon.audio?.cMovePri;
     }
     if (audio) {
+      if (shouldUseHTMLAudioPlayback) {
+        audio.muted = false;
+        audio.volume = volume;
+        audio.currentTime = 0;
+        void audio.play().catch(() => undefined);
+        return;
+      }
       const context = getMoveAudioContext();
       const buffer = moveAudioBuffers.current.get(audio.src);
       if (context) {
