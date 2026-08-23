@@ -122,6 +122,13 @@ interface IBattleState {
   pokemonObj: IPokemonBattleData;
 }
 
+type AudioContextConstructor = new (contextOptions?: AudioContextOptions) => AudioContext;
+
+type AudioContextWindow = Window & {
+  AudioContext?: AudioContextConstructor;
+  webkitAudioContext?: AudioContextConstructor;
+};
+
 class BattleState implements IBattleState {
   pokemonCurr = new PokemonBattleData();
   pokemonObj = new PokemonBattleData();
@@ -245,8 +252,18 @@ const Battle = () => {
           minLevel: minLevel(),
         },
       });
-      setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, timeline: response.data.data.timeline }));
-      setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: response.data.data.timelineOpponent }));
+      setPokemonCurr(
+        PokemonBattle.create({
+          ...pokemonCurr,
+          timeline: response.data.data.timeline,
+        })
+      );
+      setPokemonObj(
+        PokemonBattle.create({
+          ...pokemonObj,
+          timeline: response.data.data.timelineOpponent,
+        })
+      );
     } catch (error) {
       const axiosError = error as AxiosError<{ error?: string }>;
       showSnackbar(axiosError.response?.data?.error ?? axiosError.message, 'error');
@@ -480,7 +497,13 @@ const Battle = () => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
     setPlayTimeline(new BattleState());
     if (removeCMoveSec) {
-      setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, cMoveSec: undefined, timeline: [] }));
+      setPokemonCurr(
+        PokemonBattle.create({
+          ...pokemonCurr,
+          cMoveSec: undefined,
+          timeline: [],
+        })
+      );
     } else {
       setPokemonCurr(new PokemonBattle());
     }
@@ -491,7 +514,13 @@ const Battle = () => {
     setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, timeline: [] }));
     setPlayTimeline(new BattleState());
     if (removeCMoveSec) {
-      setPokemonObj(PokemonBattle.create({ ...pokemonObj, cMoveSec: undefined, timeline: [] }));
+      setPokemonObj(
+        PokemonBattle.create({
+          ...pokemonObj,
+          cMoveSec: undefined,
+          timeline: [],
+        })
+      );
     } else {
       setPokemonObj(new PokemonBattle());
     }
@@ -508,6 +537,104 @@ const Battle = () => {
   const lastTimelineIndex = useRef(-1);
   const pokemonStateRef = useRef({ curr: pokemonCurr, obj: pokemonObj });
   const prevVolume = useRef(1);
+  const moveAudioContext = useRef<AudioContext>();
+  const moveAudioGain = useRef<GainNode>();
+  const moveAudioBuffers = useRef(new Map<string, AudioBuffer>());
+  const moveAudioPending = useRef(new Map<string, Promise<void>>());
+  const activeMoveAudio = useRef(new Set<AudioBufferSourceNode>());
+
+  const getMoveAudioContext = useCallback(() => {
+    if (!moveAudioContext.current) {
+      const audioContextWindow = window as AudioContextWindow;
+      const AudioContextClass = audioContextWindow.AudioContext ?? audioContextWindow.webkitAudioContext;
+      if (!AudioContextClass) {
+        return undefined;
+      }
+      const context = new AudioContextClass();
+      const gain = context.createGain();
+      gain.connect(context.destination);
+      moveAudioContext.current = context;
+      moveAudioGain.current = gain;
+    }
+    return moveAudioContext.current;
+  }, []);
+
+  const preloadMoveAudio = useCallback(
+    (audio: HTMLAudioElement | undefined) => {
+      const url = audio?.src;
+      if (!url || moveAudioBuffers.current.has(url) || moveAudioPending.current.has(url)) {
+        return;
+      }
+      const context = getMoveAudioContext();
+      if (!context) {
+        return;
+      }
+      const pending = fetch(url, { cache: 'force-cache' })
+        .then((response) => {
+          if (!response.ok) {
+            throw new globalThis.Error(`Unable to load move audio: ${response.status}`);
+          }
+          return response.arrayBuffer();
+        })
+        .then((data) => context.decodeAudioData(data))
+        .then((buffer) => {
+          moveAudioBuffers.current.set(url, buffer);
+        })
+        .catch(() => undefined)
+        .finally(() => {
+          moveAudioPending.current.delete(url);
+        });
+      moveAudioPending.current.set(url, pending);
+    },
+    [getMoveAudioContext]
+  );
+
+  const stopDecodedMoveAudio = useCallback(() => {
+    activeMoveAudio.current.forEach((source) => {
+      try {
+        source.stop();
+      } catch {
+        // The source may already have ended.
+      }
+    });
+    activeMoveAudio.current.clear();
+  }, []);
+
+  useEffect(() => {
+    const audio = [
+      pokemonCurr.audio?.fMove,
+      pokemonCurr.audio?.cMovePri,
+      pokemonCurr.audio?.cMoveSec,
+      pokemonObj.audio?.fMove,
+      pokemonObj.audio?.cMovePri,
+      pokemonObj.audio?.cMoveSec,
+    ];
+    audio.forEach(preloadMoveAudio);
+  }, [pokemonCurr.audio, pokemonObj.audio, preloadMoveAudio]);
+
+  useEffect(() => {
+    const context = moveAudioContext.current;
+    const gain = moveAudioGain.current;
+    if (context && gain) {
+      gain.gain.setValueAtTime(volume, context.currentTime);
+    }
+    if (volume === 0) {
+      stopDecodedMoveAudio();
+    }
+  }, [stopDecodedMoveAudio, volume]);
+
+  useEffect(
+    () => () => {
+      stopDecodedMoveAudio();
+      const context = moveAudioContext.current;
+      moveAudioContext.current = undefined;
+      moveAudioGain.current = undefined;
+      if (context?.state !== 'closed') {
+        void context?.close();
+      }
+    },
+    [stopDecodedMoveAudio]
+  );
 
   const getTranslation = (elem: HTMLElement) =>
     elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
@@ -557,6 +684,9 @@ const Battle = () => {
     setPlayState(true);
     lastSoundIndex.current = -1;
     lastTimelineIndex.current = -1;
+    if (volume > 0) {
+      void getMoveAudioContext()?.resume();
+    }
     const range = pokemonCurr.timeline.length;
     const elem = playLine.current;
     let xCurrent = 0;
@@ -643,6 +773,7 @@ const Battle = () => {
     timelinePlay.current = null;
     start.current = 0;
     lastSoundIndex.current = -1;
+    stopDecodedMoveAudio();
     stopPokemonAudio(pokemonCurr);
     stopPokemonAudio(pokemonObj);
     return;
@@ -693,6 +824,21 @@ const Battle = () => {
           : pokemon.audio?.cMovePri;
     }
     if (audio) {
+      const context = getMoveAudioContext();
+      const buffer = moveAudioBuffers.current.get(audio.src);
+      if (context) {
+        if (!buffer) {
+          preloadMoveAudio(audio);
+          return;
+        }
+        const source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(moveAudioGain.current ?? context.destination);
+        source.onended = () => activeMoveAudio.current.delete(source);
+        activeMoveAudio.current.add(source);
+        source.start();
+        return;
+      }
       audio.muted = false;
       audio.volume = volume;
       audio.currentTime = 0;
@@ -1186,7 +1332,14 @@ const Battle = () => {
                     energy: 0,
                   }),
                 });
-                setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block }));
+                setPokemon(
+                  PokemonBattle.create({
+                    ...pokemon,
+                    timeline: [],
+                    energy: 0,
+                    block,
+                  })
+                );
               }}
               select
               menuItems={getArrayBySeq(defaultBlock() + 1).map((value) => ({
@@ -1212,7 +1365,12 @@ const Battle = () => {
                     }),
                   });
                   setPokemon(
-                    PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, chargeSlot: toNumber(value) })
+                    PokemonBattle.create({
+                      ...pokemon,
+                      timeline: [],
+                      energy: 0,
+                      chargeSlot: toNumber(value),
+                    })
                   );
                 }}
                 select
@@ -1352,10 +1510,22 @@ const Battle = () => {
             setOptions({ ...options, league: value });
           }}
           menuItems={[
-            { value: BattleLeagueCPType.Little, label: getPokemonBattleLeagueName(BattleLeagueCPType.Little) },
-            { value: BattleLeagueCPType.Great, label: getPokemonBattleLeagueName(BattleLeagueCPType.Great) },
-            { value: BattleLeagueCPType.Ultra, label: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra) },
-            { value: BattleLeagueCPType.InsMaster, label: getPokemonBattleLeagueName(BattleLeagueCPType.InsMaster) },
+            {
+              value: BattleLeagueCPType.Little,
+              label: getPokemonBattleLeagueName(BattleLeagueCPType.Little),
+            },
+            {
+              value: BattleLeagueCPType.Great,
+              label: getPokemonBattleLeagueName(BattleLeagueCPType.Great),
+            },
+            {
+              value: BattleLeagueCPType.Ultra,
+              label: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra),
+            },
+            {
+              value: BattleLeagueCPType.InsMaster,
+              label: getPokemonBattleLeagueName(BattleLeagueCPType.InsMaster),
+            },
           ]}
         />
         <div className="row tw-mt-4 !tw-m-0">
@@ -1377,7 +1547,10 @@ const Battle = () => {
                     }}
                     items={[
                       {
-                        sxSummary: { p: 0, '& .MuiAccordionSummary-content': { m: 0 } },
+                        sxSummary: {
+                          p: 0,
+                          '& .MuiAccordionSummary-content': { m: 0 },
+                        },
                         noPadding: true,
                         hideIcon: true,
                         value: 0,
@@ -1450,7 +1623,10 @@ const Battle = () => {
                         <IconButton
                           size="small"
                           onClick={toggleMute}
-                          sx={{ transition: 'color 0.2s', color: volume === 0 ? 'text.disabled' : 'primary.main' }}
+                          sx={{
+                            transition: 'color 0.2s',
+                            color: volume === 0 ? 'text.disabled' : 'primary.main',
+                          }}
                         >
                           {volume === 0 ? (
                             <VolumeOffIcon fontSize="small" />
@@ -1482,7 +1658,9 @@ const Battle = () => {
                         />
                         <span
                           className="tw-text-xs tw-w-8 tw-text-right tw-tabular-nums"
-                          style={{ color: volume === 0 ? 'var(--tw-color-gray-400, #9ca3af)' : undefined }}
+                          style={{
+                            color: volume === 0 ? 'var(--tw-color-gray-400, #9ca3af)' : undefined,
+                          }}
                         >
                           {Math.round(volume * 100)}%
                         </span>

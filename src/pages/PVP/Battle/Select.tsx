@@ -19,6 +19,12 @@ import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
 import StatsCalculationService from '../../../services/stats-calculation.service';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 
+const createMoveAudio = (sound: string | undefined) => {
+  const audio = new Audio(APIService.getSoundMove(sound));
+  audio.preload = 'none';
+  return audio;
+};
+
 const SelectPoke = (props: ISelectPokeComponent) => {
   const { findMoveByName } = useCombats();
   const { showSpinner, hideSpinner } = useSpinner();
@@ -107,9 +113,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         cMovePri: cMovePriCombat,
         cMoveSec: cMoveSecCombat,
         audio: {
-          fMove: new Audio(APIService.getSoundMove(fMoveCombat?.sound)),
-          cMovePri: new Audio(APIService.getSoundMove(cMovePriCombat?.sound)),
-          cMoveSec: new Audio(APIService.getSoundMove(cMoveSecCombat?.sound)),
+          fMove: createMoveAudio(fMoveCombat?.sound),
+          cMovePri: createMoveAudio(cMovePriCombat?.sound),
+          cMoveSec: createMoveAudio(cMoveSecCombat?.sound),
         },
         pokemonType: getPokemonType(value.speciesId),
       })
@@ -124,7 +130,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       PokemonBattle.create({
         ...props.pokemonBattle,
         fMove: value,
-        audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(value?.sound)) },
+        audio: {
+          ...props.pokemonBattle.audio,
+          fMove: createMoveAudio(value?.sound),
+        },
       })
     );
   };
@@ -136,7 +145,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       PokemonBattle.create({
         ...props.pokemonBattle,
         cMovePri: value,
-        audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(value?.sound)) },
+        audio: {
+          ...props.pokemonBattle.audio,
+          cMovePri: createMoveAudio(value?.sound),
+        },
       })
     );
   };
@@ -148,7 +160,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       PokemonBattle.create({
         ...props.pokemonBattle,
         cMoveSec: value,
-        audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(value?.sound)) },
+        audio: {
+          ...props.pokemonBattle.audio,
+          cMoveSec: createMoveAudio(value?.sound),
+        },
       })
     );
   };
