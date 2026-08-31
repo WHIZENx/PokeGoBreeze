@@ -155,6 +155,11 @@
     padding: 12px;
   }
 
+  &__item-card {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
   &__item-accordion {
     border-radius: 10px;
     overflow: hidden;
@@ -189,11 +194,6 @@
     flex-direction: column;
     gap: 16px;
     padding: 20px 32px 28px 144px;
-  }
-
-  &__item-empty {
-    font-size: 0.9rem;
-    line-height: 1.55;
   }
 
   &__entry {
@@ -311,6 +311,17 @@
       gap: 4px;
       margin-top: 4px;
     }
+  }
+
+  &__detail-groups {
+    display: grid;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  &__detail-group + &__detail-group {
+    border-top: 1px solid rgb(127 127 127 / 16%);
+    padding-top: 10px;
   }
 
   &__detail-key {
@@ -702,14 +713,29 @@
       border-top: 0;
     }
 
+    .game-master-updates__item-list {
+      gap: 12px;
+      padding: 20px 24px 0;
+    }
+
     .game-master-updates__entry {
-      padding: 36px 0;
+      align-items: center;
+      gap: 20px;
+      padding: 24px 28px;
     }
 
     .game-master-updates__entry-image,
     .game-master-updates__entry-placeholder {
-      height: 96px;
-      width: 96px;
+      height: 72px;
+      width: 72px;
+    }
+
+    .game-master-updates__entry-content {
+      gap: 8px;
+    }
+
+    .game-master-updates__item-details {
+      padding: 20px 28px 24px 120px;
     }
 
     .game-master-updates__entry-description {
@@ -718,22 +744,79 @@
     }
 
     .game-master-updates__technical {
-      border-left: 3px solid;
-      border-left-color: var(--mui-palette-primary-main, #42a5f5);
-      margin-top: 6px;
-      padding: 4px 0 4px 22px;
+      border-left: 0;
+      margin-top: 0;
+      padding: 0;
     }
 
     .game-master-updates__change-label {
+      border-bottom: 1px solid rgb(127 127 127 / 20%);
       display: block;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 0;
+      padding-bottom: 8px;
     }
 
     .game-master-updates__change-list {
-      gap: 16px;
-      padding-left: 20px;
+      gap: 0;
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .game-master-updates__change-item {
+      border-bottom: 1px solid rgb(127 127 127 / 16%);
+      padding: 14px 0;
+
+      &:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+    }
+
+    .game-master-updates__change-heading {
+      margin-bottom: 8px;
+    }
+
+    .game-master-updates__change-delta {
+      align-items: center;
+      background: transparent;
+      border: 0;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: auto minmax(0, 1fr);
+      padding: 0;
+
+      dt {
+        border-radius: 999px;
+        font-size: 0.68rem;
+        line-height: 1;
+        padding: 6px 9px;
+      }
+
+      dd {
+        margin: 0;
+      }
+
+      &--added dt {
+        background: rgb(102 187 106 / 12%);
+      }
+
+      &--removed dt {
+        background: rgb(239 83 80 / 12%);
+      }
+    }
+
+    .game-master-updates__detail-moves {
+      gap: 8px;
+      margin-top: 0;
+    }
+
+    .game-master-updates__detail-move {
+      background: rgb(127 127 127 / 10%);
+      border: 1px solid rgb(127 127 127 / 16%);
+      border-radius: 999px;
+      padding: 4px 10px 4px 5px;
     }
   }
 }
@@ -788,7 +871,7 @@
 
       .game-master-updates__entry {
         gap: 16px;
-        padding: 28px 0;
+        padding: 20px 16px;
       }
 
       .game-master-updates__entry-image,
@@ -797,9 +880,13 @@
         width: 64px;
       }
 
+      .game-master-updates__item-details {
+        padding: 18px 16px 22px;
+      }
+
       .game-master-updates__technical {
-        margin-left: -80px;
-        padding-left: 18px;
+        margin-left: 0;
+        padding-left: 0;
       }
 
       .game-master-updates__change-comparison {

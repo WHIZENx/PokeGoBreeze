@@ -296,9 +296,23 @@ const DetailValueContent = ({ value, context }: { value: GameMasterFieldValue; c
     if (normalized.length === 0) {
       return <Typography component="span">None</Typography>;
     }
+
+    const items = normalized.map((item) => normalizeDetailValue(item));
+    if (items.every(isStructuredDetail)) {
+      return (
+        <Box className="game-master-updates__detail-groups">
+          {items.map((item, index) => (
+            <Box className="game-master-updates__detail-group" key={`${context}:${index}`}>
+              <DetailValueContent value={item} context={context} />
+            </Box>
+          ))}
+        </Box>
+      );
+    }
+
     return (
       <Box component="ul" className="game-master-updates__detail-list">
-        {normalized.map((item, index) => (
+        {items.map((item, index) => (
           <Box component="li" key={`${context}:${index}`}>
             <DetailValueContent value={item} context={context} />
           </Box>
@@ -498,12 +512,70 @@ const patchCardsFromResponse = (data?: GameMasterUpdatesResponse['data']): GameM
 
 const PatchEntry = ({
   change,
+  showFormTag,
   onImageError,
 }: {
   change: GameMasterChange;
+  showFormTag: boolean;
   onImageError: (event: React.SyntheticEvent<HTMLImageElement>) => void;
 }) => {
   const status = statusConfig[change.status];
+  const hasForms = Boolean(change.forms && change.forms.length > 1);
+  const hasDetails = hasForms || change.fields.length > 0;
+  const formLabel = change.forms?.length === 1 ? change.forms[0] : change.form;
+  const summary = (
+    <Box className="game-master-updates__entry">
+      {change.entityType === 'move' && change.moveType ? (
+        <Box className="game-master-updates__entry-placeholder game-master-updates__move-profile">
+          <IconType
+            width={56}
+            height={56}
+            alt={`${humanizeValueName(change.moveType)} type`}
+            title={humanizeValueName(change.moveType)}
+            type={change.moveType}
+          />
+        </Box>
+      ) : change.imageUrl ? (
+        <Box
+          component="img"
+          className="game-master-updates__entry-image"
+          src={patchImageUrl(change.imageUrl)}
+          alt=""
+          loading="lazy"
+          onError={onImageError}
+        />
+      ) : (
+        <Box className="game-master-updates__entry-placeholder">{entityIcon[change.entityType]}</Box>
+      )}
+
+      <Box className="game-master-updates__entry-content">
+        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" alignItems="center">
+          <Typography component="h3" variant="h6">
+            {change.pokemonId ? `#${change.pokemonId} ` : ''}
+            {change.label}
+          </Typography>
+          {showFormTag && formLabel && <Chip size="small" variant="outlined" label={humanizeValueName(formLabel)} />}
+          <Chip
+            size="small"
+            color={status.color}
+            icon={status.icon}
+            label={status.label}
+            className="game-master-updates__status"
+          />
+        </Stack>
+
+        <Typography className="game-master-updates__entry-description">{change.description}</Typography>
+      </Box>
+    </Box>
+  );
+
+  if (!hasDetails) {
+    return (
+      <Paper component="article" variant="outlined" className="game-master-updates__item-card">
+        {summary}
+      </Paper>
+    );
+  }
 
   return (
     <Accordion
@@ -514,63 +586,22 @@ const PatchEntry = ({
       className="game-master-updates__item-accordion"
     >
       <AccordionSummary className="game-master-updates__item-summary" expandIcon={<ExpandMoreIcon />}>
-        <Box className="game-master-updates__entry">
-          {change.entityType === 'move' && change.moveType ? (
-            <Box className="game-master-updates__entry-placeholder game-master-updates__move-profile">
-              <IconType
-                width={56}
-                height={56}
-                alt={`${humanizeValueName(change.moveType)} type`}
-                title={humanizeValueName(change.moveType)}
-                type={change.moveType}
-              />
-            </Box>
-          ) : change.imageUrl ? (
-            <Box
-              component="img"
-              className="game-master-updates__entry-image"
-              src={patchImageUrl(change.imageUrl)}
-              alt=""
-              loading="lazy"
-              onError={onImageError}
-            />
-          ) : (
-            <Box className="game-master-updates__entry-placeholder">{entityIcon[change.entityType]}</Box>
-          )}
-
-          <Box className="game-master-updates__entry-content">
-            <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" alignItems="center">
-              <Typography component="h3" variant="h6">
-                {change.pokemonId ? `#${change.pokemonId} ` : ''}
-                {change.label}
-              </Typography>
-              <Chip
-                size="small"
-                color={status.color}
-                icon={status.icon}
-                label={status.label}
-                className="game-master-updates__status"
-              />
-            </Stack>
-
-            <Typography className="game-master-updates__entry-description">{change.description}</Typography>
-          </Box>
-        </Box>
+        {summary}
       </AccordionSummary>
 
       <AccordionDetails className="game-master-updates__item-details">
-        {change.forms && change.forms.length > 1 && (
+        {hasForms && (
           <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" alignItems="center">
             <Typography variant="caption" color="text.secondary">
               Forms:
             </Typography>
-            {change.forms.map((form) => (
+            {change.forms?.map((form) => (
               <Chip key={form} size="small" variant="outlined" label={humanizeValueName(form)} />
             ))}
           </Stack>
         )}
 
-        {change.fields.length > 0 ? (
+        {change.fields.length > 0 && (
           <Box component="section" className="game-master-updates__technical">
             <Typography component="h4" variant="overline" className="game-master-updates__change-label">
               Changes
@@ -586,10 +617,6 @@ const PatchEntry = ({
               ))}
             </Box>
           </Box>
-        ) : (
-          <Typography color="text.secondary" className="game-master-updates__item-empty">
-            This template was {change.status} as a complete entry, with no individual field changes to list.
-          </Typography>
         )}
       </AccordionDetails>
     </Accordion>
@@ -846,6 +873,20 @@ const GameMasterUpdates = () => {
     return groups;
   }, [changes]);
 
+  const pokemonIdsWithMultipleForms = useMemo(() => {
+    const formsByPokemon = new Map<number, Set<string>>();
+    changes.forEach((change) => {
+      if (!change.pokemonId) {
+        return;
+      }
+      const forms = change.forms?.length ? change.forms : [change.form ?? 'NORMAL'];
+      const knownForms = formsByPokemon.get(change.pokemonId) ?? new Set<string>();
+      forms.forEach((form) => knownForms.add(form));
+      formsByPokemon.set(change.pokemonId, knownForms);
+    });
+    return new Set([...formsByPokemon.entries()].filter(([, forms]) => forms.size > 1).map(([pokemonId]) => pokemonId));
+  }, [changes]);
+
   const onImageError = (event: React.SyntheticEvent<HTMLImageElement>) => {
     const image = event.currentTarget;
     const fallback = APIService.getPokeIconSprite();
@@ -1009,6 +1050,11 @@ const GameMasterUpdates = () => {
                         <PatchEntry
                           key={`${change.status}-${change.templateId}`}
                           change={change}
+                          showFormTag={Boolean(
+                            change.pokemonId &&
+                              pokemonIdsWithMultipleForms.has(change.pokemonId) &&
+                              (change.forms?.length ?? 0) <= 1
+                          )}
                           onImageError={onImageError}
                         />
                       ))}
