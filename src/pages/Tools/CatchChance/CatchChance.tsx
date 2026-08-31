@@ -49,7 +49,7 @@ import {
   greatBallIncChance,
   greatThrowIncChance,
   maxEncounterPlayerLevel,
-  maxLevel,
+  maxPokemonLevel,
   maxQuestEncounterPlayerLevel,
   minLevel,
   niceThrowIncChance,
@@ -520,7 +520,7 @@ const CatchChance = () => {
                   ]}
                   step={stepLevel()}
                   min={minLevel()}
-                  max={maxLevel() - 1}
+                  max={maxPokemonLevel()}
                   disabled={!data}
                   onChange={(_, v) => onHandleLevel(v as number)}
                 />

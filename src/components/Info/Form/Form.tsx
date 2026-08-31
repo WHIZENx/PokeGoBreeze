@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useDispatch } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -33,14 +33,38 @@ import useStats from '../../../composables/useStats';
 import { Action } from 'history';
 import { useSearch } from '../../../composables/useSearch';
 import ButtonGroupForm from '../../Commons/Buttons/ButtonGroupForm';
-import { IPokemonFormModify } from '../../../core/models/API/form.model';
+import { IPokemonFormModify, IPokemonSprite } from '../../../core/models/API/form.model';
 import { Skeleton } from '@mui/material';
+
+const hasSpriteImage = (sprite: IPokemonSprite | undefined) =>
+  Object.values(sprite ?? {}).some((value) => typeof value === 'string' && Boolean(value.trim()));
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
   const { routerAction } = useRouter();
   const { statsData } = useStats();
   const { searchingMainDetails, searchingMainForm } = useSearch();
+
+  const selectedPokemonType = searchingMainForm?.form?.pokemonType;
+  const displaySprites = useMemo(() => {
+    const selectedSprites = searchingMainForm?.form?.sprites;
+    if (!isSpecialFormType(selectedPokemonType) || hasSpriteImage(selectedSprites)) {
+      return selectedSprites;
+    }
+
+    const baseForms = props.formList
+      .flatMap((forms) => forms)
+      .filter((item) => !isSpecialFormType(item.form.pokemonType) && hasSpriteImage(item.form.sprites));
+    const matchingBaseForm = baseForms.find(
+      (item) => item.form.isDefault && isEqual(item.name, searchingMainForm?.name)
+    );
+    const matchingVariety = baseForms.find((item) => isEqual(item.name, searchingMainForm?.name));
+    const defaultForm = baseForms.find((item) => item.defaultId === props.defaultId && item.form.isDefault);
+
+    return (
+      matchingBaseForm?.form.sprites ?? matchingVariety?.form.sprites ?? defaultForm?.form.sprites ?? selectedSprites
+    );
+  }, [props.defaultId, props.formList, searchingMainForm, selectedPokemonType]);
 
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -181,14 +205,19 @@ const FormComponent = (props: IFormInfoComponent) => {
       {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
         <div className="tw-flex tw-flex-wrap tw-gap-y-3 tw-gap-x-12.5">
           {genderRatio.M !== 0 && (
-            <Gender ratio={genderRatio} sex={TypeSex.Male} sprite={searchingMainForm?.form?.sprites} />
+            <Gender ratio={genderRatio} sex={TypeSex.Male} sprite={displaySprites} pokemonType={selectedPokemonType} />
           )}
           {genderRatio.F !== 0 && (
-            <Gender ratio={genderRatio} sex={TypeSex.Female} sprite={searchingMainForm?.form?.sprites} />
+            <Gender
+              ratio={genderRatio}
+              sex={TypeSex.Female}
+              sprite={displaySprites}
+              pokemonType={selectedPokemonType}
+            />
           )}
         </div>
       ) : (
-        <Gender sex={TypeSex.Genderless} sprite={searchingMainForm?.form?.sprites} />
+        <Gender sex={TypeSex.Genderless} sprite={displaySprites} pokemonType={selectedPokemonType} />
       )}
       <Stats
         pokemonType={searchingMainForm?.form?.pokemonType}

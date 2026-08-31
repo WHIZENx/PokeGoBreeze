@@ -4,6 +4,7 @@ import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
 import { getKeyWithData } from '../../utils/utils';
 import { getValueOrDefault } from '../../utils/extension';
+import PokemonIconType from '../Sprites/PokemonIconType/PokemonIconType';
 
 const Gender = (props: IGenderComponent) => {
   return (
@@ -24,7 +25,7 @@ const Gender = (props: IGenderComponent) => {
       </div>
       <div className="tw-mt-2 tw-flex tw-ml-4 tw-gap-x-3">
         <div className="img-form-gender-group">
-          <div className="img-gender-group">
+          <div className="img-gender-group tw-relative">
             <img
               width={96}
               height={96}
@@ -49,11 +50,12 @@ const Gender = (props: IGenderComponent) => {
                     )
               }
             />
+            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-10" />
           </div>
           <span className="caption">Default</span>
         </div>
         <div className="img-form-gender-group">
-          <div className="img-gender-group">
+          <div className="img-gender-group tw-relative">
             <img
               width={96}
               height={96}
@@ -78,6 +80,7 @@ const Gender = (props: IGenderComponent) => {
                     )
               }
             />
+            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-10" />
           </div>
           <span className="caption">Shiny</span>
         </div>

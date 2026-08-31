@@ -29,7 +29,15 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../..
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PokemonType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
+import {
+  minCp,
+  minIv,
+  maxIv,
+  minLevel,
+  maxLevel,
+  maxPokemonLevel,
+  stepLevel,
+} from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
@@ -464,7 +472,7 @@ const Calculate = () => {
                 valueLabelDisplay="off"
                 step={stepLevel()}
                 min={minLevel()}
-                max={typePoke === PokemonType.Buddy ? maxLevel() : maxLevel() - 1}
+                max={typePoke === PokemonType.Buddy ? maxLevel() : maxPokemonLevel()}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={!pokeStats}
                 onChange={(_, value) => onHandleLevel(value as number)}

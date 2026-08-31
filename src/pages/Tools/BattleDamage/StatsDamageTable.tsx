@@ -11,7 +11,7 @@ import HP_LOGO from '../../../assets/hp.png';
 import { IStatsDamageTableComponent } from '../../models/page.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
-import { maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
+import { maxIv, minLevel, maxLevel, maxPokemonLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import type { DamageCalculatedStats } from '../../../services/models/tools-api.model';
 
 const StatsDamageTable = (props: IStatsDamageTableComponent) => {
@@ -135,7 +135,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
               valueLabelDisplay="off"
               step={stepLevel()}
               min={minLevel()}
-              max={currStatType === PokemonType.Buddy ? maxLevel() : maxLevel() - 1}
+              max={currStatType === PokemonType.Buddy ? maxLevel() : maxPokemonLevel()}
               onChange={(_, v) => onHandleLevel(v as number)}
             />
           </Box>

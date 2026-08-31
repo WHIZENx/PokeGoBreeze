@@ -548,6 +548,10 @@ class APIService {
     return this.getInternalQueryUrl('news', {});
   }
 
+  getGameMasterUpdates(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('game-master-updates', params);
+  }
+
   getBreakpoints(params: Record<string, string | number | boolean | undefined>) {
     return this.getInternalQueryUrl('breakpoints', params);
   }

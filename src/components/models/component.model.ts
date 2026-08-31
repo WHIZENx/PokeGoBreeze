@@ -202,6 +202,7 @@ export interface IStatsComponent {
 
 export interface IGenderComponent {
   sex: TypeSex;
+  pokemonType?: PokemonType;
   ratio?: IPokemonGenderRatio;
   sprite?: IPokemonSprite;
 }
