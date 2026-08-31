@@ -20,6 +20,7 @@ async function generateSitemap() {
     // Core
     { url: '/', changefreq: 'weekly', priority: 1.0 },
     { url: '/news', changefreq: 'daily', priority: 0.9 },
+    { url: '/game-master-updates', changefreq: 'daily', priority: 0.9 },
     { url: '/pokedex', changefreq: 'weekly', priority: 0.9 },
 
     // Search
