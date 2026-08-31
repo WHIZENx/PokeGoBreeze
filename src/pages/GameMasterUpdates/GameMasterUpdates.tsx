@@ -24,7 +24,6 @@ import {
   Chip,
   CircularProgress,
   Container,
-  Divider,
   Paper,
   Pagination,
   Stack,
@@ -40,6 +39,7 @@ import type {
   GameMasterChangeStatus,
   GameMasterEntityType,
   GameMasterFieldChange,
+  GameMasterFieldValue,
   GameMasterMoveReference,
   GameMasterPatchSection,
   GameMasterPatchSummary,
@@ -95,98 +95,260 @@ const sectionConfig: Record<GameMasterPatchSection, { icon: React.ReactElement; 
   },
 };
 
-const humanizeValueName = (value: string) =>
-  value
+const conciseValueLabels: Record<string, string> = {
+  tempEvoOverrides: 'Temporary Evolutions',
+  tempEvoId: 'Evolution',
+  baseStamina: 'Stamina',
+  baseAttack: 'Attack',
+  baseDefense: 'Defense',
+  averageHeightM: 'Average Height (m)',
+  averageWeightKg: 'Average Weight (kg)',
+  typeOverride1: 'Primary Type',
+  typeOverride2: 'Secondary Type',
+  durationMs: 'Duration',
+  damageWindowStartMs: 'Damage Window Start',
+  damageWindowEndMs: 'Damage Window End',
+  energyDelta: 'Energy',
+  movementId: 'Move',
+  uniqueId: 'Move',
+  pokemonId: 'Pokémon',
+  familyId: 'Family',
+  regionId: 'Region',
+  itemId: 'Item',
+  nameOverride: 'Name',
+  descriptionOverride: 'Description',
+  iconUrl: 'Icon',
+  backgroundImageUrl: 'Background Image',
+  eventBannerUrl: 'Event Banner',
+  titleImageUrl: 'Title Image',
+  clientEventStartTimeUtcMs: 'Client Start Time',
+  clientEventEndTimeUtcMs: 'Client End Time',
+  eventDatetimeRangeKey: 'Event Date Range Text',
+  itemBagDescriptionKey: 'Bag Description',
+  textRewardsKey: 'Reward Text',
+  grantBadgeBeforeEventStartMs: 'Badge Grant Lead Time',
+  disableTransferToPokemonHome: 'Pokémon HOME Transfer',
+  buffActivationChance: 'Activation Chance',
+  evolution: 'Evolves Into',
+  candyCost: 'Candy',
+  purificationStardustNeeded: 'Purification Stardust',
+  purificationCandyNeeded: 'Purification Candy',
+  purifiedChargeMove: 'Purified Move',
+  shadowChargeMove: 'Shadow Move',
+  candyCostPurified: 'Purified Candy',
+  isCostume: 'Costume',
+  pokemonEncounter: 'Pokémon Encounter',
+  questDisplay: 'Quest',
+  questRequirementTemplateId: 'Requirement',
+  pokemonDisplay: 'Pokémon Form',
+  exp: 'XP',
+  stardust: 'Stardust',
+  cylinderRadiusM: 'Hitbox Radius (m)',
+  cylinderHeightM: 'Hitbox Height (m)',
+  cylinderGroundM: 'Hitbox Ground Offset (m)',
+  modelHeight: 'Model Height',
+  temporaryEvolution: 'Temporary Evolution',
+  temporaryEvolutionEnergyCost: 'Initial Energy Cost',
+  temporaryEvolutionEnergyCostSubsequent: 'Repeat Energy Cost',
+  evolutionItemRequirement: 'Required Item',
+  evolutionItemRequirementCost: 'Required Item Quantity',
+  modelScaleV2: 'Model Scale',
+  noCandyCostViaTrade: 'Free After Trade',
+  lureItemRequirement: 'Required Lure',
+  onlyDaytime: 'Daytime Only',
+  onlyNighttime: 'Nighttime Only',
+  onlyUpsideDown: 'Upside-down Evolution',
+  mustBeBuddy: 'Buddy Required',
+  kmBuddyDistanceRequirement: 'Buddy Distance (km)',
+  evolutionLikelihoodWeight: 'Evolution Chance Weight',
+  neutralAvatarItemTemplate: 'Avatar Item',
+  neutralAvatarItemTemplateString1: 'Avatar Item 1',
+  neutralAvatarItemTemplateString2: 'Avatar Item 2',
+  buddyPortraitOffset: 'Buddy Portrait Position',
+  assetBundleValue: 'Asset',
+  headerMessage: 'Header',
+  evolutionInfos: 'Evolutions',
+  groupNumber: 'Group',
+  overrideDisplayForm: 'Display Form',
+  raidBossDistanceOffset: 'Raid Boss Distance',
+  withPokemonType: 'Pokémon Type Rule',
+  pokemonType: 'Pokémon Type',
+  withCombatType: 'Battle Type Rule',
+  combatType: 'Battle Type',
+  pokemonBanList: 'Banned Pokémon',
+  pokemonWhiteList: 'Allowed Pokémon',
+  targetDefenseStatStageChange: 'Target Defense Stages',
+  targetAttackStatStageChange: 'Target Attack Stages',
+  attackerDefenseStatStageChange: 'User Defense Stages',
+  attackerAttackStatStageChange: 'User Attack Stages',
+  sillouetteObfuscationGroup: 'Silhouette Group',
+  avatarTemplateId: 'Avatar',
+  pokecoin: 'PokéCoins',
+  genderRequirement: 'Gender',
+};
+
+const humanizeValueName = (value: string): string => {
+  const key = value.split('.').at(-1) ?? value;
+  const concise = conciseValueLabels[value] ?? conciseValueLabels[key];
+  if (concise) {
+    return concise;
+  }
+
+  const pokemonTemplate = key.match(/^V0*(\d+)_POKEMON_(.+)$/);
+  if (pokemonTemplate) {
+    return `#${Number(pokemonTemplate[1])} ${humanizeValueName(pokemonTemplate[2])}`;
+  }
+
+  return key
+    .replace(/^TEMP_EVOLUTION_/, '')
     .replace(/^POKEMON_TYPE_/, '')
     .replace(/_FAST$/, '')
     .replaceAll('_', ' ')
-    .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
+    .replaceAll(/([a-z0-9])([A-Z])/g, '$1 $2')
     .toLowerCase()
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    .replace(/\b\w/g, (letter) => letter.toUpperCase())
+    .replace(/\bId\b/g, 'ID')
+    .replace(/\bCp\b/g, 'CP')
+    .replace(/\bPvp\b/g, 'PvP')
+    .replace(/\bUtc\b/g, 'UTC')
+    .replace(/\bMs\b/g, 'ms')
+    .replace(/\bKg\b/g, 'kg');
+};
 
-const readableValue = (value: unknown, context = '', depth = 0): string => {
-  if (value === undefined || value === null || value === '') {
-    return 'none';
+const normalizeDetailValue = (value: GameMasterFieldValue): GameMasterFieldValue => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+  const trimmed = value.trim();
+  if ((trimmed.startsWith('[') && trimmed.endsWith(']')) || (trimmed.startsWith('{') && trimmed.endsWith('}'))) {
+    try {
+      return JSON.parse(trimmed) as GameMasterFieldValue;
+    } catch {
+      return value;
+    }
+  }
+  const legacyItems = trimmed
+    .split('; ')
+    .map((item) => item.trim())
+    .filter(Boolean);
+  return legacyItems.length > 1 ? legacyItems : value;
+};
+
+const isDetailRecord = (value: GameMasterFieldValue): value is Record<string, GameMasterFieldValue> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const isStructuredDetail = (value: GameMasterFieldValue) => Array.isArray(value) || isDetailRecord(value);
+
+const formatDuration = (milliseconds: number) => {
+  if (!Number.isFinite(milliseconds)) {
+    return milliseconds.toLocaleString();
+  }
+  const units = [
+    ['day', 86_400_000],
+    ['hour', 3_600_000],
+    ['minute', 60_000],
+    ['second', 1_000],
+  ] as const;
+  let remaining = Math.abs(milliseconds);
+  const parts = units.flatMap(([label, size]) => {
+    const amount = Math.floor(remaining / size);
+    remaining %= size;
+    return amount ? [`${amount.toLocaleString()} ${label}${amount === 1 ? '' : 's'}`] : [];
+  });
+  if (parts.length === 0) {
+    return `${milliseconds.toLocaleString()} ms`;
+  }
+  return `${milliseconds < 0 ? '-' : ''}${parts.join(' ')}`;
+};
+
+const readablePrimitive = (value: Exclude<GameMasterFieldValue, GameMasterFieldValue[] | object>, context = '') => {
+  if (value === null || value === '') {
+    return 'None';
   }
   if (typeof value === 'boolean') {
-    return value ? 'enabled' : 'disabled';
+    return value ? 'Enabled' : 'Disabled';
+  }
+
+  const numericValue =
+    typeof value === 'number' ? value : /^-?\d+(?:\.\d+)?$/.test(value.trim()) ? Number(value) : null;
+  if (
+    numericValue !== null &&
+    /timestamp|(?:start|end)time/i.test(context) &&
+    Math.abs(numericValue) >= 100_000_000_000
+  ) {
+    return new Date(numericValue).toLocaleString();
+  }
+  if (numericValue !== null && /(?:Ms|Milliseconds)$/i.test(context)) {
+    return formatDuration(numericValue);
   }
   if (typeof value === 'number') {
-    return /move/i.test(context) ? `move #${value}` : value.toLocaleString();
+    return /move/i.test(context) ? `Move #${value}` : value.toLocaleString();
   }
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    if (/timestamp/i.test(context)) {
-      const timestamps = trimmed.split(';').map((item) => item.trim());
-      if (
-        timestamps.every(
-          (item) =>
-            item.length === 13 &&
-            [...item].every((character) => character.charCodeAt(0) >= 48 && character.charCodeAt(0) <= 57)
-        )
-      ) {
-        return timestamps.map((item) => new Date(Number(item)).toLocaleString()).join('; ');
-      }
+
+  const trimmed = value.trim();
+  return /^[A-Z0-9_]+$/.test(trimmed) || trimmed.includes('_') ? humanizeValueName(trimmed) : trimmed;
+};
+
+const DetailValueContent = ({ value, context }: { value: GameMasterFieldValue; context: string }) => {
+  const normalized = normalizeDetailValue(value);
+
+  if (Array.isArray(normalized)) {
+    if (normalized.length === 0) {
+      return <Typography component="span">None</Typography>;
     }
-    const deltaParts = trimmed.split('; ');
-    if (
-      deltaParts.length > 1 &&
-      deltaParts.every((part) => part.startsWith('{') || part.startsWith('[') || /^and [0-9,]+ more$/i.test(part))
-    ) {
-      return deltaParts
-        .map((part) => {
-          if (/^and [0-9,]+ more$/i.test(part)) {
-            return part;
-          }
-          try {
-            return readableValue(JSON.parse(part), context, depth);
-          } catch {
-            return humanizeValueName(part);
-          }
-        })
-        .join('; ');
-    }
-    const looksStructured =
-      trimmed.startsWith('[') ||
-      trimmed.startsWith('{') ||
-      (trimmed.includes('...') && (trimmed.includes('{') || trimmed.includes('[') || trimmed.includes(',')));
-    if (looksStructured) {
-      try {
-        return readableValue(JSON.parse(trimmed), context, depth);
-      } catch {
-        const readable = trimmed
-          .replace(/[{}[\]"]/g, '')
-          .replaceAll('_', ' ')
-          .replace(/([a-z])([A-Z])/g, '$1 $2')
-          .replaceAll(':', ': ')
-          .replaceAll(',', '; ')
-          .replace(/\s+/g, ' ')
-          .trim();
-        return readable + (trimmed.endsWith('...') ? ' (additional settings omitted)' : '');
-      }
-    }
-    return /^[A-Z0-9_]+$/.test(trimmed) || trimmed.includes('_') ? humanizeValueName(trimmed) : trimmed;
+    return (
+      <Box component="ul" className="game-master-updates__detail-list">
+        {normalized.map((item, index) => (
+          <Box component="li" key={`${context}:${index}`}>
+            <DetailValueContent value={item} context={context} />
+          </Box>
+        ))}
+      </Box>
+    );
   }
-  if (Array.isArray(value)) {
-    if (value.length === 0) {
-      return 'none';
+
+  if (isDetailRecord(normalized)) {
+    const entries = Object.entries(normalized);
+    if (entries.length === 0) {
+      return <Typography component="span">None</Typography>;
     }
-    const visible = value.slice(0, 6).map((item) => readableValue(item, context, depth + 1));
-    const remaining = value.length - visible.length;
-    return `${visible.join('; ')}${remaining > 0 ? `; and ${remaining.toLocaleString()} more` : ''}`;
+    return (
+      <Box component="ul" className="game-master-updates__detail-list game-master-updates__detail-list--nested">
+        {entries.map(([key, item]) => {
+          const normalizedItem = normalizeDetailValue(item);
+          return (
+            <Box component="li" key={key}>
+              <Typography component="span" className="game-master-updates__detail-key">
+                {humanizeValueName(key)}
+              </Typography>
+              {isStructuredDetail(normalizedItem) ? (
+                <DetailValueContent value={normalizedItem} context={key} />
+              ) : (
+                <>
+                  <Typography component="span">: </Typography>
+                  <DetailValueContent value={normalizedItem} context={key} />
+                </>
+              )}
+            </Box>
+          );
+        })}
+      </Box>
+    );
   }
-  if (typeof value === 'object') {
-    if (depth >= 3) {
-      return 'updated configuration';
-    }
-    const entries = Object.entries(value as Record<string, unknown>);
-    const visible = entries
-      .slice(0, 6)
-      .map(([key, item]) => `${humanizeValueName(key)}: ${readableValue(item, key, depth + 1)}`);
-    const remaining = entries.length - visible.length;
-    return `${visible.join(', ')}${remaining > 0 ? `, and ${remaining.toLocaleString()} more settings` : ''}`;
+
+  if (typeof normalized === 'string' && /^https?:\/\//i.test(normalized.trim())) {
+    return (
+      <Box
+        component="img"
+        className="game-master-updates__detail-image game-master-updates__detail-image--nested"
+        src={normalized.trim()}
+        alt={humanizeValueName(context)}
+        loading="lazy"
+      />
+    );
   }
-  return String(value);
+
+  return <Typography component="span">{readablePrimitive(normalized, context)}</Typography>;
 };
 
 const DetailValue = ({
@@ -237,7 +399,11 @@ const DetailValue = ({
     );
   }
 
-  return <Typography component="dd">{readableValue(value, label)}</Typography>;
+  return (
+    <Box component="dd" className="game-master-updates__detail-value">
+      <DetailValueContent value={value ?? null} context={label} />
+    </Box>
+  );
 };
 
 const FieldChange = ({ field }: { field: GameMasterFieldChange }) => {
@@ -340,47 +506,53 @@ const PatchEntry = ({
   const status = statusConfig[change.status];
 
   return (
-    <Box component="article" className="game-master-updates__entry">
-      {change.entityType === 'move' && change.moveType ? (
-        <Box className="game-master-updates__entry-placeholder game-master-updates__move-profile">
-          <IconType
-            width={56}
-            height={56}
-            alt={`${humanizeValueName(change.moveType)} type`}
-            title={humanizeValueName(change.moveType)}
-            type={change.moveType}
-          />
+    <Accordion component="article" disableGutters variant="outlined" className="game-master-updates__item-accordion">
+      <AccordionSummary className="game-master-updates__item-summary" expandIcon={<ExpandMoreIcon />}>
+        <Box className="game-master-updates__entry">
+          {change.entityType === 'move' && change.moveType ? (
+            <Box className="game-master-updates__entry-placeholder game-master-updates__move-profile">
+              <IconType
+                width={56}
+                height={56}
+                alt={`${humanizeValueName(change.moveType)} type`}
+                title={humanizeValueName(change.moveType)}
+                type={change.moveType}
+              />
+            </Box>
+          ) : change.imageUrl ? (
+            <Box
+              component="img"
+              className="game-master-updates__entry-image"
+              src={patchImageUrl(change.imageUrl)}
+              alt=""
+              loading="lazy"
+              onError={onImageError}
+            />
+          ) : (
+            <Box className="game-master-updates__entry-placeholder">{entityIcon[change.entityType]}</Box>
+          )}
+
+          <Box className="game-master-updates__entry-content">
+            <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" alignItems="center">
+              <Typography component="h3" variant="h6">
+                {change.pokemonId ? `#${change.pokemonId} ` : ''}
+                {change.label}
+              </Typography>
+              <Chip
+                size="small"
+                color={status.color}
+                icon={status.icon}
+                label={status.label}
+                className="game-master-updates__status"
+              />
+            </Stack>
+
+            <Typography className="game-master-updates__entry-description">{change.description}</Typography>
+          </Box>
         </Box>
-      ) : change.imageUrl ? (
-        <Box
-          component="img"
-          className="game-master-updates__entry-image"
-          src={patchImageUrl(change.imageUrl)}
-          alt=""
-          loading="lazy"
-          onError={onImageError}
-        />
-      ) : (
-        <Box className="game-master-updates__entry-placeholder">{entityIcon[change.entityType]}</Box>
-      )}
+      </AccordionSummary>
 
-      <Box className="game-master-updates__entry-content">
-        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" alignItems="center">
-          <Typography component="h3" variant="h6">
-            {change.pokemonId ? `#${change.pokemonId} ` : ''}
-            {change.label}
-          </Typography>
-          <Chip
-            size="small"
-            color={status.color}
-            icon={status.icon}
-            label={status.label}
-            className="game-master-updates__status"
-          />
-        </Stack>
-
-        <Typography className="game-master-updates__entry-description">{change.description}</Typography>
-
+      <AccordionDetails className="game-master-updates__item-details">
         {change.forms && change.forms.length > 1 && (
           <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" alignItems="center">
             <Typography variant="caption" color="text.secondary">
@@ -392,7 +564,7 @@ const PatchEntry = ({
           </Stack>
         )}
 
-        {change.fields.length > 0 && (
+        {change.fields.length > 0 ? (
           <Box component="section" className="game-master-updates__technical">
             <Typography component="h4" variant="overline" className="game-master-updates__change-label">
               Changes
@@ -408,9 +580,13 @@ const PatchEntry = ({
               ))}
             </Box>
           </Box>
+        ) : (
+          <Typography color="text.secondary" className="game-master-updates__item-empty">
+            This template was {change.status} as a complete entry, with no individual field changes to list.
+          </Typography>
         )}
-      </Box>
-    </Box>
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
@@ -822,7 +998,7 @@ const GameMasterUpdates = () => {
                     </Box>
                   </AccordionSummary>
                   <AccordionDetails className="game-master-updates__section-details">
-                    <Stack divider={<Divider flexItem />}>
+                    <Stack className="game-master-updates__item-list">
                       {groupedChanges.get(item.key)?.map((change) => (
                         <PatchEntry
                           key={`${change.status}-${change.templateId}`}

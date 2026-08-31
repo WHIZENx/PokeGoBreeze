@@ -15,11 +15,19 @@ export interface GameMasterMoveReference {
   type?: string;
 }
 
+export type GameMasterFieldValue =
+  | string
+  | number
+  | boolean
+  | null
+  | GameMasterFieldValue[]
+  | { [key: string]: GameMasterFieldValue };
+
 export interface GameMasterFieldChange {
   path: string;
   label: string;
-  before?: string | number | boolean | null;
-  after?: string | number | boolean | null;
+  before?: GameMasterFieldValue;
+  after?: GameMasterFieldValue;
   beforeMoves?: GameMasterMoveReference[];
   afterMoves?: GameMasterMoveReference[];
 }
