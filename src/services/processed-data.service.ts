@@ -21,12 +21,16 @@ export interface ProcessedDataMeta {
   appIcon?: string;
   source: {
     gameMaster: number;
+    gameMasterSha?: string;
+    gameMasterCommitSha?: string;
     assets: number;
+    items?: number;
     icon?: number;
     sounds: number;
     pvp: number;
   };
   sections: Record<string, number>;
+  sectionHashes?: Record<string, string>;
 }
 
 export interface ProcessedDataPage<T> {

@@ -193,9 +193,60 @@ export const greatThrowIncChance = () => currentOptions.config.greatThrowIncChan
 export const excellentThrowIncChance = () => currentOptions.config.excellentThrowIncChance;
 export const minCp = () => currentOptions.config.minCp;
 export const cpDiffRatio = () => currentOptions.config.cpDiffRatio;
-export const minLevel = () => currentOptions.config.minLevel;
-export const maxLevel = () => currentOptions.config.maxLevel;
-export const stepLevel = () => currentOptions.config.stepLevel;
+let cachedCpmSource: DynamicObj<number> | undefined;
+let cachedLevelRange:
+  | { min: number; maxCpm: number; maxCalculation: number; maxPokemon: number; maxBuddy: number; step: number }
+  | undefined;
+
+const getLevelRange = () => {
+  const source = cpMultipliers();
+  if (cachedCpmSource === source && cachedLevelRange) {
+    return cachedLevelRange;
+  }
+
+  const entries = Object.entries(source)
+    .map(([level, multiplier]) => ({ level: Number(level), multiplier }))
+    .filter(({ level, multiplier }) => Number.isFinite(level) && Number.isFinite(multiplier))
+    .sort((left, right) => left.level - right.level);
+  const min = entries[0]?.level ?? currentOptions.config.minLevel;
+  const maxCpm = entries.at(-1)?.level ?? currentOptions.config.maxLevel;
+  let maxCalculation = entries[0]?.level;
+  for (let index = 1; index < entries.length; index++) {
+    if (entries[index].multiplier > entries[index - 1].multiplier) {
+      maxCalculation = entries[index].level;
+    }
+  }
+  maxCalculation = Math.floor(maxCalculation ?? currentOptions.config.maxLevel - 1);
+  const maxPokemon = currentOptions.playerSetting.maxNormalUpgradeLevel || currentOptions.config.maxLevel - 1;
+  const buddyBoost = currentOptions.playerSetting.defaultCpBoostAdditionalLevel || 1;
+  const steps = entries
+    .slice(1)
+    .map((entry, index) => entry.level - entries[index].level)
+    .filter((step) => step > 0);
+
+  cachedCpmSource = source;
+  cachedLevelRange = {
+    min,
+    maxCpm,
+    maxCalculation,
+    maxPokemon,
+    maxBuddy: Math.min(maxCpm, maxPokemon + buddyBoost),
+    step: steps.length ? Math.min(...steps) : currentOptions.config.stepLevel,
+  };
+  return cachedLevelRange;
+};
+
+export const minLevel = () => getLevelRange().min;
+export const maxCpmLevel = () => getLevelRange().maxCpm;
+export const maxCalculationLevel = () => getLevelRange().maxCalculation;
+export const maxPokemonLevel = () => getLevelRange().maxPokemon;
+export const maxBuddyLevel = () => getLevelRange().maxBuddy;
+export const maxTrainerLevel = () =>
+  Math.max(...levelUps().map(({ level }) => level), maxCpmLevel(), currentOptions.config.maxLevel);
+// Kept as the historical "maximum selectable Pokémon level", including the
+// one-level Best Buddy boost. Call maxPokemonLevel() for a normal Pokémon.
+export const maxLevel = () => maxBuddyLevel();
+export const stepLevel = () => getLevelRange().step;
 export const minIv = () => currentOptions.config.minIv;
 export const maxIv = () => currentOptions.config.maxIv;
 export const defaultSize = () => currentOptions.config.defaultSize;

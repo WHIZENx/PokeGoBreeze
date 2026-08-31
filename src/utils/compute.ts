@@ -14,11 +14,16 @@ import { CostPowerUp } from './models/constants.model';
 // set, and would go stale if config ever changed at runtime. Now computes on first
 // access and caches — always reflects the current config, still stable reference.
 let _levelList: number[] | undefined;
+let _levelListKey = '';
 
 export const getLevelList = (): number[] => {
-  if (!_levelList) {
-    const step = stepLevel();
-    _levelList = Array.from({ length: (maxLevel() - minLevel()) / step + 1 }, (_, i) => 1 + i * step);
+  const min = minLevel();
+  const max = maxLevel();
+  const step = stepLevel();
+  const key = `${min}:${max}:${step}`;
+  if (!_levelList || _levelListKey !== key) {
+    _levelList = Array.from({ length: Math.floor((max - min) / step) + 1 }, (_, i) => min + i * step);
+    _levelListKey = key;
   }
   return _levelList;
 };
