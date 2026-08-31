@@ -506,7 +506,13 @@ const PatchEntry = ({
   const status = statusConfig[change.status];
 
   return (
-    <Accordion component="article" disableGutters variant="outlined" className="game-master-updates__item-accordion">
+    <Accordion
+      component="article"
+      TransitionProps={{ unmountOnExit: true }}
+      disableGutters
+      variant="outlined"
+      className="game-master-updates__item-accordion"
+    >
       <AccordionSummary className="game-master-updates__item-summary" expandIcon={<ExpandMoreIcon />}>
         <Box className="game-master-updates__entry">
           {change.entityType === 'move' && change.moveType ? (
