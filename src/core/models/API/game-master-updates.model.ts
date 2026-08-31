@@ -111,6 +111,7 @@ export interface GameMasterUpdatesResponse {
     compareTo: string;
     patchPage: number;
     patchLimit: number;
+    patchFirstPageLimit: number;
     patchTotal: number;
     patchPages: number;
   };
