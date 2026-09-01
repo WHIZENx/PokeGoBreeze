@@ -47,8 +47,11 @@ import type {
   GameMasterUpdatesResponse,
 } from '../../core/models/API/game-master-updates.model';
 import IconType from '../../components/Sprites/Icon/Type/Type';
+import { LinkToTop } from '../../components/Link/LinkToTop';
 import APIService from '../../services/api.service';
+import { Params } from '../../utils/constants';
 import { useTitle } from '../../utils/hooks/useTitle';
+import { generateParamForm } from '../../utils/utils';
 
 import './GameMasterUpdates.scss';
 
@@ -406,7 +409,14 @@ const DetailValue = ({
                 title={humanizeValueName(move.type)}
               />
             )}
-            <Typography component="span">{move.name}</Typography>
+            <LinkToTop
+              className="game-master-updates__entity-link"
+              to={`/move/${encodeURIComponent(move.id)}${
+                move.type ? `?${Params.MoveType}=${encodeURIComponent(move.type.toLowerCase())}` : ''
+              }`}
+            >
+              {move.name}
+            </LinkToTop>
           </Box>
         ))}
       </Box>
@@ -447,17 +457,17 @@ const FieldChange = ({ field }: { field: GameMasterFieldChange }) => {
   }
 
   return (
-    <Box component="dl" className="game-master-updates__change-comparison">
-      <Box className="game-master-updates__change-value game-master-updates__change-value--old">
+    <Box className="game-master-updates__change-transition">
+      <Box component="dl" className="game-master-updates__change-delta game-master-updates__change-delta--removed">
         <Typography component="dt" variant="overline">
-          Before
+          <RemoveCircleOutlineIcon fontSize="inherit" /> Before
         </Typography>
         <DetailValue value={field.before} moves={field.beforeMoves} label={field.label} />
       </Box>
       <ArrowForwardIcon className="game-master-updates__change-arrow" aria-hidden="true" />
-      <Box className="game-master-updates__change-value game-master-updates__change-value--new">
+      <Box component="dl" className="game-master-updates__change-delta game-master-updates__change-delta--added">
         <Typography component="dt" variant="overline">
-          Now
+          <AddCircleOutlineIcon fontSize="inherit" /> Now
         </Typography>
         <DetailValue value={field.after} moves={field.afterMoves} label={field.label} />
       </Box>
@@ -510,6 +520,20 @@ const patchCardsFromResponse = (data?: GameMasterUpdatesResponse['data']): GameM
   }));
 };
 
+const entityDetailPath = (change: GameMasterChange) => {
+  if (change.entityType === 'pokemon' && change.pokemonId) {
+    const rawForm = change.forms?.length === 1 ? change.forms[0] : change.forms?.length ? undefined : change.form;
+    const form = rawForm && !/^\d+$/.test(rawForm) ? rawForm : undefined;
+    return `/pokemon/${change.pokemonId}${generateParamForm(form)}`;
+  }
+  if (change.entityType === 'move' && change.entityId) {
+    return `/move/${encodeURIComponent(change.entityId)}${
+      change.moveType ? `?${Params.MoveType}=${encodeURIComponent(change.moveType.toLowerCase())}` : ''
+    }`;
+  }
+  return undefined;
+};
+
 const PatchEntry = ({
   change,
   showFormTag,
@@ -523,6 +547,13 @@ const PatchEntry = ({
   const hasForms = Boolean(change.forms && change.forms.length > 1);
   const hasDetails = hasForms || change.fields.length > 0;
   const formLabel = change.forms?.length === 1 ? change.forms[0] : change.form;
+  const detailPath = entityDetailPath(change);
+  const entityTitle = (
+    <Typography component="h3" variant="h6">
+      {change.pokemonId ? `#${change.pokemonId} ` : ''}
+      {change.label}
+    </Typography>
+  );
   const summary = (
     <Box className="game-master-updates__entry">
       {change.entityType === 'move' && change.moveType ? (
@@ -550,10 +581,19 @@ const PatchEntry = ({
 
       <Box className="game-master-updates__entry-content">
         <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" alignItems="center">
-          <Typography component="h3" variant="h6">
-            {change.pokemonId ? `#${change.pokemonId} ` : ''}
-            {change.label}
-          </Typography>
+          {detailPath ? (
+            <LinkToTop
+              className="game-master-updates__entity-link game-master-updates__entity-link--title"
+              to={detailPath}
+              title={`View ${change.label} details`}
+              funcOnClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+            >
+              {entityTitle}
+            </LinkToTop>
+          ) : (
+            entityTitle
+          )}
           {showFormTag && formLabel && <Chip size="small" variant="outlined" label={humanizeValueName(formLabel)} />}
           <Chip
             size="small"

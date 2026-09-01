@@ -1,11 +1,10 @@
-import { IPokemonDetail } from '../../core/models/API/info.model';
 import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { IStatsIV, IStatsPokemonGO, StatsIV } from '../../core/models/stats.model';
 import { PokemonType } from '../../enums/type.enum';
 import { getValueOrDefault, toNumber } from '../extension';
-import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
+import { IPokemonQueryCounter } from './pokemon-top-move.model';
 
 export interface IBattleCalculate {
   atk?: number;
@@ -310,31 +309,6 @@ export class QueryMovesCounterPokemon {
   constructor(pokemon: IPokemonData, def: number, types: string[] | undefined, dataList: IPokemonQueryCounter[] = []) {
     this.pokemon = pokemon;
     this.def = def;
-    this.types = getValueOrDefault(Array, types);
-    this.dataList = dataList;
-  }
-}
-
-export class QueryMovesPokemon {
-  pokemon: Partial<IPokemonDetail>;
-  atk: number;
-  def: number;
-  sta: number;
-  types: string[] = [];
-  dataList: IPokemonQueryMove[];
-
-  constructor(
-    pokemon: Partial<IPokemonDetail>,
-    atk: number | undefined,
-    def: number | undefined,
-    sta: number | undefined,
-    types: string[] | undefined,
-    dataList: IPokemonQueryMove[] = []
-  ) {
-    this.pokemon = pokemon;
-    this.atk = toNumber(atk);
-    this.def = toNumber(def);
-    this.sta = toNumber(sta);
     this.types = getValueOrDefault(Array, types);
     this.dataList = dataList;
   }

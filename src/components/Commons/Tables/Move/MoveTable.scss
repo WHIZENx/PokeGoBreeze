@@ -32,3 +32,23 @@
 .text-b-ic {
   @apply tw-mr-2;
 }
+
+.move-tables-wrapper {
+  @apply tw-relative;
+
+  &[aria-busy="true"] {
+    @apply tw-min-h-[240px];
+  }
+}
+
+.move-tables-content {
+  transition: opacity 180ms ease;
+
+  &.is-loading {
+    @apply tw-opacity-30 tw-pointer-events-none tw-select-none;
+  }
+}
+
+.move-tables-loading {
+  @apply tw-absolute tw-inset-0 tw-z-10 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium;
+}
