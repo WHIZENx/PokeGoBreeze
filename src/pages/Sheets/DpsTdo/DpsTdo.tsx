@@ -332,7 +332,7 @@ const DpsTdo = () => {
   const [options, setOptions] = useState(new OptionOtherDPS());
   const { weatherBoosts, isTrainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
 
-  const [isShowSpinner, setIsShowSpinner] = useState(false);
+  const [isShowSpinner, setIsShowSpinner] = useState(true);
   const [selectTypes, setSelectTypes] = useState(getValueOrDefault(Array, optionsDpsSheet?.selectTypes));
 
   useEffect(() => {
@@ -1054,7 +1054,11 @@ const DpsTdo = () => {
         <CustomDataTable
           customColumns={columns}
           data={dpsTable}
-          noDataComponent={<div className="tw-p-6 tw-text-center">No Pokémon match the selected filters.</div>}
+          noDataComponent={
+            <div className="tw-p-6 tw-text-center">
+              {isShowSpinner ? 'Loading Pokémon data...' : 'No Pokémon match the selected filters.'}
+            </div>
+          }
           pagination
           paginationServer
           paginationTotalRows={totalRows}

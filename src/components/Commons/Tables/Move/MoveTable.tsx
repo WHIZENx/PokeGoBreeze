@@ -1,47 +1,21 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { getAllMoves, getKeyWithData, splitAndCapitalize } from '../../../../utils/utils';
+import React, { Fragment, useRef, useState } from 'react';
+import { getKeyWithData, splitAndCapitalize } from '../../../../utils/utils';
 
 import './MoveTable.scss';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { ICombat } from '../../../../core/models/combat.model';
-import {
-  IPokemonQueryMove,
-  IPokemonQueryRankMove,
-  PokemonQueryRankMove,
-} from '../../../../utils/models/pokemon-top-move.model';
+import { IPokemonQueryMove, IPokemonQueryRankMove } from '../../../../utils/models/pokemon-top-move.model';
 import { ITableMoveComponent } from '../../models/component.model';
-import {
-  combineClasses,
-  DynamicObj,
-  getPropertyName,
-  isNotEmpty,
-  isUndefined,
-  toFloatWithPadding,
-  toNumber,
-} from '../../../../utils/extension';
+import { combineClasses, DynamicObj, getPropertyName, toFloatWithPadding, toNumber } from '../../../../utils/extension';
 import { TableType, TypeSorted } from './enums/table-type.enum';
-import { MoveType, PokemonType } from '../../../../enums/type.enum';
+import { MoveType } from '../../../../enums/type.enum';
 import { LinkToTop } from '../../../Link/LinkToTop';
 import { FloatPaddingOption } from '../../../../utils/models/extension.model';
-import { IPokemonDetail } from '../../../../core/models/API/info.model';
 import IconType from '../../../Sprites/Icon/Type/Type';
-import useCombats from '../../../../composables/useCombats';
-import useCalculate from '../../../../composables/useCalculate';
 import TabsPanel from '../../Tabs/TabsPanel';
-
-interface PokemonMoves {
-  fastMoves: ICombat[];
-  chargedMoves: ICombat[];
-  eliteFastMoves: ICombat[];
-  eliteChargedMoves: ICombat[];
-  purifiedMoves: ICombat[];
-  shadowMoves: ICombat[];
-  specialMoves: ICombat[];
-  exclusiveMoves: ICombat[];
-  dynamaxMoves: ICombat[];
-}
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface ISortModel {
   fast: boolean;
@@ -75,11 +49,21 @@ class TableSort implements ITableSort {
   }
 }
 
+const emptyMoveRanking: IPokemonQueryRankMove = { data: [] };
+
 const TableMove = (props: ITableMoveComponent) => {
-  const { rankMove } = useCalculate();
-  const { filterUnknownMove } = useCombats();
-  const [move, setMove] = useState<IPokemonQueryRankMove>(new PokemonQueryRankMove());
-  const [moveOrigin, setMoveOrigin] = useState<PokemonMoves>();
+  const cachedMoveData = useRef(props.moveData);
+  const cachedRankMoveData = useRef(props.rankMoveData);
+  if (props.moveData) {
+    cachedMoveData.current = props.moveData;
+  }
+  if (props.rankMoveData) {
+    cachedRankMoveData.current = props.rankMoveData;
+  }
+
+  const move = props.rankMoveData ?? cachedRankMoveData.current ?? emptyMoveRanking;
+  const moveOrigin = props.moveData ?? cachedMoveData.current;
+  const isLoading = Boolean(props.isLoading || !props.moveData || !props.rankMoveData);
 
   const [stateSorted, setStateSorted] = useState(
     new TableSort({
@@ -101,47 +85,6 @@ const TableMove = (props: ITableMoveComponent) => {
   );
 
   const { offensive, defensive, disableSortFM, disableSortCM } = stateSorted;
-
-  const filterMoveType = (pokemon: Partial<IPokemonDetail> | undefined) => {
-    if (!pokemon) {
-      setMoveOrigin(undefined);
-      setMove(new PokemonQueryRankMove());
-      return;
-    }
-    setMoveOrigin({
-      fastMoves: filterUnknownMove(pokemon.quickMoves),
-      chargedMoves: filterUnknownMove(pokemon.cinematicMoves),
-      eliteFastMoves: filterUnknownMove(pokemon.eliteQuickMoves),
-      eliteChargedMoves: filterUnknownMove(pokemon.eliteCinematicMoves),
-      purifiedMoves: pokemon.pokemonType === PokemonType.Shadow ? [] : filterUnknownMove(pokemon.purifiedMoves),
-      shadowMoves: pokemon.pokemonType === PokemonType.Purified ? [] : filterUnknownMove(pokemon.shadowMoves),
-      specialMoves: filterUnknownMove(pokemon.specialMoves),
-      exclusiveMoves: filterUnknownMove(pokemon.exclusiveMoves),
-      dynamaxMoves: filterUnknownMove(pokemon.dynamaxMoves),
-    });
-    setMove(
-      props.rankMoveData ??
-        setRankMove({
-          ...pokemon,
-          purifiedMoves: pokemon.pokemonType === PokemonType.Shadow ? [] : pokemon.purifiedMoves,
-          shadowMoves: pokemon.pokemonType === PokemonType.Purified ? [] : pokemon.shadowMoves,
-        })
-    );
-  };
-
-  const setRankMove = (result: Partial<IPokemonDetail>) => {
-    return rankMove(result, result.statsGO?.atk, result.statsGO?.def, result.statsGO?.sta, result.types);
-  };
-
-  useEffect(() => {
-    if (!isUndefined(props.pokemonData?.pokemonType)) {
-      setMoveOrigin(undefined);
-      setMove(new PokemonQueryRankMove());
-      if (props.pokemonData && isNotEmpty(getAllMoves(props.pokemonData))) {
-        filterMoveType(props.pokemonData);
-      }
-    }
-  }, [props.pokemonData, props.pokemonData?.pokemonType, props.rankMoveData]);
 
   const renderTable = (table: TableType) => {
     const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
@@ -354,63 +297,73 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   return (
-    <TabsPanel
-      tabs={[
-        {
-          label: 'Moves List',
-          children: (
-            <div className="row tw-w-full tw-bg-table-info !tw-m-0">
-              <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
-                <table className="table-moves">
-                  <colgroup className="main-move" />
-                  <thead>
-                    <tr className="tw-text-center">
-                      <th className="table-sub-header">Fast Moves</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {moveOrigin && renderMoveSetTable(moveOrigin.fastMoves.concat(moveOrigin.eliteFastMoves))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
-                <table className="table-moves">
-                  <colgroup className="main-move" />
-                  <thead>
-                    <tr className="tw-text-center">
-                      <th className="table-sub-header">Charged Moves</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {moveOrigin &&
-                      renderMoveSetTable(
-                        moveOrigin.chargedMoves.concat(
-                          moveOrigin.eliteChargedMoves,
-                          moveOrigin.purifiedMoves,
-                          moveOrigin.shadowMoves,
-                          moveOrigin.specialMoves,
-                          moveOrigin.exclusiveMoves,
-                          moveOrigin.dynamaxMoves
-                        )
-                      )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ),
-        },
-        {
-          label: 'Best Moves List',
-          children: (
-            <div className="row tw-w-full !tw-m-0">
-              {renderTable(TableType.Offensive)}
-              {renderTable(TableType.Defensive)}
-            </div>
-          ),
-        },
-      ]}
-      className="lg-2"
-    />
+    <div className="move-tables-wrapper" aria-busy={isLoading}>
+      <div className={combineClasses('move-tables-content', isLoading ? 'is-loading' : '')}>
+        <TabsPanel
+          tabs={[
+            {
+              label: 'Moves List',
+              children: (
+                <div className="row tw-w-full tw-bg-table-info !tw-m-0">
+                  <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
+                    <table className="table-moves">
+                      <colgroup className="main-move" />
+                      <thead>
+                        <tr className="tw-text-center">
+                          <th className="table-sub-header">Fast Moves</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {moveOrigin && renderMoveSetTable(moveOrigin.fastMoves.concat(moveOrigin.eliteFastMoves))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
+                    <table className="table-moves">
+                      <colgroup className="main-move" />
+                      <thead>
+                        <tr className="tw-text-center">
+                          <th className="table-sub-header">Charged Moves</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {moveOrigin &&
+                          renderMoveSetTable(
+                            moveOrigin.chargedMoves.concat(
+                              moveOrigin.eliteChargedMoves,
+                              moveOrigin.purifiedMoves,
+                              moveOrigin.shadowMoves,
+                              moveOrigin.specialMoves,
+                              moveOrigin.exclusiveMoves,
+                              moveOrigin.dynamaxMoves
+                            )
+                          )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              label: 'Best Moves List',
+              children: (
+                <div className="row tw-w-full !tw-m-0">
+                  {renderTable(TableType.Offensive)}
+                  {renderTable(TableType.Defensive)}
+                </div>
+              ),
+            },
+          ]}
+          className="lg-2"
+        />
+      </div>
+      {isLoading && (
+        <div className="move-tables-loading" role="status" aria-live="polite">
+          <CircularProgress size={28} />
+          <span>Loading moves...</span>
+        </div>
+      )}
+    </div>
   );
 };
 

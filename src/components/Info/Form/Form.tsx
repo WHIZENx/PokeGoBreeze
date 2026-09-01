@@ -39,6 +39,9 @@ import { Skeleton } from '@mui/material';
 const hasSpriteImage = (sprite: IPokemonSprite | undefined) =>
   Object.values(sprite ?? {}).some((value) => typeof value === 'string' && Boolean(value.trim()));
 
+const normalizePokemonType = (pokemonType: PokemonType | undefined) =>
+  pokemonType && pokemonType !== PokemonType.None ? pokemonType : PokemonType.Normal;
+
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
   const { routerAction } = useRouter();
@@ -73,7 +76,7 @@ const FormComponent = (props: IFormInfoComponent) => {
   const [genderRatio, setGenderRatio] = useState(new PokemonGenderRatio());
   const moveRanking = props.moveRankings.find(
     (item) =>
-      item.pokemonType === (searchingMainDetails?.pokemonType ?? PokemonType.Normal) &&
+      normalizePokemonType(item.pokemonType) === normalizePokemonType(searchingMainDetails?.pokemonType) &&
       ((item.fullName && isEqual(item.fullName, searchingMainDetails?.fullName)) ||
         isEqual(item.form, searchingMainDetails?.form))
   );
@@ -249,7 +252,11 @@ const FormComponent = (props: IFormInfoComponent) => {
           )}
         </div>
         <div className="md:tw-w-7/12 !tw-p-0">
-          <TableMove pokemonData={searchingMainDetails} rankMoveData={moveRanking?.bestMoves} />
+          <TableMove
+            moveData={moveRanking?.moves}
+            rankMoveData={moveRanking?.bestMoves}
+            isLoading={!props.isLoadedForms || !moveRanking}
+          />
           <Counter pokemonData={searchingMainDetails} />
         </div>
       </div>

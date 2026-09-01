@@ -18,7 +18,6 @@ import { BadgeType } from '../../enums/badge-type.enum';
 import { InputSearchType, InputType } from '../Inputs/enums/input-type.enum';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Inputs/models/select-move.model';
 import { SelectPosition } from '../Selects/enums/select-type.enum';
-import { IPokemonDetail } from '../../../core/models/API/info.model';
 import { TableProps, TableStyles } from 'react-data-table-component';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
@@ -28,6 +27,7 @@ import React from 'react';
 import { IAppMenuItem, IMenuItem } from './menu.model';
 import { IStatsRankAtk, IStatsRankDef, IStatsRankSta, IStatsRankProd } from '../../../core/models/stats.model';
 import { IPokemonQueryRankMove } from '../../../utils/models/pokemon-top-move.model';
+import type { PokemonMoves } from '../../../core/models/API/pokemon-bundle.model';
 
 export interface IResponsiveAppBarComponent {
   version?: string;
@@ -311,8 +311,9 @@ export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
 }
 
 export interface ITableMoveComponent {
-  pokemonData: Partial<IPokemonDetail> | undefined;
+  moveData?: PokemonMoves;
   rankMoveData?: IPokemonQueryRankMove;
+  isLoading?: boolean;
   maxHeight?: number | string;
 }
 
