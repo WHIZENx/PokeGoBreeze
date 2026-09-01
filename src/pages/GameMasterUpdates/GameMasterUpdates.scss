@@ -239,6 +239,22 @@
     }
   }
 
+  &__entity-link {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--mui-palette-primary-main, #42a5f5);
+      text-decoration: underline;
+    }
+
+    &--title {
+      border-radius: 4px;
+      display: inline-flex;
+    }
+  }
+
   &__status {
     height: 20px;
 
@@ -404,39 +420,11 @@
     }
   }
 
-  &__change-comparison {
-    align-items: stretch;
+  &__change-transition {
+    align-items: center;
     display: grid;
     gap: 12px;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    margin: 0;
-  }
-
-  &__change-value {
-    background: rgb(255 255 255 / 4%);
-    border: 1px solid rgb(255 255 255 / 10%);
-    border-radius: 8px;
-    min-width: 0;
-    padding: 12px 14px;
-
-    dt {
-      color: rgb(127 127 127);
-      font-weight: 700;
-    }
-
-    dd {
-      line-height: 1.55;
-      margin: 2px 0 0;
-      overflow-wrap: anywhere;
-    }
-
-    &--old {
-      border-left: 3px solid #ef5350;
-    }
-
-    &--new {
-      border-left: 3px solid #66bb6a;
-    }
   }
 
   &__change-arrow {
@@ -889,7 +877,7 @@
         padding-left: 0;
       }
 
-      .game-master-updates__change-comparison {
+      .game-master-updates__change-transition {
         grid-template-columns: minmax(0, 1fr);
       }
 
