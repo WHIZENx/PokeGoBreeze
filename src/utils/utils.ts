@@ -762,11 +762,7 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 
   const fastMoves = getAllMoves(pokemon, TypeMove.Fast);
   const chargeMoves = getAllMoves(pokemon, TypeMove.Charge);
-  return (
-    (isNotEmpty(fastMoves) && isNotEmpty(chargeMoves)) ||
-    (!isEqual(fastMoves[0], 'STRUGGLE') && !isInclude(fastMoves[0], 'SPLASH')) ||
-    !isEqual(chargeMoves[0], 'STRUGGLE')
-  );
+  return isNotEmpty(fastMoves) && isNotEmpty(chargeMoves);
 };
 
 const EFFORT_NAME_MAP: Partial<Record<string, string>> = {

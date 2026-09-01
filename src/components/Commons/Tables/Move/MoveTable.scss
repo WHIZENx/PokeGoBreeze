@@ -34,7 +34,11 @@
 }
 
 .move-tables-wrapper {
-  @apply tw-relative tw-min-h-[240px];
+  @apply tw-relative;
+
+  &[aria-busy="true"] {
+    @apply tw-min-h-[240px];
+  }
 }
 
 .move-tables-content {
