@@ -14,18 +14,31 @@
 
 ## Overview
 
-PokeGoBreeze is a comprehensive, feature-rich web application designed for Pokémon GO trainers of all levels. It provides an extensive suite of tools and resources to help players optimize their gameplay, build competitive teams, analyze battles, and make informed decisions. The application features real-time data synchronization with the latest Pokémon GO game mechanics, an intuitive user interface with dark/light theme support, and powerful calculators for various gameplay scenarios.
+PokeGoBreeze is a web application for Pokémon GO trainers who want to explore game data, compare Pokémon, analyze battles, and use gameplay calculators. The public web client consumes processed, versioned data from the PokeGoBreeze API so that data preparation and calculation logic stay consistent across pages.
 
 **Key Highlights:**
-- 🎮 Complete Pokédex with 900+ Pokémon and detailed statistics
+- 🎮 Pokédex with 1,000+ Pokémon, forms, assets, moves, and detailed statistics
 - ⚔️ Advanced PVP battle simulator with league rankings
 - 📊 Comprehensive damage, DPS/TDO, and stats calculators
-- 🌟 Real-time game data updates
+- 📰 Readable Game Master patch notes for webapp-relevant changes
+- 🌟 Scheduled updates from Pokémon GO Game Master snapshots
 - 🎨 Beautiful, responsive UI with theme customization
 - ⚡ Fast performance with optimized loading and caching
 - 📱 Mobile-friendly responsive design
 
 ## Architecture & Tech Stack
+
+### Web/API Boundary
+
+This repository contains the public React web client. Processed game data and calculation-heavy operations are provided by a separate API service through versioned `/api/v1` endpoints.
+
+- The API publishes metadata and generated sections from one consistent Game Master snapshot.
+- Pages request only the sections and endpoint results they need instead of loading the complete dataset at startup.
+- The web client validates the processed-data schema before accepting a dataset.
+- Pokémon GO assets use centralized URL resolution and fallback handling in the web client.
+- Internal data-processing implementation and generated server data are not part of this public repository.
+
+For local development, set `REACT_APP_DATA_API_URL` to a compatible deployed API or to the API service running locally.
 
 ### Frontend Framework
 - **Core**: React 18.2.0 with TypeScript 5.5.3
@@ -93,8 +106,8 @@ PokeGoBreeze is a comprehensive, feature-rich web application designed for Poké
 
 ### Deployment & DevOps
 - **Hosting**:
-  - Primary: Firebase Hosting
-  - Secondary: Vercel
+  - Vercel deployments for production and branch environments
+  - Firebase Hosting deployments and pull-request previews
 - **Containerization**: Docker support with docker-compose
 - **CI/CD**:
   - GitHub Actions for automated workflows
@@ -123,7 +136,7 @@ PokeGoBreeze is a comprehensive, feature-rich web application designed for Poké
 ├── composables      # Reusable composition hooks (useTimestamp, useTheme, useDevice, useRouter, ...)
 ├── contexts         # React contexts (options, snackbar, ...)
 ├── core             # Core functionality and utilities
-├── data             # Static data files and game data
+├── data             # Small client-owned reference data; processed game data comes from the API
 ├── enums            # TypeScript enumerations
 ├── pages            # Application pages and routes
 │   ├── Error        # 404 / error page
@@ -158,10 +171,13 @@ PokeGoBreeze is a comprehensive, feature-rich web application designed for Poké
 
 ### 🏠 Home & Information
 #### **Pokédex** (`/`)
-Main hub displaying the complete Pokémon database with filtering, sorting, and search capabilities. Browse through 900+ Pokémon with detailed stats, types, and quick access to individual Pokémon pages.
+Main hub displaying the Pokémon database with filtering, sorting, and search capabilities. Browse through 1,000+ Pokémon with detailed stats, types, and quick access to individual Pokémon pages.
 
 #### **Game News** (`/news`)
 Latest Pokémon GO news, updates, events, and announcements. Stay informed about new features, special events, and game changes.
+
+#### **Game Master Updates** (`/game-master-updates`)
+Patch-note-style summaries of Game Master changes that affect PokéGO Breeze. Updates are grouped into Pokémon, moves, battle/PVP, items, progression, and system sections, with links to supported Pokémon and move detail pages.
 
 ### 🔍 Search & Discovery
 #### **Search Pokémon** (`/search-pokemon`)
@@ -315,8 +331,8 @@ Browse and track the complete collection of in-game stickers, including special 
 - **🌓 Theme System**: Toggle between light and dark modes with persistent preference
 - **📱 Responsive Design**: Optimized for desktop, tablet, and mobile devices
 - **⚡ Performance**: Fast page loads with optimized caching and code splitting
-- **🔄 Auto-sync**: Regular updates to match the latest game data
-- **💾 Offline Support**: Core features work offline with cached data
+- **🔄 Versioned Data**: Generated sections are synchronized from a single Game Master snapshot
+- **📦 On-demand Loading**: Pages load and cache only the processed sections they use
 - **🔐 Secure Storage**: Encrypted local data storage for user preferences
 - **🎯 Smart Search**: Fuzzy search and autocomplete for quick navigation
 - **📊 Data Tables**: Sortable, filterable tables with export capabilities
@@ -330,16 +346,16 @@ Browse and track the complete collection of in-game stickers, including special 
 4. Ensure compatibility with the latest Pokémon GO game mechanics and updates
 
 ### Success Metrics
-- **Data Accuracy**: Sync with official game data within 24 hours of updates
+- **Data Consistency**: Publish all generated sections from the same source snapshot and reject unsupported schemas
 - **Tool Completeness**: Cover all major gameplay aspects (catching, battling, raids, PVP)
-- **Performance**: <2s initial load time, <500ms for subsequent interactions
+- **Performance**: Minimize initial payloads and avoid unnecessary API section requests
 - **Accessibility**: Support all modern browsers and devices
 
 ## Getting Started
 
 ### Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **npm**: v8.0.0 or higher
+- **Node.js**: v24.x (matches `package.json` and CI)
+- **npm**: a version compatible with Node.js 24
 - **Git**: For cloning the repository
 
 ### Installation
@@ -382,6 +398,7 @@ npm install
    | `REACT_APP_ENCRYPTION_SALT` | Yes | AES encryption salt (40+ chars) |
    | `REACT_APP_DEPLOYMENT_MODE` | Yes | `development` \| `staging` \| `production` |
    | `REACT_APP_BASE_URL` | Yes | Application base URL |
+   | `REACT_APP_DATA_API_URL` | Yes | Base URL of a compatible PokeGoBreeze API deployment |
    | `REACT_APP_EDGE_TOKEN` | Yes | Edge Config write token (deploy.sh) |
    | `REACT_APP_EDGE_READ_TOKEN` | Yes | Edge Config read token (config.sh) |
    | `REACT_APP_EDGE_ID` | Yes | Edge Config ID (e.g. `ecfg_xxx`) |
@@ -410,6 +427,8 @@ The development server includes:
 - 🔍 ESLint and Stylelint real-time checking
 - 🎨 SCSS preprocessing
 - 🔧 Source maps for debugging
+
+Data-backed pages also require `REACT_APP_DATA_API_URL`. When developing through the workspace repository, run the web and API services together; when cloning only this repository, point the variable at a compatible API deployment.
 
 **Other development commands**:
 ```bash
@@ -620,7 +639,7 @@ Contributions are welcome and greatly appreciated! Whether you're fixing bugs, a
 
 - 🐛 **Bug Fixes**: Report and fix bugs
 - ✨ **New Features**: Suggest and implement new tools or features
-- 📊 **Data Updates**: Help keep Pokémon data current with game updates
+- 📊 **Data Presentation**: Improve how API data and Game Master changes are presented in the web client
 - 🎨 **UI/UX Improvements**: Enhance the user interface and experience
 - 📚 **Documentation**: Improve code documentation and user guides
 - ♿ **Accessibility**: Make the app more accessible to all users
@@ -650,39 +669,37 @@ When reporting issues, please include:
 - 🏆 **Community Features**: Share teams and strategies with other players
 
 ### Recent Updates
-- 🚀 Upgraded Vite from v5 to v6 for faster builds and updated `.gitignore`
-- 🖼️ Fixed Pokémon sprite ID padding to 4 digits
-- 🛡️ Added Pokémon encounter fallback and guarded string replace errors
-- 🎨 Adjusted HP bar gap styling
-- ⚔️ Updated UI styling and fixed raid battle state management
-- 🎨 Migrated to modern SCSS `@use` syntax
-- 🔐 Enhanced security with encrypted storage
-- 🎯 Continued TypeScript type-safety improvements across composables and stores
+- 📰 Added paginated Game Master Patch Notes with readable field changes and entity assets
+- 🔌 Moved processed datasets and calculation-heavy tools to versioned API endpoints
+- 📦 Added page-level section loading, request deduplication, and schema-version validation
+- 🖼️ Centralized Pokémon GO asset resolution and fallbacks across detail and counter views
+- ⚔️ Moved raid, stats, damage, league, and PVP simulation workflows to API responses
+- 🎯 Improved Pokémon form switching, moveset loading, loading states, and mobile battle audio
+- 🚀 Upgraded the build toolchain to Vite 6 and Node.js 24
 
 ## Performance & Optimization
 
 PokeGoBreeze is built with performance in mind:
 
-- **Fast Initial Load**: < 2s on average network connection
 - **Code Splitting**: Vendor and route-based splitting for smaller bundles
 - **Lazy Loading**: Components load on-demand
 - **Optimized Assets**: Compressed images and minified code
-- **Efficient Caching**: Smart caching strategies for static assets
+- **Efficient Caching**: Deduplicated section requests and API-side caching for generated data
 - **Redux Optimization**: Memoized selectors and normalized state
 - **Tree Shaking**: Unused code is eliminated from production builds
 
 ## Security
 
-- **Encrypted Storage**: User data is encrypted using AES encryption
-- **Environment Variables**: Sensitive data stored securely
-- **No Sensitive Data Collection**: App doesn't collect personal information
+- **Encrypted Storage**: Persisted application preferences use encrypted serialization in browser storage
+- **Deployment Secrets**: CI and hosting credentials belong in GitHub/Vercel/Firebase secret stores, never in client configuration
+- **Operational Telemetry**: Deployment analytics and web-vitals requests contain no gameplay account credentials
 - **HTTPS Only**: All production deployments use HTTPS
 - **Regular Updates**: Dependencies are regularly updated for security patches
 
 ## Acknowledgments
 
 - **Pokémon GO**: © 2016-2026 Niantic, Inc. © 2016-2026 Pokémon. © 1995-2026 Nintendo/Creatures Inc./GAME FREAK inc.
-- **Data Sources**: Thanks to the Pokémon GO community for data contributions
+- **Data Sources**: Thanks to PokeMiners and the wider Pokémon GO community for Game Master and asset contributions
 - **Open Source Libraries**: Built with amazing open-source tools and libraries
 - **Contributors**: Special thanks to all contributors who have helped improve this project
 
@@ -692,13 +709,13 @@ PokeGoBreeze is built with performance in mind:
 No, PokeGoBreeze is an independent, community-driven project and is not affiliated with Niantic or The Pokémon Company.
 
 ### How often is the data updated?
-We aim to update Pokémon data within 24-48 hours of official game updates.
+The API checks for new Game Master snapshots on a schedule. The web client receives the refreshed version after the API finishes generating and publishing a complete, consistent section set.
 
 ### Can I use this app offline?
-Yes, core features work offline with cached data. However, the latest updates require an internet connection.
+Some previously loaded browser assets may remain cached, but data-backed pages and calculators require access to the PokeGoBreeze API.
 
 ### Is my data secure?
-Yes, all local data is encrypted using AES encryption. We don't collect or store personal information on external servers.
+Persisted application preferences are encrypted in browser storage. The app also sends operational analytics and web-vitals events; do not place account credentials or other secrets in client-side configuration.
 
 ### Can I suggest new features?
 Absolutely! Please open an issue on GitHub with your feature request.
