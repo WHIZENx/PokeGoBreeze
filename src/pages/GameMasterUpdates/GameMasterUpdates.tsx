@@ -840,7 +840,9 @@ const GameMasterUpdates = () => {
       })
       .catch((reason: unknown) => {
         if (currentRequest === requestId.current && !APIService.isCancel(reason)) {
-          setError(`Unable to load Game Master patch notes: ${String(reason)}`);
+          setError(
+            'Unable to load Game Master patch notes. The data service is temporarily unavailable. Please try again.'
+          );
         }
       })
       .finally(() => {
