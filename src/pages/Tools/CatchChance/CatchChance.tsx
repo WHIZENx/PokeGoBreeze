@@ -4,7 +4,6 @@ import SelectBadge from '../../../components/Commons/Selects/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
 import APIService from '../../../services/api.service';
-import { calculateCatchChance, calculateCP } from '../../../utils/calculate';
 import {
   createDataRows,
   getItemSpritePath,
@@ -41,26 +40,11 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import {
-  bronzeIncChance,
-  curveIncChance,
-  excellentThrowIncChance,
-  goldIncChance,
-  goldRazzBerryIncChance,
-  greatBallIncChance,
-  greatThrowIncChance,
   maxEncounterPlayerLevel,
   maxPokemonLevel,
   maxQuestEncounterPlayerLevel,
   minLevel,
-  niceThrowIncChance,
-  normalThrowIncChance,
-  platinumIncChance,
-  pokeBallIncChance,
-  razzBerryIncChance,
-  silverIncChance,
-  silverPinapsIncChance,
   stepLevel,
-  ultraBallIncChance,
 } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
@@ -72,27 +56,27 @@ const balls = createDataRows<PokeBallThreshold>(
   {
     name: 'Poké Ball',
     itemName: ItemName.PokeBall,
-    threshold: pokeBallIncChance(),
+    threshold: 1,
     pokeBallType: PokeBallType.PokeBall,
   },
   {
     name: 'Great Ball',
     itemName: ItemName.GreatBall,
-    threshold: greatBallIncChance(),
+    threshold: 1.5,
     pokeBallType: PokeBallType.GreatBall,
   },
   {
     name: 'Ultra Ball',
     itemName: ItemName.UltraBall,
-    threshold: ultraBallIncChance(),
+    threshold: 2,
     pokeBallType: PokeBallType.UltraBall,
   }
 );
 const throws = createDataRows<ThrowThreshold>(
-  { name: 'Normal Throw', threshold: normalThrowIncChance(), throwType: ThrowType.Normal },
-  { name: 'Nice Throw', threshold: niceThrowIncChance(), throwType: ThrowType.Nice },
-  { name: 'Great Throw', threshold: greatThrowIncChance(), throwType: ThrowType.Great },
-  { name: 'Excellent Throw', threshold: excellentThrowIncChance(), throwType: ThrowType.Excellent }
+  { name: 'Normal Throw', threshold: [], throwType: ThrowType.Normal },
+  { name: 'Nice Throw', threshold: [], throwType: ThrowType.Nice },
+  { name: 'Great Throw', threshold: [], throwType: ThrowType.Great },
+  { name: 'Excellent Throw', threshold: [], throwType: ThrowType.Excellent }
 );
 throws.forEach((t) => throwsByType.set(t.throwType, t));
 
@@ -102,9 +86,9 @@ const CatchChance = () => {
 
   const [form, setForm] = useState<IPokemonFormModify>();
 
-  const [statATK, setStatATK] = useState(0);
-  const [statDEF, setStatDEF] = useState(0);
-  const [statSTA, setStatSTA] = useState(0);
+  const [, setStatATK] = useState(0);
+  const [, setStatDEF] = useState(0);
+  const [, setStatSTA] = useState(0);
 
   const [data, setData] = useState<PokemonCatchChance>();
   const [dataAdv, setDataAdv] = useState(new DataAdvance());
@@ -115,6 +99,7 @@ const CatchChance = () => {
   const [advanceOption, setAdvanceOption] = useState(new AdvanceOption());
   const { ballType, isNormalThrow } = advanceOption;
   const [colorCircle, setColorCircle] = useState('#00ff00');
+  const [calculatedCp, setCalculatedCp] = useState(0);
   const [isEncounter, setIsEncounter] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [options, setOptions] = useState(new PokeBallOption());
@@ -143,30 +128,70 @@ const CatchChance = () => {
   }, [searchingToolCurrentDetails]);
 
   useEffect(() => {
-    if (!isAdvance && data && medal) {
-      calculateCatch();
+    if (!form?.defaultId || !data || !medal.typePri) {
+      return;
     }
-  }, [isAdvance, medal, level, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, isShadow]);
-
-  useEffect(() => {
-    if (data && medal) {
-      renderRingColor();
-    }
-  }, [ballType, medal, level, isRazzBerry, isGoldenRazzBerry, isSilverPinaps]);
-
-  useEffect(() => {
-    if (isAdvance) {
-      setAdvThrow(renderAdvThrow());
-      calculateAdvance();
-    }
-  }, [isAdvance, radius]);
-
-  useEffect(() => {
-    if (isAdvance) {
-      calculateAdvance();
-    }
+    const currentThrow = renderAdvThrow();
+    setAdvThrow(currentThrow);
+    const url = APIService.getCatchChance({
+      id: form.defaultId,
+      form: form.form.formName,
+      level,
+      primaryMedal: medal.typePri.priority,
+      secondaryMedal: medal.typeSec?.type ? medal.typeSec.priority : -1,
+      ball: ballType,
+      radius,
+      normalThrow: isNormalThrow,
+      curve: isCurveBall,
+      razz: isRazzBerry,
+      goldenRazz: isGoldenRazzBerry,
+      silverPinap: isSilverPinaps,
+      shadow: isShadow,
+    });
+    let active = true;
+    APIService.getFetchUrl<{
+      data: {
+        matrix: DynamicObj<DynamicObj<number>>;
+        cp: number;
+        ringChance: number;
+        advanced: { result: number; throwType: ThrowType };
+      };
+    }>(url)
+      .then(({ data: response }) => {
+        if (!active) {
+          return;
+        }
+        const selectedBall = balls[ballType];
+        const selectedThrow = throws[response.data.advanced.throwType];
+        setData((current) => (current ? { ...current, result: response.data.matrix } : current));
+        setCalculatedCp(response.data.cp);
+        setColorCircle(checkValueColor(response.data.ringChance));
+        if (selectedBall) {
+          setDataAdv(
+            DataAdvance.create({
+              result: response.data.advanced.result,
+              ballName: selectedBall.name,
+              ballItemName: selectedBall.itemName,
+              pokeBallType: selectedBall.pokeBallType,
+              throwText: selectedThrow?.name ?? 'Normal Throw',
+              throwType: response.data.advanced.throwType,
+            })
+          );
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setCalculatedCp(0);
+        }
+      });
+    return () => {
+      active = false;
+    };
   }, [
-    isAdvance,
+    form?.defaultId,
+    form?.form.formName,
+    data?.baseCaptureRate,
+    data?.shadowBaseCaptureRate,
     radius,
     medal,
     level,
@@ -176,63 +201,12 @@ const CatchChance = () => {
     isSilverPinaps,
     ballType,
     isNormalThrow,
+    isShadow,
   ]);
 
   useEffect(() => {
     setIsLoading(false);
   }, [form]);
-
-  const medalCatchChance = (priority: BadgeType) => {
-    switch (priority) {
-      case BadgeType.Bronze:
-        return bronzeIncChance();
-      case BadgeType.Silver:
-        return silverIncChance();
-      case BadgeType.Gold:
-        return goldIncChance();
-      case BadgeType.Platinum:
-        return platinumIncChance();
-      default:
-        return pokeBallIncChance();
-    }
-  };
-
-  const calculateCatch = () => {
-    const result = new Object() as DynamicObj<DynamicObj<number>>;
-    const medalChance =
-      (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) /
-      (medal.typeSec ? 2 : 1);
-
-    if (data) {
-      balls.forEach((ball) => {
-        const ballType = getValueOrDefault(String, getKeyWithData(ThrowType, ball.pokeBallType)?.toLowerCase());
-        result[ballType] = new Object() as DynamicObj<number>;
-        throws.forEach((type) => {
-          const [minThreshold, maxThreshold] = type.threshold;
-          const multiplier =
-            ball.threshold *
-            ((minThreshold + maxThreshold) / 2) *
-            medalChance *
-            (isCurveBall ? curveIncChance() : 1) *
-            (isRazzBerry ? razzBerryIncChance() : 1) *
-            (isGoldenRazzBerry ? goldRazzBerryIncChance() : 1) *
-            (isSilverPinaps ? silverPinapsIncChance() : 1);
-          const prob = calculateCatchChance(
-            data.shadowBaseCaptureRate && options.isShadow ? data.shadowBaseCaptureRate : data.baseCaptureRate,
-            level,
-            multiplier
-          );
-          const throwType = getValueOrDefault(String, getKeyWithData(ThrowType, type.throwType)?.toLowerCase());
-          result[ballType][throwType] = Math.min(prob * 100, 100);
-        });
-      });
-    }
-
-    setData({
-      ...data,
-      result,
-    });
-  };
 
   const findCatchCapture = (pokemon: Partial<IPokemonDetail>) => {
     if (!pokemon || !pokemon.encounter || isUndefined(pokemon.encounter.movementTimerS) || !pokemon.types) {
@@ -298,10 +272,6 @@ const CatchChance = () => {
     }
   };
 
-  const renderRingColor = () => {
-    setColorCircle(checkValueColor(calculateProb(true)));
-  };
-
   const checkValueColor = (value: number) => {
     if (value >= 66) {
       return `rgb(${255 - Math.round(((value - 66) * 255) / 34)}, 255, 0)`;
@@ -321,51 +291,6 @@ const CatchChance = () => {
       return throwsByType.get(ThrowType.Great);
     } else {
       return throwsByType.get(ThrowType.Excellent);
-    }
-  };
-
-  const calculateProb = (disable = false, threshold = 1) => {
-    const medalChance =
-      (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) /
-      (medal.typeSec ? 2 : 1);
-    const pokeBall = balls[ballType];
-    let result = 0;
-    if (pokeBall) {
-      const multiplier =
-        pokeBall.threshold *
-        threshold *
-        medalChance *
-        (isCurveBall && !disable ? curveIncChance() : 1) *
-        (isRazzBerry ? razzBerryIncChance() : 1) *
-        (isGoldenRazzBerry ? goldRazzBerryIncChance() : 1) *
-        (isSilverPinaps ? silverPinapsIncChance() : 1);
-      const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
-      result = Math.min(prob * 100, 100);
-    }
-    return result;
-  };
-
-  const calculateAdvance = () => {
-    const threshold = isNormalThrow ? 1 : 1 + (100 - radius) / 100;
-    const result = calculateProb(false, threshold);
-    const pokeBall = balls[ballType];
-    let throwText = '';
-    if (isNormalThrow) {
-      throwText = getValueOrDefault(String, throwsByType.get(ThrowType.Normal)?.name);
-    } else if (advThrow) {
-      throwText = advThrow.name;
-    }
-    if (pokeBall) {
-      setDataAdv(
-        DataAdvance.create({
-          result,
-          ballName: pokeBall.name,
-          ballItemName: pokeBall.itemName,
-          pokeBallType: pokeBall.pokeBallType,
-          throwText,
-          throwType: advThrow?.throwType ?? ThrowType.Normal,
-        })
-      );
     }
   };
 
@@ -536,7 +461,7 @@ const CatchChance = () => {
                 <div className="tw-w-1/4 tw-text-center tw-inline-block">
                   <h1>CP</h1>
                   <hr className="tw-w-full" />
-                  <h5>{calculateCP(statATK, statDEF, statSTA, level)}</h5>
+                  <h5>{calculatedCp}</h5>
                 </div>
                 <div className="tw-w-1/4 tw-text-center tw-inline-block">
                   <h1>LEVEL</h1>
@@ -603,9 +528,6 @@ const CatchChance = () => {
                   checked={isAdvance}
                   onChange={(_, check) => {
                     setOptions(PokeBallOption.create({ ...options, isAdvance: check }));
-                    if (check) {
-                      calculateAdvance();
-                    }
                   }}
                 />
               }

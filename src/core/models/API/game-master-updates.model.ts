@@ -15,6 +15,13 @@ export interface GameMasterMoveReference {
   type?: string;
 }
 
+export interface GameMasterPokemonReference {
+  id: number;
+  name: string;
+  form?: string;
+  imageUrl?: string;
+}
+
 export type GameMasterFieldValue =
   | string
   | number
@@ -30,6 +37,8 @@ export interface GameMasterFieldChange {
   after?: GameMasterFieldValue;
   beforeMoves?: GameMasterMoveReference[];
   afterMoves?: GameMasterMoveReference[];
+  beforePokemon?: GameMasterPokemonReference[];
+  afterPokemon?: GameMasterPokemonReference[];
 }
 
 export interface GameMasterChange {
@@ -87,6 +96,7 @@ export interface GameMasterPatchSummary {
   previous: GameMasterVersion;
   summary: GameMasterUpdateSummary;
   heroImage?: GameMasterPatchHeroImage;
+  backgroundImage?: GameMasterPatchHeroImage;
   title?: string;
   description?: string;
   highlights?: string[];
