@@ -8,7 +8,7 @@ import APIService from '../../services/api.service';
 import { genList, regionList, versionList } from '../../utils/constants';
 import { Checkbox, FormControlLabel, ListItemText, Skeleton, Switch } from '@mui/material';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
-import { PokedexApiResponse } from '../../core/models/API/pokedex.model';
+import { isPokedexApiResponse, PokedexApiResponse } from '../../core/models/API/pokedex.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
@@ -202,6 +202,9 @@ const Pokedex = (props: IStyleSheetData) => {
       .then(({ data }) => {
         if (requestId !== latestRequestRef.current) {
           return;
+        }
+        if (!isPokedexApiResponse(data)) {
+          throw new Error('The Pokédex service returned an invalid response. Please try again.');
         }
         const rows = data.data.map((item) => new PokemonHomeModel(item, item.assetForm));
         setPages(data.meta.pages);
