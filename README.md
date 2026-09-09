@@ -409,7 +409,19 @@ npm install
    GitHub Actions deployment also requires the `VERCEL_TOKEN` Actions secret
    and the `VERCEL_ORG_ID` plus `VERCEL_PROJECT_ID` Actions variables. Branches
    map to Vercel as follows: `develop` → Preview develop, `stage` → Preview
-   stage, and `main` → Production. The workspace is not part of this deployment.
+   stage, and `main` → Production. Firebase Hosting uses the same branch and API
+   environment mapping:
+
+   | Branch | Firebase Hosting | Data API |
+   |---|---|---|
+   | `develop` | `pokego-breeze-develop.web.app` | `pokego-breeze-api-develop.vercel.app` |
+   | `stage` | `pokego-breeze-stage.web.app` | `pokego-breeze-api-stage.vercel.app` |
+   | `main` | `pokego-breeze.web.app` | `pokego-breeze-api.vercel.app` |
+
+   The deployment workflow validates that the selected API URL is embedded in
+   the Firebase build and verifies the hosted SPA route after deployment. SPA
+   documents revalidate immediately, while fingerprinted assets use immutable
+   caching. The workspace is not part of this deployment.
 
    > See [`.env.example`](.env.example) for all variables with descriptions and example values.
 

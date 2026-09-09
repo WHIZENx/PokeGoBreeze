@@ -17,6 +17,9 @@ env:
   REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
   REACT_APP_ENCRYPTION_SALT: ${{ secrets.REACT_APP_ENCRYPTION_SALT }}
   REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
+  # Public API aliases are branch-specific. Keep this explicit so non-Vercel
+  # builders (Firebase Hosting and PR previews) receive the same API endpoint.
+  REACT_APP_DATA_API_URL: ${{ github.ref_name == 'main' && 'https://pokego-breeze-api.vercel.app' || github.ref_name == 'stage' && 'https://pokego-breeze-api-stage.vercel.app' || 'https://pokego-breeze-api-develop.vercel.app' }}
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
@@ -30,8 +33,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    environment: ${{ github.ref_name == 'main' && 'production' || 
-      github.ref_name == 'stage' && 'stage' || 
+    environment: ${{ github.ref_name == 'main' && 'production' ||
+      github.ref_name == 'stage' && 'stage' ||
       github.ref_name == 'develop' && 'development' }}
     steps:
       - uses: actions/checkout@v5
@@ -82,11 +85,12 @@ jobs:
     if: |
       github.event_name != 'pull_request' &&
       (github.ref_name == 'main' || github.ref_name == 'stage' || github.ref_name == 'develop')
+    needs: deploy-vercel
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    environment: ${{ github.ref_name == 'main' && 'production' || 
-      github.ref_name == 'stage' && 'stage' || 
+    environment: ${{ github.ref_name == 'main' && 'production' ||
+      github.ref_name == 'stage' && 'stage' ||
       github.ref_name == 'develop' && 'development' }}
     steps:
       - uses: actions/checkout@v5
@@ -120,6 +124,11 @@ jobs:
           npm run generate:sitemap
           bash -c 'source ./config.sh && npx vite build'
 
+      - name: Verify Firebase build environment
+        run: |
+          test -n "$REACT_APP_DATA_API_URL"
+          grep -R --fixed-strings --quiet "$REACT_APP_DATA_API_URL" dist/static/js
+
       - name: Deploy to Firebase Hosting
         run: |
           firebase deploy \
@@ -135,6 +144,22 @@ jobs:
           name: build-${{ github.ref_name }}-${{ github.sha }}
           path: dist
           retention-days: 7
+
+      - name: Verify Firebase Hosting route
+        run: |
+          case "${{ github.ref_name }}" in
+            main)    HOST="https://pokego-breeze.web.app" ;;
+            stage)   HOST="https://pokego-breeze-stage.web.app" ;;
+            develop) HOST="https://pokego-breeze-develop.web.app" ;;
+          esac
+          HEADERS_FILE="$RUNNER_TEMP/firebase-headers.txt"
+          curl --fail --silent --show-error --retry 5 --retry-all-errors \
+            "$HOST/game-master-updates" \
+            --dump-header "$HEADERS_FILE" \
+            --output /dev/null
+          grep --fixed-strings --ignore-case --quiet \
+            "cache-control: public, max-age=0, must-revalidate" \
+            "$HEADERS_FILE"
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 3 – Firebase Hosting: PR preview
