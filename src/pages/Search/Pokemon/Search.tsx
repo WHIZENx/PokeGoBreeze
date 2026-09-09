@@ -15,7 +15,11 @@ import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
 import SelectCardPokemon from '../../../components/Commons/Selects/SelectCardPokemon';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import type { PokedexApiPokemon, PokedexApiResponse } from '../../../core/models/API/pokedex.model';
+import {
+  isPokedexApiResponse,
+  type PokedexApiPokemon,
+  type PokedexApiResponse,
+} from '../../../core/models/API/pokedex.model';
 
 const Search = () => {
   useTitle({
@@ -68,6 +72,9 @@ const Search = () => {
         .then(({ data }) => {
           if (requestId !== latestSearchRequest.current) {
             return;
+          }
+          if (!isPokedexApiResponse(data)) {
+            throw new Error('The Pokémon search service returned an invalid response.');
           }
           setSearchPages(data.meta.pages);
           setSearchResults((current) => {

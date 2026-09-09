@@ -10,13 +10,13 @@
           "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
         },
         {
-          "source": "**/*.@(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2)",
+          "source": "/static/**",
           "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
         }
       ],
       "rewrites": [
         {
-          "source": "**",
+          "source": "!/@(static)/**",
           "destination": "/index.html"
         }
       ]
@@ -31,13 +31,13 @@
           "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
         },
         {
-          "source": "**/*.@(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2)",
+          "source": "/static/**",
           "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
         }
       ],
       "rewrites": [
         {
-          "source": "**",
+          "source": "!/@(static)/**",
           "destination": "/index.html"
         }
       ]
@@ -52,13 +52,13 @@
           "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
         },
         {
-          "source": "**/*.@(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2)",
+          "source": "/static/**",
           "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
         }
       ],
       "rewrites": [
         {
-          "source": "**",
+          "source": "!/@(static)/**",
           "destination": "/index.html"
         }
       ]
@@ -73,13 +73,13 @@
           "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
         },
         {
-          "source": "**/*.@(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2)",
+          "source": "/static/**",
           "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
         }
       ],
       "rewrites": [
         {
-          "source": "**",
+          "source": "!/@(static)/**",
           "destination": "/index.html"
         }
       ]
