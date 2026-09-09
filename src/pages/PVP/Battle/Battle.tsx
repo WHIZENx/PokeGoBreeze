@@ -134,6 +134,7 @@ const isIOSAudioDevice =
 const audioContextWindow = window as AudioContextWindow;
 const shouldUseHTMLAudioPlayback =
   isIOSAudioDevice || !(audioContextWindow.AudioContext ?? audioContextWindow.webkitAudioContext);
+const htmlAudioPoolSize = 3;
 
 class BattleState implements IBattleState {
   pokemonCurr = new PokemonBattleData();
@@ -550,6 +551,7 @@ const Battle = () => {
   const moveAudioPending = useRef(new Map<string, Promise<ArrayBuffer | undefined>>());
   const moveAudioDecodePending = useRef(new Map<string, Promise<void>>());
   const activeMoveAudio = useRef(new Set<AudioBufferSourceNode>());
+  const htmlMoveAudioPools = useRef(new Map<HTMLAudioElement, HTMLAudioElement[]>());
   const preparingMoveAudio = useRef(false);
 
   const getMoveAudioContext = useCallback(() => {
@@ -639,10 +641,24 @@ const Battle = () => {
     [pokemonCurr.audio, pokemonObj.audio]
   );
 
-  const prepareHTMLMoveAudioPlayback = useCallback(async () => {
-    const audio = getMoveAudio().filter((item): item is HTMLAudioElement => Boolean(item));
-    const unlock = audio.map((item) => {
+  const getHTMLMoveAudioPool = useCallback((audio: HTMLAudioElement) => {
+    const cached = htmlMoveAudioPools.current.get(audio);
+    if (cached) {
+      return cached;
+    }
+    const pool = [audio, ...Array.from({ length: htmlAudioPoolSize - 1 }, () => new Audio(audio.src))];
+    pool.forEach((item) => {
       item.preload = 'auto';
+    });
+    htmlMoveAudioPools.current.set(audio, pool);
+    return pool;
+  }, []);
+
+  const prepareHTMLMoveAudioPlayback = useCallback(async () => {
+    const audio = getMoveAudio()
+      .filter((item): item is HTMLAudioElement => Boolean(item))
+      .flatMap(getHTMLMoveAudioPool);
+    const unlock = audio.map((item) => {
       item.muted = true;
       item.load();
       return item
@@ -655,7 +671,7 @@ const Battle = () => {
         .catch(() => undefined);
     });
     await Promise.all(unlock);
-  }, [getMoveAudio, volume]);
+  }, [getHTMLMoveAudioPool, getMoveAudio, volume]);
 
   const prepareMoveAudioPlayback = useCallback(async () => {
     const context = getMoveAudioContext();
@@ -689,6 +705,10 @@ const Battle = () => {
     activeMoveAudio.current.clear();
   }, []);
 
+  const stopHTMLMoveAudio = useCallback(() => {
+    htmlMoveAudioPools.current.forEach((pool) => pool.forEach(stopAudio));
+  }, []);
+
   useEffect(() => {
     getMoveAudio().forEach((audio) => void preloadMoveAudio(audio));
   }, [getMoveAudio, preloadMoveAudio]);
@@ -701,12 +721,21 @@ const Battle = () => {
     }
     if (volume === 0) {
       stopDecodedMoveAudio();
+      stopHTMLMoveAudio();
     }
-  }, [stopDecodedMoveAudio, volume]);
+    htmlMoveAudioPools.current.forEach((pool) => {
+      pool.forEach((audio) => {
+        audio.volume = volume;
+        audio.muted = volume === 0;
+      });
+    });
+  }, [stopDecodedMoveAudio, stopHTMLMoveAudio, volume]);
 
   useEffect(
     () => () => {
       stopDecodedMoveAudio();
+      stopHTMLMoveAudio();
+      htmlMoveAudioPools.current.clear();
       const context = moveAudioContext.current;
       moveAudioContext.current = undefined;
       moveAudioGain.current = undefined;
@@ -714,7 +743,7 @@ const Battle = () => {
         void context?.close();
       }
     },
-    [stopDecodedMoveAudio]
+    [stopDecodedMoveAudio, stopHTMLMoveAudio]
   );
 
   const getTranslation = (elem: HTMLElement) =>
@@ -867,6 +896,7 @@ const Battle = () => {
     start.current = 0;
     lastSoundIndex.current = -1;
     stopDecodedMoveAudio();
+    stopHTMLMoveAudio();
     stopPokemonAudio(pokemonCurr);
     stopPokemonAudio(pokemonObj);
     return;
@@ -918,10 +948,12 @@ const Battle = () => {
     }
     if (audio) {
       if (shouldUseHTMLAudioPlayback) {
-        audio.muted = false;
-        audio.volume = volume;
-        audio.currentTime = 0;
-        void audio.play().catch(() => undefined);
+        const availableAudio = getHTMLMoveAudioPool(audio).find((item) => item.paused || item.ended);
+        if (availableAudio) {
+          availableAudio.muted = false;
+          availableAudio.volume = volume;
+          void availableAudio.play().catch(() => undefined);
+        }
         return;
       }
       const context = getMoveAudioContext();

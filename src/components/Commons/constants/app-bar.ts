@@ -2,6 +2,8 @@ import { IAppMenuItem } from '../models/menu.model';
 
 export const POKEDEX = 'pokedex';
 export const NEWS = 'news';
+export const LATEST_NEWS = 'latest-news';
+export const GAME_MASTER_UPDATES = 'game-master-updates';
 export const SEARCH = 'search';
 export const EFFECTIVE = 'effective';
 export const TOOLS = 'tools';
@@ -30,6 +32,11 @@ export const STATS_RANKING = 'stats-ranking';
 
 export const SIMULATOR = 'simulator';
 export const BATTLE_LEAGUES = 'battle-leagues';
+
+const subMenuNews: IAppMenuItem<string>[] = [
+  { label: 'Latest News', value: LATEST_NEWS, path: '/news' },
+  { label: 'Game Master Updates', value: GAME_MASTER_UPDATES, path: '/game-master-updates' },
+];
 
 const subMenuSearch: IAppMenuItem<string>[] = [
   { label: 'Pokémon', value: POKEMON, path: '/search-pokemon' },
@@ -68,7 +75,7 @@ const subMenuPvp: IAppMenuItem<string>[] = [
 
 export const pages: IAppMenuItem<string>[] = [
   { label: 'Pokédex', value: POKEDEX, path: '/' },
-  { label: 'News', value: NEWS, path: '/news' },
+  { label: 'News', value: NEWS, subMenus: subMenuNews },
   { label: 'Search', value: SEARCH, subMenus: subMenuSearch },
   { label: 'Effective', value: EFFECTIVE, subMenus: subMenuEffective },
   { label: 'Tools', value: TOOLS, subMenus: subMenuTools },

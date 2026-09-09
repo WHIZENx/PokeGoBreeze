@@ -348,6 +348,11 @@ export interface ItemSettings {
   descriptionOverride?: string;
 }
 
+export interface PokemonUpgradeSettings {
+  maxNormalUpgradeLevel: number;
+  defaultCpBoostAdditionalLevel: number;
+}
+
 export interface PlayerLevel {
   rankNum: number[];
   requiredExperience: number[];
@@ -411,6 +416,7 @@ interface DataGM {
   evolutionChainDisplaySettings: EvolutionChainDisplaySettings;
   itemSettings?: ItemSettings;
   playerLevel: PlayerLevel;
+  pokemonUpgrades: PokemonUpgradeSettings;
   levelUpRewardSettings: LevelUpRewardSettings;
   sourdoughMoveMappingSettings?: SourdoughMoveMappingSettings;
   nonCombatMoveSettings?: NonCombatMoveSettings;
@@ -474,6 +480,8 @@ interface IPlayerSetting {
   cpMultipliers: DynamicObj<number>;
   maxEncounterPlayerLevel: number;
   maxQuestEncounterPlayerLevel: number;
+  maxNormalUpgradeLevel: number;
+  defaultCpBoostAdditionalLevel: number;
 }
 
 export class PlayerSetting implements IPlayerSetting {
@@ -481,6 +489,8 @@ export class PlayerSetting implements IPlayerSetting {
   cpMultipliers: DynamicObj<number> = {};
   maxEncounterPlayerLevel = 0;
   maxQuestEncounterPlayerLevel = 0;
+  maxNormalUpgradeLevel = 0;
+  defaultCpBoostAdditionalLevel = 0;
 }
 
 interface ICombatOption {

@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.scss';
 
 import News from './pages/News/News';
+import GameMasterUpdates from './pages/GameMasterUpdates/GameMasterUpdates';
 import Pokedex from './pages/Pokedex/Pokedex';
 import SearchPokemon from './pages/Search/Pokemon/Search';
 import SearchMove from './pages/Search/Moves/SearchMoves';
@@ -200,6 +201,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
           <Route path="/news" element={<News />} />
+          <Route path="/game-master-updates" element={<GameMasterUpdates />} />
+          <Route path="/game-master-updates/:patchSlug" element={<GameMasterUpdates />} />
           <Route path="/type-effective" element={<TypeEffect />} />
           <Route path="/weather-boosts" element={<Weather />} />
           <Route path="/search-pokemon" element={<SearchPokemon />} />

@@ -13,7 +13,7 @@ import { ScoreType } from '../../../utils/enums/constants.enum';
 import { EqualMode } from '../../../utils/enums/string.enum';
 import { AnimationType } from '../../../components/Sprites/Hexagon/enums/hexagon.enum';
 import { IStatsPokemonGO } from '../../../core/models/stats.model';
-import { maxLevel, maxIv } from '../../../utils/helpers/options-context.helpers';
+import { maxLevel, maxIv, maxPokemonLevel } from '../../../utils/helpers/options-context.helpers';
 import StatsCalculationService from '../../../services/stats-calculation.service';
 import APIService from '../../../services/api.service';
 
@@ -25,7 +25,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
     id = toNumber(id);
     let prevCurrentStats = new BattleBaseStats();
     if (maxCP > BattleLeagueCPType.Ultra) {
-      prevCurrentStats = await StatsCalculationService.getTopRank(stats, id, maxCP, maxLevel() - 1, signal);
+      prevCurrentStats = await StatsCalculationService.getTopRank(stats, id, maxCP, maxPokemonLevel(), signal);
     }
     const currentStats = await StatsCalculationService.getTopRank(stats, id, maxCP, maxLevel(), signal);
     const level = toNumber(currentStats?.level);
@@ -69,7 +69,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
         Level:{' '}
         <b>
           {toNumber(data?.maxCP) > BattleLeagueCPType.Ultra
-            ? `${maxLevel() - 1}-${maxLevel()}`
+            ? `${maxPokemonLevel()}-${maxLevel()}`
             : `${toNumber(data?.level)}`}{' '}
         </b>
         {(toNumber(data?.level) > 40 || toNumber(data?.maxCP) > BattleLeagueCPType.Ultra) && (

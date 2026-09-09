@@ -7,7 +7,7 @@ export interface Species {
   capture_rate: number;
   color: Path;
   egg_groups: Path[];
-  evolution_chain: EvoPath;
+  evolution_chain?: EvoPath | null;
   evolves_from_species: string | null;
   flavor_text_entries: FlavorText[];
   form_descriptions: [];

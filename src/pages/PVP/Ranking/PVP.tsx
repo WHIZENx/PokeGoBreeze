@@ -2,16 +2,12 @@ import React, { useState, useEffect, Fragment, useRef, useCallback } from 'react
 import '../PVP.scss';
 
 import {
-  convertNameRankingToOri,
   splitAndCapitalize,
   capitalize,
-  replaceTempMovePvpName,
   getKeysObj,
   getValidPokemonImgPath,
   getKeyWithData,
 } from '../../../utils/utils';
-import { calculateStatsByTag } from '../../../utils/calculate';
-
 import APIService from '../../../services/api.service';
 import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 
@@ -22,7 +18,6 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { Params } from '../../../utils/constants';
-import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import {
   combineClasses,
@@ -30,15 +25,13 @@ import {
   getPropertyName,
   getValueOrDefault,
   isEqual,
-  isInclude,
   isIncludeList,
   isNotEmpty,
   toNumber,
 } from '../../../utils/extension';
-import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
+import { EqualMode } from '../../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { SortType } from '../enums/pvp-ranking.enum';
-import { PokemonType } from '../../../enums/type.enum';
 import HeaderPVP from '../components/HeaderPVP';
 import BodyPVP from '../components/BodyPVP';
 import MoveSet from '../components/MoveSet';
@@ -48,19 +41,13 @@ import { ScoreType } from '../../../utils/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { HexagonStats } from '../../../core/models/stats.model';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
-import useAssets from '../../../composables/useAssets';
-import useStats from '../../../composables/useStats';
 import useSpinner from '../../../composables/useSpinner';
-import useCombats from '../../../composables/useCombats';
-import usePokemon from '../../../composables/usePokemon';
 import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
@@ -68,11 +55,7 @@ import { Skeleton } from '@mui/material';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
-  const { pvpData, pokemonsData, combatsData, assetsData } = useDataStore();
-  const { findPokemonBySlug } = usePokemon();
-  const { findMoveByName } = useCombats();
-  const { getAssetNameById } = useAssets();
-  const { statsData } = useStats();
+  const { pvpData } = useDataStore();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
   const [searchParams] = useSearchParams();
@@ -109,156 +92,85 @@ const RankingPVP = (props: IStyleSheetData) => {
   useTitle(titleProps);
 
   const fetchPokemonRanking = useCallback(async () => {
-    if (
-      statsData?.attack?.ranking &&
-      statsData?.defense?.ranking &&
-      statsData?.stamina?.ranking &&
-      statsData?.statProd?.ranking
-    ) {
-      showSpinner();
-      try {
-        const cp = toNumber(params.cp);
-        const pvpType = getValueOrDefault(
-          String,
-          searchParams.get(Params.LeagueType),
-          getKeyWithData(ScoreType, ScoreType.Overall)
-        ).toLowerCase();
-        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, pvpType)))
-          .data;
-        if (!isNotEmpty(file)) {
-          setIsFound(false);
-          return;
-        }
-        if (params.serie === LeagueBattleType.All) {
+    showSpinner();
+    try {
+      const cp = toNumber(params.cp);
+      const pvpType = getValueOrDefault(
+        String,
+        searchParams.get(Params.LeagueType),
+        getKeyWithData(ScoreType, ScoreType.Overall)
+      ).toLowerCase();
+      const file = (
+        await APIService.getFetchUrl<IPokemonBattleRanking[]>(
+          APIService.getRankingFile(params.serie, cp, pvpType, true)
+        )
+      ).data;
+      if (!isNotEmpty(file)) {
+        setIsFound(false);
+        return;
+      }
+      if (params.serie === LeagueBattleType.All) {
+        setTitleProps({
+          title: `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`,
+          description: `Top ranked Pokémon for ${getPokemonBattleLeagueName(
+            cp
+          )} PVP battles in Pokémon GO. Find the best Pokémon with optimal stats and movesets.`,
+          keywords: [
+            'Pokémon GO',
+            `${getPokemonBattleLeagueName(cp)}`,
+            'PVP ranking',
+            'best PVP Pokémon',
+            'meta rankings',
+            'PokéGO Breeze',
+          ],
+          image: getPokemonBattleLeagueIcon(cp),
+        });
+      } else {
+        {
+          const leagueName = params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : '';
+          const serieName = splitAndCapitalize(params.serie, '-', ' ');
+          const leaguePrefix = leagueName ? `${leagueName} ` : '';
           setTitleProps({
-            title: `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`,
-            description: `Top ranked Pokémon for ${getPokemonBattleLeagueName(
-              cp
-            )} PVP battles in Pokémon GO. Find the best Pokémon with optimal stats and movesets.`,
+            title: `PVP Ranking - ${leaguePrefix}${serieName} (${capitalize(pvpType)}) | PokéGO Breeze`,
+            description: `Top ranked Pokémon for ${leaguePrefix}${serieName} (${capitalize(pvpType)}) battles in Pokémon GO. Find the best Pokémon with optimal stats and movesets.`,
             keywords: [
               'Pokémon GO',
-              `${getPokemonBattleLeagueName(cp)}`,
+              serieName,
+              ...(leagueName ? [leagueName] : []),
               'PVP ranking',
+              `${capitalize(pvpType)} ranking`,
               'best PVP Pokémon',
               'meta rankings',
               'PokéGO Breeze',
             ],
             image: getPokemonBattleLeagueIcon(cp),
           });
-        } else {
-          {
-            const leagueName = params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : '';
-            const serieName = splitAndCapitalize(params.serie, '-', ' ');
-            const leaguePrefix = leagueName ? `${leagueName} ` : '';
-            setTitleProps({
-              title: `PVP Ranking - ${leaguePrefix}${serieName} (${capitalize(pvpType)}) | PokéGO Breeze`,
-              description: `Top ranked Pokémon for ${leaguePrefix}${serieName} (${capitalize(pvpType)}) battles in Pokémon GO. Find the best Pokémon with optimal stats and movesets.`,
-              keywords: [
-                'Pokémon GO',
-                serieName,
-                ...(leagueName ? [leagueName] : []),
-                'PVP ranking',
-                `${capitalize(pvpType)} ranking`,
-                'best PVP Pokémon',
-                'meta rankings',
-                'PokéGO Breeze',
-              ],
-              image: getPokemonBattleLeagueIcon(cp),
-            });
-          }
-        }
-        const filePVP = file.map((data) => {
-          const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-          const pokemon = findPokemonBySlug(name);
-          const id = pokemon?.num;
-          const form = getAssetNameById(id, name, pokemon?.form);
-
-          const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
-
-          const [fMoveData] = data.moveset;
-          let [, cMoveDataPri, cMoveDataSec] = data.moveset;
-          cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
-          cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
-
-          const fMove = findMoveByName(fMoveData);
-          const cMovePri = findMoveByName(cMoveDataPri);
-          let cMoveSec;
-          if (cMoveDataSec) {
-            cMoveSec = findMoveByName(cMoveDataSec);
-          }
-
-          data.scorePVP = HexagonStats.create(data.scores);
-          let pokemonType = PokemonType.Normal;
-          if (isInclude(data.speciesName, `(${formShadow()})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
-            pokemonType = PokemonType.Shadow;
-          } else if (
-            isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
-            isIncludeList(pokemon?.purifiedMoves, cMoveDataSec)
-          ) {
-            pokemonType = PokemonType.Purified;
-          }
-
-          return new PokemonBattleRanking({
-            data,
-            id,
-            name,
-            form,
-            pokemon,
-            stats,
-            atk: statsData?.attack?.ranking?.find((i) => i.attack === stats.atk),
-            def: statsData?.defense?.ranking?.find((i) => i.defense === stats.def),
-            sta: statsData?.stamina?.ranking?.find((i) => i.stamina === stats.sta),
-            prod: statsData?.statProd?.ranking?.find((i) => i.product === stats.prod),
-            fMove,
-            cMovePri,
-            cMoveSec,
-            pokemonType,
-          });
-        });
-        setRankingData(filePVP);
-        hideSpinner();
-      } catch (e) {
-        if ((e as AxiosError)?.status === 404) {
-          setIsFound(false);
-        } else {
-          showSpinnerMsg({
-            isError: true,
-            message: (e as AxiosError).message,
-          });
         }
       }
+      const filePVP = file.map((data) => new PokemonBattleRanking(data));
+      setRankingData(filePVP);
+      hideSpinner();
+    } catch (e) {
+      if ((e as AxiosError)?.status === 404) {
+        setIsFound(false);
+      } else {
+        showSpinnerMsg({
+          isError: true,
+          message: (e as AxiosError).message,
+        });
+      }
     }
-  }, [
-    searchParams,
-    params.serie,
-    params.cp,
-    statsData?.attack?.ranking,
-    statsData?.defense?.ranking,
-    statsData?.stamina?.ranking,
-    statsData?.statProd?.ranking,
-    findMoveByName,
-    findPokemonBySlug,
-    getAssetNameById,
-  ]);
+  }, [searchParams, params.serie, params.cp]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonRanking();
     };
-    if (
-      statsData &&
-      isNotEmpty(pvpData.rankings) &&
-      isNotEmpty(pvpData.trains) &&
-      isNotEmpty(pokemonsData) &&
-      isNotEmpty(combatsData) &&
-      isNotEmpty(assetsData)
-    ) {
-      fetchPokemon();
-    }
+    fetchPokemon();
     return () => {
       hideSpinner();
     };
-  }, [fetchPokemonRanking, pvpData.rankings, pvpData.trains, pokemonsData, combatsData, assetsData]);
+  }, [fetchPokemonRanking]);
 
   const renderHeader = (data: IPokemonBattleRanking) => (
     <div className="tw-flex tw-items-center tw-w-full tw-gap-3">

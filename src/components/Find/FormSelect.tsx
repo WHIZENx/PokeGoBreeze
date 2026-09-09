@@ -24,7 +24,6 @@ import {
   IPokemonFormDetail,
 } from '../../core/models/API/form.model';
 import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo } from '../../core/models/API/info.model';
-import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
 import { PokemonType, TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
@@ -141,11 +140,17 @@ const FormSelect = (props: IFormSelectComponent) => {
             fetchMap(result, res.data.data.varieties);
           }
         })
-        .catch((e: AxiosError) => {
-          if (APIService.isCancel(e)) {
+        .catch((error: unknown) => {
+          if (APIService.isCancel(error)) {
             return;
           }
-          showSnackbar(`Pokémon ID or name: ${id} not found!`, 'error');
+          const status = (error as { response?: { status?: number } }).response?.status;
+          showSnackbar(
+            status === 404
+              ? `Pokémon ID or name: ${id} not found!`
+              : `Unable to display Pokémon data for ID: ${id}. Please try again.`,
+            'error'
+          );
         });
     },
     [fetchMap]
