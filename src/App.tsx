@@ -57,6 +57,7 @@ import { createProgressHelpers } from './utils/helpers/progress-helpers';
 import { useDispatch } from 'react-redux';
 import useDataStore from './composables/useDataStore';
 import { getProcessedDataSectionsForRoute } from './utils/configs/processed-data-routes.config';
+import type { ProcessedDataSection } from './services/processed-data.service';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -77,13 +78,14 @@ function App() {
   const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
   const [, setStateVersion] = useLocalStorage(LocalStorageConfig.Version, '');
   const [isBootstrapLoaded, setIsBootstrapLoaded] = useState(false);
-  const [loadedRoutePath, setLoadedRoutePath] = useState('');
+  const [loadedRouteDataKey, setLoadedRouteDataKey] = useState<string | null>(null);
   const routeDataRequestRef = useRef(0);
   const dispatch = useDispatch();
   const { errorProgress } = createProgressHelpers(dispatch);
 
   const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
+  const routeDataKey = useMemo(() => getProcessedDataSectionsForRoute(pathname).join('|'), [pathname]);
 
   useOptionsObserver();
 
@@ -142,16 +144,16 @@ function App() {
       return;
     }
     const requestId = ++routeDataRequestRef.current;
-    const sections = getProcessedDataSectionsForRoute(pathname);
-    if (sections.length === 0) {
-      setLoadedRoutePath(pathname);
+    const routeDataSections = routeDataKey.split('|').filter(Boolean) as ProcessedDataSection[];
+    if (routeDataSections.length === 0) {
+      setLoadedRouteDataKey(routeDataKey);
       return;
     }
     startProgress();
-    loadProcessedSections(sections)
+    loadProcessedSections(routeDataSections)
       .then(() => {
         if (requestId === routeDataRequestRef.current) {
-          setLoadedRoutePath(pathname);
+          setLoadedRouteDataKey(routeDataKey);
           completeProgress();
         }
       })
@@ -160,7 +162,7 @@ function App() {
           errorProgress({ message: `Load page data error: ${e}`, isError: true });
         }
       });
-  }, [isBootstrapLoaded, pathname]);
+  }, [isBootstrapLoaded, routeDataKey]);
 
   useEffect(() => {
     setDevice();
@@ -197,7 +199,7 @@ function App() {
   return (
     <Box className="tw-min-h-full" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
       <ResponsiveAppBar toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
-      {isBootstrapLoaded && loadedRoutePath === pathname && (
+      {isBootstrapLoaded && loadedRouteDataKey === routeDataKey && (
         <Routes>
           <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
           <Route path="/news" element={<News />} />
