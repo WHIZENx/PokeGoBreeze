@@ -161,6 +161,22 @@ jobs:
             "cache-control: public, max-age=0, must-revalidate" \
             "$HEADERS_FILE"
 
+          ASSET_PATH=$(find dist/static/js -maxdepth 1 -type f -name '*.js' -printf '%P\n' | head -n 1)
+          ASSET_HEADERS_FILE="$RUNNER_TEMP/firebase-asset-headers.txt"
+          curl --fail --silent --show-error --retry 5 --retry-all-errors \
+            "$HOST/static/js/$ASSET_PATH" \
+            --dump-header "$ASSET_HEADERS_FILE" \
+            --output /dev/null
+          grep --fixed-strings --ignore-case --quiet \
+            "cache-control: public, max-age=31536000, immutable" \
+            "$ASSET_HEADERS_FILE"
+
+          MISSING_ASSET_STATUS=$(curl --silent --show-error \
+            "$HOST/static/js/__missing-asset-check__.js" \
+            --output /dev/null \
+            --write-out '%{http_code}')
+          test "$MISSING_ASSET_STATUS" = "404"
+
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 3 – Firebase Hosting: PR preview
   # ─────────────────────────────────────────────────────────────────────────────
