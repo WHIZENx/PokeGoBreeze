@@ -789,7 +789,7 @@ export class PokemonSpecie implements IPokemonSpecie {
 
   static create(value: Species) {
     const obj = new PokemonSpecie();
-    obj.evolutionChainPath = value.evolution_chain.url;
+    obj.evolutionChainPath = value.evolution_chain?.url;
     obj.generation = getGenerationPokemon(value.generation.url);
     obj.hasGenderDifferences = value.has_gender_differences;
     obj.id = value.id;

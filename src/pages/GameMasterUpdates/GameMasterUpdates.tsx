@@ -34,6 +34,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ButtonMui from '../../components/Commons/Buttons/ButtonMui';
 import InputMuiSearch from '../../components/Commons/Inputs/InputMuiSearch';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
+import Candy from '../../components/Sprites/Candy/Candy';
 import type {
   GameMasterChange,
   GameMasterChangeStatus,
@@ -41,6 +42,7 @@ import type {
   GameMasterFieldChange,
   GameMasterFieldValue,
   GameMasterMoveReference,
+  GameMasterPokemonReference,
   GameMasterPatchSection,
   GameMasterPatchSummary,
   GameMasterUpdateSummary,
@@ -292,7 +294,20 @@ const readablePrimitive = (value: Exclude<GameMasterFieldValue, GameMasterFieldV
   return /^[A-Z0-9_]+$/.test(trimmed) || trimmed.includes('_') ? humanizeValueName(trimmed) : trimmed;
 };
 
-const DetailValueContent = ({ value, context }: { value: GameMasterFieldValue; context: string }) => {
+const referenceKey = (value: string | number) =>
+  String(value)
+    .replaceAll(/[^a-z0-9]/gi, '')
+    .toLowerCase();
+
+type DetailValueContentProps = {
+  value: GameMasterFieldValue;
+  context: string;
+  moves?: GameMasterMoveReference[];
+  pokemon?: GameMasterPokemonReference[];
+  candyPokemonId?: number;
+};
+
+const DetailValueContent = ({ value, context, moves, pokemon, candyPokemonId }: DetailValueContentProps) => {
   const normalized = normalizeDetailValue(value);
 
   if (Array.isArray(normalized)) {
@@ -306,7 +321,13 @@ const DetailValueContent = ({ value, context }: { value: GameMasterFieldValue; c
         <Box className="game-master-updates__detail-groups">
           {items.map((item, index) => (
             <Box className="game-master-updates__detail-group" key={`${context}:${index}`}>
-              <DetailValueContent value={item} context={context} />
+              <DetailValueContent
+                value={item}
+                context={context}
+                moves={moves}
+                pokemon={pokemon}
+                candyPokemonId={candyPokemonId}
+              />
             </Box>
           ))}
         </Box>
@@ -317,7 +338,13 @@ const DetailValueContent = ({ value, context }: { value: GameMasterFieldValue; c
       <Box component="ul" className="game-master-updates__detail-list">
         {items.map((item, index) => (
           <Box component="li" key={`${context}:${index}`}>
-            <DetailValueContent value={item} context={context} />
+            <DetailValueContent
+              value={item}
+              context={context}
+              moves={moves}
+              pokemon={pokemon}
+              candyPokemonId={candyPokemonId}
+            />
           </Box>
         ))}
       </Box>
@@ -330,22 +357,23 @@ const DetailValueContent = ({ value, context }: { value: GameMasterFieldValue; c
       return <Typography component="span">None</Typography>;
     }
     return (
-      <Box component="ul" className="game-master-updates__detail-list game-master-updates__detail-list--nested">
+      <Box className="game-master-updates__detail-record">
         {entries.map(([key, item]) => {
           const normalizedItem = normalizeDetailValue(item);
           return (
-            <Box component="li" key={key}>
-              <Typography component="span" className="game-master-updates__detail-key">
+            <Box className="game-master-updates__detail-row" key={key}>
+              <Typography component="span" color="text.secondary" className="game-master-updates__detail-key">
                 {humanizeValueName(key)}
               </Typography>
-              {isStructuredDetail(normalizedItem) ? (
-                <DetailValueContent value={normalizedItem} context={key} />
-              ) : (
-                <>
-                  <Typography component="span">: </Typography>
-                  <DetailValueContent value={normalizedItem} context={key} />
-                </>
-              )}
+              <Box className="game-master-updates__detail-row-value">
+                <DetailValueContent
+                  value={normalizedItem}
+                  context={key}
+                  moves={moves}
+                  pokemon={pokemon}
+                  candyPokemonId={candyPokemonId}
+                />
+              </Box>
             </Box>
           );
         })}
@@ -365,16 +393,91 @@ const DetailValueContent = ({ value, context }: { value: GameMasterFieldValue; c
     );
   }
 
+  const primitiveKey = typeof normalized === 'string' || typeof normalized === 'number' ? referenceKey(normalized) : '';
+  const pokemonReference = /evolution/i.test(context)
+    ? pokemon?.find(
+        (reference) => referenceKey(reference.name) === primitiveKey || referenceKey(reference.id) === primitiveKey
+      )
+    : undefined;
+  if (pokemonReference) {
+    return (
+      <LinkToTop
+        className="game-master-updates__detail-pokemon"
+        to={`/pokemon/${pokemonReference.id}${generateParamForm(pokemonReference.form)}`}
+        title={`View ${pokemonReference.name} details`}
+      >
+        <Box
+          component="img"
+          src={pokemonReference.imageUrl ?? APIService.getPokeSprite(pokemonReference.id)}
+          alt={pokemonReference.name}
+          loading="lazy"
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = APIService.getPokeSprite(pokemonReference.id);
+          }}
+        />
+        <Typography component="span">{pokemonReference.name}</Typography>
+      </LinkToTop>
+    );
+  }
+
+  const moveReference = /move/i.test(context)
+    ? moves?.find(
+        (reference) => referenceKey(reference.name) === primitiveKey || referenceKey(reference.id) === primitiveKey
+      )
+    : undefined;
+  if (moveReference) {
+    return (
+      <Box className="game-master-updates__detail-move">
+        {moveReference.type && (
+          <IconType
+            width={26}
+            height={26}
+            type={moveReference.type}
+            alt={`${moveReference.name} ${humanizeValueName(moveReference.type)} type`}
+            title={humanizeValueName(moveReference.type)}
+          />
+        )}
+        <LinkToTop
+          className="game-master-updates__entity-link"
+          to={`/move/${encodeURIComponent(moveReference.id)}${
+            moveReference.type ? `?${Params.MoveType}=${encodeURIComponent(moveReference.type.toLowerCase())}` : ''
+          }`}
+        >
+          {moveReference.name}
+        </LinkToTop>
+      </Box>
+    );
+  }
+
+  if (
+    candyPokemonId &&
+    /^(?:candyCost|candyCostPurified|purificationCandyNeeded|Candy|Purified Candy|Purification Candy|Candy Cost Purified)$/i.test(
+      context
+    )
+  ) {
+    return (
+      <Box className="game-master-updates__detail-candy">
+        <Candy id={candyPokemonId} size={22} />
+        <Typography component="span">{readablePrimitive(normalized, context)}</Typography>
+      </Box>
+    );
+  }
+
   return <Typography component="span">{readablePrimitive(normalized, context)}</Typography>;
 };
 
 const DetailValue = ({
   value,
   moves,
+  pokemon,
+  candyPokemonId,
   label,
 }: {
   value: GameMasterFieldChange['before'];
   moves?: GameMasterMoveReference[];
+  pokemon?: GameMasterPokemonReference[];
+  candyPokemonId?: number;
   label: string;
 }) => {
   const imageUrl = typeof value === 'string' && /^https?:\/\//i.test(value.trim()) ? value.trim() : undefined;
@@ -395,7 +498,7 @@ const DetailValue = ({
     );
   }
 
-  if (moves?.length) {
+  if (moves?.length && !isStructuredDetail(normalizeDetailValue(value ?? null))) {
     return (
       <Box component="dd" className="game-master-updates__detail-moves">
         {moves.map((move) => (
@@ -425,12 +528,18 @@ const DetailValue = ({
 
   return (
     <Box component="dd" className="game-master-updates__detail-value">
-      <DetailValueContent value={value ?? null} context={label} />
+      <DetailValueContent
+        value={value ?? null}
+        context={label}
+        moves={moves}
+        pokemon={pokemon}
+        candyPokemonId={candyPokemonId}
+      />
     </Box>
   );
 };
 
-const FieldChange = ({ field }: { field: GameMasterFieldChange }) => {
+const FieldChange = ({ field, pokemonId }: { field: GameMasterFieldChange; pokemonId?: number }) => {
   const beforeMissing = field.before === undefined || field.before === null || field.before === '';
   const afterMissing = field.after === undefined || field.after === null || field.after === '';
 
@@ -440,7 +549,13 @@ const FieldChange = ({ field }: { field: GameMasterFieldChange }) => {
         <Typography component="dt" variant="overline">
           <AddCircleOutlineIcon fontSize="inherit" /> Added
         </Typography>
-        <DetailValue value={field.after} moves={field.afterMoves} label={field.label} />
+        <DetailValue
+          value={field.after}
+          moves={field.afterMoves}
+          pokemon={field.afterPokemon}
+          candyPokemonId={pokemonId}
+          label={field.label}
+        />
       </Box>
     );
   }
@@ -451,7 +566,13 @@ const FieldChange = ({ field }: { field: GameMasterFieldChange }) => {
         <Typography component="dt" variant="overline">
           <RemoveCircleOutlineIcon fontSize="inherit" /> Removed
         </Typography>
-        <DetailValue value={field.before} moves={field.beforeMoves} label={field.label} />
+        <DetailValue
+          value={field.before}
+          moves={field.beforeMoves}
+          pokemon={field.beforePokemon}
+          candyPokemonId={pokemonId}
+          label={field.label}
+        />
       </Box>
     );
   }
@@ -462,22 +583,104 @@ const FieldChange = ({ field }: { field: GameMasterFieldChange }) => {
         <Typography component="dt" variant="overline">
           <RemoveCircleOutlineIcon fontSize="inherit" /> Before
         </Typography>
-        <DetailValue value={field.before} moves={field.beforeMoves} label={field.label} />
+        <DetailValue
+          value={field.before}
+          moves={field.beforeMoves}
+          pokemon={field.beforePokemon}
+          candyPokemonId={pokemonId}
+          label={field.label}
+        />
       </Box>
       <ArrowForwardIcon className="game-master-updates__change-arrow" aria-hidden="true" />
       <Box component="dl" className="game-master-updates__change-delta game-master-updates__change-delta--added">
         <Typography component="dt" variant="overline">
           <AddCircleOutlineIcon fontSize="inherit" /> Now
         </Typography>
-        <DetailValue value={field.after} moves={field.afterMoves} label={field.label} />
+        <DetailValue
+          value={field.after}
+          moves={field.afterMoves}
+          pokemon={field.afterPokemon}
+          candyPokemonId={pokemonId}
+          label={field.label}
+        />
       </Box>
     </Box>
   );
 };
 
+const missingFieldValue = (value: GameMasterFieldChange['before']) =>
+  value === undefined || value === null || value === '';
+
+const mergeComplementaryFields = (fields: GameMasterFieldChange[]) => {
+  const merged: GameMasterFieldChange[] = [];
+  const consumed = new Set<number>();
+
+  fields.forEach((field, index) => {
+    if (consumed.has(index)) {
+      return;
+    }
+    const isRemoval = !missingFieldValue(field.before) && missingFieldValue(field.after);
+    const isAddition = missingFieldValue(field.before) && !missingFieldValue(field.after);
+    if (!isRemoval && !isAddition) {
+      merged.push(field);
+      return;
+    }
+
+    const pairIndex = fields.findIndex((candidate, candidateIndex) => {
+      if (candidateIndex === index || consumed.has(candidateIndex) || candidate.label !== field.label) {
+        return false;
+      }
+      const candidateIsRemoval = !missingFieldValue(candidate.before) && missingFieldValue(candidate.after);
+      const candidateIsAddition = missingFieldValue(candidate.before) && !missingFieldValue(candidate.after);
+      return (isRemoval && candidateIsAddition) || (isAddition && candidateIsRemoval);
+    });
+    if (pairIndex < 0) {
+      merged.push(field);
+      return;
+    }
+
+    const pair = fields[pairIndex];
+    const beforeField = isRemoval ? field : pair;
+    const afterField = isAddition ? field : pair;
+    consumed.add(pairIndex);
+    merged.push({
+      path: `${beforeField.path}->${afterField.path}`,
+      label: field.label,
+      before: beforeField.before,
+      after: afterField.after,
+      beforeMoves: beforeField.beforeMoves,
+      afterMoves: afterField.afterMoves,
+      beforePokemon: beforeField.beforePokemon,
+      afterPokemon: afterField.afterPokemon,
+    });
+  });
+
+  return merged;
+};
+
 const formatDate = (value: string) => {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+};
+
+const formatCompactDateRange = (startValue: string, endValue: string) => {
+  const start = new Date(startValue);
+  const end = new Date(endValue);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return `${formatDate(startValue)} – ${formatDate(endValue)}`;
+  }
+  const sameYear = start.getFullYear() === end.getFullYear();
+  const startFormatter = new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    ...(sameYear ? {} : { year: 'numeric' }),
+  });
+  const endFormatter = new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  return `${startFormatter.format(start)} – ${endFormatter.format(end)}`;
 };
 
 const patchPathSlug = (version: GameMasterPatchSummary['previous']) =>
@@ -548,6 +751,7 @@ const PatchEntry = ({
   const hasDetails = hasForms || change.fields.length > 0;
   const formLabel = change.forms?.length === 1 ? change.forms[0] : change.form;
   const detailPath = entityDetailPath(change);
+  const displayFields = mergeComplementaryFields(change.fields);
   const entityTitle = (
     <Typography component="h3" variant="h6">
       {change.pokemonId ? `#${change.pokemonId} ` : ''}
@@ -581,19 +785,7 @@ const PatchEntry = ({
 
       <Box className="game-master-updates__entry-content">
         <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" alignItems="center">
-          {detailPath ? (
-            <LinkToTop
-              className="game-master-updates__entity-link game-master-updates__entity-link--title"
-              to={detailPath}
-              title={`View ${change.label} details`}
-              funcOnClick={(event) => event.stopPropagation()}
-              onKeyDown={(event) => event.stopPropagation()}
-            >
-              {entityTitle}
-            </LinkToTop>
-          ) : (
-            entityTitle
-          )}
+          {entityTitle}
           {showFormTag && formLabel && <Chip size="small" variant="outlined" label={humanizeValueName(formLabel)} />}
           <Chip
             size="small"
@@ -605,6 +797,20 @@ const PatchEntry = ({
         </Stack>
 
         <Typography className="game-master-updates__entry-description">{change.description}</Typography>
+        {detailPath && (
+          <LinkToTop
+            className="game-master-updates__entry-action"
+            to={detailPath}
+            title={`View ${change.label} details`}
+            funcOnClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
+            <Typography component="span">
+              View {change.entityType === 'pokemon' ? 'Pokémon' : change.entityType === 'move' ? 'Move' : 'details'}
+            </Typography>
+            <ArrowForwardIcon fontSize="small" />
+          </LinkToTop>
+        )}
       </Box>
     </Box>
   );
@@ -647,12 +853,12 @@ const PatchEntry = ({
               Changes
             </Typography>
             <Box component="ul" className="game-master-updates__change-list">
-              {change.fields.map((field) => (
+              {displayFields.map((field) => (
                 <Box component="li" key={field.path} className="game-master-updates__change-item">
                   <Typography component="h5" variant="subtitle2" className="game-master-updates__change-heading">
                     {field.label}
                   </Typography>
-                  <FieldChange field={field} />
+                  <FieldChange field={field} pokemonId={change.pokemonId} />
                 </Box>
               ))}
             </Box>
@@ -707,23 +913,34 @@ const PatchIndex = ({
                 <CardActionArea onClick={() => onOpen(patch.slug ?? patchPathSlug(patch.previous))}>
                   <Box
                     className="game-master-updates__patch-card-visual"
-                    role={patch.heroImage ? 'img' : undefined}
-                    aria-label={patch.heroImage ? patch.heroImage.label : undefined}
-                    style={
-                      patch.heroImage
-                        ? {
-                            backgroundImage:
-                              'linear-gradient(145deg, rgb(10 35 57 / 30%), rgb(10 35 57 / 78%)), url("' +
-                              patchImageUrl(patch.heroImage.url) +
-                              '")',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundSize: 'cover, contain',
-                          }
-                        : undefined
-                    }
+                    role={patch.backgroundImage || patch.heroImage ? 'img' : undefined}
+                    aria-label={patch.backgroundImage?.label ?? patch.heroImage?.label}
                   >
-                    {!patch.heroImage && <SystemUpdateAltIcon />}
+                    {patch.backgroundImage && (
+                      <Box
+                        component="img"
+                        className="game-master-updates__patch-card-background"
+                        src={patchImageUrl(patch.backgroundImage.url)}
+                        alt=""
+                        loading="lazy"
+                        onError={(event) => {
+                          event.currentTarget.hidden = true;
+                        }}
+                      />
+                    )}
+                    {patch.heroImage && (
+                      <Box
+                        component="img"
+                        className="game-master-updates__patch-card-entity"
+                        src={patchImageUrl(patch.heroImage.url)}
+                        alt=""
+                        loading="lazy"
+                        onError={(event) => {
+                          event.currentTarget.hidden = true;
+                        }}
+                      />
+                    )}
+                    {!patch.backgroundImage && !patch.heroImage && <SystemUpdateAltIcon />}
                     <Chip
                       size="small"
                       color={patchPage === 1 && index === 0 ? 'primary' : 'default'}
@@ -939,6 +1156,8 @@ const GameMasterUpdates = () => {
   };
 
   const hasFilters = Boolean(search || status || section);
+  const activePatch =
+    response?.selectedPatch ?? response?.patches?.find((patch) => patch.compareTo === response.previous.name);
 
   if (isIndex) {
     return (
@@ -974,13 +1193,28 @@ const GameMasterUpdates = () => {
         {response && (
           <>
             <Box component="section" aria-labelledby="patch-overview" className="game-master-updates__overview">
-              <Typography id="patch-overview" component="h1" variant="h5" gutterBottom>
-                Patch overview
-              </Typography>
-              <Typography color="text.secondary" paragraph>
-                {response.summary.total.toLocaleString()} webapp-relevant changes were detected in this patch, covering{' '}
-                {formatDate(response.previous.timestamp)} to {formatDate(response.current.timestamp)}.
-              </Typography>
+              <Box className="game-master-updates__overview-copy">
+                <Typography id="patch-overview" component="h1" variant="h5">
+                  Patch overview
+                </Typography>
+                <Typography component="p" variant="overline" color="primary">
+                  {formatCompactDateRange(response.previous.timestamp, response.current.timestamp)} ·{' '}
+                  {response.summary.total.toLocaleString()} relevant changes
+                </Typography>
+                <Typography className="game-master-updates__overview-summary" color="text.secondary">
+                  {activePatch?.description ??
+                    `${response.summary.total.toLocaleString()} changes affect the Pokémon GO data used by PokéGO Breeze.`}
+                </Typography>
+                {activePatch?.highlights && activePatch.highlights.length > 0 && (
+                  <Box component="ul" className="game-master-updates__overview-highlights">
+                    {activePatch.highlights.map((highlight) => (
+                      <Box component="li" key={highlight}>
+                        {highlight}
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
               <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" className="game-master-updates__counts">
                 <Box>
                   <AddCircleOutlineIcon color="success" />

@@ -44,7 +44,10 @@ export const getProcessedDataSectionsForRoute = (pathname: string): ProcessedDat
   if (pathname === '/pvp') {
     return ['pvp'];
   }
-  if (pathname.startsWith('/pvp/rankings/') || pathname.startsWith('/pvp/teams/')) {
+  if (pathname.startsWith('/pvp/rankings/')) {
+    return ['pvp'];
+  }
+  if (pathname.startsWith('/pvp/teams/')) {
     return pvpDetails;
   }
   if (pathname.startsWith('/pvp/battle')) {

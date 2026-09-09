@@ -48,7 +48,6 @@ import { regionList, Params } from '../../utils/constants';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
-import { AxiosError } from 'axios';
 import { IPokemonPage } from '../models/page.model';
 import {
   combineClasses,
@@ -350,11 +349,18 @@ const Pokemon = (props: IPokemonPage) => {
             );
           }
         })
-        .catch((e: AxiosError) => {
-          if (APIService.isCancel(e)) {
+        .catch((error: unknown) => {
+          if (APIService.isCancel(error)) {
             return;
           }
-          showSnackbar(`Pokémon ID or name: ${id} not found!`, 'error');
+          const status = (error as { response?: { status?: number } }).response?.status;
+          const notFound = status === 404;
+          showSnackbar(
+            notFound
+              ? `Pokémon ID or name: ${id} not found!`
+              : `Unable to display Pokémon data for ID: ${id}. Please try again.`,
+            'error'
+          );
           if (params.id) {
             setIsFound(false);
           } else {

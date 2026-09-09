@@ -436,12 +436,13 @@ class APIService {
     return `${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}Stickers/${sticker}`;
   }
 
-  getRankingFile(serie: string | undefined, cp: number, type: string | undefined) {
+  getRankingFile(serie: string | undefined, cp: number, type: string | undefined, enriched = false) {
     const query = new URLSearchParams({
       kind: 'ranking',
       series: getValueOrDefault(String, serie),
       cp: String(cp),
       type: getValueOrDefault(String, type, getKeyWithData(ScoreType, ScoreType.Overall)).toLowerCase(),
+      enriched: String(enriched),
     });
     return `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp?${query}`;
   }
@@ -534,6 +535,10 @@ class APIService {
 
   getFindCalculation(params: Record<string, string | number | boolean | undefined>) {
     return this.getInternalQueryUrl('find', params);
+  }
+
+  getCatchChance(params: Record<string, string | number | boolean | undefined>) {
+    return this.getInternalQueryUrl('catch-chance', params);
   }
 
   getBattleLeagueStats(params: Record<string, string | number | boolean | undefined>) {

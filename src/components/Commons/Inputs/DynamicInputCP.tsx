@@ -1,18 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { predictCPList } from '../../../utils/calculate';
 import { IPredictCPCalculate } from '../../../utils/models/calculate.model';
 import { IDynamicInputCPComponent } from '../models/component.model';
 import { getValueOrDefault, isNullOrUndefined } from '../../../utils/extension';
 import { isInvalidIV } from '../../../utils/utils';
+import APIService from '../../../services/api.service';
 
 const DynamicInputCP = (props: IDynamicInputCPComponent) => {
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
 
-  const findStatsCP = useCallback(() => {
+  useEffect(() => {
     if (isInvalidIV(props.ivAtk) || isInvalidIV(props.ivDef) || isInvalidIV(props.ivSta)) {
-      return;
+      setPreCpArr(undefined);
+      return undefined;
     }
     if (
       !isNullOrUndefined(props.statATK) &&
@@ -22,14 +23,34 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
       props.statDEF > 0 &&
       props.statSTA > 0
     ) {
-      const result = predictCPList(props.statATK, props.statDEF, props.statSTA, props.ivAtk, props.ivDef, props.ivSta);
-      setPreCpArr(result);
+      const url = APIService.getFindCalculation({
+        mode: 'cp',
+        atk: props.statATK,
+        def: props.statDEF,
+        sta: props.statSTA,
+        atkIv: props.ivAtk,
+        defIv: props.ivDef,
+        staIv: props.ivSta,
+      });
+      let active = true;
+      APIService.getFetchUrl<{ data: IPredictCPCalculate }>(url)
+        .then(({ data }) => {
+          if (active) {
+            setPreCpArr(data.data);
+          }
+        })
+        .catch(() => {
+          if (active) {
+            setPreCpArr(undefined);
+          }
+        });
+      return () => {
+        active = false;
+      };
     }
+    setPreCpArr(undefined);
+    return undefined;
   }, [props.statATK, props.statDEF, props.statSTA, props.ivAtk, props.ivDef, props.ivSta]);
-
-  useEffect(() => {
-    findStatsCP();
-  }, [findStatsCP]);
 
   return (
     <Autocomplete
