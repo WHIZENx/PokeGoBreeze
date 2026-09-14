@@ -41,7 +41,7 @@ root.render(
   <>
     <Provider store={store}>
       <PersistGate loading={<LoadingPersist />} persistor={persistor}>
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <BrowserRouter>
           <RouterSync />
           <Main />
         </BrowserRouter>

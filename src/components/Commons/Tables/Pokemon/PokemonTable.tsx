@@ -4,6 +4,7 @@ import { genRoman } from '../../../../utils/compute';
 import { IPokemonTableComponent } from '../../models/component.model';
 import { combineClasses, isNumber, isUndefined, toFloatWithPadding, toNumber } from '../../../../utils/extension';
 import { Skeleton } from '@mui/material';
+import './PokemonTable.scss';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
   const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
@@ -24,7 +25,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
   );
 
   return (
-    <table className={combineClasses('table-info table-desc', props.className)}>
+    <table className={combineClasses('table-info table-desc tw-w-full', props.className)}>
       <thead />
       <tbody>
         <tr>

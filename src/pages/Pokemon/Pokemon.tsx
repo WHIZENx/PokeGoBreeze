@@ -675,6 +675,7 @@ const Pokemon = (props: IPokemonPage) => {
           </div>
           <div className="tw-inline-block tw-align-bottom">
             <PokemonTable
+              className="pokemon-detail-table"
               id={dataStorePokemon?.current?.id}
               gen={generation}
               formName={formName}

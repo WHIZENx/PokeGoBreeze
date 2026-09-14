@@ -356,7 +356,7 @@ const CalculatePoint = () => {
         <div className="lg:tw-flex-1 !tw-p-0">
           <Find isHide title="Attacker Pokémon" clearStats={clearData} />
         </div>
-        <div className="lg:tw-flex-1 tw-flex tw-justify-center !tw-p-0">
+        <div className="calculate-point-defender lg:tw-flex-1 tw-flex tw-justify-center !tw-p-0">
           <Find
             isSwap
             isRaid={isRaid}

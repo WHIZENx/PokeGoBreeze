@@ -63,7 +63,7 @@ const TableMove = (props: ITableMoveComponent) => {
 
   const move = props.rankMoveData ?? cachedRankMoveData.current ?? emptyMoveRanking;
   const moveOrigin = props.moveData ?? cachedMoveData.current;
-  const isLoading = Boolean(props.isLoading || !props.moveData || !props.rankMoveData);
+  const isLoading = props.isLoading ?? (!props.moveData || !props.rankMoveData);
 
   const [stateSorted, setStateSorted] = useState(
     new TableSort({
@@ -92,7 +92,7 @@ const TableMove = (props: ITableMoveComponent) => {
     );
     const max = table === TableType.Offensive ? move.maxOff : move.maxDef;
     return (
-      <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
+      <div className="table-moves-col tw-min-w-0" style={{ maxHeight: props.maxHeight }}>
         <table className="table-moves">
           <colgroup className="main-move" />
           <colgroup className="main-move" />
@@ -304,8 +304,8 @@ const TableMove = (props: ITableMoveComponent) => {
             {
               label: 'Moves List',
               renderChildren: () => (
-                <div className="row tw-w-full tw-bg-table-info !tw-m-0">
-                  <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
+                <div className="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-items-start tw-w-full tw-bg-table-info">
+                  <div className="table-moves-col tw-min-w-0" style={{ maxHeight: props.maxHeight }}>
                     <table className="table-moves">
                       <colgroup className="main-move" />
                       <thead>
@@ -318,7 +318,7 @@ const TableMove = (props: ITableMoveComponent) => {
                       </tbody>
                     </table>
                   </div>
-                  <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
+                  <div className="table-moves-col tw-min-w-0" style={{ maxHeight: props.maxHeight }}>
                     <table className="table-moves">
                       <colgroup className="main-move" />
                       <thead>
@@ -347,7 +347,7 @@ const TableMove = (props: ITableMoveComponent) => {
             {
               label: 'Best Moves List',
               renderChildren: () => (
-                <div className="row tw-w-full !tw-m-0">
+                <div className="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-items-start tw-w-full">
                   {renderTable(TableType.Offensive)}
                   {renderTable(TableType.Defensive)}
                 </div>

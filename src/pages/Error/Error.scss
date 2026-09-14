@@ -2,7 +2,7 @@
   @apply tw-w-full tw-min-h-[calc(100vh-56px)] tw-bg-black;
 }
 
-.img {
+.error-img .img {
   background-image: url("../../assets/error.jpg");
   background-position-x: right;
   background-position-y: bottom;

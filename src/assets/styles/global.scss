@@ -40,6 +40,10 @@
   @apply tw-flex-1;
 }
 
+.img-desc {
+  @apply tw-w-[217px] tw-h-[217px] tw-p-1;
+}
+
 .slide-container {
   direction: ltr;
 

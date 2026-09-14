@@ -400,7 +400,6 @@ npm install
    | `REACT_APP_EDGE_READ_TOKEN` | Yes | Edge Config read token (config.sh) |
    | `REACT_APP_EDGE_ID` | Yes | Edge Config ID (e.g. `ecfg_xxx`) |
    | `REACT_APP_VERSION` | No | App version override (e.g. `1.0.0`) |
-   | `REACT_APP_REDUX_VERBOSE` | No | `true` = show full Redux store in DevTools (default `false`) |
    | `MONGODB_URI` | No | MongoDB connection string (deploy.sh version history) |
 
    GitHub Actions deployment also requires the `VERCEL_TOKEN` Actions secret

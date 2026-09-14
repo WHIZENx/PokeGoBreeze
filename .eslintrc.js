@@ -2,6 +2,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: __dirname,
+    project: false,
     ecmaVersion: 2020,
     sourceType: 'module',
     ecmaFeatures: {
@@ -34,16 +35,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['src/**/*.ts', 'src/**/*.tsx'],
-      parserOptions: {
-        project: './tsconfig.app.json',
-      },
-    },
-    {
       files: ['vite.config.ts'],
-      parserOptions: {
-        project: './tsconfig.node.json',
-      },
       rules: {
         '@typescript-eslint/no-var-requires': 'off',
       },
