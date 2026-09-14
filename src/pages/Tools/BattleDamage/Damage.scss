@@ -10,12 +10,7 @@
   @apply tw-p-[15px];
 }
 
-.result-move {
-  height: auto !important;
-  max-height: 250px !important;
-}
-
-.card-header {
+.battle-game .card-header {
   cursor: auto !important;
 
   @apply tw-text-center;

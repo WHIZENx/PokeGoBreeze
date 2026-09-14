@@ -7,6 +7,7 @@ import { ISelectCustomMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../../utils/extension';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
+import './SelectCustomMove.scss';
 
 const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
   const { findMoveByName } = useCombats();

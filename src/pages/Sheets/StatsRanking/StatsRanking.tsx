@@ -30,14 +30,13 @@ import { TableColumnModify } from '../../../utils/models/overrides/data-table.mo
 import { getValueOrDefault, isEqual, isNullOrUndefined, toNumber } from '../../../utils/extension';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
+import type { PokemonMoveRanking } from '../../../core/models/API/pokemon-bundle.model';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../../components/Commons/models/menu.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
-import usePokemon from '../../../composables/usePokemon';
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 
@@ -184,10 +183,11 @@ const StatsRanking = () => {
     ],
   });
   const [searchParams, setSearchParams] = useSearchParams();
-  const { getPokemonDetails } = usePokemon();
   const [select, setSelect] = useState<IPokemonStatsRanking>();
   const selectedRef = useRef<IPokemonStatsRanking>();
-  const [pokemon, setPokemon] = useState<IPokemonDetail>();
+  const [moveRankings, setMoveRankings] = useState<{ id: number; data: PokemonMoveRanking[] }>();
+  const [movesLoading, setMovesLoading] = useState(false);
+  const moveRankingsCache = useRef(new Map<number, PokemonMoveRanking[]>());
   const [rows, setRows] = useState<IPokemonStatsRanking[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
@@ -209,14 +209,53 @@ const StatsRanking = () => {
   const paramStatsType = searchParams.get(Params.StatsType) ?? '';
   const sortId = getSortId(paramStatsType);
   const routeTarget = `${paramId}|${paramForm}|${paramFormType}|${paramStatsType}`;
+  const selectedId = select?.num;
+  const moveRanking =
+    select && moveRankings?.id === select.num
+      ? moveRankings.data.find(
+          (item) =>
+            item.pokemonType === (select.pokemonType || PokemonType.Normal) &&
+            ((select.fullName && isEqual(item.fullName, select.fullName)) ||
+              (select.form && isEqual(item.form, select.form)))
+        )
+      : undefined;
 
   const applySelection = (row: IPokemonStatsRanking) => {
     selectedRef.current = row;
     setSelect(row);
-    const details = getPokemonDetails(row.num, row.fullName, row.pokemonType, true);
-    details.pokemonType = row.pokemonType ?? PokemonType.Normal;
-    setPokemon(PokemonDetail.setData(details));
   };
+
+  useEffect(() => {
+    if (!selectedId) {
+      return;
+    }
+    const cached = moveRankingsCache.current.get(selectedId);
+    if (cached) {
+      setMoveRankings({ id: selectedId, data: cached });
+      setMovesLoading(false);
+      return;
+    }
+    const controller = new AbortController();
+    setMoveRankings(undefined);
+    setMovesLoading(true);
+    APIService.getPokemonBundle(selectedId, { signal: controller.signal })
+      .then(({ data }) => {
+        const rankings = data.data.moveRankings ?? [];
+        moveRankingsCache.current.set(selectedId, rankings);
+        setMoveRankings({ id: selectedId, data: rankings });
+      })
+      .catch((error) => {
+        if (!APIService.isCancel(error)) {
+          setMoveRankings({ id: selectedId, data: [] });
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setMovesLoading(false);
+        }
+      });
+    return () => controller.abort();
+  }, [selectedId]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
@@ -309,14 +348,15 @@ const StatsRanking = () => {
     applySelection(row);
     const next = new URLSearchParams(searchParams);
     next.set(Params.Id, row.num.toString());
-    const form = row.form?.replace(formNormal(), '').toLowerCase().replaceAll('_', '-');
+    const form = (row.form ?? '').replace(formNormal(), '').toLowerCase().replaceAll('_', '-');
     if (form) {
       next.set(Params.Form, form);
     } else {
       next.delete(Params.Form);
     }
-    if (isSpecialFormType(row.pokemonType)) {
-      next.set(Params.FormType, getKeyWithData(PokemonType, row.pokemonType).toLowerCase());
+    const formType = getKeyWithData(PokemonType, row.pokemonType);
+    if (isSpecialFormType(row.pokemonType) && formType) {
+      next.set(Params.FormType, formType.toLowerCase());
     } else {
       next.delete(Params.FormType);
     }
@@ -377,8 +417,8 @@ const StatsRanking = () => {
             />
           </div>
         </div>
-        <div className="row tw-w-full !tw-mt-2 !tw-m-0">
-          <div className="xl:tw-w-5/12 !tw-p-0">
+        <div className="tw-grid tw-grid-cols-1 xl:tw-grid-cols-12 tw-w-full !tw-mt-2">
+          <div className="xl:tw-col-span-5 tw-min-w-0">
             <PokemonTable
               id={select?.num}
               gen={select?.gen}
@@ -392,8 +432,14 @@ const StatsRanking = () => {
             />
           </div>
           {select && (
-            <div className="xl:tw-w-7/12 !tw-p-0">
-              <TableMove pokemonData={pokemon} maxHeight={400} />
+            <div className="xl:tw-col-span-7 tw-min-w-0">
+              <TableMove
+                key={`${select.num}-${select.fullName ?? select.form ?? ''}-${select.pokemonType ?? ''}`}
+                moveData={moveRanking?.moves}
+                rankMoveData={moveRanking?.bestMoves}
+                isLoading={movesLoading || moveRankings?.id !== select.num}
+                maxHeight={400}
+              />
             </div>
           )}
         </div>

@@ -1,0 +1,28 @@
+.text-gen {
+  @apply tw-text-[16px];
+}
+
+.table-desc {
+  @apply tw-w-full;
+}
+
+.table-desc td h5,
+.table-desc td h6 {
+  @apply tw-m-0;
+}
+
+.table-desc tbody tr td:first-child {
+  width: 25% !important;
+  text-align: start !important;
+
+  @apply tw-min-w-[180px];
+}
+
+.table-desc tbody tr:nth-child(odd) td,
+.table-desc tbody tr:nth-child(even) td {
+  @apply tw-text-start;
+}
+
+.table-desc tbody tr td div.tw-h-full {
+  @apply tw-py-[5px] tw-px-2.5;
+}
