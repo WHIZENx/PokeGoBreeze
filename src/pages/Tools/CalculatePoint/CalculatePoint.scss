@@ -2,6 +2,15 @@
   @apply tw-p-6;
 }
 
+.calculate-point-defender .table-raid {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.calculate-point-defender .table-raid tbody tr td:first-child:not([colspan]) {
+  width: 60%;
+}
+
 .table-raid-cal thead tr th {
   @apply tw-text-[16px] tw-h-[35px] tw-py-[5px] tw-px-2.5;
 }

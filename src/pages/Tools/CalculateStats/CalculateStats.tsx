@@ -306,7 +306,7 @@ const Calculate = () => {
 
   return (
     <Fragment>
-      <div className="tw-container tw-mt-2">
+      <div className="tw-container tw-mt-2 calculate-stats-page">
         <Find isHide clearStats={clearArrStats} />
         <h1 id="main" className="tw-text-center">
           Calculate Stats

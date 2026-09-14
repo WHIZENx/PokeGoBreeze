@@ -1,11 +1,3 @@
-.img-desc {
-  @apply tw-w-[217px] tw-h-[217px] tw-p-1;
-}
-
-.text-gen {
-  @apply tw-text-[16px];
-}
-
 .img-form-group hr {
   @apply tw-w-[350px];
 }
@@ -20,8 +12,11 @@ a b.link-title,
   text-decoration: underline !important;
 }
 
-.table-main,
-.table-desc {
+.table-main {
+  max-width: 500px !important;
+}
+
+.pokemon-detail-table {
   max-width: 500px !important;
 }
 
@@ -29,46 +24,24 @@ a b.link-title,
   @apply tw-text-[16px] tw-py-[5px] tw-px-2.5 tw-h-[35px];
 }
 
-td h5,
-td h6 {
+.table-main td h5,
+.table-main td h6 {
   @apply tw-m-0;
 }
 
-.table-info tbody tr td:nth-child(1) {
+.table-main tbody tr td:nth-child(1) {
   @apply tw-w-1/4 tw-min-w-[180px];
 }
 
-.table-desc tbody tr td:nth-child(1) {
-  width: 25% !important;
-
-  @apply tw-text-start tw-min-w-[180px];
-}
-
-.table-desc tbody tr:nth-child(odd) td {
-  @apply tw-text-start;
-}
-
-.table-desc tbody tr td div.tw-h-full {
-  @apply tw-py-[5px] tw-px-2.5;
-}
-
-.table-desc tbody tr:nth-child(even) td {
-  @apply tw-text-start;
-}
-
-.table-desc.table-info tbody tr td:first-child {
-  text-align: start !important;
-}
-
-.table-info tbody tr.tw-text-center td.table-sub-header:nth-child(2) {
+.table-main tbody tr.tw-text-center td.table-sub-header:nth-child(2) {
   @apply tw-font-bold;
 }
 
-.table-info tbody tr:nth-child(even) td:nth-child(2) {
+.table-main tbody tr:nth-child(even) td:nth-child(2) {
   @apply tw-text-start;
 }
 
-.table-info tbody tr:nth-child(even) td:nth-child(2) div.row-extra {
+.table-main tbody tr:nth-child(even) td:nth-child(2) div.row-extra {
   @apply tw-py-[5px] tw-px-2.5;
 }
 

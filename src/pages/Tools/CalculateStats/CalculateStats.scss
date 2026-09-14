@@ -1,20 +1,20 @@
-.table-info {
+.calculate-stats-page .table-info {
   @apply tw-w-full;
 }
 
-.table-info td:nth-child(1) {
+.calculate-stats-page .table-info td:nth-child(1) {
   @apply tw-w-1/2;
 }
 
-.battle-league td:nth-child(1) {
+.calculate-stats-page .battle-league td:nth-child(1) {
   @apply tw-w-[35%];
 }
 
-.table-info thead tr {
+.calculate-stats-page .table-info thead tr {
   @apply tw-font-bold;
 }
 
-.table-info tbody tr td:nth-child(1) {
+.calculate-stats-page .table-info tbody tr td:nth-child(1) {
   @apply tw-font-bold;
 }
 

@@ -40,7 +40,7 @@ const hasSpriteImage = (sprite: IPokemonSprite | undefined) =>
   Object.values(sprite ?? {}).some((value) => typeof value === 'string' && Boolean(value.trim()));
 
 const normalizePokemonType = (pokemonType: PokemonType | undefined) =>
-  pokemonType && pokemonType !== PokemonType.None ? pokemonType : PokemonType.Normal;
+  pokemonType === undefined || pokemonType === PokemonType.None ? PokemonType.Normal : pokemonType;
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
@@ -233,8 +233,8 @@ const FormComponent = (props: IFormInfoComponent) => {
         isDisabled={!statsData}
       />
       <hr className="tw-w-full" />
-      <div className="row tw-w-full !tw-m-0">
-        <div className="md:tw-w-5/12 !tw-p-0 tw-overflow-auto">
+      <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-12 tw-w-full">
+        <div className="md:tw-col-span-5 tw-min-w-0 tw-overflow-auto">
           <Info />
           {!isSpecialFormType(searchingMainForm?.form?.pokemonType) && (
             <Fragment>
@@ -251,8 +251,9 @@ const FormComponent = (props: IFormInfoComponent) => {
             </Fragment>
           )}
         </div>
-        <div className="md:tw-w-7/12 !tw-p-0">
+        <div className="md:tw-col-span-7 tw-min-w-0">
           <TableMove
+            key={`${props.defaultId}-${searchingMainDetails?.fullName ?? searchingMainDetails?.form ?? ''}-${searchingMainDetails?.pokemonType ?? ''}`}
             moveData={moveRanking?.moves}
             rankMoveData={moveRanking?.bestMoves}
             isLoading={!props.isLoadedForms || !moveRanking}

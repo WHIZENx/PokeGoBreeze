@@ -1,4 +1,4 @@
-import { ICombat } from '../../core/models/combat.model';
+import { Combat, ICombat } from '../../core/models/combat.model';
 import { MoveType } from '../../enums/type.enum';
 
 export interface IPokemonTopMove {

@@ -283,6 +283,7 @@ const RaidBattle = () => {
       setResult([]);
       setResultRaid(undefined);
       setResultBoss(undefined);
+      setDisableSearch(false);
     }
   };
 

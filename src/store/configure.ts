@@ -12,9 +12,6 @@ import localForage from 'localforage';
 import { LocalForageConfig } from './constants/local-forage';
 import { StoreState } from './models/state.model';
 import { persistKey } from '../utils/helpers/options-context.helpers';
-import { BooleanType } from '../enums/type.enum';
-
-const REDUX_VERBOSE = process.env.REACT_APP_REDUX_VERBOSE === BooleanType.True;
 
 interface IAction extends Action {
   payload: object[];
@@ -93,7 +90,7 @@ const devTools =
         maxAge: 30,
         actionsDenylist: UI_ACTIONS_DENYLIST,
         actionSanitizer: sanitizeActionPayload,
-        stateSanitizer: REDUX_VERBOSE ? undefined : sanitizeState,
+        stateSanitizer: sanitizeState,
         trace: false,
         traceLimit: 10,
       })(middleware);
