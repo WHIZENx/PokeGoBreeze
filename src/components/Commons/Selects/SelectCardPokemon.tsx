@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import './Select.scss';
 import { combineClasses, isInclude, isNotEmpty, isUndefined, toNumber } from '../../../utils/extension';
 import { ISelectCardPokemonComponent } from '../models/component.model';
 import InputMuiSearch from '../Inputs/InputMuiSearch';

@@ -608,7 +608,7 @@ const Leagues = () => {
             bgHeadColor: 'openLeague',
             label: renderHeader(value),
             value: value.id,
-            children: renderBody(value),
+            renderChildren: () => renderBody(value),
           };
         })}
       />
@@ -630,7 +630,7 @@ const Leagues = () => {
           return {
             label: renderHeader(value),
             value: value.id,
-            children: renderBody(value),
+            renderChildren: () => renderBody(value),
           };
         })}
       />

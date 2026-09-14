@@ -11,7 +11,11 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
   return (
     <div
       style={{ width: props.width, height: props.height }}
-      className={combineClasses('scroll-form', props.className, props.isLoaded && props.isFullWidth ? 'tw-w-full' : '')}
+      className={combineClasses(
+        'tw-relative tw-whitespace-nowrap tw-overflow-x-auto',
+        props.className,
+        props.isLoaded && props.isFullWidth ? 'tw-w-full' : ''
+      )}
     >
       {props.isLoaded ? (
         <Fragment>

@@ -52,9 +52,9 @@ export interface BattleLeagueSearchApiResponse {
 }
 
 export type BreakpointApiResult =
-  | { mode: 'attacker'; data: number[][] }
-  | { mode: 'defender'; dataDef: number[][]; dataSta: number[][] }
-  | { mode: 'bulk'; data: number[][]; maxLength: number };
+  | { mode: 'attacker'; data: number[][]; levels: number[]; ivs: number[] }
+  | { mode: 'defender'; dataDef: number[][]; dataSta: number[][]; levels: number[]; ivs: number[] }
+  | { mode: 'bulk'; data: number[][]; maxLength: number; levels: number[]; ivs: number[] };
 
 export interface RaidApiResponse {
   data: IPokemonMoveData[];

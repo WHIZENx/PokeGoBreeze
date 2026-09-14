@@ -3,7 +3,7 @@ import Find from '../../../components/Find/Find';
 
 import './CalculatePoint.scss';
 import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMove';
-import { Badge, Checkbox, FormControlLabel } from '@mui/material';
+import { Badge, Checkbox, FormControlLabel, Pagination } from '@mui/material';
 import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { findStabType } from '../../../utils/compute';
 import { getLevelList } from '../../../utils/compute';
@@ -57,6 +57,7 @@ const CalculatePoint = () => {
   const [weatherBoosts, setWeatherBoosts] = useState(false);
   const [pvpDmg, setPvpDmg] = useState(false);
   const [showDiffBorder, setShowDiffBorder] = useState(false);
+  const [levelPage, setLevelPage] = useState(1);
 
   const [isRaid, setIsRaid] = useState(true);
   const [tier, setTier] = useState(1);
@@ -141,7 +142,12 @@ const CalculatePoint = () => {
       const dataList = response.data.data.data;
       const group = dataList.flat();
       const colorTone = computeColorTone(UniqValueInArray(group).sort((a, b) => a - b));
-      setResultBreakPointAtk({ data: dataList, colorTone });
+      setResultBreakPointAtk({
+        data: dataList,
+        levels: response.data.data.levels,
+        ivs: response.data.data.ivs,
+        colorTone,
+      });
       showSnackbar('Calculate breakpoint attacker successfully!', 'success');
     } catch {
       showSnackbar('Breakpoint API is unavailable.', 'error');
@@ -168,7 +174,14 @@ const CalculatePoint = () => {
       const { dataDef, dataSta } = response.data.data;
       const colorToneDef = computeColorTone(UniqValueInArray(dataDef.flat()).sort((a, b) => b - a));
       const colorToneSta = computeColorTone(UniqValueInArray(dataSta.flat()).sort((a, b) => a - b));
-      setResultBreakPointDef({ dataDef, dataSta, colorToneDef, colorToneSta });
+      setResultBreakPointDef({
+        dataDef,
+        dataSta,
+        levels: response.data.data.levels,
+        ivs: response.data.data.ivs,
+        colorToneDef,
+        colorToneSta,
+      });
       showSnackbar('Calculate breakpoint defender successfully!', 'success');
     } catch {
       showSnackbar('Breakpoint API is unavailable.', 'error');
@@ -222,7 +235,12 @@ const CalculatePoint = () => {
       if (response.data.data.mode !== 'bulk') {
         return;
       }
-      setResultBulkPointDef({ data: response.data.data.data, maxLength: response.data.data.maxLength });
+      setResultBulkPointDef({
+        data: response.data.data.data,
+        maxLength: response.data.data.maxLength,
+        levels: response.data.data.levels,
+        ivs: response.data.data.ivs,
+      });
       showSnackbar('Calculate bulkpoint defender successfully!', 'success');
     } catch {
       showSnackbar('Breakpoint API is unavailable.', 'error');
@@ -315,6 +333,9 @@ const CalculatePoint = () => {
   };
 
   const ivIndices = useMemo(() => [...Array(maxIv() + 1).keys()], []);
+  const levelPageSize = 40;
+  const visibleLevelRows = (levels: number[]) =>
+    levels.map((level, index) => ({ level, index })).slice((levelPage - 1) * levelPageSize, levelPage * levelPageSize);
 
   const colorToneAtkMap = useMemo(
     () => new Map(Object.values(resultBreakPointAtk?.colorTone ?? {}).map((t) => [t.number, t.color])),
@@ -350,11 +371,20 @@ const CalculatePoint = () => {
       </div>
       <hr />
       <div className="tw-container tw-mb-3">
+        <div className="tw-flex tw-flex-wrap tw-items-center tw-justify-between tw-gap-2 tw-mb-3">
+          <span className="caption">Level rows</span>
+          <Pagination
+            size="small"
+            page={levelPage}
+            count={Math.max(1, Math.ceil(getLevelList().length / levelPageSize))}
+            onChange={(_, page) => setLevelPage(page)}
+          />
+        </div>
         <TabsPanel
           tabs={[
             {
               label: 'Breakpoint Attacker',
-              children: (
+              renderChildren: () => (
                 <div className="tab-body">
                   <div className="row">
                     <div className="lg:tw-w-1/3">
@@ -453,33 +483,35 @@ const CalculatePoint = () => {
                           <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
-                              {ivIndices.map((value, index) => (
+                              {(resultBreakPointAtk?.ivs ?? ivIndices).map((value, index) => (
                                 <th key={index}>{value}</th>
                               ))}
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {getLevelList().map((level, i) => (
-                              <tr key={i}>
-                                <td>{level}</td>
-                                {ivIndices.map((_, index) => (
-                                  <td
-                                    className={combineClasses(
-                                      'text-iv',
-                                      showDiffBorder ? getBorderHighlight(i, index, resultBreakPointAtk?.data) : ''
-                                    )}
-                                    style={{
-                                      backgroundColor: resultBreakPointAtk
-                                        ? computeColor(colorToneAtkMap.get(resultBreakPointAtk.data[i][index]))
-                                        : '',
-                                    }}
-                                    key={index}
-                                  >
-                                    {resultBreakPointAtk && `${resultBreakPointAtk.data[i][index]}`}
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
+                            {visibleLevelRows(resultBreakPointAtk?.levels ?? getLevelList()).map(
+                              ({ level, index: i }) => (
+                                <tr key={level}>
+                                  <td>{level}</td>
+                                  {(resultBreakPointAtk?.ivs ?? ivIndices).map((_, index) => (
+                                    <td
+                                      className={combineClasses(
+                                        'text-iv',
+                                        showDiffBorder ? getBorderHighlight(i, index, resultBreakPointAtk?.data) : ''
+                                      )}
+                                      style={{
+                                        backgroundColor: resultBreakPointAtk
+                                          ? computeColor(colorToneAtkMap.get(resultBreakPointAtk.data[i][index]))
+                                          : '',
+                                      }}
+                                      key={index}
+                                    >
+                                      {resultBreakPointAtk && `${resultBreakPointAtk.data[i][index]}`}
+                                    </td>
+                                  ))}
+                                </tr>
+                              )
+                            )}
                           </tbody>
                         </table>
                       </div>
@@ -490,7 +522,7 @@ const CalculatePoint = () => {
             },
             {
               label: 'Breakpoint Defender',
-              children: (
+              renderChildren: () => (
                 <div className="tab-body">
                   <div className="row">
                     <div className="lg:tw-w-1/3">
@@ -589,33 +621,35 @@ const CalculatePoint = () => {
                           <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
-                              {ivIndices.map((value, index) => (
+                              {(resultBreakPointDef?.ivs ?? ivIndices).map((value, index) => (
                                 <th key={index}>{value}</th>
                               ))}
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {getLevelList().map((level, i) => (
-                              <tr key={i}>
-                                <td>{level}</td>
-                                {ivIndices.map((_, index) => (
-                                  <td
-                                    className={combineClasses(
-                                      'text-iv',
-                                      showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataDef) : ''
-                                    )}
-                                    style={{
-                                      backgroundColor: resultBreakPointDef
-                                        ? computeColor(colorToneDefMap.get(resultBreakPointDef.dataDef[i][index]))
-                                        : '',
-                                    }}
-                                    key={index}
-                                  >
-                                    {resultBreakPointDef && `${resultBreakPointDef.dataDef[i][index]}`}
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
+                            {visibleLevelRows(resultBreakPointDef?.levels ?? getLevelList()).map(
+                              ({ level, index: i }) => (
+                                <tr key={level}>
+                                  <td>{level}</td>
+                                  {(resultBreakPointDef?.ivs ?? ivIndices).map((_, index) => (
+                                    <td
+                                      className={combineClasses(
+                                        'text-iv',
+                                        showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataDef) : ''
+                                      )}
+                                      style={{
+                                        backgroundColor: resultBreakPointDef
+                                          ? computeColor(colorToneDefMap.get(resultBreakPointDef.dataDef[i][index]))
+                                          : '',
+                                      }}
+                                      key={index}
+                                    >
+                                      {resultBreakPointDef && `${resultBreakPointDef.dataDef[i][index]}`}
+                                    </td>
+                                  ))}
+                                </tr>
+                              )
+                            )}
                           </tbody>
                         </table>
                       </div>
@@ -640,33 +674,35 @@ const CalculatePoint = () => {
                           <thead className="tw-text-center">
                             <tr className="table-header">
                               <th />
-                              {ivIndices.map((value, index) => (
+                              {(resultBreakPointDef?.ivs ?? ivIndices).map((value, index) => (
                                 <th key={index}>{value}</th>
                               ))}
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {getLevelList().map((level, i) => (
-                              <tr key={i}>
-                                <td>{level}</td>
-                                {ivIndices.map((_, index) => (
-                                  <td
-                                    className={combineClasses(
-                                      'text-iv',
-                                      showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataSta) : ''
-                                    )}
-                                    style={{
-                                      backgroundColor: resultBreakPointDef
-                                        ? computeColor(colorToneStaMap.get(resultBreakPointDef.dataSta[i][index]))
-                                        : '',
-                                    }}
-                                    key={index}
-                                  >
-                                    {resultBreakPointDef && `${resultBreakPointDef.dataSta[i][index]}`}
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
+                            {visibleLevelRows(resultBreakPointDef?.levels ?? getLevelList()).map(
+                              ({ level, index: i }) => (
+                                <tr key={level}>
+                                  <td>{level}</td>
+                                  {(resultBreakPointDef?.ivs ?? ivIndices).map((_, index) => (
+                                    <td
+                                      className={combineClasses(
+                                        'text-iv',
+                                        showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataSta) : ''
+                                      )}
+                                      style={{
+                                        backgroundColor: resultBreakPointDef
+                                          ? computeColor(colorToneStaMap.get(resultBreakPointDef.dataSta[i][index]))
+                                          : '',
+                                      }}
+                                      key={index}
+                                    >
+                                      {resultBreakPointDef && `${resultBreakPointDef.dataSta[i][index]}`}
+                                    </td>
+                                  ))}
+                                </tr>
+                              )
+                            )}
                           </tbody>
                         </table>
                       </div>
@@ -677,7 +713,7 @@ const CalculatePoint = () => {
             },
             {
               label: 'Breakpoint Attacker',
-              children: (
+              renderChildren: () => (
                 <div className="tab-body">
                   <div className="row">
                     <div className="lg:tw-w-1/3">
@@ -871,32 +907,34 @@ const CalculatePoint = () => {
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {getLevelList().map((level, i) => (
-                              <tr key={i}>
-                                <td>{level}</td>
-                                {resultBulkPointDef ? (
-                                  <Fragment>
-                                    {resultBulkPointDef.data[i].map((value, index) => (
-                                      <td
-                                        className={combineClasses(
-                                          'text-iv-bulk',
-                                          value === 0 && showDiffBorder ? getBorderSplit(i, index) : ''
-                                        )}
-                                        key={index}
-                                      >
-                                        {value}
-                                      </td>
-                                    ))}
-                                  </Fragment>
-                                ) : (
-                                  <Fragment>
-                                    {[...Array(12).keys()].map((_, index) => (
-                                      <td key={index} />
-                                    ))}
-                                  </Fragment>
-                                )}
-                              </tr>
-                            ))}
+                            {visibleLevelRows(resultBulkPointDef?.levels ?? getLevelList()).map(
+                              ({ level, index: i }) => (
+                                <tr key={level}>
+                                  <td>{level}</td>
+                                  {resultBulkPointDef ? (
+                                    <Fragment>
+                                      {resultBulkPointDef.data[i].map((value, index) => (
+                                        <td
+                                          className={combineClasses(
+                                            'text-iv-bulk',
+                                            value === 0 && showDiffBorder ? getBorderSplit(i, index) : ''
+                                          )}
+                                          key={index}
+                                        >
+                                          {value}
+                                        </td>
+                                      ))}
+                                    </Fragment>
+                                  ) : (
+                                    <Fragment>
+                                      {[...Array(12).keys()].map((_, index) => (
+                                        <td key={index} />
+                                      ))}
+                                    </Fragment>
+                                  )}
+                                </tr>
+                              )
+                            )}
                           </tbody>
                         </table>
                       </div>

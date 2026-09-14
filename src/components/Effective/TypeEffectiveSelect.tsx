@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/api.service';
 import { splitAndCapitalize } from '../../utils/utils';
 
-import './TypeEffectiveSelect.scss';
 import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
 import { combineClasses, DynamicObj, isNotEmpty, safeObjectEntries, toFloat } from '../../utils/extension';

@@ -159,3 +159,123 @@ ul {
 
   @apply tw-p-4 tw-rounded-lg tw-text-default tw-shadow;
 }
+
+.type-icon-small {
+  @apply tw-py-[5px] tw-px-2 tw-rounded-[5px] tw-text-white;
+}
+
+.view-pokemon {
+  @apply tw-opacity-50 tw-cursor-pointer;
+}
+
+.view-pokemon:hover {
+  @apply tw-opacity-100;
+}
+
+.poke-container {
+  @apply tw-mb-[15px] tw-overflow-hidden;
+}
+
+.info-event-future {
+  border: 1px solid #1987540d;
+  box-shadow: 0 0 0 0.15rem #19875440;
+  color: #198754;
+  background-color: #1987540d;
+}
+
+.title-leagues {
+  @apply tw-underline tw-font-bold;
+}
+
+.text-origin {
+  font-weight: lighter !important;
+}
+
+.text-b-ic {
+  @apply tw-mr-2;
+}
+
+.sprite-type-select {
+  width: auto !important;
+}
+
+.select-evo {
+  @apply tw-mb-2.5 tw-h-full tw-block;
+}
+
+.select-evo p {
+  @apply tw-m-0 tw-h-[18px];
+}
+
+.select-evo:hover {
+  @apply tw-cursor-pointer;
+}
+
+.select-evo b.link-title {
+  color: #0d6efd !important;
+
+  @apply tw-underline;
+}
+
+.tooltips-info {
+  @apply tw-relative tw-inline-block tw-cursor-pointer;
+}
+
+.info-evo span {
+  @apply tw-mb-[5px];
+}
+
+.info-evo span:last-child {
+  @apply tw-mb-0;
+}
+
+.img-form-gender-group {
+  @apply tw-align-top tw-inline-block tw-text-center tw-mr-[5%] tw-w-24 tw-h-[130px];
+
+  .img-gender-group {
+    @apply tw-w-full tw-h-24 tw-min-w-24;
+  }
+}
+
+.caption-small {
+  @apply tw-text-[13px];
+}
+
+.card-input div h5 {
+  @apply tw-text-center tw-mb-2.5;
+}
+
+.card-input {
+  @apply tw-w-[300px] tw-h-[86px];
+}
+
+.card-input:hover {
+  @apply tw-cursor-pointer;
+}
+
+.card-select {
+  @apply tw-relative tw-p-2.5;
+}
+
+
+.result-type {
+  box-shadow: 0 4px 8px 0 #00000033;
+
+  @apply tw-absolute tw-z-2 tw-w-[300px] tw-max-h-[50%] tw-overflow-y-auto;
+}
+
+.type-title {
+  @apply tw-py-1 tw-px-[6px] tw-rounded-[5px];
+}
+
+.weakness-title {
+  @apply tw-bg-red-600 tw-text-white;
+}
+
+.resistance-title {
+  @apply tw-bg-green-600 tw-text-white;
+}
+
+.neutral-title {
+  @apply tw-bg-gray-500 tw-text-white;
+}

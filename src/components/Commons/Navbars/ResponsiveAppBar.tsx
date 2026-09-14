@@ -235,7 +235,10 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
       </Toolbar>
       {spinnerBarIsShow && (
         <Box className="tw-w-full tw-absolute tw-z-7">
-          <LinearProgress variant={VariantType.Determinate} value={spinnerPercent} />
+          <LinearProgress
+            variant={spinnerPercent === 0 ? 'indeterminate' : VariantType.Determinate}
+            value={spinnerPercent}
+          />
         </Box>
       )}
       <DrawerSideBar
