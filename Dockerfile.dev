@@ -3,10 +3,10 @@ FROM node:24-alpine
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci && cat package.json package-lock.json | sha256sum | cut -d ' ' -f1 > node_modules/.package-lock.sha256
 
 COPY . .
 
 EXPOSE 9000
 
-CMD ["npm", "run", "develop", "--", "--host", "0.0.0.0"]
+CMD ["sh", "./docker-entrypoint.dev.sh"]

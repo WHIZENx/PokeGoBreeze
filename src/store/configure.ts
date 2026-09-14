@@ -51,7 +51,8 @@ const sanitizeState = <S>(state: S): S => {
     return state;
   }
 
-  const sanitized = { ...state } as any;
+  const sanitized: Record<string, unknown> = {};
+  Object.assign(sanitized, state);
   if (state.store?.data) {
     sanitized.store = {
       ...state.store,

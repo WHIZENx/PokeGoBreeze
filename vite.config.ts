@@ -18,7 +18,6 @@ export default defineConfig(({ mode }) => {
       ...(isDev
         ? [
             eslint({
-              eslintOptions: { cache: true },
               shouldLint: (path) =>
                 path.includes('/src/') &&
                 /\.(ts|tsx|js|jsx)$/.test(path) &&
@@ -33,7 +32,6 @@ export default defineConfig(({ mode }) => {
               exclude: ['node_modules', 'dist', 'build'],
               build: false,
               lintInWorker: false,
-              cache: true,
             }),
           ]
         : []),

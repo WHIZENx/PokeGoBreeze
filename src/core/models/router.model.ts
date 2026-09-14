@@ -5,7 +5,7 @@ export interface Location {
   pathname: string;
   search: string;
   hash: string;
-  state?: any;
+  state?: unknown;
   key?: string;
 }
 
