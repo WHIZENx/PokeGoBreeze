@@ -1,7 +1,7 @@
 export abstract class ValueObject<T> {
   value!: T;
 
-  constructor(valueObj: T, defaultValue: Partial<T> | any = null) {
+  constructor(valueObj: T, defaultValue: Partial<T> | null = null) {
     if (!valueObj) {
       return;
     }

@@ -368,7 +368,7 @@
       padding-left: 0;
 
       &::before {
-        // stylelint-disable-next-line stylistic/string-quotes
+        // stylelint-disable-next-line @stylistic/string-quotes
         content: '•';
         font-size: 1rem;
         justify-self: center;
@@ -708,7 +708,7 @@
       background:
         linear-gradient(90deg, rgb(8 10 14 / 58%), transparent 52%),
         linear-gradient(0deg, rgb(8 10 14 / 62%), transparent 55%);
-      // stylelint-disable-next-line stylistic/string-quotes
+      // stylelint-disable-next-line @stylistic/string-quotes
       content: '';
       inset: 0;
       pointer-events: none;
@@ -789,7 +789,7 @@
     text-transform: uppercase;
 
     span + span::before {
-      // stylelint-disable-next-line stylistic/string-quotes
+      // stylelint-disable-next-line @stylistic/string-quotes
       content: '•';
       margin-right: 8px;
     }

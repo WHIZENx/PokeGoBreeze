@@ -650,9 +650,9 @@ const mergeTableStyles = (custom: Partial<TableStyles>, defaults: TableStyles): 
       !Array.isArray(customValue) &&
       !Array.isArray(defaultValue)
     ) {
-      result[customKey] = { ...defaultValue, ...customValue } as any;
+      Object.assign(result, { [customKey]: { ...defaultValue, ...customValue } });
     } else {
-      result[customKey] = customValue as any;
+      Object.assign(result, { [customKey]: customValue });
     }
   }
 

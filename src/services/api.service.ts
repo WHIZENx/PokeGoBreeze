@@ -63,7 +63,7 @@ class APIService {
     return this.cancelToken.cancel();
   }
 
-  isCancel(throwErr: any) {
+  isCancel(throwErr: unknown) {
     return this.axios.isCancel(throwErr);
   }
 
@@ -76,7 +76,7 @@ class APIService {
     return this.publicGitHubRepos.some((repo) => apiUrl.startsWith(`https://api.github.com/repos/${repo}`));
   }
 
-  withoutPublicGitHubAuthorization(url: string, options?: AxiosRequestConfig<any>) {
+  withoutPublicGitHubAuthorization(url: string, options?: AxiosRequestConfig<unknown>) {
     if (!options?.headers || !this.isPublicGitHubRepoUrl(url)) {
       return options;
     }
@@ -91,12 +91,12 @@ class APIService {
     };
   }
 
-  async getFetchUrl<T>(url: string | null | undefined, options?: AxiosRequestConfig<any>) {
+  async getFetchUrl<T>(url: string | null | undefined, options?: AxiosRequestConfig<unknown>) {
     const fetchUrl = getValueOrDefault(String, url);
     return await this.axios.get<T>(fetchUrl, this.withoutPublicGitHubAuthorization(fetchUrl, options));
   }
 
-  async getPokemonBundle(value: number, options?: AxiosRequestConfig<any>) {
+  async getPokemonBundle(value: number, options?: AxiosRequestConfig<unknown>) {
     const query = new URLSearchParams({ id: String(value) });
     return await this.getFetchUrl<{ data: PokemonBundle }>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pokemon?${query}`,
@@ -104,7 +104,7 @@ class APIService {
     );
   }
 
-  async getCandyData<T>(options?: AxiosRequestConfig<any>) {
+  async getCandyData<T>(options?: AxiosRequestConfig<unknown>) {
     return await this.getFetchUrl<{ data: T }>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/candy`, options);
   }
 
