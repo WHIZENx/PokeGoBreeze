@@ -16,8 +16,7 @@ type Constructor =
   | typeof Date
   | typeof Map
   | typeof Set
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | (new (...args: any[]) => any);
+  | (new (...args: never[]) => unknown);
 
 /**
  * Returns the default value for the given type.
