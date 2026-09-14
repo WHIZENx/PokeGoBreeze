@@ -254,7 +254,7 @@ const News = () => {
       return element;
     }
     return (
-      <div className="tw-w-full tw-h-full counter-none tw-align-top">
+      <div className="tw-w-full tw-h-[550px] tw-align-top">
         <div className="text-origin tw-text-center">
           <div className="slide-container">
             <div className="slide-col !tw-flex tw-w-full tw-h-full tw-flex-col !tw-m-0 !tw-p-0 tw-gap-3">

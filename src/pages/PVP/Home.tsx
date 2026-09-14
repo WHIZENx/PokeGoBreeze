@@ -107,14 +107,7 @@ const PVPHome = () => {
           }))}
         />
       </div>
-      <ButtonGroupLeague
-        height={200}
-        leagues={rank?.cp}
-        isLoaded={!!rank}
-        loading={renderLoading()}
-        data={rank}
-        path="rankings"
-      />
+      <ButtonGroupLeague leagues={rank?.cp} isLoaded={!!rank} loading={renderLoading()} data={rank} path="rankings" />
       <div className="tw-flex tw-items-center tw-justify-between">
         <h1 className="tw-w-3/4 tw-block">Top Teams Pokémon Leagues</h1>
         <SelectMui
@@ -134,20 +127,12 @@ const PVPHome = () => {
           }))}
         />
       </div>
-      <ButtonGroupLeague
-        height={200}
-        leagues={team?.cp}
-        isLoaded={!!team}
-        loading={renderLoading()}
-        data={team}
-        path="teams"
-      />
+      <ButtonGroupLeague leagues={team?.cp} isLoaded={!!team} loading={renderLoading()} data={team} path="teams" />
       <h1 className="tw-flex tw-gap-2 tw-items-end">
         <span>Battle League Simulator</span>
         <span className="tw-mb-1 caption !tw-text-red-600">(Beta Test)</span>
       </h1>
       <ButtonGroupLeague
-        height={200}
         leagues={leaguesTeamBattle
           .filter((value) => value.cp.length > 0)
           .map((value) => value.cp)

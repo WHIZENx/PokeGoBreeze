@@ -40,7 +40,7 @@ const TabsPanel = (props: TabPanelComponent) => {
       </Box>
       {props.tabs.map((tab, index) => (
         <CustomTabPanel key={index} value={value} tabValue={index}>
-          {tab.children}
+          {value === index && tab.renderChildren ? tab.renderChildren() : tab.children}
         </CustomTabPanel>
       ))}
     </Box>

@@ -4,7 +4,6 @@ import { createDataRows, HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCa
 import APIService from '../../../services/api.service';
 
 import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
-import '../../../components/Find/FormSelect.scss';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
 import './FindTable.scss';

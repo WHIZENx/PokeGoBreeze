@@ -149,7 +149,7 @@ const TableMove = (props: ITableMoveComponent) => {
             </tr>
           </thead>
           <tbody>
-            {move.data
+            {[...move.data]
               .sort((a, b) => sortFunc(a, b, table))
               .map((value, index) => (
                 <Fragment key={index}>{renderBestMovesetTable(value, max, table)}</Fragment>
@@ -303,7 +303,7 @@ const TableMove = (props: ITableMoveComponent) => {
           tabs={[
             {
               label: 'Moves List',
-              children: (
+              renderChildren: () => (
                 <div className="row tw-w-full tw-bg-table-info !tw-m-0">
                   <div className="xl:tw-flex-1 table-moves-col !tw-p-0" style={{ maxHeight: props.maxHeight }}>
                     <table className="table-moves">
@@ -346,7 +346,7 @@ const TableMove = (props: ITableMoveComponent) => {
             },
             {
               label: 'Best Moves List',
-              children: (
+              renderChildren: () => (
                 <div className="row tw-w-full !tw-m-0">
                   {renderTable(TableType.Offensive)}
                   {renderTable(TableType.Defensive)}

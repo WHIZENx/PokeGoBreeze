@@ -3,7 +3,6 @@ import React from 'react';
 import Attacker from './Attacker';
 import Defender from './Defender';
 
-import './TypeEffect.scss';
 import { useTitle } from '../../utils/hooks/useTitle';
 
 const TypeEffect = () => {

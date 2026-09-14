@@ -18,12 +18,16 @@ export class ColorTone implements IColorTone {
 
 export interface BreakPointAtk {
   data: number[][];
+  levels: number[];
+  ivs: number[];
   colorTone: DynamicObj<ColorTone>;
 }
 
 export interface BreakPointDef {
   dataDef: number[][];
   dataSta: number[][];
+  levels: number[];
+  ivs: number[];
   colorToneDef: DynamicObj<ColorTone>;
   colorToneSta: DynamicObj<ColorTone>;
 }
@@ -31,4 +35,6 @@ export interface BreakPointDef {
 export interface BulkPointDef {
   data: number[][];
   maxLength: number;
+  levels: number[];
+  ivs: number[];
 }

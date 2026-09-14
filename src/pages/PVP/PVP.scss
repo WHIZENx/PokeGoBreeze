@@ -136,20 +136,8 @@
   }
 }
 
-.group-selected {
-  @apply tw-whitespace-nowrap tw-overflow-x-auto tw-m-2.5 tw-flex tw-gap-x-2.5;
-}
-
 .card-ranking {
   @apply tw-p-2.5;
-}
-
-.view-pokemon {
-  @apply tw-opacity-50 tw-cursor-pointer;
-}
-
-.view-pokemon:hover {
-  @apply tw-opacity-100;
 }
 
 .battle-bar {

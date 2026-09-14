@@ -8,6 +8,7 @@ import loading from '../../assets/loading.png';
 interface Props {
   children: ReactNode;
   fallbackUI?: ReactNode;
+  resetKey?: string;
 }
 
 interface IState {
@@ -46,6 +47,12 @@ class ErrorBoundary extends Component<Props, IState> {
         errorInfo,
       })
     );
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
+      this.setState(new State());
+    }
   }
 
   handleGoHome = () => {

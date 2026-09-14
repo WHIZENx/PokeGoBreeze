@@ -1,4 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import '../PVP.scss';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/api.service';

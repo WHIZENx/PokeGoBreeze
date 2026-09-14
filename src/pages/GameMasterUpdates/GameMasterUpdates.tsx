@@ -608,56 +608,6 @@ const FieldChange = ({ field, pokemonId }: { field: GameMasterFieldChange; pokem
   );
 };
 
-const missingFieldValue = (value: GameMasterFieldChange['before']) =>
-  value === undefined || value === null || value === '';
-
-const mergeComplementaryFields = (fields: GameMasterFieldChange[]) => {
-  const merged: GameMasterFieldChange[] = [];
-  const consumed = new Set<number>();
-
-  fields.forEach((field, index) => {
-    if (consumed.has(index)) {
-      return;
-    }
-    const isRemoval = !missingFieldValue(field.before) && missingFieldValue(field.after);
-    const isAddition = missingFieldValue(field.before) && !missingFieldValue(field.after);
-    if (!isRemoval && !isAddition) {
-      merged.push(field);
-      return;
-    }
-
-    const pairIndex = fields.findIndex((candidate, candidateIndex) => {
-      if (candidateIndex === index || consumed.has(candidateIndex) || candidate.label !== field.label) {
-        return false;
-      }
-      const candidateIsRemoval = !missingFieldValue(candidate.before) && missingFieldValue(candidate.after);
-      const candidateIsAddition = missingFieldValue(candidate.before) && !missingFieldValue(candidate.after);
-      return (isRemoval && candidateIsAddition) || (isAddition && candidateIsRemoval);
-    });
-    if (pairIndex < 0) {
-      merged.push(field);
-      return;
-    }
-
-    const pair = fields[pairIndex];
-    const beforeField = isRemoval ? field : pair;
-    const afterField = isAddition ? field : pair;
-    consumed.add(pairIndex);
-    merged.push({
-      path: `${beforeField.path}->${afterField.path}`,
-      label: field.label,
-      before: beforeField.before,
-      after: afterField.after,
-      beforeMoves: beforeField.beforeMoves,
-      afterMoves: afterField.afterMoves,
-      beforePokemon: beforeField.beforePokemon,
-      afterPokemon: afterField.afterPokemon,
-    });
-  });
-
-  return merged;
-};
-
 const formatDate = (value: string) => {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
@@ -751,7 +701,7 @@ const PatchEntry = ({
   const hasDetails = hasForms || change.fields.length > 0;
   const formLabel = change.forms?.length === 1 ? change.forms[0] : change.form;
   const detailPath = entityDetailPath(change);
-  const displayFields = mergeComplementaryFields(change.fields);
+  const displayFields = change.fields;
   const entityTitle = (
     <Typography component="h3" variant="h6">
       {change.pokemonId ? `#${change.pokemonId} ` : ''}
@@ -1129,7 +1079,14 @@ const GameMasterUpdates = () => {
 
   const groupedChanges = useMemo(() => {
     const groups = new Map<GameMasterPatchSection, GameMasterChange[]>();
-    changes.forEach((change) => groups.set(change.section, [...(groups.get(change.section) ?? []), change]));
+    changes.forEach((change) => {
+      const group = groups.get(change.section);
+      if (group) {
+        group.push(change);
+      } else {
+        groups.set(change.section, [change]);
+      }
+    });
     return groups;
   }, [changes]);
 

@@ -70,7 +70,7 @@ const MemoizedAccordionContent = memo(
           ...(item.sxDetails ? item.sxDetails : {}),
         }}
       >
-        {item.children}
+        {item.renderChildren ? item.renderChildren() : item.children}
       </AccordionDetails>
       {(item.footer || isShowAction) && (
         <AccordionActions sx={{ backgroundColor: 'background.paper', ...(item.sxFooter ? item.sxFooter : {}) }}>
