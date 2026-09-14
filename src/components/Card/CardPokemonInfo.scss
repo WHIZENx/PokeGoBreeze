@@ -2,6 +2,11 @@
   @apply tw-p-2;
 }
 
+.pokemon-content > li {
+  content-visibility: auto;
+  contain-intrinsic-size: 170px 260px;
+}
+
 .no-released-pokemon {
   @apply tw-absolute tw-left-[5px] tw-top-[5px];
 }

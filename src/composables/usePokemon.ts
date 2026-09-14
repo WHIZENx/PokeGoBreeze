@@ -13,10 +13,63 @@ import {
 import { PokemonType } from '../enums/type.enum';
 import { versionList } from '../utils/constants';
 import useDataStore from './useDataStore';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 export const usePokemon = () => {
   const { pokemonsData } = useDataStore();
+  const validPokemons = useMemo(() => pokemonsData.filter((pokemon) => pokemon.num > 0), [pokemonsData]);
+  const pokemonsById = useMemo(() => {
+    const result = new Map<number, IPokemonData[]>();
+    validPokemons.forEach((pokemon) => {
+      const matches = result.get(pokemon.num);
+      if (matches) {
+        matches.push(pokemon);
+      } else {
+        result.set(pokemon.num, [pokemon]);
+      }
+    });
+    return result;
+  }, [validPokemons]);
+  const pokemonByIdAndForm = useMemo(() => {
+    const result = new Map<string, IPokemonData>();
+    validPokemons.forEach((pokemon) => {
+      result.set(`${pokemon.num}:${pokemon.form?.toUpperCase() ?? formNormal()}`, pokemon);
+    });
+    return result;
+  }, [validPokemons]);
+  const evolutionParents = useMemo(() => {
+    const result = new Map<string, IPokemonData[]>();
+    validPokemons.forEach((pokemon) => {
+      pokemon.evoList?.forEach((evolution) => {
+        const key = `${evolution.evoToId}:${evolution.evoToForm?.toUpperCase() ?? formNormal()}`;
+        const parents = result.get(key);
+        if (parents) {
+          parents.push(pokemon);
+        } else {
+          result.set(key, [pokemon]);
+        }
+      });
+    });
+    return result;
+  }, [validPokemons]);
+  const pokemonBySlug = useMemo(
+    () => new Map(validPokemons.flatMap((pokemon) => (pokemon.slug ? [[pokemon.slug.toLowerCase(), pokemon]] : []))),
+    [validPokemons]
+  );
+  const defaultPokemons = useMemo(
+    () =>
+      validPokemons
+        .filter(
+          (pokemon) =>
+            pokemon.form === formNormal() || (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form))
+        )
+        .sort((a, b) => a.num - b.num),
+    [validPokemons]
+  );
+  const pokemonNames = useMemo(
+    () => defaultPokemons.map((pokemon) => new PokemonSearching(pokemon)),
+    [defaultPokemons]
+  );
 
   /**
    * Returns a filtered version of the pokemons data based on the provided filter function
@@ -25,9 +78,9 @@ export const usePokemon = () => {
    */
   const getFilteredPokemons = useCallback(
     (filterFn?: (item: IPokemonData) => boolean | undefined) => {
-      return pokemonsData.filter((item) => item.num > 0 && (filterFn === undefined || filterFn(item)));
+      return filterFn ? validPokemons.filter(filterFn) : validPokemons;
     },
-    [pokemonsData]
+    [validPokemons]
   );
 
   /**
@@ -37,68 +90,84 @@ export const usePokemon = () => {
    */
   const getFindPokemon = useCallback(
     (findFn?: (item: IPokemonData) => boolean | undefined) => {
-      return pokemonsData.find((item) => item.num > 0 && (findFn === undefined || findFn(item)));
+      return findFn ? validPokemons.find(findFn) : validPokemons[0];
     },
-    [pokemonsData]
+    [validPokemons]
   );
 
   const findPokemonById = useCallback(
     (id: number | undefined) => {
-      return getFindPokemon((pokemon) => pokemon.num === id);
+      return id === undefined ? undefined : pokemonsById.get(id)?.[0];
     },
-    [getFindPokemon]
+    [pokemonsById]
   );
 
   const findPokemonBySlug = useCallback(
     (name: string | undefined) => {
-      return getFindPokemon((pokemon) => isEqual(pokemon.slug, name));
+      return name ? pokemonBySlug.get(name.toLowerCase()) : undefined;
     },
-    [getFindPokemon]
+    [pokemonBySlug]
+  );
+
+  const findPokemonByIdAndForm = useCallback(
+    (id: number | undefined, form: string | undefined) => {
+      if (id === undefined) {
+        return undefined;
+      }
+      if (!form) {
+        return pokemonsById.get(id)?.[0];
+      }
+      const normalizedForm = form?.replace(`_${formStandard()}`, '').toUpperCase() ?? formNormal();
+      return pokemonByIdAndForm.get(`${id}:${normalizedForm}`);
+    },
+    [pokemonByIdAndForm, pokemonsById]
+  );
+
+  const getEvolutionParents = useCallback(
+    (id: number | undefined, form: string | undefined) => {
+      if (id === undefined) {
+        return [];
+      }
+      const normalizedForm = form?.replace(`_${formStandard()}`, '').toUpperCase() ?? formNormal();
+      return evolutionParents.get(`${id}:${normalizedForm}`) ?? [];
+    },
+    [evolutionParents]
   );
 
   const checkPokemonGO = useCallback(
     (id: number, name: string | undefined) =>
-      getFindPokemon((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO,
-    [getFindPokemon]
+      pokemonsById.get(id)?.find((pokemon) => isEqual(pokemon.fullName, name))?.releasedGO,
+    [pokemonsById]
   );
 
-  const getDefaultPokemons = useCallback(
-    () =>
-      getFilteredPokemons(
-        (pokemon) =>
-          pokemon.form === formNormal() || (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form))
-      ).sort((a, b) => a.num - b.num),
-    [getFilteredPokemons]
-  );
+  const getDefaultPokemons = useCallback(() => defaultPokemons, [defaultPokemons]);
 
-  const mappingPokemonName = useCallback(
-    () => getDefaultPokemons().map((pokemon) => new PokemonSearching(pokemon)),
-    [getDefaultPokemons]
-  );
+  const mappingPokemonName = useCallback(() => pokemonNames, [pokemonNames]);
 
   const getPokemonById = useCallback(
     (id: number) => {
-      const result = getFindPokemon(
-        (pokemon) =>
-          pokemon.num === id &&
-          (isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
-            (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive)))
-      );
+      const result = pokemonsById
+        .get(id)
+        ?.find(
+          (pokemon) =>
+            isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
+            (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
+        );
       if (!result) {
         return;
       }
       return new PokemonModel(result.num, result.name);
     },
-    [getFindPokemon]
+    [pokemonsById]
   );
 
   const checkPokemonIncludeShadowForm = useCallback(
     (form: string) =>
-      getFilteredPokemons().some(
+      validPokemons.some(
         (p) =>
           p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), getValueOrDefault(String, p.fullName, p.name))
       ),
-    [getFilteredPokemons]
+    [validPokemons]
   );
 
   const generatePokemonGoForms = (
@@ -111,7 +180,7 @@ export const usePokemon = () => {
     const formList = dataFormList
       .flatMap((form) => form)
       .map((p) => convertPokemonAPIDataName(p.formName, formNormal()));
-    getFilteredPokemons((pokemon) => pokemon.num === id).forEach((pokemon) => {
+    (pokemonsById.get(id) ?? []).forEach((pokemon) => {
       const isIncludeFormGO = formList.some((form) => isInclude(pokemon.form, form));
       if (!isIncludeFormGO) {
         index--;
@@ -136,21 +205,18 @@ export const usePokemon = () => {
   };
 
   const retrieveMoves = (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None) => {
-    const filterPokemons = getFilteredPokemons();
-    if (isNotEmpty(filterPokemons)) {
+    const idPokemons = id === undefined ? [] : (pokemonsById.get(id) ?? []);
+    if (isNotEmpty(idPokemons)) {
       if (pokemonType === PokemonType.GMax) {
-        return filterPokemons.find((item) => item.num === id && isEqual(item.form, formGmax()));
+        return idPokemons.find((item) => isEqual(item.form, formGmax()));
       }
-      const resultFilter = filterPokemons.filter((item) => item.num === id);
       const pokemonForm = getValueOrDefault(
         String,
         form?.replaceAll('-', '_').toUpperCase().replace(`_${formStandard()}`, '').replace(formGmax(), formNormal()),
         formNormal()
       );
-      const result = resultFilter.find(
-        (item) => isEqual(item.fullName, pokemonForm) || isEqual(item.form, pokemonForm)
-      );
-      return PokemonData.copy(result ?? resultFilter[0]);
+      const result = idPokemons.find((item) => isEqual(item.fullName, pokemonForm) || isEqual(item.form, pokemonForm));
+      return PokemonData.copy(result ?? idPokemons[0]);
     }
   };
 
@@ -165,22 +231,19 @@ export const usePokemon = () => {
             .replaceAll(' ', '-'),
           pokemonType
         );
-        let pokemonForm = getFindPokemon(
-          (item) => item.num === id && isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive)
-        );
+        const idPokemons = id === undefined ? [] : (pokemonsById.get(id) ?? []);
+        let pokemonForm = idPokemons.find((item) => isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive));
 
         if (isDefault && !pokemonForm) {
-          pokemonForm = getFindPokemon(
-            (item) =>
-              item.num === id &&
-              (item.form === formNormal() || (isNotEmpty(item.baseForme) && isEqual(item.baseForme, item.form)))
+          pokemonForm = idPokemons.find(
+            (item) => item.form === formNormal() || (isNotEmpty(item.baseForme) && isEqual(item.baseForme, item.form))
           );
         }
         return PokemonData.copyWithCreate(pokemonForm);
       }
       return new PokemonData();
     },
-    [getFindPokemon]
+    [pokemonsById]
   );
 
   return {
@@ -188,6 +251,8 @@ export const usePokemon = () => {
     getFindPokemon,
     findPokemonById,
     findPokemonBySlug,
+    findPokemonByIdAndForm,
+    getEvolutionParents,
     checkPokemonGO,
     getDefaultPokemons,
     mappingPokemonName,

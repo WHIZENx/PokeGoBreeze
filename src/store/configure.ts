@@ -9,19 +9,12 @@ import { createRouterMiddleware } from './middleware/router.middleware';
 import { legacy_createStore as createStore } from 'redux';
 import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import localForage from 'localforage';
-import CryptoJS from 'crypto-js';
 import { LocalForageConfig } from './constants/local-forage';
 import { StoreState } from './models/state.model';
 import { persistKey } from '../utils/helpers/options-context.helpers';
 import { BooleanType } from '../enums/type.enum';
 
-const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY;
-const ENCRYPTION_SALT = process.env.REACT_APP_ENCRYPTION_SALT;
 const REDUX_VERBOSE = process.env.REACT_APP_REDUX_VERBOSE === BooleanType.True;
-
-if (!ENCRYPTION_KEY || !ENCRYPTION_SALT) {
-  throw new Error('Missing encryption key or salt');
-}
 
 interface IAction extends Action {
   payload: object[];
@@ -111,73 +104,17 @@ localForage.config({
   description: LocalForageConfig.Description,
 });
 
-const createEncryptionTransform = () => {
-  return createTransform(
-    (inboundState, key) => {
-      if (!inboundState) {
-        return inboundState;
-      }
-
-      try {
-        const keyWithSalt = `${ENCRYPTION_KEY}${ENCRYPTION_SALT}${String(key)}`;
-        const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(inboundState), keyWithSalt, {
-          keySize: 256 / 32,
-          mode: CryptoJS.mode.CBC,
-          padding: CryptoJS.pad.Pkcs7,
-        }).toString();
-
-        return encryptedData;
-      } catch (error) {
-        if (process.env.NODE_ENV !== 'production') {
-          // eslint-disable-next-line no-console
-          console.error('Error encrypting state for key:', key, error);
-        }
-        return null;
-      }
-    },
-    (outboundState, key) => {
-      if (!outboundState) {
-        return outboundState;
-      }
-
-      if (typeof outboundState !== 'string' || !outboundState.startsWith('U2F')) {
-        return outboundState;
-      }
-
-      try {
-        const keyWithSalt = `${ENCRYPTION_KEY}${ENCRYPTION_SALT}${String(key)}`;
-        const decryptedBytes = CryptoJS.AES.decrypt(outboundState, keyWithSalt);
-        const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
-
-        if (!decryptedText) {
-          if (process.env.NODE_ENV !== 'production') {
-            // eslint-disable-next-line no-console
-            console.warn('Decryption produced empty result for key:', key);
-          }
-          return {};
-        }
-
-        return JSON.parse(decryptedText);
-      } catch (error) {
-        if (process.env.NODE_ENV !== 'production') {
-          // eslint-disable-next-line no-console
-          console.error('Error decrypting state for key:', key, error);
-        }
-        return {};
-      }
-    }
-  );
-};
-
 const sensitiveDataTransform = createTransform(
   (inboundState: object) => ({ ...inboundState, sensitiveData: undefined }),
   (outboundState: object) => ({ ...outboundState })
 );
 
 const persistConfig = {
-  key: persistKey(),
+  // The prior cache encrypted public API data with a key bundled into the app.
+  // Use a new cache key so old encrypted values are never rehydrated.
+  key: `${persistKey()}-v2`,
   storage: localForage,
-  transforms: [sensitiveDataTransform, createEncryptionTransform()],
+  transforms: [sensitiveDataTransform],
   whitelist: ['store', 'stats', 'timestamp'],
   timeout: 0,
 };

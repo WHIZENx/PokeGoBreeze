@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef, useCallback } from 'react';
+import React, { useState, useEffect, Fragment, useRef, useCallback, useMemo } from 'react';
 import '../PVP.scss';
 
 import {
@@ -25,11 +25,12 @@ import {
   getPropertyName,
   getValueOrDefault,
   isEqual,
+  isInclude,
   isIncludeList,
   isNotEmpty,
   toNumber,
 } from '../../../utils/extension';
-import { EqualMode } from '../../../utils/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { SortType } from '../enums/pvp-ranking.enum';
 import HeaderPVP from '../components/HeaderPVP';
@@ -238,12 +239,15 @@ const RankingPVP = (props: IStyleSheetData) => {
     </div>
   );
 
-  const setSortedPokemonBattle = (primary: IPokemonBattleRanking, secondary: IPokemonBattleRanking) => {
-    const sortedColumn = getPropertyName(primary.data || secondary.data, (o) => o.score);
-    const a = primary.data as unknown as DynamicObj<number>;
-    const b = secondary.data as unknown as DynamicObj<number>;
-    return sorted === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
-  };
+  const setSortedPokemonBattle = useCallback(
+    (primary: IPokemonBattleRanking, secondary: IPokemonBattleRanking) => {
+      const sortedColumn = getPropertyName(primary.data || secondary.data, (o) => o.score);
+      const a = primary.data as unknown as DynamicObj<number>;
+      const b = secondary.data as unknown as DynamicObj<number>;
+      return sorted === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
+    },
+    [sorted]
+  );
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
@@ -274,6 +278,20 @@ const RankingPVP = (props: IStyleSheetData) => {
       </Fragment>
     );
   };
+
+  const visibleRankings = useMemo(
+    () =>
+      rankingData
+        .filter(
+          (pokemon) =>
+            pokemon.id &&
+            (isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+              isInclude(pokemon.id, search))
+        )
+        .sort(setSortedPokemonBattle)
+        .slice(0, firstInit.current + eachCounter.current * startIndex),
+    [rankingData, search, setSortedPokemonBattle, startIndex]
+  );
 
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
@@ -328,27 +346,14 @@ const RankingPVP = (props: IStyleSheetData) => {
           <AccordionMui
             isShowAction
             resetItemOnChange={resetItem}
-            items={rankingData
-              .filter(
-                (pokemon) =>
-                  pokemon.id &&
-                  (isInclude(
-                    splitAndCapitalize(pokemon.name, '-', ' '),
-                    search,
-                    IncludeMode.IncludeIgnoreCaseSensitive
-                  ) ||
-                    isInclude(pokemon.id, search))
-              )
-              .sort((a, b) => setSortedPokemonBattle(a, b))
-              .slice(0, firstInit.current + eachCounter.current * startIndex)
-              .map((item, index) => ({
-                value: index,
-                label: renderHeader(item),
-                children: renderBody(item),
-                sxDetails: {
-                  backgroundImage: computeBgType(item.pokemon?.types, item.pokemonType, props.styleSheet, 0.3),
-                },
-              }))}
+            items={visibleRankings.map((item, index) => ({
+              value: index,
+              label: renderHeader(item),
+              renderChildren: () => renderBody(item),
+              sxDetails: {
+                backgroundImage: computeBgType(item.pokemon?.types, item.pokemonType, props.styleSheet, 0.3),
+              },
+            }))}
           />
         </div>
       </div>

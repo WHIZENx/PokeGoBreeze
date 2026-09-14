@@ -37,7 +37,7 @@ const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
     <div
       style={{ width: props.width, height: props.height }}
       className={combineClasses(
-        'group-selected',
+        'tw-flex tw-flex-nowrap tw-gap-x-2.5 tw-overflow-x-auto tw-whitespace-nowrap tw-m-2.5',
         props.className,
         props.isLoaded && props.isFullWidth ? 'tw-w-full' : ''
       )}

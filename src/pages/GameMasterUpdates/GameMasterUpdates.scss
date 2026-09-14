@@ -170,11 +170,15 @@
 
   &__item-card {
     border-radius: 10px;
+    contain-intrinsic-size: auto 160px;
+    content-visibility: auto;
     overflow: hidden;
   }
 
   &__item-accordion {
     border-radius: 10px;
+    contain-intrinsic-size: auto 180px;
+    content-visibility: auto;
     overflow: hidden;
 
     &::before {

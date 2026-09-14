@@ -46,7 +46,7 @@ For local development, set `REACT_APP_DATA_API_URL` to a compatible deployed API
 - **State Management**: 
   - Redux 4.2.0 with React-Redux 7.2.6
   - Redux Thunk 2.4.1 for async operations
-  - Redux Persist 6.0.0 with encrypted storage
+  - Redux Persist 6.0.0 for browser caching
 - **Routing**: React Router DOM v6.20.0
 - **HTTP Client**: Axios 1.12.0
 
@@ -74,14 +74,13 @@ For local development, set `REACT_APP_DATA_API_URL` to a compatible deployed API
 
 ### Storage & Security
 - **Client Storage**: LocalForage 1.10.0 with IndexedDB (localStorage fallback)
-- **Encryption**: Crypto-js 4.2.0 AES encryption for persisted state
-- **Data Persistence**: Redux Persist with encrypted serialization
+- **Data Persistence**: Redux Persist caches public data and preferences; sensitiveData is excluded
 
 ### Development Tools
 - **Build System**: Vite 6 with custom configuration
   - Code splitting and lazy loading
   - Chunk optimization for vendor libraries
-  - Node.js polyfills (crypto, stream, buffer, util, process, vm)
+  - Node.js polyfills (stream, buffer, util, process, vm)
 - **Code Quality**:
   - ESLint 8.57.0 with TypeScript support (@typescript-eslint 5.45)
   - Prettier 3.2.5 for code formatting
@@ -394,8 +393,6 @@ npm install
 
    | Variable | Required | Purpose |
    |---|---|---|
-   | `REACT_APP_ENCRYPTION_KEY` | Yes | AES encryption key (40+ chars) |
-   | `REACT_APP_ENCRYPTION_SALT` | Yes | AES encryption salt (40+ chars) |
    | `REACT_APP_DEPLOYMENT_MODE` | Yes | `development` \| `staging` \| `production` |
    | `REACT_APP_BASE_URL` | Yes | Application base URL |
    | `REACT_APP_DATA_API_URL` | Yes | Base URL of a compatible PokeGoBreeze API deployment |
@@ -702,7 +699,7 @@ PokeGoBreeze is built with performance in mind:
 
 ## Security
 
-- **Encrypted Storage**: Persisted application preferences use encrypted serialization in browser storage
+- **Client Storage**: Public data and preferences are cached without encryption; sensitiveData is excluded from persistence
 - **Deployment Secrets**: CI and hosting credentials belong in GitHub/Vercel/Firebase secret stores, never in client configuration
 - **Operational Telemetry**: Deployment analytics and web-vitals requests contain no gameplay account credentials
 - **HTTPS Only**: All production deployments use HTTPS
@@ -727,7 +724,7 @@ The API checks for new Game Master snapshots on a schedule. The web client recei
 Some previously loaded browser assets may remain cached, but data-backed pages and calculators require access to the PokeGoBreeze API.
 
 ### Is my data secure?
-Persisted application preferences are encrypted in browser storage. The app also sends operational analytics and web-vitals events; do not place account credentials or other secrets in client-side configuration.
+Browser storage is not encrypted; do not place account credentials or other secrets in client-side configuration. The app also sends operational analytics and web-vitals events.
 
 ### Can I suggest new features?
 Absolutely! Please open an issue on GitHub with your feature request.

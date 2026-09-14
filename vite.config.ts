@@ -52,7 +52,6 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': resolve(__dirname, 'src'),
         process: 'process/browser',
-        crypto: 'crypto-browserify',
         stream: 'stream-browserify',
         buffer: 'buffer',
         util: 'util',
@@ -124,7 +123,7 @@ export default defineConfig(({ mode }) => {
             if (id.includes('/axios/')) {
               return 'api-vendor';
             }
-            if (id.includes('crypto-js') || id.includes('dompurify')) {
+            if (id.includes('dompurify')) {
               return 'crypto-vendor';
             }
             if (id.includes('usehooks-ts') || id.includes('react-device-detect')) {
@@ -195,9 +194,7 @@ export default defineConfig(({ mode }) => {
         '@emotion/react',
         '@emotion/styled',
         'axios',
-        'crypto-js',
         'localforage',
-        'crypto-browserify',
         'stream-browserify',
         'buffer',
         'util',

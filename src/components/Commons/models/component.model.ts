@@ -443,6 +443,7 @@ interface IDefaultOption<T> {
 
 export interface ITab extends IDefaultOption<number> {
   tabValue?: number;
+  renderChildren?: () => React.ReactNode;
 }
 
 export interface TabPanelComponent {
@@ -452,6 +453,7 @@ export interface TabPanelComponent {
 }
 
 export interface IIDefaultOptionAccordion<T> extends IDefaultOption<T> {
+  renderChildren?: () => React.ReactNode;
   hideIcon?: boolean;
   footer?: React.ReactNode;
   bgHeadColor?: string;

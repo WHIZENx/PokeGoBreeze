@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import '../Commons/Selects/Select.scss';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
 
