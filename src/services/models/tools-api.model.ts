@@ -180,7 +180,7 @@ export interface DamageBattleRequest {
     pokemonType: number;
     types: string[];
   };
-  move: { type: string; power: number };
+  move: { type: string; power: number; charged: boolean };
   battle: {
     isWb: boolean;
     isDodge: boolean;
@@ -189,7 +189,7 @@ export interface DamageBattleRequest {
     throwLevel: number;
     isMega: boolean;
   };
-  config: { iv: number; trainerMultiplier: number; megaMultiplier: number };
+  config: { iv: number };
 }
 
 export type DamageSimulatorRequest = DamageStatsRequest | DamageBattleRequest;

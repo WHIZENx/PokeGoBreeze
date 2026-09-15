@@ -109,6 +109,7 @@ const CalculatePoint = () => {
   ) => ({
     [`${prefix}effective`]: getTypeEffective(selectedMove?.type, pokemon?.form?.types),
     [`${prefix}stab`]: findStabType(attacker?.form?.types, selectedMove?.type),
+    [`${prefix}isCharged`]: selectedMove?.typeMove === TypeMove.Charge,
   });
 
   const commonParams = () => ({
@@ -117,6 +118,7 @@ const CalculatePoint = () => {
     step: stepLevel(),
     minIv: minIv(),
     maxIv: maxIv(),
+    pvp: !isRaid && pvpDmg,
     weather: (!pvpDmg || isRaid) && weatherBoosts,
   });
 

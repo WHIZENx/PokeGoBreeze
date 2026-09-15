@@ -31,22 +31,14 @@ import Candy from '../../components/Sprites/Candy/Candy';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import useAssets from '../../composables/useAssets';
 import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
-import { Divider, Skeleton } from '@mui/material';
+import { Alert, Divider, Skeleton } from '@mui/material';
 import DOMPurify from 'dompurify';
 
 const News = () => {
   useTitle({
-    title: 'PokéGO Breeze - News',
-    description:
-      'Stay up-to-date with the latest Pokémon GO news, events, and updates. Find information about upcoming events, rewards, and special features.',
-    keywords: [
-      'Pokémon GO news',
-      'Pokémon GO events',
-      'game updates',
-      'event rewards',
-      'special events',
-      'upcoming features',
-    ],
+    title: 'PokéGO Breeze - Game Master Event Tickets',
+    description: 'Browse event ticket and reward metadata currently published in the Pokémon GO Game Master.',
+    keywords: ['Pokémon GO Game Master', 'event tickets', 'event rewards', 'Pokémon GO tickets'],
   });
   const { findAssetsById } = useAssets();
 
@@ -166,24 +158,28 @@ const News = () => {
 
   const getDateEvent = (dateStartString: string | undefined, dateEndString: string | undefined) => {
     const currentDate = new Date();
-    let date = currentDate;
-    if (dateStartString) {
-      if (isNumber(dateStartString)) {
-        date = new Date(toNumber(dateStartString) * 1000);
-      } else {
-        date = new Date(dateStartString);
+    const parseDate = (value: string | undefined) => {
+      if (!value) {
+        return undefined;
       }
-    }
-
-    date = currentDate;
-    if (dateEndString) {
-      if (isNumber(dateEndString)) {
-        date = new Date(toNumber(dateEndString) * 1000);
-      } else {
-        date = new Date(dateEndString);
+      if (isNumber(value)) {
+        const timestamp = toNumber(value);
+        return new Date(timestamp < 1_000_000_000_000 ? timestamp * 1000 : timestamp);
       }
+      return new Date(value);
+    };
+    const startDate = parseDate(dateStartString);
+    const endDate = parseDate(dateEndString);
+    if (startDate && !Number.isNaN(startDate.getTime()) && currentDate < startDate) {
+      return DateEvent.Future;
     }
-    return currentDate > date ? DateEvent.End : DateEvent.Progressing;
+    if (endDate && !Number.isNaN(endDate.getTime()) && currentDate > endDate) {
+      return DateEvent.End;
+    }
+    if (startDate || endDate) {
+      return DateEvent.Progressing;
+    }
+    return DateEvent.None;
   };
 
   const getItemSprite = (value: ITicketReward) => {
@@ -271,7 +267,11 @@ const News = () => {
   return (
     <div className="tw-container tw-mb-3">
       <div className="info-main-container tw-pb-3 tw-mt-2">
-        <h1 className="tw-text-center tw-underline">News</h1>
+        <h1 className="tw-text-center tw-underline">Game Master Event Tickets</h1>
+        <Alert severity="info" className="!tw-m-3">
+          This page shows ticket, schedule, and reward metadata found in the latest Game Master snapshot. It is not an
+          official or real-time Pokémon GO news feed, and published metadata does not guarantee availability.
+        </Alert>
         {reload(
           <div
             className={combineClasses(
@@ -302,7 +302,7 @@ const News = () => {
                                   'tw-p-1 tw-rounded-sm tw-text-sm',
                                   value.eventType === DateEvent.End
                                     ? 'info-event-ending'
-                                    : DateEvent.Progressing
+                                    : value.eventType === DateEvent.Progressing
                                       ? 'info-event-progress'
                                       : 'info-event-future'
                                 )}
