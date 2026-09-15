@@ -32,6 +32,7 @@ export const STATS_RANKING = 'stats-ranking';
 
 export const SIMULATOR = 'simulator';
 export const BATTLE_LEAGUES = 'battle-leagues';
+// export const TRAINER_LAB = 'trainer-lab';
 
 const subMenuNews: IAppMenuItem<string>[] = [
   { label: 'Latest News', value: LATEST_NEWS, path: '/news' },
@@ -70,6 +71,7 @@ const subMenuStatsSheets: IAppMenuItem<string>[] = [
 
 const subMenuPvp: IAppMenuItem<string>[] = [
   { label: 'Simulator', value: SIMULATOR, path: '/pvp' },
+  // { label: 'Trainer Lab', value: TRAINER_LAB, path: '/trainer' },
   { label: 'Battle Leagues', value: BATTLE_LEAGUES, path: '/battle-leagues' },
 ];
 

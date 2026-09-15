@@ -1,6 +1,7 @@
 export class TemplateId {
   public static PlayerSetting = 'PLAYER_LEVEL_SETTINGS';
   public static CombatSetting = 'COMBAT_SETTINGS';
+  public static CombatStatStageSetting = 'COMBAT_STAT_STAGE_SETTINGS';
   public static BattleSetting = 'BATTLE_SETTINGS';
   public static PokemonUpgradeSetting = 'POKEMON_UPGRADE_SETTINGS';
   public static BuddyLevel = 'BUDDY_LEVEL';

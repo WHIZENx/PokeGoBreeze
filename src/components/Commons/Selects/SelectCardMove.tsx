@@ -72,13 +72,28 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
         displayEmpty={!props.isHideEmpty}
         menuItems={resultMove.map((value) => ({
           value: value?.name,
-          label: <CardMoveSmall isDisable={props.isDisable} name={value?.name} pokemonId={props.pokemon?.id} />,
+          label: (
+            <CardMoveSmall
+              isDisable={props.isDisable}
+              name={value?.name}
+              moveType={value?.moveType}
+              pokemonId={props.pokemon?.id}
+            />
+          ),
         }))}
         renderValue={(name) => {
           if (props.pokemon && !isNotEmpty(resultMove)) {
             return getValueOrDefault(String, props.emptyText, 'Moves unavailable');
           }
-          return <CardMoveSmall isDisable={props.isDisable} name={name} pokemonId={props.pokemon?.id} />;
+          const selectedMove = resultMove.find((move) => move?.name === name);
+          return (
+            <CardMoveSmall
+              isDisable={props.isDisable}
+              name={name}
+              moveType={selectedMove?.moveType}
+              pokemonId={props.pokemon?.id}
+            />
+          );
         }}
         endAdornment={props.clearData && props.move && iconRemove()}
         value={props.move?.name && resultMove.some((move) => move?.name === props.move?.name) ? props.move?.name : ''}

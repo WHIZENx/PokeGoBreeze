@@ -56,6 +56,9 @@ export const getProcessedDataSectionsForRoute = (pathname: string): ProcessedDat
   if (pathname.startsWith('/pvp/')) {
     return ['pokemons', 'combats', 'assets', 'cpm', 'statsRankings'];
   }
+  if (pathname === '/trainer') {
+    return ['pokemons', 'combats', 'trainers', 'trainerBattlePresets'];
+  }
   if (pathname === '/battle-leagues') {
     return ['assets'];
   }

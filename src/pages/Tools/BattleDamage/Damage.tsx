@@ -27,13 +27,7 @@ import {
   toNumber,
 } from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeMove } from '../../../enums/type.enum';
-import {
-  defaultMegaMultiply,
-  defaultTrainerMultiply,
-  getMultiplyFriendship,
-  getThrowCharge,
-  maxIv,
-} from '../../../utils/helpers/options-context.helpers';
+import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
@@ -167,7 +161,11 @@ const Damage = () => {
             pokemonType: statTypeObj,
             types: searchingToolObjectData?.form?.form?.types ?? [],
           },
-          move: { type: getValueOrDefault(String, move.type), power: move.pvePower },
+          move: {
+            type: getValueOrDefault(String, move.type),
+            power: battleState.isTrainer ? move.pvpPower : move.pvePower,
+            charged: move.typeMove === TypeMove.Charge,
+          },
           battle: {
             isWb: battleState.isWeather,
             isDodge: battleState.isDodge,
@@ -178,8 +176,6 @@ const Damage = () => {
           },
           config: {
             iv: maxIv(),
-            trainerMultiplier: defaultTrainerMultiply(),
-            megaMultiplier: defaultMegaMultiply(),
           },
         });
         const data = response.data.data;
@@ -224,6 +220,19 @@ const Damage = () => {
   );
 
   const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.name === 'isTrainer' && event.target.checked) {
+      setEnableFriend(false);
+      setBattleState(
+        Filter.create({
+          ...battleState,
+          isTrainer: true,
+          isWeather: false,
+          isDodge: false,
+          friendshipLevel: 0,
+        })
+      );
+      return;
+    }
     setBattleState({
       ...battleState,
       [event.target.name]: event.target.checked,
@@ -306,7 +315,7 @@ const Damage = () => {
                     <p>
                       {'- Damage: '}
                       <b>
-                        {move.pvePower}
+                        {isTrainer ? move.pvpPower : move.pvePower}
                         {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
                           <span className="caption-small tw-text-green-600"> (x1.2)</span>
                         )}
@@ -318,10 +327,12 @@ const Damage = () => {
                   <FormControlLabel
                     control={<Checkbox checked={isWeather} onChange={handleCheckbox} name="isWeather" />}
                     label="Weather Boosts"
+                    disabled={isTrainer}
                   />
                   <FormControlLabel
                     control={<Checkbox checked={isDodge} onChange={handleCheckbox} name="isDodge" />}
                     label="Dodge"
+                    disabled={isTrainer}
                   />
                   <FormControlLabel
                     control={<Checkbox checked={isTrainer} onChange={handleCheckbox} name="isTrainer" />}
@@ -340,6 +351,7 @@ const Damage = () => {
                               })
                             );
                           }}
+                          disabled={isTrainer}
                         />
                       }
                       label="Friendship Level:"
@@ -372,6 +384,7 @@ const Damage = () => {
                       value={battleState.throwLevel}
                       onChangeSelect={(throwLevel) => setBattleState({ ...battleState, throwLevel })}
                       menuItems={throwChargeMenuItems}
+                      disabled={!isTrainer || move?.typeMove !== TypeMove.Charge}
                     />
                   </Box>
                   <ButtonMui

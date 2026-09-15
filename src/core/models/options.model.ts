@@ -11,6 +11,8 @@ import { IWeatherBoost, WeatherBoost } from './weather-boost.model';
 
 interface CombatSetting {
   sameTypeAttackBonusMultiplier: number;
+  fastAttackBonusMultiplier: number;
+  chargeAttackBonusMultiplier: number;
   shadowPokemonAttackBonusMultiplier: number;
   shadowPokemonDefenseBonusMultiplier: number;
   chargeScoreBase: number;
@@ -19,6 +21,13 @@ interface CombatSetting {
   chargeScoreExcellent: number;
   maxEnergy: number;
   purifiedPokemonAttackMultiplierVsShadow: number;
+}
+
+interface CombatStatStageSetting {
+  minimumStatStage: number;
+  maximumStatStage: number;
+  attackBuffMultiplier: number[];
+  defenseBuffMultiplier: number[];
 }
 
 interface BattleSetting {
@@ -392,6 +401,7 @@ interface NonCombatMoveSettings {
 interface DataGM {
   pokemonSettings: PokemonDataModel;
   combatSettings: CombatSetting;
+  combatStatStageSettings: CombatStatStageSetting;
   battleSettings: BattleSetting;
   buddyLevelSettings: BuddyLevelSetting;
   friendshipMilestoneSettings: FriendshipMilestoneSetting;
@@ -495,6 +505,12 @@ export class PlayerSetting implements IPlayerSetting {
 
 interface ICombatOption {
   stab: number;
+  fastAttackBonusMultiplier: number;
+  chargeAttackBonusMultiplier: number;
+  minimumStatStage: number;
+  maximumStatStage: number;
+  attackBuffMultiplier: number[];
+  defenseBuffMultiplier: number[];
   shadowBonus: IStatsPokemonGO;
   purifiedBonus: IStatsPokemonGO;
   maxEnergy: number;
@@ -502,6 +518,12 @@ interface ICombatOption {
 
 export class CombatOption implements ICombatOption {
   stab = 0;
+  fastAttackBonusMultiplier = 1;
+  chargeAttackBonusMultiplier = 1;
+  minimumStatStage = -4;
+  maximumStatStage = 4;
+  attackBuffMultiplier: number[] = [];
+  defenseBuffMultiplier: number[] = [];
   shadowBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
   purifiedBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
   maxEnergy = 0;

@@ -8,7 +8,7 @@ import { IOptions, Options } from '../../core/models/options.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { IPVPDataModel, PVPDataModel } from '../../core/models/pvp.model';
 import { ISticker } from '../../core/models/sticker.model';
-import { ITrainerLevelUp } from '../../core/models/trainer.model';
+import { ITrainerBattlePreset, ITrainerLevelUp } from '../../core/models/trainer.model';
 
 export interface StoreModel {
   icon?: string;
@@ -30,6 +30,7 @@ export interface IDataModel {
   evolutionChains: IEvolutionChain[];
   information: IInformationData;
   trainers: ITrainerLevelUp[];
+  trainerBattlePresets: ITrainerBattlePreset[];
   leagues: ILeagueData;
   pvp: IPVPDataModel;
 }
@@ -44,6 +45,7 @@ export class Data implements IDataModel {
   evolutionChains: IEvolutionChain[] = [];
   information = new InformationData();
   trainers: ITrainerLevelUp[] = [];
+  trainerBattlePresets: ITrainerBattlePreset[] = [];
   leagues = new LeagueData();
   pvp = new PVPDataModel();
 

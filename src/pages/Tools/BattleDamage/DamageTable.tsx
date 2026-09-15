@@ -11,11 +11,13 @@ import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../utils/u
 import { IDamageTableComponent } from '../../models/page.model';
 import { LabelDamage } from '../../../core/models/damage.model';
 import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
-import { PokemonType } from '../../../enums/type.enum';
+import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { EffectiveType } from '../../../components/Effective/enums/type-effective.enum';
 import { getThrowCharge } from '../../../utils/helpers/options-context.helpers';
 
 const DamageTable = (props: IDamageTableComponent) => {
+  const movePower = props.result.battleState?.isTrainer ? props.result.move?.pvpPower : props.result.move?.pvePower;
+
   const setLabelDamage = (amount: EffectiveType) =>
     LabelDamage.create({
       label: toFloat(amount, 3),
@@ -162,7 +164,7 @@ const DamageTable = (props: IDamageTableComponent) => {
             <tr>
               <td>Charge ability</td>
               <td>
-                {props.result.battleState
+                {props.result.battleState?.isTrainer && props.result.move?.typeMove === TypeMove.Charge
                   ? capitalize(Object.keys(getThrowCharge()).at(toNumber(props.result.battleState.throwLevel)))
                   : '-'}
               </td>
@@ -198,11 +200,10 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.damage ? (
                   <Fragment>
-                    {props.result.damage < toNumber(props.result.move?.pvePower) ? (
+                    {props.result.damage < toNumber(movePower) ? (
                       <b className="tw-text-green-600">
                         {toFloatWithPadding(
-                          ((toNumber(props.result.move?.pvePower) - props.result.damage) * 100) /
-                            toNumber(props.result.move?.pvePower, 1),
+                          ((toNumber(movePower) - props.result.damage) * 100) / toNumber(movePower, 1),
                           2
                         )}
                         %

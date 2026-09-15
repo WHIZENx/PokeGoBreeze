@@ -10,6 +10,7 @@ import {
   SetLeagues,
   SetCPM,
   SetTrainer,
+  SetTrainerBattlePresets,
   SetPVP,
 } from '../store/actions/store.action';
 import { IOptions } from '../core/models/options.model';
@@ -20,7 +21,7 @@ import { IInformation } from '../core/models/information';
 import { IAsset } from '../core/models/asset.model';
 import { LeagueData } from '../core/models/league.model';
 import { ICPM } from '../core/models/cpm.model';
-import { ITrainerLevelUp } from '../core/models/trainer.model';
+import { ITrainerBattlePreset, ITrainerLevelUp } from '../core/models/trainer.model';
 import { IPVPDataModel } from '../core/models/pvp.model';
 import { IStatsRank } from '../core/models/stats.model';
 import { StoreActions, StatsActions, TimestampActions } from '../store/actions';
@@ -113,6 +114,10 @@ export const useDataStore = () => {
     dispatch(SetTrainer.create(trainers));
   };
 
+  const setTrainerBattlePresets = (presets: ITrainerBattlePreset[]) => {
+    dispatch(SetTrainerBattlePresets.create(presets));
+  };
+
   /**
    * Update PVP data in the store
    * @param pvpData - The new PVP data to be set
@@ -152,6 +157,9 @@ export const useDataStore = () => {
         break;
       case 'trainers':
         dispatch(StoreActions.SetTrainer.create(data as ITrainerLevelUp[]));
+        break;
+      case 'trainerBattlePresets':
+        dispatch(StoreActions.SetTrainerBattlePresets.create(data as ITrainerBattlePreset[]));
         break;
     }
   };
@@ -197,6 +205,7 @@ export const useDataStore = () => {
   const leaguesData = dataStore.leagues;
   const cpmData = dataStore.cpm;
   const trainersData = dataStore.trainers;
+  const trainerBattlePresetsData = dataStore.trainerBattlePresets;
   const pvpData = dataStore.pvp;
   const optionsData = dataStore.options;
 
@@ -212,6 +221,7 @@ export const useDataStore = () => {
     leaguesData,
     cpmData,
     trainersData,
+    trainerBattlePresetsData,
     pvpData,
     optionsData,
     setOptions,
@@ -223,6 +233,7 @@ export const useDataStore = () => {
     setLeagues,
     setCPM,
     setTrainers,
+    setTrainerBattlePresets,
     setPVP,
   };
 };

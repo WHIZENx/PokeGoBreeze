@@ -180,7 +180,7 @@ export interface DamageBattleRequest {
     pokemonType: number;
     types: string[];
   };
-  move: { type: string; power: number };
+  move: { type: string; power: number; charged: boolean };
   battle: {
     isWb: boolean;
     isDodge: boolean;
@@ -189,7 +189,7 @@ export interface DamageBattleRequest {
     throwLevel: number;
     isMega: boolean;
   };
-  config: { iv: number; trainerMultiplier: number; megaMultiplier: number };
+  config: { iv: number };
 }
 
 export type DamageSimulatorRequest = DamageStatsRequest | DamageBattleRequest;
@@ -260,4 +260,56 @@ export interface PvpBattleSimulatorApiResponse {
     turns: number;
   };
   meta: { section: 'pvpBattleSimulator' };
+}
+
+export interface TrainerBattleSimulatorRequest {
+  presetId: string;
+  team: Array<{
+    pokemonId: string;
+    form?: string;
+    level?: number;
+    iv?: { atk: number; def: number; sta: number };
+    fastMove?: string;
+    chargedMoves?: string[];
+  }>;
+  shields?: number;
+  seed?: number;
+}
+
+export interface TrainerBattleTeamResult {
+  pokemonId: string;
+  name: string;
+  form?: string;
+  sprite?: string;
+  level: number;
+  cp: number;
+  iv: { atk: number; def: number; sta: number };
+  fastMove: string;
+  chargedMoves: string[];
+  maxHp: number;
+  remainingHp: number;
+  damageDealt: number;
+}
+
+export interface TrainerBattleSimulatorApiResponse {
+  data: {
+    winner: 'player' | 'opponent' | 'draw';
+    durationSeconds: number;
+    timedOut: boolean;
+    seed: number;
+    player: { shields: number; remaining: number; team: TrainerBattleTeamResult[] };
+    opponent: { shields: number; remaining: number; team: TrainerBattleTeamResult[] };
+    events: Array<{
+      turn: number;
+      second: number;
+      side: 'player' | 'opponent';
+      type: 'enter' | 'charged' | 'shield' | 'buff' | 'faint' | 'timeout';
+      pokemon: string;
+      move?: string;
+      target?: string;
+      damage?: number;
+    }>;
+    assumptions: string[];
+  };
+  meta: { section: 'trainerBattleSimulator'; presetId: string };
 }
