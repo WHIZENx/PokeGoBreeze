@@ -4,11 +4,12 @@
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Version](https://img.shields.io/badge/version-6.0.0-blue.svg)
-![React](https://img.shields.io/badge/React-18.2.0-61DAFB?logo=react)
+![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-3178C6?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-6.4.2-646CFF?logo=vite)
+![Vite](https://img.shields.io/badge/Vite-6.4.3-646CFF?logo=vite)
 
-[Production](https://poke-go-breeze.vercel.app/) • [Staging](https://poke-go-breeze-stage.vercel.app/)
+[![Vercel Production](https://img.shields.io/badge/Production-Vercel-000000?logo=vercel&logoColor=white)](https://poke-go-breeze.vercel.app/)
+[![Firebase Production](https://img.shields.io/badge/Production-Firebase-FFCA28?logo=firebase&logoColor=black)](https://pokego-breeze.web.app/)
 
 </div>
 
@@ -40,315 +41,306 @@ This repository contains the public React web client. Processed game data and ca
 
 For local development, set `REACT_APP_DATA_API_URL` to a compatible deployed API or to the API service running locally.
 
+The versions below reflect the currently committed `package-lock.json`.
+
 ### Frontend Framework
-- **Core**: React 18.2.0 with TypeScript 5.5.3
-- **Build Tool**: Vite 6.4.2 (migrated from Webpack for faster builds)
-- **State Management**: 
-  - Redux 4.2.0 with React-Redux 7.2.6
-  - Redux Thunk 2.4.1 for async operations
+- **Core**: React 18.3.1 with TypeScript 5.5.3
+- **Build Tool**: Vite 6.4.3
+- **State Management**:
+  - Redux 4.2.1 with React-Redux 7.2.9
+  - Redux Thunk 2.4.2 for async operations
   - Redux Persist 6.0.0 for browser caching
-- **Routing**: React Router DOM v6.20.0
-- **HTTP Client**: Axios 1.12.0
+- **Routing**: React Router DOM 7.18.3
+- **HTTP Client**: Axios 1.18.1
 
 ### UI & Styling
 - **Component Libraries**:
-  - Material UI (MUI) v5.6 - Primary UI framework
-  - MUI Icons Material 5.6.2
-  - Styled Components 6.1.8
-  - Emotion (React & Styled) 11.11
+  - Material UI (MUI) 5.18.0
+  - MUI Icons Material 5.18.0
+  - Styled Components 6.4.1
+  - Emotion React 11.14.0 and Emotion Styled 11.14.1
 - **Styling System**:
-  - SCSS/Sass 1.83.0 with modern @use syntax
-  - Tailwind CSS 3.4.17 for utility classes
+  - SCSS/Sass 1.83.0 with modern `@use` syntax
+  - Tailwind CSS 3.4.19 for utility classes
   - Custom theming system with dark/light modes
-  - PostCSS with Autoprefixer 10.4
+  - PostCSS 8.5.26 with Autoprefixer 10.5.0
 - **Data Visualization**:
-  - React Data Table Component 7.4.7 for data grids
+  - React Data Table Component 7.7.0 for data grids
   - React XArrows 2.0.2 for visual connections
 - **Utilities**:
-  - Lodash 4.17.21 for data manipulation
+  - Lodash 4.18.1 for data manipulation
   - Moment 2.30.1 for date/time handling
-  - DOMPurify 3.2.6 for safe HTML rendering
+  - DOMPurify 3.4.13 for safe HTML rendering
   - Immutability Helper 3.1.1 for state updates
-  - usehooks-ts 2.7.2 for reusable React hooks
+  - usehooks-ts 2.16.0 for reusable React hooks
   - React Device Detect 2.2.3 for device-aware UI
 
 ### Storage & Security
 - **Client Storage**: LocalForage 1.10.0 with IndexedDB (localStorage fallback)
-- **Data Persistence**: Redux Persist caches public data and preferences; sensitiveData is excluded
+- **Data Persistence**: Redux Persist 6.0.0 caches public data and preferences without client-side encryption; `sensitiveData` is excluded
 
 ### Development Tools
 - **Build System**: Vite 6 with custom configuration
-  - Code splitting and lazy loading
+  - Code splitting and lazy route imports
   - Chunk optimization for vendor libraries
-  - Node.js polyfills (stream, buffer, util, process, vm)
+  - Node.js polyfills (stream, buffer, util, process, events, vm)
 - **Code Quality**:
-  - ESLint 8.57.0 with TypeScript support (@typescript-eslint 5.45)
-  - Prettier 3.2.5 for code formatting
-  - Stylelint 15.11.0 for SCSS/CSS linting
-  - Vite ESLint & Stylelint plugins for real-time feedback
+  - ESLint 10.10.0 flat config with typescript-eslint 8.70.0 and eslint-react 5.19.1
+  - Prettier 3.6.2 for code formatting
+  - Stylelint 17.15.0 with Stylistic 5.3.0 for SCSS/CSS linting
+  - Vite ESLint 3.0.1 and Stylelint 6.1.0 plugins for development feedback
 - **TypeScript**:
   - Strict type checking (TypeScript 5.5.3)
   - Custom type definitions
   - Separate app/node tsconfig files
 
 ### Performance Optimization
-- **Loading Strategies**:
-  - Debounced loading patterns
-  - Lazy component imports
-  - Redux DevTools optimization for large states
-  - Action sanitization and denylist
-- **Build Optimization**:
-  - Vendor code splitting (react, redux, mui, etc.)
-  - Tree shaking and dead code elimination
-  - CSS minification and optimization
-  - Asset optimization and compression
+- **Navigation and data loading**:
+  - Route-level lazy imports keep feature code out of the initial bundle
+  - The current page remains visible while the next route and its required data load
+  - API requests use debouncing, cancellation, stale-response guards, and request deduplication where applicable
+  - Pages request and cache only their required processed-data sections
+- **Production build**:
+  - Vite splits major vendor libraries into stable chunks
+  - JavaScript and CSS are minified for production
+  - Fingerprinted assets use long-lived hosting cache headers
 
 ### Deployment & DevOps
 - **Hosting**:
   - Vercel deployments for production and branch environments
   - Firebase Hosting deployments and pull-request previews
-- **Containerization**: Docker support with docker-compose
+- **Containerization**: Docker support with Docker Compose
 - **CI/CD**:
   - GitHub Actions for automated workflows
   - A push to `develop`, `stage`, or `main` deploys that branch from this repository
 - **Analytics**:
   - Vercel Analytics
   - Vercel Speed Insights
-  - Web Vitals tracking
 
 ## Project Structure
 
-```
-/src
-├── assets           # Static assets, images, global styles and theme definitions, and icons
-├── components       # Reusable UI components
-│   ├── Card         # Card-based display components
-│   ├── Commons      # Shared layout & navigation components (e.g. navbars)
-│   ├── Effective    # Type effectiveness components
-│   ├── ErrorBoundary # Global error boundary
-│   ├── Find         # Find/search helper components
-│   ├── Info         # Info display components
-│   ├── Link         # Link-related components
-│   ├── Raid         # Raid-related components
-│   ├── Spinner      # Loading spinner
-│   └── Sprites      # Pokémon sprite components
-├── composables      # Reusable composition hooks (useTimestamp, useTheme, useDevice, useRouter, ...)
-├── contexts         # React contexts (options, snackbar, ...)
-├── core             # Core functionality and utilities
-├── data             # Small client-owned reference data; processed game data comes from the API
-├── enums            # TypeScript enumerations
-├── pages            # Application pages and routes
-│   ├── Error        # 404 / error page
-│   ├── Move         # Move details and information
-│   ├── News         # Game news and updates
-│   ├── PVP          # PVP battle simulator, rankings, teams, leagues
-│   ├── Pokedex      # Pokémon listing and information
-│   ├── Pokemon      # Individual Pokémon details
-│   ├── Search       # Search functionality for Pokémon/moves/types
-│   ├── Sheets       # Data sheets (DPS/TDO, stats rankings)
-│   ├── Sticker      # Sticker collection
-│   ├── Tools        # Calculators: BattleDamage, CalculatePoint, CalculateStats,
-│   │                #              CatchChance, FindTable, RaidBattle,
-│   │                #              SearchBattle, StatsInfo
-│   ├── Trainer      # Trainer-related views
-│   ├── TypeEffect   # Type effectiveness charts
-│   ├── Weather      # Weather boost information
-│   └── models       # Page-level models / types
-├── services         # API services and data fetching
-├── store            # Redux store configuration
-│   ├── actions      # Redux actions
-│   ├── constants    # Action types and store constants
-│   ├── middleware   # Custom Redux middleware
-│   ├── models       # Store models / types
-│   ├── reducers     # State reducers
-│   └── configure.ts # Store setup with persistence
-├── types            # Global TypeScript type definitions
-└── utils            # Utility functions, hooks, helpers, and configs
+```text
+src/
+├── assets/                 # Images, icons, global styles, themes, and shared style types
+│   ├── styles/
+│   └── types/
+├── components/             # Reusable UI and domain components
+│   ├── Card/
+│   ├── Commons/
+│   ├── Effective/
+│   ├── ErrorBoundary/
+│   ├── Find/
+│   ├── Info/
+│   ├── Link/
+│   ├── Raid/
+│   ├── Spinner/
+│   ├── Sprites/
+│   ├── enums/
+│   └── models/
+├── composables/            # Store-backed application hooks
+├── contexts/               # Options and snackbar React contexts
+├── core/                   # Shared domain contracts
+│   ├── constants/
+│   ├── enums/
+│   └── models/
+├── data/                   # Client-owned CP multiplier and candy-color reference data
+├── enums/                  # Application-level enumerations
+├── pages/                  # Route views and page-local code
+│   ├── Error/
+│   ├── GameMasterUpdates/
+│   ├── Move/
+│   ├── News/
+│   ├── PVP/
+│   │   ├── Battle/
+│   │   ├── Leagues/
+│   │   ├── Pokemon/
+│   │   ├── Ranking/
+│   │   ├── Teams/
+│   │   ├── components/
+│   │   ├── enums/
+│   │   ├── models/
+│   │   └── utils/
+│   ├── Pokedex/
+│   ├── Pokemon/
+│   ├── Search/
+│   │   ├── Moves/
+│   │   ├── Pokemon/
+│   │   └── Types/
+│   ├── Sheets/
+│   │   ├── DpsTdo/
+│   │   └── StatsRanking/
+│   ├── Sticker/
+│   ├── Tools/
+│   │   ├── BattleDamage/
+│   │   ├── CalculatePoint/
+│   │   ├── CalculateStats/
+│   │   ├── CatchChance/
+│   │   ├── FindTable/
+│   │   ├── RaidBattle/
+│   │   ├── SearchBattle/
+│   │   └── StatsInfo/
+│   ├── Trainer/            # Legacy view; not registered in App.tsx
+│   ├── TypeEffect/
+│   ├── Weather/
+│   └── models/
+├── services/               # API, processed-data, and stats-calculation services
+│   └── models/
+├── store/                  # Redux state and persistence
+│   ├── actions/
+│   ├── constants/
+│   ├── middleware/
+│   ├── models/
+│   └── reducers/
+├── types/                  # Global TypeScript declarations
+├── utils/                  # Shared configuration and utilities
+│   ├── configs/
+│   ├── enums/
+│   ├── extensions/
+│   ├── helpers/
+│   ├── hooks/
+│   └── models/
+├── App.tsx                 # Lazy routes and application bootstrap
+├── App.scss
+├── index.tsx               # React entry point
+├── index.scss
+├── react-app-env.d.ts
+├── reportWebVitals.tsx
+└── logo.svg
 ```
 
 ## Features
 
 ### 🏠 Home & Information
+
 #### **Pokédex** (`/`)
-Main hub displaying the Pokémon database with filtering, sorting, and search capabilities. Browse through 1,000+ Pokémon with detailed stats, types, and quick access to individual Pokémon pages.
+Server-paginated Pokémon catalogue with name matching, release status, type, generation, game version, and special-form filters. Each result links to its Pokémon detail page.
 
 #### **Game News** (`/news`)
-Latest Pokémon GO news, updates, events, and announcements. Stay informed about new features, special events, and game changes.
+API-backed Pokémon GO news feed with event dates, descriptions, bonuses, rewards, and related assets when supplied by the source.
 
-#### **Game Master Updates** (`/game-master-updates`)
-Patch-note-style summaries of Game Master changes that affect PokéGO Breeze. Updates are grouped into Pokémon, moves, battle/PVP, items, progression, and system sections, with links to supported Pokémon and move detail pages.
+#### **Game Master Updates** (`/game-master-updates`, `/game-master-updates/:patchSlug`)
+Paginated patch notes for web-relevant Game Master changes. Entries can be searched and filtered by section and status, while detail routes show readable changes and links to supported Pokémon or moves.
 
 ### 🔍 Search & Discovery
+
 #### **Search Pokémon** (`/search-pokemon`)
-Advanced Pokémon search with multiple filters including:
-- Name, number, type, and generation
-- Stats ranges (HP, Attack, Defense)
-- Evolution stages and families
-- Regional availability and forms
+Remote name/ID selector with incremental result loading, previous/next navigation, and the selected Pokémon's full detail view.
 
 #### **Search Moves** (`/search-moves`)
-Comprehensive move database search with filters for:
-- Move type and category (Fast/Charged)
-- Power, energy, and duration
-- DPS and EPS calculations
-- PVP and PVE effectiveness
+Separate fast- and charged-move tables with name/ID and type filters. Results expose the available PVE/PVP values and link to move detail pages.
 
 #### **Search Types** (`/search-types`)
-Type effectiveness lookup and analysis. Explore type matchups, strengths, and weaknesses for strategic team building.
+Browse Pokémon and fast/charged moves by type, with Pokémon GO release filtering, result totals, and separate tables for each result category.
 
 ### 📖 Detailed Information
+
 #### **Pokémon Details** (`/pokemon/:id`)
-In-depth information for individual Pokémon including:
-- Base stats, CP, and HP calculations
-- Type effectiveness chart
-- Evolution chain and requirements
-- Best movesets for PVE and PVP
-- Shiny availability and forms
-- Weather boosts and counters
+Displays identity, forms and availability, base and battle stats, move lists and best-move rankings, type/weather information, counters, evolution data, upgrade costs, and available media assets.
 
 #### **Move Details** (`/move/:id`)
-Detailed move information with:
-- Power, energy, and duration statistics
-- Type and category
-- DPS/EPS calculations
-- List of Pokémon that can learn the move
-- PVP and PVE viability ratings
+Displays move identity and type, weather boost, PVE/PVP power and energy values, PVP buffs, timing and damage-window metadata, DPS/EPS comparisons, and Pokémon that can learn the move.
 
 ### ⚔️ Battle Analysis
+
 #### **Type Effectiveness** (`/type-effective`)
-Interactive type matchup chart showing:
-- Super effective and not very effective combinations
-- Immune and resistant types
-- Quick reference for battle strategy
+Interactive attacker and defender charts showing Pokémon GO damage multipliers for weaknesses, neutral matchups, and resistances.
 
 #### **Battle Leagues** (`/battle-leagues`)
-Overview of all PVP battle leagues with CP limits, rules, and meta information.
+Searchable league directory with CP limits, rules, cup restrictions, and eligible Pokémon assets supplied by the API.
 
 #### **Damage Calculator** (`/damage-calculate`)
-Simulate battle damage between any two Pokémon:
-- Select attacker and defender
-- Choose moves and weather conditions
-- Calculate exact damage per attack
-- Account for STAB, type effectiveness, and stats
+Calculates attack damage for a selected attacker, defender, and move while applying supported battle, weather, type, and Pokémon modifiers.
 
 #### **Search Battle Stats** (`/search-battle-stats`)
-Look up and compare battle statistics across multiple Pokémon for competitive analysis.
+Searches a Pokémon's CP/IV combinations and calculated battle values for league-oriented comparison.
 
 ### 🏆 PVP (Player vs Player) Tools
+
 #### **PVP Home** (`/pvp`)
-Central hub for all PVP-related tools and resources.
+Navigation hub for rankings, teams, and the battle simulator across the league and data series currently available from the API.
 
 #### **PVP Rankings** (`/pvp/rankings/:serie/:cp`)
-League-specific rankings for:
-- Great League (1500 CP)
-- Ultra League (2500 CP)
-- Master League (Unlimited)
-Sorted by performance metrics, TDO, and viability.
+League-specific ranking tables with role score modes, Pokémon search, sorting, recommended moves, and expandable matchup/counter details.
 
 #### **PVP Teams** (`/pvp/teams/:serie/:cp`)
-Pre-built team compositions and meta teams for each league. Analyze team synergy, coverage, and counters.
+League team-performance data with top performers, team combinations, move sets, game counts, and sortable score columns.
 
-#### **PVP Battle Simulator** (`/pvp/battle`)
-Real-time battle simulator allowing you to:
-- Select two Pokémon with custom IVs
-- Choose movesets and shields
-- Simulate turn-by-turn battles
-- Analyze win conditions and optimal strategies
+#### **PVP Battle Simulator** (`/pvp/battle`, `/pvp/battle/:cp`)
+Compares two Pokémon using selected league, IV, move, and shield settings, then presents the API simulation as an animated battle timeline.
 
 #### **PVP Pokémon Analysis** (`/pvp/:cp/:serie/:pokemon`)
-Detailed PVP performance analysis for specific Pokémon including:
-- League rankings and ratings
-- Best IV spreads for each league
-- Key matchups and counters
-- Optimal move combinations
-- Breakpoint and bulkpoint calculations
+League-specific Pokémon analysis with scores, recommended moves, calculated stats, and best matchup/counter lists.
 
 ### 📊 Data Sheets & Rankings
+
 #### **DPS/TDO Sheets** (`/dps-tdo-sheets`)
-Comprehensive damage rankings showing:
-- Damage Per Second (DPS) for all Pokémon
-- Total Damage Output (TDO) calculations
-- Best attackers by type
-- Raid and gym battle recommendations
+Server-calculated DPS/TDO results for Pokémon and move combinations, with attacker/target settings, combat modifiers, release/form filters, and sortable columns.
 
 #### **Stats Ranking** (`/stats-ranking`)
-Global Pokémon rankings by base stats:
-- Highest Attack, Defense, HP
-- Overall stat product
-- CP potential at different levels
-- Great/Ultra League stat product rankings
+Global base-stat ranking table for Attack, Defense, Stamina, and stat product, with name/release filters and an expandable Pokémon summary.
 
 #### **Stats Table** (`/stats-table`)
-Detailed statistics table with sortable columns for comparing Pokémon performance metrics.
+League IV/stat-product table for a selected Pokémon and CP limit, with optional CP and exact-IV inputs for narrowing combinations.
 
 ### 🧮 Calculators & Tools
+
 #### **Find CP/IV** (`/find-cp-iv`)
-Reverse IV calculator to find possible IV combinations from:
-- CP and HP values
-- Pokémon level
-- Appraisal information
-Useful for checking newly caught or traded Pokémon.
+Finds possible level and IV combinations from a Pokémon and CP, or calculates CP values from selected IVs and levels.
 
 #### **Calculate Stats** (`/calculate-stats`)
-Calculate exact stats for any Pokémon at any level:
-- Input IVs (Attack, Defense, HP)
-- Select Pokémon level
-- Get resulting CP, HP, and stats
-- Compare different IV combinations
+Calculates CP, HP, battle stats, level, and power-up costs for a selected Pokémon and IV spread, including supported buddy, lucky, shadow, and purified states.
 
 #### **Raid Battle Tool** (`/raid-battle`)
-Raid battle optimizer helping you:
-- Select raid boss and tier
-- Build optimal counter teams
-- Calculate time to win
-- Determine minimum number of trainers needed
+Select a raid boss, tier, moves, weather, and time limit to find counters, build trainer teams, run the raid simulation, and estimate the required player count.
 
 #### **Calculate Point** (`/calculate-point`)
-Calculate various in-game points and rewards for activities like raids, catches, and tasks.
+Calculates attack breakpoints, defense breakpoints, and bulkpoints across Pokémon levels and IVs for PVE or PVP battles.
 
 #### **Catch Chance Calculator** (`/calculate-catch-chance`)
-Calculate probability of catching Pokémon based on:
-- Pokémon species and level
-- Ball type (Poké Ball, Great Ball, Ultra Ball)
-- Berries used (Razz, Golden Razz, Silver Pinap)
-- Throw quality (Nice, Great, Excellent)
-- Medal bonuses
+Calculates catch probability from species, level and encounter settings, ball, berry, throw quality, curveball, and medal bonuses.
 
 ### 🌤️ Weather & Environment
+
 #### **Weather Boosts** (`/weather-boosts`)
-Complete guide to weather effects showing:
-- Pokémon types boosted by each weather
-- Increased CP ranges for weather-boosted spawns
-- Best Pokémon to catch in each weather
-- Weather-specific raid recommendations
+Maps each Pokémon GO weather condition to its boosted types and finds matching weather for one or two selected Pokémon types.
 
 ### 🎨 Collections
+
 #### **Stickers** (`/stickers`)
-Browse and track the complete collection of in-game stickers, including special event stickers and their availability.
+Browses sticker data and pack information with Pokémon association and shop-availability filters.
+
+### 🧭 Navigation & Errors
+
+#### **Error / Not Found** (`*`)
+Displays the application error page for unmatched URLs. Runtime errors are handled by a route-aware error boundary that resets after navigation.
 
 ### ⚙️ Application Features
-- **🌓 Theme System**: Toggle between light and dark modes with persistent preference
-- **📱 Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **⚡ Performance**: Fast page loads with optimized caching and code splitting
-- **🔄 Versioned Data**: Generated sections are synchronized from a single Game Master snapshot
+
+- **🌓 Theme System**: Light and dark modes with a persistent preference
+- **📱 Responsive Design**: Layouts for desktop, tablet, and mobile viewports
+- **⏳ Route Transitions**: Keeps the current page visible and shows global progress until a lazy route and its data are ready
+- **🛡️ Error Recovery**: Route-aware error boundaries reset when navigation changes
+- **🔄 Versioned Data**: Generated sections are synchronized from one Game Master snapshot
 - **📦 On-demand Loading**: Pages load and cache only the processed sections they use
-- **🔐 Secure Storage**: Encrypted local data storage for user preferences
-- **🎯 Smart Search**: Fuzzy search and autocomplete for quick navigation
-- **📊 Data Tables**: Sortable, filterable tables with export capabilities
+- **💾 Browser Storage**: Public data and preferences are cached locally without client-side encryption
+- **🎯 Search Tools**: Search and autocomplete for quick navigation
+- **📊 Data Tables**: Sortable, filterable, responsive result tables
 
-## Goals & Success Metrics
+## Product & Engineering Priorities
 
-### Primary Goals
-1. Provide the most accurate and up-to-date Pokémon GO information
-2. Offer comprehensive tools that enhance player experience and strategy
-3. Maintain an intuitive, responsive UI accessible to all player levels
-4. Ensure compatibility with the latest Pokémon GO game mechanics and updates
+### Product Goals
 
-### Success Metrics
-- **Data Consistency**: Publish all generated sections from the same source snapshot and reject unsupported schemas
-- **Tool Completeness**: Cover all major gameplay aspects (catching, battling, raids, PVP)
-- **Performance**: Minimize initial payloads and avoid unnecessary API section requests
-- **Accessibility**: Support all modern browsers and devices
+1. Present current Pokémon GO data in practical search, detail, battle, and calculator views.
+2. Keep tools usable across desktop and mobile layouts.
+3. Link related Pokémon, moves, leagues, counters, and update records for efficient navigation.
+4. Keep calculations and generated data aligned with the API's published Game Master snapshot.
+
+### Operational Priorities
+
+- **Data consistency**: Accept supported processed-data schemas and consume mutually dependent sections from one source snapshot.
+- **Focused loading**: Minimize initial payloads by fetching only the sections required by the current route.
+- **Resilient navigation**: Cancel stale work, recover from route errors, and preserve the current page during lazy transitions.
+- **Supported browsers**: Follow the repository's declared Browserslist targets.
 
 ## Getting Started
 
@@ -367,7 +359,7 @@ cd PokeGoBreeze
 
 2. **Install dependencies**
 ```bash
-npm install
+npm ci
 ```
 
 3. **Set up configuration**
@@ -380,7 +372,7 @@ npm install
    ```bash
    cp config.example.json config.json
    ```
-   Edit `config.json` with your values. This file is gitignored and takes precedence over Vercel Edge Config when present. No Edge Config credentials are required.
+   Edit `config.json` with your values. This file is gitignored and takes precedence over Vercel Edge Config when present. No Edge Config credentials are required, but data-backed pages still need a compatible `REACT_APP_DATA_API_URL` value in the selected configuration.
 
    **Option B — Vercel Edge Config**
 
@@ -389,18 +381,18 @@ npm install
    cp .env.example .env
    ```
 
-   Key variables required:
+   Configuration variables:
 
-   | Variable | Required | Purpose |
+   | Variable | When required | Purpose |
    |---|---|---|
-   | `REACT_APP_DEPLOYMENT_MODE` | Yes | `development` \| `staging` \| `production` |
-   | `REACT_APP_BASE_URL` | Yes | Application base URL |
-   | `REACT_APP_DATA_API_URL` | Yes | Base URL of a compatible PokeGoBreeze API deployment |
-   | `REACT_APP_EDGE_TOKEN` | Yes | Edge Config write token (deploy.sh) |
-   | `REACT_APP_EDGE_READ_TOKEN` | Yes | Edge Config read token (config.sh) |
-   | `REACT_APP_EDGE_ID` | Yes | Edge Config ID (e.g. `ecfg_xxx`) |
-   | `REACT_APP_VERSION` | No | App version override (e.g. `1.0.0`) |
-   | `MONGODB_URI` | No | MongoDB connection string (deploy.sh version history) |
+   | `REACT_APP_DEPLOYMENT_MODE` | Optional | `development` (default), `staging`, or `production` |
+   | `REACT_APP_BASE_URL` | Sitemap builds | Public application URL used by the sitemap generator |
+   | `REACT_APP_DATA_API_URL` | Data-backed pages | Base URL of a compatible PokeGoBreeze API deployment |
+   | `REACT_APP_EDGE_TOKEN` | Local `deploy.sh` | Edge Config write token |
+   | `REACT_APP_EDGE_READ_TOKEN` | Edge Config mode | Edge Config read token when `config.json` is absent |
+   | `REACT_APP_EDGE_ID` | Edge Config mode or deployment | Edge Config ID (for example, `ecfg_xxx`) |
+   | `REACT_APP_VERSION` | Optional | Overrides the version selected from config |
+   | `MONGODB_URI` | Optional | Records deployment versions when running `deploy.sh` |
 
    GitHub Actions deployment also requires the `VERCEL_TOKEN` Actions secret
    and the `VERCEL_ORG_ID` plus `VERCEL_PROJECT_ID` Actions variables. Branches
@@ -461,22 +453,17 @@ npm run format:style
 
 ### Production Build
 
-**Build for production**:
+**Full production build** (loads config, lints, generates the sitemap, and builds `dist/`):
 ```bash
-npm run deploy
+REACT_APP_DEPLOYMENT_MODE=production npm run deploy
 ```
 
-This command will:
-1. Run linting checks
-2. Build optimized production bundle with Vite
-3. Generate sitemap for SEO
-4. Output to `dist/` directory
-
-**Manual build** (without linting):
+**Build without linting or runtime config loading**:
 ```bash
-npm run prebuild  # Clean dist folder
-npm run build     # Build and generate sitemap
+npm run build
 ```
+
+The npm `prebuild` lifecycle cleans `dist/` automatically before `npm run build`.
 
 **Preview production build locally**:
 ```bash
@@ -493,13 +480,13 @@ cp docker-compose.example.yml docker-compose.yml
 cp .env.example .env  # fill in your values
 
 # Build and start development container
-docker-compose up app-dev
+docker compose up app-dev
 ```
 
 **Production with Docker** (Nginx on `localhost:8000`):
 ```bash
 # Build and start production container (requires .env to be populated)
-docker-compose up --build app-build nginx
+docker compose up --build app-build nginx
 
 # Or build the image directly
 docker build -f Dockerfile -t pokego-breeze:latest .
@@ -516,8 +503,9 @@ npm install -g firebase-tools
 # Login to Firebase
 firebase login
 
-# Deploy to Firebase
-firebase deploy
+# Build and deploy only the production hosting target
+REACT_APP_DEPLOYMENT_MODE=production npm run deploy
+firebase deploy --project pokego-breeze --only hosting:pokego-breeze
 ```
 
 #### Vercel
@@ -537,8 +525,8 @@ vercel --prod
 | `npm run develop` | Alias for `npm start` |
 | `npm run build` | Build production bundle and generate sitemap |
 | `npm run build:vite` | Build production bundle only (no sitemap) |
-| `npm run prebuild` | Clean `dist/` folder before building |
-| `npm run deploy` | Lint, build, and generate sitemap for deployment |
+| `npm run prebuild` | Clean `dist/` (runs automatically before `npm run build`) |
+| `npm run deploy` | Load runtime config, then lint, generate the sitemap, and build for the configured deployment mode |
 | `npm run lint` | Run ESLint and Stylelint |
 | `npm run lint:code` | Run ESLint only |
 | `npm run lint:style` | Run Stylelint only |
@@ -546,15 +534,12 @@ vercel --prod
 | `npm run format:code` | Run Prettier only |
 | `npm run format:style` | Run Stylelint --fix only |
 | `npm run generate:sitemap` | Generate sitemap.xml for SEO |
-| `npm run debug-vite` | Start Vite with `--debug --force` for diagnostics |
+| `npm run test-vite` | Start Vite directly without runtime config loading |
+| `npm run debug-vite` | Start Vite directly with `--debug --force` for diagnostics |
 
 ### Browser Support
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+The production CSS/tooling target follows `browserslist` in `package.json`: browsers with more than 0.2% usage, excluding dead browsers and Opera Mini. Vite emits ES2015-compatible JavaScript. Development targets the latest Chrome, Firefox, and Safari.
 
 ### Troubleshooting
 
@@ -574,9 +559,9 @@ npm run develop
 
 **Build errors**:
 ```bash
-# Clean install
-rm -rf node_modules package-lock.json
-npm install
+# Reinstall exactly from the committed lockfile
+rm -rf node_modules
+npm ci
 ```
 
 ## Contributing
@@ -664,45 +649,33 @@ When reporting issues, please include:
 - Browser and device information
 - Console errors (if any)
 
-## Project Roadmap
+## Project Status
 
-### Planned Features
-- 🌐 **Multi-language Support**: Internationalization (i18n) for multiple languages
-- 📊 **Advanced Analytics**: Detailed statistics and performance tracking
-- 🤖 **Team Builder AI**: AI-powered team composition suggestions
-- 📱 **Progressive Web App**: Full offline support with service workers
-- 🔔 **Notifications**: Event reminders and update notifications
-- 💾 **Cloud Sync**: Cross-device data synchronization
-- 🎮 **Interactive Tutorials**: Guided tours for new users
-- 🏆 **Community Features**: Share teams and strategies with other players
+### Recent Changes
 
-### Recent Updates
-- 📰 Added paginated Game Master Patch Notes with readable field changes and entity assets
-- 🔌 Moved processed datasets and calculation-heavy tools to versioned API endpoints
-- 📦 Added page-level section loading, request deduplication, and schema-version validation
-- 🖼️ Centralized Pokémon GO asset resolution and fallbacks across detail and counter views
-- ⚔️ Moved raid, stats, damage, league, and PVP simulation workflows to API responses
-- 🎯 Improved Pokémon form switching, moveset loading, loading states, and mobile battle audio
-- 🚀 Upgraded the build toolchain to Vite 6 and Node.js 24
+- Added paginated Game Master patch notes with readable field changes and linked entity assets.
+- Moved processed datasets and calculation-heavy tools to versioned API endpoints.
+- Added page-level section loading, request deduplication, cancellation, and schema validation.
+- Kept the current route visible during lazy navigation and added route-aware error recovery.
+- Centralized Pokémon GO asset resolution and fallbacks across detail and counter views.
+- Upgraded routing, dependency versions, and the lint/build toolchain.
 
 ## Performance & Optimization
 
-PokeGoBreeze is built with performance in mind:
-
-- **Code Splitting**: Vendor and route-based splitting for smaller bundles
-- **Lazy Loading**: Components load on-demand
-- **Optimized Assets**: Compressed images and minified code
-- **Efficient Caching**: Deduplicated section requests and API-side caching for generated data
-- **Redux Optimization**: Memoized selectors and normalized state
-- **Tree Shaking**: Unused code is eliminated from production builds
+- **Route splitting**: Lazy route imports and manually separated vendor chunks reduce the initial application bundle.
+- **Focused data loading**: Each route declares the processed-data sections it requires.
+- **Request control**: Shared section requests are deduplicated; page requests use cancellation or stale-response checks where needed.
+- **Transition handling**: The previous page remains mounted until the next lazy page and required data are ready.
+- **Production output**: Vite minifies JavaScript and CSS and emits fingerprinted assets for long-lived hosting caches.
+- **API caching**: Generated datasets and calculation responses use the API's cache behavior rather than browser-side recomputation.
 
 ## Security
 
 - **Client Storage**: Public data and preferences are cached without encryption; sensitiveData is excluded from persistence
 - **Deployment Secrets**: CI and hosting credentials belong in GitHub/Vercel/Firebase secret stores, never in client configuration
-- **Operational Telemetry**: Deployment analytics and web-vitals requests contain no gameplay account credentials
+- **Operational Telemetry**: Vercel Analytics and Speed Insights contain no Pokémon GO account credentials
 - **HTTPS Only**: All production deployments use HTTPS
-- **Regular Updates**: Dependencies are regularly updated for security patches
+- **Dependency Controls**: The committed lockfile, targeted overrides, install-script allowlist, and `npm audit` are used to control dependency risk
 
 ## Acknowledgments
 
@@ -723,7 +696,7 @@ The API checks for new Game Master snapshots on a schedule. The web client recei
 Some previously loaded browser assets may remain cached, but data-backed pages and calculators require access to the PokeGoBreeze API.
 
 ### Is my data secure?
-Browser storage is not encrypted; do not place account credentials or other secrets in client-side configuration. The app also sends operational analytics and web-vitals events.
+Browser storage is not encrypted; do not place account credentials or other secrets in client-side configuration. Production deployments also use Vercel Analytics and Speed Insights.
 
 ### Can I suggest new features?
 Absolutely! Please open an issue on GitHub with your feature request.
@@ -740,8 +713,8 @@ This project uses several open-source libraries. See `package.json` for a comple
 
 ## Links & Resources
 
-- 🌐 **Live Site (Firebase)**: [pokego-breeze.web.app](https://pokego-breeze.web.app/)
-- 🌐 **Alternative Site (Vercel)**: [poke-go-breeze.vercel.app](https://poke-go-breeze.vercel.app/)
+- 🌐 **Production (Firebase)**: [pokego-breeze.web.app](https://pokego-breeze.web.app/)
+- 🌐 **Production (Vercel)**: [poke-go-breeze.vercel.app](https://poke-go-breeze.vercel.app/)
 - 💻 **GitHub Repository**: [WHIZENx/PokeGoBreeze](https://github.com/WHIZENx/PokeGoBreeze)
 - 📝 **Issues & Bug Reports**: [GitHub Issues](https://github.com/WHIZENx/PokeGoBreeze/issues)
 - 📢 **Feature Requests**: [GitHub Discussions](https://github.com/WHIZENx/PokeGoBreeze/discussions)
