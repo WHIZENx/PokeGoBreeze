@@ -41,6 +41,7 @@ const Battle = lazy(() => import('./pages/PVP/Battle/Battle'));
 const CatchChance = lazy(() => import('./pages/Tools/CatchChance/CatchChance'));
 const SearchTypes = lazy(() => import('./pages/Search/Types/Types'));
 const StatsRanking = lazy(() => import('./pages/Sheets/StatsRanking/StatsRanking'));
+const TrainerLab = lazy(() => import('./pages/Trainer/TrainerLab'));
 import Spinner from './components/Spinner/Spinner';
 import { useLocalStorage } from 'usehooks-ts';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -261,6 +262,7 @@ function App() {
             <Route path="/pvp/battle/:cp" element={<Battle />} />
             <Route path="/pvp/:cp/:serie/:pokemon" element={<PokemonPVP styleSheet={styleSheet.current} />} />
             <Route path="/battle-leagues" element={<Leagues />} />
+            <Route path="/trainer" element={<TrainerLab />} />
             <Route path="/stickers" element={<Sticker />} />
             <Route path="*" element={<Error />} />
           </Routes>

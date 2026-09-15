@@ -37,6 +37,7 @@ async function generateSitemap() {
     // PVP
     { url: '/pvp', changefreq: 'weekly', priority: 0.9 },
     { url: '/pvp/battle', changefreq: 'weekly', priority: 0.8 },
+    { url: '/trainer', changefreq: 'weekly', priority: 0.9 },
 
     // Tools
     { url: '/find-cp-iv', changefreq: 'monthly', priority: 0.7 },

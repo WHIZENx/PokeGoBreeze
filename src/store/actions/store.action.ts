@@ -9,7 +9,7 @@ import { LeagueData } from '../../core/models/league.model';
 import { IPVPDataModel } from '../../core/models/pvp.model';
 import { IEvolutionChain } from '../../core/models/evolution-chain.model';
 import { IInformation } from '../../core/models/information';
-import { ITrainerLevelUp } from '../../core/models/trainer.model';
+import { ITrainerBattlePreset, ITrainerLevelUp } from '../../core/models/trainer.model';
 
 export enum StoreActionTypes {
   getStore = '[Store] GetStore',
@@ -24,6 +24,7 @@ export enum StoreActionTypes {
   setLogoPokeGO = '[Store] SetLogoPokeGO',
   setCPM = '[Store] SetCPM',
   setTrainers = '[Store] SetTrainers',
+  setTrainerBattlePresets = '[Store] SetTrainerBattlePresets',
   setPVP = '[Store] SetPVP',
   resetStore = '[Store] ResetStore',
 }
@@ -193,6 +194,17 @@ export class SetTrainer implements Action {
   }
 }
 
+export class SetTrainerBattlePresets implements Action {
+  readonly type = StoreActionTypes.setTrainerBattlePresets;
+
+  constructor(public payload: ITrainerBattlePreset[]) {}
+
+  static create(value: ITrainerBattlePreset[]) {
+    const { type, payload } = new SetTrainerBattlePresets(value);
+    return { type, payload };
+  }
+}
+
 export class SetPVP implements Action {
   readonly type = StoreActionTypes.setPVP;
 
@@ -231,5 +243,6 @@ export type StoreActionsUnion =
   | SetLogoPokeGO
   | SetCPM
   | SetTrainer
+  | SetTrainerBattlePresets
   | SetPVP
   | ResetStore;

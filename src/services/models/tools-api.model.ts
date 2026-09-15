@@ -261,3 +261,55 @@ export interface PvpBattleSimulatorApiResponse {
   };
   meta: { section: 'pvpBattleSimulator' };
 }
+
+export interface TrainerBattleSimulatorRequest {
+  presetId: string;
+  team: Array<{
+    pokemonId: string;
+    form?: string;
+    level?: number;
+    iv?: { atk: number; def: number; sta: number };
+    fastMove?: string;
+    chargedMoves?: string[];
+  }>;
+  shields?: number;
+  seed?: number;
+}
+
+export interface TrainerBattleTeamResult {
+  pokemonId: string;
+  name: string;
+  form?: string;
+  sprite?: string;
+  level: number;
+  cp: number;
+  iv: { atk: number; def: number; sta: number };
+  fastMove: string;
+  chargedMoves: string[];
+  maxHp: number;
+  remainingHp: number;
+  damageDealt: number;
+}
+
+export interface TrainerBattleSimulatorApiResponse {
+  data: {
+    winner: 'player' | 'opponent' | 'draw';
+    durationSeconds: number;
+    timedOut: boolean;
+    seed: number;
+    player: { shields: number; remaining: number; team: TrainerBattleTeamResult[] };
+    opponent: { shields: number; remaining: number; team: TrainerBattleTeamResult[] };
+    events: Array<{
+      turn: number;
+      second: number;
+      side: 'player' | 'opponent';
+      type: 'enter' | 'charged' | 'shield' | 'buff' | 'faint' | 'timeout';
+      pokemon: string;
+      move?: string;
+      target?: string;
+      damage?: number;
+    }>;
+    assumptions: string[];
+  };
+  meta: { section: 'trainerBattleSimulator'; presetId: string };
+}

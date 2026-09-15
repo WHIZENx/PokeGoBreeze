@@ -32,6 +32,8 @@ import type {
   PvpBattleSimulatorRequest,
   RaidBattleApiResponse,
   RaidBattleRequest,
+  TrainerBattleSimulatorApiResponse,
+  TrainerBattleSimulatorRequest,
 } from './models/tools-api.model';
 
 class APIService {
@@ -521,6 +523,13 @@ class APIService {
   postPvpBattleSimulator(payload: PvpBattleSimulatorRequest) {
     return this.axios.post<PvpBattleSimulatorApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp-battle-simulator`,
+      payload
+    );
+  }
+
+  postTrainerBattleSimulator(payload: TrainerBattleSimulatorRequest) {
+    return this.axios.post<TrainerBattleSimulatorApiResponse>(
+      `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/trainer-battle-simulator`,
       payload
     );
   }
