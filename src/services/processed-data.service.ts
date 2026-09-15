@@ -2,7 +2,7 @@ import APIService from './api.service';
 import { APIUrl } from './constants';
 import type { AxiosRequestConfig } from 'axios';
 
-export const PROCESSED_DATA_SCHEMA_VERSION = 3;
+export const PROCESSED_DATA_SCHEMA_VERSION = 4;
 
 export class UnsupportedProcessedDataSchemaError extends Error {
   constructor(actualVersion: unknown) {
@@ -53,7 +53,8 @@ export type ProcessedDataSection =
   | 'combats'
   | 'assets'
   | 'evolutionChains'
-  | 'trainers';
+  | 'trainers'
+  | 'trainerBattlePresets';
 
 const endpoint = (path: string) => `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/${path}`;
 

@@ -1,0 +1,265 @@
+.trainer-lab {
+  @apply tw-pb-10;
+}
+
+.trainer-hero {
+  @apply tw-relative tw-overflow-hidden tw-flex tw-items-center tw-justify-between tw-gap-4 tw-rounded-2xl tw-p-6 tw-mb-4;
+
+  min-height: 180px;
+  color: white;
+  background:
+    radial-gradient(circle at 88% 15%, rgb(255 255 255 / 26%), transparent 25%),
+    linear-gradient(125deg, #243b80 0%, #4267b9 52%, #5baec9 100%);
+
+  h1 {
+    @apply tw-font-black;
+  }
+}
+
+.trainer-hero-icon {
+  width: clamp(90px, 16vw, 170px) !important;
+  height: clamp(90px, 16vw, 170px) !important;
+  opacity: 0.24;
+  transform: rotate(-10deg);
+}
+
+.trainer-tabs {
+  @apply tw-mb-4;
+
+  border-bottom: 1px solid rgb(127 127 127 / 24%);
+}
+
+.trainer-setup-grid,
+.trainer-result-teams {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.trainer-panel {
+  @apply tw-h-full tw-rounded-2xl;
+}
+
+.trainer-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.trainer-opponent {
+  @apply tw-flex tw-items-center tw-gap-4 tw-rounded-xl tw-p-4;
+
+  min-height: 150px;
+  border: 1px solid rgb(127 127 127 / 18%);
+
+  > img {
+    width: 92px;
+    height: 92px;
+    object-fit: contain;
+  }
+}
+
+.trainer-blanche {
+  background: linear-gradient(135deg, rgb(51 122 183 / 18%), rgb(255 255 255 / 3%));
+}
+
+.trainer-candela {
+  background: linear-gradient(135deg, rgb(211 47 47 / 18%), rgb(255 255 255 / 3%));
+}
+
+.trainer-spark {
+  background: linear-gradient(135deg, rgb(249 168 37 / 22%), rgb(255 255 255 / 3%));
+}
+
+.trainer-opponent-team {
+  @apply tw-flex tw-flex-wrap tw-gap-2 tw-mt-3;
+}
+
+.trainer-opponent-pokemon {
+  @apply tw-flex tw-items-center tw-gap-1 tw-rounded-full tw-pr-3;
+
+  background: rgb(127 127 127 / 12%);
+
+  img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+  }
+
+  span {
+    @apply tw-text-xs tw-font-semibold;
+  }
+}
+
+.trainer-team-pickers {
+  @apply tw-flex tw-flex-col tw-gap-3;
+
+  > div + div {
+    padding-top: 12px;
+    border-top: 1px solid rgb(127 127 127 / 12%);
+  }
+}
+
+.trainer-slot-moves {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+
+  > div {
+    min-width: 0;
+  }
+}
+
+.trainer-picker-row {
+  @apply tw-flex tw-items-center tw-gap-2;
+}
+
+.trainer-picker-meta {
+  @apply tw-flex tw-items-center tw-gap-1.5 tw-mt-0.5;
+}
+
+.trainer-actions {
+  @apply tw-flex tw-items-center tw-flex-wrap tw-gap-2 tw-mt-5;
+
+  button .MuiButton-startIcon,
+  button svg {
+    margin-right: 4px;
+  }
+}
+
+.trainer-result {
+  @apply tw-mt-5 tw-rounded-2xl tw-p-5;
+
+  border: 1px solid rgb(127 127 127 / 20%);
+  background: linear-gradient(180deg, rgb(66 103 178 / 12%), transparent 220px);
+}
+
+.trainer-result-player {
+  background: linear-gradient(180deg, rgb(46 125 50 / 16%), transparent 220px);
+}
+
+.trainer-result-opponent {
+  background: linear-gradient(180deg, rgb(198 40 40 / 14%), transparent 220px);
+}
+
+.trainer-result-heading {
+  @apply tw-flex tw-items-end tw-justify-between tw-gap-4 tw-mb-4;
+}
+
+.trainer-result-stats {
+  @apply tw-flex tw-flex-wrap tw-justify-end tw-gap-2;
+}
+
+.trainer-result-pokemon {
+  @apply tw-flex tw-items-center tw-gap-3 tw-py-2;
+
+  & + & {
+    border-top: 1px solid rgb(127 127 127 / 16%);
+  }
+
+  > img {
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
+  }
+}
+
+.trainer-result-moves {
+  @apply tw-flex tw-flex-wrap tw-items-end tw-gap-3 tw-mt-2;
+}
+
+.trainer-battle-timeline {
+  @apply tw-mt-2 tw-rounded-xl tw-overflow-hidden tw-p-4;
+
+  border: 1px solid rgb(127 127 127 / 16%);
+  background: rgb(127 127 127 / 5%);
+
+  .fit-timeline {
+    height: 120px;
+  }
+
+  .play-line {
+    display: none;
+  }
+}
+
+.trainer-timeline-lanes,
+.trainer-timeline-footer,
+.trainer-timeline-legend,
+.trainer-timeline-legend span {
+  @apply tw-flex tw-items-center;
+}
+
+.trainer-timeline-lanes,
+.trainer-timeline-footer {
+  @apply tw-justify-between tw-gap-3;
+}
+
+.trainer-timeline-lanes > :last-child {
+  text-align: right;
+}
+
+.trainer-timeline-footer {
+  color: rgb(127 127 127);
+}
+
+.trainer-timeline-legend {
+  @apply tw-flex-wrap tw-justify-center tw-gap-3;
+
+  span {
+    @apply tw-gap-1 tw-text-xs;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.trainer-legend-charge {
+  width: 12px;
+  height: 12px;
+  border: 1px solid currentcolor;
+  border-radius: 50%;
+  background: #6d8ed6;
+}
+
+@media (width <= 900px) {
+  .trainer-setup-grid,
+  .trainer-result-teams {
+    grid-template-columns: 1fr;
+  }
+
+  .trainer-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .trainer-result-heading {
+    @apply tw-items-start tw-flex-col;
+  }
+
+  .trainer-result-stats {
+    @apply tw-justify-start;
+  }
+}
+
+@media (width <= 520px) {
+  .trainer-hero {
+    @apply tw-p-4;
+  }
+
+  .trainer-opponent {
+    @apply tw-items-start tw-flex-col;
+  }
+
+  .trainer-timeline-footer {
+    @apply tw-flex-wrap;
+
+    .trainer-timeline-legend {
+      order: 3;
+      width: 100%;
+    }
+  }
+}

@@ -44,8 +44,8 @@ const Trainer = () => {
   }, [trainersData, level]);
 
   return (
-    <div className="tw-container tw-p-3">
-      <h2 className="title-leagues tw-mb-3">Trainer</h2>
+    <section className="trainer-rewards tw-py-3">
+      <h2 className="title-leagues tw-mb-3">Trainer Level Rewards</h2>
       <hr />
       <div>
         <SelectMui
@@ -84,7 +84,7 @@ const Trainer = () => {
           </div>
           {isNotEmpty(data.itemUnlocks) && (
             <>
-              <p className="title-leagues tw-mt-2">Receive Items</p>
+              <p className="title-leagues tw-mt-2">Newly Unlocked Items</p>
               <div className="tw-flex tw-justify-center tw-mt-2">
                 <div className="trainer-levelup">
                   <div className="levelup-container tw-justify-center">
@@ -110,7 +110,7 @@ const Trainer = () => {
           )}
         </>
       )}
-    </div>
+    </section>
   );
 };
 

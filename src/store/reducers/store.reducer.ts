@@ -96,6 +96,14 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
           trainers: action.payload,
         },
       };
+    case StoreActions.StoreActionTypes.setTrainerBattlePresets:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          trainerBattlePresets: action.payload,
+        },
+      };
     case StoreActions.StoreActionTypes.setPVP:
       return {
         ...state,

@@ -13,7 +13,7 @@ import {
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { RAID_BOSS_TIER } from '../../../utils/constants';
-import { Badge, Checkbox, FormControlLabel, IconButton, LinearProgress, Switch } from '@mui/material';
+import { Alert, Badge, Checkbox, FormControlLabel, IconButton, LinearProgress, Switch } from '@mui/material';
 
 import './RaidBattle.scss';
 import APIService from '../../../services/api.service';
@@ -100,9 +100,8 @@ const PRIORITY_MENU_ITEMS = [
 
 const RaidBattle = () => {
   useTitle({
-    title: 'Raid Battle - Tools',
-    description:
-      'Plan your Pokémon GO raid battles with our comprehensive raid battle simulator. Find the best counters and strategies for defeating raid bosses.',
+    title: 'Raid Battle Estimator - Tools',
+    description: 'Estimate Pokémon GO raid damage and compare counters using a simplified DPS/TDO model.',
     keywords: [
       'raid battle simulator',
       'Pokémon GO raids',
@@ -460,7 +459,7 @@ const RaidBattle = () => {
       }
       const response = await APIService.postRaidBattle(payload);
       setResultRaid(response.data.data);
-      showSnackbar('Simulator battle raid successfully!', 'success');
+      showSnackbar('Raid estimate calculated successfully!', 'success');
     } catch {
       showSnackbar('Raid Battle simulation API is unavailable.', 'error');
     } finally {
@@ -1073,6 +1072,11 @@ const RaidBattle = () => {
 
   return (
     <Fragment>
+      <Alert severity="warning" className="!tw-m-3">
+        This is a simplified raid estimator based on move timing, DPS/TDO, boss HP, and the selected timer. It does not
+        simulate Party Power cycles, Shadow Raid enrage, Super Mega shields, relobby timing, or Max Battles. Legacy raid
+        tiers remain available only for historical comparisons.
+      </Alert>
       <div className="row !tw-m-0 tw-overflow-x-hidden">
         <div className="lg:tw-flex-1 !tw-p-0">
           <Find isHide title="Raid Boss" clearStats={clearDataBoss} />
@@ -1367,7 +1371,7 @@ const RaidBattle = () => {
               <ButtonMui
                 onClick={() => calculateTrainerBattle(trainerBattle)}
                 disabled={disableRaidBattle(trainerBattle)}
-                label="Raid Battle"
+                label="Calculate Raid Estimate"
               />
             </div>
             <div className="tw-flex tw-flex-wrap tw-justify-center tw-items-center tw-mt-2">
