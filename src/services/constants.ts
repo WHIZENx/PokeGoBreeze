@@ -1,5 +1,11 @@
+const configuredDataApiUrl = process.env.REACT_APP_DATA_API_URL?.trim();
+const defaultDataApiUrl =
+  typeof window === 'undefined' || window.location.hostname !== 'localhost'
+    ? 'https://pokego-breeze-api.vercel.app'
+    : '';
+
 export class APIUrl {
-  public static POKEGO_BREEZE_API_URL = (process.env.REACT_APP_DATA_API_URL ?? '').replace(/\/$/, '');
+  public static POKEGO_BREEZE_API_URL = (configuredDataApiUrl || defaultDataApiUrl).replace(/\/$/, '');
   public static POKE_ASSETS = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 
   public static POGO_PROD_ASSET_URL = 'https://storage.googleapis.com/prod-public-images/';
