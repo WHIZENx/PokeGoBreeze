@@ -4,11 +4,12 @@
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Version](https://img.shields.io/badge/version-6.0.0-blue.svg)
-![React](https://img.shields.io/badge/React-18.2.0-61DAFB?logo=react)
+![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-3178C6?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-6.4.2-646CFF?logo=vite)
+![Vite](https://img.shields.io/badge/Vite-6.4.3-646CFF?logo=vite)
 
-[Production](https://poke-go-breeze.vercel.app/) • [Staging](https://poke-go-breeze-stage.vercel.app/)
+[![Vercel Production](https://img.shields.io/badge/Production-Vercel-000000?logo=vercel&logoColor=white)](https://poke-go-breeze.vercel.app/)
+[![Firebase Production](https://img.shields.io/badge/Production-Firebase-FFCA28?logo=firebase&logoColor=black)](https://pokego-breeze.web.app/)
 
 </div>
 
@@ -40,52 +41,54 @@ This repository contains the public React web client. Processed game data and ca
 
 For local development, set `REACT_APP_DATA_API_URL` to a compatible deployed API or to the API service running locally.
 
+The versions below reflect the currently committed `package-lock.json`.
+
 ### Frontend Framework
-- **Core**: React 18.2.0 with TypeScript 5.5.3
-- **Build Tool**: Vite 6.4.2 (migrated from Webpack for faster builds)
-- **State Management**: 
-  - Redux 4.2.0 with React-Redux 7.2.6
-  - Redux Thunk 2.4.1 for async operations
+- **Core**: React 18.3.1 with TypeScript 5.5.3
+- **Build Tool**: Vite 6.4.3
+- **State Management**:
+  - Redux 4.2.1 with React-Redux 7.2.9
+  - Redux Thunk 2.4.2 for async operations
   - Redux Persist 6.0.0 for browser caching
-- **Routing**: React Router DOM v6.20.0
-- **HTTP Client**: Axios 1.12.0
+- **Routing**: React Router DOM 7.18.3
+- **HTTP Client**: Axios 1.18.1
 
 ### UI & Styling
 - **Component Libraries**:
-  - Material UI (MUI) v5.6 - Primary UI framework
-  - MUI Icons Material 5.6.2
-  - Styled Components 6.1.8
-  - Emotion (React & Styled) 11.11
+  - Material UI (MUI) 5.18.0
+  - MUI Icons Material 5.18.0
+  - Styled Components 6.4.1
+  - Emotion React 11.14.0 and Emotion Styled 11.14.1
 - **Styling System**:
-  - SCSS/Sass 1.83.0 with modern @use syntax
-  - Tailwind CSS 3.4.17 for utility classes
+  - SCSS/Sass 1.83.0 with modern `@use` syntax
+  - Tailwind CSS 3.4.19 for utility classes
   - Custom theming system with dark/light modes
-  - PostCSS with Autoprefixer 10.4
+  - PostCSS 8.5.26 with Autoprefixer 10.5.0
 - **Data Visualization**:
-  - React Data Table Component 7.4.7 for data grids
+  - React Data Table Component 7.7.0 for data grids
   - React XArrows 2.0.2 for visual connections
 - **Utilities**:
-  - Lodash 4.17.21 for data manipulation
+  - Lodash 4.18.1 for data manipulation
   - Moment 2.30.1 for date/time handling
-  - DOMPurify 3.2.6 for safe HTML rendering
+  - DOMPurify 3.4.13 for safe HTML rendering
   - Immutability Helper 3.1.1 for state updates
-  - usehooks-ts 2.7.2 for reusable React hooks
+  - usehooks-ts 2.16.0 for reusable React hooks
   - React Device Detect 2.2.3 for device-aware UI
 
 ### Storage & Security
 - **Client Storage**: LocalForage 1.10.0 with IndexedDB (localStorage fallback)
-- **Data Persistence**: Redux Persist caches public data and preferences; sensitiveData is excluded
+- **Data Persistence**: Redux Persist 6.0.0 caches public data and preferences without client-side encryption; `sensitiveData` is excluded
 
 ### Development Tools
 - **Build System**: Vite 6 with custom configuration
-  - Code splitting and lazy loading
+  - Code splitting and lazy route imports
   - Chunk optimization for vendor libraries
-  - Node.js polyfills (stream, buffer, util, process, vm)
+  - Node.js polyfills (stream, buffer, util, process, events, vm)
 - **Code Quality**:
-  - ESLint 8.57.0 with TypeScript support (@typescript-eslint 5.45)
-  - Prettier 3.2.5 for code formatting
-  - Stylelint 15.11.0 for SCSS/CSS linting
-  - Vite ESLint & Stylelint plugins for real-time feedback
+  - ESLint 10.10.0 flat config with typescript-eslint 8.70.0 and eslint-react 5.19.1
+  - Prettier 3.6.2 for code formatting
+  - Stylelint 17.15.0 with Stylistic 5.3.0 for SCSS/CSS linting
+  - Vite ESLint 3.0.1 and Stylelint 6.1.0 plugins for development feedback
 - **TypeScript**:
   - Strict type checking (TypeScript 5.5.3)
   - Custom type definitions
@@ -107,7 +110,7 @@ For local development, set `REACT_APP_DATA_API_URL` to a compatible deployed API
 - **Hosting**:
   - Vercel deployments for production and branch environments
   - Firebase Hosting deployments and pull-request previews
-- **Containerization**: Docker support with docker-compose
+- **Containerization**: Docker support with Docker Compose
 - **CI/CD**:
   - GitHub Actions for automated workflows
   - A push to `develop`, `stage`, or `main` deploys that branch from this repository
@@ -194,7 +197,7 @@ Comprehensive move database search with filters for:
 - PVP and PVE effectiveness
 
 #### **Search Types** (`/search-types`)
-Type effectiveness lookup and analysis. Explore type matchups, strengths, and weaknesses for strategic team building.
+Browse Pokémon and fast/charged moves by type, with release filtering, totals, and separate result tables.
 
 ### 📖 Detailed Information
 #### **Pokémon Details** (`/pokemon/:id`)
@@ -304,7 +307,7 @@ Raid battle optimizer helping you:
 - Determine minimum number of trainers needed
 
 #### **Calculate Point** (`/calculate-point`)
-Calculate various in-game points and rewards for activities like raids, catches, and tasks.
+Calculate attack breakpoints, defense breakpoints, and bulkpoints across Pokémon levels and IVs for PVE or PVP battles.
 
 #### **Catch Chance Calculator** (`/calculate-catch-chance`)
 Calculate probability of catching Pokémon based on:
@@ -332,9 +335,9 @@ Browse and track the complete collection of in-game stickers, including special 
 - **⚡ Performance**: Fast page loads with optimized caching and code splitting
 - **🔄 Versioned Data**: Generated sections are synchronized from a single Game Master snapshot
 - **📦 On-demand Loading**: Pages load and cache only the processed sections they use
-- **🔐 Secure Storage**: Encrypted local data storage for user preferences
-- **🎯 Smart Search**: Fuzzy search and autocomplete for quick navigation
-- **📊 Data Tables**: Sortable, filterable tables with export capabilities
+- **💾 Browser Storage**: Public data and preferences are cached locally without client-side encryption
+- **🎯 Search Tools**: Search and autocomplete for quick navigation
+- **📊 Data Tables**: Sortable, filterable, responsive result tables
 
 ## Goals & Success Metrics
 
@@ -367,7 +370,7 @@ cd PokeGoBreeze
 
 2. **Install dependencies**
 ```bash
-npm install
+npm ci
 ```
 
 3. **Set up configuration**
@@ -389,18 +392,18 @@ npm install
    cp .env.example .env
    ```
 
-   Key variables required:
+   Configuration variables:
 
-   | Variable | Required | Purpose |
+   | Variable | When required | Purpose |
    |---|---|---|
-   | `REACT_APP_DEPLOYMENT_MODE` | Yes | `development` \| `staging` \| `production` |
-   | `REACT_APP_BASE_URL` | Yes | Application base URL |
-   | `REACT_APP_DATA_API_URL` | Yes | Base URL of a compatible PokeGoBreeze API deployment |
-   | `REACT_APP_EDGE_TOKEN` | Yes | Edge Config write token (deploy.sh) |
-   | `REACT_APP_EDGE_READ_TOKEN` | Yes | Edge Config read token (config.sh) |
-   | `REACT_APP_EDGE_ID` | Yes | Edge Config ID (e.g. `ecfg_xxx`) |
-   | `REACT_APP_VERSION` | No | App version override (e.g. `1.0.0`) |
-   | `MONGODB_URI` | No | MongoDB connection string (deploy.sh version history) |
+   | `REACT_APP_DEPLOYMENT_MODE` | Optional | `development` (default), `staging`, or `production` |
+   | `REACT_APP_BASE_URL` | Sitemap builds | Public application URL used by the sitemap generator |
+   | `REACT_APP_DATA_API_URL` | Data-backed pages | Base URL of a compatible PokeGoBreeze API deployment |
+   | `REACT_APP_EDGE_TOKEN` | Local `deploy.sh` | Edge Config write token |
+   | `REACT_APP_EDGE_READ_TOKEN` | Edge Config mode | Edge Config read token when `config.json` is absent |
+   | `REACT_APP_EDGE_ID` | Edge Config mode or deployment | Edge Config ID (for example, `ecfg_xxx`) |
+   | `REACT_APP_VERSION` | Optional | Overrides the version selected from config |
+   | `MONGODB_URI` | Optional | Records deployment versions when running `deploy.sh` |
 
    GitHub Actions deployment also requires the `VERCEL_TOKEN` Actions secret
    and the `VERCEL_ORG_ID` plus `VERCEL_PROJECT_ID` Actions variables. Branches
@@ -461,22 +464,17 @@ npm run format:style
 
 ### Production Build
 
-**Build for production**:
+**Full production build** (loads config, lints, generates the sitemap, and builds `dist/`):
 ```bash
-npm run deploy
+REACT_APP_DEPLOYMENT_MODE=production npm run deploy
 ```
 
-This command will:
-1. Run linting checks
-2. Build optimized production bundle with Vite
-3. Generate sitemap for SEO
-4. Output to `dist/` directory
-
-**Manual build** (without linting):
+**Build without linting or runtime config loading**:
 ```bash
-npm run prebuild  # Clean dist folder
-npm run build     # Build and generate sitemap
+npm run build
 ```
+
+The npm `prebuild` lifecycle cleans `dist/` automatically before `npm run build`.
 
 **Preview production build locally**:
 ```bash
@@ -493,13 +491,13 @@ cp docker-compose.example.yml docker-compose.yml
 cp .env.example .env  # fill in your values
 
 # Build and start development container
-docker-compose up app-dev
+docker compose up app-dev
 ```
 
 **Production with Docker** (Nginx on `localhost:8000`):
 ```bash
 # Build and start production container (requires .env to be populated)
-docker-compose up --build app-build nginx
+docker compose up --build app-build nginx
 
 # Or build the image directly
 docker build -f Dockerfile -t pokego-breeze:latest .
@@ -516,8 +514,9 @@ npm install -g firebase-tools
 # Login to Firebase
 firebase login
 
-# Deploy to Firebase
-firebase deploy
+# Build and deploy only the production hosting target
+REACT_APP_DEPLOYMENT_MODE=production npm run deploy
+firebase deploy --project pokego-breeze --only hosting:pokego-breeze
 ```
 
 #### Vercel
@@ -537,8 +536,8 @@ vercel --prod
 | `npm run develop` | Alias for `npm start` |
 | `npm run build` | Build production bundle and generate sitemap |
 | `npm run build:vite` | Build production bundle only (no sitemap) |
-| `npm run prebuild` | Clean `dist/` folder before building |
-| `npm run deploy` | Lint, build, and generate sitemap for deployment |
+| `npm run prebuild` | Clean `dist/` (runs automatically before `npm run build`) |
+| `npm run deploy` | Load runtime config, then lint, generate the sitemap, and build for the configured deployment mode |
 | `npm run lint` | Run ESLint and Stylelint |
 | `npm run lint:code` | Run ESLint only |
 | `npm run lint:style` | Run Stylelint only |
@@ -546,15 +545,12 @@ vercel --prod
 | `npm run format:code` | Run Prettier only |
 | `npm run format:style` | Run Stylelint --fix only |
 | `npm run generate:sitemap` | Generate sitemap.xml for SEO |
-| `npm run debug-vite` | Start Vite with `--debug --force` for diagnostics |
+| `npm run test-vite` | Start Vite directly without runtime config loading |
+| `npm run debug-vite` | Start Vite directly with `--debug --force` for diagnostics |
 
 ### Browser Support
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+Production follows the `browserslist` policy in `package.json`: browsers with more than 0.2% usage, excluding dead browsers and Opera Mini. Development targets the latest Chrome, Firefox, and Safari.
 
 ### Troubleshooting
 
@@ -574,9 +570,9 @@ npm run develop
 
 **Build errors**:
 ```bash
-# Clean install
-rm -rf node_modules package-lock.json
-npm install
+# Reinstall exactly from the committed lockfile
+rm -rf node_modules
+npm ci
 ```
 
 ## Contributing
@@ -740,8 +736,8 @@ This project uses several open-source libraries. See `package.json` for a comple
 
 ## Links & Resources
 
-- 🌐 **Live Site (Firebase)**: [pokego-breeze.web.app](https://pokego-breeze.web.app/)
-- 🌐 **Alternative Site (Vercel)**: [poke-go-breeze.vercel.app](https://poke-go-breeze.vercel.app/)
+- 🌐 **Production (Firebase)**: [pokego-breeze.web.app](https://pokego-breeze.web.app/)
+- 🌐 **Production (Vercel)**: [poke-go-breeze.vercel.app](https://poke-go-breeze.vercel.app/)
 - 💻 **GitHub Repository**: [WHIZENx/PokeGoBreeze](https://github.com/WHIZENx/PokeGoBreeze)
 - 📝 **Issues & Bug Reports**: [GitHub Issues](https://github.com/WHIZENx/PokeGoBreeze/issues)
 - 📢 **Feature Requests**: [GitHub Discussions](https://github.com/WHIZENx/PokeGoBreeze/discussions)
