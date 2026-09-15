@@ -8,6 +8,10 @@
   @apply tw-relative tw-overflow-y-auto tw-h-auto;
 }
 
+.table-movesets {
+  @apply tw-w-full;
+}
+
 td.data-table {
   @apply tw-p-0;
 }

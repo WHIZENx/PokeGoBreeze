@@ -15,8 +15,9 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
 
   const [countFM, setCountFM] = useState(0);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
-  const [currentMove, setCurrentMove] = useState<ISelectMoveModel>();
   const [showMove, setShowMove] = useState(false);
+
+  const currentMove = resultMove.find((move) => isEqual(move.name, props.move?.name));
 
   const findMove = () => {
     const result = retrieveMoves(props.id, props.form, props.pokemonType);
@@ -30,14 +31,13 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
         simpleMove = addSelectMovesByType(result, TypeMove.Charge, simpleMove);
       }
       if (
-        currentMove &&
+        props.move &&
         isNotEmpty(simpleMove) &&
         !isIncludeList(
           simpleMove.map((m) => m.name),
-          currentMove.name
+          props.move.name
         )
       ) {
-        setCurrentMove(undefined);
         props.setMove(undefined);
       }
       return setResultMove(simpleMove);
@@ -46,11 +46,7 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
 
   useEffect(() => {
     findMove();
-    if (!props.move) {
-      setCurrentMove(undefined);
-      props.setMove(undefined);
-    }
-  }, [props.id, props.form, props.pokemonType, props.move, props.type, currentMove]);
+  }, [props.id, props.form, props.pokemonType, props.move, props.type]);
 
   const findType = (move: string | undefined) => {
     if (!move) {
@@ -61,7 +57,6 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
 
   const changeMove = (value: ISelectMoveModel) => {
     setShowMove(false);
-    setCurrentMove(value);
     props.setMove(findMoveByName(value.name));
 
     if (props.clearData) {
