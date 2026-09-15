@@ -317,9 +317,21 @@ const SearchTypes = (props: IStyleSheetData) => {
     }
   }, [currentType]);
 
+  const percentage = (value: number | undefined, total: number | undefined) => {
+    const resultTotal = toNumber(total);
+    return resultTotal > 0 ? Math.round((toNumber(value) * 100) / resultTotal) : 0;
+  };
+
   return (
-    <div className="tw-container tw-mt-2">
-      <div className="tw-flex tw-justify-end">
+    <div className="tw-container tw-my-4 type-search-page">
+      <header className="type-search-toolbar">
+        <div>
+          <h1 className="type-search-heading">{`${capitalize(currentType)} Type`}</h1>
+          <span className="caption">{`${toNumber(counts?.typedPokemon)} of ${toNumber(counts?.pokemon)} Pokémon`}</span>
+        </div>
+      </header>
+
+      <div className="type-search-controls">
         <SelectTypeComponent
           title="Select Type"
           data={typesEffective}
@@ -327,195 +339,164 @@ const SearchTypes = (props: IStyleSheetData) => {
           setCurrentType={setCurrentType}
           filterType={[currentType]}
         />
+        <InputReleased releasedGO={releasedGO} setReleaseGO={(check) => setReleaseGO(check)} isAvailable={releasedGO} />
       </div>
-      <InputReleased
-        releasedGO={releasedGO}
-        setReleaseGO={(check) => setReleaseGO(check)}
-        isAvailable={releasedGO}
-        label={<b>{`Filter from ${toNumber(counts?.pokemon)} Pokémon`}</b>}
-      />
-      <div className="row">
-        <div className="xl:tw-w-1/3 !tw-mt-2">
-          <div
-            className={combineClasses(
-              'tw-flex tw-flex-col tw-items-center type-info-container',
-              `${currentType.toLowerCase()}-border`
-            )}
-            style={{ background: computeBgType(currentType, PokemonType.Normal, props.styleSheet) }}
-          >
-            <div className="filter-shadow tw-w-32">
-              <img
-                className="sprite-type-large tw-p-3 tw-rounded-full tw-bg-black"
-                alt="Pokémon GO Type Logo"
-                src={APIService.getTypeHqSprite(currentType)}
-              />
+
+      <section
+        className={combineClasses('type-overview', `${currentType.toLowerCase()}-border`)}
+        style={{ background: computeBgType(currentType, PokemonType.Normal, props.styleSheet) }}
+      >
+        <div className="type-overview-identity text-shadow-black">
+          <img
+            className="type-overview-icon filter-shadow"
+            alt={`${capitalize(currentType)} type`}
+            src={APIService.getTypeHqSprite(currentType)}
+          />
+          <strong>{capitalize(currentType)}</strong>
+        </div>
+        <div className="type-overview-metrics">
+          <div className="type-overview-metric">
+            <div className="type-overview-label">
+              <img alt="Pokémon" height={30} src={getItemSpritePath(ItemName.PokeBall)} />
+              <span>Pokémon</span>
             </div>
-            <span
-              className={combineClasses(
-                currentType.toLowerCase(),
-                'type-select-bg tw-flex tw-items-center filter-shadow tw-mt-2 tw-w-max'
-              )}
-            >
-              <div className="tw-w-3 tw-contents">
-                <img
-                  className="pokemon-sprite-small sprite-type-select filter-shadow"
-                  alt="Pokémon GO Type Logo"
-                  src={APIService.getTypeHqSprite(currentType)}
-                />
-              </div>
-              <span className="filter-shadow">{capitalize(currentType)}</span>
-            </span>
-            <span className="tw-mt-2 tw-text-white text-shadow-black">
-              <img alt="Icon Item" height={36} src={getItemSpritePath(ItemName.PokeBall)} />
-              <b>{` Pokémon: ${toNumber(counts?.typedPokemon)} (${
-                toNumber(counts?.typedPokemon) > 0 &&
-                toNumber(counts?.pokemon) > 0 &&
-                Math.round((toNumber(counts?.typedPokemon) * 100) / toNumber(counts?.pokemon, 1))
-              }%)`}</b>
-              <ul className="list-style-disc">
-                <li>
-                  <b>{`Legacy Type: ${toNumber(counts?.singlePokemon)} (${
-                    toNumber(counts?.typedPokemon) > 0 &&
-                    Math.round((toNumber(counts?.singlePokemon) * 100) / toNumber(counts?.pokemon, 1))
-                  }%)`}</b>
-                </li>
-                <li>
-                  <b>{`Include Type: ${toNumber(counts?.dualPokemon)} (${
-                    toNumber(counts?.typedPokemon) > 0 &&
-                    Math.round((toNumber(counts?.dualPokemon) * 100) / toNumber(counts?.pokemon, 1))
-                  }%)`}</b>
-                </li>
-              </ul>
-            </span>
-            <span className="tw-mt-2 tw-text-white text-shadow-black">
-              <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1201')} />
-              <b>{` Fast Moves: ${toNumber(counts?.typedFastMoves)}/${toNumber(counts?.fastMoves)} (${Math.round(
-                (toNumber(counts?.typedFastMoves) * 100) / toNumber(counts?.fastMoves, 1)
-              )}%)`}</b>
-            </span>
-            <span className="tw-mt-2 tw-text-white text-shadow-black">
-              <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1202')} />
-              <b>{` Charged Moves: ${toNumber(counts?.typedChargedMoves)}/${toNumber(counts?.chargedMoves)} (${Math.round(
-                (toNumber(counts?.typedChargedMoves) * 100) / toNumber(counts?.chargedMoves, 1)
-              )}%)`}</b>
-            </span>
+            <strong>{toNumber(counts?.typedPokemon)}</strong>
+            <span>{`${percentage(counts?.typedPokemon, counts?.pokemon)}% of ${toNumber(counts?.pokemon)}`}</span>
+            <small>{`${toNumber(counts?.singlePokemon)} single / ${toNumber(counts?.dualPokemon)} dual`}</small>
+          </div>
+          <div className="type-overview-metric">
+            <div className="type-overview-label">
+              <img alt="Fast Move" height={30} src={APIService.getItemSprite('Item_1201')} />
+              <span>Fast Moves</span>
+            </div>
+            <strong>{toNumber(counts?.typedFastMoves)}</strong>
+            <span>{`${percentage(counts?.typedFastMoves, counts?.fastMoves)}% of ${toNumber(counts?.fastMoves)}`}</span>
+          </div>
+          <div className="type-overview-metric">
+            <div className="type-overview-label">
+              <img alt="Charged Move" height={30} src={APIService.getItemSprite('Item_1202')} />
+              <span>Charged Moves</span>
+            </div>
+            <strong>{toNumber(counts?.typedChargedMoves)}</strong>
+            <span>{`${percentage(counts?.typedChargedMoves, counts?.chargedMoves)}% of ${toNumber(counts?.chargedMoves)}`}</span>
           </div>
         </div>
-        <div className="xl:tw-w-2/3 !tw-mt-2">
-          <TabsPanel
-            tabs={[
-              {
-                label: 'Pokémon Legacy Type List',
-                children: (
-                  <CustomDataTable
-                    customColumns={columnPokemon}
-                    data={singlePokemon.data}
-                    pagination
-                    paginationServer
-                    paginationTotalRows={singlePokemon.total}
-                    paginationResetDefaultPage={singlePokemon.resetPaginationToggle}
-                    paginationPerPage={50}
-                    paginationComponentOptions={{ noRowsPerPage: true }}
-                    onChangePage={singlePokemon.setPage}
-                    sortServer
-                    onSort={(column, direction) => singlePokemon.onSort(column.id, direction)}
-                    defaultSortFieldId={ColumnType.Name}
-                    highlightOnHover
-                    striped
-                    progressPending={singlePokemon.loading}
-                    progressComponent={<CircularProgressTable />}
-                    isShowSearch
-                    inputPlaceholder="Search Pokémon Name or ID"
-                    onSearchTermChange={singlePokemon.setSearch}
-                    debounceTime={300}
-                  />
-                ),
-              },
-              {
-                label: 'Pokémon Include Types List',
-                children: (
-                  <CustomDataTable
-                    customColumns={columnPokemon}
-                    data={dualPokemon.data}
-                    pagination
-                    paginationServer
-                    paginationTotalRows={dualPokemon.total}
-                    paginationResetDefaultPage={dualPokemon.resetPaginationToggle}
-                    paginationPerPage={50}
-                    paginationComponentOptions={{ noRowsPerPage: true }}
-                    onChangePage={dualPokemon.setPage}
-                    sortServer
-                    onSort={(column, direction) => dualPokemon.onSort(column.id, direction)}
-                    defaultSortFieldId={ColumnType.Name}
-                    highlightOnHover
-                    striped
-                    progressPending={dualPokemon.loading}
-                    progressComponent={<CircularProgressTable />}
-                    isShowSearch
-                    inputPlaceholder="Search Pokémon Name or ID"
-                    onSearchTermChange={dualPokemon.setSearch}
-                    debounceTime={300}
-                  />
-                ),
-              },
-              {
-                label: 'Fast Move List',
-                children: (
-                  <CustomDataTable
-                    customColumns={columnMove}
-                    data={fastMoves.data}
-                    pagination
-                    paginationServer
-                    paginationTotalRows={fastMoves.total}
-                    paginationResetDefaultPage={fastMoves.resetPaginationToggle}
-                    paginationPerPage={50}
-                    paginationComponentOptions={{ noRowsPerPage: true }}
-                    onChangePage={fastMoves.setPage}
-                    sortServer
-                    onSort={(column, direction) => fastMoves.onSort(column.id, direction)}
-                    defaultSortFieldId={ColumnType.Name}
-                    highlightOnHover
-                    striped
-                    progressPending={fastMoves.loading}
-                    progressComponent={<CircularProgressTable />}
-                    isShowSearch
-                    inputPlaceholder="Search Move Name or ID"
-                    onSearchTermChange={fastMoves.setSearch}
-                    debounceTime={300}
-                  />
-                ),
-              },
-              {
-                label: 'Charged Move List',
-                children: (
-                  <CustomDataTable
-                    customColumns={columnMove}
-                    data={chargedMoves.data}
-                    pagination
-                    paginationServer
-                    paginationTotalRows={chargedMoves.total}
-                    paginationResetDefaultPage={chargedMoves.resetPaginationToggle}
-                    paginationPerPage={50}
-                    paginationComponentOptions={{ noRowsPerPage: true }}
-                    onChangePage={chargedMoves.setPage}
-                    sortServer
-                    onSort={(column, direction) => chargedMoves.onSort(column.id, direction)}
-                    defaultSortFieldId={ColumnType.Name}
-                    highlightOnHover
-                    striped
-                    progressPending={chargedMoves.loading}
-                    progressComponent={<CircularProgressTable />}
-                    isShowSearch
-                    inputPlaceholder="Search Move Name or ID"
-                    onSearchTermChange={chargedMoves.setSearch}
-                    debounceTime={300}
-                  />
-                ),
-              },
-            ]}
-          />
-        </div>
-      </div>
+      </section>
+
+      <section className="type-search-results">
+        <TabsPanel
+          tabs={[
+            {
+              label: 'Single Type',
+              children: (
+                <CustomDataTable
+                  customColumns={columnPokemon}
+                  data={singlePokemon.data}
+                  pagination
+                  paginationServer
+                  paginationTotalRows={singlePokemon.total}
+                  paginationResetDefaultPage={singlePokemon.resetPaginationToggle}
+                  paginationPerPage={50}
+                  paginationComponentOptions={{ noRowsPerPage: true }}
+                  onChangePage={singlePokemon.setPage}
+                  sortServer
+                  onSort={(column, direction) => singlePokemon.onSort(column.id, direction)}
+                  defaultSortFieldId={ColumnType.Name}
+                  highlightOnHover
+                  striped
+                  progressPending={singlePokemon.loading}
+                  progressComponent={<CircularProgressTable />}
+                  isShowSearch
+                  inputPlaceholder="Search Pokémon Name or ID"
+                  onSearchTermChange={singlePokemon.setSearch}
+                  debounceTime={300}
+                />
+              ),
+            },
+            {
+              label: 'Dual Type',
+              children: (
+                <CustomDataTable
+                  customColumns={columnPokemon}
+                  data={dualPokemon.data}
+                  pagination
+                  paginationServer
+                  paginationTotalRows={dualPokemon.total}
+                  paginationResetDefaultPage={dualPokemon.resetPaginationToggle}
+                  paginationPerPage={50}
+                  paginationComponentOptions={{ noRowsPerPage: true }}
+                  onChangePage={dualPokemon.setPage}
+                  sortServer
+                  onSort={(column, direction) => dualPokemon.onSort(column.id, direction)}
+                  defaultSortFieldId={ColumnType.Name}
+                  highlightOnHover
+                  striped
+                  progressPending={dualPokemon.loading}
+                  progressComponent={<CircularProgressTable />}
+                  isShowSearch
+                  inputPlaceholder="Search Pokémon Name or ID"
+                  onSearchTermChange={dualPokemon.setSearch}
+                  debounceTime={300}
+                />
+              ),
+            },
+            {
+              label: 'Fast Moves',
+              children: (
+                <CustomDataTable
+                  customColumns={columnMove}
+                  data={fastMoves.data}
+                  pagination
+                  paginationServer
+                  paginationTotalRows={fastMoves.total}
+                  paginationResetDefaultPage={fastMoves.resetPaginationToggle}
+                  paginationPerPage={50}
+                  paginationComponentOptions={{ noRowsPerPage: true }}
+                  onChangePage={fastMoves.setPage}
+                  sortServer
+                  onSort={(column, direction) => fastMoves.onSort(column.id, direction)}
+                  defaultSortFieldId={ColumnType.Name}
+                  highlightOnHover
+                  striped
+                  progressPending={fastMoves.loading}
+                  progressComponent={<CircularProgressTable />}
+                  isShowSearch
+                  inputPlaceholder="Search Move Name or ID"
+                  onSearchTermChange={fastMoves.setSearch}
+                  debounceTime={300}
+                />
+              ),
+            },
+            {
+              label: 'Charged Moves',
+              children: (
+                <CustomDataTable
+                  customColumns={columnMove}
+                  data={chargedMoves.data}
+                  pagination
+                  paginationServer
+                  paginationTotalRows={chargedMoves.total}
+                  paginationResetDefaultPage={chargedMoves.resetPaginationToggle}
+                  paginationPerPage={50}
+                  paginationComponentOptions={{ noRowsPerPage: true }}
+                  onChangePage={chargedMoves.setPage}
+                  sortServer
+                  onSort={(column, direction) => chargedMoves.onSort(column.id, direction)}
+                  defaultSortFieldId={ColumnType.Name}
+                  highlightOnHover
+                  striped
+                  progressPending={chargedMoves.loading}
+                  progressComponent={<CircularProgressTable />}
+                  isShowSearch
+                  inputPlaceholder="Search Move Name or ID"
+                  onSearchTermChange={chargedMoves.setSearch}
+                  debounceTime={300}
+                />
+              ),
+            },
+          ]}
+        />
+      </section>
     </div>
   );
 };

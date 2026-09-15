@@ -6,6 +6,11 @@ h1.text-move {
   @apply tw-mb-0;
 }
 
+.move-table,
+.move-damage-table {
+  @apply tw-w-full;
+}
+
 .move-table td:nth-child(1) {
   width: 40% !important;
   min-width: 150px !important;
