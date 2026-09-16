@@ -5,7 +5,6 @@ import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { EqualMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isIncludeList, toNumber } from './extension';
 import { IStyleData } from './models/util.model';
-import candy from '../data/pokemon_candy_color_data.json';
 import { maxLevel, minLevel, stepLevel } from './helpers/options-context.helpers';
 import { CostPowerUp } from './models/constants.model';
 
@@ -121,35 +120,15 @@ export const raidEgg = (tier: number, pokemonType?: PokemonType, pokemonClass?: 
   }
 };
 
-const _candyCache = new Map<number, ICandy | undefined>();
-
-const getCandyData = (id: number | undefined): ICandy | undefined => {
-  const key = toNumber(id);
-  if (_candyCache.has(key)) {
-    return _candyCache.get(key);
-  }
-  const data = (candy as ICandy[]).find(
-    (item) =>
-      isIncludeList(
-        item.familyGroup.map((v) => v.id),
-        id
-      ) || item.familyId === key
-  );
-  _candyCache.set(key, data);
-  return data;
-};
-
 const toRgba = (color: Color) => `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 
-export const computeCandyColor = (id: number | undefined) => {
-  const data = getCandyData(id);
+export const computeCandyColor = (data: ICandy | undefined) => {
   return toRgba(
     Color.createRgb(data?.primaryColor.r, data?.primaryColor.g, data?.primaryColor.b, data?.primaryColor.a)
   );
 };
 
-export const computeCandyBgColor = (id: number | undefined) => {
-  const data = getCandyData(id);
+export const computeCandyBgColor = (data: ICandy | undefined) => {
   return toRgba(
     Color.createRgb(data?.secondaryColor.r, data?.secondaryColor.g, data?.secondaryColor.b, data?.secondaryColor.a)
   );

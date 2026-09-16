@@ -1,7 +1,7 @@
 import type { ProcessedDataSection } from '../../services/processed-data.service';
 
 const pokemonDetails: ProcessedDataSection[] = ['pokemons', 'combats', 'assets', 'cpm', 'statsRankings'];
-const pvpDetails: ProcessedDataSection[] = ['pvp', 'pokemons', 'combats', 'assets', 'statsRankings'];
+const pvpDetails: ProcessedDataSection[] = ['pvp', 'pokemons', 'combats', 'assets', 'statsRankings', 'cpm'];
 
 /**
  * Large processed-data sections are loaded only when the active route needs

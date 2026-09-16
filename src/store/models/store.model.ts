@@ -9,6 +9,7 @@ import { IPokemonData } from '../../core/models/pokemon.model';
 import { IPVPDataModel, PVPDataModel } from '../../core/models/pvp.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { ITrainerBattlePreset, ITrainerLevelUp } from '../../core/models/trainer.model';
+import { ICandy } from '../../core/models/candy.model';
 
 export interface StoreModel {
   icon?: string;
@@ -22,6 +23,7 @@ export class Store implements StoreModel {
 
 export interface IDataModel {
   cpm: ICPM[];
+  candy: ICandy[];
   options: IOptions;
   pokemons: IPokemonData[];
   stickers: ISticker[];
@@ -37,6 +39,7 @@ export interface IDataModel {
 
 export class Data implements IDataModel {
   cpm: ICPM[] = [];
+  candy: ICandy[] = [];
   options = new Options();
   pokemons: IPokemonData[] = [];
   stickers: ISticker[] = [];

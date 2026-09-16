@@ -27,6 +27,8 @@ export interface ProcessedDataMeta {
     items?: number;
     icon?: number;
     sounds: number;
+    candy?: number;
+    candyCommitSha?: string;
     pvp: number;
   };
   sections: Record<string, number>;
@@ -46,6 +48,7 @@ export interface ProcessedDataPage<T> {
 
 export type ProcessedDataSection =
   | 'options'
+  | 'candy'
   | 'cpm'
   | 'pvp'
   | 'statsRankings'

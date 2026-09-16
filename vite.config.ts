@@ -76,9 +76,6 @@ export default defineConfig(({ mode }) => {
             if (id.includes('/data/pokemon.json')) {
               return 'pokemon';
             }
-            if (id.includes('/data/pokemon_candy_color_data.json')) {
-              return 'candy-data';
-            }
             if (id.includes('/data/pokemon_encounter.json')) {
               return 'encounter-data';
             }

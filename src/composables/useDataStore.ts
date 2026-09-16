@@ -22,6 +22,7 @@ import { IAsset } from '../core/models/asset.model';
 import { LeagueData } from '../core/models/league.model';
 import { ICPM } from '../core/models/cpm.model';
 import { ITrainerBattlePreset, ITrainerLevelUp } from '../core/models/trainer.model';
+import { ICandy } from '../core/models/candy.model';
 import { IPVPDataModel } from '../core/models/pvp.model';
 import { IStatsRank } from '../core/models/stats.model';
 import { StoreActions, StatsActions, TimestampActions } from '../store/actions';
@@ -30,6 +31,7 @@ import ProcessedDataService, {
   ProcessedDataSection,
   UnsupportedProcessedDataSchemaError,
 } from '../services/processed-data.service';
+import { setCpmData as configureCpmData } from '../services/cpm.service';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -134,7 +136,11 @@ export const useDataStore = () => {
       case 'options':
         dispatch(StoreActions.SetOptions.create(data as IOptions));
         break;
+      case 'candy':
+        dispatch(StoreActions.SetCandy.create(data as ICandy[]));
+        break;
       case 'cpm':
+        configureCpmData(data as ICPM[]);
         dispatch(StoreActions.SetCPM.create(data as ICPM[]));
         break;
       case 'pvp':
@@ -178,7 +184,7 @@ export const useDataStore = () => {
     try {
       const meta = await ProcessedDataService.getMeta();
       setProgress(20);
-      await loadProcessedSections(['options']);
+      await loadProcessedSections(['options', 'candy']);
       setProgress(70);
       dispatch(TimestampActions.SetSnapshotGeneratedAt.create(meta.generatedAt));
       dispatch(TimestampActions.SetTimestampGameMaster.create(meta.source.gameMaster));
@@ -204,6 +210,7 @@ export const useDataStore = () => {
   const assetsData = dataStore.assets;
   const leaguesData = dataStore.leagues;
   const cpmData = dataStore.cpm;
+  const candyData = dataStore.candy;
   const trainersData = dataStore.trainers;
   const trainerBattlePresetsData = dataStore.trainerBattlePresets;
   const pvpData = dataStore.pvp;
@@ -220,6 +227,7 @@ export const useDataStore = () => {
     assetsData,
     leaguesData,
     cpmData,
+    candyData,
     trainersData,
     trainerBattlePresetsData,
     pvpData,
