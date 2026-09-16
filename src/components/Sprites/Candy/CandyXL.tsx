@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { computeCandyBgColor, computeCandyColor } from '../../../utils/compute';
 
@@ -6,6 +6,7 @@ import bgCandyXL from '../../../assets/bg_CandyXL.png';
 
 import { ICandyComponent } from '../../models/component.model';
 import { combineClasses, toNumber } from '../../../utils/extension';
+import useCandy from '../../../composables/useCandy';
 
 const DEFAULT_SIZE = 30;
 
@@ -35,15 +36,10 @@ const Fill = styled.div<Element>`
 `;
 
 const CandyXL = (props: ICandyComponent) => {
-  const [color, setColor] = useState<string>();
-  const [bgColor, setBgColor] = useState<string>();
-
-  useEffect(() => {
-    const candyColor = computeCandyColor(props.id);
-    const candyBgColor = computeCandyBgColor(props.id);
-    setColor(candyColor);
-    setBgColor(candyBgColor);
-  }, [props.id]);
+  const { getCandyData } = useCandy();
+  const candy = getCandyData(toNumber(props.id));
+  const color = computeCandyColor(candy);
+  const bgColor = computeCandyBgColor(candy);
 
   return (
     <div className={combineClasses('tw-relative tw-inline-block', props.className)} style={props.style}>

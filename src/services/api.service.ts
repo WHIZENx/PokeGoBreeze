@@ -106,10 +106,6 @@ class APIService {
     );
   }
 
-  async getCandyData<T>(options?: AxiosRequestConfig<unknown>) {
-    return await this.getFetchUrl<{ data: T }>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/candy`, options);
-  }
-
   setPokemonModel(item: string) {
     if (isInclude(item, 'necrozma-dawn')) {
       item += '-wings';

@@ -10,6 +10,7 @@ import { IPVPDataModel } from '../../core/models/pvp.model';
 import { IEvolutionChain } from '../../core/models/evolution-chain.model';
 import { IInformation } from '../../core/models/information';
 import { ITrainerBattlePreset, ITrainerLevelUp } from '../../core/models/trainer.model';
+import { ICandy } from '../../core/models/candy.model';
 
 export enum StoreActionTypes {
   getStore = '[Store] GetStore',
@@ -23,6 +24,7 @@ export enum StoreActionTypes {
   setLeagues = '[Store] SetLeagues',
   setLogoPokeGO = '[Store] SetLogoPokeGO',
   setCPM = '[Store] SetCPM',
+  setCandy = '[Store] SetCandy',
   setTrainers = '[Store] SetTrainers',
   setTrainerBattlePresets = '[Store] SetTrainerBattlePresets',
   setPVP = '[Store] SetPVP',
@@ -180,6 +182,17 @@ export class SetCPM implements Action {
   }
 }
 
+export class SetCandy implements Action {
+  readonly type = StoreActionTypes.setCandy;
+
+  constructor(public payload: ICandy[]) {}
+
+  static create(value: ICandy[]) {
+    const { type, payload } = new SetCandy(value);
+    return { type, payload };
+  }
+}
+
 export class SetTrainer implements Action {
   readonly type = StoreActionTypes.setTrainers;
 
@@ -242,6 +255,7 @@ export type StoreActionsUnion =
   | SetLeagues
   | SetLogoPokeGO
   | SetCPM
+  | SetCandy
   | SetTrainer
   | SetTrainerBattlePresets
   | SetPVP

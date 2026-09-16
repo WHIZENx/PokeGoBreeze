@@ -16,6 +16,14 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
           cpm: action.payload,
         },
       };
+    case StoreActions.StoreActionTypes.setCandy:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          candy: action.payload,
+        },
+      };
     case StoreActions.StoreActionTypes.setLogoPokeGO:
       return {
         ...state,

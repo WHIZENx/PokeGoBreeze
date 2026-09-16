@@ -1,8 +1,7 @@
-import { ICPM } from '../core/models/cpm.model';
 import { IPokemonData } from '../core/models/pokemon.model';
 import { IStatsPokemon, StatsPokemon, StatsIV, StatsPokemonGO } from '../core/models/stats.model';
-import dataCPM from '../data/cp_multiplier.json';
 import { PokemonType } from '../enums/type.enum';
+import { getCpmMultiplier } from '../services/cpm.service';
 import { RAID_BOSS_TIER } from './constants';
 import { camelCase, splitAndCamelCase } from './utils';
 import { BattleBaseStats, StatsBaseCalculate } from './models/calculate.model';
@@ -15,9 +14,6 @@ import {
   minCp,
   getTypeEffective as getTypeEffectiveScalar,
 } from './helpers/options-context.helpers';
-
-const CPM_MAP = new Map<number, number>(dataCPM.map((item: ICPM) => [item.level, item.multiplier]));
-const getCpmMultiplier = (level: number | undefined): number => toNumber(CPM_MAP.get(toNumber(level)));
 
 export const getTypeEffective = (typeMove: string | undefined, typesObj: string[] | undefined) => {
   let valueEffective = 1;
@@ -108,7 +104,7 @@ export const calBaseSTA = (stats: IStatsPokemon | undefined, nerf: boolean) => {
 };
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) =>
-  Math.floor(Math.max(minCp(), (atk * def ** 0.5 * sta ** 0.5 * getCpmMultiplier(level) ** 2) / 10));
+  Math.floor(Math.max(minCp(), (atk * def ** 0.5 * sta ** 0.5 * getCpmMultiplier(toNumber(level)) ** 2) / 10));
 
 export const calculateRaidStat = (stat: number | undefined, tier: number) =>
   Math.floor((toNumber(stat) + maxIv()) * RAID_BOSS_TIER[tier].CPm);
@@ -117,7 +113,7 @@ export const calculateRaidCP = (atk: number, def: number, tier: number) =>
   Math.floor(((atk + maxIv()) * Math.sqrt(def + maxIv()) * Math.sqrt(RAID_BOSS_TIER[tier].sta)) / 10);
 
 export const calculateStatsBattle = (base?: number, iv?: number, level?: number, floor = false, addition = 1) => {
-  const result = (toNumber(base) + toNumber(iv)) * getCpmMultiplier(level) * addition;
+  const result = (toNumber(base) + toNumber(iv)) * getCpmMultiplier(toNumber(level)) * addition;
   if (floor) {
     return Math.floor(result);
   }
