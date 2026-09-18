@@ -22,7 +22,11 @@ import {
   PokemonSpecie,
 } from '../../core/models/pokemon.model';
 import APIService from '../../services/api.service';
-import type { PokemonBundleVariety, PokemonMoveRanking } from '../../core/models/API/pokemon-bundle.model';
+import type {
+  PokemonBundleVariety,
+  PokemonFusionOption,
+  PokemonMoveRanking,
+} from '../../core/models/API/pokemon-bundle.model';
 import type { IAsset } from '../../core/models/asset.model';
 import type { IEvolutionChain } from '../../core/models/evolution-chain.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
@@ -128,6 +132,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [costModifier, setCostModifier] = useState<ITypeCost>();
   const [evolutionChain, setEvolutionChain] = useState<PokemonInfoEvo>();
   const [pokemonGoAsset, setPokemonGoAsset] = useState<IAsset>();
+  const [pokemonGoFusionOptions, setPokemonGoFusionOptions] = useState<PokemonFusionOption[]>([]);
   const [pokemonGoEvolutionChains, setPokemonGoEvolutionChains] = useState<IEvolutionChain[]>([]);
   const [moveRankings, setMoveRankings] = useState<PokemonMoveRanking[]>([]);
 
@@ -179,7 +184,8 @@ const Pokemon = (props: IPokemonPage) => {
       bundledEvolutionChain: PokemonInfoEvo | null,
       bundledMoveRankings: PokemonMoveRanking[] = [],
       bundledPokemonGoAsset?: IAsset | null,
-      bundledPokemonGoEvolutionChains: IEvolutionChain[] = []
+      bundledPokemonGoEvolutionChains: IEvolutionChain[] = [],
+      bundledFusionOptions: PokemonFusionOption[] = []
     ) => {
       const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
@@ -198,6 +204,7 @@ const Pokemon = (props: IPokemonPage) => {
       }
       setEvolutionChain(bundledEvolutionChain ?? undefined);
       setPokemonGoAsset(bundledPokemonGoAsset ?? undefined);
+      setPokemonGoFusionOptions(bundledFusionOptions);
       setPokemonGoEvolutionChains(bundledPokemonGoEvolutionChains);
       setMoveRankings(bundledMoveRankings);
 
@@ -345,7 +352,8 @@ const Pokemon = (props: IPokemonPage) => {
               res.data.data.evolutionChain,
               res.data.data.moveRankings ?? [],
               res.data.data.pokemonGo?.asset,
-              res.data.data.pokemonGo?.evolutionChains
+              res.data.data.pokemonGo?.evolutionChains,
+              res.data.data.pokemonGo?.fusionOptions
             );
           }
         })
@@ -389,6 +397,7 @@ const Pokemon = (props: IPokemonPage) => {
       setCostModifier(undefined);
       setMoveRankings([]);
       setPokemonGoAsset(undefined);
+      setPokemonGoFusionOptions([]);
       setPokemonGoEvolutionChains([]);
     }
   };
@@ -767,6 +776,7 @@ const Pokemon = (props: IPokemonPage) => {
           defaultId={dataStorePokemon?.current?.id}
           evolutionChain={evolutionChain}
           pokemonGoAsset={pokemonGoAsset}
+          pokemonGoFusionOptions={pokemonGoFusionOptions}
           pokemonGoEvolutionChains={pokemonGoEvolutionChains}
           moveRankings={moveRankings}
           isLoadedForms={progress.isLoadedForms}

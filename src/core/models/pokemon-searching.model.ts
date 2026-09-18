@@ -1,5 +1,5 @@
 import APIService from '../../services/api.service';
-import { splitAndCapitalize } from '../../utils/utils';
+import { formatPokemonDisplayName } from '../../utils/pokemon-display-name';
 import { IPokemonData } from './pokemon.model';
 
 export interface IPokemonSearching {
@@ -15,10 +15,7 @@ export class PokemonSearching implements IPokemonSearching {
 
   constructor(item: IPokemonData) {
     this.id = item.num;
-    this.name = splitAndCapitalize(item.pokemonId?.toString().replace(/-M$/, 'MALE').replace(/-F$/, 'FEMALE'), '_', ' ')
-      .replace('Mr ', 'Mr. ')
-      .replace(/^Ho Oh$/, 'Ho-Oh')
-      .replace(/ O$/, '-O');
+    this.name = formatPokemonDisplayName(item.pokemonId?.toString());
     this.sprites = APIService.getPokeSprite(item.num);
   }
 }

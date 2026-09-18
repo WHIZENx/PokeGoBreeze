@@ -25,6 +25,8 @@ export class EvolutionQuestCondition implements IEvolutionQuestCondition {
 }
 
 interface IEvolutionQuest {
+  details?: string[];
+  requirements?: IEvolutionRequirement[];
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;
   isMustBeBuddy?: boolean;
@@ -40,6 +42,8 @@ interface IEvolutionQuest {
 }
 
 export class EvolutionQuest implements IEvolutionQuest {
+  details?: string[];
+  requirements?: IEvolutionRequirement[];
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;
   isMustBeBuddy?: boolean;
@@ -52,6 +56,13 @@ export class EvolutionQuest implements IEvolutionQuest {
   goal?: number;
   type?: QuestType;
   isRandomEvolution?: boolean;
+}
+
+export interface IEvolutionRequirement {
+  templateId: string;
+  type?: string;
+  goal: number;
+  conditions: Record<string, unknown>[];
 }
 
 export interface IEvoList {

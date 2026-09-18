@@ -35,6 +35,7 @@ import { useSearch } from '../../../composables/useSearch';
 import ButtonGroupForm from '../../Commons/Buttons/ButtonGroupForm';
 import { IPokemonFormModify, IPokemonSprite } from '../../../core/models/API/form.model';
 import { Skeleton } from '@mui/material';
+import Fusion from '../FormChange/Fusion';
 
 const hasSpriteImage = (sprite: IPokemonSprite | undefined) =>
   Object.values(sprite ?? {}).some((value) => typeof value === 'string' && Boolean(value.trim()));
@@ -256,7 +257,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             key={`${props.defaultId}-${searchingMainDetails?.fullName ?? searchingMainDetails?.form ?? ''}-${searchingMainDetails?.pokemonType ?? ''}`}
             moveData={moveRanking?.moves}
             rankMoveData={moveRanking?.bestMoves}
-            isLoading={!props.isLoadedForms || !moveRanking}
+            isLoading={!props.isLoadedForms}
           />
           <Counter pokemonData={searchingMainDetails} />
         </div>
@@ -277,6 +278,14 @@ const FormComponent = (props: IFormInfoComponent) => {
       )}
       {isNotEmpty(searchingMainDetails?.formChange) && (
         <FromChange asset={props.pokemonGoAsset} currentId={props.defaultId} pokemonData={searchingMainDetails} />
+      )}
+      {props.isLoadedForms && props.defaultId && Boolean(props.pokemonGoFusionOptions?.length) && (
+        <Fusion
+          options={props.pokemonGoFusionOptions ?? []}
+          componentId={props.defaultId}
+          componentName={searchingMainDetails?.pokemonId ?? ''}
+          asset={props.pokemonGoAsset}
+        />
       )}
     </Fragment>
   );

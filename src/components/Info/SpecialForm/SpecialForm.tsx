@@ -24,6 +24,8 @@ const SpecialForm = (props: IFormSpecialComponent) => {
       setPokemonType(PokemonType.Mega);
     } else if (props.formList.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal))) {
       setPokemonType(PokemonType.Primal);
+    } else {
+      setPokemonType(PokemonType.None);
     }
   }, [props.formList]);
 
@@ -52,8 +54,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
     )?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     return TempEvo.create({
       ...pokemonEvo,
-      firstTempEvolution: pokemonEvo?.firstTempEvolution ? `x${pokemonEvo.firstTempEvolution}` : 'Unavailable',
-      tempEvolution: pokemonEvo?.tempEvolution ? `x${pokemonEvo.tempEvolution}` : 'Unavailable',
+      firstTempEvolution:
+        pokemonEvo?.firstTempEvolution !== undefined ? `x${pokemonEvo.firstTempEvolution}` : 'Not in snapshot',
+      tempEvolution: pokemonEvo?.tempEvolution !== undefined ? `x${pokemonEvo.tempEvolution}` : 'Not in snapshot',
     });
   };
 
@@ -62,8 +65,10 @@ const SpecialForm = (props: IFormSpecialComponent) => {
       {isNotEmpty(arrEvoList) && (
         <div className={props.className} style={props.style}>
           <h4 className="title-evo">
-            <b>{getKeyWithData(PokemonType, pokemonType)} Evolution</b>
+            <b>{pokemonType === PokemonType.Primal ? 'Primal Reversion' : 'Mega Evolution'}</b>
           </h4>
+          {props.id === 384 && <p className="caption">Requires Dragon Ascent (Meteorite, not TMs).</p>}
+          {props.id === 6 && <p className="caption">Unlock Mega Charizard X and Y separately.</p>}
           <div className="form-special-container scroll-evolution">
             <ul className="ul-evo tw-flex tw-justify-center tw-gap-3">
               {arrEvoList?.map((value, evo) => (
@@ -85,7 +90,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
                   </div>
                   <span className="caption">
-                    {`First ${getKeyWithData(PokemonType, pokemonType)?.toLowerCase()} evolution: `}
+                    {`Initial energy: `}
                     <img
                       alt={`img-${getKeyWithData(PokemonType, pokemonType)?.toLowerCase()}`}
                       width={25}
@@ -103,7 +108,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     <b>{getQuestEvo(value.name).firstTempEvolution}</b>
                   </span>
                   <span className="caption">
-                    {`${getKeyWithData(PokemonType, pokemonType)} evolution: `}
+                    {`Repeat energy (base): `}
                     <img
                       alt="Image Primal"
                       width={25}

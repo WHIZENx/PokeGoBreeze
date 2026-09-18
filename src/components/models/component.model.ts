@@ -28,7 +28,7 @@ import { CardType, MoveType, PokemonType, TypeAction, TypeSex } from '../../enum
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
-import type { PokemonMoveRanking } from '../../core/models/API/pokemon-bundle.model';
+import type { PokemonFusionOption, PokemonMoveRanking } from '../../core/models/API/pokemon-bundle.model';
 import { IStyleData } from '../../utils/models/util.model';
 import { PaletteMode } from '@mui/material';
 import React from 'react';
@@ -170,6 +170,7 @@ export interface IFormInfoComponent {
   defaultId: number | undefined;
   evolutionChain?: PokemonInfoEvo;
   pokemonGoAsset?: IAsset;
+  pokemonGoFusionOptions?: PokemonFusionOption[];
   pokemonGoEvolutionChains?: IEvolutionChain[];
   moveRankings: PokemonMoveRanking[];
   isLoadedForms: boolean;
