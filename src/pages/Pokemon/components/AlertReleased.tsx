@@ -10,7 +10,7 @@ const AlertReleased = (props: IAlertReleasedComponent) => {
   return (
     <>
       {searchingMainDetails && !searchingMainDetails.releasedGO && (
-        <Alert className="tw-mb-1 tw-items-center tw-justify-center" severity="error">
+        <Alert className="tw-mb-2 tw-items-center tw-justify-center" severity="error">
           <div className="tw-flex tw-items-center tw-text-base tw-gap-2">
             <span>
               <b>

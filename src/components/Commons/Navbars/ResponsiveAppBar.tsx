@@ -125,7 +125,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
 
   const navigateInfo = useMemo(() => {
     return (
-      <Box className="tw-flex tw-gap-1">
+      <Box className="tw-flex tw-gap-2">
         <Box className="tw-hidden tw-w-full tw-flex-col min-[900px]:tw-flex">{infoVersion}</Box>
         <IconButton
           className={combineClasses(
@@ -148,11 +148,11 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
 
   return (
     <AppBar className="tw-overflow-x-auto" position="sticky">
-      <Toolbar className="tw-mx-2 tw-my-0.5" disableGutters variant="dense">
+      <Toolbar className="tw-mx-4 tw-my-1" disableGutters variant="dense">
         {/* width >= 900 */}
         <Box className="tw-hidden tw-items-center tw-text-white min-[900px]:tw-flex">
           <img src={logo} width="30" height="30" alt="Home" />
-          <Typography noWrap component="span" className="!tw-mx-1 !tw-font-bold">
+          <Typography noWrap component="span" className="!tw-mx-2 !tw-font-bold">
             PokéGoBreeze
           </Typography>
         </Box>
@@ -240,7 +240,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         open={open}
         setOpen={setOpen}
         footer={
-          <Box className="tw-flex tw-flex-col tw-items-start tw-p-2 tw-text-default min-[900px]:tw-hidden">
+          <Box className="tw-flex tw-flex-col tw-items-start tw-p-4 tw-text-default min-[900px]:tw-hidden">
             {infoVersion}
           </Box>
         }

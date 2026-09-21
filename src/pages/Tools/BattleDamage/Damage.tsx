@@ -373,11 +373,11 @@ const Damage = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                    <Box className="tw-ml-2 tw-text-sm tw-text-accent-green">
+                    <Box className="tw-ml-4 tw-text-sm tw-text-accent-green">
                       x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>
-                  <Box className="tw-mt-2">
+                  <Box className="tw-mt-4">
                     <SelectMui
                       formSx={{ width: 200 }}
                       inputLabel="Charge ability"

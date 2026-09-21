@@ -1739,7 +1739,7 @@ const Battle = () => {
                         <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
                       </RadioGroup>
                       <SelectMui
-                        formClassName="tw-m-1 tw-min-w-[120px]"
+                        formClassName="tw-m-2 tw-min-w-[120px]"
                         onChangeSelect={(value) => setOptions({ ...options, duration: toFloat(value) })}
                         value={duration}
                         inputLabel="Speed"

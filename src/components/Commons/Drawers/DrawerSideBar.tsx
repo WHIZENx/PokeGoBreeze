@@ -43,9 +43,9 @@ const DrawerSideBar = (props: IDrawerSideBarComponent) => {
 
   const DrawerList = (
     <Box className="tw-h-full tw-w-sidebar" role="presentation">
-      <Box className="tw-flex tw-items-center tw-p-2">
+      <Box className="tw-flex tw-items-center tw-p-4">
         <img src={logo} width="30" height="30" alt="Home" />
-        <Typography noWrap component="span" className="!tw-mx-1 !tw-font-bold">
+        <Typography noWrap component="span" className="!tw-mx-2 !tw-font-bold">
           PokéGoBreeze
         </Typography>
       </Box>
