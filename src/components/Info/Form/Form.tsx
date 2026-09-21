@@ -277,14 +277,13 @@ const FormComponent = (props: IFormInfoComponent) => {
         renderEvolution()
       )}
       {isNotEmpty(searchingMainDetails?.formChange) && (
-        <FromChange asset={props.pokemonGoAsset} currentId={props.defaultId} pokemonData={searchingMainDetails} />
+        <FromChange currentId={props.defaultId} pokemonData={searchingMainDetails} />
       )}
       {props.isLoadedForms && props.defaultId && Boolean(props.pokemonGoFusionOptions?.length) && (
         <Fusion
           options={props.pokemonGoFusionOptions ?? []}
           componentId={props.defaultId}
           componentName={searchingMainDetails?.pokemonId ?? ''}
-          asset={props.pokemonGoAsset}
         />
       )}
     </Fragment>

@@ -1,4 +1,4 @@
-import { Badge, Skeleton } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
@@ -23,7 +23,6 @@ import APIService from '../../../services/api.service';
 import './Evolution.scss';
 import {
   capitalize,
-  convertFormGif,
   convertModelSpritName,
   generateFormName,
   generateParamForm,
@@ -42,12 +41,11 @@ import { EqualMode } from '../../../utils/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import { ItemName } from '../../../pages/News/enums/item-type.enum';
-import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../Sprites/Icon/Type/Type';
-import { APIUrl } from '../../../services/constants';
 import { formNormal, formStandard } from '../../../utils/helpers/options-context.helpers';
 import usePokemon from '../../../composables/usePokemon';
 import Tooltips from '../../Commons/Tooltips/Tooltips';
+import EvolutionPokemonDisplay from './EvolutionPokemonDisplay';
 
 interface IPokemonEvo {
   prev?: string;
@@ -250,29 +248,6 @@ const Evolution = (props: IEvolutionComponent) => {
       );
       return branch ? [{ index, branch }] : [];
     });
-
-  const renderImgGif = (value: IPokemonEvo) => (
-    <PokemonIconType pokemonType={props.pokemonData?.pokemonType} size={30}>
-      <img
-        className="pokemon-sprite"
-        id="Pokémon Image"
-        alt="Pokémon Image"
-        src={
-          value.formVaries
-            ? APIService.getPokeSprite()
-            : APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')
-        }
-        onError={(e) => {
-          e.currentTarget.onerror = null;
-          if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_API_URL)) {
-            e.currentTarget.src = APIService.getPokeSprite();
-          } else {
-            e.currentTarget.src = APIService.getPokeSprite(value.id);
-          }
-        }}
-      />
-    </PokemonIconType>
-  );
 
   const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {
     const form = getValueOrDefault(String, value.form, props.pokemonData?.form);
@@ -508,58 +483,30 @@ const Evolution = (props: IEvolutionComponent) => {
                 end={`evo-${evo}-${index}`}
               />
             ))}
-          {evoCount > 1 ? (
-            <Fragment>
-              {chain.length > 1 || (chain.length === 1 && !isEqual(form, formNormal()) && isNotEmpty(form)) ? (
-                <Fragment>
-                  {!isEqual(form, formNormal(), EqualMode.IgnoreCaseSensitive) && isNotEmpty(form) ? (
-                    <Badge
-                      color="secondary"
-                      overlap="circular"
-                      badgeContent={
-                        value.formVaries ? 'Pattern varies' : splitAndCapitalize(form.replaceAll('_', '-'), '-', ' ')
-                      }
-                      anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'left',
-                      }}
-                    >
-                      <Badge color="primary" overlap="circular" badgeContent={evo + 1} className="tw-w-24">
-                        {renderImgGif(value)}
-                      </Badge>
-                    </Badge>
-                  ) : (
-                    <Badge color="primary" overlap="circular" badgeContent={evo + 1} className="tw-w-24">
-                      {renderImgGif(value)}
-                    </Badge>
-                  )}
-                </Fragment>
-              ) : (
-                <Badge color="primary" overlap="circular" badgeContent={evo + 1} className="tw-w-24">
-                  {renderImgGif(value)}
-                </Badge>
-              )}
-            </Fragment>
-          ) : (
-            <span className="img-evo-container">{renderImgGif(value)}</span>
-          )}
-          <div id="id-pokemon">
-            <b className="tw-text-default">#{value.id}</b>
-          </div>
-          <div>
-            <b className="link-title">
-              {splitAndCapitalize(
-                evoCount === 1 &&
-                  form &&
-                  !value.formVaries &&
-                  !isEqual(form, formNormal(), EqualMode.IgnoreCaseSensitive)
-                  ? `${value.name}-${form.replaceAll('_', '-')}`
-                  : value.name,
-                '-',
-                ' '
-              )}
-            </b>
-          </div>
+          <EvolutionPokemonDisplay
+            id={value.id}
+            sprite={value.sprite}
+            pokemonType={props.pokemonData?.pokemonType}
+            stage={evoCount > 1 ? evo + 1 : undefined}
+            formVaries={value.formVaries}
+            formLabel={
+              evoCount > 1 &&
+              (chain.length > 1 || (chain.length === 1 && !isEqual(form, formNormal()) && isNotEmpty(form))) &&
+              !isEqual(form, formNormal(), EqualMode.IgnoreCaseSensitive) &&
+              isNotEmpty(form)
+                ? value.formVaries
+                  ? 'Pattern varies'
+                  : splitAndCapitalize(form.replaceAll('_', '-'), '-', ' ')
+                : undefined
+            }
+            name={splitAndCapitalize(
+              evoCount === 1 && form && !value.formVaries && !isEqual(form, formNormal(), EqualMode.IgnoreCaseSensitive)
+                ? `${value.name}-${form.replaceAll('_', '-')}`
+                : value.name,
+              '-',
+              ' '
+            )}
+          />
         </span>
         {value.isBaby && <span className="caption tw-text-red-600">(Baby)</span>}
         <p>{isCurrent && <span className="caption">Current</span>}</p>

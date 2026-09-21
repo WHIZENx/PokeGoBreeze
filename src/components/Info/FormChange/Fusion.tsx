@@ -1,52 +1,31 @@
 import React, { useId } from 'react';
 import Xarrow from 'react-xarrows';
-import { useAssets } from '../../../composables/useAssets';
 import type { PokemonFusionOption } from '../../../core/models/API/pokemon-bundle.model';
-import type { IAsset } from '../../../core/models/asset.model';
-import APIService from '../../../services/api.service';
 import { Params } from '../../../utils/constants';
+import { convertModelSpritName } from '../../../utils/utils';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import { LinkToTop } from '../../Link/LinkToTop';
+import EvolutionPokemonDisplay from '../Evolution/EvolutionPokemonDisplay';
 
 interface FusionProps {
   options: PokemonFusionOption[];
   componentId: number;
   componentName: string;
-  asset?: IAsset;
 }
 
-const Fusion = ({ options, componentId, componentName, asset }: FusionProps) => {
-  const { findAssetsById } = useAssets();
+const Fusion = ({ options, componentId, componentName }: FusionProps) => {
   const arrowId = useId().replaceAll(':', '');
   const renderPokemon = (id: number, name: string, form = 'NORMAL') => {
-    const images = [...(asset?.id === id ? asset.image : []), ...(findAssetsById(id)?.image ?? [])];
-    const image = images.find(
-      (entry) => entry.form?.toUpperCase() === form.toUpperCase() && !entry.default.endsWith('.s.icon')
-    );
-    const squareSrc = image ? APIService.getPokemonSqModel(image.default, id) : undefined;
     const label = formatPokemonDisplayName(name);
     const to = `/pokemon/${id}${form === 'NORMAL' ? '' : `?${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}`}`;
+    const normalizedName = name.replaceAll('-', '_').toUpperCase();
+    const sprite = convertModelSpritName(
+      form !== 'NORMAL' && !normalizedName.endsWith(`_${form.toUpperCase()}`) ? `${name}_${form}` : name
+    );
     return (
       <LinkToTop to={to}>
         <span className="tw-flex tw-flex-col tw-items-center tw-gap-1">
-          <img
-            key={`${id}-${form}-${image?.default ?? ''}`}
-            width={96}
-            height={96}
-            className="tw-object-contain"
-            alt={label}
-            src={image ? APIService.getPokemonModel(image.default, id) : APIService.getPokeSprite()}
-            onError={(event) => {
-              if (squareSrc && event.currentTarget.dataset.squareFallback !== 'true') {
-                event.currentTarget.dataset.squareFallback = 'true';
-                event.currentTarget.src = squareSrc;
-                return;
-              }
-              event.currentTarget.onerror = null;
-              event.currentTarget.src = APIService.getPokeSprite();
-            }}
-          />
-          <span>{label}</span>
+          <EvolutionPokemonDisplay id={id} name={label} sprite={sprite} />
         </span>
       </LinkToTop>
     );
@@ -57,27 +36,34 @@ const Fusion = ({ options, componentId, componentName, asset }: FusionProps) => 
       <h4 className="title-evo">
         <b>Fusion</b>
       </h4>
-      {options.map((option, index) => (
-        <div
-          key={`${option.baseId}-${option.targetName}`}
-          className="caption tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-12"
-        >
-          <div id={`${arrowId}-fusion-${index}-origin`} className="tw-flex tw-items-center tw-justify-center tw-gap-3">
-            {renderPokemon(option.baseId, option.baseName)}
-            <span>+</span>
-            {renderPokemon(componentId, componentName)}
+      <div className="tw-overflow-x-auto">
+        {options.map((option, index) => (
+          <div
+            key={`${option.baseId}-${option.targetName}`}
+            className="!tw-flex tw-w-max tw-min-w-full tw-flex-nowrap tw-items-center tw-justify-center tw-gap-12"
+          >
+            <div
+              id={`${arrowId}-fusion-${index}-origin`}
+              className="tw-flex tw-items-center tw-justify-center tw-gap-3"
+            >
+              {renderPokemon(option.baseId, option.baseName)}
+              <span>+</span>
+              {renderPokemon(componentId, componentName)}
+            </div>
+            <div id={`${arrowId}-fusion-${index}-target`}>
+              {renderPokemon(option.baseId, option.targetName, option.targetForm)}
+            </div>
+            <Xarrow
+              strokeWidth={2}
+              path="straight"
+              startAnchor="right"
+              endAnchor="left"
+              start={`${arrowId}-fusion-${index}-origin`}
+              end={`${arrowId}-fusion-${index}-target`}
+            />
           </div>
-          <div id={`${arrowId}-fusion-${index}-target`}>
-            {renderPokemon(option.baseId, option.targetName, option.targetForm)}
-          </div>
-          <Xarrow
-            strokeWidth={2}
-            path="grid"
-            start={`${arrowId}-fusion-${index}-origin`}
-            end={`${arrowId}-fusion-${index}-target`}
-          />
-        </div>
-      ))}
+        ))}
+      </div>
     </section>
   );
 };

@@ -177,7 +177,6 @@ export interface IFormInfoComponent {
 }
 
 export interface IFromChangeComponent {
-  asset?: IAsset;
   pokemonData: Partial<IPokemonDetail> | undefined;
   currentId: number | undefined;
 }

@@ -1,13 +1,14 @@
 import React, { useId } from 'react';
 import Xarrow from 'react-xarrows';
 import APIService from '../../../services/api.service';
-import { splitAndCapitalize } from '../../../utils/utils';
+import { convertModelSpritName, splitAndCapitalize } from '../../../utils/utils';
 import { IFromChangeComponent } from '../../models/component.model';
-import { useAssets } from '../../../composables/useAssets';
 import useCombats from '../../../composables/useCombats';
 import Candy from '../../Sprites/Candy/Candy';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { LinkToTop } from '../../Link/LinkToTop';
+import { Params } from '../../../utils/constants';
+import EvolutionPokemonDisplay from '../Evolution/EvolutionPokemonDisplay';
 
 const resourceNames: Record<string, string> = {
   FUSION_RESOURCE_BLACK_KYUREM: 'Volt Fusion Energy',
@@ -21,13 +22,13 @@ const resourceNames: Record<string, string> = {
 const humanize = (value: string) => splitAndCapitalize(value, '_', ' ');
 
 const FromChange = (props: IFromChangeComponent) => {
-  const { findAssetsById } = useAssets();
   const { findMoveByName } = useCombats();
   const arrowId = useId().replaceAll(':', '');
   const pokemon = props.pokemonData;
   if (!pokemon?.id || props.currentId !== pokemon.id || !pokemon.formChange?.length) {
     return null;
   }
+  const pokemonId = pokemon.id;
 
   const displayName = (fullName: string) => {
     if (pokemon.id === 718) {
@@ -49,35 +50,26 @@ const FromChange = (props: IFromChangeComponent) => {
       (fullName.toUpperCase() === pokemon.pokemonId?.toUpperCase()
         ? pokemon.form?.replaceAll('-', '_').toUpperCase() || 'NORMAL'
         : fullName.toUpperCase().replace(`${pokemon.pokemonId?.toUpperCase()}_`, ''));
-    const images = [
-      ...(props.asset && props.asset.id === pokemon.id ? props.asset.image : []),
-      ...(findAssetsById(pokemon.id)?.image ?? []),
-    ];
-    // An exact form match is essential: a different form is not a valid fallback.
-    const candidates = images.filter((entry) => entry.form?.toUpperCase() === form.toUpperCase());
-    const image = candidates.find((entry) => !entry.default.endsWith('.s.icon')) ?? candidates[0];
-    const squareSrc = image ? APIService.getPokemonSqModel(image.default, pokemon.id) : undefined;
+    const normalizedFullName = fullName.replaceAll('-', '_').toUpperCase();
+    const sprite = convertModelSpritName(
+      form !== 'NORMAL' && !normalizedFullName.endsWith(`_${form}`)
+        ? `${pokemon.pokemonId}_${form}`
+        : normalizedFullName
+    );
+    const to = `/pokemon/${pokemonId}${
+      form === 'NORMAL' ? '' : `?${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}`
+    }`;
     return (
-      <div className="tw-flex tw-flex-col tw-items-center tw-justify-center">
-        <div className="tw-w-24">
-          <img
-            key={`${pokemon.id}-${form}-${image?.default ?? ''}`}
-            className="pokemon-sprite-large"
-            alt={displayName(fullName)}
-            src={image ? APIService.getPokemonModel(image.default, pokemon.id) : APIService.getPokeSprite()}
-            onError={(event) => {
-              if (squareSrc && event.currentTarget.dataset.squareFallback !== 'true') {
-                event.currentTarget.dataset.squareFallback = 'true';
-                event.currentTarget.src = squareSrc;
-                return;
-              }
-              event.currentTarget.onerror = null;
-              event.currentTarget.src = APIService.getPokeSprite();
-            }}
+      <LinkToTop to={to}>
+        <span className="tw-flex tw-flex-col tw-items-center tw-justify-center">
+          <EvolutionPokemonDisplay
+            id={pokemonId}
+            name={displayName(fullName)}
+            sprite={sprite}
+            pokemonType={pokemon.pokemonType}
           />
-        </div>
-        <span className="caption">{displayName(fullName)}</span>
-      </div>
+        </span>
+      </LinkToTop>
     );
   };
   const renderMove = (name: string) => {
@@ -119,12 +111,16 @@ const FromChange = (props: IFromChangeComponent) => {
                 <div id={`${arrowId}-${index}-${target}`}>{renderPokemon(target)}</div>
                 <Xarrow strokeWidth={2} path="grid" start={`${arrowId}-origin`} end={`${arrowId}-${index}-${target}`} />
                 <div className="caption tw-flex tw-max-w-full tw-flex-col tw-items-center tw-gap-1 tw-text-center">
-                  {(fusion || separate) && <span>{fusion ? 'Fusion' : 'Separate'}</span>}
-                  {partner && (
-                    <span>
-                      {separate ? 'Returns: ' : 'Partner: '}
-                      <LinkToTop to={`/pokemon/${partner.id}`}>{humanize(partner.pokedexId)}</LinkToTop>
-                    </span>
+                  {(fusion || separate || partner) && (
+                    <div className="tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-x-2 tw-gap-y-1">
+                      {(fusion || separate) && <span>{fusion ? 'Fusion' : 'Separate'}</span>}
+                      {partner && (
+                        <span>
+                          {separate ? 'Returns: ' : 'Partner: '}
+                          <LinkToTop to={`/pokemon/${partner.id}`}>{humanize(partner.pokedexId)}</LinkToTop>
+                        </span>
+                      )}
+                    </div>
                   )}
                   <div className="tw-flex tw-flex-col tw-items-center tw-gap-1">
                     {Number(change.candyCost) > 0 && (
