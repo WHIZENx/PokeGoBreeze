@@ -30,7 +30,7 @@
 .claude
 
 # generated files
-/public/sitemap.xml
+/public/sitemap*.xml
 
 # Standalone API repository staged locally next to the web source
 /PokeGoBreeze-api/
