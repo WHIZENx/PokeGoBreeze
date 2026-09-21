@@ -147,10 +147,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     </>
                   )}
                   {getQuestEvo(value.name).additionalMove && (
-                    <span
-                      className="caption"
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
-                    >
+                    <span className="caption tw-flex tw-items-center tw-justify-center tw-gap-1">
                       <span>Mega attack:</span>
                       {renderMoveLink(
                         getQuestEvo(value.name).additionalMove?.name ?? '',
@@ -177,10 +174,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     <b>{getQuestEvo(value.name).tempEvolution}</b>
                   </span>
                   {getQuestEvo(value.name).requireMove && (
-                    <span
-                      className="caption"
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
-                    >
+                    <span className="caption tw-flex tw-items-center tw-justify-center tw-gap-1">
                       {`Require move: `}
                       {renderMoveLink(getQuestEvo(value.name).requireMove ?? '')}
                     </span>

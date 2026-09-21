@@ -84,17 +84,17 @@ const OverAllStats = (props: OverAllStatsComponent) => {
         <IVBar
           title="Attack"
           iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? maxIv() : toNumber(data?.currentStats.IV?.atkIV)}
-          style={{ maxWidth: 500 }}
+          className="tw-max-w-stats"
         />
         <IVBar
           title="Defense"
           iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? maxIv() : toNumber(data?.currentStats.IV?.defIV)}
-          style={{ maxWidth: 500 }}
+          className="tw-max-w-stats"
         />
         <IVBar
           title="HP"
           iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? maxIv() : toNumber(data?.currentStats.IV?.staIV)}
-          style={{ maxWidth: 500 }}
+          className="tw-max-w-stats"
         />
       </li>
     </ul>

@@ -277,7 +277,8 @@ export interface IIconTypeComponent {
 
 export interface IIVBarComponent {
   iv: number;
-  style: React.CSSProperties;
+  className?: string;
+  style?: React.CSSProperties;
   title: string;
 }
 

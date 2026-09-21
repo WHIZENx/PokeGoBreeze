@@ -37,22 +37,21 @@ const MoveSet = (props: MoveSetComponent) => {
         {isInclude(archetype, value) && !(isInclude(archetype, ArcheType.SelfDebuff) && value === ArcheType.Debuff) && (
           <div className="filter-shadow" title={value} key={index}>
             {value === ArcheType.General && <CircleIcon />}
-            {value === ArcheType.Nuke && <RocketLaunchIcon sx={{ color: 'gray' }} />}
-            {value === ArcheType.SpamBait && <BakeryDiningIcon sx={{ color: 'pink' }} />}
-            {value === ArcheType.HighEnergy && <EnergySavingsLeafIcon sx={{ color: 'orange' }} />}
-            {value === ArcheType.LowQuality && <StairsIcon sx={{ color: 'lightgray' }} />}
-            {value === ArcheType.Debuff && <ArrowDownwardIcon sx={{ color: 'lightcoral' }} />}
-            {value === ArcheType.Boost && <ArrowUpwardIcon sx={{ color: 'lightgreen' }} />}
-            {value === ArcheType.FastCharge && <BoltIcon sx={{ color: '#f8d030' }} />}
-            {value === ArcheType.HeavyDamage && <BrokenImageIcon sx={{ color: 'brown' }} />}
-            {value === ArcheType.Multipurpose && <SpokeIcon sx={{ color: 'lightskyblue' }} />}
+            {value === ArcheType.Nuke && <RocketLaunchIcon className="tw-text-archetype-nuke" />}
+            {value === ArcheType.SpamBait && <BakeryDiningIcon className="tw-text-archetype-spam-bait" />}
+            {value === ArcheType.HighEnergy && <EnergySavingsLeafIcon className="tw-text-archetype-high-energy" />}
+            {value === ArcheType.LowQuality && <StairsIcon className="tw-text-lightgray" />}
+            {value === ArcheType.Debuff && <ArrowDownwardIcon className="tw-text-archetype-debuff" />}
+            {value === ArcheType.Boost && <ArrowUpwardIcon className="tw-text-archetype-boost" />}
+            {value === ArcheType.FastCharge && <BoltIcon className="tw-text-archetype-fast-charge" />}
+            {value === ArcheType.HeavyDamage && <BrokenImageIcon className="tw-text-archetype-heavy-damage" />}
+            {value === ArcheType.Multipurpose && <SpokeIcon className="tw-text-archetype-multipurpose" />}
             {value === ArcheType.SelfDebuff && (
               <div className="tw-relative">
-                <PersonIcon sx={{ color: 'black' }} />
+                <PersonIcon className="tw-text-black" />
                 <KeyboardDoubleArrowDownIcon
                   fontSize="small"
-                  className="tw-absolute"
-                  sx={{ color: 'red', left: '50%', bottom: 0 }}
+                  className="tw-absolute tw-bottom-0 tw-left-1/2 tw-text-accent-red"
                 />
               </div>
             )}
@@ -83,43 +82,42 @@ const MoveSet = (props: MoveSetComponent) => {
         <div className="popover-info">
           <span className="info-evo">
             <span className="tw-block caption">
-              - <CircleIcon className="filter-shadow" sx={{ color: 'white' }} /> {ArcheType.General}
+              - <CircleIcon className="filter-shadow tw-text-white" /> {ArcheType.General}
             </span>
             <span className="tw-block caption">
-              - <RocketLaunchIcon className="filter-shadow" sx={{ color: 'gray' }} /> {ArcheType.Nuke}
+              - <RocketLaunchIcon className="filter-shadow tw-text-archetype-nuke" /> {ArcheType.Nuke}
             </span>
             <span className="tw-block caption">
-              - <BakeryDiningIcon className="filter-shadow" sx={{ color: 'pink' }} /> {ArcheType.SpamBait}
+              - <BakeryDiningIcon className="filter-shadow tw-text-archetype-spam-bait" /> {ArcheType.SpamBait}
             </span>
             <span className="tw-block caption">
-              - <EnergySavingsLeafIcon className="filter-shadow" sx={{ color: 'orange' }} /> {ArcheType.HighEnergy}
+              - <EnergySavingsLeafIcon className="filter-shadow tw-text-archetype-high-energy" /> {ArcheType.HighEnergy}
             </span>
             <span className="tw-block caption">
-              - <StairsIcon className="filter-shadow" sx={{ color: 'lightgray' }} /> {ArcheType.LowQuality}
+              - <StairsIcon className="filter-shadow tw-text-lightgray" /> {ArcheType.LowQuality}
             </span>
             <span className="tw-block caption">
-              - <ArrowDownwardIcon className="filter-shadow" sx={{ color: 'lightcoral' }} /> {ArcheType.Debuff}
+              - <ArrowDownwardIcon className="filter-shadow tw-text-archetype-debuff" /> {ArcheType.Debuff}
             </span>
             <span className="tw-block caption">
-              - <ArrowUpwardIcon className="filter-shadow" sx={{ color: 'lightgreen' }} /> {ArcheType.Boost}
+              - <ArrowUpwardIcon className="filter-shadow tw-text-archetype-boost" /> {ArcheType.Boost}
             </span>
             <span className="tw-block caption">
-              - <BoltIcon className="filter-shadow" sx={{ color: '#f8d030' }} /> {ArcheType.FastCharge}
+              - <BoltIcon className="filter-shadow tw-text-archetype-fast-charge" /> {ArcheType.FastCharge}
             </span>
             <span className="tw-block caption">
-              - <BrokenImageIcon className="filter-shadow" sx={{ color: 'brown' }} /> {ArcheType.HeavyDamage}
+              - <BrokenImageIcon className="filter-shadow tw-text-archetype-heavy-damage" /> {ArcheType.HeavyDamage}
             </span>
             <span className="tw-block caption">
-              - <SpokeIcon className="filter-shadow" sx={{ color: 'lightskyblue' }} /> {ArcheType.Multipurpose}
+              - <SpokeIcon className="filter-shadow tw-text-archetype-multipurpose" /> {ArcheType.Multipurpose}
             </span>
             <span className="tw-block caption">
               {'- '}
               <span className="tw-relative filter-shadow tw-mr-1">
-                <PersonIcon sx={{ color: 'black' }} />
+                <PersonIcon className="tw-text-black" />
                 <KeyboardDoubleArrowDownIcon
                   fontSize="small"
-                  className="tw-absolute"
-                  sx={{ color: 'red', left: '50%', bottom: 0 }}
+                  className="tw-absolute tw-bottom-0 tw-left-1/2 tw-text-accent-red"
                 />
               </span>
               {` ${ArcheType.SelfDebuff}`}

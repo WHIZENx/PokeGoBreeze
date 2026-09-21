@@ -83,8 +83,8 @@ const FromChange = (props: IFromChangeComponent) => {
   const renderMove = (name: string) => {
     const move = findMoveByName(name);
     return move ? (
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-        <IconType width={25} height={25} alt={`${move.type} type`} type={move.type} style={{ flexShrink: 0 }} />
+      <span className="tw-inline-flex tw-items-center tw-gap-1">
+        <IconType width={25} height={25} alt={`${move.type} type`} type={move.type} className="tw-shrink-0" />
         <LinkToTop to={`/move/${move.id}`}>
           <b>{humanize(name)}</b>
         </LinkToTop>
@@ -118,17 +118,7 @@ const FromChange = (props: IFromChangeComponent) => {
               <div key={`${index}-${target}`} className="tw-flex tw-flex-col tw-items-center tw-justify-center">
                 <div id={`${arrowId}-${index}-${target}`}>{renderPokemon(target)}</div>
                 <Xarrow strokeWidth={2} path="grid" start={`${arrowId}-origin`} end={`${arrowId}-${index}-${target}`} />
-                <div
-                  className="caption"
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 4,
-                    maxWidth: '100%',
-                    textAlign: 'center',
-                  }}
-                >
+                <div className="caption tw-flex tw-max-w-full tw-flex-col tw-items-center tw-gap-1 tw-text-center">
                   {(fusion || separate) && <span>{fusion ? 'Fusion' : 'Separate'}</span>}
                   {partner && (
                     <span>
@@ -136,9 +126,9 @@ const FromChange = (props: IFromChangeComponent) => {
                       <LinkToTop to={`/pokemon/${partner.id}`}>{humanize(partner.pokedexId)}</LinkToTop>
                     </span>
                   )}
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <div className="tw-flex tw-flex-col tw-items-center tw-gap-1">
                     {Number(change.candyCost) > 0 && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <div className="tw-flex tw-items-center tw-gap-1">
                         <Candy id={pokemon.id} size={20} />
                         <span>
                           {humanize(pokemon.pokemonId ?? '')} Candy: <b>x{change.candyCost}</b>
@@ -146,7 +136,7 @@ const FromChange = (props: IFromChangeComponent) => {
                       </div>
                     )}
                     {partner && Number(partner.componentCandyCost) > 0 && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <div className="tw-flex tw-items-center tw-gap-1">
                         <Candy id={partner.id} size={20} />
                         <span>
                           {humanize(partner.familyId.replace('FAMILY_', ''))} Candy:{' '}
@@ -176,14 +166,7 @@ const FromChange = (props: IFromChangeComponent) => {
                   {change.requiredCinematicMoves?.map((requirement, key) => (
                     <div
                       key={key}
-                      className="caption tw-mt-1"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexWrap: 'wrap',
-                        gap: 6,
-                      }}
+                      className="caption tw-mt-1 tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-1.5"
                     >
                       <span>Require move:</span>
                       {requirement.requiredMoves.map((move) => (
@@ -196,14 +179,7 @@ const FromChange = (props: IFromChangeComponent) => {
                   {change.moveReassignment?.cinematicMoves?.map((move, key) => (
                     <div
                       key={key}
-                      className="caption tw-mt-1"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexWrap: 'wrap',
-                        gap: 6,
-                      }}
+                      className="caption tw-mt-1 tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-1.5"
                     >
                       <span>Move:</span>
                       {move.existingMoves?.length

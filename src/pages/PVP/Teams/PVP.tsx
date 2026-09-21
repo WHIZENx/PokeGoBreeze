@@ -351,7 +351,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         ))}
       </div>
       <div className="tw-flex tw-items-center tw-mr-3 tw-gap-x-12.5">
-        <div className="tw-text-center" style={{ width: 200 }}>
+        <div className="tw-w-[200px] tw-text-center">
           <span className="ranking-score score-ic !tw-text-black">{value.teamScore}</span>
         </div>
         <div className="tw-text-center ranking-score score-ic !tw-text-black tw-w-fit">
@@ -591,10 +591,10 @@ const TeamPVP = (props: IStyleSheetData) => {
                   </div>
                 </div>
                 <div className="tw-flex filter-shadow tw-items-center tw-mr-3 tw-gap-x-7.5">
-                  <div className="tw-text-center" style={{ width: 120 }}>
+                  <div className="tw-w-[120px] tw-text-center">
                     <span className="ranking-score score-ic !tw-text-black">{value.teamScore}</span>
                   </div>
-                  <div className="tw-text-center" style={{ width: 160 }}>
+                  <div className="tw-w-40 tw-text-center">
                     <span className="ranking-score score-ic !tw-text-black">{value.individualScore}</span>
                   </div>
                   <div className="tw-text-center ranking-score score-ic !tw-text-black tw-w-fit">

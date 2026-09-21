@@ -344,7 +344,7 @@ const News = () => {
                             )}
                             {value.detailsLink && (
                               <>
-                                <Divider sx={{ my: 1 }} />
+                                <Divider className="!tw-my-1" />
                                 <p
                                   className="tw-mt-3"
                                   dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value.detailsLink) }}

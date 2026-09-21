@@ -343,6 +343,7 @@ export interface ISelectCustomMoveComponent {
 }
 
 export interface ISelectCardMoveComponent<T> {
+  className?: string;
   style?: React.CSSProperties;
   move: T | undefined;
   setMovePokemon: (value: T | undefined) => void;

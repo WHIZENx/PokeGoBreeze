@@ -236,7 +236,7 @@ const FindBattle = () => {
       </h1>
       <form className="tw-mt-2 tw-pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
         <div className="form-group tw-flex tw-justify-center tw-text-center">
-          <Box className="tw-w-1/2" sx={{ minWidth: 350 }}>
+          <Box className="tw-w-1/2 tw-min-w-form">
             <div className="tw-justify-center input-group tw-mb-3">
               <DynamicInputCP
                 statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}

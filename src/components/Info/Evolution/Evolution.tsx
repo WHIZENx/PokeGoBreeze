@@ -468,7 +468,7 @@ const Evolution = (props: IEvolutionComponent) => {
                           {!data?.quest?.requirements?.length && data?.quest?.type === QuestType.BuddyEarn && (
                             <span className="caption">
                               <Fragment>
-                                <FavoriteIcon fontSize="small" sx={{ color: 'red' }} />
+                                <FavoriteIcon fontSize="small" className="tw-text-accent-red" />
                                 <span>{`x${data.quest.goal}`}</span>
                               </Fragment>
                             </span>
@@ -524,18 +524,18 @@ const Evolution = (props: IEvolutionComponent) => {
                         horizontal: 'left',
                       }}
                     >
-                      <Badge color="primary" overlap="circular" badgeContent={evo + 1} sx={{ width: 96 }}>
+                      <Badge color="primary" overlap="circular" badgeContent={evo + 1} className="tw-w-24">
                         {renderImgGif(value)}
                       </Badge>
                     </Badge>
                   ) : (
-                    <Badge color="primary" overlap="circular" badgeContent={evo + 1} sx={{ width: 96 }}>
+                    <Badge color="primary" overlap="circular" badgeContent={evo + 1} className="tw-w-24">
                       {renderImgGif(value)}
                     </Badge>
                   )}
                 </Fragment>
               ) : (
-                <Badge color="primary" overlap="circular" badgeContent={evo + 1} sx={{ width: 96 }}>
+                <Badge color="primary" overlap="circular" badgeContent={evo + 1} className="tw-w-24">
                   {renderImgGif(value)}
                 </Badge>
               )}
@@ -647,7 +647,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <SportsMartialArtsIcon fontSize="small" /> : Win raid.
                 </span>
                 <span className="tw-block caption">
-                  - <FavoriteIcon fontSize="small" sx={{ color: 'red' }} /> : Evolution with affection points.
+                  - <FavoriteIcon fontSize="small" className="tw-text-accent-red" /> : Evolution with affection points.
                 </span>
                 <span className="tw-block caption">
                   - <RestaurantIcon fontSize="small" /> : Buddy feed.

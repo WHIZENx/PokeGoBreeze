@@ -123,7 +123,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
           </TypeRadioGroup>
         </div>
         <div className="tw-flex tw-justify-center tw-text-center tw-h-20">
-          <Box className="tw-w-3/5" sx={{ minWidth: 320 }}>
+          <Box className="tw-w-3/5 tw-min-w-content">
             <div className="tw-flex tw-justify-between">
               <b>Level</b>
               <b>{currStatLevel}</b>
@@ -141,7 +141,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
           </Box>
         </div>
         <div className="tw-flex tw-justify-center tw-text-center">
-          <table className="table-info !tw-w-2/5" style={{ minWidth: 270 }}>
+          <table className="table-info !tw-w-2/5 tw-min-w-[270px]">
             <thead />
             <tbody>
               <tr className="tw-text-center">

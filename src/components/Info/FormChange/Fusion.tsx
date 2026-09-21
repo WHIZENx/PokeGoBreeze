@@ -28,12 +28,12 @@ const Fusion = ({ options, componentId, componentName, asset }: FusionProps) => 
     const to = `/pokemon/${id}${form === 'NORMAL' ? '' : `?${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}`}`;
     return (
       <LinkToTop to={to}>
-        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+        <span className="tw-flex tw-flex-col tw-items-center tw-gap-1">
           <img
             key={`${id}-${form}-${image?.default ?? ''}`}
             width={96}
             height={96}
-            style={{ objectFit: 'contain' }}
+            className="tw-object-contain"
             alt={label}
             src={image ? APIService.getPokemonModel(image.default, id) : APIService.getPokeSprite()}
             onError={(event) => {
@@ -60,13 +60,9 @@ const Fusion = ({ options, componentId, componentName, asset }: FusionProps) => 
       {options.map((option, index) => (
         <div
           key={`${option.baseId}-${option.targetName}`}
-          className="caption"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: 48 }}
+          className="caption tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-12"
         >
-          <div
-            id={`${arrowId}-fusion-${index}-origin`}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}
-          >
+          <div id={`${arrowId}-fusion-${index}-origin`} className="tw-flex tw-items-center tw-justify-center tw-gap-3">
             {renderPokemon(option.baseId, option.baseName)}
             <span>+</span>
             {renderPokemon(componentId, componentName)}

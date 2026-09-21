@@ -893,7 +893,7 @@ const DpsTdo = () => {
                   fullWidth
                 />
               </FormControlMui>
-              <FormControlMui sx={{ paddingRight: '0 !important' }}>
+              <FormControlMui boxClassName="!tw-pr-0">
                 <InputMui
                   labelPrepend="IV ATK"
                   placeholder={`${minIv()}-${maxIv()}`}
@@ -962,7 +962,7 @@ const DpsTdo = () => {
                   fullWidth
                 />
               </FormControlMui>
-              <FormControlMui sx={{ paddingRight: '0 !important' }}>
+              <FormControlMui boxClassName="!tw-pr-0">
                 <InputMui
                   labelPrepend="DEF Target"
                   placeholder="Defense target"

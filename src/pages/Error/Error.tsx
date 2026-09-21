@@ -44,7 +44,7 @@ const Error = (props: IErrorPage) => {
               <h1>Page Not Found</h1>
               <span>
                 {'It looks like nothing was found at '}
-                <p style={{ color: 'yellow' }}>
+                <p className="tw-text-accent-yellow">
                   {location.state?.url && location.state?.id
                     ? `${location.state.url}${location.state.id && `/${location.state.id}`}`
                     : location.pathname}
