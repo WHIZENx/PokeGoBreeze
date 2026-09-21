@@ -1,6 +1,6 @@
 import React from 'react';
 import APIService from '../../services/api.service';
-import { splitAndCapitalize } from '../../utils/utils';
+import { formatPokemonDisplayName } from '../../utils/pokemon-display-name';
 import { ICardPokemonComponent } from '../models/component.model';
 import { isNullOrUndefined } from '../../utils/extension';
 import PokemonIconType from '../Sprites/PokemonIconType/PokemonIconType';
@@ -13,7 +13,7 @@ const CardPokemon = (props: ICardPokemonComponent) => {
           <img
             height={38}
             alt="Pokémon Logo"
-            title={splitAndCapitalize(props.value?.name.replaceAll('_', '-'), '-', ' ')}
+            title={formatPokemonDisplayName(props.value?.name)}
             className="tw-mr-2"
             src={APIService.getPokeIconSprite(props.value?.sprite, true)}
             onError={(e) => {
@@ -23,7 +23,7 @@ const CardPokemon = (props: ICardPokemonComponent) => {
           />
         </PokemonIconType>
       </div>
-      <span className="tw-truncate">{splitAndCapitalize(props.value?.name.replaceAll('_', '-'), '-', ' ')}</span>
+      <span className="tw-truncate">{formatPokemonDisplayName(props.value?.name)}</span>
       {!isNullOrUndefined(props.score) && <span className="type-icon-small ic elite-ic tw-ml-2">{props.score}</span>}
     </div>
   );

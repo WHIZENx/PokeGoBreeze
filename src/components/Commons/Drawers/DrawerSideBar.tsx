@@ -42,22 +42,15 @@ const DrawerSideBar = (props: IDrawerSideBarComponent) => {
   };
 
   const DrawerList = (
-    <Box className="tw-h-full" sx={{ width: 250 }} role="presentation">
-      <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
+    <Box className="tw-h-full tw-w-sidebar" role="presentation">
+      <Box className="tw-flex tw-items-center tw-p-4">
         <img src={logo} width="30" height="30" alt="Home" />
-        <Typography
-          noWrap
-          component="span"
-          sx={{
-            mx: 1,
-            fontWeight: 700,
-          }}
-        >
+        <Typography noWrap component="span" className="!tw-mx-2 !tw-font-bold">
           PokéGoBreeze
         </Typography>
       </Box>
       <Divider />
-      <Box className="tw-h-full" sx={{ width: 250, position: 'relative' }}>
+      <Box className="tw-relative tw-h-full tw-w-sidebar">
         {pages.map((page) => (
           <Fragment key={page.value}>
             {!page.value ? (

@@ -390,7 +390,7 @@ const Leagues = () => {
       <>
         {!value.type ? (
           <Fragment>
-            <CloseIcon fontSize="large" sx={{ color: 'red', height: 82 }} />
+            <CloseIcon fontSize="large" className="!tw-h-[82px] tw-text-accent-red" />
           </Fragment>
         ) : (
           <Fragment>
@@ -518,7 +518,7 @@ const Leagues = () => {
             </div>
           </div>
           <div className="tw-w-full tw-text-center tw-my-3">
-            <div className="tw-flex tw-justify-center tw-mb-2" style={{ columnGap: '10%' }}>
+            <div className="tw-flex tw-justify-center tw-mb-2 tw-gap-x-[10%]">
               <div id="currRank" className="combat-league-info">
                 <img
                   className="main-combat-league-info"
@@ -683,7 +683,7 @@ const Leagues = () => {
                       title="Paid Raid Ticket"
                       src={getItemSpritePath(ItemName.PaidRaidTicket)}
                     />
-                    <span style={{ color: 'crimson' }}>Premium</span> (Win stack {showData.step})
+                    <span className="tw-text-accent-crimson">Premium</span> (Win stack {showData.step})
                   </div>
                 )}
               </div>

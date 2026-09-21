@@ -33,8 +33,7 @@ const SearchBar = (props: ISearchBarComponent) => {
             </div>
             <div className="tw-h-full tw-cursor-pointer tw-w-15">
               <img
-                style={{ padding: '5px 5px 5px 0' }}
-                className="pokemon-navigate-sprite"
+                className="pokemon-navigate-sprite tw-py-1.25 tw-pr-1.25"
                 alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(props.data.prev.id)}
                 onError={(e) => {
@@ -76,8 +75,7 @@ const SearchBar = (props: ISearchBarComponent) => {
             </div>
             <div className="tw-h-full tw-cursor-pointer tw-w-15">
               <img
-                style={{ padding: '5px 0 5px 5px' }}
-                className="pokemon-navigate-sprite"
+                className="pokemon-navigate-sprite tw-py-1.25 tw-pl-1.25"
                 alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(props.data.next.id)}
                 onError={(e) => {

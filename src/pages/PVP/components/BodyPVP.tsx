@@ -111,8 +111,9 @@ const BodyPVP = (props: BodyComponent) => {
       </div>
       <div className="tw-ml-3">
         <span
-          className="ranking-score tw-text-white text-shadow-black filter-shadow"
-          style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
+          className={`ranking-score tw-text-white text-shadow-black filter-shadow ${
+            bgType === BackgroundType.Matchup ? 'tw-bg-combat-matchup' : 'tw-bg-combat-counter'
+          }`}
         >
           {data.rating}
         </span>

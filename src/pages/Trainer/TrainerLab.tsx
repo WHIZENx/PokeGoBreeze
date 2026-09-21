@@ -20,6 +20,7 @@ import TrainerLevelRewards from './Trainer';
 import TrainerBattleTimeline from './TrainerBattleTimeline';
 import TrainerMoveSelect, { createDefaultTrainerMoveSelection, type TrainerMoveSelection } from './TrainerMoveSelect';
 import './TrainerLab.scss';
+import { formatPokemonDisplayName } from '../../utils/pokemon-display-name';
 
 type TrainerTab = 'battle' | 'rewards';
 type League = ITrainerBattlePreset['league'];
@@ -168,7 +169,7 @@ const TrainerLab = () => {
       <img src={APIService.getPokeIconSprite(pokemon.sprite)} width={44} height={44} alt="" />
       <Box>
         <Typography variant="body2" fontWeight={700}>
-          {pokemon.name}
+          {formatPokemonDisplayName(pokemon.name)}
         </Typography>
         <Box className="trainer-picker-meta">
           <Typography variant="caption" color="text.secondary">
@@ -326,13 +327,13 @@ const TrainerLab = () => {
                           (pokemon) =>
                             !team.some((member, slot) => slot !== index && member?.pokemonId === pokemon.pokemonId)
                         )}
-                        value={selected?.name}
+                        value={formatPokemonDisplayName(selected?.name)}
                         sprite={selected ? APIService.getPokeIconSprite(selected.sprite) : undefined}
                         placeholder="Search Pokémon"
                         isShowPokemonIcon
                         isFit
                         onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.num })}
-                        onSelect={(pokemon) => pokemon.name}
+                        onSelect={(pokemon) => formatPokemonDisplayName(pokemon.name)}
                         onSprite={(pokemon) => pokemon.sprite}
                         onSetPokemon={(pokemon) => setTeamSlot(index, pokemon)}
                         onRemove={() => setTeamSlot(index)}

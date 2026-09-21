@@ -264,7 +264,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         <SelectCardMove
           key={`pri-${props.league}`}
           isHideEmpty
-          style={{ width: 'calc(100% - 50px)' }}
+          className="tw-w-move-select"
           pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}
           move={cMovePri}
           setMovePokemon={(value) => selectCMovePri(value)}
@@ -297,7 +297,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         <SelectCardMove
           key={`sec-${props.league}`}
           isHideEmpty
-          style={{ width: 'calc(100% - 50px)' }}
+          className="tw-w-move-select"
           pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}
           move={cMoveSec}
           setMovePokemon={(value) => selectCMoveSec(value)}

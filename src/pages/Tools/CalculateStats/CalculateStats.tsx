@@ -313,7 +313,7 @@ const Calculate = () => {
         </h1>
         <form className="tw-mt-2" onSubmit={onCalculateStatsPoke.bind(this)}>
           <div className="form-group tw-flex tw-justify-center tw-text-center">
-            <Box className="tw-w-1/2" sx={{ minWidth: 350 }}>
+            <Box className="tw-w-1/2 tw-min-w-form">
               <div className="input-group tw-mb-3 tw-justify-center">
                 <DynamicInputCP
                   statATK={searchingToolCurrentDetails?.statsGO?.atk}
@@ -460,7 +460,7 @@ const Calculate = () => {
         </form>
         <div>
           <div className="tw-flex tw-justify-center tw-text-center tw-h-20">
-            <Box className="tw-w-3/5" sx={{ minWidth: 320 }}>
+            <Box className="tw-w-3/5 tw-min-w-content">
               <div className="tw-flex tw-justify-between">
                 <b>Level</b>
                 <b>{statData ? statLevel : 'None'}</b>
@@ -480,7 +480,7 @@ const Calculate = () => {
             </Box>
           </div>
           <div className="tw-flex tw-justify-center tw-mt-3">
-            <Box className="tw-w-full md:tw-w-4/5 tw-overflow-x-auto" sx={{ minWidth: 320 }}>
+            <Box className="tw-w-full tw-min-w-content tw-overflow-x-auto md:tw-w-4/5">
               <div className="row">
                 <div className="col !tw-p-0">
                   <table className="table-info table-stats">

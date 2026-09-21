@@ -75,7 +75,7 @@ const Timeline = (
         {poke.timeline.map((value, index) => (
           <Fragment key={index}>
             {value.type === AttackType.Block && (
-              <HexagonIcon id={index.toString()} sx={{ color: 'purple', fontSize: value.size }} />
+              <HexagonIcon id={index.toString()} className="tw-text-combat-block" sx={{ fontSize: value.size }} />
             )}
             {value.type === AttackType.Fast && (
               <div

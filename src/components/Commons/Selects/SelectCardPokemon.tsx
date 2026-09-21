@@ -7,7 +7,7 @@ import { MenuList, MenuItem } from '@mui/material';
 import { SelectPosition } from './enums/select-type.enum';
 import { debounce } from 'lodash';
 import { IncludeMode } from '../../../utils/enums/string.enum';
-import { splitAndCapitalize } from '../../../utils/utils';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import apiService from '../../../services/api.service';
 
 const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
@@ -46,11 +46,14 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
           if (props.onFilter) {
             const { name, id } = props.onFilter(item);
             return (
+              isInclude(formatPokemonDisplayName(name), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+              isInclude(name, search, IncludeMode.IncludeIgnoreCaseSensitive) ||
               isInclude(
-                splitAndCapitalize(name?.replaceAll('_', '-'), '-', ' '),
-                search,
+                name?.replace(/[-_]/g, ' '),
+                search?.replace(/[-_]/g, ' '),
                 IncludeMode.IncludeIgnoreCaseSensitive
-              ) || isInclude(id, search)
+              ) ||
+              isInclude(id, search)
             );
           }
           return true;

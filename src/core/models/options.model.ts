@@ -452,7 +452,9 @@ interface OpponentPokemonBattleStatus {
 }
 
 interface EvolutionCondition {
+  [key: string]: unknown;
   type: ConditionType;
+  withCombatType?: { combatType: string[] };
   withPokemonType?: WithPokemonType;
   withThrowType?: WithThrowType;
   withOpponentPokemonBattleStatus?: OpponentPokemonBattleStatus;

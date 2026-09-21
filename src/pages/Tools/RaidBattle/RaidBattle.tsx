@@ -741,12 +741,11 @@ const RaidBattle = () => {
                   src={APIService.getPokeShadow()}
                 />
                 <span
-                  style={{
-                    color:
-                      showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow
-                        ? 'var(--text-primary)'
-                        : 'lightgray',
-                  }}
+                  className={
+                    showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow
+                      ? 'tw-text-[var(--text-primary)]'
+                      : 'tw-text-lightgray'
+                  }
                 >
                   {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
@@ -1023,7 +1022,7 @@ const RaidBattle = () => {
                       </span>
                     ) : (
                       <span>
-                        <AddIcon fontSize="large" sx={{ color: 'lightgray' }} />
+                        <AddIcon fontSize="large" className="tw-text-lightgray" />
                       </span>
                     )}
                   </div>
@@ -1333,7 +1332,7 @@ const RaidBattle = () => {
                         </span>
                       ) : (
                         <span>
-                          <AddIcon fontSize="large" sx={{ color: 'lightgray' }} />
+                          <AddIcon fontSize="large" className="tw-text-lightgray" />
                         </span>
                       )}
                     </div>
@@ -1600,7 +1599,7 @@ const RaidBattle = () => {
         title={`Trainer #${trainerBattleId + 1}`}
         content={
           <>
-            <div className="tw-overflow-y-auto tw-max-h-[60vh]">
+            <div className="tw-max-h-dialog tw-overflow-y-auto">
               {pokemonBattle.map((pokemon, index) => (
                 <div className={index === 0 ? '' : 'tw-mt-2'} key={index}>
                   <PokemonRaid
@@ -1652,7 +1651,7 @@ const RaidBattle = () => {
         open={showOption}
         onClose={handleCloseOption}
         title="Search Options"
-        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalFormFilters()}</div>}
+        content={<div className="tw-max-h-dialog tw-overflow-y-auto">{modalFormFilters()}</div>}
         actions={[
           {
             label: 'Cancel',
@@ -1670,7 +1669,7 @@ const RaidBattle = () => {
         open={showSettingPokemon.isShow}
         onClose={handleCloseSettingPokemon}
         title="Pokémon Settings"
-        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalFormSetting()}</div>}
+        content={<div className="tw-max-h-dialog tw-overflow-y-auto">{modalFormSetting()}</div>}
         actions={[
           {
             label: 'Cancel',
@@ -1688,7 +1687,7 @@ const RaidBattle = () => {
         open={showMovePokemon.isShow}
         onClose={handleCloseMovePokemon}
         title="Move Pokémon"
-        content={<div className="tw-overflow-y-auto tw-max-h-[60vh]">{modalMovePokemon()}</div>}
+        content={<div className="tw-max-h-dialog tw-overflow-y-auto">{modalMovePokemon()}</div>}
         actions={[
           {
             label: 'Cancel',

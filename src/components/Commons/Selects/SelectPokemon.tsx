@@ -3,7 +3,8 @@ import CardPokemon from '../../Card/CardPokemon';
 import React from 'react';
 
 import './Select.scss';
-import { addSelectMovesByType, splitAndCapitalize } from '../../../utils/utils';
+import { addSelectMovesByType } from '../../../utils/utils';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import APIService from '../../../services/api.service';
 import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
@@ -56,10 +57,10 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   return (
     <SelectCardPokemon
       pokemonList={getFilteredPokemons()}
-      value={props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : ''}
+      value={formatPokemonDisplayName(props.pokemon?.name)}
       onSetPokemon={(pokemon) => changePokemon(pokemon)}
       isFit
-      onSelect={(pokemon) => splitAndCapitalize(pokemon.name.replaceAll('_', '-'), '-', ' ')}
+      onSelect={(pokemon) => formatPokemonDisplayName(pokemon.name)}
       onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.num })}
       onIsSelectedPokemon={(pokemon) => pokemon === props.pokemon}
       label={props.labelPrepend}

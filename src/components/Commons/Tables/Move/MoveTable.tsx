@@ -54,16 +54,17 @@ const emptyMoveRanking: IPokemonQueryRankMove = { data: [] };
 const TableMove = (props: ITableMoveComponent) => {
   const cachedMoveData = useRef(props.moveData);
   const cachedRankMoveData = useRef(props.rankMoveData);
-  if (props.moveData) {
+  const isLoading = props.isLoading ?? (!props.moveData || !props.rankMoveData);
+  // Keep previous rows only during a request, not after an empty result.
+  if (props.moveData || !isLoading) {
     cachedMoveData.current = props.moveData;
   }
-  if (props.rankMoveData) {
+  if (props.rankMoveData || !isLoading) {
     cachedRankMoveData.current = props.rankMoveData;
   }
 
   const move = props.rankMoveData ?? cachedRankMoveData.current ?? emptyMoveRanking;
   const moveOrigin = props.moveData ?? cachedMoveData.current;
-  const isLoading = props.isLoading ?? (!props.moveData || !props.rankMoveData);
 
   const [stateSorted, setStateSorted] = useState(
     new TableSort({

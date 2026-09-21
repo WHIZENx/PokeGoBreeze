@@ -428,8 +428,7 @@ const CatchChance = () => {
               <div className="tw-flex tw-w-full tw-justify-center tw-mt-2 tw-px-3">
                 <LevelSlider
                   aria-label="Level"
-                  className="tw-w-3/4"
-                  style={{ maxWidth: 400 }}
+                  className="tw-w-3/4 tw-max-w-[400px]"
                   value={level}
                   defaultValue={minLevel()}
                   valueLabelDisplay="off"

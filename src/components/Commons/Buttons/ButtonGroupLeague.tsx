@@ -56,9 +56,8 @@ const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
                       )
                 }
                 active={props.value === value}
-                sx={{ minHeight: 142 }}
                 color="default"
-                className="btn-default"
+                className="btn-default !tw-min-h-selection-button"
                 label={
                   <div className="tw-flex tw-flex-col">
                     <img

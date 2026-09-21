@@ -62,8 +62,7 @@ const CustomInput = <T,>(props: ICustomInputComponent<T>) => {
         </>
       )}
       <InputBase
-        className="tw-ml-2"
-        sx={{ flex: 1, minHeight: 40 }}
+        className="tw-ml-2 tw-min-h-10 tw-flex-1"
         placeholder={props.inputPlaceholder}
         defaultValue={props.defaultValue}
         onKeyUp={(e) => props.setSearchTerm?.(e.currentTarget.value)}
@@ -74,7 +73,7 @@ const CustomInput = <T,>(props: ICustomInputComponent<T>) => {
           <SearchIcon />
         </IconButton>
       )}
-      {props.optionsIcon && <Divider className="tw-m-1" sx={{ height: 28 }} orientation="vertical" />}
+      {props.optionsIcon && <Divider className="!tw-m-1 !tw-h-7" orientation="vertical" />}
       <IconButton className="tw-p-2" color="primary" aria-label="options" onClick={props.onOptionsClick}>
         {props.optionsIcon}
       </IconButton>

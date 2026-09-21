@@ -38,6 +38,28 @@ module.exports = {
       colors: {
         ...defaultTheme.colors,
         lightgray: 'lightgray',
+        accent: {
+          red: 'red',
+          blue: 'blue',
+          yellow: 'yellow',
+          green: 'green',
+          crimson: 'crimson',
+        },
+        archetype: {
+          nuke: 'gray',
+          'spam-bait': 'pink',
+          'high-energy': 'orange',
+          debuff: 'lightcoral',
+          boost: 'lightgreen',
+          'fast-charge': '#f8d030',
+          'heavy-damage': 'brown',
+          multipurpose: 'lightskyblue',
+        },
+        combat: {
+          block: 'purple',
+          matchup: 'lightgreen',
+          counter: 'lightcoral',
+        },
         primary: 'var(--primary-main)',
         secondary: 'var(--secondary-main)',
         default: 'var(--default)',
@@ -63,6 +85,7 @@ module.exports = {
       spacing: {
         ...defaultTheme.spacing,
         unit: 'var(--spacing-unit)',
+        1.25: '5px',
         7.5: '30px',
         12.5: '50px',
         15: '60px',
@@ -73,6 +96,24 @@ module.exports = {
         30: '120px',
         36.5: '146px',
         75: '300px',
+      },
+      width: {
+        sidebar: '250px',
+        'battle-icon': '35px',
+        'move-select': 'calc(100% - 50px)',
+      },
+      minWidth: {
+        form: '350px',
+        content: '320px',
+      },
+      maxWidth: {
+        stats: '500px',
+      },
+      minHeight: {
+        'selection-button': '142px',
+      },
+      maxHeight: {
+        dialog: '60vh',
       },
       screens: {
         ...defaultTheme.screens,

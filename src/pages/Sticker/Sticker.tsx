@@ -177,7 +177,7 @@ const Sticker = () => {
                     </Badge>
                     {value.isShop && (
                       <span className="icon-shop">
-                        <ShoppingCartIcon fontSize="small" sx={{ color: 'white' }} />
+                        <ShoppingCartIcon fontSize="small" className="tw-text-white" />
                       </span>
                     )}
                     <span className="caption">{splitAndCapitalize(value.id.toLowerCase(), '_', ' ')}</span>

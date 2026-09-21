@@ -52,7 +52,7 @@ const TimelineFit = (
                 {!value.isTap && (
                   <Fragment>
                     {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
-                      <div className="tw-absolute icon-buff-timeline tw-top-[10px]" style={{ left: positions[index] }}>
+                      <div className="tw-absolute icon-buff-timeline tw-top-2.5" style={{ left: positions[index] }}>
                         {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
                             {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
@@ -64,10 +64,7 @@ const TimelineFit = (
                         {pokeObj.timeline.at(index) &&
                         pokeObj.timeline.at(index)?.type === AttackType.Charge &&
                         isNotEmpty(value.buff) ? (
-                          <div
-                            className="tw-absolute icon-buff-timeline tw-top-[10px]"
-                            style={{ left: positions[index] }}
-                          >
+                          <div className="tw-absolute icon-buff-timeline tw-top-2.5" style={{ left: positions[index] }}>
                             {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
                                 {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
@@ -92,7 +89,7 @@ const TimelineFit = (
             <Fragment key={index}>
               {value.type === AttackType.Block && (
                 <div id={index.toString()} style={{ left: positions[index] }}>
-                  <HexagonIcon sx={{ color: 'purple', fontSize: value.size }} />
+                  <HexagonIcon className="tw-text-combat-block" sx={{ fontSize: value.size }} />
                 </div>
               )}
               {value.type === AttackType.Fast && (
