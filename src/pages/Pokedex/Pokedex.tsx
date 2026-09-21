@@ -179,7 +179,7 @@ const Pokedex = (props: IStyleSheetData) => {
     const pokemonClass = isLegendary
       ? PokemonClass.Legendary
       : isMythic
-        ? PokemonClass.Mythic
+        ? PokemonClass.Mythical
         : isUltraBeast
           ? PokemonClass.UltraBeast
           : undefined;
@@ -518,7 +518,7 @@ const Pokedex = (props: IStyleSheetData) => {
                         }
                       />
                     }
-                    label={getKeyWithData(PokemonClass, PokemonClass.Mythic)}
+                    label={getKeyWithData(PokemonClass, PokemonClass.Mythical)}
                   />
                   <FormControlLabel
                     control={

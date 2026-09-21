@@ -310,7 +310,7 @@ const RaidBattle = () => {
       const simpleFMove = addSelectMovesByType(result, TypeMove.Fast);
       setFMove(simpleFMove.at(0));
       setResultFMove(simpleFMove);
-      const simpleCMove = addSelectMovesByType(result, TypeMove.Charge);
+      const simpleCMove = addSelectMovesByType(result, TypeMove.Charged);
       setCMove(simpleCMove.at(0));
       setResultCMove(simpleCMove);
     } else {
@@ -1126,7 +1126,7 @@ const RaidBattle = () => {
                     clearData={clearDataBoss}
                     move={cMove}
                     setMovePokemon={setCMove}
-                    moveType={TypeMove.Charge}
+                    moveType={TypeMove.Charged}
                   />
                 </div>
               </div>

@@ -47,7 +47,7 @@
 .type-overview-metrics {
   background-color: rgb(0 0 0 / 28%);
 
-  @apply tw-grid tw-grid-cols-3;
+  @apply tw-grid tw-grid-cols-2 sm:tw-grid-cols-4;
 }
 
 .type-overview-metric {

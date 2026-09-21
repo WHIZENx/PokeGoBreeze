@@ -109,7 +109,7 @@ const CalculatePoint = () => {
   ) => ({
     [`${prefix}effective`]: getTypeEffective(selectedMove?.type, pokemon?.form?.types),
     [`${prefix}stab`]: findStabType(attacker?.form?.types, selectedMove?.type),
-    [`${prefix}isCharged`]: selectedMove?.typeMove === TypeMove.Charge,
+    [`${prefix}isCharged`]: selectedMove?.typeMove === TypeMove.Charged,
   });
 
   const commonParams = () => ({
@@ -773,7 +773,7 @@ const CalculatePoint = () => {
                           }
                           setMove={setCMove}
                           move={cMove}
-                          type={TypeMove.Charge}
+                          type={TypeMove.Charged}
                           clearData={clearDataBulk}
                           isHighlight
                           pokemonType={searchingToolObjectData?.form?.form?.pokemonType}

@@ -98,7 +98,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     }
 
     const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
-    const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
+    const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charged);
 
     const fCombatName = findMoveTeam(fMoveText, fastMoveSet);
     const cCombatName = findMoveTeam(cMovePriText, chargedMoveSet);
