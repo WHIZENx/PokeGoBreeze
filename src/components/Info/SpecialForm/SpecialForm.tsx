@@ -69,6 +69,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
           </h4>
           {props.id === 384 && <p className="caption">Requires Dragon Ascent (Meteorite, not TMs).</p>}
           {props.id === 6 && <p className="caption">Unlock Mega Charizard X and Y separately.</p>}
+          {pokemonType === PokemonType.Mega && (
+            <span className="caption">Mega Level: Mega Evolutions / Mega Energy</span>
+          )}
           <div className="form-special-container scroll-evolution">
             <ul className="ul-evo tw-flex tw-justify-center tw-gap-3">
               {arrEvoList?.map((value, evo) => (
@@ -90,7 +93,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
                   </div>
                   <span className="caption">
-                    {`Initial energy: `}
+                    {`Initial energy (base): `}
                     <img
                       alt={`img-${getKeyWithData(PokemonType, pokemonType)?.toLowerCase()}`}
                       width={25}
@@ -107,6 +110,39 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     />
                     <b>{getQuestEvo(value.name).firstTempEvolution}</b>
                   </span>
+                  {getQuestEvo(value.name).energyVariant && (
+                    <span className="caption">Energy: Mega Energy {getQuestEvo(value.name).energyVariant}</span>
+                  )}
+                  {getQuestEvo(value.name).superMax && (
+                    <>
+                      <span className="caption">Super Max · Requires Max Level</span>
+                      {getQuestEvo(value.name).superMax?.unlockEnergy !== undefined && (
+                        <span className="caption">
+                          Unlock energy (base): <b>x{getQuestEvo(value.name).superMax?.unlockEnergy}</b>
+                        </span>
+                      )}
+                      {getQuestEvo(value.name).superMax?.restHours !== undefined && (
+                        <span className="caption">
+                          Super Max rest: <b>{getQuestEvo(value.name).superMax?.restHours}h</b>
+                        </span>
+                      )}
+                    </>
+                  )}
+                  {getQuestEvo(value.name).additionalMove && (
+                    <span
+                      className="caption"
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+                    >
+                      <span>Mega attack:</span>
+                      <IconType
+                        width={25}
+                        height={25}
+                        alt="Move type"
+                        type={getQuestEvo(value.name).additionalMove?.type}
+                      />
+                      <b>{getQuestEvo(value.name).additionalMove?.name}</b>
+                    </span>
+                  )}
                   <span className="caption">
                     {`Repeat energy (base): `}
                     <img

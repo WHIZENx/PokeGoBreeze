@@ -8,6 +8,12 @@
   @apply tw-m-0 tw-p-0;
 }
 
+.evo-chain {
+  --evo-gap: 14rem;
+
+  column-gap: var(--evo-gap);
+}
+
 .li-evo {
   @apply tw-mr-0 tw-h-full;
 }
@@ -20,4 +26,32 @@
   -ms-flex-negative: 0;
 
   @apply tw-relative tw-inline-flex tw-align-middle tw-flex-shrink-0 tw-w-24;
+}
+
+.evo-arrow-details {
+  transform: translateY(calc(50% + 0.75rem));
+  width: calc(var(--evo-gap) - 1rem);
+  text-align: center;
+}
+
+.evo-quest-detail {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  width: 100%;
+}
+
+.evo-quest-conditions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+@media (width <= 640px) {
+  .evo-chain {
+    --evo-gap: 10rem;
+  }
 }

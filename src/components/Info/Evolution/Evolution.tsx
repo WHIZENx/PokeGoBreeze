@@ -12,6 +12,9 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import PetsIcon from '@mui/icons-material/Pets';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import QuestRequirements from './QuestRequirements';
 import React, { Fragment, useEffect, useState } from 'react';
 import Xarrow, { cAnchorEdge } from 'react-xarrows';
 import { Link } from 'react-router-dom';
@@ -335,8 +338,8 @@ const Evolution = (props: IEvolutionComponent) => {
           {evo > 0 && (
             <Xarrow
               labels={{
-                end: (
-                  <div className="tw-absolute -tw-left-6">
+                middle: (
+                  <div className="evo-arrow-details">
                     {data && value.pokemonType !== PokemonType.GMax && (
                       <div>
                         {toNumber(data.evoToId) > 0 && (
@@ -362,6 +365,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         {data?.quest?.isRandomEvolution && (
                           <span className="caption">
                             <QuestionMarkIcon fontSize="small" />
+                            Random
                           </span>
                         )}
                         {data?.quest?.genderRequirement && (
@@ -402,6 +406,13 @@ const Evolution = (props: IEvolutionComponent) => {
                             {` ${data.quest.kmBuddyDistanceRequirement} km`}
                           </span>
                         )}
+                        {data?.quest?.isMustBeBuddy &&
+                          !data.quest.kmBuddyDistanceRequirement &&
+                          !data.quest.requirements?.length && (
+                            <span className="caption">
+                              <PetsIcon fontSize="small" /> Current Buddy
+                            </span>
+                          )}
                         {data?.quest?.isOnlyDaytime && (
                           <span className="caption">
                             <WbSunnyIcon fontSize="small" />
@@ -436,7 +447,31 @@ const Evolution = (props: IEvolutionComponent) => {
                             <SecurityUpdateIcon fontSize="small" />
                           </span>
                         )}
-                        {data?.quest?.condition && (
+                        {data?.quest?.isOnlyFullMoon && (
+                          <span className="caption" title="Full moon active in Pokémon GO">
+                            <DarkModeIcon fontSize="small" /> Full moon
+                          </span>
+                        )}
+                        {data?.quest?.isOnlyDuskPeriod && (
+                          <span className="caption">
+                            <Brightness4Icon fontSize="small" /> Dusk · Eligible form
+                          </span>
+                        )}
+                        {data?.quest?.noCandyCostViaTrade && (
+                          <span className="caption">
+                            <SwapHorizIcon fontSize="small" /> Traded: 0 Candy
+                          </span>
+                        )}
+                        {data?.quest?.highestIv && (
+                          <span className="caption">Highest {data.quest.highestIv} IV · Ties: Random</span>
+                        )}
+                        {data?.quest?.nickname && (
+                          <span className="caption">{data.quest.nickname} · Once per Trainer</span>
+                        )}
+                        {Boolean(data?.quest?.requirements?.length) && (
+                          <QuestRequirements requirements={data?.quest?.requirements ?? []} />
+                        )}
+                        {!data?.quest?.requirements?.length && data?.quest?.condition && (
                           <span className="caption">
                             {data.quest.condition.desc === ConditionType.Throw && (
                               <Fragment>
@@ -478,7 +513,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             )}
                           </span>
                         )}
-                        {data?.quest?.type === QuestType.BuddyEarn && (
+                        {!data?.quest?.requirements?.length && data?.quest?.type === QuestType.BuddyEarn && (
                           <span className="caption">
                             <Fragment>
                               <FavoriteIcon fontSize="small" sx={{ color: 'red' }} />
@@ -486,7 +521,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             </Fragment>
                           </span>
                         )}
-                        {data?.quest?.type === QuestType.BuddyFeed && (
+                        {!data?.quest?.requirements?.length && data?.quest?.type === QuestType.BuddyFeed && (
                           <span className="caption">
                             <Fragment>
                               <RestaurantIcon fontSize="small" />
@@ -494,7 +529,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             </Fragment>
                           </span>
                         )}
-                        {data?.quest?.type === QuestType.UseIncense && (
+                        {!data?.quest?.requirements?.length && data?.quest?.type === QuestType.UseIncense && (
                           <span className="caption">
                             <Fragment>
                               <img
@@ -675,12 +710,7 @@ const Evolution = (props: IEvolutionComponent) => {
       </h4>
       <div className="evo-container scroll-evolution">
         {reload(
-          <ul
-            className="ul-evo tw-inline-flex"
-            style={{
-              columnGap: isNotEmpty(arrEvoList) ? window.innerWidth / (6.5 * arrEvoList.length) : 0,
-            }}
-          >
+          <ul className="ul-evo evo-chain tw-inline-flex">
             {arrEvoList.map((values, evo) => (
               <li key={evo} className="img-form-gender-group li-evo">
                 <ul className="ul-evo tw-flex tw-flex-col">

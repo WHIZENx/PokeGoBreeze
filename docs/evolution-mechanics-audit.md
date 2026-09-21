@@ -42,7 +42,10 @@ Added API-generated readable details and lossless quest goals/conditions:
 - Target forms are no longer blindly inherited from the source. This fixes previously unresolved Clodsire, Overqwil, Sneasler, male Burmy → Mothim, base Scatterbug/Spewpa and Finizen → Palafin Zero branches. Explicit target forms stay authoritative; missing explicit forms are not replaced by a different regional form.
 - Evolution links use the target's form instead of the currently viewed Pokémon's form. Missing purified-cost data no longer appears as a free evolution.
 
-Detailed requirements render below the chain instead of cramming text onto arrows.
+Compact requirements now render in the existing chain details. Complete quest
+goals are preferred over the legacy single-condition field; long explanatory
+paragraphs remain hidden. Full moon, dusk, trade Candy waiver, highest-IV/ties
+and one-time nickname conditions have structured fields for concise display.
 Legacy single-condition fields remain for compatibility; new clients use the
 complete `quest.details` and `quest.requirements` fields. Event quest templates
 not referenced by active snapshot branches are not silently substituted.
@@ -55,7 +58,11 @@ not referenced by active snapshot branches are not silently substituted.
   state and Crowned unlock state cannot be inferred from a species snapshot.
 - A Game Master transition is not proof that it is currently enabled for every
   account or region. Costs are displayed as snapshot data, not live eligibility.
-- No level-up energy or Super Max cost calculator is implemented here.
+- No individual level-up energy or Super Max cost calculator is implemented here.
+  Eligible, officially published Mega forms show their snapshot Super Max unlock
+  baseline and rest period, X/Y energy distinction and additional Mega attack.
+  Extra attacks are not ordinary Elite TM moves and are not gated on the
+  individual Pokémon already being at Super Max Level.
 
 Do not fill these gaps with main-series rules or silently replace missing costs
 with zero. Regenerate all derived sections together and keep the exhaustive
@@ -69,6 +76,7 @@ snapshot audit and regression fixtures passing.
 - [Mega Evolution help](https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/3332-how-can-i-mega-evolve-my-pokemon/)
 - [2026 Mega system](https://pokemongo.com/news/mega-evolution-2026-update)
 - [Energy-based level upgrades](https://pokemongo.com/news/falinks-super-mega-raid-day-2026)
+- [September 2026 Mega energy and additional attacks](https://pokemongo.com/news/more-mega-updates-2026)
 - [Trade evolution](https://pokemongo.com/news/trade-evolution)
 - [Event-specific Furfrou availability](https://pokemongo.com/gotour/global/)
 - [Kingambit](https://pokemongo.com/news/crown-clash-2025?hl=en)

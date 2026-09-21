@@ -25,6 +25,11 @@ export class EvolutionQuestCondition implements IEvolutionQuestCondition {
 }
 
 interface IEvolutionQuest {
+  isOnlyFullMoon?: boolean;
+  isOnlyDuskPeriod?: boolean;
+  noCandyCostViaTrade?: boolean;
+  highestIv?: string;
+  nickname?: string;
   details?: string[];
   requirements?: IEvolutionRequirement[];
   genderRequirement?: string;
@@ -42,6 +47,11 @@ interface IEvolutionQuest {
 }
 
 export class EvolutionQuest implements IEvolutionQuest {
+  isOnlyFullMoon?: boolean;
+  isOnlyDuskPeriod?: boolean;
+  noCandyCostViaTrade?: boolean;
+  highestIv?: string;
+  nickname?: string;
   details?: string[];
   requirements?: IEvolutionRequirement[];
   genderRequirement?: string;
@@ -88,6 +98,9 @@ export class EvoList implements IEvoList {
 }
 
 export interface ITempEvo {
+  energyVariant?: 'X' | 'Y';
+  superMax?: { unlockEnergy?: number; restHours?: number };
+  additionalMove?: { name: string; type: string };
   tempEvolutionName?: string;
   firstTempEvolution: string | number;
   tempEvolution: string | number;
@@ -95,6 +108,9 @@ export interface ITempEvo {
 }
 
 export class TempEvo implements ITempEvo {
+  energyVariant?: 'X' | 'Y';
+  superMax?: { unlockEnergy?: number; restHours?: number };
+  additionalMove?: { name: string; type: string };
   tempEvolutionName?: string;
   firstTempEvolution: string | number = '';
   tempEvolution: string | number = '';
