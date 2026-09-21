@@ -970,12 +970,6 @@ const PatchIndex = ({
 };
 
 const GameMasterUpdates = () => {
-  useTitle({
-    title: 'PokéGO Breeze - Game Master Patch Notes',
-    description: 'See the Game Master changes that affect PokéGO Breeze features and tools.',
-    keywords: ['Pokémon GO Game Master', 'Game Master patch notes', 'Pokémon GO changes'],
-  });
-
   const navigate = useNavigate();
   const { patchSlug } = useParams<{ patchSlug?: string }>();
   const compareTo = patchSlug ?? '';
@@ -1115,6 +1109,19 @@ const GameMasterUpdates = () => {
   const hasFilters = Boolean(search || status || section);
   const activePatch =
     response?.selectedPatch ?? response?.patches?.find((patch) => patch.compareTo === response.previous.name);
+  const patchDate = response?.current.timestamp.slice(0, 10);
+  useTitle({
+    title:
+      !isIndex && patchDate
+        ? `Pokémon GO Game Master Changes – ${patchDate} | PokéGo Breeze`
+        : 'Pokémon GO Game Master Patch Notes | PokéGo Breeze',
+    description:
+      !isIndex && activePatch?.description
+        ? activePatch.description
+        : 'Track Pokémon GO Game Master changes to Pokémon, moves, battles, items, and game systems.',
+    keywords: ['Pokémon GO Game Master', 'Game Master patch notes', 'Pokémon GO changes'],
+    type: !isIndex ? 'article' : 'website',
+  });
 
   if (isIndex) {
     return (

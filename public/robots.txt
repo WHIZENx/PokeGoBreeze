@@ -4,4 +4,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://poke-go-breeze.vercel.app/sitemap.xml
+Sitemap: https://poke-go-breeze.vercel.app/sitemap-index.xml
