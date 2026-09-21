@@ -39,7 +39,7 @@
   },
   "scripts": {
     "start": "node scripts/withConfig.js vite",
-    "build": "npm run generate:sitemap && cross-env VITE_CJS_IGNORE_WARNING=true vite build",
+    "build": "npm run generate:sitemap && cross-env VITE_CJS_IGNORE_WARNING=true vite build && npm run prerender:seo",
     "format:code": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "format:style": "stylelint --fix \"src/**/*.{css,scss}\"",
     "lint:code": "eslint \"src/**/*.{ts,tsx,js,jsx}\"",
@@ -52,9 +52,10 @@
     "prebuild": "rimraf dist",
     "build:vite": "cross-env VITE_CJS_IGNORE_WARNING=true vite build",
     "deploy": "node scripts/withConfig.js",
-    "_deploy:inner:production": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode production",
-    "_deploy:inner:development": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode development",
-    "generate:sitemap": "node sitemap/buildSitemap.js"
+    "_deploy:inner:production": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode production && npm run prerender:seo",
+    "_deploy:inner:development": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode development && npm run prerender:seo",
+    "generate:sitemap": "node sitemap/buildSitemap.js",
+    "prerender:seo": "node sitemap/prerenderSeo.js"
   },
   "browserslist": {
     "production": [

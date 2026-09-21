@@ -70,7 +70,7 @@ jobs:
             ALIAS=poke-go-breeze.vercel.app
           else
             vercel pull --yes --environment=preview --git-branch="$GITHUB_REF_NAME" --token="$CLI_TOKEN"
-            DEPLOYMENT_URL=$(vercel deploy --force --token="$CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --force --local-config=vercel.preview.json --token="$CLI_TOKEN")
             ALIAS="poke-go-breeze-${GITHUB_REF_NAME}.vercel.app"
           fi
           vercel alias set "$DEPLOYMENT_URL" "$ALIAS" --token="$CLI_TOKEN"
@@ -121,6 +121,7 @@ jobs:
           npm run prebuild
           npm run generate:sitemap
           bash -c 'source ./config.sh && npx vite build'
+          npm run prerender:seo
 
       - name: Verify Firebase build environment
         run: |
@@ -150,6 +151,18 @@ jobs:
             stage)   HOST="https://pokego-breeze-stage.web.app" ;;
             develop) HOST="https://pokego-breeze-develop.web.app" ;;
           esac
+          if [[ "$GITHUB_REF_NAME" == "main" ]]; then
+            REDIRECT_HEADERS_FILE="$RUNNER_TEMP/firebase-redirect-headers.txt"
+            curl --silent --show-error --retry 5 --retry-all-errors \
+              "$HOST/game-master-updates" \
+              --dump-header "$REDIRECT_HEADERS_FILE" \
+              --output /dev/null
+            grep --extended-regexp --ignore-case --quiet '^HTTP/[^ ]+ 308' "$REDIRECT_HEADERS_FILE"
+            grep --fixed-strings --ignore-case --quiet \
+              'location: https://poke-go-breeze.vercel.app/game-master-updates' \
+              "$REDIRECT_HEADERS_FILE"
+            exit 0
+          fi
           HEADERS_FILE="$RUNNER_TEMP/firebase-headers.txt"
           curl --fail --silent --show-error --retry 5 --retry-all-errors \
             "$HOST/game-master-updates" \
@@ -157,6 +170,9 @@ jobs:
             --output /dev/null
           grep --fixed-strings --ignore-case --quiet \
             "cache-control: public, max-age=0, must-revalidate" \
+            "$HEADERS_FILE"
+          grep --fixed-strings --ignore-case --quiet \
+            "x-robots-tag: noindex, nofollow, noarchive" \
             "$HEADERS_FILE"
 
           ASSET_PATH=$(find dist/static/js -maxdepth 1 -type f -name '*.js' -printf '%P\n' | head -n 1)
@@ -200,6 +216,7 @@ jobs:
         run: |
           npm run prebuild
           bash -c 'source ./config.sh && npx vite build'
+          npm run prerender:seo
 
       - name: Deploy PR Preview to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0

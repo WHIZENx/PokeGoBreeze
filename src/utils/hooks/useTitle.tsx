@@ -4,11 +4,11 @@ import { TitleSEOProps } from '../models/hook.model';
 export const useTitle = (props: TitleSEOProps) => {
   useEffect(() => {
     const path = window.location.pathname;
-    const origin = window.location.origin;
-    const fullPath = `${origin}${path}`;
+    const canonicalOrigin = 'https://poke-go-breeze.vercel.app';
+    const fullPath = `${canonicalOrigin}${path}`;
 
     const { title, description, keywords, isShowTitle } = props;
-    const image = props.image || `${origin}/og-image.png`;
+    const image = props.image || `${canonicalOrigin}/og-image.png`;
     const url = props.url || fullPath;
     const type = props.type || 'website';
 
