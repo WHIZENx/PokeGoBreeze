@@ -77,6 +77,7 @@ export interface IEvolutionRequirement {
 
 export interface IEvoList {
   evoToForm: string;
+  formVaries?: boolean;
   evoToId: number;
   evoToName: string;
   candyCost: number;
@@ -88,6 +89,7 @@ export interface IEvoList {
 
 export class EvoList implements IEvoList {
   evoToForm = '';
+  formVaries?: boolean;
   evoToId = 0;
   evoToName = '';
   candyCost = 0;
@@ -149,6 +151,7 @@ export interface IEvolution {
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   form: string | undefined;
+  formVaries?: boolean;
   isBaby?: boolean;
 }
 
@@ -162,6 +165,7 @@ export class EvolutionModel implements IEvolution {
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   form: string | undefined;
+  formVaries?: boolean;
   isBaby?: boolean;
 
   constructor({ ...props }: IEvolution) {

@@ -85,7 +85,7 @@ const FromChange = (props: IFromChangeComponent) => {
     return move ? (
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
         <IconType width={25} height={25} alt={`${move.type} type`} type={move.type} style={{ flexShrink: 0 }} />
-        <LinkToTop to={`../move/${move.id}`}>
+        <LinkToTop to={`/move/${move.id}`}>
           <b>{humanize(name)}</b>
         </LinkToTop>
       </span>

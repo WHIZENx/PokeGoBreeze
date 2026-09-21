@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import APIService from '../../../services/api.service';
-import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
+import { getKeyWithData, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
 import './SpecialForm.scss';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
@@ -60,6 +60,29 @@ const SpecialForm = (props: IFormSpecialComponent) => {
     });
   };
 
+  const renderMoveLink = (name: string, fallbackType?: string) => {
+    const normalizedName = name.trim().replace(/\+$/, '').replaceAll(' ', '_').toUpperCase();
+    const move = findMoveByName(normalizedName) ?? findMoveByName(replaceTempMovePvpName(normalizedName));
+    const content = (
+      <>
+        <IconType
+          width={25}
+          height={25}
+          alt={`${move?.type ?? fallbackType ?? 'Move'} type`}
+          type={move?.type ?? fallbackType}
+        />
+        <b>{splitAndCapitalize(name, '_', ' ')}</b>
+      </>
+    );
+    return move ? (
+      <LinkToTop to={`/move/${move.id}`} className="tw-inline-flex tw-items-center tw-gap-1">
+        {content}
+      </LinkToTop>
+    ) : (
+      <span className="tw-inline-flex tw-items-center tw-gap-1">{content}</span>
+    );
+  };
+
   return (
     <Fragment>
       {isNotEmpty(arrEvoList) && (
@@ -67,11 +90,6 @@ const SpecialForm = (props: IFormSpecialComponent) => {
           <h4 className="title-evo">
             <b>{pokemonType === PokemonType.Primal ? 'Primal Reversion' : 'Mega Evolution'}</b>
           </h4>
-          {props.id === 384 && <p className="caption">Requires Dragon Ascent (Meteorite, not TMs).</p>}
-          {props.id === 6 && <p className="caption">Unlock Mega Charizard X and Y separately.</p>}
-          {pokemonType === PokemonType.Mega && (
-            <span className="caption">Mega Level: Mega Evolutions / Mega Energy</span>
-          )}
           <div className="form-special-container scroll-evolution">
             <ul className="ul-evo tw-flex tw-justify-center tw-gap-3">
               {arrEvoList?.map((value, evo) => (
@@ -134,13 +152,10 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
                     >
                       <span>Mega attack:</span>
-                      <IconType
-                        width={25}
-                        height={25}
-                        alt="Move type"
-                        type={getQuestEvo(value.name).additionalMove?.type}
-                      />
-                      <b>{getQuestEvo(value.name).additionalMove?.name}</b>
+                      {renderMoveLink(
+                        getQuestEvo(value.name).additionalMove?.name ?? '',
+                        getQuestEvo(value.name).additionalMove?.type
+                      )}
                     </span>
                   )}
                   <span className="caption">
@@ -162,18 +177,12 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     <b>{getQuestEvo(value.name).tempEvolution}</b>
                   </span>
                   {getQuestEvo(value.name).requireMove && (
-                    <span className="caption">
+                    <span
+                      className="caption"
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+                    >
                       {`Require move: `}
-                      <IconType
-                        width={25}
-                        height={25}
-                        alt="Pokémon GO Type Logo"
-                        className="tw-mr-1"
-                        type={findMoveByName(getQuestEvo(value.name).requireMove)?.type}
-                      />
-                      <LinkToTop to={`../move/${findMoveByName(getQuestEvo(value.name).requireMove)?.id}`}>
-                        <b>{splitAndCapitalize(getQuestEvo(value.name).requireMove, '_', ' ')}</b>
-                      </LinkToTop>
+                      {renderMoveLink(getQuestEvo(value.name).requireMove ?? '')}
                     </span>
                   )}
                 </li>

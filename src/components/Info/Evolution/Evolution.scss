@@ -32,6 +32,13 @@
   transform: translateY(calc(50% + 0.75rem));
   width: calc(var(--evo-gap) - 1rem);
   text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.evo-quest-action {
+  display: block;
+  white-space: normal;
 }
 
 .evo-quest-detail {
