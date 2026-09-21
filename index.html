@@ -68,26 +68,6 @@
 
     <script>
       (function () {
-        var origin = window.location.origin;
-        var imageUrl = origin + '/og-image.png';
-
-        // Update URL-dependent meta tags to reflect actual deployment origin
-        document.getElementById('og-url').setAttribute('content', origin + '/');
-        document.getElementById('twitter-url').setAttribute('content', origin + '/');
-        document.getElementById('canonical-url').setAttribute('href', origin + '/');
-        document.getElementById('og-image').setAttribute('content', imageUrl);
-        document.getElementById('twitter-image').setAttribute('content', imageUrl);
-        document.getElementById('image-src').setAttribute('href', imageUrl);
-
-        // Update JSON-LD structured data with correct absolute URLs
-        var ldScript = document.getElementById('ld-json');
-        if (ldScript) {
-          var ldData = JSON.parse(ldScript.textContent);
-          ldData.url = origin + '/';
-          ldData.publisher.logo.url = imageUrl;
-          ldScript.textContent = JSON.stringify(ldData);
-        }
-
         // Expose SEO helpers for React components to update per-page meta tags
         window.SEO = {
           setKeywords: function (keywords) {

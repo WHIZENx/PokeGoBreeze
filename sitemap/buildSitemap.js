@@ -4,21 +4,24 @@ require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
-const generateSitemap = require('./generateSitemap');
+const generateSitemaps = require('./generateSitemap');
 
-async function buildSitemap() {
+async function buildSitemaps() {
   try {
-    const sitemap = await generateSitemap();
+    const { files, manifest } = await generateSitemaps();
     const publicPath = path.resolve(__dirname, '../public');
-
-    // mkdirSync with recursive: true is idempotent — no existsSync check needed
     fs.mkdirSync(publicPath, { recursive: true });
-    fs.writeFileSync(path.join(publicPath, 'sitemap.xml'), sitemap);
+    for (const name of fs.readdirSync(publicPath).filter((name) => /^sitemap(?:-|\.)/.test(name))) {
+      fs.rmSync(path.join(publicPath, name));
+    }
+    for (const [name, contents] of Object.entries(files)) {
+      fs.writeFileSync(path.join(publicPath, name), contents);
+    }
+    console.log(`[seo] Wrote ${Object.keys(files).length} sitemap files for ${manifest.routes.length} dynamic routes.`);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[sitemap] Build failed:', error.message);
+    console.error('[seo] Sitemap build failed:', error.message);
     process.exit(1);
   }
 }
 
-buildSitemap();
+buildSitemaps();
