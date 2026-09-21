@@ -31,10 +31,13 @@ const TabsPanel = (props: TabPanelComponent) => {
 
   return (
     <Box className={combineClasses('tw-w-full', props.className)}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
+      <Box
+        className="tw-border-0 tw-border-b tw-border-solid"
+        sx={{ borderColor: 'divider', bgcolor: 'background.paper' }}
+      >
         <Tabs variant="fullWidth" value={value} onChange={handleChange}>
           {props.tabs.map((tab, index) => (
-            <Tab key={index} sx={{ textTransform: 'none' }} label={tab.label} {...a11yProps(index)} />
+            <Tab key={index} className="!tw-normal-case" label={tab.label} {...a11yProps(index)} />
           ))}
         </Tabs>
       </Box>

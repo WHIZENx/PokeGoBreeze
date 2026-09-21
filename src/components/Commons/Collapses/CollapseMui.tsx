@@ -31,7 +31,7 @@ const CollapseMui = <T,>(props: ICollapseComponent<T>) => {
             subMenu.value ? (
               <ListItem
                 key={index}
-                sx={{ py: 0 }}
+                className="!tw-py-0"
                 selected={!isNullOrUndefined(subMenu.value) && props.isSelect?.(subMenu)}
               >
                 <ListItemButton className="tw-truncate" onClick={() => handleSubMenuClick(subMenu)}>

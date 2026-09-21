@@ -26,8 +26,10 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                   key={subIndex}
                   active={value.form.id === props.id}
                   onClick={() => props.changeForm(value)}
-                  sx={{ minHeight: 142 }}
-                  className={combineClasses(index + subIndex === 0 ? '' : '!tw-ml-3', 'btn-default')}
+                  className={combineClasses(
+                    index + subIndex === 0 ? '' : '!tw-ml-3',
+                    'btn-default !tw-min-h-selection-button'
+                  )}
                   color="default"
                   label={
                     <div className="tw-h-full">

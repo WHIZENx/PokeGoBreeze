@@ -25,6 +25,13 @@ export class EvolutionQuestCondition implements IEvolutionQuestCondition {
 }
 
 interface IEvolutionQuest {
+  isOnlyFullMoon?: boolean;
+  isOnlyDuskPeriod?: boolean;
+  noCandyCostViaTrade?: boolean;
+  highestIv?: string;
+  nickname?: string;
+  details?: string[];
+  requirements?: IEvolutionRequirement[];
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;
   isMustBeBuddy?: boolean;
@@ -40,6 +47,13 @@ interface IEvolutionQuest {
 }
 
 export class EvolutionQuest implements IEvolutionQuest {
+  isOnlyFullMoon?: boolean;
+  isOnlyDuskPeriod?: boolean;
+  noCandyCostViaTrade?: boolean;
+  highestIv?: string;
+  nickname?: string;
+  details?: string[];
+  requirements?: IEvolutionRequirement[];
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;
   isMustBeBuddy?: boolean;
@@ -54,8 +68,16 @@ export class EvolutionQuest implements IEvolutionQuest {
   isRandomEvolution?: boolean;
 }
 
+export interface IEvolutionRequirement {
+  templateId: string;
+  type?: string;
+  goal: number;
+  conditions: Record<string, unknown>[];
+}
+
 export interface IEvoList {
   evoToForm: string;
+  formVaries?: boolean;
   evoToId: number;
   evoToName: string;
   candyCost: number;
@@ -67,6 +89,7 @@ export interface IEvoList {
 
 export class EvoList implements IEvoList {
   evoToForm = '';
+  formVaries?: boolean;
   evoToId = 0;
   evoToName = '';
   candyCost = 0;
@@ -77,6 +100,9 @@ export class EvoList implements IEvoList {
 }
 
 export interface ITempEvo {
+  energyVariant?: 'X' | 'Y';
+  superMax?: { unlockEnergy?: number; restHours?: number };
+  additionalMove?: { name: string; type: string };
   tempEvolutionName?: string;
   firstTempEvolution: string | number;
   tempEvolution: string | number;
@@ -84,6 +110,9 @@ export interface ITempEvo {
 }
 
 export class TempEvo implements ITempEvo {
+  energyVariant?: 'X' | 'Y';
+  superMax?: { unlockEnergy?: number; restHours?: number };
+  additionalMove?: { name: string; type: string };
   tempEvolutionName?: string;
   firstTempEvolution: string | number = '';
   tempEvolution: string | number = '';
@@ -122,6 +151,7 @@ export interface IEvolution {
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   form: string | undefined;
+  formVaries?: boolean;
   isBaby?: boolean;
 }
 
@@ -135,6 +165,7 @@ export class EvolutionModel implements IEvolution {
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   form: string | undefined;
+  formVaries?: boolean;
   isBaby?: boolean;
 
   constructor({ ...props }: IEvolution) {

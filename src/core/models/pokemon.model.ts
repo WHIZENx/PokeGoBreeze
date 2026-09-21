@@ -64,12 +64,15 @@ interface MoveReassignment {
 
 export interface IPokemonFormChange {
   availableForm: string[];
-  candyCost?: string;
-  stardustCost?: string;
+  candyCost?: string | number;
+  stardustCost?: string | number;
   item?: string;
   itemCostCount?: number;
   componentPokemonSettings?: ComponentPokemonSettings;
   moveReassignment?: MoveReassignment;
+  requiredCinematicMoves?: { requiredMoves: string[] }[];
+  requiredBreadMoves?: { moveTypes: string[]; moveLevel: string }[];
+  priority?: number;
 }
 
 interface QuestDisplay {
@@ -90,6 +93,10 @@ interface EvolutionBranch {
   lureItemRequirement: ItemLureType;
   evolutionItemRequirement: ItemEvolutionType;
   onlyUpsideDown: boolean;
+  onlyFullMoon?: boolean;
+  onlyDuskPeriod?: boolean;
+  noCandyCostViaTrade?: boolean;
+  evolutionLikelihoodWeight?: number;
   questDisplay: QuestDisplay[];
   temporaryEvolution: string;
   temporaryEvolutionEnergyCost: number;

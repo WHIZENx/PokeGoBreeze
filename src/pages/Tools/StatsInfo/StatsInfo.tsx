@@ -233,7 +233,7 @@ const StatsInfo = () => {
   );
 
   return (
-    <div className="tw-container" style={{ minHeight: 1650 }}>
+    <div className="tw-container tw-min-h-[1650px]">
       <Find isHide clearStats={clearStats} />
       <h1 id="main" className="tw-text-center">
         Stats Battle Table
@@ -260,7 +260,7 @@ const StatsInfo = () => {
       </div>
       <form className="tw-mt-2" onSubmit={onSearchStatsPoke.bind(this)}>
         <div className="form-group tw-flex tw-justify-center tw-text-center">
-          <Box className="tw-w-1/2" sx={{ minWidth: 350 }}>
+          <Box className="tw-w-1/2 tw-min-w-form">
             <div className="input-group tw-mb-3 tw-justify-center">
               <DynamicInputCP
                 statATK={searchingToolCurrentDetails?.statsGO?.atk}

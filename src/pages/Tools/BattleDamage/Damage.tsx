@@ -273,7 +273,7 @@ const Damage = () => {
           <div className="col tw-mb-3">
             <form onSubmit={onCalculateDamagePoke.bind(this)}>
               <div className="tw-flex tw-justify-center">
-                <div className="row tw-text-center" style={{ width: 520 }}>
+                <div className="row tw-w-[520px] tw-text-center">
                   <div className="col">
                     <h5 className="tw-text-green-600">- Current Pokémon Type -</h5>
                     {searchingToolCurrentData?.form && <TypeInfo arr={searchingToolCurrentData?.form.form?.types} />}
@@ -373,11 +373,11 @@ const Damage = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                    <Box className="tw-text-sm" sx={{ ml: 2, color: 'green' }}>
+                    <Box className="tw-ml-4 tw-text-sm tw-text-accent-green">
                       x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>
-                  <Box sx={{ marginTop: 2 }}>
+                  <Box className="tw-mt-4">
                     <SelectMui
                       formSx={{ width: 200 }}
                       inputLabel="Charge ability"

@@ -13,6 +13,7 @@ import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import SelectCardPokemon from '../../../components/Commons/Selects/SelectCardPokemon';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import {
@@ -219,7 +220,7 @@ const Search = () => {
                   e.currentTarget.src = APIService.getPokeSprite();
                 }}
               />
-              {pokemon.name}
+              {formatPokemonDisplayName(pokemon.name)}
             </>
           )}
         />

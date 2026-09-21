@@ -125,13 +125,11 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
 
   const navigateInfo = useMemo(() => {
     return (
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column' }} className="tw-w-full">
-          {infoVersion}
-        </Box>
+      <Box className="tw-flex tw-gap-2">
+        <Box className="tw-hidden tw-w-full tw-flex-col min-[900px]:tw-flex">{infoVersion}</Box>
         <IconButton
-          sx={{ p: 0 }}
           className={combineClasses(
+            '!tw-p-0',
             stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
             isDelay ? 'cursor-default' : 'tw-cursor-pointer'
           )}
@@ -150,31 +148,24 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
 
   return (
     <AppBar className="tw-overflow-x-auto" position="sticky">
-      <Toolbar sx={{ mx: 2, my: 0.5 }} disableGutters variant="dense">
+      <Toolbar className="tw-mx-4 tw-my-1" disableGutters variant="dense">
         {/* width >= 900 */}
-        <Box className="tw-text-white" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+        <Box className="tw-hidden tw-items-center tw-text-white min-[900px]:tw-flex">
           <img src={logo} width="30" height="30" alt="Home" />
-          <Typography
-            noWrap
-            component="span"
-            sx={{
-              mx: 1,
-              fontWeight: 700,
-            }}
-          >
+          <Typography noWrap component="span" className="!tw-mx-2 !tw-font-bold">
             PokéGoBreeze
           </Typography>
         </Box>
 
         {/* width < 900 */}
-        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+        <Box className="tw-flex tw-flex-grow min-[900px]:tw-hidden">
           <IconButton size="large" onClick={() => setOpen(true)} color="inherit">
             <MenuIcon />
           </IconButton>
         </Box>
 
         {/* width >= 900 */}
-        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+        <Box className="tw-hidden tw-flex-grow min-[900px]:tw-flex">
           {pages.map((page) => (
             <Fragment key={page.value}>
               <ButtonMui
@@ -210,12 +201,12 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
                   }}
                   open={page.value === menu ? showMenu : false}
                   onClose={() => handleCloseMenu(null, null)}
-                  sx={{ display: { xs: 'none', sm: 'block' } }}
+                  className="tw-hidden min-[600px]:tw-block"
                 >
                   {page.subMenus?.map((subMenu, index) => (
                     <Fragment key={subMenu.value || `header-${page.value}-${index}`}>
                       {subMenu.isHeader ? (
-                        <ListSubheader sx={{ textAlign: 'center' }}>{subMenu.label}</ListSubheader>
+                        <ListSubheader className="!tw-text-center">{subMenu.label}</ListSubheader>
                       ) : (
                         <MenuItem
                           onClick={() => handleCloseMenu(page, subMenu)}
@@ -249,15 +240,7 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         open={open}
         setOpen={setOpen}
         footer={
-          <Box
-            className="tw-text-default"
-            sx={{
-              display: { xs: 'flex', md: 'none' },
-              flexDirection: 'column',
-              p: 2,
-              alignItems: 'start',
-            }}
-          >
+          <Box className="tw-flex tw-flex-col tw-items-start tw-p-4 tw-text-default min-[900px]:tw-hidden">
             {infoVersion}
           </Box>
         }

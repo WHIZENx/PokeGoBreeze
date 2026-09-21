@@ -1580,7 +1580,7 @@ const Battle = () => {
     <div className="tw-flex tw-w-full timeline-vertical">
       <div className="tw-w-1/2">
         <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-start tw-gap-2">
-          <div className="tw-relative filter-shadow tw-w-[35px]">
+          <div className="tw-relative filter-shadow tw-w-battle-icon">
             <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
               <img
                 alt="Image League"
@@ -1609,7 +1609,7 @@ const Battle = () => {
       </div>
       <div className="tw-w-1/2">
         <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-end tw-gap-2">
-          <div className="tw-relative filter-shadow tw-w-[35px]">
+          <div className="tw-relative filter-shadow tw-w-battle-icon">
             <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
               <img
                 alt="Image League"
@@ -1739,8 +1739,7 @@ const Battle = () => {
                         <FormControlLabel value={TimelineType.Normal} control={<Radio />} label="Normal Timeline" />
                       </RadioGroup>
                       <SelectMui
-                        formClassName="tw-mt-2"
-                        formSx={{ m: 1, minWidth: 120 }}
+                        formClassName="tw-m-2 tw-min-w-[120px]"
                         onChangeSelect={(value) => setOptions({ ...options, duration: toFloat(value) })}
                         value={duration}
                         inputLabel="Speed"
@@ -1790,10 +1789,9 @@ const Battle = () => {
                           }}
                         />
                         <span
-                          className="tw-text-xs tw-w-8 tw-text-right tw-tabular-nums"
-                          style={{
-                            color: volume === 0 ? 'var(--tw-color-gray-400, #9ca3af)' : undefined,
-                          }}
+                          className={`tw-w-8 tw-text-right tw-text-xs tw-tabular-nums ${
+                            volume === 0 ? 'tw-text-gray-400' : ''
+                          }`}
                         >
                           {Math.round(volume * 100)}%
                         </span>

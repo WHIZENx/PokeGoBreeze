@@ -12,6 +12,13 @@ export interface PokemonBundleVariety {
   forms: PokemonForm[];
 }
 
+export interface PokemonFusionOption {
+  baseId: number;
+  baseName: string;
+  targetName: string;
+  targetForm: string;
+}
+
 export interface PokemonMoveRanking {
   num: number;
   form?: string;
@@ -39,6 +46,7 @@ export interface PokemonBundle {
   evolutionChain: PokemonInfoEvo | null;
   moveRankings?: PokemonMoveRanking[];
   pokemonGo?: {
+    fusionOptions?: PokemonFusionOption[];
     asset: IAsset | null;
     evolutionChains: IEvolutionChain[];
   };
