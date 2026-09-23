@@ -41,7 +41,7 @@ const Attacker = () => {
           />
         </div>
       </div>
-      <TypeEffectiveComponent typeEffective={typeEffective} />
+      <TypeEffectiveComponent typeEffective={typeEffective} perspective="attacker" />
     </div>
   );
 };
