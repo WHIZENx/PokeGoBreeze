@@ -162,7 +162,7 @@ const columnMove = createDataRows<TableColumnModify<ICombat>>(
   }
 );
 
-type TypeResultKind = 'pokemon-single' | 'pokemon-dual' | 'fast' | 'charged';
+type TypeResultKind = 'pokemon-single' | 'pokemon-dual' | 'fast' | 'charged' | 'max';
 
 interface TypeCounts {
   pokemon: number;
@@ -173,6 +173,8 @@ interface TypeCounts {
   typedFastMoves: number;
   chargedMoves: number;
   typedChargedMoves: number;
+  maxMoves: number;
+  typedMaxMoves: number;
 }
 
 interface TypePage<T> {
@@ -288,7 +290,9 @@ const SearchTypes = (props: IStyleSheetData) => {
   const dualPokemon = useTypeResult<IPokemonData>('pokemon-dual', currentType, releasedGO);
   const fastMoves = useTypeResult<ICombat>('fast', currentType, releasedGO);
   const chargedMoves = useTypeResult<ICombat>('charged', currentType, releasedGO);
-  const counts = singlePokemon.counts ?? dualPokemon.counts ?? fastMoves.counts ?? chargedMoves.counts;
+  const maxMoves = useTypeResult<ICombat>('max', currentType, releasedGO);
+  const counts =
+    singlePokemon.counts ?? dualPokemon.counts ?? fastMoves.counts ?? chargedMoves.counts ?? maxMoves.counts;
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PokéGO Breeze - Type',
@@ -379,6 +383,14 @@ const SearchTypes = (props: IStyleSheetData) => {
             </div>
             <strong>{toNumber(counts?.typedChargedMoves)}</strong>
             <span>{`${percentage(counts?.typedChargedMoves, counts?.chargedMoves)}% of ${toNumber(counts?.chargedMoves)}`}</span>
+          </div>
+          <div className="type-overview-metric">
+            <div className="type-overview-label">
+              <img alt="Max Move" height={30} src={APIService.getItemSprite('Item_1202')} />
+              <span>Max Moves</span>
+            </div>
+            <strong>{toNumber(counts?.typedMaxMoves)}</strong>
+            <span>{`${percentage(counts?.typedMaxMoves, counts?.maxMoves)}% of ${toNumber(counts?.maxMoves)}`}</span>
           </div>
         </div>
       </section>
@@ -490,6 +502,33 @@ const SearchTypes = (props: IStyleSheetData) => {
                   isShowSearch
                   inputPlaceholder="Search Move Name or ID"
                   onSearchTermChange={chargedMoves.setSearch}
+                  debounceTime={300}
+                />
+              ),
+            },
+            {
+              label: 'Max Moves',
+              children: (
+                <CustomDataTable
+                  customColumns={columnMove}
+                  data={maxMoves.data}
+                  pagination
+                  paginationServer
+                  paginationTotalRows={maxMoves.total}
+                  paginationResetDefaultPage={maxMoves.resetPaginationToggle}
+                  paginationPerPage={50}
+                  paginationComponentOptions={{ noRowsPerPage: true }}
+                  onChangePage={maxMoves.setPage}
+                  sortServer
+                  onSort={(column, direction) => maxMoves.onSort(column.id, direction)}
+                  defaultSortFieldId={ColumnType.Name}
+                  highlightOnHover
+                  striped
+                  progressPending={maxMoves.loading}
+                  progressComponent={<CircularProgressTable />}
+                  isShowSearch
+                  inputPlaceholder="Search Max Move Name or ID"
+                  onSearchTermChange={maxMoves.setSearch}
                   debounceTime={300}
                 />
               ),

@@ -437,6 +437,7 @@ const StatsRanking = () => {
                 key={`${select.num}-${select.fullName ?? select.form ?? ''}-${select.pokemonType ?? ''}`}
                 moveData={moveRanking?.moves}
                 rankMoveData={moveRanking?.bestMoves}
+                pokemonType={select.pokemonType}
                 isLoading={movesLoading || moveRankings?.id !== select.num}
                 maxHeight={400}
               />

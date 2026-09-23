@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/api.service';
-import { splitAndCapitalize } from '../../utils/utils';
+import { getWeatherDisplayName } from '../../utils/utils';
 import { IWeatherComponent } from '../models/component.model';
 import { isNotEmpty } from '../../utils/extension';
 import { combineClasses } from '../../utils/extension';
@@ -23,7 +23,7 @@ const Weather = (props: IWeatherComponent) => {
               <div className="tw-text-center tw-flex" key={index}>
                 <div>
                   <img height={50} alt="Pokémon Image" src={APIService.getWeatherSprite(value)} />
-                  <span className="caption tw-text-default">{splitAndCapitalize(value, /(?=[A-Z])/, ' ')}</span>
+                  <span className="caption tw-text-default">{getWeatherDisplayName(value)}</span>
                 </div>
               </div>
             ))}

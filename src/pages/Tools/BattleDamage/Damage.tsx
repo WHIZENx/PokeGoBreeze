@@ -164,7 +164,7 @@ const Damage = () => {
           move: {
             type: getValueOrDefault(String, move.type),
             power: battleState.isTrainer ? move.pvpPower : move.pvePower,
-            charged: move.typeMove === TypeMove.Charge,
+            charged: move.typeMove === TypeMove.Charged,
           },
           battle: {
             isWb: battleState.isWeather,
@@ -384,7 +384,7 @@ const Damage = () => {
                       value={battleState.throwLevel}
                       onChangeSelect={(throwLevel) => setBattleState({ ...battleState, throwLevel })}
                       menuItems={throwChargeMenuItems}
-                      disabled={!isTrainer || move?.typeMove !== TypeMove.Charge}
+                      disabled={!isTrainer || move?.typeMove !== TypeMove.Charged}
                     />
                   </Box>
                   <ButtonMui

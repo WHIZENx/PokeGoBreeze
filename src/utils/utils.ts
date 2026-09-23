@@ -244,6 +244,11 @@ export const splitAndCapitalize = (
     defaultText
   );
 
+export const getWeatherDisplayName = (weather: string | undefined | null) => {
+  const weatherKey = camelCase(weather);
+  return weatherKey === 'overcast' ? 'Cloudy' : splitAndCapitalize(weatherKey, /(?=[A-Z])/, ' ');
+};
+
 export const reversedCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') =>
   getValueOrDefault(String, str?.replaceAll(joinBy, splitBy).toLowerCase(), defaultText);
 
@@ -761,7 +766,7 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   }
 
   const fastMoves = getAllMoves(pokemon, TypeMove.Fast);
-  const chargeMoves = getAllMoves(pokemon, TypeMove.Charge);
+  const chargeMoves = getAllMoves(pokemon, TypeMove.Charged);
   return isNotEmpty(fastMoves) && isNotEmpty(chargeMoves);
 };
 
@@ -1040,22 +1045,24 @@ export const getAllMoves = (
   const fastMove = getValueOrDefault(Array, pokemon?.quickMoves).concat(
     getValueOrDefault(Array, pokemon?.eliteQuickMoves)
   );
-  const chargeMoves = getValueOrDefault(Array, pokemon?.cinematicMoves).concat(
+  const chargedMoves = getValueOrDefault(Array, pokemon?.cinematicMoves).concat(
     getValueOrDefault(Array, pokemon?.eliteCinematicMoves),
     getValueOrDefault(Array, pokemon?.shadowMoves),
     getValueOrDefault(Array, pokemon?.purifiedMoves),
     getValueOrDefault(Array, pokemon?.specialMoves),
-    getValueOrDefault(Array, pokemon?.exclusiveMoves),
-    getValueOrDefault(Array, pokemon?.dynamaxMoves)
+    getValueOrDefault(Array, pokemon?.exclusiveMoves)
   );
+  const maxMoves = getValueOrDefault(Array, pokemon?.dynamaxMoves);
   switch (moveType) {
     case TypeMove.Fast:
       return fastMove;
-    case TypeMove.Charge:
-      return chargeMoves;
+    case TypeMove.Charged:
+      return chargedMoves;
+    case TypeMove.Max:
+      return maxMoves;
     case TypeMove.All:
     default:
-      return fastMove.concat(chargeMoves);
+      return fastMove.concat(chargedMoves, maxMoves);
   }
 };
 
@@ -1112,14 +1119,16 @@ export const addSelectMovesByType = (
     push(pokemonData.quickMoves, MoveType.None);
     push(pokemonData.eliteQuickMoves, MoveType.Elite);
   }
-  if (moveType === TypeMove.Charge || moveType === TypeMove.All) {
+  if (moveType === TypeMove.Charged || moveType === TypeMove.All) {
     push(pokemonData.cinematicMoves, MoveType.None);
     push(pokemonData.eliteCinematicMoves, MoveType.Elite);
     push(pokemonData.shadowMoves, MoveType.Shadow);
     push(pokemonData.purifiedMoves, MoveType.Purified);
     push(pokemonData.specialMoves, MoveType.Special);
     push(pokemonData.exclusiveMoves, MoveType.Exclusive);
-    push(pokemonData.dynamaxMoves, MoveType.Dynamax);
+  }
+  if (moveType === TypeMove.Max || moveType === TypeMove.All) {
+    push(pokemonData.dynamaxMoves, MoveType.Max);
   }
   return selectMoves;
 };
@@ -1139,7 +1148,7 @@ export const getMoveType = (pokemonData?: Partial<IPokemonData | IPokemonDetail>
   } else if (isIncludeList(pokemonData?.exclusiveMoves, moveName)) {
     return MoveType.Exclusive;
   } else if (isIncludeList(pokemonData?.dynamaxMoves, moveName)) {
-    return MoveType.Dynamax;
+    return MoveType.Max;
   } else if (!isIncludeList(getAllMoves(pokemonData), moveName)) {
     return MoveType.Unavailable;
   }
@@ -1173,7 +1182,7 @@ export const getPokemonClass = (className?: string | number | null): PokemonClas
     return PokemonClass.Legendary;
   }
   if (isInclude(className, classMythic(), IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return PokemonClass.Mythic;
+    return PokemonClass.Mythical;
   }
   if (isInclude(className, classUltraBeast(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonClass.UltraBeast;

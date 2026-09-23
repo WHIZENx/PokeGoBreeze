@@ -55,7 +55,6 @@ const TrainerMoveSelect = ({ pokemon, combats, selection, onChange }: TrainerMov
         ...(pokemon.purifiedMoves ?? []),
         ...(pokemon.specialMoves ?? []),
         ...(pokemon.exclusiveMoves ?? []),
-        ...(pokemon.dynamaxMoves ?? []),
       ]),
     [combatByName, pokemon]
   );

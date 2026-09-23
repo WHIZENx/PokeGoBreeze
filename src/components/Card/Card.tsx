@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { ICardTypeComponent } from '../models/component.model';
 import { CardType, MoveType } from '../../enums/type.enum';
 import { combineClasses, getValueOrDefault } from '../../utils/extension';
-import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
+import { getKeyWithData, getWeatherDisplayName, splitAndCapitalize } from '../../utils/utils';
 import IconType from '../Sprites/Icon/Type/Type';
 import APIService from '../../services/api.service';
 import useCombats from '../../composables/useCombats';
@@ -46,7 +46,11 @@ const Card = (props: ICardTypeComponent) => {
           )}
           <span className={props.cardType === CardType.Move ? 'tw-mr-1' : ''}>
             <b>{`${splitAndCapitalize(
-              getValueOrDefault(String, props.cardType === CardType.Move ? move?.name : props.name, props.value),
+              getValueOrDefault(
+                String,
+                props.cardType === CardType.Move ? move?.name : props.name,
+                props.cardType === CardType.Weather ? getWeatherDisplayName(props.value) : props.value
+              ),
               '_',
               ' '
             )} `}</b>

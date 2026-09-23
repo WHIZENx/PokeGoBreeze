@@ -27,8 +27,8 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
         simpleMove = addSelectMovesByType(result, TypeMove.Fast, simpleMove);
         setCountFM(simpleMove.length);
       }
-      if (!props.type || props.type === TypeMove.Charge) {
-        simpleMove = addSelectMovesByType(result, TypeMove.Charge, simpleMove);
+      if (!props.type || props.type === TypeMove.Charged) {
+        simpleMove = addSelectMovesByType(result, TypeMove.Charged, simpleMove);
       }
       if (
         props.move &&

@@ -1,8 +1,9 @@
 export enum TypeMove {
   Fast = 1,
-  Charge,
-  All,
-  None,
+  Charged = 2,
+  All = 3,
+  None = 4,
+  Max = 5,
 }
 
 export enum TypeTheme {
@@ -11,26 +12,26 @@ export enum TypeTheme {
 }
 
 export enum TypeRaid {
-  Pokemon,
-  Boss,
+  Pokemon = 0,
+  Boss = 1,
 }
 
 export enum TypeSex {
-  Genderless,
-  Male,
-  Female,
+  Genderless = 0,
+  Male = 1,
+  Female = 2,
 }
 
 export enum TypeAction {
-  Prod,
-  Atk,
-  Def,
-  Sta,
+  Prod = 0,
+  Atk = 1,
+  Def = 2,
+  Sta = 3,
 }
 
 export enum BuffType {
-  Target,
-  Attacker,
+  Target = 0,
+  Attacker = 1,
 }
 
 export enum GlobalType {
@@ -57,47 +58,53 @@ export enum VariantType {
 }
 
 export enum CardType {
-  Type,
-  Weather,
-  Move,
+  Type = 0,
+  Weather = 1,
+  Move = 2,
 }
 
 export enum MoveType {
-  None,
-  Shadow,
-  Purified,
-  Elite,
-  Special,
-  Exclusive,
-  Dynamax,
-  Unavailable,
-  Disable,
+  None = 0,
+  Shadow = 1,
+  Purified = 2,
+  Elite = 3,
+  Special = 4,
+  Exclusive = 5,
+  Max = 6,
+  Unavailable = 7,
+  Disable = 8,
+}
+
+export enum MaxMoveType {
+  Attack = 'attack',
+  Guard = 'guard',
+  Spirit = 'spirit',
 }
 
 export enum PokemonType {
-  None,
-  Normal,
-  Shadow,
-  Purified,
-  Mega,
-  Primal,
-  GMax,
-  Buddy,
-  Lucky,
+  None = 0,
+  Normal = 1,
+  Shadow = 2,
+  Purified = 3,
+  Mega = 4,
+  Primal = 5,
+  GMax = 6,
+  Buddy = 7,
+  Lucky = 8,
 }
 
 export enum PokemonClass {
-  None,
-  Legendary,
-  Mythic,
-  UltraBeast,
+  None = 0,
+  Legendary = 1,
+  Mythical = 2,
+  UltraBeast = 3,
 }
 
 export enum ThrowType {
-  Normal,
-  Nice,
-  Great,
-  Excellent,
+  Normal = 0,
+  Nice = 1,
+  Great = 2,
+  Excellent = 3,
 }
 
 export enum ColumnType {

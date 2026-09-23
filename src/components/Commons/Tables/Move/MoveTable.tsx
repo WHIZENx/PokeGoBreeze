@@ -10,7 +10,7 @@ import { IPokemonQueryMove, IPokemonQueryRankMove } from '../../../../utils/mode
 import { ITableMoveComponent } from '../../models/component.model';
 import { combineClasses, DynamicObj, getPropertyName, toFloatWithPadding, toNumber } from '../../../../utils/extension';
 import { TableType, TypeSorted } from './enums/table-type.enum';
-import { MoveType } from '../../../../enums/type.enum';
+import { MoveType, PokemonType } from '../../../../enums/type.enum';
 import { LinkToTop } from '../../../Link/LinkToTop';
 import { FloatPaddingOption } from '../../../../utils/models/extension.model';
 import IconType from '../../../Sprites/Icon/Type/Type';
@@ -65,6 +65,7 @@ const TableMove = (props: ITableMoveComponent) => {
 
   const move = props.rankMoveData ?? cachedRankMoveData.current ?? emptyMoveRanking;
   const moveOrigin = props.moveData ?? cachedMoveData.current;
+  const showMaxMoves = props.pokemonType === PokemonType.GMax && Boolean(moveOrigin?.dynamaxMoves.length);
 
   const [stateSorted, setStateSorted] = useState(
     new TableSort({
@@ -305,7 +306,12 @@ const TableMove = (props: ITableMoveComponent) => {
             {
               label: 'Moves List',
               renderChildren: () => (
-                <div className="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-items-start tw-w-full tw-bg-table-info">
+                <div
+                  className={combineClasses(
+                    'tw-grid tw-grid-cols-1 tw-items-start tw-w-full tw-bg-table-info',
+                    showMaxMoves ? 'lg:tw-grid-cols-3' : 'lg:tw-grid-cols-2'
+                  )}
+                >
                   <div className="table-moves-col tw-min-w-0" style={{ maxHeight: props.maxHeight }}>
                     <table className="table-moves">
                       <colgroup className="main-move" />
@@ -335,13 +341,25 @@ const TableMove = (props: ITableMoveComponent) => {
                               moveOrigin.purifiedMoves,
                               moveOrigin.shadowMoves,
                               moveOrigin.specialMoves,
-                              moveOrigin.exclusiveMoves,
-                              moveOrigin.dynamaxMoves
+                              moveOrigin.exclusiveMoves
                             )
                           )}
                       </tbody>
                     </table>
                   </div>
+                  {showMaxMoves && moveOrigin && (
+                    <div className="table-moves-col tw-min-w-0" style={{ maxHeight: props.maxHeight }}>
+                      <table className="table-moves">
+                        <colgroup className="main-move" />
+                        <thead>
+                          <tr className="tw-text-center">
+                            <th className="table-sub-header">Max Moves</th>
+                          </tr>
+                        </thead>
+                        <tbody>{renderMoveSetTable(moveOrigin.dynamaxMoves)}</tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               ),
             },

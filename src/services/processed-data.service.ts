@@ -2,7 +2,7 @@ import APIService from './api.service';
 import { APIUrl } from './constants';
 import type { AxiosRequestConfig } from 'axios';
 
-export const PROCESSED_DATA_SCHEMA_VERSION = 4;
+export const PROCESSED_DATA_SCHEMA_VERSION = 5;
 
 export class UnsupportedProcessedDataSchemaError extends Error {
   constructor(actualVersion: unknown) {
