@@ -244,6 +244,11 @@ export const splitAndCapitalize = (
     defaultText
   );
 
+export const getWeatherDisplayName = (weather: string | undefined | null) => {
+  const weatherKey = camelCase(weather);
+  return weatherKey === 'overcast' ? 'Cloudy' : splitAndCapitalize(weatherKey, /(?=[A-Z])/, ' ');
+};
+
 export const reversedCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') =>
   getValueOrDefault(String, str?.replaceAll(joinBy, splitBy).toLowerCase(), defaultText);
 
