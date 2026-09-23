@@ -635,7 +635,7 @@ const DpsTdo = () => {
                     }
                   />
                 }
-                label={getKeyWithData(PokemonClass, PokemonClass.Mythic)}
+                label={getKeyWithData(PokemonClass, PokemonClass.Mythical)}
               />
               <FormControlLabel
                 control={
@@ -728,7 +728,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableMythic: check })}
                   />
                 }
-                label={getKeyWithData(PokemonClass, PokemonClass.Mythic)}
+                label={getKeyWithData(PokemonClass, PokemonClass.Mythical)}
               />
               <FormControlLabel
                 control={
@@ -820,7 +820,7 @@ const DpsTdo = () => {
                     }
                     move={cMoveTargetPokemon}
                     setMovePokemon={setCMoveTargetPokemon}
-                    moveType={TypeMove.Charge}
+                    moveType={TypeMove.Charged}
                     isDisable={isShowSpinner}
                   />
                 </Box>

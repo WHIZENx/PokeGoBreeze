@@ -1,4 +1,4 @@
-import { BuffType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
+import { BuffType, MaxMoveType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { BonusType } from '../enums/bonus-type.enum';
 import { MoveSetting } from './options.model';
@@ -164,6 +164,7 @@ export interface ICombat {
   abbreviation?: string;
   isMultipleWithType: boolean;
   moveType?: MoveType;
+  maxMoveType?: MaxMoveType;
   bonus?: IBonus;
 }
 
@@ -189,6 +190,7 @@ export class Combat implements ICombat {
   abbreviation?: string;
   isMultipleWithType = false;
   moveType?: MoveType;
+  maxMoveType?: MaxMoveType;
   bonus?: IBonus;
 
   static create(value: ICombat) {

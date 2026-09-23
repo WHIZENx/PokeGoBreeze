@@ -172,6 +172,8 @@ interface IFilter {
   fMoveName: string;
   cMoveType: SelectType;
   cMoveName: string;
+  mMoveType: SelectType;
+  mMoveName: string;
 }
 
 class Filter implements IFilter {
@@ -179,6 +181,8 @@ class Filter implements IFilter {
   fMoveName = '';
   cMoveType = SelectType.All;
   cMoveName = '';
+  mMoveType = SelectType.All;
+  mMoveName = '';
 
   static create(value: IFilter) {
     const obj = new Filter();
@@ -196,14 +200,17 @@ const Search = () => {
   });
   const [filters, setFilters] = useState(new Filter());
 
-  const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
+  const { fMoveType, fMoveName, cMoveType, cMoveName, mMoveType, mMoveName } = filters;
 
   const fastMoves = useMoveResults(TypeMove.Fast, fMoveType, fMoveName);
-  const chargedMoves = useMoveResults(TypeMove.Charge, cMoveType, cMoveName);
+  const chargedMoves = useMoveResults(TypeMove.Charged, cMoveType, cMoveName);
+  const maxMoves = useMoveResults(TypeMove.Max, mMoveType, mMoveName);
 
   const setMoveByType = (category: TypeMove, value: SelectType) => {
     if (category === TypeMove.Fast) {
       setFilters(Filter.create({ ...filters, fMoveType: value }));
+    } else if (category === TypeMove.Max) {
+      setFilters(Filter.create({ ...filters, mMoveType: value }));
     } else {
       setFilters(Filter.create({ ...filters, cMoveType: value }));
     }
@@ -212,6 +219,8 @@ const Search = () => {
   const setMoveNameByType = (category: TypeMove, value: string) => {
     if (category === TypeMove.Fast) {
       setFilters(Filter.create({ ...filters, fMoveName: value }));
+    } else if (category === TypeMove.Max) {
+      setFilters(Filter.create({ ...filters, mMoveName: value }));
     } else {
       setFilters(Filter.create({ ...filters, cMoveName: value }));
     }
@@ -299,7 +308,8 @@ const Search = () => {
       <div className="table-head">Moveset list in Pokémon GO</div>
       <div className="row tw-w-full !tw-m-0">
         {moveList(fastMoves, fMoveType, fMoveName, TypeMove.Fast)}
-        {moveList(chargedMoves, cMoveType, cMoveName, TypeMove.Charge)}
+        {moveList(chargedMoves, cMoveType, cMoveName, TypeMove.Charged)}
+        {moveList(maxMoves, mMoveType, mMoveName, TypeMove.Max)}
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Checkbox, Skeleton } from '@mui/material';
-import { BuffType, ColumnType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
+import { BuffType, ColumnType, MaxMoveType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
@@ -331,7 +331,8 @@ const Move = (props: IMovePage) => {
     if (move) {
       const moveName = splitAndCapitalize(move.name.toLowerCase(), '_', ' ');
       const moveTypeName = capitalize(move.type);
-      const moveCategory = move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged';
+      const moveCategory =
+        move.typeMove === TypeMove.Fast ? 'Fast' : move.typeMove === TypeMove.Max ? 'Max' : 'Charged';
       setTitleProps({
         title: `${moveName} - ${moveTypeName} ${moveCategory} Move | PokéGO Breeze`,
         description: `${moveName} is a ${moveTypeName}-type ${moveCategory} move in Pokémon GO (#${move.track}). View power, energy cost, DPS, and which Pokémon can learn it.`,
@@ -455,6 +456,14 @@ const Move = (props: IMovePage) => {
                   <b>{move && `${getKeyWithData(TypeMove, move.typeMove)} Move`}</b>
                 </td>
               </tr>
+              {move?.typeMove === TypeMove.Max && move.maxMoveType && (
+                <tr>
+                  <td>Max Move Type</td>
+                  <td colSpan={2}>
+                    <b>{getKeyWithData(MaxMoveType, move.maxMoveType)}</b>
+                  </td>
+                </tr>
+              )}
               <tr>
                 <td>Weather Boosts</td>
                 <td colSpan={2}>
@@ -503,7 +512,7 @@ const Move = (props: IMovePage) => {
                   {move?.pveEnergy}
                 </td>
               </tr>
-              {move?.typeMove === TypeMove.Charge && (
+              {move?.typeMove === TypeMove.Charged && (
                 <tr>
                   <td>PVE Bar Charged</td>
                   <td colSpan={2}>
@@ -543,7 +552,7 @@ const Move = (props: IMovePage) => {
                   {move?.pvpEnergy}
                 </td>
               </tr>
-              {move?.typeMove === TypeMove.Charge && (
+              {move?.typeMove === TypeMove.Charged && (
                 <tr>
                   <td>PVP Bar Charged</td>
                   <td colSpan={2}>

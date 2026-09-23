@@ -257,6 +257,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             key={`${props.defaultId}-${searchingMainDetails?.fullName ?? searchingMainDetails?.form ?? ''}-${searchingMainDetails?.pokemonType ?? ''}`}
             moveData={moveRanking?.moves}
             rankMoveData={moveRanking?.bestMoves}
+            pokemonType={searchingMainDetails?.pokemonType}
             isLoading={!props.isLoadedForms}
           />
           <Counter pokemonData={searchingMainDetails} />

@@ -24,7 +24,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       props.setFMovePokemon(findMove(value, TypeMove.Fast));
     }
     if (props.isSelected && props.setCMovePokemon) {
-      props.setCMovePokemon(findMove(value, TypeMove.Charge));
+      props.setCMovePokemon(findMove(value, TypeMove.Charged));
     }
     if (props.clearData) {
       props.clearData();

@@ -164,7 +164,7 @@ const DamageTable = (props: IDamageTableComponent) => {
             <tr>
               <td>Charge ability</td>
               <td>
-                {props.result.battleState?.isTrainer && props.result.move?.typeMove === TypeMove.Charge
+                {props.result.battleState?.isTrainer && props.result.move?.typeMove === TypeMove.Charged
                   ? capitalize(Object.keys(getThrowCharge()).at(toNumber(props.result.battleState.throwLevel)))
                   : '-'}
               </td>

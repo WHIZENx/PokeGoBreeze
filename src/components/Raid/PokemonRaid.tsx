@@ -123,7 +123,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         }
         move={cMoveTargetPokemon}
         setMovePokemon={setCMoveTargetPokemon}
-        moveType={TypeMove.Charge}
+        moveType={TypeMove.Charged}
         emptyText="- Please select Pokémon -"
       />
     </div>
