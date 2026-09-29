@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import APIService from '../../../services/api.service';
 
 import './Leagues.scss';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import {
   getTime,
   splitAndCapitalize,
@@ -76,6 +76,18 @@ const Leagues = () => {
   const [rank, setRank] = useState(1);
   const [setting, setSetting] = useState<SettingLeague>();
   const [showData, setShowData] = useState<RewardDialogData>();
+  const scheduleDisplay = useMemo(() => {
+    const now = Date.now();
+    const windows = leaguesData.schedules
+      .flatMap((season) => season.windows.map((window) => ({ ...window, seasonTitle: season.seasonTitle })))
+      .sort((a, b) => a.start - b.start);
+    const currentOrUpcoming = windows.filter((window) => window.end >= now).slice(0, 4);
+    return {
+      windows: currentOrUpcoming.length ? currentOrUpcoming : windows.slice(-3),
+      hasCurrentOrUpcoming: currentOrUpcoming.length > 0,
+      now,
+    };
+  }, [leaguesData.schedules]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -471,6 +483,43 @@ const Leagues = () => {
           />
         </div>
       </div>
+      {scheduleDisplay.windows.length ? (
+        <section className="tw-my-3" aria-labelledby="league-rotation-heading">
+          <div className="tw-flex tw-flex-wrap tw-items-baseline tw-justify-between tw-gap-2">
+            <h3 id="league-rotation-heading" className="tw-m-0 tw-text-lg tw-font-semibold">
+              GO Battle League rotations
+            </h3>
+            {!scheduleDisplay.hasCurrentOrUpcoming ? (
+              <span className="caption">No current or upcoming rotation is available in the published schedule.</span>
+            ) : null}
+          </div>
+          <div className="tw-mt-2 tw-grid tw-grid-cols-1 tw-gap-2 md:tw-grid-cols-2 xl:tw-grid-cols-4">
+            {scheduleDisplay.windows.map((window) => {
+              const status =
+                window.start <= scheduleDisplay.now && window.end > scheduleDisplay.now
+                  ? 'Current'
+                  : window.start > scheduleDisplay.now
+                    ? 'Upcoming'
+                    : 'Ended';
+              return (
+                <article
+                  className="tw-rounded tw-border tw-border-solid tw-border-gray-300 tw-bg-table-primary tw-p-3"
+                  key={`${window.start}-${window.end}-${window.leagueIds.join('-')}`}
+                >
+                  <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
+                    <b>{status}</b>
+                    <span className="caption">Season {window.seasonTitle}</span>
+                  </div>
+                  <span className="tw-block tw-text-sm">
+                    {getTime(window.start)} – {getTime(window.end)}
+                  </span>
+                  <span className="tw-mt-1 tw-block">{window.leagueTitles.join(' · ')}</span>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
       {isNotEmpty(leaguesData.data) ? (
         <Fragment>
           <div className="tw-flex tw-justify-center tw-mt-2">

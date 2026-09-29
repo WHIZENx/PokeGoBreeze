@@ -180,7 +180,7 @@ export interface DamageBattleRequest {
     pokemonType: number;
     types: string[];
   };
-  move: { type: string; power: number; charged: boolean };
+  move: { type: string; power: number; charged: boolean; typeMove: number };
   battle: {
     isWb: boolean;
     isDodge: boolean;

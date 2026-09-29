@@ -236,6 +236,7 @@ export interface PokemonModel {
   shadow?: ShadowSetting;
   buddyGroupNumber: number;
   buddyWalkedMegaEnergyAward: number;
+  breadTierGroup?: string;
   nonTmCinematicMoves?: (string | number)[];
   obSpecialAttackMoves?: (string | number)[];
   eliteQuickMove?: (string | number)[];
@@ -315,6 +316,8 @@ export interface IPokemonData {
   specialMoves?: string[];
   exclusiveMoves?: string[];
   dynamaxMoves?: string[];
+  breadTierGroup?: string;
+  maxMoveCosts?: MaxMoveCosts;
   eliteQuickMoves?: string[];
   eliteCinematicMoves?: string[];
   shadowMoves?: string[];
@@ -325,6 +328,22 @@ export interface IPokemonData {
   thirdMove?: IPokemonTypeCost;
   encounter?: IEncounter;
   pokemonType: PokemonType;
+}
+
+export interface MaxMoveUpgradeCost {
+  level: number;
+  mpCost?: number;
+  candyCost?: number;
+  xlCandyCost?: number;
+  stardustCost?: number;
+  xpReward?: number;
+}
+
+export interface MaxMoveCosts {
+  group: string;
+  attack: MaxMoveUpgradeCost[];
+  guard: MaxMoveUpgradeCost[];
+  spirit: MaxMoveUpgradeCost[];
 }
 
 export interface IPokemonName {
@@ -544,6 +563,8 @@ export class PokemonData implements IPokemonData {
   specialMoves?: string[];
   exclusiveMoves?: string[];
   dynamaxMoves?: string[];
+  breadTierGroup?: string;
+  maxMoveCosts?: MaxMoveCosts;
   eliteQuickMoves?: string[];
   eliteCinematicMoves?: string[];
   shadowMoves?: string[];
@@ -645,6 +666,7 @@ export class PokemonData implements IPokemonData {
     obj.encounter = pokemon.encounter;
     obj.hasShadowForm = Boolean(pokemon.shadow);
     obj.formChange = pokemon.formChange;
+    obj.breadTierGroup = pokemon.breadTierGroup;
 
     obj.quickMoves = UniqValueInArray(pokemon.quickMoves?.map((move) => replaceTempMoveName(move)));
     obj.cinematicMoves = UniqValueInArray(pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move)));
@@ -714,6 +736,7 @@ export class PokemonDataModel {
   shadow?: ShadowSetting | undefined;
   buddyGroupNumber = 0;
   buddyWalkedMegaEnergyAward = 0;
+  breadTierGroup?: string;
   nonTmCinematicMoves?: (string | number)[] | undefined;
   obSpecialAttackMoves?: (string | number)[] | undefined;
   eliteQuickMove?: (string | number)[] | undefined;

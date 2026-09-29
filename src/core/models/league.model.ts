@@ -165,12 +165,28 @@ export interface ILeagueData {
   allowLeagues: string[];
   data: ILeague[];
   season: ISeason;
+  schedules: ILeagueScheduleSeason[];
+}
+
+export interface ILeagueScheduleWindow {
+  start: number;
+  end: number;
+  leagueTemplateIds: string[];
+  leagueIds: string[];
+  leagueTitles: string[];
+}
+
+export interface ILeagueScheduleSeason {
+  seasonTitle: string;
+  descriptionKey?: string;
+  windows: ILeagueScheduleWindow[];
 }
 
 export class LeagueData implements ILeagueData {
   allowLeagues: string[] = [];
   data: ILeague[] = [];
   season = new Season();
+  schedules: ILeagueScheduleSeason[] = [];
 }
 
 export class League implements ILeague {

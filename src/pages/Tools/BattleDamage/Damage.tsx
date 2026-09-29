@@ -26,7 +26,7 @@ import {
   safeObjectEntries,
   toNumber,
 } from '../../../utils/extension';
-import { PokemonType, ThrowType, TypeMove } from '../../../enums/type.enum';
+import { MaxMoveType, PokemonType, ThrowType, TypeMove } from '../../../enums/type.enum';
 import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
@@ -34,6 +34,7 @@ import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import APIService from '../../../services/api.service';
 import useSpinner from '../../../composables/useSpinner';
+import { defaultMaxMoveLevel, getMaxMoveLevelValue } from '../../../utils/max-move';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -93,6 +94,7 @@ const Damage = () => {
   const { searchingToolCurrentData, searchingToolObjectData } = useSearch();
 
   const [move, setMove] = useState<ICombat>();
+  const [maxMoveLevel, setMaxMoveLevel] = useState(defaultMaxMoveLevel);
 
   const [statLevel, setStatLevel] = useState(1);
   const [statType, setStatType] = useState(PokemonType.Normal);
@@ -107,6 +109,10 @@ const Damage = () => {
 
   const { showSnackbar } = useSnackbar();
   const { showSpinner, hideSpinner } = useSpinner();
+  const isMaxMove = move?.typeMove === TypeMove.Max;
+  const selectedMovePower = isMaxMove
+    ? toNumber(getMaxMoveLevelValue(move, maxMoveLevel))
+    : toNumber(battleState.isTrainer ? move?.pvpPower : move?.pvePower);
 
   const throwChargeMenuItems = useMemo(
     () =>
@@ -130,6 +136,24 @@ const Damage = () => {
   const clearMove = () => {
     setMove(undefined);
     clearData();
+  };
+
+  const selectMove = (selected?: ICombat) => {
+    setMove(selected);
+    clearData();
+    if (selected?.typeMove === TypeMove.Max && (battleState.isTrainer || battleState.isDodge)) {
+      if (battleState.isTrainer) {
+        setEnableFriend(false);
+      }
+      setBattleState(
+        Filter.create({
+          ...battleState,
+          isTrainer: false,
+          isDodge: false,
+          friendshipLevel: battleState.isTrainer ? 0 : battleState.friendshipLevel,
+        })
+      );
+    }
   };
 
   const onCalculateDamagePoke = useCallback(
@@ -163,13 +187,14 @@ const Damage = () => {
           },
           move: {
             type: getValueOrDefault(String, move.type),
-            power: battleState.isTrainer ? move.pvpPower : move.pvePower,
+            power: selectedMovePower,
             charged: move.typeMove === TypeMove.Charged,
+            typeMove: move.typeMove,
           },
           battle: {
             isWb: battleState.isWeather,
             isDodge: battleState.isDodge,
-            isTrainer: battleState.isTrainer,
+            isTrainer: isMaxMove ? false : battleState.isTrainer,
             friendshipLevel: enableFriend ? battleState.friendshipLevel : 0,
             throwLevel: battleState.throwLevel,
             isMega: searchingToolCurrentData?.form?.form?.pokemonType === PokemonType.Mega,
@@ -186,6 +211,8 @@ const Damage = () => {
           PokemonDmgOption.create({
             battleState: data.battleState,
             move,
+            movePower: selectedMovePower,
+            maxMoveLevel: isMaxMove ? maxMoveLevel : undefined,
             damage: data.damage,
             hp: data.hp,
             currPoke: searchingToolCurrentData?.form,
@@ -206,6 +233,9 @@ const Damage = () => {
     [
       enableFriend,
       battleState,
+      isMaxMove,
+      maxMoveLevel,
+      selectedMovePower,
       move,
       searchingToolCurrentData?.form,
       searchingToolObjectData?.form,
@@ -294,8 +324,10 @@ const Damage = () => {
                     ? searchingToolCurrentData?.form.form?.name
                     : searchingToolCurrentData?.form?.form?.formName
                 )}
-                setMove={setMove}
+                setMove={selectMove}
                 move={move}
+                includeMaxMoves
+                maxMoveType={MaxMoveType.Attack}
                 isHighlight
                 pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
               />
@@ -315,12 +347,31 @@ const Damage = () => {
                     <p>
                       {'- Damage: '}
                       <b>
-                        {isTrainer ? move.pvpPower : move.pvePower}
+                        {selectedMovePower}
                         {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
                           <span className="caption-small tw-text-green-600"> (x1.2)</span>
                         )}
                       </b>
                     </p>
+                    {isMaxMove && (
+                      <>
+                        <SelectMui
+                          formClassName="tw-mt-2"
+                          formSx={{ width: 220 }}
+                          inputLabel="Max Move Level"
+                          value={maxMoveLevel}
+                          onChangeSelect={(value) => {
+                            setMaxMoveLevel(toNumber(value));
+                            clearData();
+                          }}
+                          menuItems={[1, 2, 3, 4].map((level) => ({
+                            value: level,
+                            label: level === 4 ? 'Level 4 (Adventure Effect)' : `Level ${level}`,
+                          }))}
+                        />
+                        <p className="caption tw-mt-2">Max Moves are available only in Max Battles.</p>
+                      </>
+                    )}
                   </div>
                 )}
                 <div className="tw-text-center">
@@ -332,11 +383,12 @@ const Damage = () => {
                   <FormControlLabel
                     control={<Checkbox checked={isDodge} onChange={handleCheckbox} name="isDodge" />}
                     label="Dodge"
-                    disabled={isTrainer}
+                    disabled={isTrainer || isMaxMove}
                   />
                   <FormControlLabel
                     control={<Checkbox checked={isTrainer} onChange={handleCheckbox} name="isTrainer" />}
                     label="Trainer"
+                    disabled={isMaxMove}
                   />
                   <Box className="tw-flex tw-items-center tw-justify-center">
                     <FormControlLabel
@@ -384,7 +436,7 @@ const Damage = () => {
                       value={battleState.throwLevel}
                       onChangeSelect={(throwLevel) => setBattleState({ ...battleState, throwLevel })}
                       menuItems={throwChargeMenuItems}
-                      disabled={!isTrainer || move?.typeMove !== TypeMove.Charged}
+                      disabled={isMaxMove || !isTrainer || move?.typeMove !== TypeMove.Charged}
                     />
                   </Box>
                   <ButtonMui

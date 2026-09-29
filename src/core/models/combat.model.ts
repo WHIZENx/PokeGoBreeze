@@ -1,7 +1,16 @@
-import { BuffType, MaxMoveType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
+import {
+  BuffType,
+  MaxMoveEffect,
+  MaxMoveType,
+  MaxMoveVariant,
+  MoveType,
+  TypeAction,
+  TypeMove,
+} from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { BonusType } from '../enums/bonus-type.enum';
 import { MoveSetting } from './options.model';
+import type { MaxMoveUpgradeCost } from './pokemon.model';
 
 export interface IBuff {
   type?: TypeAction;
@@ -92,14 +101,26 @@ interface SlowFreezeBonus {
 
 interface Attributes {
   combatTypes: string[];
-  attackMultiplier: number;
+  attackMultiplier?: number;
+  defenseMultiplier?: number;
 }
 
 interface AttackDefenseBonus {
   attributes: Attributes[];
 }
 
-export type BonusEffectType = SpaceBonus | TimeBonus | DayNightBonus | SlowFreezeBonus | AttackDefenseBonus;
+interface MaxMoveBonus {
+  excludedPokedexIds?: string[];
+  numAllMaxMoveLevelIncrease: number;
+}
+
+export type BonusEffectType =
+  | SpaceBonus
+  | TimeBonus
+  | DayNightBonus
+  | SlowFreezeBonus
+  | AttackDefenseBonus
+  | MaxMoveBonus;
 
 export interface IBonusEffect {
   spaceBonus?: SpaceBonus;
@@ -107,6 +128,7 @@ export interface IBonusEffect {
   dayNightBonus?: DayNightBonus;
   slowFreezeBonus?: SlowFreezeBonus;
   attackDefenseBonus?: AttackDefenseBonus;
+  maxMoveBonus?: MaxMoveBonus;
 }
 
 class BonusEffect implements IBonusEffect {
@@ -114,6 +136,8 @@ class BonusEffect implements IBonusEffect {
   timeBonus?: TimeBonus;
   dayNightBonus?: DayNightBonus;
   slowFreezeBonus?: SlowFreezeBonus;
+  attackDefenseBonus?: AttackDefenseBonus;
+  maxMoveBonus?: MaxMoveBonus;
 }
 
 interface IBonus {
@@ -165,6 +189,10 @@ export interface ICombat {
   isMultipleWithType: boolean;
   moveType?: MoveType;
   maxMoveType?: MaxMoveType;
+  maxMoveVariant?: MaxMoveVariant;
+  maxMoveEffect?: MaxMoveEffect;
+  maxMoveLevels?: number[];
+  maxMoveCosts?: MaxMoveUpgradeCost[];
   bonus?: IBonus;
 }
 
@@ -191,6 +219,10 @@ export class Combat implements ICombat {
   isMultipleWithType = false;
   moveType?: MoveType;
   maxMoveType?: MaxMoveType;
+  maxMoveVariant?: MaxMoveVariant;
+  maxMoveEffect?: MaxMoveEffect;
+  maxMoveLevels?: number[];
+  maxMoveCosts?: MaxMoveUpgradeCost[];
   bonus?: IBonus;
 
   static create(value: ICombat) {
