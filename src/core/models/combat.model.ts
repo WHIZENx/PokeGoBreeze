@@ -101,14 +101,26 @@ interface SlowFreezeBonus {
 
 interface Attributes {
   combatTypes: string[];
-  attackMultiplier: number;
+  attackMultiplier?: number;
+  defenseMultiplier?: number;
 }
 
 interface AttackDefenseBonus {
   attributes: Attributes[];
 }
 
-export type BonusEffectType = SpaceBonus | TimeBonus | DayNightBonus | SlowFreezeBonus | AttackDefenseBonus;
+interface MaxMoveBonus {
+  excludedPokedexIds?: string[];
+  numAllMaxMoveLevelIncrease: number;
+}
+
+export type BonusEffectType =
+  | SpaceBonus
+  | TimeBonus
+  | DayNightBonus
+  | SlowFreezeBonus
+  | AttackDefenseBonus
+  | MaxMoveBonus;
 
 export interface IBonusEffect {
   spaceBonus?: SpaceBonus;
@@ -116,6 +128,7 @@ export interface IBonusEffect {
   dayNightBonus?: DayNightBonus;
   slowFreezeBonus?: SlowFreezeBonus;
   attackDefenseBonus?: AttackDefenseBonus;
+  maxMoveBonus?: MaxMoveBonus;
 }
 
 class BonusEffect implements IBonusEffect {
@@ -123,6 +136,8 @@ class BonusEffect implements IBonusEffect {
   timeBonus?: TimeBonus;
   dayNightBonus?: DayNightBonus;
   slowFreezeBonus?: SlowFreezeBonus;
+  attackDefenseBonus?: AttackDefenseBonus;
+  maxMoveBonus?: MaxMoveBonus;
 }
 
 interface IBonus {

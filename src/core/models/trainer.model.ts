@@ -5,6 +5,7 @@ export interface AwardItem {
 
 export interface ITrainerLevelUp {
   level: number;
+  available: boolean;
   items: AwardItem[];
   itemsUnlock?: string[];
 }
@@ -40,6 +41,7 @@ export interface ITrainerBattlePreset {
 
 export class TrainerLevelUp implements ITrainerLevelUp {
   level = 0;
+  available = false;
   items: AwardItem[] = [];
   itemsUnlock?: string[];
 

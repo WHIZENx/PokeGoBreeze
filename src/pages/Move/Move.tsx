@@ -368,7 +368,8 @@ const Move = (props: IMovePage) => {
     if (
       isEqual(bonusType, BonusType.SpaceBonus) ||
       isEqual(bonusType, BonusType.SlowFreezeBonus) ||
-      isEqual(bonusType, BonusType.AttackDefenseBonus)
+      isEqual(bonusType, BonusType.AttackDefenseBonus) ||
+      isEqual(bonusType, BonusType.MaxMoveBonus)
     ) {
       return value;
     } else if (isEqual(bonusType, BonusType.TimeBonus)) {
@@ -846,36 +847,56 @@ const Move = (props: IMovePage) => {
                                         {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
                                       </td>
                                     </tr>
-                                    {safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
-                                      <Fragment key={j}>
-                                        {move?.bonus?.bonusEffect?.attackDefenseBonus ? (
-                                          move?.bonus?.bonusEffect?.attackDefenseBonus.attributes.map((attr, k) => (
-                                            <tr key={k}>
-                                              <td>
-                                                {splitAndCapitalize(key, /(?=[A-Z])/, ' ')}
-                                                <span className="caption">
-                                                  (
-                                                  {attr.combatTypes
-                                                    .map((type) => capitalize(type.replace('COMBAT_TYPE_', '')))
-                                                    .join(', ')}
-                                                  )
-                                                </span>
-                                              </td>
-                                              <td colSpan={2} key={j}>
-                                                {renderBonus(move.bonus?.bonusType, `x${attr.attackMultiplier}`)}
-                                              </td>
-                                            </tr>
-                                          ))
-                                        ) : (
-                                          <tr key={j}>
-                                            <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
-                                            <td colSpan={2} key={j}>
-                                              {renderBonus(move.bonus?.bonusType, value)}
+                                    {k === 'attackDefenseBonus' && move.bonus?.bonusEffect.attackDefenseBonus ? (
+                                      move.bonus?.bonusEffect.attackDefenseBonus.attributes.map((attr, index) => (
+                                        <tr key={index}>
+                                          <td>
+                                            {attr.attackMultiplier !== undefined
+                                              ? 'Attack multiplier'
+                                              : 'Defense multiplier'}
+                                            <span className="caption">
+                                              (
+                                              {attr.combatTypes
+                                                .map((type) => capitalize(type.replace('COMBAT_TYPE_', '')))
+                                                .join(', ')}
+                                              )
+                                            </span>
+                                          </td>
+                                          <td colSpan={2}>
+                                            {renderBonus(
+                                              move.bonus?.bonusType,
+                                              `x${attr.attackMultiplier ?? attr.defenseMultiplier}`
+                                            )}
+                                          </td>
+                                        </tr>
+                                      ))
+                                    ) : k === 'maxMoveBonus' && move.bonus?.bonusEffect.maxMoveBonus ? (
+                                      <Fragment>
+                                        <tr>
+                                          <td>All Max Move levels</td>
+                                          <td colSpan={2}>
+                                            +{move.bonus?.bonusEffect.maxMoveBonus.numAllMaxMoveLevelIncrease}
+                                          </td>
+                                        </tr>
+                                        {move.bonus?.bonusEffect.maxMoveBonus.excludedPokedexIds?.length ? (
+                                          <tr>
+                                            <td>Excluded Pokémon</td>
+                                            <td colSpan={2}>
+                                              {move.bonus.bonusEffect.maxMoveBonus.excludedPokedexIds
+                                                .map((id) => splitAndCapitalize(id.toLowerCase(), '_', ' '))
+                                                .join(', ')}
                                             </td>
                                           </tr>
-                                        )}
+                                        ) : null}
                                       </Fragment>
-                                    ))}
+                                    ) : (
+                                      safeObjectEntries<number | string[] | string>(v).map(([key, value], j) => (
+                                        <tr key={j}>
+                                          <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
+                                          <td colSpan={2}>{renderBonus(move.bonus?.bonusType, value)}</td>
+                                        </tr>
+                                      ))
+                                    )}
                                   </Fragment>
                                 ))}
                               </tbody>

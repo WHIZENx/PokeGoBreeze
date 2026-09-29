@@ -103,6 +103,7 @@ export interface ITempEvo {
   energyVariant?: 'X' | 'Y';
   superMax?: { unlockEnergy?: number; restHours?: number };
   additionalMove?: { name: string; type: string };
+  megaLevels?: IMegaLevelBenefit[];
   tempEvolutionName?: string;
   firstTempEvolution: string | number;
   tempEvolution: string | number;
@@ -113,6 +114,7 @@ export class TempEvo implements ITempEvo {
   energyVariant?: 'X' | 'Y';
   superMax?: { unlockEnergy?: number; restHours?: number };
   additionalMove?: { name: string; type: string };
+  megaLevels?: IMegaLevelBenefit[];
   tempEvolutionName?: string;
   firstTempEvolution: string | number = '';
   tempEvolution: string | number = '';
@@ -123,6 +125,20 @@ export class TempEvo implements ITempEvo {
     Object.assign(obj, value);
     return obj;
   }
+}
+
+export interface IMegaLevelBenefit {
+  level: number;
+  pointsRequired: number;
+  cooldownHours: number;
+  bypassEnergy: number;
+  differentTypeAttackBoost: number;
+  sameTypeAttackBoost: number;
+  sameTypeExtraCatchCandy: number;
+  sameTypeExtraCatchXp?: number;
+  sameTypeExtraCatchCandyXlChance?: number;
+  selfCpBoostAdditionalLevel?: number;
+  megaEnergyCostPerPoint?: number;
 }
 
 export interface IPokemonTypeCost {

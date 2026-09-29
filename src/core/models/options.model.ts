@@ -167,6 +167,18 @@ interface VsSeekerClientSetting {
   allowedVsSeekerLeagueTemplateId: string[];
 }
 
+interface VsSeekerScheduleSettings {
+  seasonSchedules: Array<{
+    seasonTitle: string;
+    descriptionKey?: string;
+    vsSeekerSchedules: Array<{
+      startTimeMs: string;
+      endTimeMs: string;
+      vsSeekerLeagueTempalteId: string[];
+    }>;
+  }>;
+}
+
 interface IPokemonFromReward {
   form: string;
 }
@@ -381,6 +393,7 @@ export interface PlayerLevel {
   cpMultiplier: number[];
   maxEncounterPlayerLevel: number;
   maxQuestEncounterPlayerLevel: number;
+  defaultLevelCap: number;
 }
 
 export interface LevelUpRewardSettings {
@@ -422,6 +435,12 @@ interface BreadSettings {
     form: string[];
     breadMode: string;
   }>;
+  maxStationedPokemon?: number;
+  maxStationedPokemonPerPlayer?: number;
+  breadBattleAvailability?: {
+    breadBattleAvailabilityStartMinute: number;
+    breadBattleAvailabilityEndMinute: number;
+  };
 }
 
 export interface MaxMoveUpgradeCost {
@@ -465,6 +484,57 @@ interface EncounterSettings {
   excellentThrowThreshold: number;
 }
 
+interface MpSettingsGM {
+  numMpFromWalkQuest: number;
+  numMetersGoal: number;
+  numMpFromLootStation: number;
+  numExtraMpFromFirstLootStation: number;
+  mpCapacity: number;
+  mpBaseDailyLimit: number;
+  battleMpCostPerTier: Array<{
+    battleLevel: string;
+    breadBattleCatchMpCost: number;
+    breadBattleRemoteCatchMpCost: number;
+  }>;
+}
+
+interface BreadFeatureFlagsGM {
+  enabled: boolean;
+  minimumPlayerLevel: number;
+}
+
+interface BreadBattleClientSettingsGM {
+  maxPlayersPerBreadLobby: number;
+  maxRemotePlayersPerBreadLobby: number;
+  maxNumFriendInvitesPerAction: number;
+  maxPlayersPerBreadDoughLobby: number;
+  maxRemotePlayersPerBreadDoughLobby: number;
+  maxNumFriendInvitesToBreadDoughLobbyPerAction: number;
+}
+
+interface RaidSettingsGM {
+  remoteRaidsMinPlayerLevel: number;
+  maxPlayersPerLobby: number;
+  maxRemotePlayersPerLobby: number;
+  maxNumFriendInvites: number;
+  maxNumFriendInvitesPerAction: number;
+  friendInviteCutoffTimeSec: number;
+}
+
+interface RaidEntryCostSettingsGM {
+  raidLevelEntryCost: Array<{
+    raidLevel: string;
+    raidEntryCost: Array<{
+      raidType: string;
+      itemRequirement: Array<{ item: string | number; count: number }>;
+    }>;
+  }>;
+}
+
+interface StationedPokemonTableSettingsGM {
+  tierBoosts: Array<{ numStationed: number; numBoostIcons: number }>;
+}
+
 interface NonCombatMoveSettings {
   uniqueId: string;
   cost: Cost;
@@ -495,6 +565,7 @@ interface DataGM {
   moveSequenceSettings: MoveSequenceSetting;
   smeargleMovesSettings: PokemonDataModel;
   vsSeekerClientSettings: VsSeekerClientSetting;
+  vsSeekerScheduleSettings?: VsSeekerScheduleSettings;
   vsSeekerPokemonRewards: VsSeekerPokemonReward;
   combatCompetitiveSeasonSettings: CombatCompetitiveSeasonSetting;
   combatRankingProtoSettings: CombatRankingProtoSetting;
@@ -516,6 +587,12 @@ interface DataGM {
   primalEvoSettings?: PrimalEvoSettings;
   encounterSettings: EncounterSettings;
   nonCombatMoveSettings?: NonCombatMoveSettings;
+  mpSettings?: MpSettingsGM;
+  breadFeatureFlags?: BreadFeatureFlagsGM;
+  breadBattleClientSettings?: BreadBattleClientSettingsGM;
+  raidSettings?: RaidSettingsGM;
+  raidEntryCostSettings?: RaidEntryCostSettingsGM;
+  stationedPokemonTableSettings?: StationedPokemonTableSettingsGM;
 }
 
 export interface PokemonDataGM {
@@ -580,6 +657,7 @@ interface IPlayerSetting {
   maxQuestEncounterPlayerLevel: number;
   maxNormalUpgradeLevel: number;
   defaultCpBoostAdditionalLevel: number;
+  defaultLevelCap: number;
 }
 
 export class PlayerSetting implements IPlayerSetting {
@@ -589,6 +667,7 @@ export class PlayerSetting implements IPlayerSetting {
   maxQuestEncounterPlayerLevel = 0;
   maxNormalUpgradeLevel = 0;
   defaultCpBoostAdditionalLevel = 0;
+  defaultLevelCap = 0;
 }
 
 interface ICombatOption {
@@ -686,6 +765,44 @@ export class MegaBattleSettings {
 export class CatchMechanicSettings {
   throwThresholds = { nice: 1, great: 1, excellent: 1 };
   berryMultipliers: DynamicObj<number> = {};
+}
+
+export class MaxBattleSettings {
+  enabled = false;
+  minimumPlayerLevel = 0;
+  mp = {
+    walkReward: 0,
+    walkDistanceMeters: 0,
+    powerSpotReward: 0,
+    firstPowerSpotBonus: 0,
+    capacity: 0,
+    dailyLimit: 0,
+  };
+  entryCosts: Array<{ battleLevel: string; local: number; remote: number }> = [];
+  lobby = {
+    maxPlayers: 0,
+    maxRemotePlayers: 0,
+    maxInvitesPerAction: 0,
+    maxGmaxPlayers: 0,
+    maxRemoteGmaxPlayers: 0,
+    maxGmaxInvitesPerAction: 0,
+  };
+  availability = { startMinute: 0, endMinute: 0 };
+  station = {
+    maxStationedPokemon: 0,
+    maxPerPlayer: 0,
+    boostTiers: [] as Array<{ numStationed: number; numBoostIcons: number }>,
+  };
+}
+
+export class RaidSettings {
+  minimumPlayerLevel = 0;
+  maxPlayersPerLobby = 0;
+  maxRemotePlayersPerLobby = 0;
+  maxFriendInvites = 0;
+  maxInvitesPerAction = 0;
+  inviteCutoffSeconds = 0;
+  entryCosts: RaidEntryCostSettingsGM['raidLevelEntryCost'] = [];
 }
 
 export interface IBuddyFriendship {
@@ -892,6 +1009,8 @@ export interface IOptions {
   weatherBonus: WeatherBonusSettings;
   megaBattle: MegaBattleSettings;
   catchMechanics: CatchMechanicSettings;
+  maxBattle: MaxBattleSettings;
+  raid: RaidSettings;
   config: IConfig;
 }
 
@@ -909,5 +1028,7 @@ export class Options implements IOptions {
   weatherBonus = new WeatherBonusSettings();
   megaBattle = new MegaBattleSettings();
   catchMechanics = new CatchMechanicSettings();
+  maxBattle = new MaxBattleSettings();
+  raid = new RaidSettings();
   config = new Config();
 }
