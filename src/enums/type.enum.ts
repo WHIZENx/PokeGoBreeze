@@ -81,6 +81,18 @@ export enum MaxMoveType {
   Spirit = 'spirit',
 }
 
+export enum MaxMoveVariant {
+  Dynamax = 'dynamax',
+  Gigantamax = 'gigantamax',
+  Special = 'special',
+}
+
+export enum MaxMoveEffect {
+  Power = 'power',
+  TemporaryHp = 'temporaryHp',
+  HealPercent = 'healPercent',
+}
+
 export enum PokemonType {
   None = 0,
   Normal = 1,

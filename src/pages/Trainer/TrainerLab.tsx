@@ -21,6 +21,7 @@ import TrainerBattleTimeline from './TrainerBattleTimeline';
 import TrainerMoveSelect, { createDefaultTrainerMoveSelection, type TrainerMoveSelection } from './TrainerMoveSelect';
 import './TrainerLab.scss';
 import { formatPokemonDisplayName } from '../../utils/pokemon-display-name';
+import DismissibleAlert from '../../components/Commons/Alerts/DismissibleAlert';
 
 type TrainerTab = 'battle' | 'rewards';
 type League = ITrainerBattlePreset['league'];
@@ -225,10 +226,10 @@ const TrainerLab = () => {
         <TrainerLevelRewards />
       ) : (
         <>
-          <Alert severity="info" className="tw-mb-3">
-            Team Leader lineups and battle values come from the same Game Master snapshot. This MVP uses automatic moves
-            and switches only after a Pokémon faints.
-          </Alert>
+          <DismissibleAlert severity="info" className="tw-mb-3">
+            Team Leader lineups and battle values use the same current game data. This version uses automatic moves and
+            switches only after a Pokémon faints.
+          </DismissibleAlert>
 
           <section className="trainer-setup-grid">
             <Card className="trainer-panel">
@@ -454,9 +455,13 @@ const TrainerLab = () => {
                 durationSeconds={result.durationSeconds}
                 opponentLabel={capitalize(preset?.trainer ?? 'Opponent')}
               />
-              <Alert severity="warning" className="tw-mt-3">
+              <DismissibleAlert
+                severity="warning"
+                className="tw-mt-3"
+                resetKey={`${presetId}-${seed}-${result.durationSeconds}`}
+              >
                 {result.assumptions.join(' ')}
-              </Alert>
+              </DismissibleAlert>
             </section>
           )}
         </>

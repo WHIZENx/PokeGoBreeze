@@ -16,7 +16,9 @@ import { EffectiveType } from '../../../components/Effective/enums/type-effectiv
 import { getThrowCharge } from '../../../utils/helpers/options-context.helpers';
 
 const DamageTable = (props: IDamageTableComponent) => {
-  const movePower = props.result.battleState?.isTrainer ? props.result.move?.pvpPower : props.result.move?.pvePower;
+  const movePower =
+    props.result.movePower ??
+    (props.result.battleState?.isTrainer ? props.result.move?.pvpPower : props.result.move?.pvePower);
 
   const setLabelDamage = (amount: EffectiveType) =>
     LabelDamage.create({
@@ -99,8 +101,14 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>Move damage</td>
-              <td>{props.result.move ? props.result.move.pvePower : '-'}</td>
+              <td>{props.result.move ? movePower : '-'}</td>
             </tr>
+            {props.result.maxMoveLevel && (
+              <tr>
+                <td>Max Move Level</td>
+                <td>{props.result.maxMoveLevel}</td>
+              </tr>
+            )}
             <tr>
               <td>Stab</td>
               <td>

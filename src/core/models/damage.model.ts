@@ -56,6 +56,8 @@ export interface IPokemonDmgOption {
   typeObj?: PokemonType;
   objLevel: number;
   move?: ICombat;
+  movePower?: number;
+  maxMoveLevel?: number;
   battleState?: IBattleState;
   damage?: number;
   hp?: number;
@@ -69,6 +71,8 @@ export class PokemonDmgOption implements IPokemonDmgOption {
   typeObj?: PokemonType;
   objLevel = minLevel();
   move?: ICombat;
+  movePower?: number;
+  maxMoveLevel?: number;
   battleState?: IBattleState;
   damage?: number;
   hp?: number;

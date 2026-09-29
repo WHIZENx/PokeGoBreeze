@@ -11,6 +11,7 @@ import { useTitle } from '../../utils/hooks/useTitle';
 interface TrainerLevelUp {
   levelUps: AwardItem[];
   itemUnlocks?: string[];
+  available: boolean;
 }
 
 const Trainer = () => {
@@ -39,6 +40,7 @@ const Trainer = () => {
       setData({
         levelUps: getValueOrDefault(Array, result?.items),
         itemUnlocks: result?.itemsUnlock,
+        available: result?.available ?? false,
       });
     }
   }, [trainersData, level]);
@@ -54,12 +56,17 @@ const Trainer = () => {
           onChangeSelect={(value) => setLevel(value)}
           menuItems={trainersData.map((value) => ({
             value: value.level,
-            label: `Level ${value.level}`,
+            label: `Level ${value.level}${value.available ? '' : ' (Upcoming)'}`,
           }))}
         />
       </div>
       {data && (
         <>
+          {!data.available && (
+            <p className="tw-mx-auto tw-mt-3 tw-max-w-xl tw-rounded tw-bg-amber-100 tw-p-3 tw-text-center tw-text-amber-900">
+              This level is listed in the current game data but is not available to Trainers yet.
+            </p>
+          )}
           <p className="title-leagues tw-mt-2">Receive Items</p>
           <div className="tw-flex tw-justify-center tw-mt-2">
             <div className="trainer-levelup">

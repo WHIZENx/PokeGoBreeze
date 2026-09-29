@@ -13,7 +13,7 @@ import {
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { RAID_BOSS_TIER } from '../../../utils/constants';
-import { Alert, Badge, Checkbox, FormControlLabel, IconButton, LinearProgress, Switch } from '@mui/material';
+import { Badge, Checkbox, FormControlLabel, IconButton, LinearProgress, Switch } from '@mui/material';
 
 import './RaidBattle.scss';
 import APIService from '../../../services/api.service';
@@ -29,6 +29,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import TimerIcon from '@mui/icons-material/Timer';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import update from 'immutability-helper';
 import {
@@ -85,6 +86,8 @@ import { useSnackbar } from '../../../contexts/snackbar.context';
 import DialogMui from '../../../components/Commons/Dialogs/Dialogs';
 import Tooltips from '../../../components/Commons/Tooltips/Tooltips';
 import type { RaidApiResponse, RaidBattleRequest } from '../../../services/models/tools-api.model';
+import useDataStore from '../../../composables/useDataStore';
+import DismissibleAlert from '../../../components/Commons/Alerts/DismissibleAlert';
 
 const SORT_MENU_ITEMS = [
   { value: SortType.DPS, label: 'Damage Per Second' },
@@ -116,6 +119,12 @@ const RaidBattle = () => {
   const { showSpinner, hideSpinner } = useSpinner();
   const { retrieveMoves } = usePokemon();
   const { searchingToolCurrentData } = useSearch();
+  const { optionsData } = useDataStore();
+  const raidLobbyLimits = [
+    optionsData.raid.maxPlayersPerLobby,
+    optionsData.battleOptions.maximumAttackersPerBattle,
+  ].filter((limit) => limit > 0);
+  const maxRaidTrainers = raidLobbyLimits.length ? Math.min(...raidLobbyLimits) : Number.POSITIVE_INFINITY;
 
   const [statBossATK, setStatBossATK] = useState(0);
   const [statBossDEF, setStatBossDEF] = useState(0);
@@ -401,10 +410,14 @@ const RaidBattle = () => {
         )
       )
     );
-    return isNotEmpty(trainerNoPokemon);
+    return isNotEmpty(trainerNoPokemon) || trainerBattle.length > maxRaidTrainers;
   };
 
   const calculateTrainerBattle = async (trainerBattle: ITrainerBattle[]) => {
+    if (trainerBattle.length > maxRaidTrainers) {
+      showSnackbar(`A raid lobby supports up to ${maxRaidTrainers} trainers.`, 'error');
+      return;
+    }
     if (disableRaidBattle(trainerBattle)) {
       showSnackbar('Please select Pokémon to raid battle!', 'error');
       return;
@@ -1071,11 +1084,60 @@ const RaidBattle = () => {
 
   return (
     <Fragment>
-      <Alert severity="warning" className="!tw-m-3">
+      <DismissibleAlert severity="warning" className="!tw-m-3">
         This is a simplified raid estimator based on move timing, DPS/TDO, boss HP, and the selected timer. It does not
         simulate Party Power cycles, Shadow Raid enrage, Super Mega shields, relobby timing, or Max Battles. Legacy raid
         tiers remain available only for historical comparisons.
-      </Alert>
+      </DismissibleAlert>
+      {optionsData.raid.maxPlayersPerLobby > 0 ? (
+        <DismissibleAlert severity="info" className="!tw-m-3 tw-flex tw-items-center">
+          <span>
+            Current raid lobby limits: <b>{optionsData.raid.maxPlayersPerLobby}</b> total ·{' '}
+            <b>{optionsData.raid.maxRemotePlayersPerLobby}</b> remote · remote raids from Trainer Level{' '}
+            <b>{optionsData.raid.minimumRemotePlayerLevel}</b> · invite cutoff{' '}
+            <b>{optionsData.raid.inviteCutoffSeconds}s</b>
+          </span>
+          {optionsData.raid.entryCosts.length ? (
+            <Tooltips
+              arrow
+              title={
+                <div className="tw-max-w-96 tw-text-sm">
+                  <b className="tw-block tw-mb-1">Special raid entry costs</b>
+                  {optionsData.raid.entryCosts.map((level) => (
+                    <div className="tw-mb-2" key={level.raidLevel}>
+                      <b className="tw-block">
+                        {splitAndCapitalize(level.raidLevel.replace('RAID_LEVEL_', '').toLowerCase(), '_', ' ')}
+                      </b>
+                      {level.raidEntryCost.map((cost, index) => (
+                        <span className="tw-block" key={`${cost.raidType}-${index}`}>
+                          {splitAndCapitalize(cost.raidType.toLowerCase(), '_', ' ')}:{' '}
+                          {cost.itemRequirement
+                            .map((requirement) => {
+                              const item =
+                                typeof requirement.item === 'number'
+                                  ? `Item ${requirement.item}`
+                                  : splitAndCapitalize(requirement.item.replace('ITEM_', '').toLowerCase(), '_', ' ');
+                              return `${item} ×${requirement.count}`;
+                            })
+                            .join(' + ')}
+                        </span>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              }
+            >
+              <button
+                type="button"
+                aria-label="Special raid entry costs"
+                className="tw-ml-1 tw-inline-flex tw-border-0 tw-bg-transparent tw-p-0 tw-align-middle"
+              >
+                <InfoOutlinedIcon fontSize="small" />
+              </button>
+            </Tooltips>
+          ) : null}
+        </DismissibleAlert>
+      ) : null}
       <div className="row !tw-m-0 tw-overflow-x-hidden">
         <div className="lg:tw-flex-1 !tw-p-0">
           <Find isHide title="Raid Boss" clearStats={clearDataBoss} />
@@ -1342,7 +1404,7 @@ const RaidBattle = () => {
                   <ButtonMui
                     isRound
                     className="ic-copy !tw-p-0 !tw-min-w-8 !tw-h-8"
-                    disabled={!trainer.pokemons.at(0)?.dataTargetPokemon}
+                    disabled={!trainer.pokemons.at(0)?.dataTargetPokemon || trainerBattle.length >= maxRaidTrainers}
                     title="Copy"
                     label={<ContentCopyIcon color="inherit" className="!tw-text-small" />}
                     onClick={() => {
@@ -1383,6 +1445,7 @@ const RaidBattle = () => {
               </IconButton>
               <div className="count-pokemon">{trainerBattle.length}</div>
               <IconButton
+                disabled={trainerBattle.length >= maxRaidTrainers}
                 color="success"
                 onClick={() => {
                   setCountTrainer(countTrainer + 1);

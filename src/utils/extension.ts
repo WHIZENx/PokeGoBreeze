@@ -242,7 +242,7 @@ export const isIncludeListBetween = (
       )
     )
   );
-  return isNotEmpty(Array.from(result.intersection(resultBetween)));
+  return isNotEmpty(Array.from(result).filter((item) => resultBetween.has(item)));
 };
 
 export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) =>

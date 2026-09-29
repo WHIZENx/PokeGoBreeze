@@ -10,6 +10,10 @@ import { ITypeEffectiveModel, TypeEffectiveModel } from './type-effective.model'
 import { IWeatherBoost, WeatherBoost } from './weather-boost.model';
 
 interface CombatSetting {
+  roundDurationSeconds: number;
+  turnDurationSeconds: number;
+  changePokemonDurationSeconds: number;
+  quickSwapCooldownDurationSeconds: number;
   sameTypeAttackBonusMultiplier: number;
   fastAttackBonusMultiplier: number;
   chargeAttackBonusMultiplier: number;
@@ -31,7 +35,12 @@ interface CombatStatStageSetting {
 }
 
 interface BattleSetting {
+  roundDurationSeconds: number;
   enemyAttackInterval: number;
+  energyDeltaPerHealthLost: number;
+  bossEnergyRegenerationPerHealthLost: number;
+  dodgeDurationMs: number;
+  maximumAttackersPerBattle: number;
   sameTypeAttackBonusMultiplier: number;
   shadowPokemonAttackBonusMultiplier: number;
   shadowPokemonDefenseBonusMultiplier: number;
@@ -156,6 +165,18 @@ interface MoveSequenceSetting {
 
 interface VsSeekerClientSetting {
   allowedVsSeekerLeagueTemplateId: string[];
+}
+
+interface VsSeekerScheduleSettings {
+  seasonSchedules: Array<{
+    seasonTitle: string;
+    descriptionKey?: string;
+    vsSeekerSchedules: Array<{
+      startTimeMs: string;
+      endTimeMs: string;
+      vsSeekerLeagueTempalteId: string[];
+    }>;
+  }>;
 }
 
 interface IPokemonFromReward {
@@ -348,13 +369,17 @@ export interface GlobalEventTicket {
 }
 
 export interface ItemSettings {
-  itemId: string;
+  itemId: string | number;
   itemType: string;
   category: string;
   globalEventTicket: GlobalEventTicket;
   ignoreInventorySpace?: boolean;
   nameOverride?: string;
   descriptionOverride?: string;
+  food?: {
+    itemEffect?: string[];
+    itemEffectPercent?: number[];
+  };
 }
 
 export interface PokemonUpgradeSettings {
@@ -368,6 +393,7 @@ export interface PlayerLevel {
   cpMultiplier: number[];
   maxEncounterPlayerLevel: number;
   maxQuestEncounterPlayerLevel: number;
+  defaultLevelCap: number;
 }
 
 export interface LevelUpRewardSettings {
@@ -379,12 +405,134 @@ export interface LevelUpRewardSettings {
 
 interface MoveMapping {
   pokemonId: string;
-  form: string;
+  form?: string;
   move: string;
+  optionalBMoveOverride?: { override?: boolean; move?: string };
+  optionalCMoveOverride?: { override?: boolean; move?: string };
 }
 
 interface SourdoughMoveMappingSettings {
   mappings: MoveMapping[];
+}
+
+interface BreadMoveMappingSettings {
+  mappings: Array<{ type: string; move: string }>;
+}
+
+interface BreadPokemonScalingSettings {
+  visualSettings: Array<{
+    pokemonId: string;
+    pokemonFormData: Array<{
+      pokemonForm: string;
+      visualData: Array<{ breadMode: string }>;
+    }>;
+  }>;
+}
+
+interface BreadSettings {
+  allowedSourdoughPokemon: Array<{
+    pokemonId: string;
+    form: string[];
+    breadMode: string;
+  }>;
+  maxStationedPokemon?: number;
+  maxStationedPokemonPerPlayer?: number;
+  breadBattleAvailability?: {
+    breadBattleAvailabilityStartMinute: number;
+    breadBattleAvailabilityEndMinute: number;
+  };
+}
+
+export interface MaxMoveUpgradeCost {
+  mpCost?: number;
+  candyCost?: number;
+  xlCandyCost?: number;
+  stardustCost?: number;
+  xpReward?: number;
+}
+
+interface BreadMoveLevelSettings {
+  group: string;
+  aSettings: MaxMoveUpgradeCost[];
+  bSettings: MaxMoveUpgradeCost[];
+  cSettings: MaxMoveUpgradeCost[];
+}
+
+interface WeatherBonusSettingsGM {
+  cpBaseLevelBonus: number;
+  guaranteedIndividualValues: number;
+  stardustBonusMultiplier: number;
+  attackBonusMultiplier: number;
+  raidEncounterCpBaseLevelBonus: number;
+  raidEncounterGuaranteedIndividualValues: number;
+}
+
+interface MegaEvoSettings {
+  evolutionLengthMs: string;
+  attackBoostFromMegaDifferentType: number;
+  attackBoostFromMegaSameType: number;
+}
+
+interface PrimalEvoSettings {
+  commonTempSettings: { evolutionLengthMs: string };
+  typeBoosts: Array<{ pokemonId: string; boostType: string[] }>;
+}
+
+interface EncounterSettings {
+  niceThrowThreshold: number;
+  greatThrowThreshold: number;
+  excellentThrowThreshold: number;
+}
+
+interface MpSettingsGM {
+  numMpFromWalkQuest: number;
+  numMetersGoal: number;
+  numMpFromLootStation: number;
+  numExtraMpFromFirstLootStation: number;
+  mpCapacity: number;
+  mpBaseDailyLimit: number;
+  battleMpCostPerTier: Array<{
+    battleLevel: string;
+    breadBattleCatchMpCost: number;
+    breadBattleRemoteCatchMpCost: number;
+  }>;
+}
+
+interface BreadFeatureFlagsGM {
+  enabled: boolean;
+  minimumPlayerLevel: number;
+}
+
+interface BreadBattleClientSettingsGM {
+  maxPlayersPerBreadLobby: number;
+  maxRemotePlayersPerBreadLobby: number;
+  maxNumFriendInvitesPerAction: number;
+  maxPlayersPerBreadDoughLobby: number;
+  maxRemotePlayersPerBreadDoughLobby: number;
+  maxNumFriendInvitesToBreadDoughLobbyPerAction: number;
+}
+
+interface RaidSettingsGM {
+  remoteRaidsMinPlayerLevel: number;
+  maxPlayersPerLobby: number;
+  maxRemotePlayersPerLobby: number;
+  maxNumFriendInvites: number;
+  maxNumFriendInvitesPerAction: number;
+  friendInviteCutoffTimeSec: number;
+}
+
+interface RaidEntryCostSettingsGM {
+  raidLevelEntryCost: Array<{
+    raidLevel: string;
+    raidEntryCost: Array<{
+      raidType: string;
+      itemRequirement: Array<{ item: string | number; count: number }>;
+    }>;
+  }>;
+}
+
+interface StationedPokemonTableSettingsGM {
+  tierBoosts: Array<{ numStationed: number; numBoostIcons: number }>;
 }
 
 interface NonCombatMoveSettings {
@@ -417,6 +565,7 @@ interface DataGM {
   moveSequenceSettings: MoveSequenceSetting;
   smeargleMovesSettings: PokemonDataModel;
   vsSeekerClientSettings: VsSeekerClientSetting;
+  vsSeekerScheduleSettings?: VsSeekerScheduleSettings;
   vsSeekerPokemonRewards: VsSeekerPokemonReward;
   combatCompetitiveSeasonSettings: CombatCompetitiveSeasonSetting;
   combatRankingProtoSettings: CombatRankingProtoSetting;
@@ -428,8 +577,22 @@ interface DataGM {
   playerLevel: PlayerLevel;
   pokemonUpgrades: PokemonUpgradeSettings;
   levelUpRewardSettings: LevelUpRewardSettings;
+  breadMoveMappings?: BreadMoveMappingSettings;
+  breadPokemonScalingSettings?: BreadPokemonScalingSettings;
+  breadSettings?: BreadSettings;
+  breadMoveLevelSettings?: BreadMoveLevelSettings;
   sourdoughMoveMappingSettings?: SourdoughMoveMappingSettings;
+  weatherBonusSettings?: WeatherBonusSettingsGM;
+  megaEvoSettings?: MegaEvoSettings;
+  primalEvoSettings?: PrimalEvoSettings;
+  encounterSettings: EncounterSettings;
   nonCombatMoveSettings?: NonCombatMoveSettings;
+  mpSettings?: MpSettingsGM;
+  breadFeatureFlags?: BreadFeatureFlagsGM;
+  breadBattleClientSettings?: BreadBattleClientSettingsGM;
+  raidSettings?: RaidSettingsGM;
+  raidEntryCostSettings?: RaidEntryCostSettingsGM;
+  stationedPokemonTableSettings?: StationedPokemonTableSettingsGM;
 }
 
 export interface PokemonDataGM {
@@ -494,6 +657,7 @@ interface IPlayerSetting {
   maxQuestEncounterPlayerLevel: number;
   maxNormalUpgradeLevel: number;
   defaultCpBoostAdditionalLevel: number;
+  defaultLevelCap: number;
 }
 
 export class PlayerSetting implements IPlayerSetting {
@@ -503,9 +667,14 @@ export class PlayerSetting implements IPlayerSetting {
   maxQuestEncounterPlayerLevel = 0;
   maxNormalUpgradeLevel = 0;
   defaultCpBoostAdditionalLevel = 0;
+  defaultLevelCap = 0;
 }
 
 interface ICombatOption {
+  roundDurationSeconds: number;
+  turnDurationSeconds: number;
+  changePokemonDurationSeconds: number;
+  quickSwapCooldownDurationSeconds: number;
   stab: number;
   fastAttackBonusMultiplier: number;
   chargeAttackBonusMultiplier: number;
@@ -519,6 +688,10 @@ interface ICombatOption {
 }
 
 export class CombatOption implements ICombatOption {
+  roundDurationSeconds = 0;
+  turnDurationSeconds = 0;
+  changePokemonDurationSeconds = 0;
+  quickSwapCooldownDurationSeconds = 0;
   stab = 0;
   fastAttackBonusMultiplier = 1;
   chargeAttackBonusMultiplier = 1;
@@ -532,7 +705,12 @@ export class CombatOption implements ICombatOption {
 }
 
 interface IBattleOption {
+  roundDurationSeconds: number;
   enemyAttackInterval: number;
+  energyDeltaPerHealthLost: number;
+  bossEnergyRegenerationPerHealthLost: number;
+  dodgeDurationMs: number;
+  maximumAttackersPerBattle: number;
   stab: number;
   shadowBonus: IStatsPokemonGO;
   purifiedBonus: IStatsPokemonGO;
@@ -541,7 +719,12 @@ interface IBattleOption {
 }
 
 export class BattleOption implements IBattleOption {
+  roundDurationSeconds = 0;
   enemyAttackInterval = 0;
+  energyDeltaPerHealthLost = 0;
+  bossEnergyRegenerationPerHealthLost = 0;
+  dodgeDurationMs = 0;
+  maximumAttackersPerBattle = 0;
   stab = 0;
   shadowBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
   purifiedBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
@@ -561,6 +744,65 @@ export class ThrowOption implements IThrowOption {
   nice = 0;
   great = 0;
   excellent = 0;
+}
+
+export class WeatherBonusSettings {
+  cpBaseLevelBonus = 0;
+  guaranteedIndividualValues = 0;
+  stardustBonusMultiplier = 0;
+  attackBonusMultiplier = 0;
+  raidEncounterCpBaseLevelBonus = 0;
+  raidEncounterGuaranteedIndividualValues = 0;
+}
+
+export class MegaBattleSettings {
+  evolutionLengthMs = 0;
+  differentTypeAttackBoost = 1;
+  sameTypeAttackBoost = 1;
+  primalTypeBoosts: DynamicObj<string[]> = {};
+}
+
+export class CatchMechanicSettings {
+  throwThresholds = { nice: 1, great: 1, excellent: 1 };
+  berryMultipliers: DynamicObj<number> = {};
+}
+
+export class MaxBattleSettings {
+  enabled = false;
+  minimumPlayerLevel = 0;
+  mp = {
+    walkReward: 0,
+    walkDistanceMeters: 0,
+    powerSpotReward: 0,
+    firstPowerSpotBonus: 0,
+    capacity: 0,
+    dailyLimit: 0,
+  };
+  entryCosts: Array<{ battleLevel: string; local: number; remote: number }> = [];
+  lobby = {
+    maxPlayers: 0,
+    maxRemotePlayers: 0,
+    maxInvitesPerAction: 0,
+    maxGmaxPlayers: 0,
+    maxRemoteGmaxPlayers: 0,
+    maxGmaxInvitesPerAction: 0,
+  };
+  availability = { startMinute: 0, endMinute: 0 };
+  station = {
+    maxStationedPokemon: 0,
+    maxPerPlayer: 0,
+    boostTiers: [] as Array<{ numStationed: number; numBoostIcons: number }>,
+  };
+}
+
+export class RaidSettings {
+  minimumRemotePlayerLevel = 0;
+  maxPlayersPerLobby = 0;
+  maxRemotePlayersPerLobby = 0;
+  maxFriendInvites = 0;
+  maxInvitesPerAction = 0;
+  inviteCutoffSeconds = 0;
+  entryCosts: RaidEntryCostSettingsGM['raidLevelEntryCost'] = [];
 }
 
 export interface IBuddyFriendship {
@@ -764,6 +1006,11 @@ export interface IOptions {
   weatherTypes: string[];
   typeEffective: ITypeEffectiveModel;
   weatherBoost: IWeatherBoost;
+  weatherBonus: WeatherBonusSettings;
+  megaBattle: MegaBattleSettings;
+  catchMechanics: CatchMechanicSettings;
+  maxBattle: MaxBattleSettings;
+  raid: RaidSettings;
   config: IConfig;
 }
 
@@ -778,5 +1025,10 @@ export class Options implements IOptions {
   weatherTypes: string[] = [];
   typeEffective = new TypeEffectiveModel();
   weatherBoost = new WeatherBoost();
+  weatherBonus = new WeatherBonusSettings();
+  megaBattle = new MegaBattleSettings();
+  catchMechanics = new CatchMechanicSettings();
+  maxBattle = new MaxBattleSettings();
+  raid = new RaidSettings();
   config = new Config();
 }

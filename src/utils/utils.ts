@@ -1338,6 +1338,9 @@ export const getBonusType = (bonusType: string | number | BonusType | undefined)
   if (bonusType === BonusType.AttackDefenseBonus || bonusType === BonusType.AttackDefenseBonus2) {
     return BonusType.AttackDefenseBonus;
   }
+  if (bonusType === BonusType.MaxMoveBonus || isEqual(bonusType, 'MAX_MOVE_BONUS')) {
+    return BonusType.MaxMoveBonus;
+  }
   if (bonusType === BonusType.SlowFreezeBonus || bonusType === BonusType.SlowFreezeBonus2) {
     return BonusType.SlowFreezeBonus;
   }

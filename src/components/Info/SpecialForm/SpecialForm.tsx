@@ -155,6 +155,17 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                       )}
                     </span>
                   )}
+                  {getQuestEvo(value.name).megaLevels?.map((megaLevel) => (
+                    <span className="caption" key={megaLevel.level}>
+                      <b>{['', 'Base', 'High', 'Max'][megaLevel.level] ?? `Level ${megaLevel.level}`}</b>
+                      {` · ${megaLevel.cooldownHours / 24}d cooldown · bypass ${megaLevel.bypassEnergy} energy`}
+                      {` · Candy +${megaLevel.sameTypeExtraCatchCandy}`}
+                      {megaLevel.sameTypeExtraCatchXp !== undefined ? ` · XP +${megaLevel.sameTypeExtraCatchXp}` : ''}
+                      {megaLevel.sameTypeExtraCatchCandyXlChance !== undefined
+                        ? ` · XL chance +${megaLevel.sameTypeExtraCatchCandyXlChance * 100}%`
+                        : ''}
+                    </span>
+                  ))}
                   <span className="caption">
                     {`Repeat energy (base): `}
                     <img

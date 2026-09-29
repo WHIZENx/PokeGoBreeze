@@ -8,4 +8,5 @@ export enum BonusType {
   SlowFreezeBonus2,
   AttackDefenseBonus,
   AttackDefenseBonus2,
+  MaxMoveBonus,
 }
