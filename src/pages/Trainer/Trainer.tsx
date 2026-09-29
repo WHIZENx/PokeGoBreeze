@@ -64,7 +64,7 @@ const Trainer = () => {
         <>
           {!data.available && (
             <p className="tw-mx-auto tw-mt-3 tw-max-w-xl tw-rounded tw-bg-amber-100 tw-p-3 tw-text-center tw-text-amber-900">
-              This level is preloaded in the Game Master and is not currently available.
+              This level is listed in the current game data but is not available to Trainers yet.
             </p>
           )}
           <p className="title-leagues tw-mt-2">Receive Items</p>

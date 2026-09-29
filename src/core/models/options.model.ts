@@ -369,7 +369,7 @@ export interface GlobalEventTicket {
 }
 
 export interface ItemSettings {
-  itemId: string;
+  itemId: string | number;
   itemType: string;
   category: string;
   globalEventTicket: GlobalEventTicket;
@@ -796,7 +796,7 @@ export class MaxBattleSettings {
 }
 
 export class RaidSettings {
-  minimumPlayerLevel = 0;
+  minimumRemotePlayerLevel = 0;
   maxPlayersPerLobby = 0;
   maxRemotePlayersPerLobby = 0;
   maxFriendInvites = 0;

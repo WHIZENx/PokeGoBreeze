@@ -31,8 +31,9 @@ import Candy from '../../components/Sprites/Candy/Candy';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import useAssets from '../../composables/useAssets';
 import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
-import { Alert, Divider, Skeleton } from '@mui/material';
+import { Divider, Skeleton } from '@mui/material';
 import DOMPurify from 'dompurify';
+import DismissibleAlert from '../../components/Commons/Alerts/DismissibleAlert';
 
 const News = () => {
   useTitle({
@@ -268,10 +269,10 @@ const News = () => {
     <div className="tw-container tw-mb-3">
       <div className="info-main-container tw-pb-3 tw-mt-2">
         <h1 className="tw-text-center tw-underline">Game Master Event Tickets</h1>
-        <Alert severity="info" className="!tw-m-3">
-          This page shows ticket, schedule, and reward metadata found in the latest Game Master snapshot. It is not an
+        <DismissibleAlert severity="info" className="!tw-m-3">
+          This page shows ticket, schedule, and reward metadata from the latest published game data. It is not an
           official or real-time Pokémon GO news feed, and published metadata does not guarantee availability.
-        </Alert>
+        </DismissibleAlert>
         {reload(
           <div
             className={combineClasses(
