@@ -14,9 +14,11 @@ export const useCombats = () => {
   const combatNames = useMemo(() => combatsData.map((item) => item.name), [combatsData]);
 
   const findMoveByName = useCallback(
-    (move: string | undefined, pokemonId = 0) => {
-      const result = combatsData.find((item) =>
-        isEqual(item.name, move?.replaceAll('-', '_'), EqualMode.IgnoreCaseSensitive)
+    (move: string | undefined, pokemonId = 0, typeMove?: TypeMove) => {
+      const result = combatsData.find(
+        (item) =>
+          (typeMove === undefined || item.typeMove === typeMove) &&
+          isEqual(item.name, move?.replaceAll('-', '_'), EqualMode.IgnoreCaseSensitive)
       );
       if (result && pokemonId) {
         const pokemon = findPokemonById(pokemonId);

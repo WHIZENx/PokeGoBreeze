@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import Card from '../../Card/Card';
 import { addSelectMovesByType, splitAndCapitalize } from '../../../utils/utils';
-import { TypeMove } from '../../../enums/type.enum';
+import { MoveType, TypeMove } from '../../../enums/type.enum';
 import { ISelectMoveModel } from '../Inputs/models/select-move.model';
 import { ISelectCustomMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../../utils/extension';
@@ -14,6 +14,7 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
   const { retrieveMoves } = usePokemon();
 
   const [countFM, setCountFM] = useState(0);
+  const [countCM, setCountCM] = useState(0);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [showMove, setShowMove] = useState(false);
 
@@ -23,12 +24,25 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
     const result = retrieveMoves(props.id, props.form, props.pokemonType);
     if (result) {
       let simpleMove: ISelectMoveModel[] = [];
+      let fastMoveCount = 0;
       if (!props.type || props.type === TypeMove.Fast) {
         simpleMove = addSelectMovesByType(result, TypeMove.Fast, simpleMove);
-        setCountFM(simpleMove.length);
+        fastMoveCount = simpleMove.length;
       }
+      setCountFM(fastMoveCount);
       if (!props.type || props.type === TypeMove.Charged) {
         simpleMove = addSelectMovesByType(result, TypeMove.Charged, simpleMove);
+      }
+      setCountCM(simpleMove.length - fastMoveCount);
+      if ((!props.type && props.includeMaxMoves) || props.type === TypeMove.Max) {
+        simpleMove = addSelectMovesByType(result, TypeMove.Max, simpleMove);
+      }
+      if (props.maxMoveType) {
+        simpleMove = simpleMove.filter(
+          (item) =>
+            item.moveType !== MoveType.Max ||
+            findMoveByName(item.name, 0, TypeMove.Max)?.maxMoveType === props.maxMoveType
+        );
       }
       if (
         props.move &&
@@ -46,18 +60,18 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
 
   useEffect(() => {
     findMove();
-  }, [props.id, props.form, props.pokemonType, props.move, props.type]);
+  }, [props.id, props.form, props.pokemonType, props.move, props.type, props.includeMaxMoves, props.maxMoveType]);
 
-  const findType = (move: string | undefined) => {
+  const findType = (move: string | undefined, moveType?: MoveType) => {
     if (!move) {
       return;
     }
-    return findMoveByName(move)?.type;
+    return findMoveByName(move, 0, moveType === MoveType.Max ? TypeMove.Max : undefined)?.type;
   };
 
   const changeMove = (value: ISelectMoveModel) => {
     setShowMove(false);
-    props.setMove(findMoveByName(value.name));
+    props.setMove(findMoveByName(value.name, 0, value.moveType === MoveType.Max ? TypeMove.Max : undefined));
 
     if (props.clearData) {
       props.clearData();
@@ -73,7 +87,7 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
         <div className="card-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
           <div className="card-select">
             <Card
-              value={findType(currentMove?.name)}
+              value={findType(currentMove?.name, currentMove?.moveType)}
               name={splitAndCapitalize(currentMove?.name, '_', ' ')}
               moveType={currentMove?.moveType}
             />
@@ -97,6 +111,11 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
                               <b>Charged Moves</b>
                             </li>
                           )}
+                          {!props.type && props.includeMaxMoves && index === countFM + countCM && (
+                            <li className="card-header">
+                              <b>Max Moves</b>
+                            </li>
+                          )}
                           <li
                             className={combineClasses(
                               'tw-container card-pokemon tw-flex tw-items-center',
@@ -105,7 +124,7 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
                             onMouseDown={() => changeMove(value)}
                           >
                             <Card
-                              value={findType(value.name)}
+                              value={findType(value.name, value.moveType)}
                               name={splitAndCapitalize(value.name, '_', ' ')}
                               moveType={value.moveType}
                             />

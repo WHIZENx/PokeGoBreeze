@@ -24,7 +24,15 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Checkbox, Skeleton } from '@mui/material';
-import { BuffType, ColumnType, MaxMoveType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
+import {
+  BuffType,
+  ColumnType,
+  MaxMoveEffect,
+  MaxMoveType,
+  MoveType,
+  TypeAction,
+  TypeMove,
+} from '../../enums/type.enum';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
@@ -67,6 +75,7 @@ import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
 import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
 import { useSnackbar } from '../../contexts/snackbar.context';
+import { formatMaxMoveEffect, getMaxMoveVariantLabel } from '../../utils/max-move';
 
 interface MoveApiResponse {
   data: { move: ICombat; topPokemon: IPokemonTopMove[] };
@@ -157,6 +166,8 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
     minWidth: '90px',
   }
 );
+
+const maxMoveColumns = columns.filter((column) => column.id !== ColumnType.DPS && column.id !== ColumnType.TDO);
 
 const Move = (props: IMovePage) => {
   const params = useParams();
@@ -335,7 +346,10 @@ const Move = (props: IMovePage) => {
         move.typeMove === TypeMove.Fast ? 'Fast' : move.typeMove === TypeMove.Max ? 'Max' : 'Charged';
       setTitleProps({
         title: `${moveName} - ${moveTypeName} ${moveCategory} Move | PokéGO Breeze`,
-        description: `${moveName} is a ${moveTypeName}-type ${moveCategory} move in Pokémon GO (#${move.track}). View power, energy cost, DPS, and which Pokémon can learn it.`,
+        description:
+          move.typeMove === TypeMove.Max
+            ? `${moveName} is a ${moveTypeName}-type Max Move in Pokémon GO (#${move.track}). View its Max Battle effects by move level and eligible Pokémon.`
+            : `${moveName} is a ${moveTypeName}-type ${moveCategory} move in Pokémon GO (#${move.track}). View power, energy cost, DPS, and which Pokémon can learn it.`,
         keywords: [
           'Pokémon GO',
           moveName,
@@ -457,12 +471,27 @@ const Move = (props: IMovePage) => {
                 </td>
               </tr>
               {move?.typeMove === TypeMove.Max && move.maxMoveType && (
-                <tr>
-                  <td>Max Move Type</td>
-                  <td colSpan={2}>
-                    <b>{getKeyWithData(MaxMoveType, move.maxMoveType)}</b>
-                  </td>
-                </tr>
+                <Fragment>
+                  <tr>
+                    <td>Max Move Type</td>
+                    <td colSpan={2}>
+                      <b>{getKeyWithData(MaxMoveType, move.maxMoveType)}</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Max Move Variant</td>
+                    <td colSpan={2}>
+                      <b>{getMaxMoveVariantLabel(move)}</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Battle Availability</td>
+                    <td colSpan={2}>
+                      <b>Max Battles only</b>
+                      <span className="caption tw-block">Unavailable in Trainer Battles and GO Battle League</span>
+                    </td>
+                  </tr>
+                </Fragment>
               )}
               <tr>
                 <td>Weather Boosts</td>
@@ -480,85 +509,109 @@ const Move = (props: IMovePage) => {
                   )}
                 </td>
               </tr>
-              <tr className="tw-text-center">
-                <td className="table-sub-header" colSpan={3}>
-                  PVE Stats
-                </td>
-              </tr>
-              <tr>
-                <td>PVE Power</td>
-                <td colSpan={2}>{move?.pvePower}</td>
-              </tr>
-              <tr>
-                <td>
-                  PVE Power
-                  <span className="caption">(Weather / STAB / Shadow Bonus)</span>
-                </td>
-                <td colSpan={2}>
-                  {move && (
-                    <div className="tw-flex tw-items-center tw-gap-1">
-                      <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
-                      <span className="!tw-text-green-600 tw-inline-block caption tw-ml-1">
-                        {`+${toFloatWithPadding(move.pvePower * 0.2, 2)}`}
-                      </span>
-                    </div>
+              {move?.typeMove === TypeMove.Max ? (
+                <Fragment>
+                  <tr className="tw-text-center">
+                    <td className="table-sub-header" colSpan={3}>
+                      Max Battle Stats
+                    </td>
+                  </tr>
+                  {move.maxMoveLevels?.map((value, index) => (
+                    <tr key={`max-level-${index + 1}`}>
+                      <td>
+                        Max Move Level {index + 1}
+                        {index === 3 && <span className="caption">(Dynamax Cannon Adventure Effect)</span>}
+                      </td>
+                      <td colSpan={2}>
+                        {formatMaxMoveEffect(move, value)}
+                        {move.maxMoveEffect === MaxMoveEffect.Power && ' power'}
+                      </td>
+                    </tr>
+                  ))}
+                </Fragment>
+              ) : (
+                <Fragment>
+                  <tr className="tw-text-center">
+                    <td className="table-sub-header" colSpan={3}>
+                      PVE Stats
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>PVE Power</td>
+                    <td colSpan={2}>{move?.pvePower}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      PVE Power
+                      <span className="caption">(Weather / STAB / Shadow Bonus)</span>
+                    </td>
+                    <td colSpan={2}>
+                      {move && (
+                        <div className="tw-flex tw-items-center tw-gap-1">
+                          <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
+                          <span className="!tw-text-green-600 tw-inline-block caption tw-ml-1">
+                            {`+${toFloatWithPadding(move.pvePower * 0.2, 2)}`}
+                          </span>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>PVE Energy</td>
+                    <td colSpan={2}>
+                      {toNumber(move?.pveEnergy) > 0 && '+'}
+                      {move?.pveEnergy}
+                    </td>
+                  </tr>
+                  {move?.typeMove === TypeMove.Charged && (
+                    <tr>
+                      <td>PVE Bar Charged</td>
+                      <td colSpan={2}>
+                        <ChargedBar barCount={getBarCharge(move.pveEnergy, true)} color={move.type?.toLowerCase()} />
+                      </td>
+                    </tr>
                   )}
-                </td>
-              </tr>
-              <tr>
-                <td>PVE Energy</td>
-                <td colSpan={2}>
-                  {toNumber(move?.pveEnergy) > 0 && '+'}
-                  {move?.pveEnergy}
-                </td>
-              </tr>
-              {move?.typeMove === TypeMove.Charged && (
-                <tr>
-                  <td>PVE Bar Charged</td>
-                  <td colSpan={2}>
-                    <ChargedBar barCount={getBarCharge(move.pveEnergy, true)} color={move.type?.toLowerCase()} />
-                  </td>
-                </tr>
-              )}
-              <tr className="tw-text-center">
-                <td className="table-sub-header" colSpan={3}>
-                  PVP Stats
-                </td>
-              </tr>
-              <tr>
-                <td>PVP Power</td>
-                <td colSpan={2}>{move?.pvpPower}</td>
-              </tr>
-              <tr>
-                <td>
-                  PVP Power
-                  <span className="caption">(STAB / Shadow Bonus)</span>
-                </td>
-                <td colSpan={2}>
-                  {move && (
-                    <div className="tw-flex tw-items-center tw-gap-1">
-                      <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
-                      <span className="!tw-text-green-600 tw-inline-block caption tw-ml-1">
-                        {`+${toFloatWithPadding(move.pvpPower * 0.2, 2)}`}
-                      </span>
-                    </div>
+                  <tr className="tw-text-center">
+                    <td className="table-sub-header" colSpan={3}>
+                      PVP Stats
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>PVP Power</td>
+                    <td colSpan={2}>{move?.pvpPower}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      PVP Power
+                      <span className="caption">(STAB / Shadow Bonus)</span>
+                    </td>
+                    <td colSpan={2}>
+                      {move && (
+                        <div className="tw-flex tw-items-center tw-gap-1">
+                          <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
+                          <span className="!tw-text-green-600 tw-inline-block caption tw-ml-1">
+                            {`+${toFloatWithPadding(move.pvpPower * 0.2, 2)}`}
+                          </span>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>PVP Energy</td>
+                    <td colSpan={2}>
+                      {toNumber(move?.pvpEnergy) > 0 && '+'}
+                      {move?.pvpEnergy}
+                    </td>
+                  </tr>
+                  {move?.typeMove === TypeMove.Charged && (
+                    <tr>
+                      <td>PVP Bar Charged</td>
+                      <td colSpan={2}>
+                        <ChargedBar barCount={getBarCharge(move.pvpEnergy)} color={move.type?.toLowerCase()} />
+                      </td>
+                    </tr>
                   )}
-                </td>
-              </tr>
-              <tr>
-                <td>PVP Energy</td>
-                <td colSpan={2}>
-                  {toNumber(move?.pvpEnergy) > 0 && '+'}
-                  {move?.pvpEnergy}
-                </td>
-              </tr>
-              {move?.typeMove === TypeMove.Charged && (
-                <tr>
-                  <td>PVP Bar Charged</td>
-                  <td colSpan={2}>
-                    <ChargedBar barCount={getBarCharge(move.pvpEnergy)} color={move.type?.toLowerCase()} />
-                  </td>
-                </tr>
+                </Fragment>
               )}
               {isNotEmpty(move?.buffs) && (
                 <Fragment>
@@ -641,68 +694,80 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-damage-table">
             <thead className="tw-text-center">
               <tr>
-                <th colSpan={2}>{`Damage ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} Simulator`}</th>
+                <th colSpan={2}>
+                  {move?.typeMove === TypeMove.Max
+                    ? `Pokémon with ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`
+                    : `Damage ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} Simulator`}
+                </th>
               </tr>
             </thead>
             <tbody>
-              <tr className="tw-text-center">
-                <td className="table-sub-header" colSpan={2}>
-                  PVE Stats
-                </td>
-              </tr>
-              <tr>
-                <td>DPS</td>
-                <td>{move && `${toFloatWithPadding(move.pvePower / (move.durationMs / 1000), 2)}`}</td>
-              </tr>
-              <tr>
-                <td>
-                  DPS
-                  <span className="caption">(Weather / STAB / Shadow Bonus)</span>
-                </td>
-                <td>{move && `${toFloatWithPadding((move.pvePower * battleStab()) / (move.durationMs / 1000), 2)}`}</td>
-              </tr>
-              <tr>
-                <td>
-                  DPS
-                  <span className="caption">(2 Effect Bonus)</span>
-                </td>
-                <td>
-                  {move &&
-                    `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 2)) / (move.durationMs / 1000), 2)}`}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  DPS
-                  <span className="caption">(STAB+Weather+Shadow Bonus)</span>
-                </td>
-                <td>
-                  {move &&
-                    `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 3)) / (move.durationMs / 1000), 2)}`}
-                </td>
-              </tr>
-              {move?.typeMove === TypeMove.Fast && (
-                <tr>
-                  <td>EPS</td>
-                  <td>{move && `${toFloatWithPadding(move.pveEnergy / (move.durationMs / 1000), 2)}`}</td>
-                </tr>
+              {move?.typeMove !== TypeMove.Max && (
+                <Fragment>
+                  <tr className="tw-text-center">
+                    <td className="table-sub-header" colSpan={2}>
+                      PVE Stats
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>DPS</td>
+                    <td>{move && `${toFloatWithPadding(move.pvePower / (move.durationMs / 1000), 2)}`}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      DPS
+                      <span className="caption">(Weather / STAB / Shadow Bonus)</span>
+                    </td>
+                    <td>
+                      {move && `${toFloatWithPadding((move.pvePower * battleStab()) / (move.durationMs / 1000), 2)}`}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      DPS
+                      <span className="caption">(2 Effect Bonus)</span>
+                    </td>
+                    <td>
+                      {move &&
+                        `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 2)) / (move.durationMs / 1000), 2)}`}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      DPS
+                      <span className="caption">(STAB+Weather+Shadow Bonus)</span>
+                    </td>
+                    <td>
+                      {move &&
+                        `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 3)) / (move.durationMs / 1000), 2)}`}
+                    </td>
+                  </tr>
+                  {move?.typeMove === TypeMove.Fast && (
+                    <tr>
+                      <td>EPS</td>
+                      <td>{move && `${toFloatWithPadding(move.pveEnergy / (move.durationMs / 1000), 2)}`}</td>
+                    </tr>
+                  )}
+                  <tr className="tw-text-center">
+                    <td className="table-sub-header" colSpan={2}>
+                      PVP Stats
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>DPS</td>
+                    <td>{move && `${toFloatWithPadding(move.pvpPower / (move.durationMs / 1000), 2)}`}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      DPS
+                      <span className="caption">(STAB / Shadow Bonus)</span>
+                    </td>
+                    <td>
+                      {move && `${toFloatWithPadding((move.pvpPower * battleStab()) / (move.durationMs / 1000), 2)}`}
+                    </td>
+                  </tr>
+                </Fragment>
               )}
-              <tr className="tw-text-center">
-                <td className="table-sub-header" colSpan={2}>
-                  PVP Stats
-                </td>
-              </tr>
-              <tr>
-                <td>DPS</td>
-                <td>{move && `${toFloatWithPadding(move.pvpPower / (move.durationMs / 1000), 2)}`}</td>
-              </tr>
-              <tr>
-                <td>
-                  DPS
-                  <span className="caption">(STAB / Shadow Bonus)</span>
-                </td>
-                <td>{move && `${toFloatWithPadding((move.pvpPower * battleStab()) / (move.durationMs / 1000), 2)}`}</td>
-              </tr>
               {move?.bonus && (
                 <tr>
                   <td className="table-sub-header !tw-p-0" colSpan={2}>
@@ -833,14 +898,14 @@ const Move = (props: IMovePage) => {
                 <td className="table-top-of-move !tw-p-0" colSpan={2}>
                   <CustomDataTable
                     className="table-top-of-move-container"
-                    customColumns={columns}
+                    customColumns={move?.typeMove === TypeMove.Max ? maxMoveColumns : columns}
                     data={topListFilter}
                     pagination
                     paginationServer
                     paginationTotalRows={totalRows}
                     paginationResetDefaultPage={resetPaginationToggle}
                     paginationPerPage={rowsPerPage}
-                    defaultSortFieldId={ColumnType.DPS}
+                    defaultSortFieldId={move?.typeMove === TypeMove.Max ? ColumnType.Name : ColumnType.DPS}
                     defaultSortAsc={false}
                     sortServer
                     onSort={(column, direction) => {

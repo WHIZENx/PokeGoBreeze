@@ -13,7 +13,15 @@ import {
 } from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats } from '../../../core/models/pokemon.model';
-import { LabelType, PokemonType, PokemonClass, CardType, TypeMove, TypeAction } from '../../../enums/type.enum';
+import {
+  LabelType,
+  PokemonType,
+  PokemonClass,
+  CardType,
+  TypeMove,
+  TypeAction,
+  MaxMoveType,
+} from '../../../enums/type.enum';
 import { BadgeType } from '../../enums/badge-type.enum';
 import { InputSearchType, InputType } from '../Inputs/enums/input-type.enum';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Inputs/models/select-move.model';
@@ -332,6 +340,8 @@ export interface IPokemonTableComponent {
 
 export interface ISelectCustomMoveComponent {
   type?: TypeMove;
+  includeMaxMoves?: boolean;
+  maxMoveType?: MaxMoveType;
   id: number | undefined;
   form: string | undefined;
   move: ICombat | undefined;

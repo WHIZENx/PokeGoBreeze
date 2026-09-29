@@ -5,17 +5,24 @@ import './MoveTable.scss';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { ICombat } from '../../../../core/models/combat.model';
 import { IPokemonQueryMove, IPokemonQueryRankMove } from '../../../../utils/models/pokemon-top-move.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { combineClasses, DynamicObj, getPropertyName, toFloatWithPadding, toNumber } from '../../../../utils/extension';
 import { TableType, TypeSorted } from './enums/table-type.enum';
-import { MoveType, PokemonType } from '../../../../enums/type.enum';
+import { MoveType } from '../../../../enums/type.enum';
 import { LinkToTop } from '../../../Link/LinkToTop';
 import { FloatPaddingOption } from '../../../../utils/models/extension.model';
 import IconType from '../../../Sprites/Icon/Type/Type';
 import TabsPanel from '../../Tabs/TabsPanel';
 import CircularProgress from '@mui/material/CircularProgress';
+import Tooltips from '../../Tooltips/Tooltips';
+import {
+  formatMaxMoveLevelSummary,
+  formatMaxMoveUpgradeCosts,
+  getMaxMoveVariantLabel,
+} from '../../../../utils/max-move';
 
 interface ISortModel {
   fast: boolean;
@@ -65,7 +72,7 @@ const TableMove = (props: ITableMoveComponent) => {
 
   const move = props.rankMoveData ?? cachedRankMoveData.current ?? emptyMoveRanking;
   const moveOrigin = props.moveData ?? cachedMoveData.current;
-  const showMaxMoves = props.pokemonType === PokemonType.GMax && Boolean(moveOrigin?.dynamaxMoves.length);
+  const showMaxMoves = Boolean(moveOrigin?.dynamaxMoves.length);
 
   const [stateSorted, setStateSorted] = useState(
     new TableSort({
@@ -223,24 +230,55 @@ const TableMove = (props: ITableMoveComponent) => {
       {data.map((value, index) => (
         <tr key={index}>
           <td className="text-origin tw-bg-table-primary">
-            <LinkToTop to={`../move/${value.id}`} className="tw-block">
-              <div className="tw-inline-block tw-mr-1 tw-align-text-bottom">
-                <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.type} />
-              </div>
-              <span className="tw-mr-1">{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
-              <span className="tw-w-max tw-align-text-bottom">
-                {value.moveType !== MoveType.None && (
-                  <span
-                    className={combineClasses(
-                      'type-icon-small ic',
-                      `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`
-                    )}
+            <span className="tw-inline-flex tw-items-center">
+              <LinkToTop to={`../move/${value.id}`} className="tw-inline-flex tw-items-center">
+                <span className="tw-inline-flex tw-mr-1 tw-align-text-bottom">
+                  <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.type} />
+                </span>
+                <span className="tw-mr-1">{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
+                <span className="tw-w-max tw-align-text-bottom">
+                  {value.moveType !== MoveType.None && (
+                    <span
+                      className={combineClasses(
+                        'type-icon-small ic',
+                        `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`
+                      )}
+                    >
+                      {getKeyWithData(MoveType, value.moveType)}
+                    </span>
+                  )}
+                </span>
+              </LinkToTop>
+              {value.maxMoveLevels?.length || value.maxMoveCosts?.length ? (
+                <Tooltips
+                  hideBackground
+                  arrow
+                  colorArrow="var(--custom-pop-over)"
+                  title={
+                    <div className="popover-info tw-max-w-80">
+                      {value.maxMoveLevels?.length ? (
+                        <span className="tw-block tw-text-sm">
+                          {getMaxMoveVariantLabel(value)} · Lv. 1–4: {formatMaxMoveLevelSummary(value)}
+                        </span>
+                      ) : null}
+                      {value.maxMoveCosts?.length ? (
+                        <span className="tw-block tw-mt-2 tw-text-sm">
+                          Training: {formatMaxMoveUpgradeCosts(value)}
+                        </span>
+                      ) : null}
+                    </div>
+                  }
+                >
+                  <button
+                    type="button"
+                    aria-label={`${splitAndCapitalize(value.name.toLowerCase(), '_', ' ')} Max Move information`}
+                    className="tooltips-info tw-inline-flex tw-ml-1 tw-p-0 tw-border-0 tw-bg-transparent"
                   >
-                    {getKeyWithData(MoveType, value.moveType)}
-                  </span>
-                )}
-              </span>
-            </LinkToTop>
+                    <InfoOutlinedIcon color="primary" fontSize="small" />
+                  </button>
+                </Tooltips>
+              ) : null}
+            </span>
           </td>
         </tr>
       ))}
@@ -353,7 +391,7 @@ const TableMove = (props: ITableMoveComponent) => {
                         <colgroup className="main-move" />
                         <thead>
                           <tr className="tw-text-center">
-                            <th className="table-sub-header">Max Moves</th>
+                            <th className="table-sub-header">Max Moves (Max Battles only)</th>
                           </tr>
                         </thead>
                         <tbody>{renderMoveSetTable(moveOrigin.dynamaxMoves)}</tbody>

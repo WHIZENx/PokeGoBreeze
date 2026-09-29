@@ -10,6 +10,10 @@ import { ITypeEffectiveModel, TypeEffectiveModel } from './type-effective.model'
 import { IWeatherBoost, WeatherBoost } from './weather-boost.model';
 
 interface CombatSetting {
+  roundDurationSeconds: number;
+  turnDurationSeconds: number;
+  changePokemonDurationSeconds: number;
+  quickSwapCooldownDurationSeconds: number;
   sameTypeAttackBonusMultiplier: number;
   fastAttackBonusMultiplier: number;
   chargeAttackBonusMultiplier: number;
@@ -31,7 +35,12 @@ interface CombatStatStageSetting {
 }
 
 interface BattleSetting {
+  roundDurationSeconds: number;
   enemyAttackInterval: number;
+  energyDeltaPerHealthLost: number;
+  bossEnergyRegenerationPerHealthLost: number;
+  dodgeDurationMs: number;
+  maximumAttackersPerBattle: number;
   sameTypeAttackBonusMultiplier: number;
   shadowPokemonAttackBonusMultiplier: number;
   shadowPokemonDefenseBonusMultiplier: number;
@@ -355,6 +364,10 @@ export interface ItemSettings {
   ignoreInventorySpace?: boolean;
   nameOverride?: string;
   descriptionOverride?: string;
+  food?: {
+    itemEffect?: string[];
+    itemEffectPercent?: number[];
+  };
 }
 
 export interface PokemonUpgradeSettings {
@@ -379,12 +392,77 @@ export interface LevelUpRewardSettings {
 
 interface MoveMapping {
   pokemonId: string;
-  form: string;
+  form?: string;
   move: string;
+  optionalBMoveOverride?: { override?: boolean; move?: string };
+  optionalCMoveOverride?: { override?: boolean; move?: string };
 }
 
 interface SourdoughMoveMappingSettings {
   mappings: MoveMapping[];
+}
+
+interface BreadMoveMappingSettings {
+  mappings: Array<{ type: string; move: string }>;
+}
+
+interface BreadPokemonScalingSettings {
+  visualSettings: Array<{
+    pokemonId: string;
+    pokemonFormData: Array<{
+      pokemonForm: string;
+      visualData: Array<{ breadMode: string }>;
+    }>;
+  }>;
+}
+
+interface BreadSettings {
+  allowedSourdoughPokemon: Array<{
+    pokemonId: string;
+    form: string[];
+    breadMode: string;
+  }>;
+}
+
+export interface MaxMoveUpgradeCost {
+  mpCost?: number;
+  candyCost?: number;
+  xlCandyCost?: number;
+  stardustCost?: number;
+  xpReward?: number;
+}
+
+interface BreadMoveLevelSettings {
+  group: string;
+  aSettings: MaxMoveUpgradeCost[];
+  bSettings: MaxMoveUpgradeCost[];
+  cSettings: MaxMoveUpgradeCost[];
+}
+
+interface WeatherBonusSettingsGM {
+  cpBaseLevelBonus: number;
+  guaranteedIndividualValues: number;
+  stardustBonusMultiplier: number;
+  attackBonusMultiplier: number;
+  raidEncounterCpBaseLevelBonus: number;
+  raidEncounterGuaranteedIndividualValues: number;
+}
+
+interface MegaEvoSettings {
+  evolutionLengthMs: string;
+  attackBoostFromMegaDifferentType: number;
+  attackBoostFromMegaSameType: number;
+}
+
+interface PrimalEvoSettings {
+  commonTempSettings: { evolutionLengthMs: string };
+  typeBoosts: Array<{ pokemonId: string; boostType: string[] }>;
+}
+
+interface EncounterSettings {
+  niceThrowThreshold: number;
+  greatThrowThreshold: number;
+  excellentThrowThreshold: number;
 }
 
 interface NonCombatMoveSettings {
@@ -428,7 +506,15 @@ interface DataGM {
   playerLevel: PlayerLevel;
   pokemonUpgrades: PokemonUpgradeSettings;
   levelUpRewardSettings: LevelUpRewardSettings;
+  breadMoveMappings?: BreadMoveMappingSettings;
+  breadPokemonScalingSettings?: BreadPokemonScalingSettings;
+  breadSettings?: BreadSettings;
+  breadMoveLevelSettings?: BreadMoveLevelSettings;
   sourdoughMoveMappingSettings?: SourdoughMoveMappingSettings;
+  weatherBonusSettings?: WeatherBonusSettingsGM;
+  megaEvoSettings?: MegaEvoSettings;
+  primalEvoSettings?: PrimalEvoSettings;
+  encounterSettings: EncounterSettings;
   nonCombatMoveSettings?: NonCombatMoveSettings;
 }
 
@@ -506,6 +592,10 @@ export class PlayerSetting implements IPlayerSetting {
 }
 
 interface ICombatOption {
+  roundDurationSeconds: number;
+  turnDurationSeconds: number;
+  changePokemonDurationSeconds: number;
+  quickSwapCooldownDurationSeconds: number;
   stab: number;
   fastAttackBonusMultiplier: number;
   chargeAttackBonusMultiplier: number;
@@ -519,6 +609,10 @@ interface ICombatOption {
 }
 
 export class CombatOption implements ICombatOption {
+  roundDurationSeconds = 0;
+  turnDurationSeconds = 0;
+  changePokemonDurationSeconds = 0;
+  quickSwapCooldownDurationSeconds = 0;
   stab = 0;
   fastAttackBonusMultiplier = 1;
   chargeAttackBonusMultiplier = 1;
@@ -532,7 +626,12 @@ export class CombatOption implements ICombatOption {
 }
 
 interface IBattleOption {
+  roundDurationSeconds: number;
   enemyAttackInterval: number;
+  energyDeltaPerHealthLost: number;
+  bossEnergyRegenerationPerHealthLost: number;
+  dodgeDurationMs: number;
+  maximumAttackersPerBattle: number;
   stab: number;
   shadowBonus: IStatsPokemonGO;
   purifiedBonus: IStatsPokemonGO;
@@ -541,7 +640,12 @@ interface IBattleOption {
 }
 
 export class BattleOption implements IBattleOption {
+  roundDurationSeconds = 0;
   enemyAttackInterval = 0;
+  energyDeltaPerHealthLost = 0;
+  bossEnergyRegenerationPerHealthLost = 0;
+  dodgeDurationMs = 0;
+  maximumAttackersPerBattle = 0;
   stab = 0;
   shadowBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
   purifiedBonus: IStatsPokemonGO = { atk: 0, def: 0, sta: 0, prod: 0 };
@@ -561,6 +665,27 @@ export class ThrowOption implements IThrowOption {
   nice = 0;
   great = 0;
   excellent = 0;
+}
+
+export class WeatherBonusSettings {
+  cpBaseLevelBonus = 0;
+  guaranteedIndividualValues = 0;
+  stardustBonusMultiplier = 0;
+  attackBonusMultiplier = 0;
+  raidEncounterCpBaseLevelBonus = 0;
+  raidEncounterGuaranteedIndividualValues = 0;
+}
+
+export class MegaBattleSettings {
+  evolutionLengthMs = 0;
+  differentTypeAttackBoost = 1;
+  sameTypeAttackBoost = 1;
+  primalTypeBoosts: DynamicObj<string[]> = {};
+}
+
+export class CatchMechanicSettings {
+  throwThresholds = { nice: 1, great: 1, excellent: 1 };
+  berryMultipliers: DynamicObj<number> = {};
 }
 
 export interface IBuddyFriendship {
@@ -764,6 +889,9 @@ export interface IOptions {
   weatherTypes: string[];
   typeEffective: ITypeEffectiveModel;
   weatherBoost: IWeatherBoost;
+  weatherBonus: WeatherBonusSettings;
+  megaBattle: MegaBattleSettings;
+  catchMechanics: CatchMechanicSettings;
   config: IConfig;
 }
 
@@ -778,5 +906,8 @@ export class Options implements IOptions {
   weatherTypes: string[] = [];
   typeEffective = new TypeEffectiveModel();
   weatherBoost = new WeatherBoost();
+  weatherBonus = new WeatherBonusSettings();
+  megaBattle = new MegaBattleSettings();
+  catchMechanics = new CatchMechanicSettings();
   config = new Config();
 }

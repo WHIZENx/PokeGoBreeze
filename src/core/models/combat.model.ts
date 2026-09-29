@@ -1,7 +1,16 @@
-import { BuffType, MaxMoveType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
+import {
+  BuffType,
+  MaxMoveEffect,
+  MaxMoveType,
+  MaxMoveVariant,
+  MoveType,
+  TypeAction,
+  TypeMove,
+} from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { BonusType } from '../enums/bonus-type.enum';
 import { MoveSetting } from './options.model';
+import type { MaxMoveUpgradeCost } from './pokemon.model';
 
 export interface IBuff {
   type?: TypeAction;
@@ -165,6 +174,10 @@ export interface ICombat {
   isMultipleWithType: boolean;
   moveType?: MoveType;
   maxMoveType?: MaxMoveType;
+  maxMoveVariant?: MaxMoveVariant;
+  maxMoveEffect?: MaxMoveEffect;
+  maxMoveLevels?: number[];
+  maxMoveCosts?: MaxMoveUpgradeCost[];
   bonus?: IBonus;
 }
 
@@ -191,6 +204,10 @@ export class Combat implements ICombat {
   isMultipleWithType = false;
   moveType?: MoveType;
   maxMoveType?: MaxMoveType;
+  maxMoveVariant?: MaxMoveVariant;
+  maxMoveEffect?: MaxMoveEffect;
+  maxMoveLevels?: number[];
+  maxMoveCosts?: MaxMoveUpgradeCost[];
   bonus?: IBonus;
 
   static create(value: ICombat) {

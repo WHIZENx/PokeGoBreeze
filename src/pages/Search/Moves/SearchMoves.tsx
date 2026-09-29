@@ -20,6 +20,7 @@ import InputMui from '../../../components/Commons/Inputs/InputMui';
 import ProcessedDataService from '../../../services/processed-data.service';
 import APIService from '../../../services/api.service';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
+import { formatMaxMoveLevelSummary, getMaxMoveVariantLabel } from '../../../utils/max-move';
 
 const columns = createDataRows<TableColumnModify<ICombat>>(
   {
@@ -61,6 +62,23 @@ const columns = createDataRows<TableColumnModify<ICombat>>(
     name: 'DPS',
     selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
     sortable: true,
+  }
+);
+
+const maxColumns = createDataRows<TableColumnModify<ICombat>>(
+  ...columns.slice(0, 3),
+  {
+    id: 'maxMoveVariant',
+    name: 'Max Move Type',
+    selector: (row) => getMaxMoveVariantLabel(row),
+    width: '170px',
+  },
+  {
+    id: ColumnType.Power,
+    name: 'Level 1 / 2 / 3 / 4',
+    selector: (row) => formatMaxMoveLevelSummary(row),
+    sortable: true,
+    minWidth: '230px',
   }
 );
 
@@ -276,7 +294,7 @@ const Search = () => {
             <tr>
               <td className="data-table">
                 <CustomDataTable
-                  customColumns={columns}
+                  customColumns={category === TypeMove.Max ? maxColumns : columns}
                   data={result.data}
                   keyField="tableKey"
                   defaultSortFieldId={ColumnType.Name}

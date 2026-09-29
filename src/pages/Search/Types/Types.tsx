@@ -28,6 +28,7 @@ import SelectTypeComponent from '../../../components/Commons/Selects/SelectType'
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
+import { formatMaxMoveLevelSummary, getMaxMoveVariantLabel } from '../../../utils/max-move';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -162,6 +163,23 @@ const columnMove = createDataRows<TableColumnModify<ICombat>>(
   }
 );
 
+const columnMaxMove = createDataRows<TableColumnModify<ICombat>>(
+  ...columnMove.slice(0, 2),
+  {
+    id: 'maxMoveVariant',
+    name: 'Max Move Type',
+    selector: (row) => getMaxMoveVariantLabel(row),
+    width: '170px',
+  },
+  {
+    id: ColumnType.Power,
+    name: 'Level 1 / 2 / 3 / 4',
+    selector: (row) => formatMaxMoveLevelSummary(row),
+    sortable: true,
+    minWidth: '230px',
+  }
+);
+
 type TypeResultKind = 'pokemon-single' | 'pokemon-dual' | 'fast' | 'charged' | 'max';
 
 interface TypeCounts {
@@ -202,6 +220,8 @@ const typeSortField = (kind: TypeResultKind, columnId: string | number | undefin
       return 'pveEnergy';
     case ColumnType.EnergyPVP:
       return 'pvpEnergy';
+    case ColumnType.Power:
+      return kind === 'max' ? 'maxPower' : 'pvePower';
     default:
       return 'name';
   }
@@ -510,7 +530,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               label: 'Max Moves',
               children: (
                 <CustomDataTable
-                  customColumns={columnMove}
+                  customColumns={columnMaxMove}
                   data={maxMoves.data}
                   pagination
                   paginationServer
