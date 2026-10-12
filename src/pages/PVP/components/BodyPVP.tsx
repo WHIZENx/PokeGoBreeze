@@ -27,7 +27,7 @@ import useDataStore from '../../../composables/useDataStore';
 import usePokemon from '../../../composables/usePokemon';
 
 const BodyPVP = (props: BodyComponent) => {
-  const { findPokemonBySlug } = usePokemon();
+  const { findPokemonByPvpokeSpeciesId, findPokemonBySlug } = usePokemon();
   const { getAssetNameById } = useAssets();
   const { pokemonsData, assetsData } = useDataStore();
 
@@ -42,7 +42,7 @@ const BodyPVP = (props: BodyComponent) => {
           const speciesId = versus.opponent;
           const speciesName = convertNameRankingToForm(speciesId);
           const name = convertNameRankingToOri(speciesId, speciesName);
-          const pokemon = findPokemonBySlug(name);
+          const pokemon = findPokemonByPvpokeSpeciesId(speciesId) ?? findPokemonBySlug(name);
           const id = pokemon?.num;
           const form = getAssetNameById(id, name, pokemon?.form);
           let pokemonType;
@@ -63,7 +63,7 @@ const BodyPVP = (props: BodyComponent) => {
           });
         });
     },
-    [pokemonsData, assetsData, findPokemonBySlug, getAssetNameById]
+    [pokemonsData, assetsData, findPokemonByPvpokeSpeciesId, findPokemonBySlug, getAssetNameById]
   );
 
   const matchups = useMemo(() => mapPokemonBody(props.data?.matchups), [props.data?.matchups, mapPokemonBody]);

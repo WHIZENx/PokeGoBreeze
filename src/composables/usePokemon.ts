@@ -3,7 +3,7 @@ import { formGmax, formNormal, formStandard } from '../utils/helpers/options-con
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import { EqualMode } from '../utils/enums/string.enum';
 import { IPokemonData, PokemonData, PokemonModel } from '../core/models/pokemon.model';
-import { convertPokemonAPIDataName, getPokemonFormWithNoneSpecialForm } from '../utils/utils';
+import { convertPokemonAPIDataName, getAllMoves, getPokemonFormWithNoneSpecialForm } from '../utils/utils';
 import {
   IPokemonFormDetail,
   IPokemonFormModify,
@@ -52,10 +52,32 @@ export const usePokemon = () => {
     });
     return result;
   }, [validPokemons]);
-  const pokemonBySlug = useMemo(
-    () => new Map(validPokemons.flatMap((pokemon) => (pokemon.slug ? [[pokemon.slug.toLowerCase(), pokemon]] : []))),
-    [validPokemons]
-  );
+  const pokemonBySlug = useMemo(() => {
+    const result = new Map<string, IPokemonData>();
+    validPokemons.forEach((pokemon) => {
+      if (!pokemon.slug) {
+        return;
+      }
+
+      const slug = pokemon.slug.toLowerCase();
+      const current = result.get(slug);
+      const pokemonPriority = Number(pokemon.releasedGO) * 2 + Number(getAllMoves(pokemon).length > 0);
+      const currentPriority = current ? Number(current.releasedGO) * 2 + Number(getAllMoves(current).length > 0) : -1;
+      if (!current || pokemonPriority > currentPriority) {
+        result.set(slug, pokemon);
+      }
+    });
+    return result;
+  }, [validPokemons]);
+  const pokemonByPvpokeSpeciesId = useMemo(() => {
+    const result = new Map<string, IPokemonData>();
+    validPokemons.forEach((pokemon) => {
+      if (pokemon.fullName) {
+        result.set(pokemon.fullName.toUpperCase(), pokemon);
+      }
+    });
+    return result;
+  }, [validPokemons]);
   const defaultPokemons = useMemo(
     () =>
       validPokemons
@@ -109,6 +131,35 @@ export const usePokemon = () => {
     [pokemonBySlug]
   );
 
+  const findPokemonByPvpokeSpeciesId = useCallback(
+    (speciesId: string | undefined) => {
+      if (!speciesId) {
+        return undefined;
+      }
+      const aliases: Readonly<Record<string, string>> = {
+        AEGISLASH_SHIELD: 'AEGISLASH',
+        CLODSIRESB: 'CLODSIRE',
+        DARMANITAN_GALARIAN_STANDARD: 'DARMANITAN_GALARIAN',
+        GOLISOPODSH: 'GOLISOPOD',
+        LANTURNW: 'LANTURN',
+        MEWTWO_ARMORED: 'MEWTWO_ARMOR',
+        TAUROS_AQUA: 'TAUROS_PALDEA_AQUA',
+        TAUROS_BLAZE: 'TAUROS_PALDEA_BLAZE',
+        TAUROS_COMBAT: 'TAUROS_PALDEA_COMBAT',
+        UNOWN: 'A',
+        ZYGARDE_10: 'ZYGARDE_TEN_PERCENT',
+      };
+      let key = speciesId
+        .trim()
+        .replaceAll('-', '_')
+        .toUpperCase()
+        .replace(/_(SHADOW|XS)$/, '');
+      key = key.replace(/_ALOLAN$/, '_ALOLA').replace(/_PALDEAN$/, '_PALDEA');
+      return pokemonByPvpokeSpeciesId.get(key) ?? pokemonByPvpokeSpeciesId.get(aliases[key] ?? '');
+    },
+    [pokemonByPvpokeSpeciesId]
+  );
+
   const findPokemonByIdAndForm = useCallback(
     (id: number | undefined, form: string | undefined) => {
       if (id === undefined) {
@@ -117,7 +168,7 @@ export const usePokemon = () => {
       if (!form) {
         return pokemonsById.get(id)?.[0];
       }
-      const normalizedForm = form?.replace(`_${formStandard()}`, '').toUpperCase() ?? formNormal();
+      const normalizedForm = form.replaceAll('-', '_').replace(`_${formStandard()}`, '').toUpperCase();
       return pokemonByIdAndForm.get(`${id}:${normalizedForm}`);
     },
     [pokemonByIdAndForm, pokemonsById]
@@ -204,21 +255,26 @@ export const usePokemon = () => {
     return index;
   };
 
-  const retrieveMoves = (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None) => {
-    const idPokemons = id === undefined ? [] : (pokemonsById.get(id) ?? []);
-    if (isNotEmpty(idPokemons)) {
-      if (pokemonType === PokemonType.GMax) {
-        return idPokemons.find((item) => isEqual(item.form, formGmax()));
+  const retrieveMoves = useCallback(
+    (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None) => {
+      const idPokemons = id === undefined ? [] : (pokemonsById.get(id) ?? []);
+      if (isNotEmpty(idPokemons)) {
+        if (pokemonType === PokemonType.GMax) {
+          return idPokemons.find((item) => isEqual(item.form, formGmax()));
+        }
+        const pokemonForm = getValueOrDefault(
+          String,
+          form?.replaceAll('-', '_').toUpperCase().replace(`_${formStandard()}`, '').replace(formGmax(), formNormal()),
+          formNormal()
+        );
+        const result = idPokemons.find(
+          (item) => isEqual(item.fullName, pokemonForm) || isEqual(item.form, pokemonForm)
+        );
+        return PokemonData.copy(result ?? idPokemons[0]);
       }
-      const pokemonForm = getValueOrDefault(
-        String,
-        form?.replaceAll('-', '_').toUpperCase().replace(`_${formStandard()}`, '').replace(formGmax(), formNormal()),
-        formNormal()
-      );
-      const result = idPokemons.find((item) => isEqual(item.fullName, pokemonForm) || isEqual(item.form, pokemonForm));
-      return PokemonData.copy(result ?? idPokemons[0]);
-    }
-  };
+    },
+    [pokemonsById]
+  );
 
   const getPokemonDetails = useCallback(
     (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None, isDefault = false) => {
@@ -251,6 +307,7 @@ export const usePokemon = () => {
     getFindPokemon,
     findPokemonById,
     findPokemonBySlug,
+    findPokemonByPvpokeSpeciesId,
     findPokemonByIdAndForm,
     getEvolutionParents,
     checkPokemonGO,

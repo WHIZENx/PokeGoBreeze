@@ -33,6 +33,7 @@ export interface IPokemonBattleData {
   speciesId?: string;
   name?: string;
   form?: string;
+  assetForm?: string;
   id?: number;
   pokemonType: PokemonType;
   hp: number;
@@ -54,6 +55,7 @@ export class PokemonBattleData implements IPokemonBattleData {
   speciesId?: string;
   name?: string;
   form?: string;
+  assetForm?: string;
   id?: number;
   pokemonType = PokemonType.Normal;
   hp = 0;

@@ -179,6 +179,7 @@ export interface IBattlePokemonData {
   pokemon: IPokemonData;
   id: number;
   form: string | undefined;
+  assetForm: string | undefined;
   pokemonType: PokemonType;
 }
 
@@ -197,6 +198,7 @@ export class BattlePokemonData implements IBattlePokemonData {
   pokemon = new PokemonData();
   id = 0;
   form: string | undefined;
+  assetForm: string | undefined;
   pokemonType = PokemonType.Normal;
 
   static create(value: IBattlePokemonData) {
