@@ -1051,9 +1051,9 @@ const Battle = () => {
       return <></>;
     }
     return (
-      <div className="bufs-container tw-flex tw-flex-row tw-gap-y-1">
+      <div className="tw-flex tw-min-w-0 tw-flex-wrap tw-items-center tw-gap-x-2 tw-gap-y-5 tw-pt-5">
         {move?.buffs.map((value, index) => (
-          <div key={index} className="tw-flex tw-relative tw-gap-y-1">
+          <div key={index} className="tw-relative tw-flex tw-shrink-0">
             <img width={15} height={15} alt="Image ATK" src={value.type === TypeAction.Atk ? ATK_LOGO : DEF_LOGO} />
             <div className="tw-absolute icon-buff">
               {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" color="success" />}
@@ -1366,7 +1366,7 @@ const Battle = () => {
                   move={pokemon.fMove}
                   moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
                 />
-                <div className="tw-flex tw-w-full tw-relative tw-gap-x-2">
+                <div className="tw-flex tw-w-full tw-flex-wrap tw-items-end tw-gap-x-2 tw-gap-y-2">
                   <TypeBadge
                     isFind
                     title="Primary Charged Move"
@@ -1376,7 +1376,7 @@ const Battle = () => {
                   {findBuff(pokemon.cMovePri)}
                 </div>
                 {pokemon.cMoveSec && (
-                  <div className="tw-flex tw-w-full tw-relative tw-gap-x-2">
+                  <div className="tw-flex tw-w-full tw-flex-wrap tw-items-end tw-gap-x-2 tw-gap-y-2">
                     <TypeBadge
                       isFind
                       title="Secondary Charged Move"

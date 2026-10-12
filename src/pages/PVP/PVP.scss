@@ -231,16 +231,10 @@
   @apply tw-h-[150px] tw-py-2.5 tw-px-0;
 }
 
-.fit-timeline .timeline-fit-container div {
+.fit-timeline .timeline-fit-container > div {
   transform: translateY(-50%);
 
   @apply tw-inline-block tw-absolute tw-top-1/2;
-}
-
-.bufs-container {
-  transform: translateY(-50%);
-
-  @apply tw-absolute -tw-right-2.5 tw-top-[calc(50%+15px)];
 }
 
 .icon-buff {
@@ -254,6 +248,10 @@
   transform: translateX(-50%);
 
   @apply -tw-top-px tw-left-1/2 tw-text-[10px] tw-w-max tw-text-center tw-gap-[5px] tw-font-bold;
+}
+
+.fit-timeline .timeline-fit-container > .icon-buff-timeline {
+  transform: translate(-50%, -50%);
 }
 
 .bg-ref-pokemon {
