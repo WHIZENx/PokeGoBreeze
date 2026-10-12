@@ -78,8 +78,21 @@ const Leagues = () => {
   const [showData, setShowData] = useState<RewardDialogData>();
   const scheduleDisplay = useMemo(() => {
     const now = Date.now();
-    const windows = leaguesData.schedules
-      .flatMap((season) => season.windows.map((window) => ({ ...window, seasonTitle: season.seasonTitle })))
+    const windows = (leaguesData.schedules ?? [])
+      .flatMap((season) =>
+        Array.isArray(season.windows)
+          ? season.windows
+              .filter(
+                (window) =>
+                  Number.isFinite(window.start) &&
+                  Number.isFinite(window.end) &&
+                  window.end > window.start &&
+                  Array.isArray(window.leagueIds) &&
+                  Array.isArray(window.leagueTitles)
+              )
+              .map((window) => ({ ...window, seasonTitle: season.seasonTitle }))
+          : []
+      )
       .sort((a, b) => a.start - b.start);
     const currentOrUpcoming = windows.filter((window) => window.end >= now).slice(0, 4);
     return {
@@ -484,41 +497,41 @@ const Leagues = () => {
         </div>
       </div>
       {scheduleDisplay.windows.length ? (
-        <section className="tw-my-3" aria-labelledby="league-rotation-heading">
-          <div className="tw-flex tw-flex-wrap tw-items-baseline tw-justify-between tw-gap-2">
-            <h3 id="league-rotation-heading" className="tw-m-0 tw-text-lg tw-font-semibold">
-              GO Battle League rotations
-            </h3>
+        <details className="tw-my-3 tw-rounded tw-border tw-border-solid tw-border-gray-300 tw-bg-table-primary">
+          <summary className="tw-cursor-pointer tw-p-3 tw-font-semibold">GO Battle League rotations</summary>
+          <section className="tw-border-0 tw-border-t tw-border-solid tw-border-gray-300 tw-p-3" aria-live="polite">
             {!scheduleDisplay.hasCurrentOrUpcoming ? (
-              <span className="caption">No current or upcoming rotation is available in the published schedule.</span>
+              <span className="caption tw-block tw-pb-2">
+                No current or upcoming rotation is available in the published schedule.
+              </span>
             ) : null}
-          </div>
-          <div className="tw-mt-2 tw-grid tw-grid-cols-1 tw-gap-2 md:tw-grid-cols-2 xl:tw-grid-cols-4">
-            {scheduleDisplay.windows.map((window) => {
-              const status =
-                window.start <= scheduleDisplay.now && window.end > scheduleDisplay.now
-                  ? 'Current'
-                  : window.start > scheduleDisplay.now
-                    ? 'Upcoming'
-                    : 'Ended';
-              return (
-                <article
-                  className="tw-rounded tw-border tw-border-solid tw-border-gray-300 tw-bg-table-primary tw-p-3"
-                  key={`${window.start}-${window.end}-${window.leagueIds.join('-')}`}
-                >
-                  <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
-                    <b>{status}</b>
-                    <span className="caption">Season {window.seasonTitle}</span>
-                  </div>
-                  <span className="tw-block tw-text-sm">
-                    {getTime(window.start)} – {getTime(window.end)}
-                  </span>
-                  <span className="tw-mt-1 tw-block">{window.leagueTitles.join(' · ')}</span>
-                </article>
-              );
-            })}
-          </div>
-        </section>
+            <div className="tw-grid tw-grid-cols-1 tw-gap-2 md:tw-grid-cols-2 xl:tw-grid-cols-4">
+              {scheduleDisplay.windows.map((window) => {
+                const status =
+                  window.start <= scheduleDisplay.now && window.end > scheduleDisplay.now
+                    ? 'Current'
+                    : window.start > scheduleDisplay.now
+                      ? 'Upcoming'
+                      : 'Ended';
+                return (
+                  <article
+                    className="tw-rounded tw-border tw-border-solid tw-border-gray-300 tw-bg-table-primary tw-p-3"
+                    key={`${window.start}-${window.end}-${window.leagueIds.join('-')}`}
+                  >
+                    <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
+                      <b>{status}</b>
+                      <span className="caption">Season {window.seasonTitle}</span>
+                    </div>
+                    <span className="tw-block tw-text-sm">
+                      {getTime(window.start)} – {getTime(window.end)}
+                    </span>
+                    <span className="tw-mt-1 tw-block">{window.leagueTitles.join(' · ')}</span>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        </details>
       ) : null}
       {isNotEmpty(leaguesData.data) ? (
         <Fragment>

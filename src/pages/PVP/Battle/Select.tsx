@@ -49,9 +49,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   const selectPokemon = async (value: IBattlePokemonData) => {
     if (!isNotEmpty(value.moveset) || !value.pokemon) {
+      hideSpinner();
       return;
     }
-    props.clearData(false);
     const [fMove] = getValueOrDefault(Array, value.moveset);
     let [, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
 
@@ -65,62 +65,67 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
     topRankController.current?.abort();
-    topRankController.current = new AbortController();
-    let bestStats;
+    const controller = new AbortController();
+    topRankController.current = controller;
     try {
-      bestStats = await StatsCalculationService.getTopRank(
+      const bestStats = await StatsCalculationService.getTopRank(
         stats,
         value.pokemon.num,
         props.league,
         undefined,
-        topRankController.current.signal
+        controller.signal
       );
-    } catch (error) {
-      if (APIService.isCancel(error)) {
+
+      if (topRankController.current !== controller) {
         return;
       }
-      showSnackbar('Unable to load the server-calculated PvP rank.', 'error');
-      hideSpinner();
-      return;
-    }
 
-    setPokemon(value);
-    setFMove(fMoveCombat);
-    setCMovePri(cMovePriCombat);
-    setCMoveSec(cMoveSecCombat);
-    setScore(value.score);
-    props.setPokemonBattle(
-      PokemonBattle.create({
-        ...props.pokemonBattle,
-        pokemonData: PokemonBattleData.create({
-          ...value,
-          form: value.form,
-          pokemonType: value.pokemonType,
-          hp: toNumber(value.stats.hp),
+      props.clearData(false);
+      setPokemon(value);
+      setFMove(fMoveCombat);
+      setCMovePri(cMovePriCombat);
+      setCMoveSec(cMoveSecCombat);
+      setScore(value.score);
+      props.setPokemonBattle(
+        PokemonBattle.create({
+          ...props.pokemonBattle,
+          pokemonData: PokemonBattleData.create({
+            ...value,
+            form: value.form,
+            pokemonType: value.pokemonType,
+            hp: toNumber(value.stats.hp),
+            fMove: fMoveCombat,
+            cMove: cMovePriCombat,
+            cMoveSec: cMoveSecCombat,
+            energy: 0,
+            block: 0,
+            turn: 0,
+            currentStats: bestStats,
+            bestStats,
+            disableCMovePri: false,
+            disableCMoveSec: false,
+            stats,
+          }),
           fMove: fMoveCombat,
-          cMove: cMovePriCombat,
+          cMovePri: cMovePriCombat,
           cMoveSec: cMoveSecCombat,
-          energy: 0,
-          block: 0,
-          turn: 0,
-          currentStats: bestStats,
-          bestStats,
-          disableCMovePri: false,
-          disableCMoveSec: false,
-          stats,
-        }),
-        fMove: fMoveCombat,
-        cMovePri: cMovePriCombat,
-        cMoveSec: cMoveSecCombat,
-        audio: {
-          fMove: createMoveAudio(fMoveCombat?.sound),
-          cMovePri: createMoveAudio(cMovePriCombat?.sound),
-          cMoveSec: createMoveAudio(cMoveSecCombat?.sound),
-        },
-        pokemonType: getPokemonType(value.speciesId),
-      })
-    );
-    hideSpinner();
+          audio: {
+            fMove: createMoveAudio(fMoveCombat?.sound),
+            cMovePri: createMoveAudio(cMovePriCombat?.sound),
+            cMoveSec: createMoveAudio(cMoveSecCombat?.sound),
+          },
+          pokemonType: getPokemonType(value.speciesId),
+        })
+      );
+    } catch (error) {
+      if (!APIService.isCancel(error)) {
+        showSnackbar('Unable to load the server-calculated PvP rank.', 'error');
+      }
+    } finally {
+      if (topRankController.current === controller) {
+        hideSpinner();
+      }
+    }
   };
 
   const selectFMove = (value: ICombat | undefined) => {
