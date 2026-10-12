@@ -35,24 +35,14 @@ const TimelineFit = (
     const positions = calculateWidthBasedPositions(poke.timeline);
     return (
       <Fragment>
-        <div className="tw-mt-2 tw-h-3">
-          <div className="tw-relative timeline-fit-container">
+        <div className="tw-mt-2">
+          <div className="tw-relative timeline-fit-container tw-h-4">
             {poke.timeline.map((value, index) => (
               <Fragment key={index}>
-                {value.isTap && showTap && (
-                  <div
-                    className="charge-attack opacity-50"
-                    style={{
-                      width: value.size,
-                      left: positions[index],
-                      borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
-                    }}
-                  />
-                )}
                 {!value.isTap && (
                   <Fragment>
                     {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
-                      <div className="tw-absolute icon-buff-timeline tw-top-2.5" style={{ left: positions[index] }}>
+                      <div className="icon-buff-timeline" style={{ left: positions[index] }}>
                         {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
                             {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
@@ -64,24 +54,37 @@ const TimelineFit = (
                         {pokeObj.timeline.at(index) &&
                         pokeObj.timeline.at(index)?.type === AttackType.Charge &&
                         isNotEmpty(value.buff) ? (
-                          <div className="tw-absolute icon-buff-timeline tw-top-2.5" style={{ left: positions[index] }}>
+                          <div className="icon-buff-timeline" style={{ left: positions[index] }}>
                             {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
                                 {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
                               </span>
                             ))}
                           </div>
-                        ) : (
-                          showTap && (
-                            <div className="wait-attack" style={{ width: value.size, left: positions[index] }} />
-                          )
-                        )}
+                        ) : null}
                       </Fragment>
                     )}
                   </Fragment>
                 )}
               </Fragment>
             ))}
+          </div>
+          <div className="tw-relative timeline-fit-container tw-h-3">
+            {showTap &&
+              poke.timeline.map(
+                (value, index) =>
+                  value.isTap && (
+                    <div
+                      key={index}
+                      className="charge-attack opacity-50"
+                      style={{
+                        width: value.size,
+                        left: positions[index],
+                        borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
+                      }}
+                    />
+                  )
+              )}
           </div>
         </div>
         <div className="tw-relative timeline-fit-container tw-h-7.5">

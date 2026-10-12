@@ -22,9 +22,9 @@ const Timeline = (
   const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => (
     <Fragment>
       <div className="tw-mt-2 tw-h-3">
-        <div className="tw-flex tw-gap-x-2 tw-w-max">
+        <div className="tw-flex tw-gap-x-3 tw-w-max">
           {poke.timeline.map((value, index) => (
-            <span className="tw-relative" key={index} style={{ width: value.size }}>
+            <span className="tw-relative tw-shrink-0" key={index} style={{ width: value.size }}>
               {value.isTap && showTap && (
                 <div
                   style={{
@@ -73,46 +73,33 @@ const Timeline = (
         }}
       >
         {poke.timeline.map((value, index) => (
-          <Fragment key={index}>
+          <div id={index.toString()} className="tw-relative tw-shrink-0" key={index} style={{ width: value.size }}>
             {value.type === AttackType.Block && (
-              <HexagonIcon id={index.toString()} className="tw-text-combat-block" sx={{ fontSize: value.size }} />
+              <HexagonIcon className="tw-text-combat-block" sx={{ fontSize: value.size }} />
             )}
             {value.type === AttackType.Fast && (
-              <div
-                id={index.toString()}
-                className={combineClasses('fast-attack', value.color, `${value.color}-border`)}
-              />
+              <div className={combineClasses('fast-attack', value.color, `${value.color}-border`)} />
             )}
             {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
               <div
-                id={index.toString()}
                 className={combineClasses('charge-attack', `${value.color}-border`)}
                 style={{ width: value.size, height: value.size }}
               />
             )}
             {value.type === AttackType.Charge && (
               <div
-                id={index.toString()}
                 className={combineClasses('charge-attack', value.color, `${value.color}-border`)}
                 style={{ width: value.size, height: value.size }}
               />
             )}
-            {(value.type === AttackType.Wait || value.type === AttackType.New) && (
-              <div id={index.toString()} className="wait-attack" />
-            )}
-            {!value.type && (
-              <div
-                id={index.toString()}
-                className="wait-charge-attack"
-                style={{ width: value.size, height: value.size }}
-              />
-            )}
+            {(value.type === AttackType.Wait || value.type === AttackType.New) && <div className="wait-attack" />}
+            {!value.type && <div className="wait-charge-attack" style={{ width: value.size, height: value.size }} />}
             {value.type === AttackType.Dead && (
-              <div id={index.toString()}>
+              <div>
                 <CloseIcon color="error" />
               </div>
             )}
-          </Fragment>
+          </div>
         ))}
       </div>
     </Fragment>
