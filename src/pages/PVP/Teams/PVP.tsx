@@ -6,7 +6,6 @@ import APIService from '../../../services/api.service';
 import {
   convertNameRankingToForm,
   convertNameRankingToOri,
-  findMoveTeam,
   getAllMoves,
   getKeyWithData,
   getMoveType,
@@ -61,7 +60,7 @@ import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const { pvpData, pokemonsData, combatsData, assetsData } = useDataStore();
-  const { findPokemonBySlug } = usePokemon();
+  const { findPokemonByPvpokeSpeciesId, findPokemonBySlug } = usePokemon();
   const { findMoveByTag } = useCombats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
   const { getAssetNameById } = useAssets();
@@ -83,7 +82,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     const [speciesId, moveSet] = data.split(' ');
     const speciesName = convertNameRankingToForm(speciesId);
     const name = convertNameRankingToOri(speciesId, speciesName);
-    const pokemon = findPokemonBySlug(name);
+    const pokemon = findPokemonByPvpokeSpeciesId(speciesId) ?? findPokemonBySlug(name);
     const id = pokemon?.num || 0;
     const form = getAssetNameById(id, name, pokemon?.form);
 
@@ -100,13 +99,9 @@ const TeamPVP = (props: IStyleSheetData) => {
     const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
     const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charged);
 
-    const fCombatName = findMoveTeam(fMoveText, fastMoveSet);
-    const cCombatName = findMoveTeam(cMovePriText, chargedMoveSet);
-    const cSecCombatName = findMoveTeam(cMoveSecText, chargedMoveSet);
-
-    const fMove = findMoveByTag(fCombatName, fMoveText);
-    const cMovePri = findMoveByTag(cCombatName, cMovePriText);
-    let cMoveSec = findMoveByTag(cSecCombatName, cMoveSecText);
+    const fMove = findMoveByTag(fastMoveSet, fMoveText, id, pokemon?.form);
+    const cMovePri = findMoveByTag(chargedMoveSet, cMovePriText, id, pokemon?.form);
+    let cMoveSec = findMoveByTag(chargedMoveSet, cMoveSecText, id, pokemon?.form);
 
     if (cMovePri?.id === cMoveSec?.id) {
       cMoveSec = undefined;
