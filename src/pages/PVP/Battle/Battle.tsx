@@ -157,7 +157,7 @@ const stopPokemonAudio = (pokemon: IPokemonBattle) => {
 
 const Battle = () => {
   const { pokemonsData, combatsData, assetsData } = useDataStore();
-  const { findPokemonBySlug } = usePokemon();
+  const { findPokemonByPvpokeSpeciesId, findPokemonBySlug } = usePokemon();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
   const { isMobile } = useDevice();
@@ -345,13 +345,13 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = findPokemonBySlug(name);
+            const pokemon = findPokemonByPvpokeSpeciesId(item.speciesId) ?? findPokemonBySlug(name);
             if (!pokemon) {
               return new BattlePokemonData();
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(pokemon.num, pokemon.form);
+            const assetForm = findAssetForm(pokemon.num, pokemon.form);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -367,7 +367,8 @@ const Battle = () => {
               name,
               pokemon,
               id,
-              form,
+              form: pokemon.form,
+              assetForm,
               stats,
               pokemonType,
             });
@@ -389,7 +390,7 @@ const Battle = () => {
         }
       }
     },
-    [findPokemonBySlug]
+    [findPokemonByPvpokeSpeciesId, findPokemonBySlug]
   );
 
   useEffect(() => {
@@ -1213,13 +1214,13 @@ const Battle = () => {
                       <img
                         alt="Image League"
                         className="pokemon-sprite-raid"
-                        src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
+                        src={APIService.getPokemonModel(pokemon.pokemonData?.assetForm, pokemon.pokemonData?.id)}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = getValidPokemonImgPath(
                             e.currentTarget.src,
                             pokemon.pokemonData?.id,
-                            pokemon.pokemonData?.form
+                            pokemon.pokemonData?.assetForm
                           );
                         }}
                       />
@@ -1585,13 +1586,13 @@ const Battle = () => {
               <img
                 alt="Image League"
                 className="sprite-type"
-                src={APIService.getPokemonModel(pokemonCurr.pokemonData?.form, pokemonCurr.pokemonData?.id)}
+                src={APIService.getPokemonModel(pokemonCurr.pokemonData?.assetForm, pokemonCurr.pokemonData?.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = getValidPokemonImgPath(
                     e.currentTarget.src,
                     pokemonCurr.pokemonData?.id,
-                    pokemonCurr.pokemonData?.form
+                    pokemonCurr.pokemonData?.assetForm
                   );
                 }}
               />
@@ -1614,13 +1615,13 @@ const Battle = () => {
               <img
                 alt="Image League"
                 className="sprite-type"
-                src={APIService.getPokemonModel(pokemonObj.pokemonData?.form, pokemonObj.pokemonData?.id)}
+                src={APIService.getPokemonModel(pokemonObj.pokemonData?.assetForm, pokemonObj.pokemonData?.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = getValidPokemonImgPath(
                     e.currentTarget.src,
                     pokemonObj.pokemonData?.id,
-                    pokemonObj.pokemonData?.form
+                    pokemonObj.pokemonData?.assetForm
                   );
                 }}
               />

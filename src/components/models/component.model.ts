@@ -47,6 +47,7 @@ export interface ICardSmallComponent {
   value?: ISelectMoveModel | ICombat;
   name?: string;
   pokemonId?: number;
+  pokemonForm?: string;
   isEmpty?: boolean;
   isDisable?: boolean;
   isShow?: boolean;

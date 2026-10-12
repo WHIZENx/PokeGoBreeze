@@ -18,16 +18,16 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
 
   useEffect(() => {
     if (!props.isEmpty && (props.value || props.name)) {
-      const move = findMoveByName(props.name || props.value?.name, props.pokemonId);
+      const move = findMoveByName(props.name || props.value?.name, props.pokemonId, undefined, props.pokemonForm);
       setMove(move);
     }
-  }, [findMoveByName, props.value, props.isEmpty, props.name, props.pokemonId]);
+  }, [findMoveByName, props.value, props.isEmpty, props.name, props.pokemonId, props.pokemonForm]);
 
   const isHaveMoveType = () => {
-    if (move && move.moveType !== undefined) {
-      return move.moveType !== MoveType.None;
-    } else if (props.moveType !== undefined) {
+    if (props.moveType !== undefined) {
       return props.moveType !== MoveType.None;
+    } else if (move && move.moveType !== undefined) {
+      return move.moveType !== MoveType.None;
     }
     return false;
   };
@@ -58,13 +58,13 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                   className={combineClasses(
                     `${getKeyWithData(
                       MoveType,
-                      props.isDisable ? MoveType.Disable : move.moveType || props.moveType
+                      props.isDisable ? MoveType.Disable : (props.moveType ?? move.moveType)
                     )?.toLowerCase()}-ic`,
                     props.isDisable && '!tw-text-lightgray',
                     'type-icon-small ic !tw-flex tw-items-center tw-h-3'
                   )}
                 >
-                  {getKeyWithData(MoveType, move.moveType || props.moveType)}
+                  {getKeyWithData(MoveType, props.moveType ?? move.moveType)}
                 </span>
               )}
               {props.isShow && !props.isDisable && (

@@ -503,7 +503,7 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
     if (result && isNotEmpty(m) && m.length === result.length) {
       let count = 0;
       for (let i = 0; i < result.length; i++) {
-        if (isInclude(capitalize(m[i]), result[i])) {
+        if (capitalize(m[i]).toLowerCase().startsWith(result[i].toLowerCase())) {
           count++;
         }
       }
@@ -511,32 +511,6 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
         mSet.push(value);
         if (isSelectFirst) {
           return mSet;
-        }
-      }
-    }
-  }
-  if (!isNotEmpty(mSet)) {
-    for (const value of moveSet) {
-      if (
-        move
-          .toLowerCase()
-          .split('')
-          .every((m) => isInclude(value.toLowerCase(), m))
-      ) {
-        const m = value.split('_');
-        if (result && isNotEmpty(m) && m.length === result.length) {
-          let count = 0;
-          for (let i = 0; i < result.length; i++) {
-            if (isEqual(m[i][0], result[i][0])) {
-              count++;
-            }
-          }
-          if (count === m.length) {
-            mSet.push(value);
-            if (isSelectFirst) {
-              return mSet;
-            }
-          }
         }
       }
     }
@@ -1020,15 +994,20 @@ export const replaceTempMoveName = (name: string | number) => {
   return name.replace(/^V\d{4}_MOVE_/, '');
 };
 
+const PVP_MOVE_TO_GAME_MASTER: Readonly<Record<string, string>> = {
+  AEGISLASH_CHARGE_AIR_SLASH: 'AIR_SLASH',
+  AEGISLASH_CHARGE_PSYCHO_CUT: 'PSYCHO_CUT',
+  FUTURE_SIGHT: 'FUTURESIGHT',
+  GULP_MISSILE_ARROKUDA: 'GULP_MISSILE_GULPING',
+  GULP_MISSILE_PIKACHU: 'GULP_MISSILE_GORGING',
+  PYRO_BALL: 'PYROBALL',
+  TECHNO_BLAST_DOUSE: 'TECHNO_BLAST_WATER',
+  WATER_GUN_FAST_BLASTOISE: 'WATER_GUN_BLASTOISE',
+};
+
 export const replaceTempMovePvpName = (name: string) => {
-  if (isInclude(name, '_BLASTOISE')) {
-    name = name.replace('_BLASTOISE', '');
-  } else if (isEqual(name, 'TECHNO_BLAST_WATER')) {
-    name = 'TECHNO_BLAST_DOUSE';
-  } else if (isEqual(name, 'FUTURE_SIGHT')) {
-    name = 'FUTURESIGHT';
-  }
-  return name;
+  const moveId = name.trim().replaceAll('-', '_').replaceAll(' ', '_').toUpperCase();
+  return PVP_MOVE_TO_GAME_MASTER[moveId] ?? moveId;
 };
 
 export const reverseReplaceTempMovePvpName = (name: string | undefined) => {
