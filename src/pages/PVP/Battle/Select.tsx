@@ -1,7 +1,13 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/api.service';
 
-import { getKeyWithData, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
+import {
+  getKeyWithData,
+  getMoveType,
+  getPokemonType,
+  replaceTempMovePvpName,
+  splitAndCapitalize,
+} from '../../../utils/utils';
 import { calculateStatsByTag } from '../../../utils/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
 import { Checkbox } from '@mui/material';
@@ -38,6 +44,14 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   const [score, setScore] = useState(0);
 
+  const rankingMoves = (moves = pokemon?.moves.fastMoves) =>
+    (moves ?? [])
+      .map((value) => {
+        const move = findMoveByName(replaceTempMovePvpName(value.moveId));
+        return move ? Combat.create({ ...move, moveType: getMoveType(pokemon?.pokemon, move.name) }) : new Combat();
+      })
+      .filter((value) => value.id > 0);
+
   useEffect(() => {
     topRankController.current?.abort();
     setPokemon(undefined);
@@ -52,9 +66,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       hideSpinner();
       return;
     }
-    const [fMove] = getValueOrDefault(Array, value.moveset);
-    let [, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
+    let [fMove, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
 
+    fMove = replaceTempMovePvpName(fMove);
     const fMoveCombat = findMoveByName(fMove);
     cMovePri = replaceTempMovePvpName(cMovePri);
 
@@ -242,9 +256,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         pokemon={new SelectMovePokemonModel(pokemon?.id, pokemon?.form, pokemon?.pokemonType)}
         move={fMove}
         setMovePokemon={(value) => selectFMove(value)}
-        moves={pokemon?.moves.fastMoves
-          .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
-          .filter((value) => value.id > 0)}
+        moves={rankingMoves(pokemon?.moves.fastMoves)}
       />
       <h5 className="tw-mt-3">Charged Moves Primary</h5>
       <div className="tw-flex tw-items-center tw-gap-x-2">
@@ -274,9 +286,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           move={cMovePri}
           setMovePokemon={(value) => selectCMovePri(value)}
           isDisable={props.pokemonBattle.disableCMovePri}
-          moves={pokemon?.moves.chargedMoves
-            .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
-            .filter((value) => value.id > 0 && !isEqual(value.name, cMoveSec?.name))}
+          moves={rankingMoves(pokemon?.moves.chargedMoves).filter((value) => !isEqual(value.name, cMoveSec?.name))}
         />
       </div>
       <h5 className="tw-mt-3">Charged Moves Secondary</h5>
@@ -308,9 +318,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           setMovePokemon={(value) => selectCMoveSec(value)}
           isDisable={props.pokemonBattle.disableCMoveSec}
           clearData={props.pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
-          moves={pokemon?.moves.chargedMoves
-            .map((value) => findMoveByName(replaceTempMovePvpName(value.moveId)) || new Combat())
-            .filter((value) => value.id > 0 && !isEqual(value.name, cMovePri?.name))}
+          moves={rankingMoves(pokemon?.moves.chargedMoves).filter((value) => !isEqual(value.name, cMovePri?.name))}
         />
       </div>
     </Fragment>

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { ISelectCardMoveComponent } from '../models/component.model';
 import { addSelectMovesByType } from '../../../utils/utils';
 import SelectMui from './SelectMui';
@@ -13,7 +13,16 @@ import CloseIcon from '@mui/icons-material/Close';
 
 const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCardMoveComponent<T>) => {
   const { retrieveMoves } = usePokemon();
-  const [resultMove, setResultMove] = useState<T[]>([]);
+  const resultMove = useMemo(() => {
+    if (isNotEmpty(props.moves)) {
+      return props.moves || [];
+    }
+    if (toNumber(props.pokemon?.id) <= 0) {
+      return [];
+    }
+    const result = retrieveMoves(props.pokemon?.id, props.pokemon?.form, props.pokemon?.pokemonType);
+    return result ? (addSelectMovesByType(result, props.moveType || TypeMove.None) as T[]) : [];
+  }, [props.moveType, props.moves, props.pokemon?.form, props.pokemon?.id, props.pokemon?.pokemonType, retrieveMoves]);
 
   const changeMove = (name: string) => {
     if (props.setMovePokemon) {
@@ -22,31 +31,11 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
     }
   };
 
-  const findMove = useCallback(
-    (type: TypeMove, selected = false) => {
-      const result = retrieveMoves(props.pokemon?.id, props.pokemon?.form, props.pokemon?.pokemonType);
-      if (result) {
-        const simpleMove = addSelectMovesByType(result, type);
-        if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
-          props.setMovePokemon(simpleMove.at(0) as T);
-        }
-        setResultMove(simpleMove as T[]);
-      }
-    },
-    [props.setMovePokemon, props.move]
-  );
-
   useEffect(() => {
-    if (isNotEmpty(props.moves)) {
-      setResultMove(props.moves || []);
-    } else {
-      if (toNumber(props.pokemon?.id) > 0) {
-        findMove(props.moveType || TypeMove.None, props.isSelected);
-      } else if (resultMove.length > 0) {
-        setResultMove([]);
-      }
+    if (!isNotEmpty(props.moves) && !props.move && props.setMovePokemon && isNotEmpty(resultMove)) {
+      props.setMovePokemon(resultMove[0]);
     }
-  }, [props.pokemon, props.isSelected, resultMove.length, findMove, props.moves]);
+  }, [props.move, props.moves, props.setMovePokemon, resultMove]);
 
   const handleClear = () => {
     if (props.setMovePokemon) {
@@ -81,6 +70,7 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
               name={value?.name}
               moveType={value?.moveType}
               pokemonId={props.pokemon?.id}
+              pokemonForm={props.pokemon?.form}
             />
           ),
         }))}
@@ -95,6 +85,7 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
               name={name}
               moveType={selectedMove?.moveType}
               pokemonId={props.pokemon?.id}
+              pokemonForm={props.pokemon?.form}
             />
           );
         }}
