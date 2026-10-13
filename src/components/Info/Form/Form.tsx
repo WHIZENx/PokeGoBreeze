@@ -113,13 +113,15 @@ const FormComponent = (props: IFormInfoComponent) => {
   const findFormData = (name: string) => {
     let currentData = props.pokeData.find((item) => isEqual(name, item.name));
     const currentForm = props.formList.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
-    if (currentForm) {
-      dispatch(SearchingActions.SetMainPokemonForm.create(currentForm));
-    }
     currentData ??= props.pokeData.find((p) => p.isDefault);
-    if (currentData) {
+    if (currentForm && currentData) {
       const pokemonDetails = PokemonDetail.setDetails(currentData);
-      dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
+      dispatch(
+        SearchingActions.SetMainPokemonSelection.create({
+          form: currentForm,
+          pokemon: pokemonDetails,
+        })
+      );
     }
   };
 

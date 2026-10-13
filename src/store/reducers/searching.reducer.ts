@@ -45,6 +45,15 @@ const SearchingReducer = (state: SearchingOptionsModel = initialize, action: Sea
           pokemon: action.payload,
         },
       };
+    case SearchingActions.SearchingActionTypes.setMainPokemonSelection:
+      return {
+        ...state,
+        mainSearching: {
+          ...state.mainSearching,
+          form: action.payload.form,
+          pokemon: action.payload.pokemon,
+        },
+      };
     case SearchingActions.SearchingActionTypes.resetMainPokemon:
       return {
         ...state,
