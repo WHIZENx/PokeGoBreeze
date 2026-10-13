@@ -128,6 +128,22 @@ const evaluate = async (expression) => {
   if (result.exceptionDetails) throw new Error(result.exceptionDetails.exception?.description ?? result.exceptionDetails.text);
   return result.result.value;
 };
+const callPageFunction = async (functionDeclaration, ...values) => {
+  const globalObject = await client.send('Runtime.evaluate', { expression: 'globalThis' }, sessionId);
+  const result = await client.send(
+    'Runtime.callFunctionOn',
+    {
+      objectId: globalObject.result.objectId,
+      functionDeclaration,
+      arguments: values.map((value) => ({ value })),
+      returnByValue: true,
+      awaitPromise: true,
+    },
+    sessionId
+  );
+  if (result.exceptionDetails) throw new Error(result.exceptionDetails.exception?.description ?? result.exceptionDetails.text);
+  return result.result.value;
+};
 const readPage = () => evaluate(`(() => {
   const page = document.querySelector('[data-testid="pvp-pokemon-details-page"]');
   if (!page) return { found: false, title: document.title, text: document.body?.innerText ?? '', href: location.href };
@@ -178,7 +194,13 @@ try {
         await client.send('Page.navigate', { url: `${baseUrl}${path}` }, sessionId);
         initial = false;
       } else {
-        await evaluate(`(() => { history.pushState({}, '', ${JSON.stringify(path)}); window.dispatchEvent(new PopStateEvent('popstate', { state: {} })); })()`);
+        await callPageFunction(
+          `function (nextPath) {
+            history.pushState({}, '', nextPath);
+            window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
+          }`,
+          path
+        );
       }
       const page = await waitForPage(target);
       const checks = [
