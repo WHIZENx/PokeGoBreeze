@@ -15,7 +15,12 @@ import {
 } from '../core/models/stats.model';
 import { IPokemonDetail, IPokemonDetailInfo, Stats } from '../core/models/API/info.model';
 import { Params, versionList } from './constants';
-import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprite } from '../core/models/API/form.model';
+import {
+  IPokemonFormModify,
+  IPokemonSprite,
+  PokemonFormModifyModel,
+  PokemonSprite,
+} from '../core/models/API/form.model';
 import APIService from '../services/api.service';
 import { TableStyles } from 'react-data-table-component';
 import {
@@ -252,11 +257,16 @@ export const getWeatherDisplayName = (weather: string | undefined | null) => {
 export const reversedCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') =>
   getValueOrDefault(String, str?.replaceAll(joinBy, splitBy).toLowerCase(), defaultText);
 
-export const getTime = (value: string | number | undefined, notFull = false) => {
-  if (isNullOrUndefined(value)) {
-    return value;
+export const getTime = (value: string | number | null | undefined, notFull = false) => {
+  if (isNullOrUndefined(value) || value === 0 || (typeof value === 'string' && !value.trim())) {
+    return '-';
   }
-  return Moment(new Date(value)).format(notFull ? 'D MMMM YYYY' : 'HH:mm D MMMM YYYY');
+  const normalizedValue = typeof value === 'string' && /^\d+$/.test(value.trim()) ? Number(value) : value;
+  const date = new Date(normalizedValue);
+  if (Number.isNaN(date.getTime())) {
+    return '-';
+  }
+  return Moment(date).format(notFull ? 'D MMMM YYYY' : 'HH:mm D MMMM YYYY');
 };
 
 export const convertSexName = (text: string | undefined) =>
@@ -897,6 +907,25 @@ export const convertPokemonImageName = (text: string | undefined | null, default
     .replace(/^Hero$/, '')
     .replace(/^Armor$/, '')
     .replace(/-Rider$/, '');
+};
+
+export const getPreferredPokemonFormSprite = (sprites: IPokemonSprite | undefined) =>
+  sprites?.frontArtwork || sprites?.frontHome || sprites?.frontDefault || '';
+
+export const setNextPokemonImageFallback = (image: HTMLImageElement, candidates: Array<string | null | undefined>) => {
+  const urls = [...new Set(candidates.filter((candidate): candidate is string => Boolean(candidate)))];
+  const current = image.currentSrc || image.src;
+  const currentIndex = urls.findIndex((url) => current === url || current.endsWith(url));
+  const storedIndex = Number(image.dataset.fallbackIndex ?? -1);
+  const nextIndex = Math.max(currentIndex, storedIndex) + 1;
+  const next = urls[nextIndex];
+  if (!next) {
+    image.onerror = null;
+    return false;
+  }
+  image.dataset.fallbackIndex = String(nextIndex);
+  image.src = next;
+  return true;
 };
 
 export const generateFormName = (form: string | null | undefined, pokemonType: PokemonType, concatBy = '') => {

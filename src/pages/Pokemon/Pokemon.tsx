@@ -37,9 +37,10 @@ import {
   getDmgMultiplyBonus,
   getKeyWithData,
   getPokemonFormWithNoneSpecialForm,
+  getPreferredPokemonFormSprite,
   getPokemonType,
-  getValidPokemonImgPath,
   isSpecialFormType,
+  setNextPokemonImageFallback,
   splitAndCapitalize,
 } from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
@@ -79,6 +80,7 @@ import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { Skeleton } from '@mui/material';
+import { selectAssetForm } from '../../composables/useAssets';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -704,6 +706,26 @@ const Pokemon = (props: IPokemonPage) => {
     );
   };
 
+  const selectedImageForm = searchingMainDetails?.form || searchingMainForm?.form?.formName || 'NORMAL';
+  const exactPokemonGoImage = pokemonGoAsset
+    ? selectAssetForm(pokemonGoAsset.image, selectedImageForm, pokemonGoAsset.name)
+    : undefined;
+  const hybridImage = APIService.getPokeFullSprite(
+    dataStorePokemon?.current?.id,
+    convertPokemonImageName(
+      searchingMainForm && originForm && searchingMainForm.defaultId === searchingMainForm.form?.id
+        ? ''
+        : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
+    )
+  );
+  const mainImageCandidates = [
+    exactPokemonGoImage?.default ? APIService.getPokemonModel(exactPokemonGoImage.default) : undefined,
+    getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites),
+    hybridImage,
+    APIService.getPokeFullAsset(dataStorePokemon?.current?.id),
+  ];
+  const mainImage = mainImageCandidates.find(Boolean) ?? APIService.getPokeFullSprite();
+
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-w-full row prev-next-block tw-sticky tw-top-14">
@@ -735,19 +757,12 @@ const Pokemon = (props: IPokemonPage) => {
           <AlertReleased formName={formName} pokemonType={searchingMainForm?.form?.pokemonType} icon={iconData} />
           <div className="tw-inline-block img-desc">
             <img
+              key={mainImage}
               className="pokemon-main-sprite !tw-align-baseline"
               alt="Image Pokemon"
-              src={APIService.getPokeFullSprite(
-                dataStorePokemon?.current?.id,
-                convertPokemonImageName(
-                  searchingMainForm && originForm && searchingMainForm.defaultId === searchingMainForm.form?.id
-                    ? ''
-                    : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
-                )
-              )}
+              src={mainImage}
               onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
+                setNextPokemonImageFallback(e.currentTarget, mainImageCandidates);
               }}
             />
           </div>

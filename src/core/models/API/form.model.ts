@@ -15,6 +15,8 @@ export interface IPokemonSprite {
   frontFemale: string;
   frontShiny: string;
   frontShinyFemale: string;
+  frontHome: string;
+  frontArtwork: string;
 }
 
 export class PokemonSprite implements IPokemonSprite {
@@ -26,6 +28,8 @@ export class PokemonSprite implements IPokemonSprite {
   frontFemale = '';
   frontShiny = '';
   frontShinyFemale = '';
+  frontHome = '';
+  frontArtwork = '';
 
   static setDetails(info: SpriteInfo | undefined) {
     const obj = new PokemonSprite();
@@ -38,6 +42,8 @@ export class PokemonSprite implements IPokemonSprite {
       obj.frontFemale = getValueOrDefault(String, info.front_female);
       obj.frontShiny = getValueOrDefault(String, info.front_shiny);
       obj.frontShinyFemale = getValueOrDefault(String, info.front_shiny_female);
+      obj.frontHome = getValueOrDefault(String, info.other?.home?.front_default);
+      obj.frontArtwork = getValueOrDefault(String, info.other?.['official-artwork']?.front_default);
     }
     return obj;
   }

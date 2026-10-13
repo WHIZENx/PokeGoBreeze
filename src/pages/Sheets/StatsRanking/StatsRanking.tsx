@@ -39,6 +39,7 @@ import { IMenuItem } from '../../../components/Commons/models/menu.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
+import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
@@ -184,7 +185,6 @@ const StatsRanking = () => {
   });
   const [searchParams, setSearchParams] = useSearchParams();
   const [select, setSelect] = useState<IPokemonStatsRanking>();
-  const selectedRef = useRef<IPokemonStatsRanking>();
   const [moveRankings, setMoveRankings] = useState<{ id: number; data: PokemonMoveRanking[] }>();
   const [movesLoading, setMovesLoading] = useState(false);
   const moveRankingsCache = useRef(new Map<number, PokemonMoveRanking[]>());
@@ -221,7 +221,6 @@ const StatsRanking = () => {
       : undefined;
 
   const applySelection = (row: IPokemonStatsRanking) => {
-    selectedRef.current = row;
     setSelect(row);
   };
 
@@ -313,8 +312,10 @@ const StatsRanking = () => {
         }
         if (data.selected) {
           applySelection(data.selected);
-        } else if (!selectedRef.current && data.data[0]) {
+        } else if (data.data[0]) {
           applySelection(data.data[0]);
+        } else {
+          setSelect(undefined);
         }
       })
       .catch((error) => {
@@ -454,45 +455,48 @@ const StatsRanking = () => {
         form={select?.form}
         isDisabled
       />
-      <CustomDataTable
-        customColumns={columnPokemon}
-        data={rows}
-        pagination
-        paginationServer
-        paginationTotalRows={totalRows}
-        paginationResetDefaultPage={resetPaginationToggle}
-        paginationDefaultPage={page}
-        paginationPerPage={rowsPerPage}
-        paginationRowsPerPageOptions={[25, 50, 100]}
-        defaultSortFieldId={sortId}
-        defaultSortAsc={sortOrder === 'asc'}
-        sortServer
-        highlightOnHover
-        onRowClicked={setFilterParams}
-        onSort={(column, direction) => {
-          const columnId = toNumber(column.id) as ColumnType;
-          setSortOrder(direction === 'asc' ? 'asc' : 'desc');
-          setPage(1);
-          setResetPaginationToggle((value) => !value);
-          const next = new URLSearchParams(searchParams);
-          next.set(Params.StatsType, getStatsType(columnId).toString());
-          setSearchParams(next);
-        }}
-        onChangePage={setPage}
-        onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
-          setRowsPerPage(currentRowsPerPage);
-          setPage(currentPage);
-        }}
-        conditionalRowStyles={conditionalRowStyles}
-        customDataStyles={getCustomThemeDataTable(customStyles)}
-        progressPending={loading}
-        progressComponent={<CircularProgressTable />}
-        isShowSearch
-        inputPlaceholder="Search Pokémon Name or ID"
-        onSearchTermChange={setSearchTerm}
-        debounceTime={300}
-        menuItems={menuItems}
-      />
+      <div className="tw-relative">
+        <BackdropMui open={loading && rows.length > 0} isShowOnAbove={false} />
+        <CustomDataTable
+          customColumns={columnPokemon}
+          data={rows}
+          pagination
+          paginationServer
+          paginationTotalRows={totalRows}
+          paginationResetDefaultPage={resetPaginationToggle}
+          paginationDefaultPage={page}
+          paginationPerPage={rowsPerPage}
+          paginationRowsPerPageOptions={[25, 50, 100]}
+          defaultSortFieldId={sortId}
+          defaultSortAsc={sortOrder === 'asc'}
+          sortServer
+          highlightOnHover
+          onRowClicked={setFilterParams}
+          onSort={(column, direction) => {
+            const columnId = toNumber(column.id) as ColumnType;
+            setSortOrder(direction === 'asc' ? 'asc' : 'desc');
+            setPage(1);
+            setResetPaginationToggle((value) => !value);
+            const next = new URLSearchParams(searchParams);
+            next.set(Params.StatsType, getStatsType(columnId).toString());
+            setSearchParams(next);
+          }}
+          onChangePage={setPage}
+          onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
+            setRowsPerPage(currentRowsPerPage);
+            setPage(currentPage);
+          }}
+          conditionalRowStyles={conditionalRowStyles}
+          customDataStyles={getCustomThemeDataTable(customStyles)}
+          progressPending={loading && rows.length === 0}
+          progressComponent={<CircularProgressTable />}
+          isShowSearch
+          inputPlaceholder="Search Pokémon Name, Form or ID"
+          onSearchTermChange={setSearchTerm}
+          debounceTime={300}
+          menuItems={menuItems}
+        />
+      </div>
     </div>
   );
 };

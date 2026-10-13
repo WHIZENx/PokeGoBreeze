@@ -148,6 +148,10 @@ export enum ColumnType {
   EnergyPVE,
   EnergyPVP,
   Power,
+  DPSDef,
+  TDODef,
+  TTKAtk,
+  TTKDef,
 }
 
 export enum LabelType {

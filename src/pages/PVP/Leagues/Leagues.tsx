@@ -9,13 +9,12 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import {
   getTime,
   splitAndCapitalize,
-  getPokemonType,
   generateParamForm,
   getItemSpritePath,
   getKeyWithData,
   getValidPokemonImgPath,
 } from '../../../utils/utils';
-import { rankIconCenterName, rankIconName, rankName } from '../../../utils/compute';
+import { getPokemonBattleLeagueIcon, rankIconCenterName, rankIconName, rankName } from '../../../utils/compute';
 import { Badge, Skeleton } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Xarrow from 'react-xarrows';
@@ -56,6 +55,54 @@ interface RewardDialogData {
   track: LeagueRewardType;
   type: string | undefined;
 }
+
+interface PokemonLeagueReference {
+  id: number | undefined;
+  form?: string;
+  pokemonType: PokemonType;
+  detailForm?: string;
+  detailPokemonType?: PokemonType;
+}
+
+const pokemonDetailPath = (pokemon: PokemonLeagueReference) =>
+  `/pokemon/${pokemon.id}${generateParamForm(
+    pokemon.detailForm ?? pokemon.form,
+    pokemon.detailPokemonType ?? pokemon.pokemonType
+  )}`;
+
+const getDefaultLeagueLogo = (league: ILeague) => {
+  const maxCp = toNumber(league.conditions.maxCp);
+  let cp = BattleLeagueCPType.Master;
+  if (maxCp > 0) {
+    cp =
+      maxCp <= BattleLeagueCPType.Little
+        ? BattleLeagueCPType.Little
+        : maxCp <= BattleLeagueCPType.Great
+          ? BattleLeagueCPType.Great
+          : maxCp <= BattleLeagueCPType.Ultra
+            ? BattleLeagueCPType.Ultra
+            : BattleLeagueCPType.Master;
+  } else if (league.leagueBattleType === LeagueBattleType.Little) {
+    cp = BattleLeagueCPType.Little;
+  } else if (league.leagueBattleType === LeagueBattleType.Great) {
+    cp = BattleLeagueCPType.Great;
+  } else if (league.leagueBattleType === LeagueBattleType.Ultra) {
+    cp = BattleLeagueCPType.Ultra;
+  }
+  return getPokemonBattleLeagueIcon(cp);
+};
+
+const getLeagueLogo = (league: ILeague) =>
+  league.iconUrl ? APIService.getAssetPokeGo(league.iconUrl) : getDefaultLeagueLogo(league);
+
+const handleLeagueLogoError = (image: HTMLImageElement, league: ILeague) => {
+  const fallback = getDefaultLeagueLogo(league);
+  if (image.src === fallback) {
+    image.onerror = null;
+    return;
+  }
+  image.src = fallback;
+};
 
 const Leagues = () => {
   useTitle({
@@ -148,8 +195,12 @@ const Leagues = () => {
             if (isIncludeList(leaguesData.allowLeagues, value.id)) {
               return false;
             }
-            const textTitle = splitAndCapitalize(value.id?.toLowerCase(), '_', ' ');
-            return isEmpty(search) || isInclude(textTitle, search, IncludeMode.IncludeIgnoreCaseSensitive);
+            const technicalName = splitAndCapitalize(value.id?.toLowerCase(), '_', ' ');
+            return (
+              isEmpty(search) ||
+              isInclude(value.title, search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+              isInclude(technicalName, search, IncludeMode.IncludeIgnoreCaseSensitive)
+            );
           })
         );
       }, 500);
@@ -181,7 +232,6 @@ const Leagues = () => {
                   return PokemonRewardSetLeague.create({
                     ...item,
                     rank: value.rank,
-                    pokemonType: getPokemonType(item.form, false, false),
                   });
                 }
                 return item;
@@ -206,28 +256,35 @@ const Leagues = () => {
     setShowData(undefined);
   };
 
-  const renderHeader = (league: ILeague) => (
-    <div className="tw-flex tw-justify-between tw-w-full tw-mr-3 tw-gap-x-2">
-      <div className="tw-flex tw-items-center tw-justify-start tw-gap-x-2">
-        <img
-          alt="Image League"
-          title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
-          height={50}
-          src={APIService.getAssetPokeGo(league.iconUrl)}
-        />
-        <b className={league.enabled ? '' : '!tw-text-red-600'}>
-          {splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
-        </b>
-      </div>
-      {isEqual(league.leagueType, LeagueType.Premier) && (
-        <div className="tw-flex tw-items-center tw-justify-end">
-          <div className="info-event-future tw-p-1 tw-rounded-sm tw-text-sm">
-            <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
-          </div>
+  const renderHeader = (league: ILeague) => {
+    const technicalName = splitAndCapitalize(league.id?.toLowerCase(), '_', ' ');
+    return (
+      <div className="tw-flex tw-justify-between tw-w-full tw-mr-3 tw-gap-x-2">
+        <div className="tw-flex tw-items-center tw-justify-start tw-gap-x-2">
+          <img
+            alt="Image League"
+            title={league.title}
+            height={50}
+            src={getLeagueLogo(league)}
+            onError={(event) => handleLeagueLogoError(event.currentTarget, league)}
+          />
+          <span className="tw-flex tw-flex-col">
+            <b className={league.enabled ? '' : '!tw-text-red-600'}>{league.title}</b>
+            {!isEqual(technicalName, league.title, EqualMode.IgnoreCaseSensitive) && (
+              <span className="caption">{technicalName}</span>
+            )}
+          </span>
         </div>
-      )}
-    </div>
-  );
+        {isEqual(league.leagueType, LeagueType.Premier) && (
+          <div className="tw-flex tw-items-center tw-justify-end">
+            <div className="info-event-future tw-p-1 tw-rounded-sm tw-text-sm">
+              <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderBody = (league: ILeague) => (
     <div className="sub-body">
@@ -241,11 +298,8 @@ const Leagues = () => {
             <img
               alt="Image League"
               height={140}
-              src={APIService.getAssetPokeGo(
-                leaguesData.data.find((item) =>
-                  isEqual(item.id, league.leagueBattleType, EqualMode.IgnoreCaseSensitive)
-                )?.iconUrl
-              )}
+              src={getDefaultLeagueLogo(league)}
+              onError={(event) => handleLeagueLogoError(event.currentTarget, league)}
             />
             <span className={combineClasses('badge-league', league.league?.toLowerCase()?.replaceAll('_', '-'))}>
               <div className="sub-badge">
@@ -253,7 +307,8 @@ const Leagues = () => {
                   alt="Image League"
                   title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
                   height={50}
-                  src={APIService.getAssetPokeGo(league.iconUrl)}
+                  src={getLeagueLogo(league)}
+                  onError={(event) => handleLeagueLogoError(event.currentTarget, league)}
                 />
               </div>
             </span>
@@ -264,7 +319,8 @@ const Leagues = () => {
               alt="Image League"
               title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
               height={140}
-              src={APIService.getAssetPokeGo(league.iconUrl)}
+              src={getLeagueLogo(league)}
+              onError={(event) => handleLeagueLogoError(event.currentTarget, league)}
             />
           </div>
         )}
@@ -273,7 +329,12 @@ const Leagues = () => {
       <ul className="list-style-inherit">
         <li className="tw-font-medium">
           <h6>
-            <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
+            <b>Max CP:</b>{' '}
+            <span>
+              {league.leagueBattleType === LeagueBattleType.Master && toNumber(league.conditions.maxCp) >= 10000
+                ? 'No limit'
+                : league.conditions.maxCp}
+            </span>
           </h6>
         </li>
         {league.conditions.maxLevel && (
@@ -294,12 +355,10 @@ const Leagues = () => {
           <li>
             <h6 className="title-leagues">Event time</h6>
             <span className="tw-font-medium">Start Date: {getTime(league.conditions.timestamp.start)}</span>
-            {league.conditions.timestamp.end && (
-              <span className="tw-font-medium">
-                <br />
-                End Date: {getTime(league.conditions.timestamp.end)}
-              </span>
-            )}
+            <span className="tw-font-medium">
+              <br />
+              End Date: {getTime(league.conditions.timestamp.end)}
+            </span>
           </li>
         )}
         <li className="tw-font-medium">
@@ -323,7 +382,7 @@ const Leagues = () => {
               <LinkToTop
                 className="img-link tw-text-center"
                 key={index}
-                to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
+                to={pokemonDetailPath(item)}
                 title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
               >
                 <div className="tw-flex tw-justify-center">
@@ -362,7 +421,7 @@ const Leagues = () => {
               <LinkToTop
                 className="img-link tw-text-center"
                 key={index}
-                to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
+                to={pokemonDetailPath(item)}
                 title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
               >
                 <div className="tw-flex tw-justify-center">
@@ -398,7 +457,7 @@ const Leagues = () => {
     </div>
   );
 
-  const renderReward = (value: RankRewardSetLeague) => {
+  const renderReward = (value: RankRewardSetLeague, track: LeagueRewardType) => {
     const title =
       value.type === RewardType.Pokemon
         ? 'Random Pokémon'
@@ -441,7 +500,7 @@ const Leagues = () => {
             {value.type === RewardType.Pokemon && (
               <VisibilityIcon
                 className="view-pokemon tw-text-default !tw-text-small"
-                onClick={() => handleShow(value.type, LeagueRewardType.Free, value.step)}
+                onClick={() => handleShow(value.type, track, value.step)}
               />
             )}
           </Fragment>
@@ -450,7 +509,7 @@ const Leagues = () => {
     );
   };
 
-  const renderItem = (value: RankRewardSetLeague) => (
+  const renderItem = (value: RankRewardSetLeague, track: LeagueRewardType) => (
     <Badge
       color="primary"
       className={combineClasses(
@@ -461,7 +520,7 @@ const Leagues = () => {
       badgeContent={value.count}
       max={BattleLeagueCPType.InsMaster}
     >
-      {renderReward(value)}
+      {renderReward(value, track)}
     </Badge>
   );
 
@@ -550,7 +609,7 @@ const Leagues = () => {
                     alt="Pokémon Image"
                     src={APIService.getPokeOtherLeague('BattleIconColor')}
                   />
-                  <span className="caption tw-text-default">Free</span>
+                  <span className="caption tw-text-default">Basic</span>
                 </Badge>
                 <hr className="tw-my-0" />
                 <Badge
@@ -570,10 +629,10 @@ const Leagues = () => {
               {leaguesData.season.rewards.rank[rank].free.map((value, index) => (
                 <Fragment key={index}>
                   <div className="group-rank-league tw-text-center">
-                    <div className="rank-header">Win Stack {value.step}</div>
-                    {renderItem(value)}
+                    <div className="rank-header">Win {value.step}</div>
+                    {renderItem(value, LeagueRewardType.Free)}
                     <hr className="tw-my-0" />
-                    {renderItem(leaguesData.season.rewards.rank[rank].premium[index])}
+                    {renderItem(leaguesData.season.rewards.rank[rank].premium[index], LeagueRewardType.Premium)}
                   </div>
                 </Fragment>
               ))}
@@ -735,7 +794,7 @@ const Leagues = () => {
                       title="Battle Icon"
                       src={APIService.getPokeOtherLeague('BattleIconColor')}
                     />
-                    <span>Free</span> (Win stack {showData.step})
+                    <span>Basic</span> (Win {showData.step})
                   </div>
                 ) : (
                   <div className="tw-flex tw-gap-x-2 tw-items-center">
@@ -745,7 +804,7 @@ const Leagues = () => {
                       title="Paid Raid Ticket"
                       src={getItemSpritePath(ItemName.PaidRaidTicket)}
                     />
-                    <span className="tw-text-accent-crimson">Premium</span> (Win stack {showData.step})
+                    <span className="tw-text-accent-crimson">Premium</span> (Win {showData.step})
                   </div>
                 )}
               </div>
@@ -760,7 +819,7 @@ const Leagues = () => {
                   <LinkToTop
                     className="img-link tw-text-center"
                     key={index}
-                    to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
+                    to={pokemonDetailPath(item)}
                     title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                   >
                     <div className="tw-flex tw-justify-center">
@@ -781,7 +840,12 @@ const Leagues = () => {
                         />
                       </span>
                     </div>
-                    <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
+                    <span className="caption">
+                      {splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
+                      {item.form && item.pokemonType !== PokemonType.Normal
+                        ? ` ${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                        : ''}
+                    </span>
                   </LinkToTop>
                 ))}
               {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)) && (
@@ -794,7 +858,7 @@ const Leagues = () => {
                       <LinkToTop
                         className="img-link tw-text-center"
                         key={index}
-                        to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
+                        to={pokemonDetailPath(item)}
                         title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                       >
                         <div className="tw-flex tw-justify-center">
@@ -815,7 +879,12 @@ const Leagues = () => {
                             />
                           </span>
                         </div>
-                        <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
+                        <span className="caption">
+                          {splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
+                          {item.form && item.pokemonType !== PokemonType.Normal
+                            ? ` ${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                            : ''}
+                        </span>
                       </LinkToTop>
                     ))}
                 </Fragment>
