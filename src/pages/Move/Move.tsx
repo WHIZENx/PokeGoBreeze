@@ -56,12 +56,16 @@ import { LinkToTop } from '../../components/Link/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
+import PokemonIconType from '../../components/Sprites/PokemonIconType/PokemonIconType';
+import BackdropMui from '../../components/Commons/Backdrops/BackdropMui';
 import CustomDataTable from '../../components/Commons/Tables/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../components/Commons/models/menu.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
 import {
   battleStab,
+  combatStab,
+  combatShadowBonusAtk,
   defaultDamageConst,
   defaultDamageMultiply,
   defaultPokemonDefObj,
@@ -113,16 +117,18 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
     name: 'Name',
     selector: (row) => (
       <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}>
-        <img
-          height={48}
-          alt="Pokémon Image"
-          className="tw-mr-2"
-          src={APIService.getPokeIconSprite(row.sprite, false)}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
-          }}
-        />
+        <PokemonIconType pokemonType={row.pokemonType} size={24}>
+          <img
+            height={48}
+            alt="Pokémon Image"
+            className="tw-mr-2"
+            src={APIService.getPokeIconSprite(row.sprite, false)}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
+            }}
+          />
+        </PokemonIconType>
         {row.name}
       </LinkToTop>
     ),
@@ -218,6 +224,21 @@ const Move = (props: IMovePage) => {
   const weatherEffective = safeObjectEntries(optionsData.weatherBoost).find(([, types]) =>
     types.some((type) => isEqual(type, move?.type, EqualMode.IgnoreCaseSensitive))
   )?.[0];
+  const pveStab = battleStab();
+  const pvpStab = combatStab();
+  const shadowAttack = combatShadowBonusAtk();
+  const weatherAttack = optionsData.weatherBonus.attackBonusMultiplier || 1;
+  const turnDurationSeconds = optionsData.combatOptions.turnDurationSeconds || 0.5;
+  const pvpDurationSeconds = move
+    ? move.typeMove === TypeMove.Fast
+      ? Math.max(turnDurationSeconds, Math.ceil(move.durationMs / (turnDurationSeconds * 1000)) * turnDurationSeconds)
+      : turnDurationSeconds
+    : 0;
+  const pvpTurns = move
+    ? move.typeMove === TypeMove.Fast
+      ? Math.max(1, Math.ceil(move.durationMs / (turnDurationSeconds * 1000)))
+      : 1
+    : 0;
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'Move - Information',
@@ -539,15 +560,12 @@ const Move = (props: IMovePage) => {
                   <tr>
                     <td>
                       PVE Power
-                      <span className="caption">(Weather / STAB / Shadow Bonus)</span>
+                      <span className="caption">(STAB + Weather + Shadow)</span>
                     </td>
                     <td colSpan={2}>
                       {move && (
                         <div className="tw-flex tw-items-center tw-gap-1">
-                          <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
-                          <span className="!tw-text-green-600 tw-inline-block caption tw-ml-1">
-                            {`+${toFloatWithPadding(move.pvePower * 0.2, 2)}`}
-                          </span>
+                          <span>{toFloatWithPadding(move.pvePower * pveStab * weatherAttack * shadowAttack, 2)}</span>
                         </div>
                       )}
                     </td>
@@ -579,15 +597,12 @@ const Move = (props: IMovePage) => {
                   <tr>
                     <td>
                       PVP Power
-                      <span className="caption">(STAB / Shadow Bonus)</span>
+                      <span className="caption">(STAB + Shadow)</span>
                     </td>
                     <td colSpan={2}>
                       {move && (
                         <div className="tw-flex tw-items-center tw-gap-1">
-                          <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
-                          <span className="!tw-text-green-600 tw-inline-block caption tw-ml-1">
-                            {`+${toFloatWithPadding(move.pvpPower * 0.2, 2)}`}
-                          </span>
+                          <span>{toFloatWithPadding(move.pvpPower * pvpStab * shadowAttack, 2)}</span>
                         </div>
                       )}
                     </td>
@@ -698,7 +713,7 @@ const Move = (props: IMovePage) => {
               </tr>
             </thead>
             <tbody>
-              {move?.typeMove !== TypeMove.Max && (
+              {move && move.typeMove !== TypeMove.Max && (
                 <Fragment>
                   <tr className="tw-text-center">
                     <td className="table-sub-header" colSpan={2}>
@@ -712,20 +727,18 @@ const Move = (props: IMovePage) => {
                   <tr>
                     <td>
                       DPS
-                      <span className="caption">(Weather / STAB / Shadow Bonus)</span>
+                      <span className="caption">(STAB)</span>
                     </td>
-                    <td>
-                      {move && `${toFloatWithPadding((move.pvePower * battleStab()) / (move.durationMs / 1000), 2)}`}
-                    </td>
+                    <td>{move && `${toFloatWithPadding((move.pvePower * pveStab) / (move.durationMs / 1000), 2)}`}</td>
                   </tr>
                   <tr>
                     <td>
                       DPS
-                      <span className="caption">(2 Effect Bonus)</span>
+                      <span className="caption">(STAB + Weather)</span>
                     </td>
                     <td>
                       {move &&
-                        `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 2)) / (move.durationMs / 1000), 2)}`}
+                        `${toFloatWithPadding((move.pvePower * pveStab * weatherAttack) / (move.durationMs / 1000), 2)}`}
                     </td>
                   </tr>
                   <tr>
@@ -735,7 +748,7 @@ const Move = (props: IMovePage) => {
                     </td>
                     <td>
                       {move &&
-                        `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 3)) / (move.durationMs / 1000), 2)}`}
+                        `${toFloatWithPadding((move.pvePower * pveStab * weatherAttack * shadowAttack) / (move.durationMs / 1000), 2)}`}
                     </td>
                   </tr>
                   {move?.typeMove === TypeMove.Fast && (
@@ -749,19 +762,38 @@ const Move = (props: IMovePage) => {
                       PVP Stats
                     </td>
                   </tr>
-                  <tr>
-                    <td>DPS</td>
-                    <td>{move && `${toFloatWithPadding(move.pvpPower / (move.durationMs / 1000), 2)}`}</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      DPS
-                      <span className="caption">(STAB / Shadow Bonus)</span>
-                    </td>
-                    <td>
-                      {move && `${toFloatWithPadding((move.pvpPower * battleStab()) / (move.durationMs / 1000), 2)}`}
-                    </td>
-                  </tr>
+                  {move?.typeMove === TypeMove.Fast ? (
+                    <Fragment>
+                      <tr>
+                        <td>Turns</td>
+                        <td>{pvpTurns}</td>
+                      </tr>
+                      <tr>
+                        <td>Damage / Turn</td>
+                        <td>{toFloatWithPadding(move.pvpPower / pvpTurns, 2)}</td>
+                      </tr>
+                      <tr>
+                        <td>Energy / Turn</td>
+                        <td>{toFloatWithPadding(move.pvpEnergy / pvpTurns, 2)}</td>
+                      </tr>
+                      <tr>
+                        <td>Damage / Sec</td>
+                        <td>{toFloatWithPadding(move.pvpPower / pvpDurationSeconds, 2)}</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          Damage / Sec
+                          <span className="caption">(STAB + Shadow)</span>
+                        </td>
+                        <td>{toFloatWithPadding((move.pvpPower * pvpStab * shadowAttack) / pvpDurationSeconds, 2)}</td>
+                      </tr>
+                    </Fragment>
+                  ) : (
+                    <tr>
+                      <td>Damage / Energy</td>
+                      <td>{toFloatWithPadding(move.pvpPower / Math.abs(move.pvpEnergy), 2)}</td>
+                    </tr>
+                  )}
                 </Fragment>
               )}
               {move?.bonus && (
@@ -946,7 +978,7 @@ const Move = (props: IMovePage) => {
                     striped
                     fixedHeader
                     fixedHeaderScrollHeight="35vh"
-                    progressPending={!progress}
+                    progressPending={!progress && !isNotEmpty(topListFilter)}
                     progressComponent={<CircularProgressTable />}
                     isShowSearch
                     inputPlaceholder="Search Pokémon Name or ID"
@@ -954,6 +986,7 @@ const Move = (props: IMovePage) => {
                     debounceTime={300}
                     menuItems={menuItems}
                   />
+                  <BackdropMui open={!progress && isNotEmpty(topListFilter)} isShowOnAbove={false} />
                 </td>
               </tr>
             </tbody>

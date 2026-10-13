@@ -74,6 +74,8 @@ export interface IPokemonRewardSetLeague {
   form: string;
   rank?: number;
   pokemonType: PokemonType;
+  detailForm?: string;
+  detailPokemonType?: PokemonType;
 }
 
 export interface IRankRewardLeague {
@@ -215,6 +217,8 @@ export class PokemonRewardSetLeague implements IPokemonRewardSetLeague {
   name = '';
   form = '';
   pokemonType = PokemonType.Normal;
+  detailForm?: string;
+  detailPokemonType?: PokemonType;
 
   static create(value: IPokemonRewardSetLeague) {
     const obj = new PokemonRewardSetLeague();

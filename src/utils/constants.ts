@@ -63,7 +63,7 @@ export const genList: DynamicObj<number[]> = {
   6: [650, 721],
   7: [722, 809],
   8: [810, 905],
-  9: [906, 1008],
+  9: [906, 1025],
 };
 
 export const regionList: DynamicObj<string> = {
@@ -72,12 +72,12 @@ export const regionList: DynamicObj<string> = {
   2: 'Johto',
   3: 'Hoenn',
   4: 'Sinnoh',
-  5: 'Hisui',
-  6: 'Unova',
-  7: 'Kalos',
-  8: 'Alola',
-  9: 'Galar',
-  10: 'Paldea',
+  5: 'Unova',
+  6: 'Kalos',
+  7: 'Alola',
+  8: 'Galar',
+  9: 'Paldea',
+  10: 'Hisui',
 };
 
 export const versionList = [

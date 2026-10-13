@@ -32,7 +32,8 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
   };
 
   useEffect(() => {
-    if (!isNotEmpty(props.moves) && !props.move && props.setMovePokemon && isNotEmpty(resultMove)) {
+    const hasValidSelection = resultMove.some((move) => move?.name === props.move?.name);
+    if (!isNotEmpty(props.moves) && !hasValidSelection && props.setMovePokemon && isNotEmpty(resultMove)) {
       props.setMovePokemon(resultMove[0]);
     }
   }, [props.move, props.moves, props.setMovePokemon, resultMove]);

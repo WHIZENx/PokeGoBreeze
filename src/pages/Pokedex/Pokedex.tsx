@@ -417,7 +417,6 @@ const Pokedex = (props: IStyleSheetData) => {
                           <ListItemText
                             primary={
                               <ButtonMui
-                                fullWidth
                                 color={btnSelected.isSelectVersion ? 'error' : 'success'}
                                 label={`${btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'}`}
                               />
@@ -548,7 +547,7 @@ const Pokedex = (props: IStyleSheetData) => {
         <ul className="tw-grid pokemon-content">
           {listOfPokemon.map((row) => (
             <CardPokemonInfo
-              key={`${row.id}-${row.form ?? ''}`}
+              key={`${row.id}-${row.form ?? ''}-${row.pokemonType}`}
               name={row.name}
               form={row.form}
               isDefaultImg={isShiny}
