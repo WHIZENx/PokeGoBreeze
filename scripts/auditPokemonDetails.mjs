@@ -24,6 +24,7 @@ const baseUrl = (args.get('base-url') ?? 'http://localhost:9000').replace(/\/$/,
 const fromId = Number.parseInt(args.get('from') ?? '1', 10);
 const timeoutMs = Number.parseInt(args.get('timeout') ?? '20000', 10);
 const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
+const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
 const outputPath = resolve(
   workspaceRoot,
   args.get('output') ?? 'artifacts/pokemon-details-audit.json'
@@ -136,6 +137,13 @@ const normalizeCanonicalIdentity = (id, value) => {
   if (id === 889) identity = identity.replace(/_CROWNED$/, '_CROWNED_SHIELD');
   if (id === 898) {
     identity = identity.replace(/_ICE$/, '_ICE_RIDER').replace(/_SHADOW$/, '_SHADOW_RIDER');
+  }
+  if (id === 386) identity = identity.replace(/_NORMAL$/, '');
+  if (id === 778) {
+    identity = identity
+      .replace(/_TOTEM_DISGUISED$/, '_TOTEM')
+      .replace(/_TOTEM_BUSTED$/, '_BUSTED_TOTEM')
+      .replace(/_DISGUISED$/, '');
   }
   if (id === 555) identity = identity.replace(/_GALARIAN_STANDARD$/, '_GALARIAN');
   if ((id === 664 || id === 665) && !identity.includes('_')) identity += '_ICY_SNOW';
@@ -309,6 +317,8 @@ const readPage = () =>
       selectedPokemonType: Number(page.dataset.selectedPokemonType),
       detailFullName: page.dataset.detailFullName ?? '',
       detailForm: page.dataset.detailForm ?? '',
+      detailBodyName: page.dataset.detailBodyName ?? '',
+      bodyFormNames: (page.dataset.bodyFormNames ?? '').split(',').filter(Boolean),
       detailPokemonType: Number(page.dataset.detailPokemonType),
       detailTypes: (page.dataset.detailTypes ?? '').split(',').filter(Boolean),
       bodyWeight: infoTable?.dataset.bodyWeight ?? '',
@@ -323,6 +333,43 @@ const readPage = () =>
       evolutionEdges,
     };
   })()`);
+
+const startBodyTransitionCapture = () =>
+  evaluate(`(() => {
+    const table = document.querySelector('[data-testid="pokemon-info-table"]');
+    window.__pokemonBodyTransitions = [];
+    if (!table) return;
+    const capture = () => window.__pokemonBodyTransitions.push({
+      weight: table.dataset.bodyWeight ?? '',
+      height: table.dataset.bodyHeight ?? '',
+    });
+    capture();
+    window.__pokemonBodyObserver?.disconnect();
+    window.__pokemonBodyObserver = new MutationObserver(capture);
+    window.__pokemonBodyObserver.observe(table, {
+      attributes: true,
+      attributeFilter: ['data-body-weight', 'data-body-height'],
+    });
+  })()`);
+
+const readBodyTransitions = () =>
+  evaluate(`(() => {
+    window.__pokemonBodyObserver?.disconnect();
+    const transitions = window.__pokemonBodyTransitions ?? [];
+    window.__pokemonBodyTransitions = [];
+    return transitions.filter((value, index) =>
+      index === 0 || value.weight !== transitions[index - 1].weight || value.height !== transitions[index - 1].height
+    );
+  })()`);
+
+const validateBodyTransition = (issues, id, context, transitions) => {
+  if (transitions.some((value) => value.weight === '' || value.height === '')) {
+    addIssue(issues, id, 'form_body_value_cleared_during_switch', { ...context, transitions });
+  }
+  if (transitions.length > 2) {
+    addIssue(issues, id, 'form_body_multiple_updates_during_switch', { ...context, transitions });
+  }
+};
 
 const navigate = async (id, isInitial) => {
   const url = `${baseUrl}/pokemon/${id}`;
@@ -370,6 +417,17 @@ const validateExpectedRow = (issues, id, row, button, page) => {
   }
   if (normalizePokemonType(page.detailPokemonType) !== normalizePokemonType(row.pokemonType)) {
     addIssue(issues, id, 'detail_pokemon_type_mismatch', { ...context, actual: page.detailPokemonType });
+  }
+  const expectedCanonicalBody = normalizeCanonicalIdentity(id, row.fullName);
+  const hasFormSpecificCanonicalBody = page.bodyFormNames.some(
+    (name) => normalizeCanonicalIdentity(id, name) === expectedCanonicalBody
+  );
+  if (
+    hasFormSpecificCanonicalBody &&
+    page.detailBodyName &&
+    normalizeCanonicalIdentity(id, page.detailBodyName) !== expectedCanonicalBody
+  ) {
+    addIssue(issues, id, 'body_form_mismatch', { ...context, actual: page.detailBodyName });
   }
   const expectedTypes = (row.types ?? []).map(normalize).sort();
   const actualTypes = page.detailTypes.map(normalize).sort();
@@ -446,7 +504,13 @@ const main = async () => {
 
   let isInitial = true;
   let previousPage;
-  const idsToAudit = requestedIds.size ? [...requestedIds].sort((a, b) => a - b) : [...Array(toId - fromId + 1)].map((_, index) => fromId + index);
+  const idsToAudit = (
+    requestedIds.size
+      ? [...requestedIds]
+      : multipleFormsOnly
+        ? [...rowsById.entries()].filter(([, rows]) => rows.length > 1).map(([id]) => id)
+        : [...Array(toId - fromId + 1)].map((_, index) => fromId + index)
+  ).sort((a, b) => a - b);
   for (const id of idsToAudit) {
     browser.currentId = id;
     const rows = preferredGoRows(id, rowsById.get(id) ?? []);
@@ -522,6 +586,7 @@ const main = async () => {
         const target = page.buttons[buttonIndex];
         testedForms.add(`${normalizeForm(target.form)}:${normalizePokemonType(target.pokemonType)}`);
         if (!target.active) {
+          await startBodyTransitionCapture();
           await evaluate(`document.querySelectorAll('.form-container button[data-form]')[${buttonIndex}].click()`);
           page = await waitFor(
             readPage,
@@ -532,6 +597,13 @@ const main = async () => {
               normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
               normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
             `Pokémon #${id} form ${row.fullName}`
+          );
+          await delay(0);
+          validateBodyTransition(
+            issues,
+            id,
+            { fullName: row.fullName, form: row.form, pokemonType: row.pokemonType },
+            await readBodyTransitions()
           );
         }
         await delay(50);
@@ -551,6 +623,7 @@ const main = async () => {
         const target = page.buttons[index];
         const targetKey = `${normalizeForm(target.form)}:${normalizePokemonType(target.pokemonType)}`;
         if (target.active || testedForms.has(targetKey)) continue;
+        await startBodyTransitionCapture();
         await evaluate(`document.querySelectorAll('.form-container button[data-form]')[${index}].click()`);
         page = await waitFor(
           readPage,
@@ -561,8 +634,22 @@ const main = async () => {
             normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
           `Pokémon #${id} displayed form ${target.label}`
         );
+        await delay(0);
+        validateBodyTransition(
+          issues,
+          id,
+          { form: target.form, pokemonType: target.pokemonType, label: target.label },
+          await readBodyTransitions()
+        );
         await delay(50);
         page = await readPage();
+        if (!page.bodyWeight || !page.bodyHeight) {
+          addIssue(issues, id, 'displayed_form_body_value_missing', {
+            form: target.form,
+            pokemonType: target.pokemonType,
+            label: target.label,
+          });
+        }
         auditedForms += 1;
         testedForms.add(targetKey);
       }
@@ -588,6 +675,7 @@ const main = async () => {
     source: 'Pokémon GO generated data + rendered Pokémon detail page',
     baseUrl,
     range: { from: fromId, to: toId, latestPokemonGoId: lastPokemonId },
+    multipleFormsOnly,
     summary: {
       expectedIds: idsToAudit.length,
       auditedIds,

@@ -11,6 +11,7 @@ export enum SearchingActionTypes {
   resetPokemonToolSearch = '[Searching] ResetPokemonToolSearch',
   setMainPokemonForm = '[Searching] SetMainPokemonForm',
   setMainPokemonDetails = '[Searching] SetMainPokemonDetails',
+  setMainPokemonSelection = '[Searching] SetMainPokemonSelection',
   resetMainPokemon = '[Searching] ResetMainPokemon',
   setToolPokemonForm = '[Searching] SetToolPokemonForm',
   setToolPokemonDetails = '[Searching] SetToolPokemonDetails',
@@ -18,6 +19,11 @@ export enum SearchingActionTypes {
   setToolObjectPokemonForm = '[Searching] SetToolObjectPokemonForm',
   setToolObjectPokemonDetails = '[Searching] SetToolObjectPokemonDetails',
   resetToolObjectPokemon = '[Searching] ResetToolObjectPokemon',
+}
+
+export interface MainPokemonSelection {
+  form: Partial<IPokemonFormModify> | undefined;
+  pokemon: IPokemonDetail;
 }
 
 export class SetPokemonMainSearch implements Action {
@@ -91,6 +97,20 @@ export class SetMainPokemonDetails implements Action {
 
   static create(value: IPokemonDetail) {
     const { type, payload } = new SetMainPokemonDetails(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+export class SetMainPokemonSelection implements Action {
+  readonly type = SearchingActionTypes.setMainPokemonSelection;
+
+  constructor(public payload: MainPokemonSelection) {}
+
+  static create(value: MainPokemonSelection) {
+    const { type, payload } = new SetMainPokemonSelection(value);
     return {
       type,
       payload,
@@ -194,6 +214,7 @@ export type SearchingActionsUnion =
   | ResetPokemonToolSearch
   | SetMainPokemonForm
   | SetMainPokemonDetails
+  | SetMainPokemonSelection
   | ResetMainPokemon
   | SetToolPokemonForm
   | SetToolPokemonDetails
