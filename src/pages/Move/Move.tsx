@@ -112,7 +112,7 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
     id: ColumnType.Name,
     name: 'Name',
     selector: (row) => (
-      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form)}`}>
+      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}>
         <img
           height={48}
           alt="Pokémon Image"

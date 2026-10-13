@@ -2,7 +2,6 @@ import { PokemonType } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
 import { BattleLeagueCPType } from '../../utils/enums/compute.enum';
-import { getPokemonType } from '../../utils/utils';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
 import { IHexagonStats, IStatsAtk, IStatsDef, IStatsPokemonGO, IStatsSta, StatsPokemonGO } from './stats.model';
@@ -81,9 +80,6 @@ export class Performers implements IPerformers {
   usageTrend: string[] = [];
 
   constructor({ ...props }: IPerformers) {
-    if (props.pokemonType === PokemonType.Normal || props.pokemonType === PokemonType.None) {
-      props.pokemonType = getPokemonType(props.speciesId);
-    }
     Object.assign(this, props);
   }
 }
@@ -203,7 +199,6 @@ export class BattlePokemonData implements IBattlePokemonData {
 
   static create(value: IBattlePokemonData) {
     const obj = new BattlePokemonData();
-    obj.pokemonType = getPokemonType(obj.form);
     Object.assign(obj, value);
     return obj;
   }

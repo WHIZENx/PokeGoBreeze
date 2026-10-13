@@ -89,14 +89,20 @@ const TrainerLab = () => {
     }
   }, [presetId, presets]);
 
-  const findPokemon = (pokemonId: string, form?: string) =>
-    pokemonsData.find(
+  const findPokemon = (pokemonId: string, form?: string) => {
+    const matches = pokemonsData.filter(
       (pokemon) =>
-        String(pokemon.pokemonId).toUpperCase() === pokemonId.toUpperCase() &&
-        (!form ||
-          pokemon.form?.toUpperCase() === form.toUpperCase() ||
-          pokemon.fullName?.toUpperCase() === form.toUpperCase())
-    ) ?? pokemonsData.find((pokemon) => String(pokemon.pokemonId).toUpperCase() === pokemonId.toUpperCase());
+        String(pokemon.pokemonId).toUpperCase() === pokemonId.toUpperCase() ||
+        pokemon.fullName?.toUpperCase() === pokemonId.toUpperCase()
+    );
+    if (form) {
+      return matches.find(
+        (pokemon) =>
+          pokemon.form?.toUpperCase() === form.toUpperCase() || pokemon.fullName?.toUpperCase() === form.toUpperCase()
+      );
+    }
+    return matches.find((pokemon) => pokemon.form?.toUpperCase() === 'NORMAL') ?? matches[0];
+  };
 
   const setTeamSlot = (index: number, pokemon?: IPokemonData) => {
     setTeam((current) => current.map((item, slot) => (slot === index ? pokemon : item)));

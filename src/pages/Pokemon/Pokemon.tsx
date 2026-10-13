@@ -250,26 +250,24 @@ const Pokemon = (props: IPokemonPage) => {
       setOriginSoundCry(soundCries);
       setPokeData(dataPokeList);
 
-      const gmaxCount = formListResult.reduce(
-        (n, item) => n + item.filter((p) => p.form.pokemonType === PokemonType.GMax).length,
-        0
+      const duplicateFormKeys = new Map<string, number>();
+      formListResult.flat().forEach((item) => {
+        const key = `${item.form.pokemonType}:${item.form.formName ?? ''}`;
+        duplicateFormKeys.set(key, (duplicateFormKeys.get(key) ?? 0) + 1);
+      });
+      formListResult = formListResult.map((items) =>
+        items.map((item) => {
+          const key = `${item.form.pokemonType}:${item.form.formName ?? ''}`;
+          if ((duplicateFormKeys.get(key) ?? 0) <= 1) {
+            return item;
+          }
+          const distinctFormName = item.form.name.replace(`${specie.name}-`, '');
+          return PokemonFormModify.create({
+            ...item,
+            form: Form.create({ ...item.form, formName: distinctFormName }, true, isShadow),
+          });
+        })
       );
-      if (gmaxCount > 1) {
-        formListResult = formListResult.map((item) =>
-          item.map((p) =>
-            p.form.pokemonType === PokemonType.GMax
-              ? PokemonFormModify.create({
-                  ...p,
-                  form: Form.create(
-                    { ...p.form, formName: `${p.name.replace(`${p.defaultName}-`, '')}-${p.form.formName}` },
-                    true,
-                    isShadow
-                  ),
-                })
-              : p
-          )
-        );
-      }
 
       setFormList(formListResult);
 
@@ -383,6 +381,17 @@ const Pokemon = (props: IPokemonPage) => {
   );
 
   const clearData = (isForceClear = false) => {
+    if (isForceClear) {
+      setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: false }));
+    }
+
+    // Keep the last complete snapshot visible while a different Pokémon is
+    // being fetched. The successful bundle response replaces all dependent
+    // fields together in fetchMap.
+    if (data) {
+      return;
+    }
+
     setOriginForm(undefined);
     setFormName(undefined);
     setVersion('');
@@ -391,7 +400,6 @@ const Pokemon = (props: IPokemonPage) => {
     dispatch(SearchingActions.ResetMainPokemon.create());
     dispatch(SearchingActions.ResetPokemonMainSearch.create());
     if (isForceClear) {
-      setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: false }));
       setFormList([]);
       setPokeData([]);
       setCostModifier(undefined);
@@ -498,9 +506,13 @@ const Pokemon = (props: IPokemonPage) => {
     if (!form) {
       return false;
     }
-    const formName = getValueOrDefault(String, form.form?.name, form.form?.formName, form.defaultName);
+    // The canonical form name (for example ALOLA_TOTEM, ICE, MALE, or HERO)
+    // is the most precise key for the Pokémon GO Game Master row. The PokeAPI
+    // Pokémon name can be broader (for example marowak-alola) and previously
+    // caused distinct forms to resolve to the first matching GO form.
+    const formName = getValueOrDefault(String, form.form?.formName, form.form?.name, form.defaultName);
     const details = getPokemonDetails(id, formName, form.form?.pokemonType, form.form?.isDefault);
-    details.pokemonType = form.form?.pokemonType || PokemonType.Normal;
+    details.pokemonType = form.form?.pokemonType ?? PokemonType.Normal;
     if (isSpecialFormType(details.pokemonType)) {
       const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, TypeAction.Atk);
       const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, TypeAction.Def);
@@ -625,7 +637,11 @@ const Pokemon = (props: IPokemonPage) => {
   useEffect(() => {
     const id = getPokemonIdByParam();
     if (id > 0 && isNotEmpty(getFilteredPokemons())) {
-      const currentPokemon = getPokemonById(id);
+      const displayedId = toNumber(data?.id);
+      if (displayedId > 0 && displayedId !== id && !progress.isLoadedForms) {
+        return;
+      }
+      const currentPokemon = getPokemonById(displayedId || id);
       if (currentPokemon) {
         setDataStorePokemon({
           prev: getPokemonById(currentPokemon.id - 1),
@@ -634,7 +650,7 @@ const Pokemon = (props: IPokemonPage) => {
         });
       }
     }
-  }, [getFilteredPokemons, params.id, props.searchOption?.id]);
+  }, [getFilteredPokemons, params.id, props.searchOption?.id, data?.id, progress.isLoadedForms]);
 
   const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
     if (progress.isLoadedForms) {
@@ -657,6 +673,16 @@ const Pokemon = (props: IPokemonPage) => {
         )}
       </div>
       <div
+        data-testid="pokemon-details-page"
+        data-pokemon-id={data?.id ?? ''}
+        data-selected-name={searchingMainForm?.form?.name ?? ''}
+        data-selected-form={searchingMainForm?.form?.formName ?? ''}
+        data-selected-pokemon-type={searchingMainForm?.form?.pokemonType ?? ''}
+        data-detail-full-name={searchingMainDetails?.fullName ?? ''}
+        data-detail-form={searchingMainDetails?.form ?? ''}
+        data-detail-pokemon-type={searchingMainDetails?.pokemonType ?? ''}
+        data-detail-types={searchingMainDetails?.types?.join(',') ?? ''}
+        aria-busy={!progress.isLoadedForms}
         className={combineClasses(
           'tw-pb-3 tw-relative poke-container tw-text-default',
           props.isSearch ? '' : 'tw-container'

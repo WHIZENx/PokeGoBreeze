@@ -639,7 +639,7 @@ export class PokemonPermission implements IPokemonPermission {
   pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonPermission) {
-    props.pokemonType = getPokemonType(props.form);
+    props.pokemonType ??= getPokemonType(props.form, false, false);
     Object.assign(this, props);
   }
 }

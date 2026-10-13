@@ -22,7 +22,7 @@ import FromChange from '../FormChange/FormChange';
 import { IFormInfoComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
-import { IncludeMode } from '../../../utils/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
 import { SearchingActions } from '../../../store/actions';
 import { PokemonGenderRatio } from '../../../core/models/pokemon.model';
@@ -125,11 +125,33 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   useEffect(() => {
     if (routerAction === Action.Pop) {
+      const formType = searchParams.get(Params.FormType);
+      const pokemonType = getDataWithKey<PokemonType>(PokemonType, formType, EqualMode.IgnoreCaseSensitive);
       const form = getValueOrDefault(
         String,
         searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-'),
         formNormal()
       );
+
+      if (pokemonType !== undefined && isSpecialFormType(pokemonType)) {
+        const requestedForm = getPokemonFormWithNoneSpecialForm(form, pokemonType);
+        const currentForm = props.formList
+          .flatMap((item) => item)
+          .find(
+            (item) =>
+              item.form.pokemonType === pokemonType &&
+              isEqual(
+                getPokemonFormWithNoneSpecialForm(item.form.formName, item.form.pokemonType),
+                requestedForm,
+                EqualMode.IgnoreCaseSensitive
+              )
+          );
+        if (currentForm) {
+          findFormData(currentForm.form.name);
+        }
+        return;
+      }
+
       const currentData = props.pokeData.find(
         (i) =>
           isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
@@ -146,13 +168,13 @@ const FormComponent = (props: IFormInfoComponent) => {
     const isSelected = value.form.id === searchingMainForm?.form?.id;
     const name = value.form.name;
     const form = value.form.formName;
-    const pokemonType = value.form.pokemonType || PokemonType.None;
+    const pokemonType = value.form.pokemonType ?? PokemonType.None;
     if (isSelected) {
       return;
     }
     if (params.id) {
       const pokemonForm = getPokemonFormWithNoneSpecialForm(form, pokemonType)?.toLowerCase().replaceAll('_', '-');
-      if (pokemonForm) {
+      if (pokemonForm && !isEqual(pokemonForm, formNormal(), EqualMode.IgnoreCaseSensitive)) {
         searchParams.set(Params.Form, pokemonForm);
       } else {
         searchParams.delete(Params.Form);

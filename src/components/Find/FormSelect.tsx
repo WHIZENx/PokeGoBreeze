@@ -192,7 +192,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         currentForm.defaultName
       );
       const details = getPokemonDetails(id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
-      details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
+      details.pokemonType = currentForm.form.pokemonType ?? PokemonType.Normal;
       const pokemonDetails = PokemonDetail.setData(details);
       if (props.isObjective) {
         dispatch(SearchingActions.SetToolObjectPokemonDetails.create(pokemonDetails));
