@@ -323,7 +323,7 @@ const FindBattle = () => {
               <h4 className="tw-underline">Recommend Battle League</h4>
               {bestInLeague.map((value, index) => (
                 <LinkToTop
-                  to={`/pokemon/${value.id}${generateParamForm(value.form)}`}
+                  to={`/pokemon/${value.id}${generateParamForm(value.form, value.pokemonType)}`}
                   className="tw-inline-block contain-poke-best-league border-best-poke"
                   key={index}
                   title={`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}
@@ -388,7 +388,7 @@ const FindBattle = () => {
                               <div className="col tw-inline-block evo-item-desc tw-justify-center !tw-p-0" key={index}>
                                 <div className="pokemon-best-league">
                                   <LinkToTop
-                                    to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                                    to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
                                     title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
                                   >
                                     <Badge color="primary" overlap="circular" badgeContent={index + 1}>

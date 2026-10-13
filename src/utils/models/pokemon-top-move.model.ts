@@ -1,5 +1,5 @@
 import { Combat, ICombat } from '../../core/models/combat.model';
-import { MoveType } from '../../enums/type.enum';
+import { MoveType, PokemonType } from '../../enums/type.enum';
 
 export interface IPokemonTopMove {
   num: number;
@@ -8,6 +8,7 @@ export interface IPokemonTopMove {
   baseSpecies: string | undefined;
   sprite: string;
   releasedGO: boolean;
+  pokemonType: PokemonType;
   moveType: MoveType;
   dps: number;
   tdo: number;
@@ -20,6 +21,7 @@ export class PokemonTopMove implements IPokemonTopMove {
   baseSpecies = '';
   sprite = '';
   releasedGO = false;
+  pokemonType = PokemonType.None;
   moveType = MoveType.None;
   dps = 0;
   tdo = 0;

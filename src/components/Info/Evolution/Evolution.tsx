@@ -78,7 +78,8 @@ class PokemonEvo implements IPokemonEvo {
     pokemonType = PokemonType.Normal,
     prev = '',
     isBaby = false,
-    formVaries = false
+    formVaries = false,
+    dataForm = form
   ) {
     const obj = new PokemonEvo();
     obj.prev = prev;
@@ -86,7 +87,7 @@ class PokemonEvo implements IPokemonEvo {
     obj.id = toNumber(id);
     obj.isBaby = isBaby;
     obj.form = generateFormName(form, pokemonType, '-').toUpperCase();
-    obj.dataForm = (form || formNormal()).toUpperCase();
+    obj.dataForm = (dataForm || formNormal()).toUpperCase();
     obj.formVaries = formVaries;
     obj.pokemonType = pokemonType;
     obj.sprite = sprite;
@@ -130,7 +131,8 @@ const Evolution = (props: IEvolutionComponent) => {
       props.pokemonData?.pokemonType,
       pokemon.prev,
       pokemon.isBaby,
-      pokemon.formVaries
+      pokemon.formVaries,
+      pokemon.form
     );
   };
 
@@ -259,14 +261,27 @@ const Evolution = (props: IEvolutionComponent) => {
       isEqual(form, generateFormName(props.pokemonData?.form, value.pokemonType, '-'), EqualMode.IgnoreCaseSensitive);
     return (
       <Fragment>
-        <span id={`evo-${evo}-${index}`}>
+        <span
+          id={`evo-${evo}-${index}`}
+          data-testid="evolution-node"
+          data-evolution-stage={evo}
+          data-evolution-index={index}
+          data-evolution-id={value.id}
+          data-evolution-form={value.dataForm}
+        >
           {evo > 0 &&
             getIncomingEvolutions(value, evo).map(({ index: sourceIndex, branch: data }) => (
               <Xarrow
                 key={`evo-${evo}-${index}-from-${sourceIndex}`}
                 labels={{
                   middle: (
-                    <div className="evo-arrow-details">
+                    <div
+                      className="evo-arrow-details"
+                      data-testid="evolution-edge"
+                      data-evolution-source={`${evo - 1}:${sourceIndex}`}
+                      data-evolution-target={`${evo}:${index}`}
+                      data-evolution-target-form={value.dataForm}
+                    >
                       {data && value.pokemonType !== PokemonType.GMax && (
                         <div>
                           {toNumber(data.evoToId) > 0 && (

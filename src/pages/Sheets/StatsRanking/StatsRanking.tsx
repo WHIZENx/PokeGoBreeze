@@ -214,7 +214,7 @@ const StatsRanking = () => {
     select && moveRankings?.id === select.num
       ? moveRankings.data.find(
           (item) =>
-            item.pokemonType === (select.pokemonType || PokemonType.Normal) &&
+            item.pokemonType === (select.pokemonType ?? PokemonType.Normal) &&
             ((select.fullName && isEqual(item.fullName, select.fullName)) ||
               (select.form && isEqual(item.form, select.form)))
         )

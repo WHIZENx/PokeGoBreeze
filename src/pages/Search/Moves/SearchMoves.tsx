@@ -134,7 +134,6 @@ const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
     const moveType = type === SelectType.All ? undefined : getKeyWithData(PokemonTypeBadge, type)?.toLocaleLowerCase();
 
     setIsLoading(true);
-    setData([]);
     ProcessedDataService.getPage<ICombat>(
       'combats',
       {
@@ -164,8 +163,7 @@ const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
         if (requestId !== latestRequestRef.current || APIService.isCancel(error)) {
           return;
         }
-        setData([]);
-        setTotalRows(0);
+        // Keep the last successful result set visible when a refresh fails.
       })
       .finally(() => {
         if (requestId === latestRequestRef.current) {
@@ -293,26 +291,33 @@ const Search = () => {
             </tr>
             <tr>
               <td className="data-table">
-                <CustomDataTable
-                  customColumns={category === TypeMove.Max ? maxColumns : columns}
-                  data={result.data}
-                  keyField="tableKey"
-                  defaultSortFieldId={ColumnType.Name}
-                  sortServer
-                  onSort={(column, direction) => result.changeSort(column.id, direction === 'desc' ? 'desc' : 'asc')}
-                  pagination
-                  paginationServer
-                  paginationTotalRows={result.totalRows}
-                  paginationDefaultPage={1}
-                  paginationResetDefaultPage={result.resetPaginationToggle}
-                  paginationPerPage={50}
-                  paginationComponentOptions={{ noRowsPerPage: true }}
-                  onChangePage={result.setPage}
-                  fixedHeader
-                  fixedHeaderScrollHeight="70vh"
-                  progressPending={result.isLoading}
-                  progressComponent={<CircularProgressTable />}
-                />
+                <div className="tw-relative" aria-busy={result.isLoading}>
+                  <CustomDataTable
+                    customColumns={category === TypeMove.Max ? maxColumns : columns}
+                    data={result.data}
+                    keyField="tableKey"
+                    defaultSortFieldId={ColumnType.Name}
+                    sortServer
+                    onSort={(column, direction) => result.changeSort(column.id, direction === 'desc' ? 'desc' : 'asc')}
+                    pagination
+                    paginationServer
+                    paginationTotalRows={result.totalRows}
+                    paginationDefaultPage={1}
+                    paginationResetDefaultPage={result.resetPaginationToggle}
+                    paginationPerPage={50}
+                    paginationComponentOptions={{ noRowsPerPage: true }}
+                    onChangePage={result.setPage}
+                    fixedHeader
+                    fixedHeaderScrollHeight="70vh"
+                    progressPending={result.isLoading && result.data.length === 0}
+                    progressComponent={<CircularProgressTable />}
+                  />
+                  {result.isLoading && result.data.length > 0 && (
+                    <div className="tw-absolute tw-inset-0 tw-z-10 tw-flex tw-items-center tw-justify-center tw-bg-black tw-bg-opacity-20">
+                      <CircularProgressTable />
+                    </div>
+                  )}
+                </div>
               </td>
             </tr>
           </tbody>

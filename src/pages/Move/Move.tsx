@@ -7,6 +7,7 @@ import {
   generateParamForm,
   getItemSpritePath,
   getKeyWithData,
+  getWeatherDisplayName,
   splitAndCapitalize,
 } from '../../utils/utils';
 import { Params } from '../../utils/constants';
@@ -43,14 +44,13 @@ import {
   combineClasses,
   getValueOrDefault,
   isEqual,
-  isIncludeList,
   isNotEmpty,
   safeObjectEntries,
   toFloat,
   toFloatWithPadding,
   toNumber,
 } from '../../utils/extension';
-import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
+import { EqualMode } from '../../utils/enums/string.enum';
 import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
 import { LinkToTop } from '../../components/Link/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
@@ -67,7 +67,6 @@ import {
   defaultPokemonDefObj,
   defaultPokemonLevel,
   getTypes,
-  getWeatherBoost,
   maxIv,
 } from '../../utils/helpers/options-context.helpers';
 import InputReleased from '../../components/Commons/Inputs/InputReleased';
@@ -76,6 +75,7 @@ import SelectMui from '../../components/Commons/Selects/SelectMui';
 import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { formatMaxMoveEffect, getMaxMoveVariantLabel } from '../../utils/max-move';
+import useDataStore from '../../composables/useDataStore';
 
 interface MoveApiResponse {
   data: { move: ICombat; topPokemon: IPokemonTopMove[] };
@@ -112,7 +112,7 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
     id: ColumnType.Name,
     name: 'Name',
     selector: (row) => (
-      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form)}`}>
+      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}>
         <img
           height={48}
           alt="Pokémon Image"
@@ -172,6 +172,7 @@ const maxMoveColumns = columns.filter((column) => column.id !== ColumnType.DPS &
 const Move = (props: IMovePage) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { optionsData } = useDataStore();
 
   const [move, setMove] = useState<ICombat>();
   const [releasedGO, setReleaseGO] = useState(true);
@@ -214,17 +215,9 @@ const Move = (props: IMovePage) => {
     }
   );
 
-  const getWeatherEffective = (type: string | undefined) => {
-    const result = safeObjectEntries(getWeatherBoost())?.find(([, value]) => {
-      if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive)) {
-        return value;
-      }
-    });
-    if (result && isNotEmpty(result)) {
-      return result[0];
-    }
-    return;
-  };
+  const weatherEffective = safeObjectEntries(optionsData.weatherBoost).find(([, types]) =>
+    types.some((type) => isEqual(type, move?.type, EqualMode.IgnoreCaseSensitive))
+  )?.[0];
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'Move - Information',
@@ -497,16 +490,18 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>Weather Boosts</td>
                 <td colSpan={2}>
-                  {move && (
+                  {weatherEffective ? (
                     <div className="tw-flex tw-items-center tw-gap-2">
                       <img
                         className="img-type-icon"
                         height={25}
-                        alt="Image Weather"
-                        src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
+                        alt={`${getWeatherDisplayName(weatherEffective)} weather`}
+                        src={APIService.getWeatherIconSprite(weatherEffective)}
                       />
-                      <span className="caption">{splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}</span>
+                      <span className="caption">{getWeatherDisplayName(weatherEffective)}</span>
                     </div>
+                  ) : (
+                    <span className="caption">Weather mapping unavailable</span>
                   )}
                 </td>
               </tr>

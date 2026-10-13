@@ -997,7 +997,6 @@ const GameMasterUpdates = () => {
 
   useEffect(() => {
     setPage(1);
-    setChanges([]);
   }, [compareTo, status, section, debouncedSearch]);
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import './Select.scss';
 import { combineClasses, isInclude, isNotEmpty, isUndefined, toNumber } from '../../../utils/extension';
 import { ISelectCardPokemonComponent } from '../models/component.model';
 import InputMuiSearch from '../Inputs/InputMuiSearch';
-import { MenuList, MenuItem } from '@mui/material';
+import { CircularProgress, MenuList, MenuItem } from '@mui/material';
 import { SelectPosition } from './enums/select-type.enum';
 import { debounce } from 'lodash';
 import { IncludeMode } from '../../../utils/enums/string.enum';
@@ -158,12 +158,19 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
           left: prependRef.current?.clientWidth,
           width: props.isFit ? textRef.current?.clientWidth : 'auto',
         }}
+        aria-busy={props.isLoading}
       >
+        {props.isLoading && (
+          <div className="tw-sticky tw-top-0 tw-z-10 tw-flex tw-justify-center tw-bg-black tw-bg-opacity-30 tw-py-2">
+            <CircularProgress size={24} aria-label="Loading Pokémon" />
+          </div>
+        )}
         {isNotEmpty(pokemonListFilterSlice) && (
           <MenuList>
             {pokemonListFilterSlice.map((value, index) => (
               <MenuItem
                 key={index}
+                disabled={props.isLoading}
                 selected={props.onIsSelectedPokemon?.(value)}
                 onMouseDown={() => {
                   if (props.onSetPokemon) {

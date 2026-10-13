@@ -68,6 +68,9 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   const [search, setSearch] = useState('');
   const [isFound, setIsFound] = useState(true);
+  const [loadedLeagueType, setLoadedLeagueType] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const requestController = useRef<AbortController>();
 
   const [resetItem, setResetItem] = useState(false);
 
@@ -93,6 +96,10 @@ const RankingPVP = (props: IStyleSheetData) => {
   useTitle(titleProps);
 
   const fetchPokemonRanking = useCallback(async () => {
+    requestController.current?.abort();
+    const controller = new AbortController();
+    requestController.current = controller;
+    setIsLoading(true);
     showSpinner();
     try {
       const cp = toNumber(params.cp);
@@ -103,13 +110,20 @@ const RankingPVP = (props: IStyleSheetData) => {
       ).toLowerCase();
       const file = (
         await APIService.getFetchUrl<IPokemonBattleRanking[]>(
-          APIService.getRankingFile(params.serie, cp, pvpType, true)
+          APIService.getRankingFile(params.serie, cp, pvpType, true),
+          { signal: controller.signal }
         )
       ).data;
+      if (requestController.current !== controller) {
+        return;
+      }
       if (!isNotEmpty(file)) {
+        setRankingData([]);
+        setLoadedLeagueType(null);
         setIsFound(false);
         return;
       }
+      setIsFound(true);
       if (params.serie === LeagueBattleType.All) {
         setTitleProps({
           title: `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`,
@@ -150,15 +164,25 @@ const RankingPVP = (props: IStyleSheetData) => {
       }
       const filePVP = file.map((data) => new PokemonBattleRanking(data));
       setRankingData(filePVP);
-      hideSpinner();
+      setLoadedLeagueType(pvpType);
     } catch (e) {
-      if ((e as AxiosError)?.status === 404) {
+      if (controller.signal.aborted || APIService.isCancel(e)) {
+        return;
+      }
+      if ((e as AxiosError)?.response?.status === 404) {
+        setRankingData([]);
+        setLoadedLeagueType(null);
         setIsFound(false);
       } else {
         showSpinnerMsg({
           isError: true,
           message: (e as AxiosError).message,
         });
+      }
+    } finally {
+      if (requestController.current === controller) {
+        setIsLoading(false);
+        hideSpinner();
       }
     }
   }, [searchParams, params.serie, params.cp]);
@@ -169,6 +193,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     };
     fetchPokemon();
     return () => {
+      requestController.current?.abort();
       hideSpinner();
     };
   }, [fetchPokemonRanking]);
@@ -178,11 +203,7 @@ const RankingPVP = (props: IStyleSheetData) => {
       <LinkToTop
         to={`/pvp/${params.cp}/${params.serie?.toLowerCase()}/${data.data?.speciesId?.replaceAll('_', '-')}?${
           Params.LeagueType
-        }=${getValueOrDefault(
-          String,
-          searchParams.get(Params.LeagueType),
-          getKeyWithData(ScoreType, ScoreType.Overall)
-        ).toLowerCase()}`}
+        }=${getValueOrDefault(String, loadedLeagueType, getKeyWithData(ScoreType, ScoreType.Overall)).toLowerCase()}`}
       >
         <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
       </LinkToTop>
@@ -219,7 +240,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           data={data.data}
           cp={params.cp}
           serie={params.serie}
-          type={searchParams.get(Params.LeagueType)}
+          type={loadedLeagueType}
           styleList={props.styleSheet}
         />
       </div>
@@ -227,7 +248,7 @@ const RankingPVP = (props: IStyleSheetData) => {
         <hr />
       </div>
       <div className="stats-container">
-        <OverAllStats data={data} cp={params.cp} type={searchParams.get(Params.LeagueType)} />
+        <OverAllStats data={data} cp={params.cp} type={loadedLeagueType} />
       </div>
       <div className="tw-container">
         <hr />
@@ -321,7 +342,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           }))}
         />
         <InputMuiSearch value={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
-        <div className="ranking-container" onScroll={listenScrollEvent.bind(this)}>
+        <div className="ranking-container" onScroll={listenScrollEvent.bind(this)} aria-busy={isLoading}>
           <div className="ranking-group tw-w-full ranking-header tw-gap-y-3">
             <div />
             <div className="tw-flex tw-mr-3">

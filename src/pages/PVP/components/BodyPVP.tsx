@@ -6,28 +6,25 @@ import { PokemonVersus } from '../../../core/models/pvp.model';
 import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/api.service';
 import { computeBgType } from '../../../utils/compute';
-import { getValueOrDefault, isInclude, isNotEmpty } from '../../../utils/extension';
+import { getValueOrDefault, isNotEmpty } from '../../../utils/extension';
 import {
   convertNameRankingToOri,
   convertNameRankingToForm,
   splitAndCapitalize,
   getValidPokemonImgPath,
-  getPokemonType,
   getKeyWithData,
 } from '../../../utils/utils';
 import { BodyModel, IBody } from '../models/body.model';
 import { Params } from '../../../utils/constants';
-import { IncludeMode } from '../../../utils/enums/string.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { ScoreType } from '../../../utils/enums/constants.enum';
-import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
 import useDataStore from '../../../composables/useDataStore';
 import usePokemon from '../../../composables/usePokemon';
 
 const BodyPVP = (props: BodyComponent) => {
-  const { findPokemonByPvpokeSpeciesId, findPokemonBySlug } = usePokemon();
+  const { findPokemonByPvpokeSpeciesId, findPokemonBySlug, isPvpokeShadowPokemon } = usePokemon();
   const { getAssetNameById } = useAssets();
   const { pokemonsData, assetsData } = useDataStore();
 
@@ -45,12 +42,7 @@ const BodyPVP = (props: BodyComponent) => {
           const pokemon = findPokemonByPvpokeSpeciesId(speciesId) ?? findPokemonBySlug(name);
           const id = pokemon?.num;
           const form = getAssetNameById(id, name, pokemon?.form);
-          let pokemonType;
-          if (isInclude(versus.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
-            pokemonType = PokemonType.Shadow;
-          } else {
-            pokemonType = getPokemonType(versus.opponent);
-          }
+          const pokemonType = isPvpokeShadowPokemon(versus.opponent) ? PokemonType.Shadow : PokemonType.Normal;
 
           return BodyModel.create({
             name,
@@ -63,7 +55,7 @@ const BodyPVP = (props: BodyComponent) => {
           });
         });
     },
-    [pokemonsData, assetsData, findPokemonByPvpokeSpeciesId, findPokemonBySlug, getAssetNameById]
+    [pokemonsData, assetsData, findPokemonByPvpokeSpeciesId, findPokemonBySlug, getAssetNameById, isPvpokeShadowPokemon]
   );
 
   const matchups = useMemo(() => mapPokemonBody(props.data?.matchups), [props.data?.matchups, mapPokemonBody]);
@@ -76,14 +68,7 @@ const BodyPVP = (props: BodyComponent) => {
       }=${getValueOrDefault(String, props.type, getKeyWithData(ScoreType, ScoreType.Overall)).toLowerCase()}`}
       className="list-item-ranking"
       style={{
-        backgroundImage: computeBgType(
-          data.pokemon?.types,
-          isInclude(data.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)
-            ? PokemonType.Shadow
-            : PokemonType.Normal,
-          props.styleList,
-          0.3
-        ),
+        backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, props.styleList, 0.3),
       }}
     >
       <div className="tw-container tw-flex tw-items-center tw-gap-x-2">

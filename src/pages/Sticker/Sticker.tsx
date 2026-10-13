@@ -47,7 +47,6 @@ const Sticker = () => {
 
   useEffect(() => {
     setPage(1);
-    setPokemonStickerFilter([]);
   }, [id, shopType]);
 
   const skipStalePageRequest = useSkipStalePageRequest(page, `${id}|${shopType}`);
@@ -73,8 +72,6 @@ const Sticker = () => {
       })
       .catch((error) => {
         if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
-          setPokemonStickerFilter([]);
-          setTotal(0);
           showSnackbar(`Unable to load stickers: ${error}`, 'error');
         }
       })
