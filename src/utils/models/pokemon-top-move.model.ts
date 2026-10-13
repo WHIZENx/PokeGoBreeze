@@ -5,6 +5,7 @@ export interface IPokemonTopMove {
   num: number;
   form: string | undefined;
   name: string;
+  fullName?: string;
   baseSpecies: string | undefined;
   sprite: string;
   releasedGO: boolean;
@@ -18,6 +19,7 @@ export class PokemonTopMove implements IPokemonTopMove {
   num = 0;
   form: string | undefined;
   name = '';
+  fullName?: string;
   baseSpecies = '';
   sprite = '';
   releasedGO = false;

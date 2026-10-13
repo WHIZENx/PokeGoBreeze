@@ -59,7 +59,7 @@ const columns = createDataRows<TableColumnModify<ICombat>>(
   },
   {
     id: ColumnType.DPS,
-    name: 'DPS',
+    name: 'PvE DPS',
     selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
     sortable: true,
   }

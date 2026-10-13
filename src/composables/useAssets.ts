@@ -1,8 +1,8 @@
 import useDataStore from './useDataStore';
 import { FormType } from '../utils/enums/compute.enum';
-import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
-import { formNormal, formGmax, formMega } from '../utils/helpers/options-context.helpers';
-import { isEqual, isInclude, isNotEmpty } from '../utils/extension';
+import { IncludeMode } from '../utils/enums/string.enum';
+import { formNormal, formMega } from '../utils/helpers/options-context.helpers';
+import { isInclude, isNotEmpty } from '../utils/extension';
 import { useCallback } from 'react';
 import { convertPokemonAPIDataFormName } from '../utils/utils';
 import { GenderType } from '../core/enums/asset.enum';
@@ -11,11 +11,24 @@ import { IImage } from '../core/models/asset.model';
 const genderRank = (gender: GenderType | undefined) =>
   gender === GenderType.Male ? 0 : gender === GenderType.GenderLess ? 1 : 2;
 
-const selectAssetForm = (images: IImage[], formName: string) => {
-  const candidates = images.filter((image) => isEqual(formName, image.form, EqualMode.IgnoreCaseSensitive));
+const costumeRank = (path: string) => (path.includes('.c') ? 1 : 0);
+
+export const selectAssetForm = (images: IImage[], formName: string, assetName?: string) => {
+  const normalizedForm = formName.replaceAll('-', '_').toUpperCase();
+  const acceptedForms = new Set([normalizedForm]);
+  if (assetName?.toUpperCase() === 'UNOWN' && !normalizedForm.startsWith('UNOWN_')) {
+    acceptedForms.add(`UNOWN_${normalizedForm}`);
+  }
+  if (assetName?.toUpperCase() === 'SPINDA' && normalizedForm === 'NORMAL') {
+    acceptedForms.add('00');
+  }
+  const candidates = images.filter((image) => acceptedForms.has(String(image.form ?? '').toUpperCase()));
   const selected = candidates
     .filter((image) => image.default.endsWith('.icon') && !image.default.endsWith('.s.icon'))
-    .sort((left, right) => genderRank(left.gender) - genderRank(right.gender))[0];
+    .sort(
+      (left, right) =>
+        costumeRank(left.default) - costumeRank(right.default) || genderRank(left.gender) - genderRank(right.gender)
+    )[0];
   if (!selected) {
     return;
   }
@@ -43,16 +56,16 @@ export const useAssets = () => {
         return;
       }
       formName = formName.replaceAll('-', '_');
-      const asset = selectAssetForm(pokemonAssets.image, formName);
+      const asset = selectAssetForm(pokemonAssets.image, formName, pokemonAssets.name);
       if (asset) {
         return asset;
       } else if (
         isNotEmpty(pokemonAssets.image) &&
         !isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive)
       ) {
-        const formOrigin = selectAssetForm(pokemonAssets.image, formNormal());
+        const formOrigin = selectAssetForm(pokemonAssets.image, formNormal(), pokemonAssets.name);
         if (!formOrigin) {
-          return pokemonAssets.image[0];
+          return;
         }
         return formOrigin;
       }
@@ -63,9 +76,6 @@ export const useAssets = () => {
 
   const findAssetForm = useCallback(
     (id: number | undefined, formName = formNormal(), formType = FormType.Default) => {
-      if (isEqual(formName, formGmax(), EqualMode.IgnoreCaseSensitive)) {
-        return;
-      }
       const form = queryAssetForm(id, formName);
       if (form) {
         switch (formType) {

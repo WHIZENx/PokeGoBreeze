@@ -16,19 +16,19 @@ export interface SpriteInfo {
   front_female: string | null;
   front_shiny: string | null;
   front_shiny_female: string | null;
-  other: {
+  other?: {
     dream_world: {
-      front_default: string;
+      front_default: string | null;
       front_female: string | null;
     };
     home: {
-      front_default: string;
+      front_default: string | null;
       front_female: string | null;
       front_shiny: string | null;
       front_shiny_female: string | null;
     };
     'official-artwork': {
-      front_default: string;
+      front_default: string | null;
       front_shiny: string | null;
     };
   };

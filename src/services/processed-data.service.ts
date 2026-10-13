@@ -24,6 +24,7 @@ export interface ProcessedDataMeta {
     gameMasterSha?: string;
     gameMasterCommitSha?: string;
     assets: number;
+    assetsCommitSha?: string;
     items?: number;
     icon?: number;
     sounds: number;

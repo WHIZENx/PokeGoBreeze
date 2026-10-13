@@ -30,7 +30,7 @@ export class CounterModel implements ICounterModel {
       props.pokemonType = PokemonType.Shadow;
     } else if (props.cMove.moveType === MoveType.Purified) {
       props.pokemonType = PokemonType.Purified;
-    } else {
+    } else if (props.pokemonType === undefined || props.pokemonType === PokemonType.None) {
       props.pokemonType = getPokemonType(props.pokemonForm, false, false);
     }
     Object.assign(this, props);

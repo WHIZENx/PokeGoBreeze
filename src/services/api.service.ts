@@ -288,9 +288,20 @@ class APIService {
           '-',
           '-'
         );
+        const numericId = Number(id);
+        if (numericId === 25 && /^(Original|Hoenn|Sinnoh|Unova|Kalos|Alola|Partner|World)$/.test(form)) {
+          form += '-Cap';
+        } else if (numericId === 718) {
+          form = form
+            .replace(/^Ten-Percent$/, '10')
+            .replace(/^Fifty-Percent$/, '')
+            .replace(/^Complete-(Ten|Fifty)-Percent$/, 'Complete');
+        } else if (numericId === 801 && form === 'Original-Color') {
+          form = 'Original';
+        }
       }
       return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(4, '0')}${
-        form && id !== unownId() ? `-${form}` : ''
+        form && Number(id) !== unownId() ? `-${form}` : ''
       }.png`;
     }
     return this.getPokeFullAsset();
@@ -421,6 +432,12 @@ class APIService {
   }
 
   getAssetPokeGo(image?: string) {
+    if (!image) {
+      return '';
+    }
+    if (/^https?:\/\//i.test(image)) {
+      return image;
+    }
     return isInclude(image, 'gofestCatch2022')
       ? `${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/${image}`
       : `${APIUrl.POGO_PROD_ASSET_URL}${image}`;

@@ -76,6 +76,10 @@ interface PokemonSheetData {
   cMoveType: MoveType;
   pokemonType: PokemonType;
   cp: number;
+  dpsDef?: number;
+  tdoDef?: number;
+  ttkAtk?: number;
+  ttkDef?: number;
 }
 
 const nameSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
@@ -113,6 +117,10 @@ const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   const b = toFloat(rowB.multiDpsTdo);
   return a - b;
 };
+
+const numericSort =
+  (value: (row: PokemonSheetData) => number | undefined) => (rowA: PokemonSheetData, rowB: PokemonSheetData) =>
+    toFloat(value(rowA)) - toFloat(value(rowB));
 
 const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
   {
@@ -259,6 +267,41 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
   }
 );
 
+const defenderColumns = createDataRows<TableColumnModify<PokemonSheetData>>(
+  {
+    id: ColumnType.DPSDef,
+    name: 'Defender DPS',
+    selector: (row) => toFloatWithPadding(row.dpsDef, 3),
+    sortable: true,
+    sortFunction: numericSort((row) => row.dpsDef),
+    minWidth: '130px',
+  },
+  {
+    id: ColumnType.TDODef,
+    name: 'Defender TDO',
+    selector: (row) => toFloatWithPadding(row.tdoDef, 3),
+    sortable: true,
+    sortFunction: numericSort((row) => row.tdoDef),
+    minWidth: '140px',
+  },
+  {
+    id: ColumnType.TTKAtk,
+    name: 'Win Time',
+    selector: (row) => `${toFloatWithPadding(row.ttkAtk, 2)}s`,
+    sortable: true,
+    sortFunction: numericSort((row) => row.ttkAtk),
+    minWidth: '110px',
+  },
+  {
+    id: ColumnType.TTKDef,
+    name: 'Survival Time',
+    selector: (row) => `${toFloatWithPadding(row.ttkDef, 2)}s`,
+    sortable: true,
+    sortFunction: numericSort((row) => row.ttkDef),
+    minWidth: '130px',
+  }
+);
+
 const DpsTdo = () => {
   useTitle({
     title: 'PokéGO Breeze - DPS&TDO Sheets',
@@ -271,8 +314,8 @@ const DpsTdo = () => {
 
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
   const [totalRows, setTotalRows] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [searchTerm, setSearchTerm] = useState(optionsDpsSheet?.searchTerm ?? '');
+  const [debouncedSearch, setDebouncedSearch] = useState(optionsDpsSheet?.searchTerm ?? '');
   const [requestVersion, setRequestVersion] = useState(0);
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const latestRequestRef = useRef(0);
@@ -299,13 +342,15 @@ const DpsTdo = () => {
     routerAction === Action.Pop && optionsDpsSheet?.defaultSorted ? optionsDpsSheet.defaultSorted : new OptionDPSSort()
   );
 
-  const [filters, setFilters] = useState(optionsDpsSheet?.filters ?? new OptionFiltersDPS());
+  const [filters, setFilters] = useState(() => Object.assign(new OptionFiltersDPS(), optionsDpsSheet?.filters));
 
   const {
     isMatch,
     showSpecialMove,
     showShadow,
+    showPurified,
     enableShadow,
+    enablePurified,
     showMega,
     showGMax,
     showPrimal,
@@ -329,11 +374,56 @@ const DpsTdo = () => {
     pokemonLevel,
   } = filters;
 
-  const [options, setOptions] = useState(new OptionOtherDPS());
+  const [options, setOptions] = useState(() => Object.assign(new OptionOtherDPS(), optionsDpsSheet?.options));
   const { weatherBoosts, isTrainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
 
   const [isShowSpinner, setIsShowSpinner] = useState(true);
+  const [hasDefenderResults, setHasDefenderResults] = useState(false);
   const [selectTypes, setSelectTypes] = useState(getValueOrDefault(Array, optionsDpsSheet?.selectTypes));
+  const hasDefender = Boolean(dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon);
+  const tableColumns = hasDefenderResults ? [...columns, ...defenderColumns] : columns;
+  const requestScope = [
+    ivAtk,
+    ivDef,
+    ivHp,
+    pokemonLevel,
+    pokemonDefObj,
+    options.delay?.fTime,
+    options.delay?.cTime,
+    weatherBoosts,
+    isTrainerFriend,
+    pokemonFriendLevel,
+    dataTargetPokemon?.num,
+    dataTargetPokemon?.fullName,
+    dataTargetPokemon?.pokemonType,
+    fMoveTargetPokemon?.name,
+    cMoveTargetPokemon?.name,
+    debouncedSearch,
+    isMatch,
+    selectTypes.join(','),
+    showShadow,
+    showPurified,
+    showSpecialMove,
+    showMega,
+    showGMax,
+    showPrimal,
+    showLegendary,
+    showMythic,
+    showUltraBeast,
+    enableShadow,
+    enablePurified,
+    enableSpecial,
+    enableMega,
+    enableGMax,
+    enablePrimal,
+    enableLegendary,
+    enableMythic,
+    enableUltraBeast,
+    enableBest,
+    bestOf,
+    releasedGO,
+  ].join('|');
+  const previousRequestScope = useRef(requestScope);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
@@ -341,7 +431,19 @@ const DpsTdo = () => {
   }, [searchTerm]);
 
   useEffect(() => {
+    if (previousRequestScope.current !== requestScope) {
+      previousRequestScope.current = requestScope;
+      setDefaultPage(1);
+      setResetPaginationToggle((value) => !value);
+    }
+  }, [requestScope]);
+
+  useEffect(() => {
     const requestId = ++latestRequestRef.current;
+    if (dataTargetPokemon && !hasDefender) {
+      setIsShowSpinner(false);
+      return;
+    }
     const controller = new AbortController();
     const sort =
       defaultSorted.selectedColumn === ColumnType.Id
@@ -356,9 +458,17 @@ const DpsTdo = () => {
                 ? 'dps'
                 : defaultSorted.selectedColumn === ColumnType.TDO
                   ? 'tdo'
-                  : defaultSorted.selectedColumn === ColumnType.CP
-                    ? 'cp'
-                    : 'multiDpsTdo';
+                  : defaultSorted.selectedColumn === ColumnType.DPSDef
+                    ? 'dpsDef'
+                    : defaultSorted.selectedColumn === ColumnType.TDODef
+                      ? 'tdoDef'
+                      : defaultSorted.selectedColumn === ColumnType.TTKAtk
+                        ? 'ttkAtk'
+                        : defaultSorted.selectedColumn === ColumnType.TTKDef
+                          ? 'ttkDef'
+                          : defaultSorted.selectedColumn === ColumnType.CP
+                            ? 'cp'
+                            : 'multiDpsTdo';
     const bestBy = bestOf === BestOptionType.dps ? 'dps' : bestOf === BestOptionType.tdo ? 'tdo' : 'multiDpsTdo';
     setIsShowSpinner(true);
     APIService.getFetchUrl<ProcessedDataPage<PokemonSheetData>>(
@@ -377,14 +487,16 @@ const DpsTdo = () => {
         weather: weatherBoosts,
         friend: isTrainerFriend,
         friendLevel: pokemonFriendLevel,
-        targetId: dataTargetPokemon?.num,
-        targetForm: dataTargetPokemon?.fullName,
-        targetFast: fMoveTargetPokemon?.name,
-        targetCharged: cMoveTargetPokemon?.name,
+        targetId: hasDefender ? dataTargetPokemon?.num : undefined,
+        targetForm: hasDefender ? dataTargetPokemon?.fullName : undefined,
+        targetPokemonType: hasDefender ? dataTargetPokemon?.pokemonType : undefined,
+        targetFast: hasDefender ? fMoveTargetPokemon?.name : undefined,
+        targetCharged: hasDefender ? cMoveTargetPokemon?.name : undefined,
         q: debouncedSearch,
         match: isMatch,
         types: selectTypes.join(','),
         showShadow,
+        showPurified,
         showSpecial: showSpecialMove,
         showMega,
         showGMax,
@@ -393,6 +505,7 @@ const DpsTdo = () => {
         showMythic,
         showUltra: showUltraBeast,
         enableShadow,
+        enablePurified,
         enableSpecial,
         enableMega,
         enableGMax,
@@ -417,11 +530,13 @@ const DpsTdo = () => {
         }
         setDpsTable(data.data);
         setTotalRows(data.meta.total);
+        setHasDefenderResults(hasDefender);
       })
       .catch((error) => {
         if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setDpsTable([]);
           setTotalRows(0);
+          setHasDefenderResults(false);
         }
       })
       .finally(() => {
@@ -448,6 +563,7 @@ const DpsTdo = () => {
     isMatch,
     selectTypes,
     showShadow,
+    showPurified,
     showSpecialMove,
     showMega,
     showGMax,
@@ -456,6 +572,7 @@ const DpsTdo = () => {
     showMythic,
     showUltraBeast,
     enableShadow,
+    enablePurified,
     enableSpecial,
     enableMega,
     enableGMax,
@@ -470,6 +587,7 @@ const DpsTdo = () => {
     defaultRowPerPage,
     defaultSorted,
     requestVersion,
+    hasDefender,
   ]);
 
   useEffect(() => {
@@ -561,6 +679,21 @@ const DpsTdo = () => {
                   />
                 }
                 label={getKeyWithData(PokemonType, PokemonType.Shadow)}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showPurified}
+                    onChange={(_, check) =>
+                      setFilters({
+                        ...filters,
+                        showPurified: check,
+                        enablePurified: check === false ? check : filters.enablePurified,
+                      })
+                    }
+                  />
+                }
+                label={getKeyWithData(PokemonType, PokemonType.Purified)}
               />
               <FormControlLabel
                 control={
@@ -679,6 +812,16 @@ const DpsTdo = () => {
                   />
                 }
                 label={getKeyWithData(PokemonType, PokemonType.Shadow)}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={enablePurified}
+                    disabled={!showPurified}
+                    onChange={(_, check) => setFilters({ ...filters, enablePurified: check })}
+                  />
+                }
+                label={getKeyWithData(PokemonType, PokemonType.Purified)}
               />
               <FormControlLabel
                 control={
@@ -825,6 +968,11 @@ const DpsTdo = () => {
                   />
                 </Box>
               </div>
+              {dataTargetPokemon && !hasDefender && (
+                <div className="tw-w-full tw-px-3 tw-pb-2 tw-text-left tw-text-amber-500">
+                  Select both Defender moves before calculating matchup values.
+                </div>
+              )}
             </div>
           </div>
           <div className="2xl:tw-flex-1 !tw-p-0">
@@ -833,6 +981,7 @@ const DpsTdo = () => {
               <FormControlMui
                 control={
                   <Switch
+                    checked={enableDelay}
                     onChange={(_, check) => {
                       setFilters({ ...filters, enableDelay: check });
                       setOptions(
@@ -1013,6 +1162,7 @@ const DpsTdo = () => {
                   boxClassName="tw-flex tw-items-center tw-flex-grow"
                   control={
                     <Switch
+                      checked={Boolean(isTrainerFriend)}
                       onChange={(_, check) => {
                         setOptions(
                           OptionOtherDPS.create({
@@ -1052,7 +1202,7 @@ const DpsTdo = () => {
       <div className="tw-relative">
         <BackdropMui open={isShowSpinner && isNotEmpty(dpsTable)} isShowOnAbove={false} />
         <CustomDataTable
-          customColumns={columns}
+          customColumns={tableColumns}
           data={dpsTable}
           noDataComponent={
             <div className="tw-p-6 tw-text-center">
