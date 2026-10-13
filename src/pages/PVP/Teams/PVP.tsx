@@ -48,7 +48,6 @@ import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
 import useStats from '../../../composables/useStats';
@@ -60,7 +59,7 @@ import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const { pvpData, pokemonsData, combatsData, assetsData } = useDataStore();
-  const { findPokemonByPvpokeSpeciesId, findPokemonBySlug } = usePokemon();
+  const { findPokemonByPvpokeSpeciesId, findPokemonBySlug, isPvpokeShadowPokemon } = usePokemon();
   const { findMoveByTag } = useCombats();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
   const { getAssetNameById } = useAssets();
@@ -108,7 +107,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     }
 
     let pokemonType = PokemonType.Normal;
-    if (isInclude(speciesId, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    if (isPvpokeShadowPokemon(speciesId)) {
       pokemonType = PokemonType.Shadow;
     } else if (
       isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||

@@ -73,6 +73,7 @@ export interface ICardPokemonInfoComponent {
   pokemonStat: IStatsPokemonGO;
   icon: string | undefined;
   releasedGO: boolean;
+  pokemonType: PokemonType;
   styleList: IStyleData[];
 }
 

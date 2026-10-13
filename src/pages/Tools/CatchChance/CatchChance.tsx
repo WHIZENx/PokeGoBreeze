@@ -133,9 +133,11 @@ const CatchChance = () => {
     }
     const currentThrow = renderAdvThrow();
     setAdvThrow(currentThrow);
+    const selectedForm =
+      searchingToolCurrentDetails?.form ?? getPokemonFormWithNoneSpecialForm(form.form.formName, form.form.pokemonType);
     const url = APIService.getCatchChance({
       id: form.defaultId,
-      form: form.form.formName,
+      form: selectedForm,
       level,
       primaryMedal: medal.typePri.priority,
       secondaryMedal: medal.typeSec?.type ? medal.typeSec.priority : -1,
@@ -190,6 +192,8 @@ const CatchChance = () => {
   }, [
     form?.defaultId,
     form?.form.formName,
+    form?.form.pokemonType,
+    searchingToolCurrentDetails?.form,
     data?.baseCaptureRate,
     data?.shadowBaseCaptureRate,
     radius,

@@ -1,13 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/api.service';
 
-import {
-  getKeyWithData,
-  getMoveType,
-  getPokemonType,
-  replaceTempMovePvpName,
-  splitAndCapitalize,
-} from '../../../utils/utils';
+import { getKeyWithData, getMoveType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
 import { calculateStatsByTag } from '../../../utils/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
 import { Checkbox } from '@mui/material';
@@ -128,7 +122,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             cMovePri: createMoveAudio(cMovePriCombat?.sound),
             cMoveSec: createMoveAudio(cMoveSecCombat?.sound),
           },
-          pokemonType: getPokemonType(value.speciesId),
+          pokemonType: value.pokemonType,
         })
       );
     } catch (error) {
@@ -228,7 +222,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         customIconStart={
           (score > 0 || pokemon) && (
             <>
-              {isEqual(getPokemonType(pokemon?.speciesId), PokemonType.Shadow) && (
+              {pokemon?.pokemonType === PokemonType.Shadow && (
                 <span
                   className={combineClasses(
                     'type-icon-small ic tw-mr-1 !tw-flex tw-items-center tw-h-3',
@@ -245,7 +239,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           )
         }
         cardElement={(pokemon) => (
-          <CardPokemon value={pokemon.pokemon} score={pokemon.score} pokemonType={getPokemonType(pokemon.speciesId)} />
+          <CardPokemon value={pokemon.pokemon} score={pokemon.score} pokemonType={pokemon.pokemonType} />
         )}
         onRemove={() => removePokemon()}
       />

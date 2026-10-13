@@ -19,6 +19,7 @@ import APIService from '../../../services/api.service';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();
+  const [isStatsLoading, setIsStatsLoading] = useState(false);
 
   const setPokemonStats = async (stats: IStatsPokemonGO | undefined, id: number | undefined, signal: AbortSignal) => {
     const maxCP = toNumber(props.cp);
@@ -35,25 +36,28 @@ const OverAllStats = (props: OverAllStatsComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.data?.id);
-    if (id > 0 && pokemonAllStats && (pokemonAllStats.id !== id || pokemonAllStats.maxCP !== toNumber(props.cp))) {
-      setPokemonAllStats(undefined);
-    }
-  }, [pokemonAllStats, props.data?.id, props.cp]);
-
-  useEffect(() => {
-    const id = toNumber(props.data?.id);
-    if (id > 0 && !pokemonAllStats && props.data?.stats) {
+    if (id > 0 && props.data?.stats) {
       const controller = new AbortController();
+      setIsStatsLoading(true);
       setPokemonStats(props.data.stats, id, controller.signal)
-        .then(setPokemonAllStats)
+        .then((result) => {
+          if (!controller.signal.aborted) {
+            setPokemonAllStats(result);
+          }
+        })
         .catch((error) => {
-          if (!APIService.isCancel(error)) {
-            setPokemonAllStats(undefined);
+          if (APIService.isCancel(error)) {
+            return;
+          }
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) {
+            setIsStatsLoading(false);
           }
         });
       return () => controller.abort();
     }
-  }, [pokemonAllStats, props.data?.stats, props.data?.id, props.cp]);
+  }, [props.data?.stats, props.data?.id, props.cp]);
 
   const renderTopStats = (data: IPokemonAllStats | undefined) => (
     <ul className="tw-mt-2">
@@ -153,7 +157,9 @@ const OverAllStats = (props: OverAllStatsComponent) => {
           <h5>
             <b>Top Rank League</b>
           </h5>
-          {renderTopStats(pokemonAllStats)}
+          <div className={isStatsLoading && pokemonAllStats ? 'tw-opacity-60 tw-animate-pulse' : ''}>
+            {renderTopStats(pokemonAllStats)}
+          </div>
         </div>
       </div>
     </div>

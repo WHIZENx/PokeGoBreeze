@@ -129,7 +129,6 @@ const Pokedex = (props: IStyleSheetData) => {
 
   useEffect(() => {
     setPage(1);
-    setListOfPokemon([]);
   }, [
     debouncedSearch,
     selectTypes,
@@ -559,6 +558,7 @@ const Pokedex = (props: IStyleSheetData) => {
               pokemonStat={row.goStats}
               icon={iconData}
               releasedGO={row.releasedGO}
+              pokemonType={row.pokemonType}
               styleList={props.styleSheet}
             />
           ))}

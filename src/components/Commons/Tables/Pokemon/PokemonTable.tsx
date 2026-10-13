@@ -7,9 +7,12 @@ import { Skeleton } from '@mui/material';
 import './PokemonTable.scss';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
-  const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
+  const reload = (element: JSX.Element, hasValue = false, color = 'var(--loading-custom-bg)') => {
     if (props.isLoadedForms) {
       return element;
+    }
+    if (hasValue) {
+      return <div className="tw-opacity-60 tw-animate-pulse">{element}</div>;
     }
     return (
       <div className="slide-container tw-w-full !tw-h-full !tw-m-0 !tw-p-0 tw-opacity-50" style={{ background: color }}>
@@ -25,14 +28,19 @@ const PokemonTable = (props: IPokemonTableComponent) => {
   );
 
   return (
-    <table className={combineClasses('table-info table-desc tw-w-full', props.className)}>
+    <table
+      data-testid="pokemon-info-table"
+      data-body-weight={props.weight ?? ''}
+      data-body-height={props.height ?? ''}
+      className={combineClasses('table-info table-desc tw-w-full', props.className)}
+    >
       <thead />
       <tbody>
         <tr>
           <td>
             <h5 className="tw-flex">ID</h5>
           </td>
-          <td colSpan={2}>{toNumber(props.id) > 0 ? renderPokemonId() : reload(renderPokemonId())}</td>
+          <td colSpan={2}>{reload(renderPokemonId(), toNumber(props.id) > 0)}</td>
         </tr>
         <tr>
           <td>
@@ -42,7 +50,8 @@ const PokemonTable = (props: IPokemonTableComponent) => {
             {reload(
               <h5 className="tw-flex">
                 <b>{splitAndCapitalize(props.formName, '-', ' ')}</b>
-              </h5>
+              </h5>,
+              Boolean(props.formName)
             )}
           </td>
         </tr>
@@ -63,6 +72,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                   </>
                 )}
               </h5>,
+              !isUndefined(props.gen) && isNumber(props.gen),
               'var(--background-btn-type)'
             )}
           </td>
@@ -71,7 +81,9 @@ const PokemonTable = (props: IPokemonTableComponent) => {
           <td>
             <h5 className="tw-flex">Region</h5>
           </td>
-          <td colSpan={2}>{reload(<h5 className="tw-flex">{splitAndCapitalize(props.region, '-', ' ')}</h5>)}</td>
+          <td colSpan={2}>
+            {reload(<h5 className="tw-flex">{splitAndCapitalize(props.region, '-', ' ')}</h5>, Boolean(props.region))}
+          </td>
         </tr>
         <tr>
           <td>
@@ -82,6 +94,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
               <h5 className="tw-flex">
                 {splitAndCapitalize(props.version, '-', ' ').replace(/GO$/i, 'GO').replace(/X y$/i, 'X-Y')}
               </h5>,
+              Boolean(props.version),
               'var(--background-btn-type)'
             )}
           </td>
@@ -97,7 +110,10 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                   <h6>Weight:</h6>
                 </div>
                 <div className="tw-inline-block">
-                  {reload(<h6>{!isUndefined(props.weight) && `${toFloatWithPadding(props.weight / 10, 2)} kg`}</h6>)}
+                  {reload(
+                    <h6>{!isUndefined(props.weight) && `${toFloatWithPadding(props.weight / 10, 2)} kg`}</h6>,
+                    !isUndefined(props.weight)
+                  )}
                 </div>
               </div>
             </div>
@@ -107,7 +123,10 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                   <h6>Height:</h6>
                 </div>
                 <div className="tw-inline-block">
-                  {reload(<h6>{!isUndefined(props.height) && `${toFloatWithPadding(props.height / 10, 2)} m`}</h6>)}
+                  {reload(
+                    <h6>{!isUndefined(props.height) && `${toFloatWithPadding(props.height / 10, 2)} m`}</h6>,
+                    !isUndefined(props.height)
+                  )}
                 </div>
               </div>
             </div>

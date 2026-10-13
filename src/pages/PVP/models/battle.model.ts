@@ -13,7 +13,6 @@ import { PokemonType } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
 import { defaultBlock } from '../../../utils/helpers/options-context.helpers';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
-import { getPokemonType } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';
 
 export enum ChargeType {
@@ -74,7 +73,6 @@ export class PokemonBattleData implements IPokemonBattleData {
 
   static create(value: IPokemonBattleData) {
     const obj = new PokemonBattleData();
-    obj.pokemonType = getPokemonType(obj.form);
     Object.assign(obj, value);
     return obj;
   }
@@ -173,9 +171,6 @@ export class PokemonTeamData implements IPokemonTeamData {
   pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonTeamData) {
-    if (props.pokemonType === PokemonType.Normal || props.pokemonType === PokemonType.None) {
-      props.pokemonType = getPokemonType(props.speciesId);
-    }
     Object.assign(this, props);
   }
 }
@@ -216,9 +211,6 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonBattleRanking) {
-    if (props.pokemonType === PokemonType.Normal || props.pokemonType === PokemonType.None) {
-      props.pokemonType = getPokemonType(props.form);
-    }
     Object.assign(this, props);
   }
 }

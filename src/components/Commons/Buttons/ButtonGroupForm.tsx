@@ -25,6 +25,11 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                 <ButtonMui
                   key={subIndex}
                   active={value.form.id === props.id}
+                  aria-pressed={value.form.id === props.id}
+                  data-form-name={value.form.name}
+                  data-form={value.form.formName ?? ''}
+                  data-pokemon-type={value.form.pokemonType ?? ''}
+                  data-form-id={value.form.id}
                   onClick={() => props.changeForm(value)}
                   className={combineClasses(
                     index + subIndex === 0 ? '' : '!tw-ml-3',
