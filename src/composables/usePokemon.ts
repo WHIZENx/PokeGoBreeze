@@ -44,10 +44,13 @@ const normalizePvpokeSpeciesId = (speciesId: string) =>
 const normalizePokemonForm = (value: string | undefined) =>
   (value ?? '').trim().replaceAll('-', '_').replaceAll(' ', '_').toUpperCase();
 
+const stripStandardSuffix = (value: string) =>
+  value === formStandard() ? value : value.replace(`_${formStandard()}`, '');
+
 const getPokemonFormCandidates = (pokemons: IPokemonData[], form: string, pokemonType: PokemonType) => {
   const candidates = new Set([
-    normalizePokemonForm(form).replace(`_${formStandard()}`, ''),
-    normalizePokemonForm(getPokemonFormWithNoneSpecialForm(form, pokemonType)).replace(`_${formStandard()}`, ''),
+    stripStandardSuffix(normalizePokemonForm(form)),
+    stripStandardSuffix(normalizePokemonForm(getPokemonFormWithNoneSpecialForm(form, pokemonType))),
   ]);
   const id = pokemons[0]?.num;
   [...candidates].forEach((candidate) => {

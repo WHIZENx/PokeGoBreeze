@@ -170,10 +170,12 @@ const Pokemon = (props: IPokemonPage) => {
       }
       [form] = normalizedName.split(`-${normalizedType}`);
     }
-    const result = getPokemonFormWithNoneSpecialForm(form, pokemonType)
-      ?.replace(`_${formStandard()}`, '')
-      .replace(formStandard(), '')
-      .replaceAll('_', '-');
+    const normalizedForm = getPokemonFormWithNoneSpecialForm(form, pokemonType);
+    const result = (
+      isEqual(normalizedForm, formStandard(), EqualMode.IgnoreCaseSensitive)
+        ? normalizedForm
+        : normalizedForm?.replace(`_${formStandard()}`, '')
+    )?.replaceAll('_', '-');
     return formType ? `${result}${result ? '-' : ''}${formType.toUpperCase()}` : result;
   };
 
@@ -319,13 +321,19 @@ const Pokemon = (props: IPokemonPage) => {
       currentForm ??= flatForms.find((item) => item.defaultId === specie.id);
       let defaultData = dataPokeList.find((value) => isEqual(value.name, currentForm?.form.name));
       defaultData ??= dataPokeList.find((value) => isEqual(value.name, currentForm?.name));
-      if (defaultData) {
+      if (defaultData && currentForm) {
         const pokemonDetails = PokemonDetail.setDetails(defaultData);
-        dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
-      }
-      currentForm ??= defaultForm.at(0);
-      if (currentForm) {
-        dispatch(SearchingActions.SetMainPokemonForm.create(currentForm));
+        dispatch(
+          SearchingActions.SetMainPokemonSelection.create({
+            form: currentForm,
+            pokemon: pokemonDetails,
+          })
+        );
+      } else {
+        currentForm ??= defaultForm.at(0);
+        if (currentForm) {
+          dispatch(SearchingActions.SetMainPokemonForm.create(currentForm));
+        }
       }
       setData(specie);
 
@@ -510,7 +518,7 @@ const Pokemon = (props: IPokemonPage) => {
     // is the most precise key for the Pokémon GO Game Master row. The PokeAPI
     // Pokémon name can be broader (for example marowak-alola) and previously
     // caused distinct forms to resolve to the first matching GO form.
-    const formName = getValueOrDefault(String, form.form?.formName, form.form?.name, form.defaultName);
+    const formName = [form.form?.formName, form.form?.name, form.defaultName].find((value) => isNotEmpty(value));
     const details = getPokemonDetails(id, formName, form.form?.pokemonType, form.form?.isDefault);
     details.pokemonType = form.form?.pokemonType ?? PokemonType.Normal;
     if (isSpecialFormType(details.pokemonType)) {
@@ -520,7 +528,36 @@ const Pokemon = (props: IPokemonPage) => {
       details.statsGO = StatsPokemonGO.create(atk, def, sta);
     }
     const pokemonDetails = PokemonDetail.setData(details);
-    dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
+    const normalizeBodyName = (value: string | undefined) => value?.replaceAll('_', '-').toLowerCase();
+    const normalizedFullName = normalizeBodyName(details.fullName);
+    const normalizedFormName = normalizeBodyName(form.form?.formName);
+    const canonicalFormName =
+      data?.name && normalizedFormName ? `${normalizeBodyName(data.name)}-${normalizedFormName}` : undefined;
+    const canonicalBodyNames = new Set([normalizedFullName, canonicalFormName]);
+    const formBody =
+      pokeData.find((item) => canonicalBodyNames.has(normalizeBodyName(item.name))) ??
+      pokeData.find((item) => isEqual(item.name, form.form?.name, EqualMode.IgnoreCaseSensitive)) ??
+      pokeData.find((item) => isEqual(item.name, form.name, EqualMode.IgnoreCaseSensitive));
+    const fallbackBody = formBody ?? pokeData.find((item) => item.isDefault);
+    if (fallbackBody) {
+      // PokeAPI body measurements use decimetres/hectograms, which is the
+      // representation expected by PokemonTable. Keep those form-specific
+      // values while enriching the same snapshot with Pokémon GO mechanics.
+      pokemonDetails.height = fallbackBody.height;
+      pokemonDetails.weight = fallbackBody.weight;
+      pokemonDetails.name = fallbackBody.name;
+    } else {
+      // Generated Game Master values are metres/kilograms. Normalize them only
+      // when no canonical form detail exists (for example a GO-only costume).
+      pokemonDetails.height = toNumber(details.heightM) * 10;
+      pokemonDetails.weight = toNumber(details.weightKg) * 10;
+    }
+    dispatch(
+      SearchingActions.SetMainPokemonSelection.create({
+        form,
+        pokemon: pokemonDetails,
+      })
+    );
     return details.releasedGO;
   };
 
@@ -624,8 +661,12 @@ const Pokemon = (props: IPokemonPage) => {
       }
       if (currentForm && pokemonCurrentData) {
         const pokemonDetails = PokemonDetail.setDetails(pokemonCurrentData);
-        dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
-        dispatch(SearchingActions.SetMainPokemonForm.create(currentForm));
+        dispatch(
+          SearchingActions.SetMainPokemonSelection.create({
+            form: currentForm,
+            pokemon: pokemonDetails,
+          })
+        );
         const originForm = splitAndCapitalize(currentForm.form.formName, '-', '-');
         setOriginForm(originForm);
         setFormName(convertSexName(currentForm.form.name));
@@ -680,6 +721,8 @@ const Pokemon = (props: IPokemonPage) => {
         data-selected-pokemon-type={searchingMainForm?.form?.pokemonType ?? ''}
         data-detail-full-name={searchingMainDetails?.fullName ?? ''}
         data-detail-form={searchingMainDetails?.form ?? ''}
+        data-detail-body-name={searchingMainDetails?.name ?? ''}
+        data-body-form-names={pokeData.map((item) => item.name).join(',')}
         data-detail-pokemon-type={searchingMainDetails?.pokemonType ?? ''}
         data-detail-types={searchingMainDetails?.types?.join(',') ?? ''}
         aria-busy={!progress.isLoadedForms}
