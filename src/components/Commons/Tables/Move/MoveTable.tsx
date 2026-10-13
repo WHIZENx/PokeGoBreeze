@@ -378,7 +378,7 @@ const TableMove = (props: ITableMoveComponent) => {
                           <th className="table-sub-header">Fast Moves</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody data-testid="pokemon-fast-moves">
                         {moveOrigin && renderMoveSetTable(moveOrigin.fastMoves.concat(moveOrigin.eliteFastMoves))}
                       </tbody>
                     </table>
@@ -391,7 +391,7 @@ const TableMove = (props: ITableMoveComponent) => {
                           <th className="table-sub-header">Charged Moves</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody data-testid="pokemon-charged-moves">
                         {moveOrigin &&
                           renderMoveSetTable(
                             moveOrigin.chargedMoves.concat(

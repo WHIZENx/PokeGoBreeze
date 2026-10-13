@@ -181,7 +181,7 @@ const Leagues = () => {
                   return PokemonRewardSetLeague.create({
                     ...item,
                     rank: value.rank,
-                    pokemonType: getPokemonType(item.form),
+                    pokemonType: getPokemonType(item.form, false, false),
                   });
                 }
                 return item;
@@ -323,7 +323,7 @@ const Leagues = () => {
               <LinkToTop
                 className="img-link tw-text-center"
                 key={index}
-                to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
                 title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
               >
                 <div className="tw-flex tw-justify-center">
@@ -362,7 +362,7 @@ const Leagues = () => {
               <LinkToTop
                 className="img-link tw-text-center"
                 key={index}
-                to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
                 title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
               >
                 <div className="tw-flex tw-justify-center">
@@ -760,7 +760,7 @@ const Leagues = () => {
                   <LinkToTop
                     className="img-link tw-text-center"
                     key={index}
-                    to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                    to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
                     title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                   >
                     <div className="tw-flex tw-justify-center">
@@ -794,7 +794,7 @@ const Leagues = () => {
                       <LinkToTop
                         className="img-link tw-text-center"
                         key={index}
-                        to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                        to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
                         title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                       >
                         <div className="tw-flex tw-justify-center">

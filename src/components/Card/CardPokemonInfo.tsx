@@ -80,7 +80,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
       )}
       <LinkToTop
         className="tw-block tw-h-full pokemon-link"
-        to={`/pokemon/${props.id}${generateParamForm(props.form)}`}
+        to={`/pokemon/${props.id}${generateParamForm(props.form, props.pokemonType)}`}
       >
         <div className="tw-h-full tw-flex tw-flex-col tw-justify-between tw-gap-2">
           <div>

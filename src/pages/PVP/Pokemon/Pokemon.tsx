@@ -44,6 +44,9 @@ const PokemonPVP = (props: IStyleSheetData) => {
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const [league, setLeague] = useState<IPVPInfo>();
+  const [loadedRequestKey, setLoadedRequestKey] = useState('');
+  const [loadedLeagueType, setLoadedLeagueType] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isFound, setIsFound] = useState(true);
   const requestController = useRef<AbortController>();
 
@@ -77,6 +80,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
     requestController.current?.abort();
     const controller = new AbortController();
     requestController.current = controller;
+    setIsLoading(true);
     showSpinner();
     try {
       const cp = toNumber(params.cp);
@@ -92,15 +96,24 @@ const PokemonPVP = (props: IStyleSheetData) => {
         { signal: controller.signal }
       );
       const result = response.data.data;
-      const { id, name, form } = result;
-      if (!result?.data || !name) {
+      if (requestController.current !== controller) {
+        return;
+      }
+      if (!result?.data || !result.name) {
+        setRankingPoke(undefined);
+        setLeague(undefined);
+        setLoadedRequestKey('');
+        setLoadedLeagueType(null);
         setTitleProps(setPokemonPVPTitle(true));
         return;
       }
+      const { id, name, form } = result;
 
       setIsFound(true);
       setLeague(result.league);
       setRankingPoke(new PokemonBattleRanking(result));
+      setLoadedRequestKey(`${cp}:${params.serie}:${type}:${params.pokemon}`.toLowerCase());
+      setLoadedLeagueType(type);
       setTitleProps({
         title: `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
           cp
@@ -131,6 +144,8 @@ const PokemonPVP = (props: IStyleSheetData) => {
       if ((e as AxiosError)?.response?.status === 404) {
         setRankingPoke(undefined);
         setLeague(undefined);
+        setLoadedRequestKey('');
+        setLoadedLeagueType(null);
         setTitleProps(setPokemonPVPTitle(true));
       } else {
         showSpinnerMsg({
@@ -140,6 +155,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
       }
     } finally {
       if (requestController.current === controller) {
+        setIsLoading(false);
         hideSpinner();
       }
     }
@@ -195,7 +211,21 @@ const PokemonPVP = (props: IStyleSheetData) => {
           ),
         }}
       >
-        <div className="pokemon-ranking-body tw-container pvp-container">
+        <div
+          className="pokemon-ranking-body tw-container pvp-container"
+          data-testid="pvp-pokemon-details-page"
+          data-request-key={loadedRequestKey}
+          data-source-species-id={rankingPoke?.data?.speciesId ?? ''}
+          data-pokemon-id={rankingPoke?.id ?? ''}
+          data-pokemon-full-name={rankingPoke?.pokemon?.fullName ?? ''}
+          data-pokemon-form={rankingPoke?.pokemon?.form ?? ''}
+          data-pokemon-type={rankingPoke?.pokemonType ?? ''}
+          data-league-id={league?.id ?? ''}
+          data-fast-move={rankingPoke?.fMove?.name ?? ''}
+          data-primary-move={rankingPoke?.cMovePri?.name ?? ''}
+          data-secondary-move={rankingPoke?.cMoveSec?.name ?? ''}
+          aria-busy={isLoading}
+        >
           {renderLeague()}
           <hr />
           <ToggleGroupMui
@@ -246,7 +276,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
               data={rankingPoke?.data}
               cp={params.cp}
               serie={params.serie}
-              type={searchParams.get(Params.LeagueType)}
+              type={loadedLeagueType}
               styleList={props.styleSheet}
             />
           </div>
@@ -254,7 +284,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
             <hr />
           </div>
           <div className="stats-container">
-            <OverAllStats data={rankingPoke} cp={params.cp} type={searchParams.get(Params.LeagueType)} />
+            <OverAllStats data={rankingPoke} cp={params.cp} type={loadedLeagueType} />
           </div>
           <div className="tw-container">
             <hr />

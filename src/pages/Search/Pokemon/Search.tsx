@@ -88,8 +88,7 @@ const Search = () => {
         })
         .catch((error) => {
           if (requestId === latestSearchRequest.current && !APIService.isCancel(error)) {
-            setSearchResults([]);
-            setSearchPages(1);
+            // Keep the last successful result set visible when a refresh fails.
           }
         })
         .finally(() => {
@@ -188,6 +187,7 @@ const Search = () => {
           inputRef={inputRef}
           pokemonList={searchResults}
           isRemoteSearch
+          isLoading={isSearchLoading}
           hasMore={searchPage < searchPages}
           onLoadMore={() => {
             if (!isSearchLoading && searchPage < searchPages) {
@@ -197,7 +197,6 @@ const Search = () => {
           onSetSearch={(value) => {
             setSearchQuery(value);
             setSearchPage(1);
-            setSearchResults([]);
           }}
           onChangeSelect={onChangeSelect}
           onSetPokemon={(pokemon) => getInfoPoke(pokemon.num)}

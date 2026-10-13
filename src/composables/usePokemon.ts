@@ -1,5 +1,5 @@
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../utils/extension';
-import { formGmax, formNormal, formStandard } from '../utils/helpers/options-context.helpers';
+import { getValueOrDefault, isEqual, isNotEmpty } from '../utils/extension';
+import { formNormal, formStandard } from '../utils/helpers/options-context.helpers';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import { EqualMode } from '../utils/enums/string.enum';
 import { IPokemonData, PokemonData, PokemonModel } from '../core/models/pokemon.model';
@@ -15,6 +15,86 @@ import { versionList } from '../utils/constants';
 import useDataStore from './useDataStore';
 import { useCallback, useMemo } from 'react';
 
+const pvpokeSpeciesAliases: Readonly<Record<string, string>> = {
+  AEGISLASH_SHIELD: 'AEGISLASH',
+  CALYREX_ICE: 'CALYREX_ICE_RIDER',
+  CALYREX_SHADOW: 'CALYREX_SHADOW_RIDER',
+  CLODSIRESB: 'CLODSIRE',
+  DARMANITAN_GALARIAN_STANDARD: 'DARMANITAN_GALARIAN',
+  GOLISOPODSH: 'GOLISOPOD',
+  LANTURNW: 'LANTURN',
+  MEWTWO_ARMORED: 'MEWTWO_ARMOR',
+  TAUROS_AQUA: 'TAUROS_PALDEA_AQUA',
+  TAUROS_BLAZE: 'TAUROS_PALDEA_BLAZE',
+  TAUROS_COMBAT: 'TAUROS_PALDEA_COMBAT',
+  UNOWN: 'A',
+  ZACIAN_CROWNED: 'ZACIAN_CROWNED_SWORD',
+  ZAMAZENTA_CROWNED: 'ZAMAZENTA_CROWNED_SHIELD',
+  ZYGARDE_10: 'ZYGARDE_TEN_PERCENT',
+};
+
+const normalizePvpokeSpeciesId = (speciesId: string) =>
+  speciesId
+    .trim()
+    .replaceAll('-', '_')
+    .toUpperCase()
+    .replace(/_ALOLAN$/, '_ALOLA')
+    .replace(/_PALDEAN$/, '_PALDEA');
+
+const normalizePokemonForm = (value: string | undefined) =>
+  (value ?? '').trim().replaceAll('-', '_').replaceAll(' ', '_').toUpperCase();
+
+const getPokemonFormCandidates = (pokemons: IPokemonData[], form: string, pokemonType: PokemonType) => {
+  const candidates = new Set([
+    normalizePokemonForm(form).replace(`_${formStandard()}`, ''),
+    normalizePokemonForm(getPokemonFormWithNoneSpecialForm(form, pokemonType)).replace(`_${formStandard()}`, ''),
+  ]);
+  const id = pokemons[0]?.num;
+  [...candidates].forEach((candidate) => {
+    if (id === 422 || id === 423) {
+      candidates.add(candidate.replace(/_EAST$/, '_EAST_SEA').replace(/_WEST$/, '_WEST_SEA'));
+      candidates.add(candidate.replace(/^EAST$/, 'EAST_SEA').replace(/^WEST$/, 'WEST_SEA'));
+    } else if (id === 718) {
+      candidates.add(candidate.replace(/_10$/, '_TEN_PERCENT').replace(/_50$/, '_FIFTY_PERCENT'));
+      candidates.add(candidate.replace(/^10$/, 'TEN_PERCENT').replace(/^50$/, 'FIFTY_PERCENT'));
+    } else if (id === 741) {
+      candidates.add(candidate.replace(/POM_POM$/, 'POMPOM'));
+    } else if (id === 801) {
+      candidates.add(candidate.replace(/_ORIGINAL$/, '_ORIGINAL_COLOR').replace(/^ORIGINAL$/, 'ORIGINAL_COLOR'));
+    } else if (id === 888) {
+      candidates.add(candidate.replace(/_CROWNED$/, '_CROWNED_SWORD').replace(/^CROWNED$/, 'CROWNED_SWORD'));
+    } else if (id === 889) {
+      candidates.add(candidate.replace(/_CROWNED$/, '_CROWNED_SHIELD').replace(/^CROWNED$/, 'CROWNED_SHIELD'));
+    } else if (id === 898) {
+      candidates.add(candidate.replace(/_ICE$/, '_ICE_RIDER').replace(/^ICE$/, 'ICE_RIDER'));
+      candidates.add(candidate.replace(/_SHADOW$/, '_SHADOW_RIDER').replace(/^SHADOW$/, 'SHADOW_RIDER'));
+    } else if (id === 716) {
+      candidates.add(candidate.replace(/_ACTIVE$/, '').replace(/^ACTIVE$/, formNormal()));
+    }
+  });
+  return candidates;
+};
+
+export const resolvePokemonForm = (
+  pokemons: IPokemonData[],
+  form: string | undefined,
+  pokemonType = PokemonType.None
+) => {
+  if (!form) {
+    return pokemons.find(
+      (pokemon) =>
+        isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
+        (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
+    );
+  }
+  const requestedForms = getPokemonFormCandidates(pokemons, form, pokemonType);
+  return pokemons.find(
+    (pokemon) =>
+      requestedForms.has(normalizePokemonForm(pokemon.fullName)) ||
+      requestedForms.has(normalizePokemonForm(pokemon.form))
+  );
+};
+
 export const usePokemon = () => {
   const { pokemonsData } = useDataStore();
   const validPokemons = useMemo(() => pokemonsData.filter((pokemon) => pokemon.num > 0), [pokemonsData]);
@@ -27,13 +107,6 @@ export const usePokemon = () => {
       } else {
         result.set(pokemon.num, [pokemon]);
       }
-    });
-    return result;
-  }, [validPokemons]);
-  const pokemonByIdAndForm = useMemo(() => {
-    const result = new Map<string, IPokemonData>();
-    validPokemons.forEach((pokemon) => {
-      result.set(`${pokemon.num}:${pokemon.form?.toUpperCase() ?? formNormal()}`, pokemon);
     });
     return result;
   }, [validPokemons]);
@@ -119,7 +192,7 @@ export const usePokemon = () => {
 
   const findPokemonById = useCallback(
     (id: number | undefined) => {
-      return id === undefined ? undefined : pokemonsById.get(id)?.[0];
+      return id === undefined ? undefined : resolvePokemonForm(pokemonsById.get(id) ?? [], undefined);
     },
     [pokemonsById]
   );
@@ -136,26 +209,26 @@ export const usePokemon = () => {
       if (!speciesId) {
         return undefined;
       }
-      const aliases: Readonly<Record<string, string>> = {
-        AEGISLASH_SHIELD: 'AEGISLASH',
-        CLODSIRESB: 'CLODSIRE',
-        DARMANITAN_GALARIAN_STANDARD: 'DARMANITAN_GALARIAN',
-        GOLISOPODSH: 'GOLISOPOD',
-        LANTURNW: 'LANTURN',
-        MEWTWO_ARMORED: 'MEWTWO_ARMOR',
-        TAUROS_AQUA: 'TAUROS_PALDEA_AQUA',
-        TAUROS_BLAZE: 'TAUROS_PALDEA_BLAZE',
-        TAUROS_COMBAT: 'TAUROS_PALDEA_COMBAT',
-        UNOWN: 'A',
-        ZYGARDE_10: 'ZYGARDE_TEN_PERCENT',
-      };
-      let key = speciesId
-        .trim()
-        .replaceAll('-', '_')
-        .toUpperCase()
-        .replace(/_(SHADOW|XS)$/, '');
-      key = key.replace(/_ALOLAN$/, '_ALOLA').replace(/_PALDEAN$/, '_PALDEA');
-      return pokemonByPvpokeSpeciesId.get(key) ?? pokemonByPvpokeSpeciesId.get(aliases[key] ?? '');
+      const findExact = (key: string) =>
+        pokemonByPvpokeSpeciesId.get(pvpokeSpeciesAliases[key] ?? '') ?? pokemonByPvpokeSpeciesId.get(key);
+      const key = normalizePvpokeSpeciesId(speciesId);
+      return findExact(key) ?? findExact(key.replace(/_XS$/, '')) ?? findExact(key.replace(/_SHADOW$/, ''));
+    },
+    [pokemonByPvpokeSpeciesId]
+  );
+
+  const isPvpokeShadowPokemon = useCallback(
+    (speciesId: string | undefined) => {
+      if (!speciesId) {
+        return false;
+      }
+      const key = normalizePvpokeSpeciesId(speciesId);
+      if (!key.endsWith('_SHADOW')) {
+        return false;
+      }
+      const findExact = (candidate: string) =>
+        pokemonByPvpokeSpeciesId.has(candidate) || pokemonByPvpokeSpeciesId.has(pvpokeSpeciesAliases[candidate] ?? '');
+      return !findExact(key) && findExact(key.replace(/_SHADOW$/, ''));
     },
     [pokemonByPvpokeSpeciesId]
   );
@@ -165,13 +238,9 @@ export const usePokemon = () => {
       if (id === undefined) {
         return undefined;
       }
-      if (!form) {
-        return pokemonsById.get(id)?.[0];
-      }
-      const normalizedForm = form.replaceAll('-', '_').replace(`_${formStandard()}`, '').toUpperCase();
-      return pokemonByIdAndForm.get(`${id}:${normalizedForm}`);
+      return resolvePokemonForm(pokemonsById.get(id) ?? [], form);
     },
-    [pokemonByIdAndForm, pokemonsById]
+    [pokemonsById]
   );
 
   const getEvolutionParents = useCallback(
@@ -228,11 +297,16 @@ export const usePokemon = () => {
     name: string,
     index = 0
   ) => {
-    const formList = dataFormList
-      .flatMap((form) => form)
-      .map((p) => convertPokemonAPIDataName(p.formName, formNormal()));
+    const apiForms = dataFormList.flatMap((form) => form);
     (pokemonsById.get(id) ?? []).forEach((pokemon) => {
-      const isIncludeFormGO = formList.some((form) => isInclude(pokemon.form, form));
+      const isDefaultPokemonGoForm =
+        isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
+        (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive));
+      const isIncludeFormGO =
+        (isDefaultPokemonGoForm && apiForms.some((form) => form.isDefault)) ||
+        apiForms.some(
+          (form) => resolvePokemonForm([pokemon], form.formName, pokemon.pokemonType)?.fullName === pokemon.fullName
+        );
       if (!isIncludeFormGO) {
         index--;
         const pokemonGOModify = new PokemonFormModifyModel(
@@ -245,7 +319,7 @@ export const usePokemon = () => {
           pokemon.types,
           new PokemonSprite(),
           index,
-          PokemonType.Normal,
+          pokemon.pokemonType,
           false
         );
         formListResult.push([pokemonGOModify]);
@@ -259,18 +333,8 @@ export const usePokemon = () => {
     (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None) => {
       const idPokemons = id === undefined ? [] : (pokemonsById.get(id) ?? []);
       if (isNotEmpty(idPokemons)) {
-        if (pokemonType === PokemonType.GMax) {
-          return idPokemons.find((item) => isEqual(item.form, formGmax()));
-        }
-        const pokemonForm = getValueOrDefault(
-          String,
-          form?.replaceAll('-', '_').toUpperCase().replace(`_${formStandard()}`, '').replace(formGmax(), formNormal()),
-          formNormal()
-        );
-        const result = idPokemons.find(
-          (item) => isEqual(item.fullName, pokemonForm) || isEqual(item.form, pokemonForm)
-        );
-        return PokemonData.copy(result ?? idPokemons[0]);
+        const result = resolvePokemonForm(idPokemons, form, pokemonType);
+        return result ? PokemonData.copy(result) : undefined;
       }
     },
     [pokemonsById]
@@ -279,16 +343,9 @@ export const usePokemon = () => {
   const getPokemonDetails = useCallback(
     (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None, isDefault = false) => {
       if (form) {
-        const name = getPokemonFormWithNoneSpecialForm(
-          form
-            .replace(/10$/, 'TEN_PERCENT')
-            .replace(/50$/, 'FIFTY_PERCENT')
-            .replace(/UNOWN-/i, '')
-            .replaceAll(' ', '-'),
-          pokemonType
-        );
+        const name = getPokemonFormWithNoneSpecialForm(form.replace(/UNOWN-/i, '').replaceAll(' ', '-'), pokemonType);
         const idPokemons = id === undefined ? [] : (pokemonsById.get(id) ?? []);
-        let pokemonForm = idPokemons.find((item) => isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive));
+        let pokemonForm = resolvePokemonForm(idPokemons, name, pokemonType);
 
         if (isDefault && !pokemonForm) {
           pokemonForm = idPokemons.find(
@@ -308,6 +365,7 @@ export const usePokemon = () => {
     findPokemonById,
     findPokemonBySlug,
     findPokemonByPvpokeSpeciesId,
+    isPvpokeShadowPokemon,
     findPokemonByIdAndForm,
     getEvolutionParents,
     checkPokemonGO,

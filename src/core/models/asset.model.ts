@@ -20,8 +20,8 @@ export class ImageModel implements IImage {
   pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IImage) {
-    if (!props.pokemonType) {
-      props.pokemonType = getPokemonType(props.form);
+    if (props.pokemonType === undefined) {
+      props.pokemonType = getPokemonType(props.form, false, false);
     }
     Object.assign(this, props);
   }
@@ -39,8 +39,8 @@ export class CryPath implements ICryPath {
   pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: ICryPath) {
-    if (!props.pokemonType) {
-      props.pokemonType = getPokemonType(props.form);
+    if (props.pokemonType === undefined) {
+      props.pokemonType = getPokemonType(props.form, false, false);
     }
     Object.assign(this, props);
   }
