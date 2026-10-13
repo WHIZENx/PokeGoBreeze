@@ -1,4 +1,4 @@
-import { Checkbox, Skeleton } from '@mui/material';
+import { Checkbox, LinearProgress, Skeleton } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../../services/api.service';
 import {
@@ -38,7 +38,6 @@ import {
   defaultDamageMultiply,
   defaultEnergyPerHpLost,
   defaultPokemonLevel,
-  defaultPokemonShadow,
   maxIv,
 } from '../../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../../composables/useAssets';
@@ -318,7 +317,6 @@ const Counter = (props: ICounterComponent) => {
       return;
     }
     setShowFrame(true);
-    setCounterList([]);
     const controller = new AbortController();
     APIService.getFetchUrl<ProcessedDataPage<ICounterModel>>(
       APIService.getCounters({
@@ -330,7 +328,6 @@ const Counter = (props: ICounterComponent) => {
         damageMultiply: defaultDamageMultiply(),
         damageConst: defaultDamageConst(),
         energyPerHpLost: defaultEnergyPerHpLost(),
-        forceShadow: defaultPokemonShadow(),
         showMegaPrimal,
         released: releasedGO,
         best: enableBest,
@@ -415,46 +412,54 @@ const Counter = (props: ICounterComponent) => {
       <div className="sub-header input-group tw-items-center tw-justify-center">
         <span className="sub-title">Best Pokémon Counter</span>
       </div>
-      <CustomDataTable
-        className="table-counter-container"
-        customColumns={columns}
-        defaultSortFieldId={ColumnType.Percent}
-        defaultSortAsc={false}
-        isShowSearch
-        isAutoSearch
-        menuItems={menuItems}
-        searchFunction={(item, searchTerm) =>
-          isInclude(
-            splitAndCapitalize(item.pokemonName, '-', ' '),
-            searchTerm,
-            IncludeMode.IncludeIgnoreCaseSensitive
-          ) ||
-          (isSearchId && (isMatch ? isEqual(item.pokemonId, searchTerm) : isInclude(item.pokemonId, searchTerm)))
-        }
-        pagination
-        paginationServer
-        paginationTotalRows={totalRows}
-        onChangePage={setPage}
-        paginationDefaultPage={1}
-        paginationResetDefaultPage={resetPaginationToggle}
-        onSearchTermChange={handleSearchTermChange}
-        debounceTime={300}
-        customDataStyles={customStyles}
-        inputPlaceholder="Search Pokémon"
-        fixedHeader
-        paginationComponentOptions={{
-          noRowsPerPage: true,
-        }}
-        noDataComponent={null}
-        paginationPerPage={100}
-        progressPending={showFrame}
-        progressComponent={<CounterLoader />}
-        data={counterList}
-        isXFixed
-        isShowModalOptions
-        titleModalOptions="Pokémon counter options"
-        customOptionsModal={modalOptions}
-      />
+      <div className="tw-relative" aria-busy={showFrame}>
+        {showFrame && isNotEmpty(counterList) && (
+          <LinearProgress
+            className="!tw-absolute tw-left-0 tw-right-0 tw-top-0 tw-z-10"
+            aria-label="Updating counters"
+          />
+        )}
+        <CustomDataTable
+          className="table-counter-container"
+          customColumns={columns}
+          defaultSortFieldId={ColumnType.Percent}
+          defaultSortAsc={false}
+          isShowSearch
+          isAutoSearch
+          menuItems={menuItems}
+          searchFunction={(item, searchTerm) =>
+            isInclude(
+              splitAndCapitalize(item.pokemonName, '-', ' '),
+              searchTerm,
+              IncludeMode.IncludeIgnoreCaseSensitive
+            ) ||
+            (isSearchId && (isMatch ? isEqual(item.pokemonId, searchTerm) : isInclude(item.pokemonId, searchTerm)))
+          }
+          pagination
+          paginationServer
+          paginationTotalRows={totalRows}
+          onChangePage={setPage}
+          paginationDefaultPage={1}
+          paginationResetDefaultPage={resetPaginationToggle}
+          onSearchTermChange={handleSearchTermChange}
+          debounceTime={300}
+          customDataStyles={customStyles}
+          inputPlaceholder="Search Pokémon"
+          fixedHeader
+          paginationComponentOptions={{
+            noRowsPerPage: true,
+          }}
+          noDataComponent={null}
+          paginationPerPage={100}
+          progressPending={showFrame && !isNotEmpty(counterList)}
+          progressComponent={<CounterLoader />}
+          data={counterList}
+          isXFixed
+          isShowModalOptions
+          titleModalOptions="Pokémon counter options"
+          customOptionsModal={modalOptions}
+        />
+      </div>
     </div>
   );
 };

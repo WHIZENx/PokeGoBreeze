@@ -8,8 +8,10 @@ import {
   convertPokemonImageName,
   convertSexName,
   getItemSpritePath,
+  getPreferredPokemonFormSprite,
   getPokemonType,
   getValidPokemonImgPath,
+  setNextPokemonImageFallback,
   splitAndCapitalize,
   TypeRadioGroup,
 } from '../../utils/utils';
@@ -262,6 +264,17 @@ const FormSelect = (props: IFormSelectComponent) => {
     [props.setRaid, props.onClearStats]
   );
 
+  const selectedHybridImage = APIService.getPokeFullSprite(
+    dataStorePokemon?.current?.id,
+    convertPokemonImageName(currentForm?.form.formName)
+  );
+  const selectedImageCandidates = [
+    getPreferredPokemonFormSprite(currentForm?.form.sprites),
+    selectedHybridImage,
+    APIService.getPokeFullAsset(dataStorePokemon?.current?.id),
+  ];
+  const selectedImage = selectedImageCandidates.find(Boolean) ?? APIService.getPokeFullSprite();
+
   return (
     <Fragment>
       <div className="tw-inline-block tw-w-16 tw-h-16">
@@ -287,16 +300,13 @@ const FormSelect = (props: IFormSelectComponent) => {
         )}
       </div>
       <img
+        key={selectedImage}
         className="tw-p-2"
         height={200}
         alt="Image Pokemon"
-        src={APIService.getPokeFullSprite(
-          dataStorePokemon?.current?.id,
-          convertPokemonImageName(currentForm?.form.formName)
-        )}
+        src={selectedImage}
         onError={(e) => {
-          e.currentTarget.onerror = null;
-          e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
+          setNextPokemonImageFallback(e.currentTarget, selectedImageCandidates);
         }}
       />
       <div className="tw-inline-block tw-w-16 tw-h-16">

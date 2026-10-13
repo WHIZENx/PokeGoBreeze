@@ -629,6 +629,8 @@ export interface IPokemonPermission {
   forms?: string[];
   name: string | undefined;
   pokemonType: PokemonType;
+  detailForm?: string;
+  detailPokemonType?: PokemonType;
 }
 
 export class PokemonPermission implements IPokemonPermission {
@@ -637,6 +639,8 @@ export class PokemonPermission implements IPokemonPermission {
   forms?: string[];
   name: string | undefined;
   pokemonType = PokemonType.Normal;
+  detailForm?: string;
+  detailPokemonType?: PokemonType;
 
   constructor({ ...props }: IPokemonPermission) {
     props.pokemonType ??= getPokemonType(props.form, false, false);
