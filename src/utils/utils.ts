@@ -793,6 +793,15 @@ export const convertPokemonAPIDataFormName = (form: string | undefined | null, n
     case 'CALYREX-ICE':
       form += '-RIDER';
       break;
+    case 'CALYREX-SHADOW':
+      form += '-RIDER';
+      break;
+    case 'MIMIKYU-TOTEM-DISGUISED':
+      form = 'totem';
+      break;
+    case 'MIMIKYU-TOTEM-BUSTED':
+      form = 'busted-totem';
+      break;
     case 'ZYGARDE-10':
       form = 'TEN-PERCENT';
       break;
