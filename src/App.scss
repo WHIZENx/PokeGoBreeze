@@ -1,3 +1,43 @@
+.app-theme-root {
+  transition:
+    background-color 300ms ease-in-out,
+    color 300ms ease-in-out;
+}
+
+html.theme-view-transition *,
+html.theme-view-transition *::before,
+html.theme-view-transition *::after {
+  transition: none !important;
+}
+
+::view-transition-group(root),
+::view-transition-group(theme-toggle-icon) {
+  animation-duration: 300ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(theme-toggle-icon) {
+  animation: theme-toggle-snapshot-out 300ms ease-in-out both;
+}
+
+::view-transition-new(theme-toggle-icon) {
+  animation: theme-toggle-snapshot-in 300ms ease-in-out both;
+}
+
+@keyframes theme-toggle-snapshot-out {
+  to {
+    opacity: 0;
+    transform: rotate(180deg) scale(0.7);
+  }
+}
+
+@keyframes theme-toggle-snapshot-in {
+  from {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0.7);
+  }
+}
+
 .caption {
   text-decoration: none !important;
 
@@ -23,13 +63,13 @@ a {
 }
 
 .link-url {
-  color: #0d6efd !important;
+  color: var(--link-color) !important;
 
   @apply tw-cursor-pointer;
 }
 
 .link-url:hover {
-  color: #0000ee !important;
+  color: var(--link-hover-color) !important;
 }
 
 img.pokemon-main-sprite {
@@ -128,7 +168,7 @@ ul {
 .moveset-error-msg {
   transform: translate(-50%, -50%);
 
-  @apply tw-absolute tw-top-1/2 tw-left-1/2 tw-p-[15px] tw-rounded-lg tw-text-red-500;
+  @apply tw-absolute tw-top-1/2 tw-left-1/2 tw-p-[15px] tw-rounded-lg tw-text-error;
 }
 
 .disable-card-move {
@@ -212,7 +252,7 @@ ul {
 }
 
 .select-evo b.link-title {
-  color: #0d6efd !important;
+  color: var(--link-color) !important;
 
   @apply tw-underline;
 }
@@ -257,7 +297,6 @@ ul {
   @apply tw-relative tw-p-2.5;
 }
 
-
 .result-type {
   box-shadow: 0 4px 8px 0 #00000033;
 
@@ -273,7 +312,7 @@ ul {
 }
 
 .resistance-title {
-  @apply tw-bg-green-600 tw-text-white;
+  @apply tw-bg-green-600 tw-text-black;
 }
 
 .neutral-title {

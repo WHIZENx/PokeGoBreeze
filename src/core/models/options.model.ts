@@ -138,6 +138,7 @@ interface CombatMove {
   type: string;
   power: number;
   energyDelta: number;
+  durationTurns?: number;
   vfxName: string;
   buffs?: MoveBuff;
 }

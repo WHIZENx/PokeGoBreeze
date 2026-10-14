@@ -70,7 +70,7 @@ const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
                     <div>
                       <b>{renderLeagueName(props.data?.name, value)}</b>
                     </div>
-                    <span className="tw-text-red-600">CP below {value}</span>
+                    <span className="tw-text-error">CP below {value}</span>
                   </div>
                 }
               />

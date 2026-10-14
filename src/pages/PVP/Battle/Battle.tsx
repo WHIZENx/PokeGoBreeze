@@ -82,10 +82,10 @@ import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { getRandomNumber, overlappingPosFromOffsets, pushOffsetById } from '../utils/battle.utils';
+import { getBattleHp, getRandomNumber, overlappingPosFromOffsets, pushOffsetById } from '../utils/battle.utils';
 import {
   battleDelay,
-  battleMaxEnergy,
+  combatMaxEnergy,
   defaultAmount,
   defaultBlock,
   defaultPlusSize,
@@ -212,7 +212,7 @@ const Battle = () => {
           def: toNumber(currentStats?.IV?.defIV),
           sta: toNumber(currentStats?.IV?.staIV),
         },
-        hp: toNumber(currentStats?.stats?.statSTA),
+        hp: getBattleHp(currentStats?.stats?.statSTA),
       },
       types: pokemonData?.pokemon?.types ?? [],
       pokemonType: pokemon.pokemonType,
@@ -919,11 +919,11 @@ const Battle = () => {
     setPlayTimeline({
       pokemonCurr: PokemonBattleData.setValue(
         pokemonCurr.energy,
-        Math.round(toNumber(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA))
+        getBattleHp(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA)
       ),
       pokemonObj: PokemonBattleData.setValue(
         pokemonObj.energy,
-        Math.round(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statSTA))
+        getBattleHp(pokemonObj.pokemonData?.currentStats?.stats?.statSTA)
       ),
     });
   };
@@ -1061,9 +1061,7 @@ const Battle = () => {
               {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" color="success" />}
               {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" color="error" />}
               {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" color="error" />}
-              <span
-                className={combineClasses('tw-text-sm', value.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600')}
-              >
+              <span className={combineClasses('tw-text-sm', value.power < 0 ? '!tw-text-error' : '!tw-text-success')}>
                 {value.power}
               </span>
             </div>
@@ -1269,7 +1267,7 @@ const Battle = () => {
                 </b>
                 <br />
                 <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
-                HP: <b>{toNumber(Math.round(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
+                HP: <b>{getBattleHp(pokemon.pokemonData?.currentStats?.stats?.statSTA)}</b>
                 <br />
                 {'Stats Prod: '}
                 <b>
@@ -1421,7 +1419,7 @@ const Battle = () => {
               inputProps={{
                 type: 'number',
                 min: 0,
-                max: battleMaxEnergy(),
+                max: combatMaxEnergy(),
                 step: 1,
                 required: true,
               }}
@@ -1535,7 +1533,7 @@ const Battle = () => {
                     text={splitAndCapitalize(pokemon.cMovePri?.name, '_', ' ')}
                     type={pokemon.cMovePri?.type}
                     size={80}
-                    maxEnergy={battleMaxEnergy()}
+                    maxEnergy={combatMaxEnergy()}
                     moveEnergy={Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy))}
                     energy={toNumber(
                       (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy,
@@ -1548,7 +1546,7 @@ const Battle = () => {
                       text={splitAndCapitalize(pokemon.cMoveSec.name, '_', ' ')}
                       type={pokemon.cMoveSec.type}
                       size={80}
-                      maxEnergy={battleMaxEnergy()}
+                      maxEnergy={combatMaxEnergy()}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
                       energy={toNumber(
                         (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy,
@@ -1564,7 +1562,7 @@ const Battle = () => {
                       text="HP"
                       height={15}
                       hp={Math.round((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType].hp)}
-                      maxHp={Math.round(toNumber(pokemon.pokemonData.currentStats?.stats?.statSTA))}
+                      maxHp={getBattleHp(pokemon.pokemonData.currentStats?.stats?.statSTA)}
                     />
                   </Fragment>
                 )}

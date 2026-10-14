@@ -449,7 +449,7 @@ const CalculatePoint = () => {
                             <b>
                               {move.pvePower}
                               {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
-                                <span className="caption-small tw-text-green-600"> (x1.2)</span>
+                                <span className="caption-small tw-text-success"> (x1.2)</span>
                               )}
                             </b>
                           </p>
@@ -587,7 +587,7 @@ const CalculatePoint = () => {
                             <b>
                               {moveDef.pvePower}
                               {findStabType(searchingToolObjectData?.form?.form?.types, moveDef.type) && (
-                                <span className="caption-small tw-text-green-600"> (x1.2)</span>
+                                <span className="caption-small tw-text-success"> (x1.2)</span>
                               )}
                             </b>
                           </p>
@@ -754,7 +754,7 @@ const CalculatePoint = () => {
                               <b>
                                 {fMove.pvePower}
                                 {findStabType(searchingToolObjectData?.form?.form?.types, fMove.type) && (
-                                  <span className="caption-small tw-text-green-600"> (x1.2)</span>
+                                  <span className="caption-small tw-text-success"> (x1.2)</span>
                                 )}
                               </b>
                             </p>
@@ -795,7 +795,7 @@ const CalculatePoint = () => {
                               <b>
                                 {cMove.pvePower}
                                 {findStabType(searchingToolObjectData?.form?.form?.types, cMove.type) && (
-                                  <span className="caption-small tw-text-green-600"> (x1.2)</span>
+                                  <span className="caption-small tw-text-success"> (x1.2)</span>
                                 )}
                               </b>
                             </p>

@@ -44,7 +44,7 @@ const TimelineFit = (
                     {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                       <div className="icon-buff-timeline" style={{ left: positions[index] }}>
                         {value.buff?.map((b, i) => (
-                          <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
+                          <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
                             {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
                         ))}
@@ -56,7 +56,7 @@ const TimelineFit = (
                         isNotEmpty(value.buff) ? (
                           <div className="icon-buff-timeline" style={{ left: positions[index] }}>
                             {value.buff?.map((b, i) => (
-                              <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
+                              <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
                                 {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
                               </span>
                             ))}
@@ -142,6 +142,23 @@ const TimelineFit = (
                 <div id={index.toString()} style={{ left: positions[index] }}>
                   <CloseIcon color="error" />
                 </div>
+              )}
+              {value.type === AttackType.Timeout && (
+                <span
+                  id={index.toString()}
+                  className={combineClasses(
+                    'tw-text-xs tw-font-bold',
+                    value.outcome === 'win'
+                      ? 'tw-text-success'
+                      : value.outcome === 'lose'
+                        ? 'tw-text-error'
+                        : 'tw-text-default'
+                  )}
+                  style={{ left: positions[index] }}
+                  title="Battle ended by time limit"
+                >
+                  {value.outcome === 'win' ? 'W' : value.outcome === 'lose' ? 'L' : 'T'}
+                </span>
               )}
             </Fragment>
           ))}

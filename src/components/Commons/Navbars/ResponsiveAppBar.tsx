@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -16,9 +16,6 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import useTimestamp from '../../../composables/useTimestamp';
 import useSpinner from '../../../composables/useSpinner';
-import useTheme from '../../../composables/useTheme';
-import { useLocalStorage } from 'usehooks-ts';
-import { LocalStorageConfig } from '../../../store/constants/local-storage';
 import { getTime } from '../../../utils/utils';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -52,14 +49,11 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
   const [showMenu, setShowMenu] = React.useState(false);
   const [currentPage, setCurrentPage] = useState<string>();
   const [currentPageSub, setCurrentPageSub] = useState<string>();
+  const themeTransitionLock = useRef(false);
+  const themeTransitionTimer = useRef<number>();
 
-  const { loadTheme } = useTheme();
   const { timestamp } = useTimestamp();
   const { spinnerPercent, spinnerBarIsShow } = useSpinner();
-
-  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
-
-  const [isDelay, setIsDelay] = useState(false);
 
   useEffect(() => {
     if (router.routerLocation) {
@@ -77,16 +71,33 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
     }
   }, [router.routerLocation]);
 
-  const onChangeTheme = () => {
-    if (!isDelay) {
-      setIsDelay(true);
-      loadTheme(theme.palette.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light, setStateTheme);
-      setTimeout(() => {
-        setIsDelay(false);
-        props.toggleColorMode?.();
-      }, 500);
-    }
-  };
+  useEffect(
+    () => () => {
+      window.clearTimeout(themeTransitionTimer.current);
+      themeTransitionLock.current = false;
+    },
+    []
+  );
+
+  const onChangeTheme = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (themeTransitionLock.current) {
+        return;
+      }
+      themeTransitionLock.current = true;
+      const button = event.currentTarget;
+      button.dataset.themeTransitioning = 'true';
+      button.setAttribute('aria-disabled', 'true');
+      props.toggleColorMode?.();
+      window.clearTimeout(themeTransitionTimer.current);
+      themeTransitionTimer.current = window.setTimeout(() => {
+        themeTransitionLock.current = false;
+        delete button.dataset.themeTransitioning;
+        button.removeAttribute('aria-disabled');
+      }, 450);
+    },
+    [props.toggleColorMode]
+  );
 
   const handleCloseMenu = (page: IAppMenuItem<string> | null, subPage: IAppMenuItem<string> | null) => {
     setShowMenu(false);
@@ -130,21 +141,21 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         <IconButton
           className={combineClasses(
             '!tw-p-0',
-            stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
-            isDelay ? 'cursor-default' : 'tw-cursor-pointer'
+            'theme-toggle tw-cursor-pointer',
+            theme.palette.mode === TypeTheme.Dark ? 'theme-toggle-dark' : 'theme-toggle-light'
           )}
           onClick={onChangeTheme}
           color="inherit"
+          aria-label={`Switch to ${theme.palette.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light} theme`}
         >
-          {theme.palette.mode === TypeTheme.Light ? (
-            <LightModeIcon fontSize="large" color="inherit" />
-          ) : (
-            <DarkModeIcon fontSize="large" color="inherit" />
-          )}
+          <span className="theme-toggle-icon" aria-hidden="true">
+            <LightModeIcon className="theme-toggle-sun" fontSize="large" color="inherit" />
+            <DarkModeIcon className="theme-toggle-moon" fontSize="large" color="inherit" />
+          </span>
         </IconButton>
       </Box>
     );
-  }, [infoVersion, stateTheme, isDelay, onChangeTheme]);
+  }, [infoVersion, onChangeTheme, theme.palette.mode]);
 
   return (
     <AppBar className="tw-overflow-x-auto" position="sticky">

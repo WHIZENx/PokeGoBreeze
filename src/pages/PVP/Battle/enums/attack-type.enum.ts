@@ -8,4 +8,5 @@ export enum AttackType {
   New,
   Dead,
   Win,
+  Timeout,
 }

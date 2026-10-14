@@ -1,5 +1,13 @@
 import { isNotEmpty, toNumber } from '../../../utils/extension';
 
+/**
+ * Pokémon GO stores battle HP as the floored effective Stamina value, with a
+ * minimum of 10 HP. Keep the UI, simulator payload, and HP bar on that same
+ * integer value while retaining the unrounded Stamina stat for rank math.
+ */
+export const getBattleHp = (effectiveStamina: number | undefined) =>
+  Math.max(10, Math.floor(toNumber(effectiveStamina)));
+
 export const getRandomNumber = (min: number, max: number, step = 1) => {
   min = Math.ceil(min);
   max = Math.floor(max);

@@ -70,6 +70,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     cMoveSec = replaceTempMovePvpName(cMoveSec);
 
     const cMoveSecCombat = findMoveByName(cMoveSec);
+    const disableCMovePri = !cMovePriCombat;
+    const disableCMoveSec = !cMoveSecCombat;
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
     topRankController.current?.abort();
@@ -110,13 +112,16 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             turn: 0,
             currentStats: bestStats,
             bestStats,
-            disableCMovePri: false,
-            disableCMoveSec: false,
+            disableCMovePri,
+            disableCMoveSec,
             stats,
           }),
           fMove: fMoveCombat,
           cMovePri: cMovePriCombat,
           cMoveSec: cMoveSecCombat,
+          disableCMovePri,
+          disableCMoveSec,
+          chargeSlot: cMovePriCombat ? ChargeType.Primary : cMoveSecCombat ? ChargeType.Secondary : ChargeType.None,
           audio: {
             fMove: createMoveAudio(fMoveCombat?.sound),
             cMovePri: createMoveAudio(cMovePriCombat?.sound),

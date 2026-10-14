@@ -288,6 +288,14 @@ const CatchChance = () => {
     }
   };
 
+  const getChanceCellStyle = (value: number): React.CSSProperties => ({
+    color: 'var(--text-primary)',
+    textDecorationColor: checkValueColor(value),
+    textDecorationLine: 'underline',
+    textDecorationThickness: '4px',
+    textUnderlineOffset: '4px',
+  });
+
   const renderAdvThrow = () => {
     if (radius >= 70) {
       return throwsByType.get(ThrowType.Nice);
@@ -645,7 +653,7 @@ const CatchChance = () => {
                           [] as number[]
                         )
                         .map((value: number, index) => (
-                          <td key={index} style={{ color: checkValueColor(value) }}>
+                          <td key={index} style={getChanceCellStyle(value)}>
                             {Math.round(value)} %
                           </td>
                         ))}
@@ -692,7 +700,7 @@ const CatchChance = () => {
                 <tbody>
                   <tr className="tw-text-center">
                     <td>{dataAdv.throwText}</td>
-                    <td style={{ color: checkValueColor(dataAdv.result) }}>{Math.round(dataAdv.result)} %</td>
+                    <td style={getChanceCellStyle(dataAdv.result)}>{Math.round(dataAdv.result)} %</td>
                   </tr>
                 </tbody>
               </table>

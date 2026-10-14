@@ -137,6 +137,7 @@ export interface ITimeline extends TimelineConfig {
   energy: number;
   hp: number;
   buff?: IBuff[];
+  outcome?: 'win' | 'lose' | 'tie';
 }
 
 export interface IPokemonTeamData {
