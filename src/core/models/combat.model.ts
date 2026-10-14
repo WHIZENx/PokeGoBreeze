@@ -172,6 +172,7 @@ export interface ICombat {
   typeMove?: TypeMove;
   pvpPower: number;
   pvpEnergy: number;
+  pvpTurns?: number;
   sound?: string;
   buffs: IBuff[];
   id: number;
@@ -202,6 +203,7 @@ export class Combat implements ICombat {
   typeMove?: TypeMove;
   pvpPower = 0;
   pvpEnergy = 0;
+  pvpTurns?: number;
   sound?: string;
   buffs: IBuff[] = [];
   id = 0;

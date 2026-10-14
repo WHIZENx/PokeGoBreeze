@@ -39,7 +39,7 @@ import { defaultMaxMoveLevel, getMaxMoveLevelValue } from '../../../utils/max-mo
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
     color: 'var(--text-primary)',
-    style: '!tw-text-red-600',
+    style: '!tw-text-error',
   }),
   1: LabelDamage.create({
     color: 'blue',
@@ -51,7 +51,7 @@ const labels: DynamicObj<ILabelDamage> = {
   }),
   3: LabelDamage.create({
     color: 'red',
-    style: '!tw-text-green-600',
+    style: '!tw-text-success',
   }),
 };
 
@@ -305,11 +305,11 @@ const Damage = () => {
               <div className="tw-flex tw-justify-center">
                 <div className="row tw-w-[520px] tw-text-center">
                   <div className="col">
-                    <h5 className="tw-text-green-600">- Current Pokémon Type -</h5>
+                    <h5 className="tw-text-success">- Current Pokémon Type -</h5>
                     {searchingToolCurrentData?.form && <TypeInfo arr={searchingToolCurrentData?.form.form?.types} />}
                   </div>
                   <div className="col">
-                    <h5 className="tw-text-red-600">- Object Pokémon Type -</h5>
+                    <h5 className="tw-text-error">- Object Pokémon Type -</h5>
                     {searchingToolObjectData?.form && <TypeInfo arr={searchingToolObjectData?.form.form?.types} />}
                   </div>
                 </div>
@@ -349,7 +349,7 @@ const Damage = () => {
                       <b>
                         {selectedMovePower}
                         {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
-                          <span className="caption-small tw-text-green-600"> (x1.2)</span>
+                          <span className="caption-small tw-text-success"> (x1.2)</span>
                         )}
                       </b>
                     </p>
@@ -425,7 +425,7 @@ const Damage = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                    <Box className="tw-ml-4 tw-text-sm tw-text-accent-green">
+                    <Box className="tw-ml-4 tw-text-sm tw-text-success">
                       x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>

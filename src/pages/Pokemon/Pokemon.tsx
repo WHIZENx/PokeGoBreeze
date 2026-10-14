@@ -80,7 +80,6 @@ import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { Skeleton } from '@mui/material';
-import { selectAssetForm } from '../../composables/useAssets';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -706,10 +705,6 @@ const Pokemon = (props: IPokemonPage) => {
     );
   };
 
-  const selectedImageForm = searchingMainDetails?.form || searchingMainForm?.form?.formName || 'NORMAL';
-  const exactPokemonGoImage = pokemonGoAsset
-    ? selectAssetForm(pokemonGoAsset.image, selectedImageForm, pokemonGoAsset.name)
-    : undefined;
   const hybridImage = APIService.getPokeFullSprite(
     dataStorePokemon?.current?.id,
     convertPokemonImageName(
@@ -719,9 +714,8 @@ const Pokemon = (props: IPokemonPage) => {
     )
   );
   const mainImageCandidates = [
-    exactPokemonGoImage?.default ? APIService.getPokemonModel(exactPokemonGoImage.default) : undefined,
-    getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites),
     hybridImage,
+    getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites),
     APIService.getPokeFullAsset(dataStorePokemon?.current?.id),
   ];
   const mainImage = mainImageCandidates.find(Boolean) ?? APIService.getPokeFullSprite();

@@ -118,12 +118,12 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           <div>
             <div className="tw-flex tw-items-center tw-justify-center tw-w-full">
               <b>
-                <span className="caption !tw-text-red-600">{`ATK ${props.pokemonStat.atk}`}</span>
+                <span className="caption !tw-text-error">{`ATK ${props.pokemonStat.atk}`}</span>
               </b>
             </div>
             <div className="tw-flex tw-items-center tw-justify-center tw-w-full">
               <b>
-                <span className="caption !tw-text-green-600">{`DEF ${props.pokemonStat.def}`}</span>
+                <span className="caption !tw-text-success">{`DEF ${props.pokemonStat.def}`}</span>
               </b>
             </div>
             <div className="tw-flex tw-items-center tw-justify-center tw-w-full">

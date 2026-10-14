@@ -3,11 +3,17 @@
 }
 
 .season-league {
-  @apply tw-relative tw-whitespace-nowrap tw-overflow-x-auto tw-w-max;
+  @apply tw-relative tw-w-full tw-max-w-full tw-overflow-x-auto tw-overflow-y-hidden;
+
+  overscroll-behavior-inline: contain;
+}
+
+.season-league-track {
+  @apply tw-relative tw-w-max tw-min-w-full tw-whitespace-nowrap tw-text-center;
 }
 
 .group-rank-league {
-  @apply tw-inline-block;
+  @apply tw-inline-block tw-align-top;
 }
 
 .rank-header {
@@ -59,7 +65,6 @@ li.unique-type ul {
   @apply tw-py-4 tw-px-5;
 }
 
-
 .combat-league {
   @apply tw-inline-block tw-w-16 tw-relative tw-mr-[5px];
 }
@@ -96,7 +101,7 @@ li.unique-type ul {
 
 .require-rank-info {
   b {
-    @apply tw-text-red-600;
+    @apply tw-text-error;
   }
 
   li {

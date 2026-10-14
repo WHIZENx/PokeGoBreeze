@@ -1,12 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light" style="color-scheme: light">
   <head>
     <base href="/">
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/og-image.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#212529" />
+    <meta name="theme-color" content="#f3f4f6" />
+    <script>
+      (function () {
+        var theme = 'light';
+        try {
+          theme = JSON.parse(localStorage.getItem('theme')) === 'dark' ? 'dark' : 'light';
+        } catch (e) {}
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.style.colorScheme = theme;
+        document
+          .querySelector('meta[name="theme-color"]')
+          .setAttribute('content', theme === 'dark' ? '#222222' : '#f3f4f6');
+      })();
+    </script>
     <meta name="application-name" content="PokéGo Breeze" />
     <meta name="description" id="meta-description" content="Comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and simulation tools. Find the best Pokémon for battles, raids, and more." />
     <meta name="keywords" id="meta-keywords" content="Pokemon, Pokémon, Pokémon GO, PokéGo, Pokémon database, PVP, raids, battle simulator, Pokémon stats, Pokémon moves, Pokémon counters, Pokemon GO, Pokemon Go Breeze, Pokemon Go Tools" />

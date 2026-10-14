@@ -65,6 +65,8 @@ module.exports = {
         default: 'var(--default)',
         revert: 'var(--revert)',
         link: 'var(--link-color)',
+        error: 'var(--text-error)',
+        success: 'var(--text-success)',
         spinner: {
           default: 'var(--loading-spinner)',
           overlay: 'var(--loading-spinner-bg)',

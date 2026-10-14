@@ -15,27 +15,10 @@ import { BrowserRouter } from 'react-router-dom';
 
 import RouterSync from './utils/hooks/useRouterSync';
 import LoadingPersist from './components/Sprites/Loading/LoadingPersist';
-import { TypeTheme } from './enums/type.enum';
-import { LocalStorageConfig } from './store/constants/local-storage';
-import { lightThemeBg, darkThemeBg } from './utils/helpers/options-context.helpers';
 
 const { store, persistor } = configureStore();
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-
-// Set theme and apply it to HTML element before React renders
-let theme = TypeTheme.Light;
-try {
-  const savedTheme = localStorage.getItem(LocalStorageConfig.Theme);
-  if (savedTheme) {
-    theme = JSON.parse(savedTheme) === TypeTheme.Dark ? TypeTheme.Dark : TypeTheme.Light;
-  }
-} catch {
-  theme = TypeTheme.Light;
-}
-
-document.documentElement.setAttribute('data-theme', theme);
-document.body.style.background = theme === TypeTheme.Dark ? darkThemeBg() : lightThemeBg();
 
 root.render(
   <>

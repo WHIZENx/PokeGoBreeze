@@ -1280,7 +1280,7 @@ const RaidBattle = () => {
               {`${used.sorted ? 'Worst' : 'Best'} 10 Counters Level: `}
               {<span>{`${used.level} - ${used.iv.atkIV}/${used.iv.defIV}/${used.iv.staIV}`}</span>}
             </h4>
-            <p className="tw-text-blue-600">
+            <p className="tw-text-link">
               <b>
                 {`Sort By: ${
                   used.sortBy === SortType.DPS
@@ -1291,7 +1291,7 @@ const RaidBattle = () => {
                         ? 'Time To Kill'
                         : 'Tankiness'
                 } `}
-                <span className="tw-text-red-600">{`${used.onlyShadow ? '*Only Shadow' : ''}${
+                <span className="tw-text-error">{`${used.onlyShadow ? '*Only Shadow' : ''}${
                   used.onlyMega ? '*Only Mega' : ''
                 }`}</span>
               </b>
@@ -1330,7 +1330,7 @@ const RaidBattle = () => {
                   </span>
                   <span className="tw-flex tw-gap-2">
                     <span>Death:</span>
-                    <b className={value.death === 0 ? '!tw-text-green-600' : '!tw-text-red-600'}>{value.death}</b>
+                    <b className={value.death === 0 ? '!tw-text-success' : '!tw-text-error'}>{value.death}</b>
                   </span>
                   <span className="tw-flex tw-gap-2">
                     <span>Time to Kill (Boss):</span>
@@ -1519,12 +1519,12 @@ const RaidBattle = () => {
                     <div className="tw-flex tw-items-center tw-gap-3">
                       <div className="tw-inline-block tw-text-center">
                         <h3 className="tw-block !tw-m-0">{resultBoss.hardPlayers}</h3>
-                        <span className="caption !tw-text-red-600">Hard</span>
+                        <span className="caption !tw-text-error">Hard</span>
                       </div>
                       <h3 className="!tw-m-0">–</h3>
                       <div className="tw-inline-block tw-text-center">
                         <h3 className="tw-block !tw-m-0">{resultBoss.easyPlayers}</h3>
-                        <span className="caption !tw-text-green-600">Easy</span>
+                        <span className="caption !tw-text-success">Easy</span>
                       </div>
                     </div>
                   </div>
@@ -1596,8 +1596,8 @@ const RaidBattle = () => {
                                     <span
                                       className={
                                         Math.floor(toNumber(data.atkHpRemain)) === 0
-                                          ? '!tw-text-red-600'
-                                          : '!tw-text-green-600'
+                                          ? '!tw-text-error'
+                                          : '!tw-text-success'
                                       }
                                     >
                                       {Math.max(0, Math.floor(toNumber(data.atkHpRemain)))}

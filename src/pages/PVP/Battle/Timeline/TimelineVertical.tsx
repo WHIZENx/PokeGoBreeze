@@ -52,7 +52,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
                       src={APIService.getPokeOtherLeague('ShieldButton')}
                     />
                   </div>
-                  <span className="tw-text-green-600">
+                  <span className="tw-text-success">
                     x{value.block}
                     <span className="dec-block">-1</span>
                   </span>
@@ -160,6 +160,22 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
                   )}
                 >
                   LOSE!
+                </div>
+              )}
+              {value.type === AttackType.Timeout && (
+                <div
+                  className={combineClasses(
+                    'winner-container tw-text-white turn-battle',
+                    value.outcome === 'win'
+                      ? '!tw-bg-green-600'
+                      : value.outcome === 'lose'
+                        ? '!tw-bg-red-600'
+                        : 'bg-dark',
+                    end ? 'tw-justify-end' : ''
+                  )}
+                >
+                  {value.outcome === 'win' ? 'WIN!' : value.outcome === 'lose' ? 'LOSE!' : 'TIE!'}
+                  <span className="tw-ml-1 tw-text-xs">(TIME)</span>
                 </div>
               )}
             </Fragment>

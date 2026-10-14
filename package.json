@@ -57,7 +57,8 @@
     "generate:sitemap": "node sitemap/buildSitemap.js",
     "prerender:seo": "node sitemap/prerenderSeo.js",
     "audit:pokemon-details": "node scripts/auditPokemonDetails.mjs",
-    "audit:pvp-details": "node scripts/auditPvpPokemonDetails.mjs"
+    "audit:pvp-details": "node scripts/auditPvpPokemonDetails.mjs",
+    "audit:theme": "node scripts/auditTheme.mjs"
   },
   "browserslist": {
     "production": [

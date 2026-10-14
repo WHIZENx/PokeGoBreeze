@@ -191,7 +191,7 @@ const Calculate = () => {
         <td className="table-sub-header" colSpan={4}>
           <div className="tw-flex tw-items-center tw-justify-center tw-gap-2">
             <img alt="Image League" width={30} height={30} src={getPokemonBattleLeagueIcon(cp)} />
-            <span className={dataLeague ? (dataLeague.isElidge ? '' : '!tw-text-red-600') : ''}>
+            <span className={dataLeague ? (dataLeague.isElidge ? '' : '!tw-text-error') : ''}>
               {getPokemonBattleLeagueName(cp)}
               {dataLeague ? dataLeague.isElidge ? '' : <span> (Not Elidge)</span> : ''}
             </span>
@@ -274,7 +274,7 @@ const Calculate = () => {
           <div className="tw-flex tw-items-center tw-gap-2">
             <img alt="Image League" width={20} height={20} src={ATK_LOGO} />
             {dataLeague?.isElidge ? (
-              <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-green-600' : ''}>
+              <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-success' : ''}>
                 {dataLeague.stats?.atk}
               </span>
             ) : (
@@ -286,7 +286,7 @@ const Calculate = () => {
           <div className="tw-flex tw-items-center tw-gap-2">
             <img alt="Image League" width={20} height={20} src={DEF_LOGO} />
             {dataLeague?.isElidge ? (
-              <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-red-600' : ''}>
+              <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-error' : ''}>
                 {dataLeague.stats?.def}
               </span>
             ) : (
@@ -638,7 +638,7 @@ const Calculate = () => {
                               <Fragment>
                                 {statData.atkStat}
                                 {toNumber(statData.atkStatDiff) > 0 && (
-                                  <span className="tw-text-green-600 tw-font-medium">{` (+${statData.atkStatDiff})`}</span>
+                                  <span className="tw-text-success tw-font-medium">{` (+${statData.atkStatDiff})`}</span>
                                 )}
                               </Fragment>
                             )
@@ -662,7 +662,7 @@ const Calculate = () => {
                               <Fragment>
                                 {statData.defStat}
                                 {toNumber(statData.defStatDiff) > 0 && (
-                                  <span className="tw-text-red-600 tw-font-medium">{` (-${statData.defStatDiff})`}</span>
+                                  <span className="tw-text-error tw-font-medium">{` (-${statData.defStatDiff})`}</span>
                                 )}
                               </Fragment>
                             )
