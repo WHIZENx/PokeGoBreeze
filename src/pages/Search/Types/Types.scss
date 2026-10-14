@@ -29,7 +29,7 @@
 }
 
 .type-overview-identity {
-  background-color: rgb(0 0 0 / 20%);
+  background-color: rgb(0 0 0 / 35%);
 
   @apply tw-flex lg:tw-flex-col tw-items-center tw-justify-center tw-gap-3 tw-p-4;
 
@@ -45,7 +45,7 @@
 }
 
 .type-overview-metrics {
-  background-color: rgb(0 0 0 / 28%);
+  background-color: rgb(0 0 0 / 35%);
 
   @apply tw-grid tw-grid-cols-2 sm:tw-grid-cols-4;
 }

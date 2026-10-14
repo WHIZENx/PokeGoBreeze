@@ -246,7 +246,7 @@ const News = () => {
   const reload = (element: JSX.Element) => {
     if (!isLoading) {
       if (loadError) {
-        return <div className="tw-p-3 tw-text-center tw-text-red-600">{loadError}</div>;
+        return <div className="tw-p-3 tw-text-center tw-text-error">{loadError}</div>;
       }
       return element;
     }

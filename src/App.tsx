@@ -4,11 +4,13 @@ import React, {
   Suspense,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   useTransition,
 } from 'react';
+import { flushSync } from 'react-dom';
 import { Route, Routes, useLocation, type Location } from 'react-router-dom';
 
 import './App.scss';
@@ -56,11 +58,10 @@ import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
 import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
 import useOptionsObserver from './utils/hooks/useOptionsObserver';
-import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
+import { loadDataDelay } from './utils/helpers/options-context.helpers';
 import useTimestamp from './composables/useTimestamp';
 import useSpinner from './composables/useSpinner';
 import useDevice from './composables/useDevice';
-import { useTheme as useThemeStore } from './composables/useTheme';
 import useRouter from './composables/useRouter';
 import ResponsiveAppBar from './components/Commons/Navbars/ResponsiveAppBar';
 import { SnackbarProvider } from './contexts/snackbar.context';
@@ -86,7 +87,6 @@ function App() {
   const { loadTimestamp, timestampGameMaster } = useTimestamp();
   const { startProgress } = useSpinner();
   const { setDevice } = useDevice();
-  const { loadTheme } = useThemeStore();
   const { routerData, routerAction } = useRouter();
   const location = useLocation();
   const { pathname } = location;
@@ -94,7 +94,6 @@ function App() {
 
   const colorMode = useContext(ColorModeContext);
 
-  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
   const [, setStateVersion] = useLocalStorage(LocalStorageConfig.Version, '');
   const [isBootstrapLoaded, setIsBootstrapLoaded] = useState(false);
@@ -198,7 +197,6 @@ function App() {
 
   useEffect(() => {
     setDevice();
-    loadTheme(stateTheme, setStateTheme);
   }, []);
 
   const loadData = (signal: AbortSignal, delay = loadDataDelay()) => {
@@ -229,7 +227,7 @@ function App() {
   };
 
   return (
-    <Box className="tw-min-h-full" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
+    <Box className="app-theme-root tw-min-h-full" sx={{ backgroundColor: 'background.default' }}>
       <ResponsiveAppBar toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
       {isBootstrapLoaded && loadedRouteDataKey !== null && (
         <Suspense fallback={null}>
@@ -276,27 +274,49 @@ function App() {
 
 export default function Main() {
   const { key: locationKey } = useLocation();
-  const [stateMode] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
-  const [mode, setMode] = useState(stateMode);
+  const [mode, setMode] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
+  const modeRef = useRef(mode);
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light));
+        const nextMode = modeRef.current === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light;
+        modeRef.current = nextMode;
+
+        const applyTheme = () => flushSync(() => setMode(nextMode));
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const documentWithTransition = document as Document & {
+          startViewTransition?: (update: () => void) => {
+            ready: Promise<void>;
+            finished: Promise<void>;
+          };
+        };
+
+        if (!documentWithTransition.startViewTransition || prefersReducedMotion) {
+          applyTheme();
+          return true;
+        }
+
+        document.documentElement.classList.add('theme-view-transition');
+        const transition = documentWithTransition.startViewTransition(applyTheme);
+        const finishThemeTransition = () => document.documentElement.classList.remove('theme-view-transition');
+        transition.ready.then(finishThemeTransition, finishThemeTransition);
+        transition.finished.then(finishThemeTransition, finishThemeTransition);
         return true;
       },
     }),
-    []
+    [setMode]
   );
 
-  const theme = useMemo(() => {
-    const newTheme = createTheme(getDesignThemes(mode));
-    document.documentElement.setAttribute('data-theme', newTheme.palette.mode);
-    return newTheme;
-  }, [mode]);
+  const theme = useMemo(() => createTheme(getDesignThemes(mode)), [mode]);
 
-  useEffect(() => {
-    document.body.removeAttribute('style');
-  }, []);
+  useLayoutEffect(() => {
+    modeRef.current = mode;
+    document.documentElement.setAttribute('data-theme', mode);
+    document.documentElement.style.colorScheme = mode;
+    document
+      .querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+      ?.setAttribute('content', theme.palette.background.default);
+  }, [mode, theme.palette.background.default]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>

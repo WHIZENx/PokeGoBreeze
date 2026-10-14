@@ -1,9 +1,14 @@
 // Mixins for common styles
 @mixin theme-transition($transition: 0.3s) {
-  transition: background-color $transition, color $transition, border-color $transition;
+  transition:
+    background-color $transition,
+    color $transition,
+    border-color $transition;
 }
 
 @mixin theme-background($color: var(--background-paper), $important: false) {
+  @include theme-transition;
+
   @if $important {
     background-color: $color !important;
   } @else {
@@ -12,6 +17,8 @@
 }
 
 @mixin theme-text($color: var(--text-primary), $important: false) {
+  @include theme-transition;
+
   @if $important {
     color: $color !important;
   } @else {
@@ -19,7 +26,14 @@
   }
 }
 
-@mixin theme-border($width: 1px, $direction: all, $color: var(--custom-table-background-sub-head-border), $important: false) {
+@mixin theme-border(
+  $width: 1px,
+  $direction: all,
+  $color: var(--custom-table-background-sub-head-border),
+  $important: false
+) {
+  @include theme-transition;
+
   @if $direction == all {
     @if $important {
       border: $width solid $color !important;
@@ -142,8 +156,9 @@
 }
 
 @mixin filter-base($invert: 88%, $sepia: 36%, $saturate: 644%, $hue: 6deg, $brightness: 108%, $contrast: 105%) {
-  $base-filter: invert($invert) sepia($sepia) saturate($saturate) hue-rotate($hue) brightness($brightness) contrast($contrast);
-  
+  $base-filter: invert($invert) sepia($sepia) saturate($saturate) hue-rotate($hue) brightness($brightness)
+    contrast($contrast);
+
   filter: $base-filter;
   -webkit-filter: $base-filter;
   -moz-filter: $base-filter;
@@ -151,9 +166,18 @@
   -ms-filter: $base-filter;
 }
 
-@mixin filter($drop-shadow: none, $invert: 88%, $sepia: 36%, $saturate: 644%, $hue: 6deg, $brightness: 108%, $contrast: 105%) {
-  $base-filter: brightness(0) saturate(100%) invert($invert) sepia($sepia) saturate($saturate) hue-rotate($hue) brightness($brightness) contrast($contrast);
-  
+@mixin filter(
+  $drop-shadow: none,
+  $invert: 88%,
+  $sepia: 36%,
+  $saturate: 644%,
+  $hue: 6deg,
+  $brightness: 108%,
+  $contrast: 105%
+) {
+  $base-filter: brightness(0) saturate(100%) invert($invert) sepia($sepia) saturate($saturate) hue-rotate($hue)
+    brightness($brightness) contrast($contrast);
+
   @if $drop-shadow == none {
     filter: $base-filter;
     -webkit-filter: $base-filter;

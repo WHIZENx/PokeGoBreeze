@@ -127,7 +127,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
             </div>
           ))}
           {!isNotEmpty(pokeAssets) && (
-            <div className="tw-text-red-600 tw-mb-3">&emsp;Assets in Pokémon GO unavailable</div>
+            <div className="tw-text-error tw-mb-3">&emsp;Assets in Pokémon GO unavailable</div>
           )}
         </div>
       )}
@@ -142,7 +142,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       ) : (
         <Fragment>
           {!isNotEmpty(props.originSoundCry) ? (
-            <div className="tw-text-red-600">&emsp;Sound in Pokémon unavailable.</div>
+            <div className="tw-text-error">&emsp;Sound in Pokémon unavailable.</div>
           ) : (
             <ul className="!tw-m-0">
               {props.originSoundCry.map((value, index) => (
@@ -178,7 +178,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       ) : (
         <Fragment>
           {!isNotEmpty(asset?.sound.cry) ? (
-            <div className="tw-text-red-600">&emsp;Sound in Pokémon GO unavailable.</div>
+            <div className="tw-text-error">&emsp;Sound in Pokémon GO unavailable.</div>
           ) : (
             <ul className="!tw-m-0">
               {asset?.sound.cry.map((value, index) => (

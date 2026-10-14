@@ -17,13 +17,13 @@
 .info-event-ending {
   border: 1px solid #dc354580;
   box-shadow: 0 0 0 0.15rem #dc354540;
-  color: #dc3545;
+  color: var(--text-error);
   background-color: #dc35450d;
 }
 
 .info-event-progress {
   border: 1px solid #0dcaf080;
   box-shadow: 0 0 0 0.15rem #0dcaf040;
-  color: #0dcaf0;
+  color: var(--link-color);
   background-color: #0dcaf00d;
 }

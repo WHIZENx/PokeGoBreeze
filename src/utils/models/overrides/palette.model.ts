@@ -4,6 +4,12 @@ import { TypeTheme } from '../../../enums/type.enum';
 export const PaletteData = (mode: TypeTheme) =>
   ({
     mode,
+    primary: {
+      main: mode === TypeTheme.Light ? '#075eb8' : '#90caf9',
+    },
+    secondary: {
+      main: mode === TypeTheme.Light ? '#9c27b0' : '#ce93d8',
+    },
     tertiary: {
       main: mode === TypeTheme.Light ? '#5a6268' : '#6c757d',
       select: '#5a6268',
@@ -16,7 +22,7 @@ export const PaletteData = (mode: TypeTheme) =>
     },
     divider: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)',
     background: {
-      default: mode === TypeTheme.Light ? '#fafafa' : '#222222',
+      default: mode === TypeTheme.Light ? '#f3f4f6' : '#222222',
       paper: mode === TypeTheme.Light ? '#ffffff' : '#333333',
     },
     openLeague: {

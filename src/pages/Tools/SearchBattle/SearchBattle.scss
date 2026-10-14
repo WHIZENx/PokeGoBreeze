@@ -27,7 +27,7 @@
 }
 
 .rank-max {
-  @apply tw-text-red-600 tw-bg-[#ecc8c8];
+  @apply tw-text-error tw-bg-[#ecc8c8];
 }
 
 .rank-excellent {
@@ -35,7 +35,7 @@
 }
 
 .rank-great {
-  @apply tw-text-green-600 tw-bg-[#c8ecc8];
+  @apply tw-text-success tw-bg-[#c8ecc8];
 }
 
 .rank-nice {

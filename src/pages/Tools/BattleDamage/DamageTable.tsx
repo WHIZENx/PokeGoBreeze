@@ -209,7 +209,7 @@ const DamageTable = (props: IDamageTableComponent) => {
                 {props.result.damage ? (
                   <Fragment>
                     {props.result.damage < toNumber(movePower) ? (
-                      <b className="tw-text-green-600">
+                      <b className="tw-text-success">
                         {toFloatWithPadding(
                           ((toNumber(movePower) - props.result.damage) * 100) / toNumber(movePower, 1),
                           2
@@ -217,7 +217,7 @@ const DamageTable = (props: IDamageTableComponent) => {
                         %
                       </b>
                     ) : (
-                      <b className="tw-text-red-600">0</b>
+                      <b className="tw-text-error">0</b>
                     )}
                   </Fragment>
                 ) : (
@@ -237,9 +237,9 @@ const DamageTable = (props: IDamageTableComponent) => {
                   <b>
                     {Math.floor(props.result.hp - toNumber(props.result.damage))}
                     {Math.floor(props.result.hp - toNumber(props.result.damage)) > 0 ? (
-                      <span className="caption-small tw-text-green-600"> (Alive)</span>
+                      <span className="caption-small tw-text-success"> (Alive)</span>
                     ) : (
-                      <span className="caption-small tw-text-red-600"> (Dead)</span>
+                      <span className="caption-small tw-text-error"> (Dead)</span>
                     )}
                   </b>
                 ) : (
