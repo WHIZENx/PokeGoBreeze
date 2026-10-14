@@ -157,8 +157,10 @@ const TrainerLab = () => {
       });
       setResult(response.data.data);
     } catch (requestError) {
-      const responseError = requestError as { response?: { data?: { error?: string; pokemon?: string } } };
-      const code = responseError.response?.data?.error;
+      const responseError = requestError as {
+        response?: { data?: { error?: string; code?: string; pokemon?: string } };
+      };
+      const code = responseError.response?.data?.code ?? responseError.response?.data?.error;
       const pokemon = responseError.response?.data?.pokemon;
       setError(
         code === 'duplicate_team_species'

@@ -3,7 +3,7 @@ import CardPokemon from '../../Card/CardPokemon';
 import React from 'react';
 
 import './Select.scss';
-import { addSelectMovesByType } from '../../../utils/utils';
+import { addSelectMovesByType, isSpecialMegaFormType } from '../../../utils/utils';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
@@ -16,7 +16,17 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
 
   const changePokemon = (value: IPokemonData) => {
-    const pokemonToPass = props.defaultSetting ? { ...value, stats: props.defaultSetting } : value;
+    const pokemonToPass = props.defaultSetting
+      ? {
+          ...value,
+          stats: {
+            ...props.defaultSetting,
+            pokemonType: isSpecialMegaFormType(value.pokemonType)
+              ? value.pokemonType
+              : props.defaultSetting.pokemonType,
+          },
+        }
+      : value;
     if (props.setCurrentPokemon) {
       props.setCurrentPokemon(pokemonToPass);
     }
