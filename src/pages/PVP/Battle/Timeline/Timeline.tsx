@@ -38,7 +38,7 @@ const Timeline = (
                   {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                     <div className="tw-absolute icon-buff-timeline">
                       {value.buff?.map((b, i) => (
-                        <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
+                        <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
                           {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                         </span>
                       ))}
@@ -50,7 +50,7 @@ const Timeline = (
                       isNotEmpty(value.buff) ? (
                         <div className="tw-absolute icon-buff-timeline">
                           {value.buff?.map((b, i) => (
-                            <span key={i} className={b.power < 0 ? '!tw-text-red-600' : '!tw-text-green-600'}>
+                            <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
                               {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
                             </span>
                           ))}
@@ -98,6 +98,21 @@ const Timeline = (
               <div>
                 <CloseIcon color="error" />
               </div>
+            )}
+            {value.type === AttackType.Timeout && (
+              <span
+                className={combineClasses(
+                  'tw-text-xs tw-font-bold',
+                  value.outcome === 'win'
+                    ? 'tw-text-success'
+                    : value.outcome === 'lose'
+                      ? 'tw-text-error'
+                      : 'tw-text-default'
+                )}
+                title="Battle ended by time limit"
+              >
+                {value.outcome === 'win' ? 'W' : value.outcome === 'lose' ? 'L' : 'T'}
+              </span>
             )}
           </div>
         ))}

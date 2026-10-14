@@ -231,12 +231,12 @@ const Move = (props: IMovePage) => {
   const turnDurationSeconds = optionsData.combatOptions.turnDurationSeconds || 0.5;
   const pvpDurationSeconds = move
     ? move.typeMove === TypeMove.Fast
-      ? Math.max(turnDurationSeconds, Math.ceil(move.durationMs / (turnDurationSeconds * 1000)) * turnDurationSeconds)
+      ? Math.max(1, move.pvpTurns ?? Math.ceil(move.durationMs / (turnDurationSeconds * 1000))) * turnDurationSeconds
       : turnDurationSeconds
     : 0;
   const pvpTurns = move
     ? move.typeMove === TypeMove.Fast
-      ? Math.max(1, Math.ceil(move.durationMs / (turnDurationSeconds * 1000)))
+      ? Math.max(1, move.pvpTurns ?? Math.ceil(move.durationMs / (turnDurationSeconds * 1000)))
       : 1
     : 0;
 
@@ -643,7 +643,7 @@ const Move = (props: IMovePage) => {
                           <span
                             className={combineClasses(
                               'buff-power',
-                              value.power > 0 ? '!tw-text-green-600' : '!tw-text-red-600'
+                              value.power > 0 ? '!tw-text-success' : '!tw-text-error'
                             )}
                           >
                             <b>

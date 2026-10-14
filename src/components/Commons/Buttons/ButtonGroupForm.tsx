@@ -64,7 +64,7 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                             <small>(Default)</small>
                           </b>
                         )}
-                        {toNumber(value.form.id) <= 0 && <small className="tw-text-red-600">* Only in GO</small>}
+                        {toNumber(value.form.id) <= 0 && <small className="tw-text-error">* Only in GO</small>}
                       </div>
                     </div>
                   }

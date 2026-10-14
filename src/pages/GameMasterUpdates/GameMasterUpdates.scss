@@ -26,7 +26,7 @@
   }
 
   &__overview-highlights {
-    color: rgb(127 127 127);
+    color: var(--text-secondary);
     display: grid;
     font-size: 0.875rem;
     gap: 5px;
@@ -57,7 +57,7 @@
       }
 
       span {
-        color: rgb(127 127 127);
+        color: var(--text-secondary);
         font-size: 0.68rem;
         letter-spacing: 0.04em;
         text-transform: uppercase;
@@ -262,7 +262,7 @@
 
     &:hover,
     &:focus-visible {
-      color: var(--mui-palette-primary-main, #42a5f5);
+      color: var(--link-hover-color);
       text-decoration: underline;
     }
 
@@ -277,7 +277,7 @@
     align-self: flex-start;
     border: 1px solid rgb(127 127 127 / 24%);
     border-radius: 999px;
-    color: var(--mui-palette-primary-main, #42a5f5);
+    color: var(--link-color);
     display: inline-flex;
     gap: 6px;
     padding: 5px 10px;
@@ -540,7 +540,7 @@
 
   &__change-arrow {
     align-self: center;
-    color: rgb(127 127 127);
+    color: var(--text-secondary);
   }
 
   &__footer {
@@ -774,7 +774,7 @@
   }
 
   &__patch-card-highlights {
-    color: rgb(127 127 127);
+    color: var(--text-secondary);
     display: grid;
     font-size: 0.875rem;
     gap: 6px;
@@ -783,7 +783,7 @@
   }
 
   &__patch-card-counts {
-    color: rgb(127 127 127);
+    color: var(--text-secondary);
     font-size: 0.78rem;
     margin-top: 4px;
     text-transform: uppercase;
@@ -797,7 +797,7 @@
 
   &__patch-card-link {
     align-items: center;
-    color: var(--mui-palette-primary-main, #42a5f5);
+    color: var(--link-color);
     display: flex;
     gap: 8px;
     margin-top: auto;
@@ -875,7 +875,7 @@
     }
 
     .game-master-updates__entry-description {
-      color: rgb(127 127 127);
+      color: var(--text-secondary);
       font-size: 0.95rem;
     }
 

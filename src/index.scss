@@ -10,7 +10,9 @@ body {
     "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: 0.1s;
+  transition:
+    background-color 300ms ease-in-out,
+    color 300ms ease-in-out;
 
   @apply tw-h-full tw-m-0 tw-text-default tw-bg-custom-default tw-leading-default tw-touch-manipulation;
 }

@@ -196,7 +196,7 @@ const FindBattle = () => {
               <Candy id={item.id} className="tw-mr-1" />
               <span className="tw-flex tw-items-center tw-mr-1">
                 {toNumber(battleStats.resultBetweenCandy) + toNumber((item as BattleLeagueApiItem).evolutionCandy)}
-                <span className="tw-inline-block caption !tw-text-green-600">
+                <span className="tw-inline-block caption !tw-text-success">
                   (+{toNumber((item as BattleLeagueApiItem).evolutionCandy)})
                 </span>
               </span>
@@ -220,7 +220,7 @@ const FindBattle = () => {
             <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon(cp)} />
             <b>{` ${getPokemonBattleLeagueName(cp)}`}</b>
           </h6>
-          <b className="tw-text-red-600 tw-p-3">
+          <b className="tw-text-error tw-p-3">
             <CloseIcon color="error" /> Not Elidge
           </b>
         </div>
@@ -403,7 +403,7 @@ const FindBattle = () => {
                                   </LinkToTop>
                                 </div>
                                 {toNumber(item.maxCP) < maxCP ? (
-                                  <div className="tw-text-red-600">
+                                  <div className="tw-text-error">
                                     <b>
                                       <CloseIcon color="error" /> Not Elidge
                                     </b>

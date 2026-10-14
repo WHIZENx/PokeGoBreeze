@@ -269,7 +269,7 @@ const Leagues = () => {
             onError={(event) => handleLeagueLogoError(event.currentTarget, league)}
           />
           <span className="tw-flex tw-flex-col">
-            <b className={league.enabled ? '' : '!tw-text-red-600'}>{league.title}</b>
+            <b className={league.enabled ? '' : '!tw-text-error'}>{league.title}</b>
             {!isEqual(technicalName, league.title, EqualMode.IgnoreCaseSensitive) && (
               <span className="caption">{technicalName}</span>
             )}
@@ -377,7 +377,7 @@ const Leagues = () => {
         )}
         {isNotEmpty(league.conditions.whiteList) && (
           <li className="tw-font-medium">
-            <h6 className="title-leagues tw-text-green-600">White List</h6>
+            <h6 className="title-leagues tw-text-success">White List</h6>
             {league.conditions.whiteList.map((item, index) => (
               <LinkToTop
                 className="img-link tw-text-center"
@@ -416,7 +416,7 @@ const Leagues = () => {
         )}
         {isNotEmpty(league.conditions.banned) && (
           <li className="tw-font-medium">
-            <h6 className="title-leagues tw-text-red-600">Ban List</h6>
+            <h6 className="title-leagues tw-text-error">Ban List</h6>
             {league.conditions.banned.map((item, index) => (
               <LinkToTop
                 className="img-link tw-text-center"
@@ -513,7 +513,7 @@ const Leagues = () => {
     <Badge
       color="primary"
       className={combineClasses(
-        'tw-relative tw-inline-block img-link !tw-pt-6 !tw-min-w-16',
+        'tw-relative tw-inline-block img-link !tw-mr-7 !tw-pt-6 !tw-min-w-16',
         value.type === RewardType.Pokemon ? 'tw-pb-0' : 'tw-pb-6'
       )}
       overlap="circular"
@@ -594,48 +594,50 @@ const Leagues = () => {
       ) : null}
       {isNotEmpty(leaguesData.data) ? (
         <Fragment>
-          <div className="tw-flex tw-justify-center tw-mt-2">
-            <div className="season-league">
-              <div className="group-rank-league reward-league tw-text-center">
-                <div className="rank-header">Season {leaguesData.season.season}</div>
-                <Badge
-                  color="primary"
-                  className="tw-relative tw-inline-block img-link tw-py-6 !tw-min-w-16"
-                  overlap="circular"
-                  badgeContent={null}
-                >
-                  <img
-                    className="pokemon-sprite-medium !tw-w-16"
-                    alt="Pokémon Image"
-                    src={APIService.getPokeOtherLeague('BattleIconColor')}
-                  />
-                  <span className="caption tw-text-default">Basic</span>
-                </Badge>
-                <hr className="tw-my-0" />
-                <Badge
-                  color="primary"
-                  className="tw-relative tw-inline-block img-link tw-py-6 !tw-min-w-16"
-                  overlap="circular"
-                  badgeContent={null}
-                >
-                  <img
-                    className="pokemon-sprite-medium !tw-w-16"
-                    alt="Pokémon Image"
-                    src={getItemSpritePath(ItemName.PaidRaidTicket)}
-                  />
-                  <span className="caption tw-text-default">Premium</span>
-                </Badge>
+          <div className="tw-mt-2 tw-w-full tw-min-w-0">
+            <div className="season-league" data-testid="battle-league-rewards-scroll">
+              <div className="season-league-track" data-testid="battle-league-rewards-track">
+                <div className="group-rank-league reward-league tw-text-center">
+                  <div className="rank-header">Season {leaguesData.season.season}</div>
+                  <Badge
+                    color="primary"
+                    className="tw-relative tw-inline-block img-link tw-py-6 !tw-min-w-16"
+                    overlap="circular"
+                    badgeContent={null}
+                  >
+                    <img
+                      className="pokemon-sprite-medium !tw-w-16"
+                      alt="Pokémon Image"
+                      src={APIService.getPokeOtherLeague('BattleIconColor')}
+                    />
+                    <span className="caption tw-text-default">Basic</span>
+                  </Badge>
+                  <hr className="tw-my-0" />
+                  <Badge
+                    color="primary"
+                    className="tw-relative tw-inline-block img-link tw-py-6 !tw-min-w-16"
+                    overlap="circular"
+                    badgeContent={null}
+                  >
+                    <img
+                      className="pokemon-sprite-medium !tw-w-16"
+                      alt="Pokémon Image"
+                      src={getItemSpritePath(ItemName.PaidRaidTicket)}
+                    />
+                    <span className="caption tw-text-default">Premium</span>
+                  </Badge>
+                </div>
+                {leaguesData.season.rewards.rank[rank].free.map((value, index) => (
+                  <Fragment key={index}>
+                    <div className="group-rank-league tw-text-center">
+                      <div className="rank-header">Win {value.step}</div>
+                      {renderItem(value, LeagueRewardType.Free)}
+                      <hr className="tw-my-0" />
+                      {renderItem(leaguesData.season.rewards.rank[rank].premium[index], LeagueRewardType.Premium)}
+                    </div>
+                  </Fragment>
+                ))}
               </div>
-              {leaguesData.season.rewards.rank[rank].free.map((value, index) => (
-                <Fragment key={index}>
-                  <div className="group-rank-league tw-text-center">
-                    <div className="rank-header">Win {value.step}</div>
-                    {renderItem(value, LeagueRewardType.Free)}
-                    <hr className="tw-my-0" />
-                    {renderItem(leaguesData.season.rewards.rank[rank].premium[index], LeagueRewardType.Premium)}
-                  </div>
-                </Fragment>
-              ))}
             </div>
           </div>
           <div className="tw-w-full tw-text-center tw-my-3">
@@ -715,12 +717,10 @@ const Leagues = () => {
           <Skeleton variant="rectangular" animation="wave" height={450} className="!tw-px-0" />
         </div>
       ) : (
-        <div className="tw-p-3 tw-text-center tw-text-red-600">
-          {loadError ?? 'Battle Leagues data is unavailable.'}
-        </div>
+        <div className="tw-p-3 tw-text-center tw-text-error">{loadError ?? 'Battle Leagues data is unavailable.'}</div>
       )}
       <div className="input-group tw-w-fit">
-        <span className="input-group-text tw-text-green-600 tw-bg-transparent tw-font-medium">Opened Leagues</span>
+        <span className="input-group-text tw-text-success tw-bg-transparent tw-font-medium">Opened Leagues</span>
       </div>
       <AccordionMui
         isShowAction

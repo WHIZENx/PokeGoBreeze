@@ -80,7 +80,7 @@ const PVPHome = () => {
           <b>Updated: {getTime(timestampPVP, true)}</b>
         </h4>
       )}
-      <p className="tw-text-red-600">
+      <p className="tw-text-error">
         <b>
           {'* Pokémon data source references from '}
           <a href="https://pvpoke.com/" target="_">
@@ -130,7 +130,7 @@ const PVPHome = () => {
       <ButtonGroupLeague leagues={team?.cp} isLoaded={!!team} loading={renderLoading()} data={team} path="teams" />
       <h1 className="tw-flex tw-gap-2 tw-items-end">
         <span>Battle League Simulator</span>
-        <span className="tw-mb-1 caption !tw-text-red-600">(Beta Test)</span>
+        <span className="tw-mb-1 caption !tw-text-error">(Beta Test)</span>
       </h1>
       <ButtonGroupLeague
         leagues={leaguesTeamBattle
