@@ -12,7 +12,8 @@ import {
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { RAID_BOSS_TIER } from '../../../utils/constants';
+import { RAID_BATTLE_EXCLUDED_POKEMON_TYPES, RAID_BOSS_TIER } from '../../../utils/constants';
+import { isRaidBattlePokemonEligible } from '../../../utils/raid-battle';
 import { Badge, Checkbox, FormControlLabel, IconButton, LinearProgress, Switch } from '@mui/material';
 
 import './RaidBattle.scss';
@@ -71,6 +72,7 @@ import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.
 import { ICombat } from '../../../core/models/combat.model';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { StatsIV } from '../../../core/models/stats.model';
 import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
@@ -174,11 +176,16 @@ const RaidBattle = () => {
   const { used, selected } = filters;
 
   const { isWeatherBoss, isReleased, enableTimeAllow } = options;
+  const defaultRaidTimer =
+    tier === 4 && !isSpecialMegaFormType(searchingToolCurrentData?.form?.form?.pokemonType)
+      ? 180
+      : RAID_BOSS_TIER[tier].timer;
 
   const [timeAllow, setTimeAllow] = useState(0);
 
   const [resultBoss, setResultBoss] = useState<BattleResult>();
   const [resultRaid, setResultRaid] = useState<IRaidResult[]>();
+  const [resultRaidOutcome, setResultRaidOutcome] = useState<'win' | 'timeout' | 'team_fainted'>();
   const [result, setResult] = useState<IPokemonMoveData[]>([]);
 
   const [disableSearch, setDisableSearch] = useState(false);
@@ -290,12 +297,16 @@ const RaidBattle = () => {
     if (isClear) {
       setResult([]);
       setResultRaid(undefined);
+      setResultRaidOutcome(undefined);
       setResultBoss(undefined);
       setDisableSearch(false);
     }
   };
 
   const onCopyPokemon = (index: number) => {
+    if (pokemonBattle.length >= 6) {
+      return;
+    }
     setPokemonBattle(update(pokemonBattle, { $push: [pokemonBattle[index]] }));
   };
 
@@ -388,8 +399,11 @@ const RaidBattle = () => {
         minHP: summary.hp.min,
         maxHP: summary.hp.max,
         averageHP: summary.hp.average,
-        hardPlayers: summary.suggestedPlayers.hard,
-        easyPlayers: summary.suggestedPlayers.easy,
+        minimumPlayers: summary.suggestedPlayers.minimum ?? summary.suggestedPlayers.hard ?? 1,
+        recommendedPlayers: summary.suggestedPlayers.recommended ?? summary.suggestedPlayers.easy ?? 1,
+        recommendationTeamSize: summary.suggestedPlayers.teamSize ?? 6,
+        recommendationEfficiency: summary.suggestedPlayers.recommendedEfficiency ?? 0.85,
+        recommendationRelobbyDelay: summary.suggestedPlayers.relobbyDelaySeconds ?? 10,
       });
       setDisableSearch(true);
     } catch {
@@ -434,6 +448,7 @@ const RaidBattle = () => {
         form: searchingToolCurrentData?.pokemon?.fullName,
         fast: fMove.name,
         charged: cMove.name,
+        tier,
         atk: statBossATK,
         def: statBossDEF,
         hp: statBossHP,
@@ -472,6 +487,7 @@ const RaidBattle = () => {
       }
       const response = await APIService.postRaidBattle(payload);
       setResultRaid(response.data.data);
+      setResultRaidOutcome(response.data.meta.outcome);
       showSnackbar('Raid estimate calculated successfully!', 'success');
     } catch {
       showSnackbar('Raid Battle simulation API is unavailable.', 'error');
@@ -550,9 +566,22 @@ const RaidBattle = () => {
     );
   };
 
-  const resultBattle = (bossHp: number, timer: number) => {
+  const resultBattle = (bossHp: number, timer: number, isFinal: boolean) => {
+    if (!isFinal) {
+      return (
+        <td colSpan={3} className="!tw-text-center bg-summary !tw-bg-amber-600">
+          <span className="tw-text-white">CONTINUE</span>
+        </td>
+      );
+    }
     const status =
-      enableTimeAllow && timer >= timeAllow ? RaidState.TimeOut : bossHp > 0 ? RaidState.Loss : RaidState.Win;
+      resultRaidOutcome === 'win'
+        ? RaidState.Win
+        : resultRaidOutcome === 'timeout' || (enableTimeAllow && timer >= timeAllow)
+          ? RaidState.TimeOut
+          : bossHp > 0
+            ? RaidState.Loss
+            : RaidState.Win;
     const result = splitAndCapitalize(getKeyWithData(RaidState, status), /(?=[A-Z])/, ' ').toUpperCase();
     return (
       <>
@@ -957,15 +986,7 @@ const RaidBattle = () => {
           <div className="pokemon-battle">
             <span className="tw-relative">
               <PokemonIconType pokemonType={pokemon.pokemonType} size={18}>
-                <img
-                  className="pokemon-sprite-battle"
-                  alt="Pokémon Image"
-                  src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, false)}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = APIService.getPokeIconSprite();
-                  }}
-                />
+                {pokemon.pokemon && <PokemonTableIcon {...pokemon.pokemon} size={36} />}
               </PokemonIconType>
             </span>
           </div>
@@ -1017,19 +1038,11 @@ const RaidBattle = () => {
                           }
                           size={18}
                         >
-                          <img
-                            className="pokemon-sprite-battle"
-                            alt="Pokémon Image"
-                            src={APIService.getPokeIconSprite(
-                              hoverSlot === `${trainer.trainerId}-${index}`
-                                ? pokemon.pokemon?.sprite
-                                : poke.dataTargetPokemon.sprite,
-                              true
-                            )}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = APIService.getPokeIconSprite();
-                            }}
+                          <PokemonTableIcon
+                            {...(hoverSlot === `${trainer.trainerId}-${index}`
+                              ? (pokemon.pokemon ?? poke.dataTargetPokemon)
+                              : poke.dataTargetPokemon)}
+                            size={36}
                           />
                         </PokemonIconType>
                       </span>
@@ -1085,9 +1098,11 @@ const RaidBattle = () => {
   return (
     <Fragment>
       <DismissibleAlert severity="warning" className="!tw-m-3">
-        This is a simplified raid estimator based on move timing, DPS/TDO, boss HP, and the selected timer. It does not
-        simulate Party Power cycles, Shadow Raid enrage, Super Mega shields, relobby timing, or Max Battles. Legacy raid
-        tiers remain available only for historical comparisons.
+        This raid estimator runs all Trainers concurrently and advances each Trainer through their six-Pokémon team
+        independently. Damage uses the current Game Master move values and raid settings. It does not simulate dodging,
+        Friendship boosts, Mega/Primal ally auras, Party Power cycles, Shadow Raid enrage, Super Mega shields, faint or
+        relobby delays, network latency, or Max Battles. Legacy raid tiers remain available only for historical
+        comparisons.
       </DismissibleAlert>
       {optionsData.raid.maxPlayersPerLobby > 0 ? (
         <DismissibleAlert severity="info" className="!tw-m-3 tw-flex tw-items-center">
@@ -1140,7 +1155,13 @@ const RaidBattle = () => {
       ) : null}
       <div className="row !tw-m-0 tw-overflow-x-hidden">
         <div className="lg:tw-flex-1 !tw-p-0">
-          <Find isHide title="Raid Boss" clearStats={clearDataBoss} />
+          <Find
+            isHide
+            title="Raid Boss"
+            clearStats={clearDataBoss}
+            excludedPokemonTypes={RAID_BATTLE_EXCLUDED_POKEMON_TYPES}
+            pokemonFilter={isRaidBattlePokemonEligible}
+          />
         </div>
         <div className="lg:tw-flex-1 tw-flex tw-justify-center tw-items-center !tw-p-0">
           <div className="tw-mt-2 tw-relative">
@@ -1241,7 +1262,7 @@ const RaidBattle = () => {
                       onChange={(_, check) => setOptions({ ...options, enableTimeAllow: check })}
                     />
                   }
-                  label={`Time Allow (Default: ${RAID_BOSS_TIER[tier].timer}sec)`}
+                  label={`Time Allow (Default: ${defaultRaidTimer}sec)`}
                 />
               </div>
               <div className="!tw-w-1/2 tw-flex-none tw-pl-0">
@@ -1381,15 +1402,7 @@ const RaidBattle = () => {
                       {pokemon.dataTargetPokemon ? (
                         <span className="tw-relative">
                           <PokemonIconType pokemonType={pokemon.dataTargetPokemon.stats?.pokemonType} size={18}>
-                            <img
-                              className="pokemon-sprite-battle"
-                              alt="Pokémon Image"
-                              src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, false)}
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = APIService.getPokeIconSprite();
-                              }}
-                            />
+                            <PokemonTableIcon {...pokemon.dataTargetPokemon} size={36} />
                           </PokemonIconType>
                         </span>
                       ) : (
@@ -1518,15 +1531,21 @@ const RaidBattle = () => {
                     <hr className="tw-w-full" />
                     <div className="tw-flex tw-items-center tw-gap-3">
                       <div className="tw-inline-block tw-text-center">
-                        <h3 className="tw-block !tw-m-0">{resultBoss.hardPlayers}</h3>
-                        <span className="caption !tw-text-error">Hard</span>
+                        <h3 className="tw-block !tw-m-0">{resultBoss.minimumPlayers}</h3>
+                        <span className="caption !tw-text-error">Minimum</span>
                       </div>
                       <h3 className="!tw-m-0">–</h3>
                       <div className="tw-inline-block tw-text-center">
-                        <h3 className="tw-block !tw-m-0">{resultBoss.easyPlayers}</h3>
-                        <span className="caption !tw-text-success">Easy</span>
+                        <h3 className="tw-block !tw-m-0">{resultBoss.recommendedPlayers}</h3>
+                        <span className="caption !tw-text-success">Recommended</span>
                       </div>
                     </div>
+                    <p className="caption tw-w-full tw-mt-2 tw-text-center">
+                      Minimum assumes an optimized team of {resultBoss.recommendationTeamSize} counters and about{' '}
+                      {resultBoss.recommendationRelobbyDelay}s to relobby after a full team faints. Recommended includes
+                      a {Math.round((1 - resultBoss.recommendationEfficiency) * 100)}% margin. Fewer than the minimum is
+                      unlikely to finish in time; the range between them may be difficult.
+                    </p>
                   </div>
                 </div>
               </Fragment>
@@ -1538,7 +1557,7 @@ const RaidBattle = () => {
                   {resultRaid?.map((result, turn) => (
                     <li className="tw-mb-3" key={turn}>
                       <h4>
-                        <b>Pokémon Round {turn + 1}</b>
+                        <b>Battle Phase {turn + 1}</b>
                       </h4>
                       <div className="tw-w-full tw-overflow-x-auto">
                         <table className="table-info table-round-battle">
@@ -1555,7 +1574,7 @@ const RaidBattle = () => {
                           <tbody className="tw-text-center">
                             {result.pokemon.map((data, index) => (
                               <tr key={index}>
-                                <td>#{toNumber(data.trainerId) + 1}</td>
+                                <td>#{toNumber(data.trainerId)}</td>
                                 <td className="!tw-text-center">
                                   <Tooltips
                                     hideBackground
@@ -1565,18 +1584,11 @@ const RaidBattle = () => {
                                   >
                                     <span className="tooltips-info">
                                       <div className="tw-flex tw-items-center table-pokemon">
-                                        <PokemonIconType pokemonType={data.pokemon?.stats?.pokemonType} size={18}>
-                                          <img
-                                            className="pokemon-sprite-battle"
-                                            height={36}
-                                            alt="Pokémon Image"
-                                            src={APIService.getPokeIconSprite(data.pokemon?.sprite, false)}
-                                            onError={(e) => {
-                                              e.currentTarget.onerror = null;
-                                              e.currentTarget.src = APIService.getPokeIconSprite();
-                                            }}
-                                          />
-                                        </PokemonIconType>
+                                        <span className="tw-relative tw-inline-flex tw-flex-none">
+                                          <PokemonIconType pokemonType={data.pokemonType} size={18}>
+                                            {data.pokemon && <PokemonTableIcon {...data.pokemon} size={36} />}
+                                          </PokemonIconType>
+                                        </span>
                                         <span className="caption link-url">
                                           {splitAndCapitalize(data.pokemon?.name.replaceAll('_', '-'), '-', ' ')}
                                         </span>
@@ -1622,9 +1634,7 @@ const RaidBattle = () => {
                               <td className="tw-text-center" colSpan={2}>
                                 Total TDO: {toFloatWithPadding(result.summary.tdoAtk, 2)}
                               </td>
-                              <td colSpan={2}>
-                                Boss HP Remain: {Math.floor(result.summary.bossHp - result.summary.tdoAtk)}
-                              </td>
+                              <td colSpan={2}>Boss HP Remain: {Math.floor(result.summary.bossHpRemaining)}</td>
                             </tr>
                             {((turn > 0 && Math.floor(result.summary.tdoAtk) > 0) ||
                               turn === 0 ||
@@ -1634,14 +1644,15 @@ const RaidBattle = () => {
                                   <div className="tw-flex tw-items-center tw-gap-2">
                                     <TimerIcon />
                                     <span>
-                                      Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}
+                                      Elapsed Battle Time: {toFloatWithPadding(result.summary.timer, 2)}
                                       {enableTimeAllow && ` / ${timeAllow}`}
                                     </span>
                                   </div>
                                 </td>
                                 {resultBattle(
-                                  Math.floor(result.summary.bossHp - result.summary.tdoAtk),
-                                  result.summary.timer
+                                  Math.floor(result.summary.bossHpRemaining),
+                                  result.summary.timer,
+                                  turn === resultRaid.length - 1
                                 )}
                               </tr>
                             )}
@@ -1689,6 +1700,7 @@ const RaidBattle = () => {
               </IconButton>
               <div className="count-pokemon">{pokemonBattle.length}</div>
               <IconButton
+                disabled={pokemonBattle.length >= 6}
                 color="success"
                 onClick={() => setPokemonBattle(update(pokemonBattle, { $push: [new PokemonRaidModel()] }))}
               >

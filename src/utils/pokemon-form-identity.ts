@@ -1,0 +1,128 @@
+export interface PokemonGoFormIdentity {
+  num: number;
+  form?: string | number;
+  pokemonType?: number;
+  releasedGO?: boolean;
+  quickMoves?: unknown[];
+  cinematicMoves?: unknown[];
+}
+
+interface PokemonFormSelectionIdentity {
+  form?: {
+    name?: string;
+    formName?: string;
+    pokemonType?: number;
+  };
+}
+
+const normalizeSelectionIdentity = (value: string | undefined) =>
+  (value ?? '').trim().replaceAll('-', '_').replaceAll(' ', '_').toUpperCase();
+
+export const deduplicatePokemonFormSelections = <T extends PokemonFormSelectionIdentity>(groups: T[][]) => {
+  const seen = new Set<string>();
+  return groups
+    .map((group) =>
+      group.filter((selection) => {
+        const form = selection.form;
+        const identity = normalizeSelectionIdentity(form?.name) || normalizeSelectionIdentity(form?.formName);
+        const key = `${form?.pokemonType ?? 0}:${identity}`;
+        if (!identity || !seen.has(key)) {
+          seen.add(key);
+          return true;
+        }
+        return false;
+      })
+    )
+    .filter((group) => group.length > 0);
+};
+
+const canonicalDefaultFormById: Readonly<Record<number, string>> = {
+  664: 'ICY_SNOW',
+  665: 'ICY_SNOW',
+  875: 'ICE',
+  877: 'FULL_BELLY',
+  925: 'FAMILY_OF_FOUR',
+  931: 'GREEN',
+  964: 'ZERO',
+  978: 'CURLY',
+  982: 'TWO',
+  1007: 'APEX_BUILD',
+  1008: 'ULTIMATE_MODE',
+  1012: 'COUNTERFEIT',
+  1013: 'UNREMARKABLE',
+};
+
+export const normalizePokemonFormIdentity = (id: number, value: string | number | undefined) => {
+  let identity = String(value ?? '')
+    .trim()
+    .replaceAll('-', '_')
+    .replaceAll(' ', '_')
+    .toUpperCase();
+
+  if (id === 718) {
+    identity = identity.replace(/_10$/, '_TEN_PERCENT').replace(/_50$/, '_FIFTY_PERCENT');
+    identity = identity.replace(/^10$/, 'TEN_PERCENT').replace(/^50$/, 'FIFTY_PERCENT');
+  } else if (id === 741) {
+    identity = identity.replace(/POM_POM$/, 'POMPOM');
+  } else if (id === 801) {
+    identity = identity.replace(/_ORIGINAL$/, '_ORIGINAL_COLOR').replace(/^ORIGINAL$/, 'ORIGINAL_COLOR');
+  } else if (id === 888) {
+    identity = identity.replace(/_CROWNED$/, '_CROWNED_SWORD').replace(/^CROWNED$/, 'CROWNED_SWORD');
+  } else if (id === 889) {
+    identity = identity.replace(/_CROWNED$/, '_CROWNED_SHIELD').replace(/^CROWNED$/, 'CROWNED_SHIELD');
+  } else if (id === 898) {
+    identity = identity.replace(/_ICE$/, '_ICE_RIDER').replace(/^ICE$/, 'ICE_RIDER');
+    identity = identity.replace(/_SHADOW$/, '_SHADOW_RIDER').replace(/^SHADOW$/, 'SHADOW_RIDER');
+  } else if (id === 716) {
+    identity = identity.replace(/_ACTIVE$/, '').replace(/^ACTIVE$/, 'NORMAL');
+  } else if (id === 664 || id === 665) {
+    identity = identity.replace(/POKE_BALL$/, 'POKEBALL');
+  } else if (id === 931) {
+    identity = identity.replace(/_PLUMAGE$/, '');
+  } else if (id === 982) {
+    identity = identity.replace(/_SEGMENT$/, '');
+  } else if (id === 1007) {
+    identity = identity.replace(/_APEX$/, '_APEX_BUILD').replace(/^APEX$/, 'APEX_BUILD');
+  } else if (id === 1008) {
+    identity = identity.replace(/_ULTIMATE$/, '_ULTIMATE_MODE').replace(/^ULTIMATE$/, 'ULTIMATE_MODE');
+  }
+  if (identity === 'NORMAL' && canonicalDefaultFormById[id]) {
+    identity = canonicalDefaultFormById[id];
+  }
+
+  return identity;
+};
+
+export const pokemonGoFormIdentityKey = (pokemon: PokemonGoFormIdentity) => {
+  const identity = normalizePokemonFormIdentity(pokemon.num, pokemon.form);
+  const canonicalDefaultForm = canonicalDefaultFormById[pokemon.num];
+  const pokemonType =
+    canonicalDefaultForm === identity && (pokemon.pokemonType === 0 || pokemon.pokemonType === 1)
+      ? 0
+      : (pokemon.pokemonType ?? 0);
+  return `${pokemon.num}:${pokemonType}:${identity}`;
+};
+
+export const pokemonGoFormIdentityPriority = (pokemon: PokemonGoFormIdentity) =>
+  Number(
+    String(pokemon.form ?? '')
+      .trim()
+      .replaceAll('-', '_')
+      .replaceAll(' ', '_')
+      .toUpperCase() !== 'NORMAL'
+  ) *
+    8 +
+  Number(Boolean(pokemon.releasedGO)) * 4 +
+  Number(Boolean(pokemon.quickMoves?.length || pokemon.cinematicMoves?.length)) * 2;
+
+export const selectPreferredPokemonGoFormIdentity = <T extends PokemonGoFormIdentity>(pokemons: T[]) => {
+  const preferred = pokemons.reduce<T | undefined>((current, pokemon) => {
+    if (!current || pokemonGoFormIdentityPriority(pokemon) > pokemonGoFormIdentityPriority(current)) {
+      return pokemon;
+    }
+    return current;
+  }, undefined);
+  return preferred && pokemons.some((pokemon) => pokemon.releasedGO)
+    ? ({ ...preferred, releasedGO: true } as T)
+    : preferred;
+};

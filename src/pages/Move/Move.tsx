@@ -37,6 +37,7 @@ import {
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
+import PokemonTableIcon from '../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { IMovePage } from '../models/page.model';
 import useSkipStalePageRequest from '../../utils/hooks/useSkipStalePageRequest';
 import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
@@ -117,18 +118,11 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
     name: 'Name',
     selector: (row) => (
       <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}>
-        <PokemonIconType pokemonType={row.pokemonType} size={24}>
-          <img
-            height={48}
-            alt="Pokémon Image"
-            className="tw-mr-2"
-            src={APIService.getPokeIconSprite(row.sprite, false)}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
-            }}
-          />
-        </PokemonIconType>
+        <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
+          <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-10">
+            <PokemonTableIcon {...row} />
+          </PokemonIconType>
+        </span>
         {row.name}
       </LinkToTop>
     ),

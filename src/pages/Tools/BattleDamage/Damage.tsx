@@ -27,7 +27,12 @@ import {
   toNumber,
 } from '../../../utils/extension';
 import { MaxMoveType, PokemonType, ThrowType, TypeMove } from '../../../enums/type.enum';
-import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
+import {
+  getMultiplyFriendship,
+  getThrowCharge,
+  maxIv,
+  maxTrainerFriendshipLevel,
+} from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
@@ -275,23 +280,27 @@ const Damage = () => {
         <div className="lg:tw-flex-1 border-window">
           <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
           <StatsDamageTable
+            pvp={isTrainer}
             setStatLevel={setStatLevel}
             setStatType={setStatType}
             statATK={searchingToolCurrentData?.pokemon?.statsGO?.atk}
             statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
             statSTA={searchingToolCurrentData?.pokemon?.statsGO?.sta}
             pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
+            hasShadowForm={searchingToolCurrentData?.pokemon?.hasShadowForm}
           />
         </div>
         <div className="lg:tw-flex-1 border-window">
           <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
           <StatsDamageTable
+            pvp={isTrainer}
             setStatLevel={setStatLevelObj}
             setStatType={setStatTypeObj}
             statATK={searchingToolObjectData?.pokemon?.statsGO?.atk}
             statDEF={searchingToolObjectData?.pokemon?.statsGO?.def}
             statSTA={searchingToolObjectData?.pokemon?.statsGO?.sta}
             pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
+            hasShadowForm={searchingToolObjectData?.pokemon?.hasShadowForm}
           />
         </div>
       </div>
@@ -329,7 +338,7 @@ const Damage = () => {
                 includeMaxMoves
                 maxMoveType={MaxMoveType.Attack}
                 isHighlight
-                pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
+                pokemonType={statType}
               />
               <div className="tw-mt-2">
                 {move && (
@@ -419,7 +428,7 @@ const Damage = () => {
                         );
                       }}
                       defaultValue={0}
-                      max={4}
+                      max={maxTrainerFriendshipLevel()}
                       size="large"
                       value={battleState.friendshipLevel}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}

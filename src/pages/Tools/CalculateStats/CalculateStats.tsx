@@ -61,6 +61,7 @@ const Calculate = () => {
   const { searchingToolCurrentDetails } = useSearch();
 
   const [searchCP, setSearchCP] = useState('');
+  const [searchLevel, setSearchLevel] = useState<number>();
 
   const [ATKIv, setATKIv] = useState(0);
   const [DEFIv, setDEFIv] = useState(0);
@@ -83,6 +84,7 @@ const Calculate = () => {
 
   const clearArrStats = () => {
     setSearchCP('');
+    setSearchLevel(undefined);
     setPokeStats(undefined);
     setStatLevel(1);
     setStatData(undefined);
@@ -97,7 +99,8 @@ const Calculate = () => {
   };
 
   const calculateStatsPoke = useCallback(async () => {
-    if (toNumber(searchCP) < minCp()) {
+    const selectedCP = Number(searchCP);
+    if (!Number.isInteger(selectedCP) || selectedCP < minCp()) {
       showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
       return;
     }
@@ -112,7 +115,8 @@ const Calculate = () => {
       const response = await APIService.postCalculateStats({
         id: pokemonId,
         form: searchingToolCurrentDetails?.fullName,
-        cp: toNumber(searchCP),
+        cp: selectedCP,
+        level: searchLevel,
         pokemonType: typePoke,
         iv: { atk: ATKIv, def: DEFIv, sta: STAIv },
         config: { minCp: minCp(), minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
@@ -133,7 +137,7 @@ const Calculate = () => {
         return;
       }
       showSnackbar(
-        `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} found in ${typePoke} ${name}`,
+        `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} found in ${getKeyWithData(PokemonType, typePoke)} ${name}`,
         'success'
       );
       setPokeStats(result.stats);
@@ -162,6 +166,7 @@ const Calculate = () => {
     DEFIv,
     STAIv,
     searchCP,
+    searchLevel,
     searchingToolCurrentDetails?.fullName,
     typePoke,
     showSnackbar,
@@ -193,7 +198,7 @@ const Calculate = () => {
             <img alt="Image League" width={30} height={30} src={getPokemonBattleLeagueIcon(cp)} />
             <span className={dataLeague ? (dataLeague.isElidge ? '' : '!tw-text-error') : ''}>
               {getPokemonBattleLeagueName(cp)}
-              {dataLeague ? dataLeague.isElidge ? '' : <span> (Not Elidge)</span> : ''}
+              {dataLeague ? dataLeague.isElidge ? '' : <span> (Not Eligible)</span> : ''}
             </span>
           </div>
         </td>
@@ -324,6 +329,13 @@ const Calculate = () => {
                   ivSta={STAIv}
                   searchCP={searchCP}
                   setSearchCP={setSearchCP}
+                  setSearchLevel={setSearchLevel}
+                  minLevel={minLevel()}
+                  maxLevel={typePoke === PokemonType.Buddy ? maxLevel() : maxPokemonLevel()}
+                  levelStep={stepLevel()}
+                  minIv={minIv()}
+                  maxIv={maxIv()}
+                  minCp={minCp()}
                   label="Input CP"
                   width="50%"
                   minWidth={350}
@@ -348,6 +360,7 @@ const Calculate = () => {
                 marks={marks}
                 onChange={(_, v) => {
                   setSearchCP('');
+                  setSearchLevel(undefined);
                   setATKIv(v as number);
                 }}
               />
@@ -366,6 +379,7 @@ const Calculate = () => {
                 marks={marks}
                 onChange={(_, v) => {
                   setSearchCP('');
+                  setSearchLevel(undefined);
                   setDEFIv(v as number);
                 }}
               />
@@ -384,6 +398,7 @@ const Calculate = () => {
                 marks={marks}
                 onChange={(_, v) => {
                   setSearchCP('');
+                  setSearchLevel(undefined);
                   setSTAIv(v as number);
                 }}
               />
@@ -396,6 +411,8 @@ const Calculate = () => {
               name="row-types-group"
               defaultValue={PokemonType.Normal}
               onChange={(e) => {
+                setSearchCP('');
+                setSearchLevel(undefined);
                 setPokeStats(undefined);
                 setStatData(undefined);
                 setLevelResults([]);

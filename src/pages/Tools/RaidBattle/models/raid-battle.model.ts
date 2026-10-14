@@ -31,8 +31,11 @@ export interface BattleResult {
   minHP: number;
   maxHP: number;
   averageHP: number;
-  hardPlayers: number;
-  easyPlayers: number;
+  minimumPlayers: number;
+  recommendedPlayers: number;
+  recommendationTeamSize: number;
+  recommendationEfficiency: number;
+  recommendationRelobbyDelay: number;
 }
 
 interface IRaidSummary {
@@ -41,7 +44,9 @@ interface IRaidSummary {
   tdoAtk: number;
   tdoDef: number;
   timer: number;
+  duration: number;
   bossHp: number;
+  bossHpRemaining: number;
 }
 
 export class RaidSummary implements IRaidSummary {
@@ -50,7 +55,9 @@ export class RaidSummary implements IRaidSummary {
   tdoAtk = 0;
   tdoDef = 0;
   timer = 0;
+  duration = 0;
   bossHp = 0;
+  bossHpRemaining = 0;
 
   static create(value: IRaidSummary) {
     const obj = new RaidSummary();

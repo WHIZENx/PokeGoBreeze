@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
 import { Badge, Box } from '@mui/material';
@@ -24,6 +24,7 @@ import {
   formNormal,
   maxIv,
   maxLevel,
+  maxPokemonLevel,
   minCp,
   minIv,
   minLevel,
@@ -55,28 +56,29 @@ const FindBattle = () => {
   const { hideSpinner, showSpinner } = useSpinner();
   const { searchingToolCurrentData } = useSearch();
 
-  const [maxCP, setMaxCP] = useState(0);
-
   const [searchCP, setSearchCP] = useState('');
+  const [searchLevel, setSearchLevel] = useState<number>();
 
   const [ATKIv, setATKIv] = useState(0);
   const [DEFIv, setDEFIv] = useState(0);
   const [STAIv, setSTAIv] = useState(0);
 
-  const [evoChain, setEvoChain] = useState<IQueryStatesEvoChain[][]>([]);
+  const [evoChain, setEvoChain] = useState<BattleLeagueApiItem[][]>([]);
   const [bestInLeague, setBestInLeague] = useState<IBattleBaseStats[]>([]);
+  const requestController = useRef<AbortController>();
 
   const { showSnackbar } = useSnackbar();
 
-  const clearArrStats = () => {
+  const clearArrStats = useCallback(() => {
+    requestController.current?.abort();
     setSearchCP('');
-    setMaxCP(0);
+    setSearchLevel(undefined);
     setEvoChain([]);
     setBestInLeague([]);
     setATKIv(0);
     setDEFIv(0);
     setSTAIv(0);
-  };
+  }, []);
 
   const onSearchStatsPoke = useCallback(
     async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -89,25 +91,31 @@ const FindBattle = () => {
       if (!pokemonId) {
         return showSnackbar('Please select a Pokémon before searching Battle League stats', 'error');
       }
+      requestController.current?.abort();
+      const controller = new AbortController();
+      requestController.current = controller;
       showSpinner();
       try {
-        const response = await APIService.postBattleLeagueSearch({
-          id: pokemonId,
-          form: searchingToolCurrentData?.pokemon?.fullName,
-          cp: toNumber(searchCP),
-          iv: { atk: ATKIv, def: DEFIv, sta: STAIv },
-          config: {
-            minLevel: minLevel(),
-            maxLevel: maxLevel(),
-            step: stepLevel(),
-            minIv: minIv(),
-            maxIv: maxIv(),
-            minCp: minCp(),
+        const response = await APIService.postBattleLeagueSearch(
+          {
+            id: pokemonId,
+            form: searchingToolCurrentData?.pokemon?.fullName,
+            cp: toNumber(searchCP),
+            level: searchLevel,
+            iv: { atk: ATKIv, def: DEFIv, sta: STAIv },
+            config: {
+              minLevel: minLevel(),
+              maxLevel: maxLevel(),
+              step: stepLevel(),
+              minIv: minIv(),
+              maxIv: maxIv(),
+              minCp: minCp(),
+            },
           },
-        });
+          controller.signal
+        );
         const result = response.data.data;
         if (!result.possible) {
-          setMaxCP(0);
           setEvoChain([]);
           setBestInLeague([]);
           showSnackbar(
@@ -116,20 +124,24 @@ const FindBattle = () => {
           );
           return;
         }
-        setMaxCP(result.maxCP);
-        setEvoChain(result.chains as IQueryStatesEvoChain[][]);
+        setEvoChain(result.chains);
         setBestInLeague(result.bestInLeague);
         showSnackbar(
           `Search success at CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} found in ${name}`,
           'success'
         );
-      } catch {
-        setMaxCP(0);
+      } catch (error) {
+        if (APIService.isCancel(error)) {
+          return;
+        }
         setEvoChain([]);
         setBestInLeague([]);
         showSnackbar('Battle League API is unavailable.', 'error');
       } finally {
-        hideSpinner();
+        if (requestController.current === controller) {
+          requestController.current = undefined;
+          hideSpinner();
+        }
       }
     },
     [
@@ -137,12 +149,20 @@ const FindBattle = () => {
       DEFIv,
       STAIv,
       searchCP,
+      searchLevel,
       searchingToolCurrentData?.pokemon?.fullName,
       searchingToolCurrentData?.form,
       showSnackbar,
       showSpinner,
       hideSpinner,
     ]
+  );
+
+  useEffect(
+    () => () => {
+      requestController.current?.abort();
+    },
+    []
   );
 
   const getTextColorRatio = (value: number | undefined) => {
@@ -169,7 +189,7 @@ const FindBattle = () => {
   };
 
   const renderPokemonBattleLeague = (
-    item: IQueryStatesEvoChain,
+    item: BattleLeagueApiItem,
     battleStats: IBattleBaseStats,
     cp: BattleLeagueCPType
   ) => (
@@ -184,7 +204,10 @@ const FindBattle = () => {
             Rank: <b>#{battleStats.rank}</b>
           </li>
           <li>CP: {battleStats.CP}</li>
-          <li>Level: {battleStats.level}</li>
+          <li>
+            Level: {battleStats.level}
+            {toNumber(battleStats.level) > maxPokemonLevel() ? ' (Best Buddy)' : ''}
+          </li>
           <li>
             {'Stats Prod (%): '}
             <span className={combineClasses('!tw-bg-transparent', getTextColorRatio(battleStats.ratio))}>
@@ -221,7 +244,7 @@ const FindBattle = () => {
             <b>{` ${getPokemonBattleLeagueName(cp)}`}</b>
           </h6>
           <b className="tw-text-error tw-p-3">
-            <CloseIcon color="error" /> Not Elidge
+            <CloseIcon color="error" /> Over CP Limit at Current Level
           </b>
         </div>
       )}
@@ -247,6 +270,13 @@ const FindBattle = () => {
                 ivSta={STAIv}
                 searchCP={searchCP}
                 setSearchCP={setSearchCP}
+                setSearchLevel={setSearchLevel}
+                minLevel={minLevel()}
+                maxLevel={maxLevel()}
+                levelStep={stepLevel()}
+                minIv={minIv()}
+                maxIv={maxIv()}
+                minCp={minCp()}
                 label="Input CP"
                 width="50%"
                 minWidth={350}
@@ -271,6 +301,7 @@ const FindBattle = () => {
               marks={marks}
               onChange={(_, v) => {
                 setSearchCP('');
+                setSearchLevel(undefined);
                 setATKIv(v as number);
               }}
             />
@@ -289,6 +320,7 @@ const FindBattle = () => {
               marks={marks}
               onChange={(_, v) => {
                 setSearchCP('');
+                setSearchLevel(undefined);
                 setDEFIv(v as number);
               }}
             />
@@ -307,6 +339,7 @@ const FindBattle = () => {
               marks={marks}
               onChange={(_, v) => {
                 setSearchCP('');
+                setSearchLevel(undefined);
                 setSTAIv(v as number);
               }}
             />
@@ -320,7 +353,7 @@ const FindBattle = () => {
         {isNotEmpty(evoChain) && isNotEmpty(bestInLeague) && (
           <div className="tw-text-center tw-pb-3">
             <div className="tw-mb-3">
-              <h4 className="tw-underline">Recommend Battle League</h4>
+              <h4 className="tw-underline">Best IV Stat Product Fit</h4>
               {bestInLeague.map((value, index) => (
                 <LinkToTop
                   to={`/pokemon/${value.id}${generateParamForm(value.form, value.pokemonType)}`}
@@ -334,7 +367,7 @@ const FindBattle = () => {
                       <span className="caption border-best-poke best-name">
                         <b>
                           #{value.id} {splitAndCapitalize(value.name, '_', ' ')}{' '}
-                          {splitAndCapitalize(searchingToolCurrentData?.form?.form?.formName, '-', ' ')}
+                          {splitAndCapitalize(value.form, '_', ' ')}
                         </b>
                       </span>
                     </div>
@@ -397,15 +430,15 @@ const FindBattle = () => {
                                     <div>
                                       <b>
                                         {`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')} `}
-                                        {splitAndCapitalize(searchingToolCurrentData?.form?.form?.formName, '-', ' ')}
+                                        {splitAndCapitalize(item.form, '_', ' ')}
                                       </b>
                                     </div>
                                   </LinkToTop>
                                 </div>
-                                {toNumber(item.maxCP) < maxCP ? (
+                                {!item.eligible ? (
                                   <div className="tw-text-error">
                                     <b>
-                                      <CloseIcon color="error" /> Not Elidge
+                                      <CloseIcon color="error" /> Not in Evolution Path
                                     </b>
                                   </div>
                                 ) : (

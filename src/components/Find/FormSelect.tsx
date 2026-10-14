@@ -11,7 +11,6 @@ import {
   getPreferredPokemonFormSprite,
   getPokemonType,
   getValidPokemonImgPath,
-  setNextPokemonImageFallback,
   splitAndCapitalize,
   TypeRadioGroup,
 } from '../../utils/utils';
@@ -37,6 +36,8 @@ import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
 import { useSnackbar } from '../../contexts/snackbar.context';
+import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
+import { deduplicatePokemonFormSelections } from '../../utils/pokemon-form-identity';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -47,7 +48,8 @@ interface OptionsPokemon {
 const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
   const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
-  const { generatePokemonGoForms, getPokemonDetails, getPokemonById, findPokemonById } = usePokemon();
+  const { generatePokemonGoForms, getPokemonDetails, getPokemonNavigation, findPokemonById, retrieveMoves } =
+    usePokemon();
 
   const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
@@ -99,10 +101,26 @@ const FormSelect = (props: IFormSelectComponent) => {
 
       generatePokemonGoForms(dataFormList, formListResult, specie.id, specie.name);
 
-      setPokeData(dataPokeList);
-      setFormList(formListResult);
+      const selectableFormList = deduplicatePokemonFormSelections(formListResult)
+        .map((forms) =>
+          forms.filter((form) => {
+            const pokemonType = form.form.pokemonType ?? PokemonType.None;
+            if (props.excludedPokemonTypes?.includes(pokemonType)) {
+              return false;
+            }
+            if (!props.pokemonFilter) {
+              return true;
+            }
+            const pokemon = retrieveMoves(specie.id, form.form.formName ?? form.form.name ?? form.name, pokemonType);
+            return !!pokemon && props.pokemonFilter(pokemon);
+          })
+        )
+        .filter(isNotEmpty);
 
-      const flatForms = formListResult.flatMap((value) => value);
+      setPokeData(dataPokeList);
+      setFormList(selectableFormList);
+
+      const flatForms = selectableFormList.flatMap((value) => value);
       const defaultForm = flatForms.filter((item) => item.form.isDefault);
       let currentForm = defaultForm.find((item) => item.form.id === specie.id);
       if (searchingToolData) {
@@ -127,7 +145,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
       setData(specie);
     },
-    [searchingToolData]
+    [searchingToolData, props.excludedPokemonTypes, props.pokemonFilter, retrieveMoves]
   );
 
   const queryPokemon = useCallback(
@@ -209,16 +227,12 @@ const FormSelect = (props: IFormSelectComponent) => {
   useEffect(() => {
     const id = toNumber(props.id);
     if (id > 0) {
-      const currentPokemon = getPokemonById(id);
-      if (currentPokemon) {
-        setDataStorePokemon({
-          prev: getPokemonById(currentPokemon.id - 1),
-          current: getPokemonById(currentPokemon.id),
-          next: getPokemonById(currentPokemon.id + 1),
-        });
+      const navigation = getPokemonNavigation(id);
+      if (navigation.current) {
+        setDataStorePokemon(navigation);
       }
     }
-  }, [getPokemonById, props.id]);
+  }, [getPokemonNavigation, props.id]);
 
   const clearData = () => {
     setCurrentForm(undefined);
@@ -269,11 +283,14 @@ const FormSelect = (props: IFormSelectComponent) => {
     convertPokemonImageName(currentForm?.form.formName)
   );
   const selectedImageCandidates = [
-    getPreferredPokemonFormSprite(currentForm?.form.sprites),
     selectedHybridImage,
+    getPreferredPokemonFormSprite(currentForm?.form.sprites),
     APIService.getPokeFullAsset(dataStorePokemon?.current?.id),
   ];
-  const selectedImage = selectedImageCandidates.find(Boolean) ?? APIService.getPokeFullSprite();
+  const { displayedUrl: selectedImage, isLoading: isSelectedImageLoading } = usePreloadedImage(
+    selectedImageCandidates,
+    APIService.getPokeSprite()
+  );
 
   return (
     <Fragment>
@@ -299,16 +316,12 @@ const FormSelect = (props: IFormSelectComponent) => {
           </div>
         )}
       </div>
-      <img
-        key={selectedImage}
-        className="tw-p-2"
-        height={200}
-        alt="Image Pokemon"
-        src={selectedImage}
-        onError={(e) => {
-          setNextPokemonImageFallback(e.currentTarget, selectedImageCandidates);
-        }}
-      />
+      <span
+        aria-busy={isSelectedImageLoading}
+        className="tw-inline-flex tw-h-[216px] tw-w-[216px] tw-shrink-0 tw-align-middle tw-items-center tw-justify-center"
+      >
+        <img className="tw-h-[200px] tw-w-[200px] tw-object-contain tw-p-2" alt="Image Pokemon" src={selectedImage} />
+      </span>
       <div className="tw-inline-block tw-w-16 tw-h-16">
         {dataStorePokemon?.next && (
           <div className="tw-cursor-pointer" onClick={() => props.onSetNext?.()}>

@@ -18,6 +18,7 @@ import { SelectMovePokemonModel } from '../../../components/Commons/Inputs/model
 import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
 import StatsCalculationService from '../../../services/stats-calculation.service';
 import { useSnackbar } from '../../../contexts/snackbar.context';
+import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 
 const createMoveAudio = (sound: string | undefined) => {
   const audio = new Audio(APIService.getSoundMove(sound));
@@ -223,7 +224,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         isFit
         placeholder="Enter Name"
         isShowPokemonIcon
-        onSprite={(pokemon) => pokemon?.pokemon?.sprite}
+        selectedPokemonIcon={pokemon?.pokemon && <PokemonTableIcon {...pokemon.pokemon} size={40} />}
+        renderSelectedPokemonIcon={(value) => value.pokemon && <PokemonTableIcon {...value.pokemon} size={40} />}
         customIconStart={
           (score > 0 || pokemon) && (
             <>
