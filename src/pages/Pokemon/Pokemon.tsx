@@ -40,7 +40,6 @@ import {
   getPreferredPokemonFormSprite,
   getPokemonType,
   isSpecialFormType,
-  setNextPokemonImageFallback,
   splitAndCapitalize,
 } from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
@@ -78,6 +77,7 @@ import useSpinner from '../../composables/useSpinner';
 import useRouter from '../../composables/useRouter';
 import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
+import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { Skeleton } from '@mui/material';
 
@@ -107,6 +107,7 @@ const Pokemon = (props: IPokemonPage) => {
     checkPokemonIncludeShadowForm,
     generatePokemonGoForms,
     getPokemonDetails,
+    getPokemonNavigation,
   } = usePokemon();
   const { searchingMainData, searchingMainForm, searchingMainDetails } = useSearch();
 
@@ -490,14 +491,15 @@ const Pokemon = (props: IPokemonPage) => {
         if (!currentPokemon) {
           return;
         }
+        const navigation = getPokemonNavigation(currentPokemon.id);
         if (isLeft) {
-          const prev = getPokemonById(currentPokemon.id - 1);
+          const prev = navigation.prev;
           if (prev) {
             event.preventDefault();
             params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
           }
         } else {
-          const next = getPokemonById(currentPokemon.id + 1);
+          const next = navigation.next;
           if (next) {
             event.preventDefault();
             params.id ? navigate(`/pokemon/${next.id}`, { replace: true }) : props.onIncId?.();
@@ -509,7 +511,7 @@ const Pokemon = (props: IPokemonPage) => {
         document.removeEventListener('keyup', keyDownHandler);
       };
     }
-  }, [params.id, props.searchOption?.id, spinnerIsLoading, getFilteredPokemons]);
+  }, [params.id, props.searchOption?.id, spinnerIsLoading, getFilteredPokemons, getPokemonById, getPokemonNavigation]);
 
   const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined) => {
     if (!form) {
@@ -683,16 +685,12 @@ const Pokemon = (props: IPokemonPage) => {
       if (displayedId > 0 && displayedId !== id && !progress.isLoadedForms) {
         return;
       }
-      const currentPokemon = getPokemonById(displayedId || id);
-      if (currentPokemon) {
-        setDataStorePokemon({
-          prev: getPokemonById(currentPokemon.id - 1),
-          current: getPokemonById(currentPokemon.id),
-          next: getPokemonById(currentPokemon.id + 1),
-        });
+      const navigation = getPokemonNavigation(displayedId || id);
+      if (navigation.current) {
+        setDataStorePokemon(navigation);
       }
     }
-  }, [getFilteredPokemons, params.id, props.searchOption?.id, data?.id, progress.isLoadedForms]);
+  }, [getFilteredPokemons, getPokemonNavigation, params.id, props.searchOption?.id, data?.id, progress.isLoadedForms]);
 
   const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
     if (progress.isLoadedForms) {
@@ -718,7 +716,10 @@ const Pokemon = (props: IPokemonPage) => {
     getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites),
     APIService.getPokeFullAsset(dataStorePokemon?.current?.id),
   ];
-  const mainImage = mainImageCandidates.find(Boolean) ?? APIService.getPokeFullSprite();
+  const { displayedUrl: mainImage, isLoading: isMainImageLoading } = usePreloadedImage(
+    mainImageCandidates,
+    APIService.getPokeSprite()
+  );
 
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
@@ -749,16 +750,8 @@ const Pokemon = (props: IPokemonPage) => {
       >
         <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
           <AlertReleased formName={formName} pokemonType={searchingMainForm?.form?.pokemonType} icon={iconData} />
-          <div className="tw-inline-block img-desc">
-            <img
-              key={mainImage}
-              className="pokemon-main-sprite !tw-align-baseline"
-              alt="Image Pokemon"
-              src={mainImage}
-              onError={(e) => {
-                setNextPokemonImageFallback(e.currentTarget, mainImageCandidates);
-              }}
-            />
+          <div className="tw-inline-block img-desc" aria-busy={isMainImageLoading}>
+            <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
           </div>
           <div className="tw-inline-block tw-align-bottom">
             <PokemonTable

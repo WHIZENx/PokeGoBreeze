@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Select.scss';
-import { combineClasses, isInclude, isNotEmpty, isUndefined, toNumber } from '../../../utils/extension';
+import { combineClasses, isInclude, isNotEmpty, isUndefined } from '../../../utils/extension';
 import { ISelectCardPokemonComponent } from '../models/component.model';
 import InputMuiSearch from '../Inputs/InputMuiSearch';
 import { CircularProgress, MenuList, MenuItem } from '@mui/material';
@@ -8,14 +8,14 @@ import { SelectPosition } from './enums/select-type.enum';
 import { debounce } from 'lodash';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
-import apiService from '../../../services/api.service';
+import { isNearScrollEnd } from '../../../utils/scroll';
 
 const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
   const [showPokemon, setShowPokemon] = useState(props.isShowPokemon);
   const [search, setSearch] = useState(props.value);
   const [startIndex, setStartIndex] = useState(0);
 
-  const [pokemonIcon, setPokemonIcon] = useState(props.sprite);
+  const [pokemonIcon, setPokemonIcon] = useState<React.ReactNode>(props.selectedPokemonIcon);
 
   const prependRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLDivElement | null>(null);
@@ -31,9 +31,12 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
     : pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex);
 
   useEffect(() => {
-    setPokemonIcon(props.sprite);
+    setPokemonIcon(props.selectedPokemonIcon);
+  }, [props.selectedPokemonIcon]);
+
+  useEffect(() => {
     setSearch(props.value);
-  }, [props.sprite, props.value]);
+  }, [props.value]);
 
   useEffect(() => {
     if (props.isRemoteSearch) {
@@ -72,23 +75,21 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
   }, [search]);
 
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollingElement = ele.currentTarget;
-    const scrollTop = toNumber(scrollingElement.scrollTop);
-    const fullHeight = toNumber(scrollingElement.offsetHeight);
-    const scrollHeight = toNumber(scrollingElement.scrollHeight);
-
-    if (scrollTop + fullHeight >= scrollHeight * 0.8) {
+    if (isNearScrollEnd(ele.currentTarget)) {
       if (scrollDebounceRef.current) {
         clearTimeout(scrollDebounceRef.current);
       }
 
       scrollDebounceRef.current = setTimeout(() => {
         if (props.isRemoteSearch) {
-          if (props.hasMore) {
+          if (props.hasMore && !props.isLoading) {
             props.onLoadMore?.();
           }
         } else {
-          setStartIndex((prevIndex) => prevIndex + 1);
+          setStartIndex((current) => {
+            const visibleCount = firstInit.current + eachCounter.current * current;
+            return visibleCount < pokemonListFilter.length ? current + 1 : current;
+          });
         }
       }, 100);
     }
@@ -115,17 +116,14 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
       disabled={props.isDisable}
       customPrepend={
         pokemonIcon && (
-          <img
-            className={combineClasses('tw-object-contain', props.isDisable ? 'filter-gray' : '')}
-            width={40}
-            height={40}
-            alt="Pokémon Image"
-            src={pokemonIcon}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = apiService.getPokeIconSprite();
-            }}
-          />
+          <span
+            className={combineClasses(
+              'tw-inline-flex tw-h-10 tw-w-10 tw-items-center',
+              props.isDisable ? 'filter-gray' : ''
+            )}
+          >
+            {pokemonIcon}
+          </span>
         )
       }
       onRemove={() => {
@@ -170,17 +168,18 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
             {pokemonListFilterSlice.map((value, index) => (
               <MenuItem
                 key={index}
-                disabled={props.isLoading}
+                disabled={props.isLoading && !props.isRemoteSearch}
                 selected={props.onIsSelectedPokemon?.(value)}
                 onMouseDown={() => {
+                  const selectedLabel = props.onSelect?.(value) ?? props.onFilter?.(value).name;
                   if (props.onSetPokemon) {
                     props.onSetPokemon(value);
                   }
-                  if (props.onSelect) {
-                    setSearch(props.onSelect(value));
+                  if (selectedLabel !== undefined) {
+                    setSearch(formatPokemonDisplayName(selectedLabel));
                   }
-                  if (props.isShowPokemonIcon && props.onSprite) {
-                    setPokemonIcon(apiService.getPokeIconSprite(props.onSprite(value)));
+                  if (props.isShowPokemonIcon && props.renderSelectedPokemonIcon) {
+                    setPokemonIcon(props.renderSelectedPokemonIcon(value));
                   }
                 }}
                 onMouseOver={() => props.onSetSelectId?.(value)}

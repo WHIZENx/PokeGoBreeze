@@ -2,9 +2,9 @@ import React, { Fragment } from 'react';
 import { IButtonGroupFormComponent } from '../models/component.model';
 import { combineClasses, toNumber } from '../../../utils/extension';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
-import { capitalize, formIconAssets, splitAndCapitalize } from '../../../utils/utils';
+import { capitalize, splitAndCapitalize } from '../../../utils/utils';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
-import apiService from '../../../services/api.service';
+import PokemonTableIcon from '../../Sprites/PokemonTableIcon/PokemonTableIcon';
 import ButtonMui from './ButtonMui';
 
 const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
@@ -39,16 +39,20 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                   label={
                     <div className="tw-h-full">
                       <div className="tw-flex tw-w-full tw-justify-center">
-                        <div className="tw-relative tw-w-16">
-                          <PokemonIconType pokemonType={value.form.pokemonType} size={24}>
-                            <img
-                              className="pokemon-sprite-medium"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = apiService.getPokeIconSprite();
-                              }}
-                              alt="Image Icon Form"
-                              src={formIconAssets(value)}
+                        <div className="tw-relative tw-flex tw-h-16 tw-w-16 tw-items-center tw-justify-center">
+                          <PokemonIconType
+                            pokemonType={value.form.pokemonType}
+                            size={24}
+                            className="!tw-bottom-1 tw-right-0 tw-z-10"
+                          >
+                            <PokemonTableIcon
+                              num={value.defaultId}
+                              name={value.name}
+                              fullName={value.form.name}
+                              slug={value.form.name}
+                              form={value.form.formName}
+                              baseSpecies={value.defaultName}
+                              size={64}
                             />
                           </PokemonIconType>
                         </div>

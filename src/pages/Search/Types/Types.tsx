@@ -29,6 +29,8 @@ import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 import { formatMaxMoveLevelSummary, getMaxMoveVariantLabel } from '../../../utils/max-move';
+import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -52,16 +54,11 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonData>>(
         to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
-        <img
-          height={48}
-          alt="Pokémon Image"
-          className="tw-mr-2"
-          src={APIService.getPokeIconSprite(row.sprite, false)}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
-          }}
-        />
+        <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
+          <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-10">
+            <PokemonTableIcon {...row} />
+          </PokemonIconType>
+        </span>
         {splitAndCapitalize(row.name, '-', ' ')}
       </LinkToTop>
     ),

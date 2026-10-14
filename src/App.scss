@@ -128,7 +128,7 @@ img.badge-type-sprite {
 
 .shadow-icon,
 .purified-icon {
-  @apply tw-absolute tw-bottom-0;
+  @apply tw-absolute tw-right-0 tw-bottom-0 tw-left-auto;
 }
 
 .border-type-init {

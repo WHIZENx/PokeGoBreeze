@@ -22,6 +22,7 @@ import TrainerMoveSelect, { createDefaultTrainerMoveSelection, type TrainerMoveS
 import './TrainerLab.scss';
 import { formatPokemonDisplayName } from '../../utils/pokemon-display-name';
 import DismissibleAlert from '../../components/Commons/Alerts/DismissibleAlert';
+import PokemonTableIcon from '../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 
 type TrainerTab = 'battle' | 'rewards';
 type League = ITrainerBattlePreset['league'];
@@ -173,7 +174,7 @@ const TrainerLab = () => {
 
   const renderPokemon = (pokemon: IPokemonData) => (
     <Box className="trainer-picker-row">
-      <img src={APIService.getPokeIconSprite(pokemon.sprite)} width={44} height={44} alt="" />
+      <PokemonTableIcon {...pokemon} size={44} />
       <Box>
         <Typography variant="body2" fontWeight={700}>
           {formatPokemonDisplayName(pokemon.name)}
@@ -335,13 +336,13 @@ const TrainerLab = () => {
                             !team.some((member, slot) => slot !== index && member?.pokemonId === pokemon.pokemonId)
                         )}
                         value={formatPokemonDisplayName(selected?.name)}
-                        sprite={selected ? APIService.getPokeIconSprite(selected.sprite) : undefined}
+                        selectedPokemonIcon={selected && <PokemonTableIcon {...selected} size={40} />}
                         placeholder="Search Pokémon"
                         isShowPokemonIcon
                         isFit
                         onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.num })}
                         onSelect={(pokemon) => formatPokemonDisplayName(pokemon.name)}
-                        onSprite={(pokemon) => pokemon.sprite}
+                        renderSelectedPokemonIcon={(pokemon) => <PokemonTableIcon {...pokemon} size={40} />}
                         onSetPokemon={(pokemon) => setTeamSlot(index, pokemon)}
                         onRemove={() => setTeamSlot(index)}
                         onIsSelectedPokemon={(pokemon) => pokemon.fullName === selected?.fullName}

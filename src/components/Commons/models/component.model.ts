@@ -397,8 +397,8 @@ export interface ISelectCardPokemonComponent<T> {
   onFilter?: (pokemon: T) => { name: string | undefined; id: number };
   inputRef?: React.RefObject<HTMLInputElement>;
   isShowPokemonIcon?: boolean;
-  sprite?: string;
-  onSprite?: (pokemon: T) => string | undefined;
+  selectedPokemonIcon?: React.ReactNode;
+  renderSelectedPokemonIcon?: (pokemon: T) => React.ReactNode;
   isDisable?: boolean;
 }
 

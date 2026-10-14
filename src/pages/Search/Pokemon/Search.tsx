@@ -16,6 +16,7 @@ import useSearch from '../../../composables/useSearch';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import SelectCardPokemon from '../../../components/Commons/Selects/SelectCardPokemon';
 import { useTitle } from '../../../utils/hooks/useTitle';
+import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import {
   isPokedexApiResponse,
   type PokedexApiPokemon,
@@ -30,7 +31,7 @@ const Search = () => {
     keywords: ['Pokémon search', 'find Pokémon', 'Pokémon filter', 'Pokémon GO search', 'Pokémon database'],
   });
   const { routerAction } = useRouter();
-  const { getPokemonById } = usePokemon();
+  const { getPokemonById, getPokemonNavigation } = usePokemon();
   const { searchingMainData } = useSearch();
 
   const [searchOption, setSearchOption] = useState<SearchOption>({
@@ -59,8 +60,11 @@ const Search = () => {
     const requestId = ++latestSearchRequest.current;
     const controller = new AbortController();
     const delay = searchPage === 1 ? 250 : 0;
+    if (searchPage === 1) {
+      setSearchResults([]);
+    }
+    setIsSearchLoading(true);
     const timeout = window.setTimeout(() => {
-      setIsSearchLoading(true);
       APIService.getFetchUrl<PokedexApiResponse>(
         APIService.getPokedex({
           q: searchQuery.trim(),
@@ -110,18 +114,18 @@ const Search = () => {
   };
 
   const modifyId = (modify: number) => {
-    const currentPokemon = getPokemonById(selectId + modify);
-    if (currentPokemon) {
-      setSelectId(selectId + modify);
-      setSearchOption({ id: toNumber(currentPokemon.id) });
+    const navigation = getPokemonNavigation(selectId);
+    const targetPokemon = modify < 0 ? navigation.prev : navigation.next;
+    if (targetPokemon) {
+      setSelectId(targetPokemon.id);
+      setSearchOption({ id: targetPokemon.id });
     }
   };
 
   const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const currentPokemon = getPokemonById(selectId);
     if (currentPokemon) {
-      const prev = getPokemonById(currentPokemon.id - 1);
-      const next = getPokemonById(currentPokemon.id + 1);
+      const { prev, next } = getPokemonNavigation(currentPokemon.id);
       if (event.keyCode === keyEnter()) {
         inputRef.current?.blur();
         setSearchOption({ id: selectId });
@@ -208,17 +212,7 @@ const Search = () => {
           cardElement={(pokemon) => (
             <>
               <b>#{pokemon.num}</b>
-              <img
-                width={36}
-                height={36}
-                className="img-search"
-                alt="Pokémon Image"
-                src={APIService.getPokeSprite(pokemon.num)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeSprite();
-                }}
-              />
+              <PokemonTableIcon {...pokemon} className="img-search" size={36} />
               {formatPokemonDisplayName(pokemon.name)}
             </>
           )}

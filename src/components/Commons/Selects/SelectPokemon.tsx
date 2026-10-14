@@ -5,12 +5,12 @@ import React from 'react';
 import './Select.scss';
 import { addSelectMovesByType } from '../../../utils/utils';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
-import APIService from '../../../services/api.service';
 import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
 import usePokemon from '../../../composables/usePokemon';
 import SelectCardPokemon from './SelectCardPokemon';
+import PokemonTableIcon from '../../Sprites/PokemonTableIcon/PokemonTableIcon';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
@@ -68,8 +68,8 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       cardElement={(pokemon) => <CardPokemon value={pokemon} />}
       maxHeight={props.maxHeight}
       isShowPokemonIcon
-      sprite={props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined}
-      onSprite={(pokemon) => pokemon?.sprite}
+      selectedPokemonIcon={props.pokemon && <PokemonTableIcon {...props.pokemon} size={40} />}
+      renderSelectedPokemonIcon={(pokemon) => <PokemonTableIcon {...pokemon} size={40} />}
       isDisable={props.isDisable}
     />
   );

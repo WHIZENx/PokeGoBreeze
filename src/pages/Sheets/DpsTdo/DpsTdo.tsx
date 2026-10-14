@@ -63,6 +63,7 @@ import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../../components/Commons/Buttons/ToggleType';
 import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
 import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
+import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { ProcessedDataPage } from '../../../services/processed-data.service';
 
 interface PokemonSheetData {
@@ -140,18 +141,11 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
         className="tw-flex tw-items-center"
       >
-        <PokemonIconType pokemonType={row.pokemonType} size={25}>
-          <img
-            height={48}
-            alt="Pokémon Image"
-            className="tw-mr-2"
-            src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = APIService.getPokeIconSprite(row.pokemon.baseSpecies);
-            }}
-          />
-        </PokemonIconType>
+        <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
+          <PokemonIconType pokemonType={row.pokemonType} size={25} className="!tw-bottom-0 !tw-right-0 tw-z-10">
+            <PokemonTableIcon {...row.pokemon} />
+          </PokemonIconType>
+        </span>
         {splitAndCapitalize(row.pokemon.name, '-', ' ')}
       </LinkToTop>
     ),

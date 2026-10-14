@@ -40,6 +40,7 @@ import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
+import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
@@ -67,19 +68,14 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
     id: ColumnType.Name,
     name: 'Pokémon Name',
     selector: (row) => (
-      <PokemonIconType pokemonType={row.pokemonType} size={24}>
-        <img
-          height={48}
-          alt="Pokémon Image"
-          className="tw-mr-2"
-          src={APIService.getPokeIconSprite(row.sprite, false)}
-          onError={(event) => {
-            event.currentTarget.onerror = null;
-            event.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
-          }}
-        />
+      <>
+        <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
+          <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-10">
+            <PokemonTableIcon {...row} />
+          </PokemonIconType>
+        </span>
         {splitAndCapitalize(row.name.replaceAll('_', '-'), '-', ' ')}
-      </PokemonIconType>
+      </>
     ),
     minWidth: '200px',
   },
