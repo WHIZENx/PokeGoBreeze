@@ -1,0 +1,576 @@
+{
+  "sources": {
+    "PokeMiners/pogo_assets": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/",
+    "Pokémon GO Wiki": "https://static.wikia.nocookie.net/pokemongo/images/",
+    "HybridShivam/Pokemon type icons": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/"
+  },
+  "assets": {
+    "shadow": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Rocket/ic_shadow.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Rocket/ic_shadow.png",
+      "file": "shadow.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/shadow.png",
+      "bytes": 3685,
+      "sha256": "d51688626c210f65a49c25388d35dabe478628e996f99bf54252b4a7d492d28c"
+    },
+    "purified": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Rocket/ic_purified.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Rocket/ic_purified.png",
+      "file": "purified.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/purified.png",
+      "bytes": 4187,
+      "sha256": "7fdbdd899938dbf5dfc2cd2e1a0caed4232537b79328712d417b792f74e4eb89"
+    },
+    "buddyCrown": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Buddy/pokemonBuddyCrownSml.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Buddy/pokemonBuddyCrownSml.png",
+      "file": "buddyCrown.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/buddyCrown.png",
+      "bytes": 1592,
+      "sha256": "bd02f0bf157f5a3679ed575c69553d15f42d07b62ec15adb66c38edcbcea49b2"
+    },
+    "shiny": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Pokedex/ic_shiny.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Pokedex/ic_shiny.png",
+      "file": "shiny.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/shiny.png",
+      "bytes": 3599,
+      "sha256": "b5db1acf0f39242f6066ca0daf06eee56b12c36ad6ef94ab2643ac74e374657b"
+    },
+    "genderMale": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Pokedex/male_l.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Pokedex/male_l.png",
+      "file": "genderMale.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/genderMale.png",
+      "bytes": 2014,
+      "sha256": "abab81a571437ed4ad4d4368b8b111b72d977443de5b3987c84179eecc762e69"
+    },
+    "genderFemale": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Pokedex/female_l.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Pokedex/female_l.png",
+      "file": "genderFemale.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/genderFemale.png",
+      "bytes": 1906,
+      "sha256": "dcb81650de01ba2178bbcf3588cf75d861e11f75017d65533d74c37b615b014a"
+    },
+    "fastMove": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Items/Item_1201.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Items/Item_1201.png",
+      "file": "fastMove.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/fastMove.png",
+      "bytes": 24021,
+      "sha256": "e9862871a2714f52d4eb9a03c54728c8cf4cc4931540080fdb6eb6d7b07e33a0"
+    },
+    "chargedMove": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Items/Item_1202.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Items/Item_1202.png",
+      "file": "chargedMove.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/chargedMove.png",
+      "bytes": 25882,
+      "sha256": "21cb93c0adaf82a8d71c65b441332379a53372839e5ea6e2d882235ae092b312"
+    },
+    "stardust": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Items/stardust_painted.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Items/stardust_painted.png",
+      "file": "stardust.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/stardust.png",
+      "bytes": 25635,
+      "sha256": "7254263d1eecdc67c71f7360a0d5f9f5ff01b3c04bf9c71194dceae7eced0a07"
+    },
+    "typeBug": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_BUG.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_BUG.png",
+      "file": "POKEMON_TYPE_BUG.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_BUG.png",
+      "bytes": 3199,
+      "sha256": "28117a14fb8a3b415daa4e132b4b03de37fb1d73f12004530b205a53ad0b8771"
+    },
+    "typeDark": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_DARK.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_DARK.png",
+      "file": "POKEMON_TYPE_DARK.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_DARK.png",
+      "bytes": 3276,
+      "sha256": "7a3fd1668cd7f4d8f3e2d226c21ea6a65f5599e90bb0dc8cf941064b64f3aaf1"
+    },
+    "typeDragon": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_DRAGON.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_DRAGON.png",
+      "file": "POKEMON_TYPE_DRAGON.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_DRAGON.png",
+      "bytes": 3107,
+      "sha256": "97db9b48bbe37d6d3735db1dab10fe04164e4d264c2103daea62df76259e3f0a"
+    },
+    "typeElectric": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_ELECTRIC.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_ELECTRIC.png",
+      "file": "POKEMON_TYPE_ELECTRIC.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_ELECTRIC.png",
+      "bytes": 2465,
+      "sha256": "7bf213edeb35a2c43e76db0eb4fed3e98d7b481c91b608a7b5edf4ee092e9599"
+    },
+    "typeFairy": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_FAIRY.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_FAIRY.png",
+      "file": "POKEMON_TYPE_FAIRY.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_FAIRY.png",
+      "bytes": 2589,
+      "sha256": "82abc6f27db2093f244c8f5c971a2848da4ca455df3f9c57e5392bb10128061d"
+    },
+    "typeFighting": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_FIGHTING.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_FIGHTING.png",
+      "file": "POKEMON_TYPE_FIGHTING.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_FIGHTING.png",
+      "bytes": 2699,
+      "sha256": "6541624341c7eccb7a66d9c94dc2799511d25567c41230a92651c5d244e164bf"
+    },
+    "typeFire": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_FIRE.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_FIRE.png",
+      "file": "POKEMON_TYPE_FIRE.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_FIRE.png",
+      "bytes": 2779,
+      "sha256": "1be6e7cbeb0f99f63e4c5f5ccd7b2ea33ad07c79415a522512b5fdf6653fc475"
+    },
+    "typeFlying": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_FLYING.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_FLYING.png",
+      "file": "POKEMON_TYPE_FLYING.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_FLYING.png",
+      "bytes": 2676,
+      "sha256": "4b796fa40a186d23846f406da2505e6f54e41c5ed1a0e02ff76b7b765c628c4f"
+    },
+    "typeGhost": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_GHOST.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_GHOST.png",
+      "file": "POKEMON_TYPE_GHOST.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_GHOST.png",
+      "bytes": 2929,
+      "sha256": "298803f91fdb65e3153869beeefb4c38f093e4360ea9c44f0b65acade352e8f6"
+    },
+    "typeGrass": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_GRASS.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_GRASS.png",
+      "file": "POKEMON_TYPE_GRASS.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_GRASS.png",
+      "bytes": 3307,
+      "sha256": "dcd98674040a3a80d0376702d14326377ef38b09b14451ff80be2fdd23c7d710"
+    },
+    "typeGround": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_GROUND.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_GROUND.png",
+      "file": "POKEMON_TYPE_GROUND.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_GROUND.png",
+      "bytes": 2761,
+      "sha256": "accf81aeb7fd329b0bb6f46b5452be93057f2ffb4464572509d8622a68c69bc7"
+    },
+    "typeIce": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_ICE.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_ICE.png",
+      "file": "POKEMON_TYPE_ICE.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_ICE.png",
+      "bytes": 3183,
+      "sha256": "c8dc20f4bb0b70207de2ba9541b2458416bb44abef7038e8c69df8efb31680f6"
+    },
+    "typeNormal": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_NORMAL.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_NORMAL.png",
+      "file": "POKEMON_TYPE_NORMAL.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_NORMAL.png",
+      "bytes": 2837,
+      "sha256": "4e1b9444656f39fa50c57e0a1673da95977c819cb3ae17d3332a9509d40f7c6a"
+    },
+    "typePoison": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_POISON.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_POISON.png",
+      "file": "POKEMON_TYPE_POISON.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_POISON.png",
+      "bytes": 2981,
+      "sha256": "fa2bc32254b59abc0d332b3b42761aa162d926671e250824a7688718663c9e79"
+    },
+    "typePsychic": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_PSYCHIC.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_PSYCHIC.png",
+      "file": "POKEMON_TYPE_PSYCHIC.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_PSYCHIC.png",
+      "bytes": 3353,
+      "sha256": "9c2ab1f3b100bd54338b3692cd9bc65d847aed681919bb2ee0173fe4913927f5"
+    },
+    "typeRock": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_ROCK.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_ROCK.png",
+      "file": "POKEMON_TYPE_ROCK.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_ROCK.png",
+      "bytes": 2633,
+      "sha256": "3f518e07ed5ad9c9a6d7a8801f83a0e0ab9bcbd83e6df9b199c7f33b8f44d330"
+    },
+    "typeSteel": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_STEEL.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_STEEL.png",
+      "file": "POKEMON_TYPE_STEEL.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_STEEL.png",
+      "bytes": 2902,
+      "sha256": "62d53a0813c9f37897e867419c930bf86ae3feff773dbca0b76762228baf5021"
+    },
+    "typeWater": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Types/POKEMON_TYPE_WATER.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Types/POKEMON_TYPE_WATER.png",
+      "file": "POKEMON_TYPE_WATER.png",
+      "localPath": "src/assets/types/POKEMON_TYPE_WATER.png",
+      "bytes": 2823,
+      "sha256": "58a18a762f38c2c5d5bd1a616f468a9564af289b8617856d0d96813fd8e0005f"
+    },
+    "hqTypeBug": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "7/7d/Bug.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/7/7d/Bug.png?format=original",
+      "file": "Bug.png",
+      "localPath": "src/assets/generated/move-type-hq/Bug.png",
+      "bytes": 19682,
+      "sha256": "39d36cf1f477c5fc69044669e227376d19114ad9e79b849f1c1d2edc7d688859"
+    },
+    "hqTypeDark": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "0/0e/Dark.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/0/0e/Dark.png?format=original",
+      "file": "Dark.png",
+      "localPath": "src/assets/generated/move-type-hq/Dark.png",
+      "bytes": 21923,
+      "sha256": "800e224e7de087522348fa9b7803272f57d322bb32e913d4228d36748a4577c7"
+    },
+    "hqTypeDragon": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "c/c7/Dragon.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/c/c7/Dragon.png?format=original",
+      "file": "Dragon.png",
+      "localPath": "src/assets/generated/move-type-hq/Dragon.png",
+      "bytes": 21492,
+      "sha256": "4e433cda0b6ba5b763a7ead30ee8d49fdb01e9573097476759c85000152ae60e"
+    },
+    "hqTypeElectric": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "2/2f/Electric.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/2/2f/Electric.png?format=original",
+      "file": "Electric.png",
+      "localPath": "src/assets/generated/move-type-hq/Electric.png",
+      "bytes": 11522,
+      "sha256": "32d2b491cec5dbfb6df6745fc26f230b406e59b995ba08bcda4bb683a908c96d"
+    },
+    "hqTypeFairy": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "4/43/Fairy.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/4/43/Fairy.png?format=original",
+      "file": "Fairy.png",
+      "localPath": "src/assets/generated/move-type-hq/Fairy.png",
+      "bytes": 20765,
+      "sha256": "451ce5ccdb37b073a56a2b05e15bf44725cc7ed94e90e08b7173241a6fc1cb5f"
+    },
+    "hqTypeFighting": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "3/30/Fighting.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/3/30/Fighting.png?format=original",
+      "file": "Fighting.png",
+      "localPath": "src/assets/generated/move-type-hq/Fighting.png",
+      "bytes": 17429,
+      "sha256": "34586a62648ee31153672df0846949d1667527ec27e3983a0834d00b0ddbf890"
+    },
+    "hqTypeFire": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "3/30/Fire.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/3/30/Fire.png?format=original",
+      "file": "Fire.png",
+      "localPath": "src/assets/generated/move-type-hq/Fire.png",
+      "bytes": 16388,
+      "sha256": "5f9315c15fca927c0fb79e6cc1acaf300845db253b6343bfa1bd7b7d42ca2eb0"
+    },
+    "hqTypeFlying": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "7/7f/Flying.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/7/7f/Flying.png?format=original",
+      "file": "Flying.png",
+      "localPath": "src/assets/generated/move-type-hq/Flying.png",
+      "bytes": 18596,
+      "sha256": "e0cf543de8c8c8199ebc4664b517237c86feee79d72f31d9aa769398caa13b10"
+    },
+    "hqTypeGhost": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "a/ab/Ghost.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/a/ab/Ghost.png?format=original",
+      "file": "Ghost.png",
+      "localPath": "src/assets/generated/move-type-hq/Ghost.png",
+      "bytes": 23077,
+      "sha256": "041a7f3ea4ec8b0ef72c8a0674ad6509c54633fe7da4cd4275d8422429637436"
+    },
+    "hqTypeGrass": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "c/c5/Grass.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/c/c5/Grass.png?format=original",
+      "file": "Grass.png",
+      "localPath": "src/assets/generated/move-type-hq/Grass.png",
+      "bytes": 22469,
+      "sha256": "e07a29f9f8618012bf3d670fafa0a27004ea5219d848fd37a77eeeb950398cc4"
+    },
+    "hqTypeGround": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "8/8f/Ground.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/8/8f/Ground.png?format=original",
+      "file": "Ground.png",
+      "localPath": "src/assets/generated/move-type-hq/Ground.png",
+      "bytes": 13679,
+      "sha256": "7b5cede25c21d26711b8ce8bb0160632cf8fac574228c69bebe08736765c2383"
+    },
+    "hqTypeIce": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "7/77/Ice.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/7/77/Ice.png?format=original",
+      "file": "Ice.png",
+      "localPath": "src/assets/generated/move-type-hq/Ice.png",
+      "bytes": 20800,
+      "sha256": "8a7115b0e4dddeaacf8a3fc395229e6d9b3d14d5311537afe226440f6eba756e"
+    },
+    "hqTypeNormal": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "f/fb/Normal.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/f/fb/Normal.png?format=original",
+      "file": "Normal.png",
+      "localPath": "src/assets/generated/move-type-hq/Normal.png",
+      "bytes": 19925,
+      "sha256": "c702e02ab6c5c1da9bbd79890399ccbe989f065bbb9a68972e0537f7b9e6933e"
+    },
+    "hqTypePoison": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "0/05/Poison.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/0/05/Poison.png?format=original",
+      "file": "Poison.png",
+      "localPath": "src/assets/generated/move-type-hq/Poison.png",
+      "bytes": 22606,
+      "sha256": "292c736b7ef03d94719e6e69966d5527552cfceca72b449fb0918d95d6041b52"
+    },
+    "hqTypePsychic": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "2/21/Psychic.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/2/21/Psychic.png?format=original",
+      "file": "Psychic.png",
+      "localPath": "src/assets/generated/move-type-hq/Psychic.png",
+      "bytes": 26555,
+      "sha256": "de5726b00282c16d8c4e2140fa57ef167e893677da6e486be26796598babc630"
+    },
+    "hqTypeRock": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "0/0b/Rock.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/0/0b/Rock.png?format=original",
+      "file": "Rock.png",
+      "localPath": "src/assets/generated/move-type-hq/Rock.png",
+      "bytes": 17860,
+      "sha256": "bd2a32b9d5517a28f554e256bced42087337e9e155fe0a7031568252e1a1ccf6"
+    },
+    "hqTypeSteel": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "c/c9/Steel.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/c/c9/Steel.png?format=original",
+      "file": "Steel.png",
+      "localPath": "src/assets/generated/move-type-hq/Steel.png",
+      "bytes": 19034,
+      "sha256": "e4a2c19eb79e1632ee2c47b63f888203f6c0dbc714c9947f3e3aa187271b0ef0"
+    },
+    "hqTypeWater": {
+      "source": "Pokémon GO Wiki",
+      "sourcePath": "9/9d/Water.png?format=original",
+      "url": "https://static.wikia.nocookie.net/pokemongo/images/9/9d/Water.png?format=original",
+      "file": "Water.png",
+      "localPath": "src/assets/generated/move-type-hq/Water.png",
+      "bytes": 15595,
+      "sha256": "628a9827eb1cc6b0930cee6bb0a21e6523d81a17dc0be0535fb75819df452df3"
+    },
+    "typeMaskBug": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "bug.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/bug.png",
+      "file": "bug.png",
+      "localPath": "src/assets/generated/move-type-mask/bug.png",
+      "bytes": 8443,
+      "sha256": "18bb313d21fdebe53bc0afe09d4b6bf848beb1ab98750e947b73ea97a8d2e8fd"
+    },
+    "typeMaskDark": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "dark.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/dark.png",
+      "file": "dark.png",
+      "localPath": "src/assets/generated/move-type-mask/dark.png",
+      "bytes": 8017,
+      "sha256": "35fb19dbc914be53a51baf1dfe715671ed23e982218b95ce2c3cb174d30d754f"
+    },
+    "typeMaskDragon": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "dragon.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/dragon.png",
+      "file": "dragon.png",
+      "localPath": "src/assets/generated/move-type-mask/dragon.png",
+      "bytes": 7734,
+      "sha256": "a577a1b5947c92969c05c07a26479f0a1bb8246338cd41f5975e1688477bdbd1"
+    },
+    "typeMaskElectric": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "electric.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/electric.png",
+      "file": "electric.png",
+      "localPath": "src/assets/generated/move-type-mask/electric.png",
+      "bytes": 4729,
+      "sha256": "af36aecad6a1641bca2ac210bffd942837c25570b798266bc3cd68345da8e572"
+    },
+    "typeMaskFairy": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "fairy.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/fairy.png",
+      "file": "fairy.png",
+      "localPath": "src/assets/generated/move-type-mask/fairy.png",
+      "bytes": 7320,
+      "sha256": "afe64d84a6f91c7a27b1a637d6c658cc44d1b0d2b7b9de096347b67dd1bf5b57"
+    },
+    "typeMaskFighting": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "fighting.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/fighting.png",
+      "file": "fighting.png",
+      "localPath": "src/assets/generated/move-type-mask/fighting.png",
+      "bytes": 6008,
+      "sha256": "fe5cb98daade15c9b55b9c3534a38be994b997b24def58286cf19fa94b8b3439"
+    },
+    "typeMaskFire": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "fire.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/fire.png",
+      "file": "fire.png",
+      "localPath": "src/assets/generated/move-type-mask/fire.png",
+      "bytes": 7908,
+      "sha256": "f59da6d6ebef1f926906fc52ef888cb21afed8ea2a9ef4dd0d9323865762f389"
+    },
+    "typeMaskFlying": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "flying.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/flying.png",
+      "file": "flying.png",
+      "localPath": "src/assets/generated/move-type-mask/flying.png",
+      "bytes": 6684,
+      "sha256": "d6950aa7457c64b8dce9b27a79ebdf0f30f2d837b7e62f1974bd8d3ebb67d569"
+    },
+    "typeMaskGhost": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "ghost.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/ghost.png",
+      "file": "ghost.png",
+      "localPath": "src/assets/generated/move-type-mask/ghost.png",
+      "bytes": 6537,
+      "sha256": "60b3ce5b76660bafb4dc1e6dd9be4dd50fbe4ab830f8a8ddc3cd64f154604862"
+    },
+    "typeMaskGrass": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "grass.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/grass.png",
+      "file": "grass.png",
+      "localPath": "src/assets/generated/move-type-mask/grass.png",
+      "bytes": 8100,
+      "sha256": "4a14f8d6e44011b794eac88712c1aea29e77fe5733baec9946f50e38efa9e9ca"
+    },
+    "typeMaskGround": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "ground.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/ground.png",
+      "file": "ground.png",
+      "localPath": "src/assets/generated/move-type-mask/ground.png",
+      "bytes": 5410,
+      "sha256": "28d0758085aa357d5fee38e795167ecc8be49906afb8011c368c6d2a9d02bf5b"
+    },
+    "typeMaskIce": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "ice.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/ice.png",
+      "file": "ice.png",
+      "localPath": "src/assets/generated/move-type-mask/ice.png",
+      "bytes": 8089,
+      "sha256": "d04ba19f12af3c4a296bc1e4f849a81760616e63f9a11a108649af24ae3073c7"
+    },
+    "typeMaskNormal": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "normal.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/normal.png",
+      "file": "normal.png",
+      "localPath": "src/assets/generated/move-type-mask/normal.png",
+      "bytes": 6750,
+      "sha256": "1bbcdb3c055413514b85455d2ca5c25ea317fa04b6c649ff150b68ee50b6880e"
+    },
+    "typeMaskPoison": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "poison.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/poison.png",
+      "file": "poison.png",
+      "localPath": "src/assets/generated/move-type-mask/poison.png",
+      "bytes": 7636,
+      "sha256": "5657a95f8a4dbbcb54f087ec87077e28e0fb387a6456409a7b13a41c2008a789"
+    },
+    "typeMaskPsychic": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "psychic.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/psychic.png",
+      "file": "psychic.png",
+      "localPath": "src/assets/generated/move-type-mask/psychic.png",
+      "bytes": 10604,
+      "sha256": "f6ea4f023de4dd7c88f842bf3f0190b84c54150b4aa0e37bd5eb758ceb9dbbe4"
+    },
+    "typeMaskRock": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "rock.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/rock.png",
+      "file": "rock.png",
+      "localPath": "src/assets/generated/move-type-mask/rock.png",
+      "bytes": 7152,
+      "sha256": "b716d7b3090761229d912d254c1f8330135ff2269bd90a646cd7690787bfb505"
+    },
+    "typeMaskSteel": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "steel.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/steel.png",
+      "file": "steel.png",
+      "localPath": "src/assets/generated/move-type-mask/steel.png",
+      "bytes": 6191,
+      "sha256": "7e0876759da79598818f4e659bcd8925394deb6c49aaf3237c4de4841d27547e"
+    },
+    "typeMaskWater": {
+      "source": "HybridShivam/Pokemon type icons",
+      "sourcePath": "water.png",
+      "url": "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/water.png",
+      "file": "water.png",
+      "localPath": "src/assets/generated/move-type-mask/water.png",
+      "bytes": 6135,
+      "sha256": "7e97aad3f8bc65e26eb6b6a654bb5f21631b5b0561bd837439af3555524d28e1"
+    }
+  }
+}

@@ -101,6 +101,8 @@ export const getBuddyFriendship = () => currentOptions.buddyFriendship;
 // Trainer settings
 export const getTrainerFriendship = () => currentOptions.trainerFriendship;
 export const getMultiplyFriendship = (level = 1) => currentOptions.trainerFriendship[level.toString()]?.atkBonus || 1;
+export const maxTrainerFriendshipLevel = () =>
+  Math.max(4, ...Object.keys(currentOptions.trainerFriendship).map(Number).filter(Number.isFinite));
 
 // Type settings
 export const getTypes = () =>

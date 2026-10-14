@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import { createDataRows, HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import APIService from '../../../services/api.service';
@@ -19,11 +19,20 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { ColumnType } from '../../../enums/type.enum';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
-import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
+import {
+  minCp,
+  minIv,
+  maxIv,
+  minLevel,
+  maxLevel,
+  maxPokemonLevel,
+  stepLevel,
+} from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import InputMui from '../../../components/Commons/Inputs/InputMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
+import { pokemonGoAppraisalStars } from './appraisal';
 
 interface IFindCP {
   level: number;
@@ -46,6 +55,7 @@ const columnsIV = createDataRows<TableColumn<IPredictStatsModel>>(
     id: ColumnType.Level,
     name: 'Level',
     selector: (row) => row.level,
+    cell: (row) => (row.level > maxPokemonLevel() ? `${row.level} (Best Buddy)` : row.level),
     sortable: true,
   },
   {
@@ -85,6 +95,7 @@ const columnsCP = createDataRows<TableColumn<IPredictCPModel>>(
     id: ColumnType.Level,
     name: 'Level',
     selector: (row) => row.level,
+    cell: (row) => (row.level > maxPokemonLevel() ? `${row.level} (Best Buddy)` : row.level),
     sortable: true,
   },
   {
@@ -116,31 +127,31 @@ const customStyles: TableStyles = {
 
 const conditionalRowStyles = createDataRows<ConditionalStyles<IPredictStatsModel>>(
   {
-    when: (row) => row.percent === 100,
+    when: (row) => pokemonGoAppraisalStars(row) === 4,
     style: {
       backgroundColor: '#ecc8c8',
     },
   },
   {
-    when: (row) => row.percent > 80 && row.percent < 100,
+    when: (row) => pokemonGoAppraisalStars(row) === 3,
     style: {
       backgroundColor: '#ecc8ec',
     },
   },
   {
-    when: (row) => row.percent > 64 && row.percent <= 80,
+    when: (row) => pokemonGoAppraisalStars(row) === 2,
     style: {
       backgroundColor: '#c8ecc8',
     },
   },
   {
-    when: (row) => row.percent > 51 && row.percent <= 64,
+    when: (row) => pokemonGoAppraisalStars(row) === 1,
     style: {
       backgroundColor: '#ececc8',
     },
   },
   {
-    when: (row) => row.percent <= 51,
+    when: (row) => pokemonGoAppraisalStars(row) === 0,
     style: {
       backgroundColor: '#d7d7d7',
     },
@@ -152,6 +163,7 @@ const columns = createDataRows<TableColumn<IFindCP>>(
     id: ColumnType.Level,
     name: 'Level',
     selector: (row) => row.level,
+    cell: (row) => (row.level > maxPokemonLevel() ? `${row.level} (Best Buddy)` : row.level),
     sortable: true,
   },
   {
@@ -186,6 +198,8 @@ const FindTable = () => {
   const [preIvArr, setPreIvArr] = useState<IPredictStatsCalculate>();
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
   const [minMaxRows, setMinMaxRows] = useState<IFindCP[]>([]);
+  const findIvController = useRef<AbortController>();
+  const findCpController = useRef<AbortController>();
 
   const { showSnackbar } = useSnackbar();
 
@@ -211,9 +225,13 @@ const FindTable = () => {
     if (toNumber(searchCP) < minCp()) {
       return showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
     }
+    findIvController.current?.abort();
+    const controller = new AbortController();
+    findIvController.current = controller;
     try {
       const { data } = await APIService.getFetchUrl<{ data: IPredictStatsCalculate }>(
-        APIService.getFindCalculation({ ...calculationParams(), mode: 'iv', cp: searchCP })
+        APIService.getFindCalculation({ ...calculationParams(), mode: 'iv', cp: searchCP }),
+        { signal: controller.signal }
       );
       const result = data.data;
       if (!isNotEmpty(result.result)) {
@@ -223,8 +241,15 @@ const FindTable = () => {
       }
       setPreIvArr(result);
     } catch (error) {
+      if (APIService.isCancel(error)) {
+        return;
+      }
       setPreIvArr(undefined);
       showSnackbar(`Unable to calculate IV: ${error}`, 'error');
+    } finally {
+      if (findIvController.current === controller) {
+        findIvController.current = undefined;
+      }
     }
   }, [searchingToolCurrentDetails, searchCP, calculationParams]);
 
@@ -236,14 +261,16 @@ const FindTable = () => {
     [findStatsIv]
   );
 
-  const clearArrStats = () => {
+  const clearArrStats = useCallback(() => {
+    findIvController.current?.abort();
+    findCpController.current?.abort();
     setPreIvArr(undefined);
     setPreCpArr(undefined);
     setSearchCP('');
     setSearchATKIv(0);
     setSearchDEFIv(0);
     setSearchSTAIv(0);
-  };
+  }, []);
 
   const findStatsCP = useCallback(async () => {
     if (!searchingToolCurrentDetails) {
@@ -253,6 +280,9 @@ const FindTable = () => {
       showSnackbar(`Please input IV between ${minIv()} - ${maxIv()}.`, 'error');
       return;
     }
+    findCpController.current?.abort();
+    const controller = new AbortController();
+    findCpController.current = controller;
     try {
       const { data } = await APIService.getFetchUrl<{ data: IPredictCPCalculate }>(
         APIService.getFindCalculation({
@@ -261,12 +291,20 @@ const FindTable = () => {
           atkIv: searchATKIv,
           defIv: searchDEFIv,
           staIv: searchSTAIv,
-        })
+        }),
+        { signal: controller.signal }
       );
       setPreCpArr(data.data);
     } catch (error) {
+      if (APIService.isCancel(error)) {
+        return;
+      }
       setPreCpArr(undefined);
       showSnackbar(`Unable to calculate CP: ${error}`, 'error');
+    } finally {
+      if (findCpController.current === controller) {
+        findCpController.current = undefined;
+      }
     }
   }, [searchingToolCurrentDetails, searchATKIv, searchDEFIv, searchSTAIv, calculationParams]);
 
@@ -288,6 +326,14 @@ const FindTable = () => {
       });
     return () => controller.abort();
   }, [searchingToolCurrentDetails, calculationParams]);
+
+  useEffect(
+    () => () => {
+      findIvController.current?.abort();
+      findCpController.current?.abort();
+    },
+    []
+  );
 
   const onFindCP = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -327,16 +373,21 @@ const FindTable = () => {
       oneStar = 0,
       zeroStar = 0;
     for (const item of preIvArr?.result ?? []) {
-      if (item.percent === 100) {
-        fourStar++;
-      } else if (item.percent > 80) {
-        threeStar++;
-      } else if (item.percent > 64) {
-        twoStar++;
-      } else if (item.percent > 51) {
-        oneStar++;
-      } else {
-        zeroStar++;
+      switch (pokemonGoAppraisalStars(item)) {
+        case 4:
+          fourStar++;
+          break;
+        case 3:
+          threeStar++;
+          break;
+        case 2:
+          twoStar++;
+          break;
+        case 1:
+          oneStar++;
+          break;
+        default:
+          zeroStar++;
       }
     }
     return (
@@ -441,6 +492,8 @@ const FindTable = () => {
               inputProps={{
                 type: 'number',
                 min: minCp(),
+                max: 100000,
+                step: 1,
                 required: true,
               }}
             />

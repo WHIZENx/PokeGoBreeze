@@ -14,7 +14,7 @@
   @apply tw-inline-block;
 }
 
-.pokemon-battle span {
+.pokemon-battle > span {
   @apply tw-flex tw-w-[45px] tw-h-[45px] tw-p-[5px];
 }
 

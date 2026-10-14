@@ -14,6 +14,8 @@ import { PokemonType } from '../enums/type.enum';
 import { versionList } from '../utils/constants';
 import useDataStore from './useDataStore';
 import { useCallback, useMemo } from 'react';
+import { buildPokemonSpeciesNavigation, findPokemonSpeciesNavigation } from '../utils/pokemon-navigation';
+import { normalizePokemonFormIdentity, selectPreferredPokemonGoFormIdentity } from '../utils/pokemon-form-identity';
 
 const pvpokeSpeciesAliases: Readonly<Record<string, string>> = {
   AEGISLASH_SHIELD: 'AEGISLASH',
@@ -48,31 +50,15 @@ const stripStandardSuffix = (value: string) =>
   value === formStandard() ? value : value.replace(`_${formStandard()}`, '');
 
 const getPokemonFormCandidates = (pokemons: IPokemonData[], form: string, pokemonType: PokemonType) => {
-  const candidates = new Set([
-    stripStandardSuffix(normalizePokemonForm(form)),
-    stripStandardSuffix(normalizePokemonForm(getPokemonFormWithNoneSpecialForm(form, pokemonType))),
-  ]);
-  const id = pokemons[0]?.num;
-  [...candidates].forEach((candidate) => {
+  const candidates = new Set<string>();
+  const id = pokemons[0]?.num ?? 0;
+  [form, getPokemonFormWithNoneSpecialForm(form, pokemonType)].forEach((value) => {
+    const candidate = stripStandardSuffix(normalizePokemonForm(value));
+    candidates.add(candidate);
+    candidates.add(normalizePokemonFormIdentity(id, candidate));
     if (id === 422 || id === 423) {
       candidates.add(candidate.replace(/_EAST$/, '_EAST_SEA').replace(/_WEST$/, '_WEST_SEA'));
       candidates.add(candidate.replace(/^EAST$/, 'EAST_SEA').replace(/^WEST$/, 'WEST_SEA'));
-    } else if (id === 718) {
-      candidates.add(candidate.replace(/_10$/, '_TEN_PERCENT').replace(/_50$/, '_FIFTY_PERCENT'));
-      candidates.add(candidate.replace(/^10$/, 'TEN_PERCENT').replace(/^50$/, 'FIFTY_PERCENT'));
-    } else if (id === 741) {
-      candidates.add(candidate.replace(/POM_POM$/, 'POMPOM'));
-    } else if (id === 801) {
-      candidates.add(candidate.replace(/_ORIGINAL$/, '_ORIGINAL_COLOR').replace(/^ORIGINAL$/, 'ORIGINAL_COLOR'));
-    } else if (id === 888) {
-      candidates.add(candidate.replace(/_CROWNED$/, '_CROWNED_SWORD').replace(/^CROWNED$/, 'CROWNED_SWORD'));
-    } else if (id === 889) {
-      candidates.add(candidate.replace(/_CROWNED$/, '_CROWNED_SHIELD').replace(/^CROWNED$/, 'CROWNED_SHIELD'));
-    } else if (id === 898) {
-      candidates.add(candidate.replace(/_ICE$/, '_ICE_RIDER').replace(/^ICE$/, 'ICE_RIDER'));
-      candidates.add(candidate.replace(/_SHADOW$/, '_SHADOW_RIDER').replace(/^SHADOW$/, 'SHADOW_RIDER'));
-    } else if (id === 716) {
-      candidates.add(candidate.replace(/_ACTIVE$/, '').replace(/^ACTIVE$/, formNormal()));
     }
   });
   return candidates;
@@ -91,10 +77,13 @@ export const resolvePokemonForm = (
     );
   }
   const requestedForms = getPokemonFormCandidates(pokemons, form, pokemonType);
-  return pokemons.find(
-    (pokemon) =>
-      requestedForms.has(normalizePokemonForm(pokemon.fullName)) ||
-      requestedForms.has(normalizePokemonForm(pokemon.form))
+  const id = pokemons[0]?.num ?? 0;
+  return selectPreferredPokemonGoFormIdentity(
+    pokemons.filter(
+      (pokemon) =>
+        requestedForms.has(normalizePokemonFormIdentity(id, pokemon.fullName)) ||
+        requestedForms.has(normalizePokemonFormIdentity(id, pokemon.form))
+    )
   );
 };
 
@@ -154,15 +143,10 @@ export const usePokemon = () => {
     });
     return result;
   }, [validPokemons]);
-  const defaultPokemons = useMemo(
-    () =>
-      validPokemons
-        .filter(
-          (pokemon) =>
-            pokemon.form === formNormal() || (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form))
-        )
-        .sort((a, b) => a.num - b.num),
-    [validPokemons]
+  const defaultPokemons = useMemo(() => buildPokemonSpeciesNavigation(validPokemons), [validPokemons]);
+  const defaultPokemonById = useMemo(
+    () => new Map(defaultPokemons.map((pokemon) => [pokemon.num, pokemon])),
+    [defaultPokemons]
   );
   const pokemonNames = useMemo(
     () => defaultPokemons.map((pokemon) => new PokemonSearching(pokemon)),
@@ -269,19 +253,29 @@ export const usePokemon = () => {
 
   const getPokemonById = useCallback(
     (id: number) => {
-      const result = pokemonsById
-        .get(id)
-        ?.find(
-          (pokemon) =>
-            isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
-            (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
-        );
+      const result = defaultPokemonById.get(id);
       if (!result) {
         return;
       }
-      return new PokemonModel(result.num, result.name);
+      return new PokemonModel(result.num, result.pokemonId?.toString().replaceAll('_', '-') || result.name);
     },
-    [pokemonsById]
+    [defaultPokemonById]
+  );
+
+  const getPokemonNavigation = useCallback(
+    (id: number) => {
+      const navigation = findPokemonSpeciesNavigation(defaultPokemons, id);
+      const toPokemonModel = (pokemon: IPokemonData | undefined) =>
+        pokemon
+          ? new PokemonModel(pokemon.num, pokemon.pokemonId?.toString().replaceAll('_', '-') || pokemon.name)
+          : undefined;
+      return {
+        prev: toPokemonModel(navigation.prev),
+        current: toPokemonModel(navigation.current),
+        next: toPokemonModel(navigation.next),
+      };
+    },
+    [defaultPokemons]
   );
 
   const checkPokemonIncludeShadowForm = useCallback(
@@ -375,6 +369,7 @@ export const usePokemon = () => {
     getDefaultPokemons,
     mappingPokemonName,
     getPokemonById,
+    getPokemonNavigation,
     generatePokemonGoForms,
     retrieveMoves,
     getPokemonDetails,

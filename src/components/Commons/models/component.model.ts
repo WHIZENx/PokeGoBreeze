@@ -93,6 +93,13 @@ export interface IDynamicInputCPComponent {
   ivSta: number;
   searchCP: string;
   setSearchCP: React.Dispatch<React.SetStateAction<string>>;
+  setSearchLevel?: React.Dispatch<React.SetStateAction<number | undefined>>;
+  minLevel?: number;
+  maxLevel?: number;
+  levelStep?: number;
+  minIv?: number;
+  maxIv?: number;
+  minCp?: number;
   label?: string;
   width?: number | string;
   minWidth?: number | string;
@@ -293,6 +300,8 @@ export interface ISelectPokemonComponent {
   labelPrepend?: string;
   isNoWrap?: boolean;
   isFit?: boolean;
+  excludedPokemonTypes?: readonly PokemonType[];
+  pokemonFilter?: (pokemon: IPokemonData) => boolean;
 }
 
 export interface ISelectBadgeComponent {
@@ -397,8 +406,8 @@ export interface ISelectCardPokemonComponent<T> {
   onFilter?: (pokemon: T) => { name: string | undefined; id: number };
   inputRef?: React.RefObject<HTMLInputElement>;
   isShowPokemonIcon?: boolean;
-  sprite?: string;
-  onSprite?: (pokemon: T) => string | undefined;
+  selectedPokemonIcon?: React.ReactNode;
+  renderSelectedPokemonIcon?: (pokemon: T) => React.ReactNode;
   isDisable?: boolean;
 }
 

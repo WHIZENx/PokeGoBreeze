@@ -53,6 +53,7 @@ import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 import { Skeleton } from '@mui/material';
+import { isNearScrollEnd } from '../../../utils/scroll';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
@@ -77,14 +78,6 @@ const RankingPVP = (props: IStyleSheetData) => {
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
   const eachCounter = useRef(10);
-
-  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = ele.currentTarget.scrollTop;
-    const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
-      setStartIndex(startIndex + 1);
-    }
-  };
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PVP Rankings - Great, Ultra & Master League | PokéGO Breeze',
@@ -300,7 +293,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     );
   };
 
-  const visibleRankings = useMemo(
+  const filteredRankings = useMemo(
     () =>
       rankingData
         .filter(
@@ -309,10 +302,23 @@ const RankingPVP = (props: IStyleSheetData) => {
             (isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
               isInclude(pokemon.id, search))
         )
-        .sort(setSortedPokemonBattle)
-        .slice(0, firstInit.current + eachCounter.current * startIndex),
-    [rankingData, search, setSortedPokemonBattle, startIndex]
+        .sort(setSortedPokemonBattle),
+    [rankingData, search, setSortedPokemonBattle]
   );
+
+  const visibleRankings = useMemo(
+    () => filteredRankings.slice(0, firstInit.current + eachCounter.current * startIndex),
+    [filteredRankings, startIndex]
+  );
+
+  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    if (isNearScrollEnd(ele.currentTarget)) {
+      setStartIndex((current) => {
+        const visibleCount = firstInit.current + eachCounter.current * current;
+        return visibleCount < filteredRankings.length ? current + 1 : current;
+      });
+    }
+  };
 
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>

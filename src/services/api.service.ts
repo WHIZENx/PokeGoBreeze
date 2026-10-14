@@ -4,8 +4,15 @@ import type { PokemonBundle } from '../core/models/API/pokemon-bundle.model';
 import { getValueOrDefault, isEqual, isInclude } from '../utils/extension';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
-import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../utils/utils';
-import { PokemonTypeBadge } from '../core/enums/pokemon-type.enum';
+import { getKeyWithData, splitAndCapitalize } from '../utils/utils';
+import {
+  getLocalGenderIcon,
+  getLocalHqTypeIcon,
+  getLocalItemIcon,
+  getLocalTypeMaskIcon,
+  getLocalTypeIcon,
+  LocalPokemonGoUi,
+} from '../assets/local-ui-assets';
 import { ScoreType } from '../utils/enums/constants.enum';
 import {
   defaultSpriteName,
@@ -159,7 +166,7 @@ class APIService {
   }
 
   getItemSprite(item: string) {
-    return `${APIUrl.POGO_ASSET_API_URL}Items/${item}.png`;
+    return getLocalItemIcon(item) ?? `${APIUrl.POGO_ASSET_API_URL}Items/${item}.png`;
   }
 
   getRaidSprite(name: string) {
@@ -167,81 +174,22 @@ class APIService {
   }
 
   getGenderSprite(sex: string | undefined) {
-    return `${APIUrl.POGO_ASSET_API_URL}Pokedex/${sex?.toLowerCase()}_l.png`;
+    return getLocalGenderIcon(sex) ?? `${APIUrl.POGO_ASSET_API_URL}Pokedex/${sex?.toLowerCase()}_l.png`;
   }
 
   getShinyIcon() {
-    return `${APIUrl.POGO_ASSET_API_URL}Pokedex/ic_shiny.png`;
+    return LocalPokemonGoUi.shiny;
   }
 
   getTypeSprite(type: string | undefined) {
     if (!type || isEqual(type, 'unknown', EqualMode.IgnoreCaseSensitive)) {
       return this.getPokeSprite();
     }
-    return `${APIUrl.POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
+    return getLocalTypeIcon(type) ?? this.getPokeSprite();
   }
 
   getTypeHqSprite(type: string | undefined) {
-    if (!type) {
-      return this.getPokeSprite();
-    }
-    type = capitalize(type);
-    let encryptUrl = '';
-    switch (getDataWithKey<PokemonTypeBadge>(PokemonTypeBadge, type, EqualMode.IgnoreCaseSensitive)) {
-      case PokemonTypeBadge.Bug:
-        encryptUrl = '7/7d';
-        break;
-      case PokemonTypeBadge.Dark:
-        encryptUrl = '0/0e';
-        break;
-      case PokemonTypeBadge.Dragon:
-        encryptUrl = 'c/c7';
-        break;
-      case PokemonTypeBadge.Electric:
-        encryptUrl = '2/2f';
-        break;
-      case PokemonTypeBadge.Fairy:
-        encryptUrl = '4/43';
-        break;
-      case PokemonTypeBadge.Fighting:
-      case PokemonTypeBadge.Fire:
-        encryptUrl = '3/30';
-        break;
-      case PokemonTypeBadge.Flying:
-        encryptUrl = '7/7f';
-        break;
-      case PokemonTypeBadge.Ghost:
-        encryptUrl = 'a/ab';
-        break;
-      case PokemonTypeBadge.Grass:
-        encryptUrl = 'c/c5';
-        break;
-      case PokemonTypeBadge.Ground:
-        encryptUrl = '8/8f';
-        break;
-      case PokemonTypeBadge.Ice:
-        encryptUrl = '7/77';
-        break;
-      case PokemonTypeBadge.Normal:
-        encryptUrl = 'f/fb';
-        break;
-      case PokemonTypeBadge.Poison:
-        encryptUrl = '0/05';
-        break;
-      case PokemonTypeBadge.Psychic:
-        encryptUrl = '2/21';
-        break;
-      case PokemonTypeBadge.Rock:
-        encryptUrl = '0/0b';
-        break;
-      case PokemonTypeBadge.Steel:
-        encryptUrl = 'c/c9';
-        break;
-      case PokemonTypeBadge.Water:
-        encryptUrl = '9/9d';
-        break;
-    }
-    return `${APIUrl.POKE_ICON_SPRITES_TYPE_API_URL}${encryptUrl}/${type}.png`;
+    return getLocalHqTypeIcon(type) ?? this.getPokeSprite();
   }
 
   getWeatherSprite(weather: string | undefined) {
@@ -273,10 +221,16 @@ class APIService {
   }
 
   getPokeSprite(id = 0) {
+    if (!id) {
+      return LocalPokemonGoUi.placeholder;
+    }
     return `${APIUrl.POKE_SPRITES_API_URL}${id}.png`;
   }
 
   getPokeFullAsset(id = 0) {
+    if (!id) {
+      return LocalPokemonGoUi.placeholder;
+    }
     return `${APIUrl.POKE_ASSETS}${id}.png`;
   }
 
@@ -357,8 +311,12 @@ class APIService {
         .replace('-matcha-cream', '')
         .replace('-neutral', '');
     }
-    if (!name) {
-      name = defaultSpriteName();
+    if (
+      !name ||
+      isEqual(name, defaultSpriteName(), EqualMode.IgnoreCaseSensitive) ||
+      isEqual(name, 'unknown-pokemon', EqualMode.IgnoreCaseSensitive)
+    ) {
+      return LocalPokemonGoUi.placeholder;
     }
     return `${APIUrl.POKE_ASSETS_URL}/icon/${name}.png`;
   }
@@ -388,11 +346,11 @@ class APIService {
   }
 
   getPokeShadow() {
-    return `${APIUrl.POGO_ASSET_API_URL}Rocket/ic_shadow.png`;
+    return LocalPokemonGoUi.shadow;
   }
 
   getPokePurified() {
-    return `${APIUrl.POGO_ASSET_API_URL}Rocket/ic_purified.png`;
+    return LocalPokemonGoUi.purified;
   }
 
   getPokeLucky() {
@@ -400,7 +358,7 @@ class APIService {
   }
 
   getPokeBuddy() {
-    return `${APIUrl.POGO_ASSET_API_URL}Buddy/pokemonBuddyCrownSml.png`;
+    return LocalPokemonGoUi.buddyCrown;
   }
 
   getItemEvo(item: ItemEvolutionRequireType) {
@@ -507,10 +465,11 @@ class APIService {
     );
   }
 
-  postBattleLeagueSearch(payload: BattleLeagueSearchRequest) {
+  postBattleLeagueSearch(payload: BattleLeagueSearchRequest, signal?: AbortSignal) {
     return this.axios.post<BattleLeagueSearchApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/battle-league-search`,
-      payload
+      payload,
+      { signal }
     );
   }
 
@@ -606,7 +565,7 @@ class APIService {
   }
 
   getTypeIcon(type: string | null | undefined) {
-    return `${APIUrl.POKE_TYPES_API_URL}${getValueOrDefault(String, type).toLowerCase()}.png`;
+    return getLocalTypeMaskIcon(type) ?? this.getPokeSprite();
   }
 
   getPokemonAsset(type: string, gen: number | string, name: string | undefined, file: string) {

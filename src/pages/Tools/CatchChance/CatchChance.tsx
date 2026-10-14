@@ -20,7 +20,6 @@ import {
   isUndefined,
   safeObjectEntries,
   toFloatWithPadding,
-  toNumber,
 } from '../../../utils/extension';
 import {
   Medal,
@@ -49,8 +48,7 @@ import {
 import useSearch from '../../../composables/useSearch';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
-
-const throwsByType = new Map<ThrowType, ThrowThreshold>();
+import { encounterProbabilityPercent, encounterTimeSeconds } from './catch-chance-display';
 
 const balls = createDataRows<PokeBallThreshold>(
   {
@@ -78,7 +76,6 @@ const throws = createDataRows<ThrowThreshold>(
   { name: 'Great Throw', threshold: [], throwType: ThrowType.Great },
   { name: 'Excellent Throw', threshold: [], throwType: ThrowType.Excellent }
 );
-throws.forEach((t) => throwsByType.set(t.throwType, t));
 
 const CatchChance = () => {
   const { searchingToolCurrentDetails } = useSearch();
@@ -131,8 +128,6 @@ const CatchChance = () => {
     if (!form?.defaultId || !data || !medal.typePri) {
       return;
     }
-    const currentThrow = renderAdvThrow();
-    setAdvThrow(currentThrow);
     const selectedForm =
       searchingToolCurrentDetails?.form ?? getPokemonFormWithNoneSpecialForm(form.form.formName, form.form.pokemonType);
     const url = APIService.getCatchChance({
@@ -165,6 +160,7 @@ const CatchChance = () => {
         }
         const selectedBall = balls[ballType];
         const selectedThrow = throws[response.data.advanced.throwType];
+        setAdvThrow(selectedThrow);
         setData((current) => (current ? { ...current, result: response.data.matrix } : current));
         setCalculatedCp(response.data.cp);
         setColorCircle(checkValueColor(response.data.ringChance));
@@ -295,16 +291,6 @@ const CatchChance = () => {
     textDecorationThickness: '4px',
     textUnderlineOffset: '4px',
   });
-
-  const renderAdvThrow = () => {
-    if (radius >= 70) {
-      return throwsByType.get(ThrowType.Nice);
-    } else if (radius >= 30) {
-      return throwsByType.get(ThrowType.Great);
-    } else {
-      return throwsByType.get(ThrowType.Excellent);
-    }
-  };
 
   const clearStats = () => {
     setIsLoading(true);
@@ -487,13 +473,13 @@ const CatchChance = () => {
                     <hr className="tw-w-full" />
                     <h5>
                       {data &&
-                        `${
-                          (data.shadowAttackProbability && isShadow
-                            ? data.shadowAttackProbability
-                            : toNumber(data.attackProbability)) * 100
-                        }%`}
+                        `${encounterProbabilityPercent(
+                          data.attackProbability,
+                          data.shadowAttackProbability,
+                          isShadow
+                        )}%`}
                     </h5>
-                    <p>{data && `Time: ${toFloatWithPadding(toNumber(data.attackTimerS) / 10, 2)} sec`}</p>
+                    <p>{data && `Time: ${toFloatWithPadding(encounterTimeSeconds(data.attackTimerS), 2)} sec`}</p>
                   </div>
                 )}
                 <div className="tw-w-1/4 tw-text-center tw-inline-block">
@@ -501,13 +487,9 @@ const CatchChance = () => {
                   <hr className="tw-w-full" />
                   <h5>
                     {data &&
-                      `${
-                        data.shadowDodgeProbability && isShadow
-                          ? data.shadowDodgeProbability
-                          : toNumber(data.dodgeProbability) * 100
-                      }%`}
+                      `${encounterProbabilityPercent(data.dodgeProbability, data.shadowDodgeProbability, isShadow)}%`}
                   </h5>
-                  <p>{data && `Time: ${toFloatWithPadding(toNumber(data.dodgeDurationS) / 10, 2)} sec`}</p>
+                  <p>{data && `Time: ${toFloatWithPadding(encounterTimeSeconds(data.dodgeDurationS), 2)} sec`}</p>
                 </div>
               </div>
             </div>

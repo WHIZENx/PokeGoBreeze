@@ -3,7 +3,6 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
 import ATK_LOGO from '../../../assets/attack.png';
-import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import APIService from '../../../services/api.service';
 
@@ -65,10 +64,23 @@ const DamageTable = (props: IDamageTableComponent) => {
                     {props.result.type === PokemonType.Buddy && (
                       <img height={20} className="tw-mr-2" alt="Image Buddy" src={APIService.getPokeBuddy()} />
                     )}
-                    {props.result.type === PokemonType.Shadow && (
-                      <img height={20} className="tw-mr-2" alt="Image Shadow" src={APIService.getPokeShadow()} />
-                    )}
                     {`${splitAndCapitalize(props.result.currPoke?.form?.name, '-', ' ')} `}
+                    {props.result.type === PokemonType.Shadow && (
+                      <img
+                        height={20}
+                        className="tw-ml-1 tw-mr-2"
+                        alt="Image Shadow"
+                        src={APIService.getPokeShadow()}
+                      />
+                    )}
+                    {props.result.type === PokemonType.Purified && (
+                      <img
+                        height={20}
+                        className="tw-ml-1 tw-mr-2"
+                        alt="Image Purified"
+                        src={APIService.getPokePurified()}
+                      />
+                    )}
                     <span className="tw-inline-block caption">(LV. {props.result.currLevel})</span>
                   </Fragment>
                 ) : (
@@ -84,10 +96,23 @@ const DamageTable = (props: IDamageTableComponent) => {
                     {props.result.typeObj === PokemonType.Buddy && (
                       <img height={20} className="tw-mr-2" alt="Image Buddy" src={APIService.getPokeBuddy()} />
                     )}
-                    {props.result.typeObj === PokemonType.Shadow && (
-                      <img height={20} className="tw-mr-2" alt="Image Shadow" src={APIService.getPokeShadow()} />
-                    )}
                     {`${splitAndCapitalize(props.result.objPoke.form?.name, '-', ' ')} `}
+                    {props.result.typeObj === PokemonType.Shadow && (
+                      <img
+                        height={20}
+                        className="tw-ml-1 tw-mr-2"
+                        alt="Image Shadow"
+                        src={APIService.getPokeShadow()}
+                      />
+                    )}
+                    {props.result.typeObj === PokemonType.Purified && (
+                      <img
+                        height={20}
+                        className="tw-ml-1 tw-mr-2"
+                        alt="Image Purified"
+                        src={APIService.getPokePurified()}
+                      />
+                    )}
                     <span className="tw-inline-block caption">(LV. {props.result.objLevel})</span>
                   </Fragment>
                 ) : (
@@ -199,30 +224,11 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>{props.result.damage ? <b>{props.result.damage}</b> : '-'}</td>
             </tr>
             <tr>
+              <td>Target HP Damage</td>
               <td>
-                <div className="tw-flex tw-items-center tw-gap-2">
-                  <img className="tw-mr-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
-                  <span>Damage Reduced</span>
-                </div>
-              </td>
-              <td>
-                {props.result.damage ? (
-                  <Fragment>
-                    {props.result.damage < toNumber(movePower) ? (
-                      <b className="tw-text-success">
-                        {toFloatWithPadding(
-                          ((toNumber(movePower) - props.result.damage) * 100) / toNumber(movePower, 1),
-                          2
-                        )}
-                        %
-                      </b>
-                    ) : (
-                      <b className="tw-text-error">0</b>
-                    )}
-                  </Fragment>
-                ) : (
-                  '-'
-                )}
+                {props.result.damage && props.result.hp
+                  ? `${toFloatWithPadding((props.result.damage * 100) / props.result.hp, 2)}%`
+                  : '-'}
               </td>
             </tr>
             <tr>
@@ -235,8 +241,8 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.hp ? (
                   <b>
-                    {Math.floor(props.result.hp - toNumber(props.result.damage))}
-                    {Math.floor(props.result.hp - toNumber(props.result.damage)) > 0 ? (
+                    {Math.max(0, props.result.hp - toNumber(props.result.damage))}
+                    {props.result.hp - toNumber(props.result.damage) > 0 ? (
                       <span className="caption-small tw-text-success"> (Alive)</span>
                     ) : (
                       <span className="caption-small tw-text-error"> (Dead)</span>

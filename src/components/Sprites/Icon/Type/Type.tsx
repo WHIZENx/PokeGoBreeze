@@ -3,73 +3,9 @@ import { IIconTypeComponent } from '../../../models/component.model';
 import APIService from '../../../../services/api.service';
 import { EqualMode } from '../../../../utils/enums/string.enum';
 import { combineClasses, isEqual } from '../../../../utils/extension';
-import { getDataWithKey } from '../../../../utils/utils';
-import { PokemonTypeBadge } from '../../../../core/enums/pokemon-type.enum';
-
-import Bug from '../../../../assets/types/POKEMON_TYPE_BUG.png';
-import Dark from '../../../../assets/types/POKEMON_TYPE_DARK.png';
-import Dragon from '../../../../assets/types/POKEMON_TYPE_DRAGON.png';
-import Electric from '../../../../assets/types/POKEMON_TYPE_ELECTRIC.png';
-import Fairy from '../../../../assets/types/POKEMON_TYPE_FAIRY.png';
-import Fighting from '../../../../assets/types/POKEMON_TYPE_FIGHTING.png';
-import Fire from '../../../../assets/types/POKEMON_TYPE_FIRE.png';
-import Flying from '../../../../assets/types/POKEMON_TYPE_FLYING.png';
-import Ghost from '../../../../assets/types/POKEMON_TYPE_GHOST.png';
-import Grass from '../../../../assets/types/POKEMON_TYPE_GRASS.png';
-import Ground from '../../../../assets/types/POKEMON_TYPE_GROUND.png';
-import Ice from '../../../../assets/types/POKEMON_TYPE_ICE.png';
-import Normal from '../../../../assets/types/POKEMON_TYPE_NORMAL.png';
-import Poison from '../../../../assets/types/POKEMON_TYPE_POISON.png';
-import Psychic from '../../../../assets/types/POKEMON_TYPE_PSYCHIC.png';
-import Rock from '../../../../assets/types/POKEMON_TYPE_ROCK.png';
-import Steel from '../../../../assets/types/POKEMON_TYPE_STEEL.png';
-import Water from '../../../../assets/types/POKEMON_TYPE_WATER.png';
+import { getLocalTypeIcon } from '../../../../assets/local-ui-assets';
 
 const IconType = (props: IIconTypeComponent) => {
-  const getImageObjectByType = (type: string) => {
-    const pokemonType = getDataWithKey<PokemonTypeBadge>(PokemonTypeBadge, type, EqualMode.IgnoreCaseSensitive);
-    switch (pokemonType) {
-      case PokemonTypeBadge.Bug:
-        return Bug;
-      case PokemonTypeBadge.Dark:
-        return Dark;
-      case PokemonTypeBadge.Dragon:
-        return Dragon;
-      case PokemonTypeBadge.Electric:
-        return Electric;
-      case PokemonTypeBadge.Fairy:
-        return Fairy;
-      case PokemonTypeBadge.Fighting:
-        return Fighting;
-      case PokemonTypeBadge.Fire:
-        return Fire;
-      case PokemonTypeBadge.Flying:
-        return Flying;
-      case PokemonTypeBadge.Ghost:
-        return Ghost;
-      case PokemonTypeBadge.Grass:
-        return Grass;
-      case PokemonTypeBadge.Ground:
-        return Ground;
-      case PokemonTypeBadge.Ice:
-        return Ice;
-      case PokemonTypeBadge.Normal:
-        return Normal;
-      case PokemonTypeBadge.Poison:
-        return Poison;
-      case PokemonTypeBadge.Psychic:
-        return Psychic;
-      case PokemonTypeBadge.Rock:
-        return Rock;
-      case PokemonTypeBadge.Steel:
-        return Steel;
-      case PokemonTypeBadge.Water:
-        return Water;
-      default:
-        return APIService.getPokeSprite();
-    }
-  };
-
   return (
     <img
       alt={props.alt}
@@ -81,7 +17,7 @@ const IconType = (props: IIconTypeComponent) => {
       src={
         !props.type || isEqual(props.type, 'unknown', EqualMode.IgnoreCaseSensitive)
           ? APIService.getPokeSprite()
-          : getImageObjectByType(props.type)
+          : (getLocalTypeIcon(props.type) ?? APIService.getPokeSprite())
       }
       onError={(e) => {
         e.currentTarget.onerror = null;

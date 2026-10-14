@@ -7,7 +7,7 @@ import { combineClasses } from '../../../utils/extension';
 const PokemonIconType = (props: IPokemonIconTypeComponent) => {
   const getIconType = (src: string, className: string, alt: string) => (
     <img
-      className={combineClasses(className, props.className)}
+      className={combineClasses(className, '!tw-right-0 !tw-left-auto', props.className)}
       alt={alt}
       style={props.style}
       height={props.size}

@@ -14,7 +14,7 @@ import {
   IStatsPokemonGO,
 } from '../core/models/stats.model';
 import { IPokemonDetail, IPokemonDetailInfo, Stats } from '../core/models/API/info.model';
-import { Params, versionList } from './constants';
+import { versionList } from './constants';
 import {
   IPokemonFormModify,
   IPokemonSprite,
@@ -53,6 +53,8 @@ import { BonusType } from '../core/enums/bonus-type.enum';
 import { LeagueBattleType } from '../core/enums/league.enum';
 import { BattleLeagueCPType } from './enums/compute.enum';
 import { IStyleData } from './models/util.model';
+import { getPokemonFormWithNoneSpecialForm } from './pokemon-form-routing';
+export { generateParamForm, getPokemonFormWithNoneSpecialForm, getPokemonType } from './pokemon-form-routing';
 import {
   classLegendary,
   classMythic,
@@ -70,7 +72,6 @@ import {
   formHisuian,
   formMega,
   formNormal,
-  formPrimal,
   formPurified,
   formShadow,
   formStandard,
@@ -1152,28 +1153,6 @@ export const getMoveType = (pokemonData?: Partial<IPokemonData | IPokemonDetail>
   return MoveType.None;
 };
 
-export const getPokemonType = (formName?: string | number | null, isMega = false, isShadow = true): PokemonType => {
-  if (isInclude(formName, formNormal(), IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return PokemonType.Normal;
-  }
-  if (isInclude(formName, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) && isShadow) {
-    return PokemonType.Shadow;
-  }
-  if (isInclude(formName, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive) && isShadow) {
-    return PokemonType.Purified;
-  }
-  if (isInclude(formName, formGmax(), IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return PokemonType.GMax;
-  }
-  if (isInclude(formName, formPrimal(), IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return PokemonType.Primal;
-  }
-  if (isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive) || isMega) {
-    return PokemonType.Mega;
-  }
-  return PokemonType.None;
-};
-
 export const getPokemonClass = (className?: string | number | null): PokemonClass => {
   if (isInclude(className, classLegendary(), IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonClass.Legendary;
@@ -1188,26 +1167,6 @@ export const getPokemonClass = (className?: string | number | null): PokemonClas
 };
 
 export const getArrayBySeq = (length: number, startNumber = 0) => Array.from({ length }, (_, i) => i + startNumber);
-
-export const generateParamForm = (form: string | undefined, pokemonType = PokemonType.None, prefix = '?') => {
-  const isSpecialForm = isSpecialFormType(pokemonType);
-  const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
-  const normalizedForm = getPokemonFormWithNoneSpecialForm(form, pokemonType);
-  const formParam = normalizedForm?.toLowerCase().replaceAll('_', '-');
-  const hasBaseForm = Boolean(formParam) && !isEqual(formParam, formNormal(), EqualMode.IgnoreCaseSensitive);
-
-  if (isSpecialForm) {
-    const params = [
-      ...(hasBaseForm ? [`${Params.Form}=${formParam}`] : []),
-      ...(formType ? [`${Params.FormType}=${formType}`] : []),
-    ];
-    return params.length ? `${prefix}${params.join('&')}` : '';
-  }
-  if (hasBaseForm) {
-    return `${prefix}${Params.Form}=${formParam}`;
-  }
-  return '';
-};
 
 type TypeEffectiveKey = keyof TypeEffectiveChart;
 
@@ -1355,22 +1314,6 @@ export const isPokemonNoneSpecialForm = (form: string | undefined, pokemonType =
     isInclude(form, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) ||
     isInclude(form, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive)
   );
-
-export const getPokemonFormWithNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) => {
-  let normalizedForm = form?.toUpperCase().replaceAll('-', '_');
-  if (isSpecialFormType(pokemonType)) {
-    const modifier = getKeyWithData(PokemonType, pokemonType)?.toUpperCase();
-    if (modifier) {
-      normalizedForm = normalizedForm
-        ?.replace(new RegExp(`_${modifier}$`), '')
-        .replace(new RegExp(`^${modifier}$`), '');
-    }
-    return convertPokemonAPIDataName(normalizedForm || formNormal());
-  }
-  return isPokemonNoneSpecialForm(normalizedForm, pokemonType)
-    ? convertPokemonAPIDataName(normalizedForm || formNormal())
-    : normalizedForm;
-};
 
 export const getLeagueBattleType = (maxCp: number) => {
   if (maxCp > BattleLeagueCPType.Ultra) {

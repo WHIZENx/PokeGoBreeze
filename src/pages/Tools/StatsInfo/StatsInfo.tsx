@@ -14,7 +14,15 @@ import { ColumnType } from '../../../enums/type.enum';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
-import { maxIv, maxLevel, minCp, minIv, minLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
+import {
+  maxIv,
+  maxLevel,
+  maxPokemonLevel,
+  minCp,
+  minIv,
+  minLevel,
+  stepLevel,
+} from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import ButtonGroupLeague from '../../../components/Commons/Buttons/ButtonGroupLeague';
@@ -46,6 +54,8 @@ export const columnsStats = createDataRows<TableColumn<IBattleBaseStats>>(
     id: ColumnType.Level,
     name: 'Level',
     selector: (row) => toNumber(row.level),
+    cell: (row) =>
+      toNumber(row.level) > maxPokemonLevel() ? `${toNumber(row.level)} (Best Buddy)` : toNumber(row.level),
     sortable: true,
   },
   {
@@ -74,14 +84,14 @@ export const columnsStats = createDataRows<TableColumn<IBattleBaseStats>>(
   },
   {
     id: ColumnType.Prod,
-    name: 'Stat Prod (*1000)',
+    name: 'Stat Product (/1,000)',
     selector: (row) => toFloatWithPadding(toNumber(row.stats?.statPROD) / 1000, 2),
     sortable: true,
     sortFunction: numSortStatsProd,
   },
   {
     id: ColumnType.PercentProd,
-    name: 'Stat Prod (%)',
+    name: 'Stat Product (%)',
     selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })),
     sortable: true,
     sortFunction: numSortStatsProdsPercent,
@@ -98,6 +108,7 @@ const StatsInfo = () => {
   const { searchingToolCurrentDetails } = useSearch();
 
   const [searchCP, setSearchCP] = useState('');
+  const [searchLevel, setSearchLevel] = useState<number>();
 
   const [ATKIv, setATKIv] = useState(0);
   const [DEFIv, setDEFIv] = useState(0);
@@ -114,6 +125,7 @@ const StatsInfo = () => {
     atkIv: number;
     defIv: number;
     staIv: number;
+    level?: number;
   }>();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -209,6 +221,7 @@ const StatsInfo = () => {
     setPage(1);
     setSubmittedSearch(undefined);
     setSearchCP('');
+    setSearchLevel(undefined);
     setATKIv(0);
     setDEFIv(0);
     setSTAIv(0);
@@ -222,14 +235,25 @@ const StatsInfo = () => {
         setPage(1);
         return;
       }
-      if (toNumber(searchCP) < minCp()) {
+      const cp = toNumber(searchCP);
+      if (!Number.isInteger(cp)) {
+        showSnackbar('CP must be a whole number.', 'error');
+        return;
+      }
+      if (cp < minCp()) {
         showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
         return;
       }
-      setSubmittedSearch({ cp: toNumber(searchCP), atkIv: ATKIv, defIv: DEFIv, staIv: STAIv });
+      setSubmittedSearch({
+        cp,
+        atkIv: ATKIv,
+        defIv: DEFIv,
+        staIv: STAIv,
+        ...(searchLevel === undefined ? {} : { level: searchLevel }),
+      });
       setPage(1);
     },
-    [searchCP, ATKIv, DEFIv, STAIv, showSnackbar]
+    [searchCP, searchLevel, ATKIv, DEFIv, STAIv, showSnackbar]
   );
 
   return (
@@ -271,6 +295,13 @@ const StatsInfo = () => {
                 ivSta={STAIv}
                 searchCP={searchCP}
                 setSearchCP={setSearchCP}
+                setSearchLevel={setSearchLevel}
+                minLevel={minLevel()}
+                maxLevel={maxLevel()}
+                levelStep={stepLevel()}
+                minIv={minIv()}
+                maxIv={maxIv()}
+                minCp={minCp()}
                 label="Input CP"
                 width="50%"
                 minWidth={350}
@@ -295,6 +326,7 @@ const StatsInfo = () => {
               marks={marks}
               onChange={(_, v) => {
                 setSearchCP('');
+                setSearchLevel(undefined);
                 setATKIv(v as number);
               }}
             />
@@ -313,6 +345,7 @@ const StatsInfo = () => {
               marks={marks}
               onChange={(_, v) => {
                 setSearchCP('');
+                setSearchLevel(undefined);
                 setDEFIv(v as number);
               }}
             />
@@ -331,6 +364,7 @@ const StatsInfo = () => {
               marks={marks}
               onChange={(_, v) => {
                 setSearchCP('');
+                setSearchLevel(undefined);
                 setSTAIv(v as number);
               }}
             />

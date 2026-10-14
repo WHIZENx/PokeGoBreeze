@@ -21,6 +21,7 @@ export interface BreakPointAtk {
   levels: number[];
   ivs: number[];
   colorTone: DynamicObj<ColorTone>;
+  target: { level: number; iv: number };
 }
 
 export interface BreakPointDef {
@@ -30,6 +31,7 @@ export interface BreakPointDef {
   ivs: number[];
   colorToneDef: DynamicObj<ColorTone>;
   colorToneSta: DynamicObj<ColorTone>;
+  target: { level: number; iv: number };
 }
 
 export interface BulkPointDef {
@@ -37,4 +39,5 @@ export interface BulkPointDef {
   maxLength: number;
   levels: number[];
   ivs: number[];
+  target: { level: number; iv: number };
 }
