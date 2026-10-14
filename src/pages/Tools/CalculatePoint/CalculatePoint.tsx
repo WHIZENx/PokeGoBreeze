@@ -3,7 +3,7 @@ import Find from '../../../components/Find/Find';
 
 import './CalculatePoint.scss';
 import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMove';
-import { Badge, Checkbox, FormControlLabel, Pagination } from '@mui/material';
+import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { findStabType } from '../../../utils/compute';
 import { getLevelList } from '../../../utils/compute';
@@ -32,6 +32,9 @@ import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import type { BreakpointApiResult } from '../../../services/models/tools-api.model';
+import { RAID_BATTLE_EXCLUDED_POKEMON_TYPES, RAID_BOSS_TIER } from '../../../utils/constants';
+import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 const CalculatePoint = () => {
   useTitle({
@@ -57,8 +60,6 @@ const CalculatePoint = () => {
   const [weatherBoosts, setWeatherBoosts] = useState(false);
   const [pvpDmg, setPvpDmg] = useState(false);
   const [showDiffBorder, setShowDiffBorder] = useState(false);
-  const [levelPage, setLevelPage] = useState(1);
-
   const [isRaid, setIsRaid] = useState(true);
   const [tier, setTier] = useState(1);
 
@@ -122,6 +123,14 @@ const CalculatePoint = () => {
     weather: (!pvpDmg || isRaid) && weatherBoosts,
   });
 
+  const fixedTargetParams = () => ({
+    targetLevel: isRaid ? RAID_BOSS_TIER[tier].level : maxLevel(),
+    targetIv: maxIv(),
+  });
+
+  const pokemonType = (objective = false) =>
+    (objective ? searchingToolObjectData : searchingToolCurrentData)?.pokemon?.pokemonType;
+
   const movePower = (selectedMove: ICombat | undefined) =>
     toNumber(!isRaid && pvpDmg ? selectedMove?.pvpPower : selectedMove?.pvePower);
 
@@ -134,6 +143,9 @@ const CalculatePoint = () => {
           atk: toNumber(searchingToolCurrentData?.pokemon?.statsGO?.atk),
           targetDef: toNumber(searchingToolObjectData?.pokemon?.statsGO?.def),
           power: movePower(move),
+          ...fixedTargetParams(),
+          attackerPokemonType: pokemonType(),
+          defenderPokemonType: pokemonType(true),
           ...moveParams(searchingToolObjectData?.form, searchingToolCurrentData?.form, move),
           ...commonParams(),
         })
@@ -149,6 +161,7 @@ const CalculatePoint = () => {
         levels: response.data.data.levels,
         ivs: response.data.data.ivs,
         colorTone,
+        target: response.data.data.target,
       });
       showSnackbar('Calculate breakpoint attacker successfully!', 'success');
     } catch {
@@ -166,6 +179,9 @@ const CalculatePoint = () => {
           sta: toNumber(searchingToolCurrentData?.pokemon?.statsGO?.sta),
           targetAtk: toNumber(searchingToolObjectData?.pokemon?.statsGO?.atk),
           power: movePower(moveDef),
+          ...fixedTargetParams(),
+          attackerPokemonType: pokemonType(true),
+          defenderPokemonType: pokemonType(),
           ...moveParams(searchingToolCurrentData?.form, searchingToolObjectData?.form, moveDef),
           ...commonParams(),
         })
@@ -183,6 +199,7 @@ const CalculatePoint = () => {
         ivs: response.data.data.ivs,
         colorToneDef,
         colorToneSta,
+        target: response.data.data.target,
       });
       showSnackbar('Calculate breakpoint defender successfully!', 'success');
     } catch {
@@ -229,6 +246,9 @@ const CalculatePoint = () => {
           staIv: STAIv,
           fastPower: movePower(fMove),
           chargedPower: movePower(cMove),
+          ...fixedTargetParams(),
+          attackerPokemonType: pokemonType(true),
+          defenderPokemonType: pokemonType(),
           ...moveParams(searchingToolCurrentData?.form, searchingToolObjectData?.form, fMove, 'fast'),
           ...moveParams(searchingToolCurrentData?.form, searchingToolObjectData?.form, cMove, 'charged'),
           ...commonParams(),
@@ -242,6 +262,7 @@ const CalculatePoint = () => {
         maxLength: response.data.data.maxLength,
         levels: response.data.data.levels,
         ivs: response.data.data.ivs,
+        target: response.data.data.target,
       });
       showSnackbar('Calculate bulkpoint defender successfully!', 'success');
     } catch {
@@ -249,43 +270,47 @@ const CalculatePoint = () => {
     }
   };
 
-  const getIconBattle = (action: TypeAction, form: Partial<IPokemonFormModify> | undefined) => (
-    <div className="border-type-stat tw-text-center">
-      <Badge
-        color="primary"
-        overlap="circular"
-        badgeContent={isRaid && action === TypeAction.Def ? `Tier ${tier}` : undefined}
-      >
-        <span className="tw-relative tw-w-24">
-          <img
-            className="tw-absolute"
-            alt="Image Logo"
-            height={36}
-            src={action === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`}
-          />
-          <img
-            alt="Pokémon Image"
-            className="pokemon-sprite-large"
-            src={APIService.getPokeIconSprite(form?.form?.name, false)}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = APIService.getPokeIconSprite();
-            }}
-          />
+  const getIconBattle = (action: TypeAction, form: Partial<IPokemonFormModify> | undefined, isObjective = false) => {
+    const pokemon = (isObjective ? searchingToolObjectData : searchingToolCurrentData)?.pokemon;
+    return (
+      <div className="border-type-stat tw-text-center">
+        <Badge color="primary" overlap="circular" badgeContent={isRaid && isObjective ? `Tier ${tier}` : undefined}>
+          <span className="tw-relative tw-inline-flex tw-w-24 tw-items-center tw-justify-center">
+            <img
+              className="tw-absolute tw-left-0 tw-top-0 tw-z-10"
+              alt="Image Logo"
+              height={36}
+              src={action === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`}
+            />
+            {pokemon && (
+              <PokemonIconType pokemonType={form?.form?.pokemonType ?? pokemon.pokemonType} size={24}>
+                <PokemonTableIcon
+                  num={pokemon.id ?? form?.defaultId ?? 0}
+                  name={form?.name ?? pokemon.name}
+                  fullName={form?.form?.name ?? pokemon.fullName}
+                  slug={form?.form?.name}
+                  sprite={pokemon.sprite}
+                  form={form?.form?.formName ?? pokemon.form}
+                  baseSpecies={form?.defaultName ?? pokemon.speciesName}
+                  size={96}
+                />
+              </PokemonIconType>
+            )}
+          </span>
+        </Badge>
+        <span className="caption">{splitAndCapitalize(form?.form?.name, '-', ' ')}</span>
+        <span className="caption">
+          <b>{action === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
         </span>
-      </Badge>
-      <span className="caption">{splitAndCapitalize(form?.form?.name, '-', ' ')}</span>
-      <span className="caption">
-        <b>{action === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
-      </span>
-    </div>
-  );
+      </div>
+    );
+  };
 
-  const setIconBattle = (atk: TypeAction, def: TypeAction) => (
+  const setIconBattle = (currentAction: TypeAction, objectiveAction: TypeAction) => (
     <>
       <div className="tw-flex">
-        {getIconBattle(atk, searchingToolCurrentData?.form)}
-        {getIconBattle(def, searchingToolObjectData?.form)}
+        {getIconBattle(currentAction, searchingToolCurrentData?.form)}
+        {getIconBattle(objectiveAction, searchingToolObjectData?.form, true)}
       </div>
       <FormControlLabel
         control={<Checkbox checked={showDiffBorder} onChange={(_, check) => setShowDiffBorder(check)} />}
@@ -335,10 +360,6 @@ const CalculatePoint = () => {
   };
 
   const ivIndices = useMemo(() => [...Array(maxIv() + 1).keys()], []);
-  const levelPageSize = 40;
-  const visibleLevelRows = (levels: number[]) =>
-    levels.map((level, index) => ({ level, index })).slice((levelPage - 1) * levelPageSize, levelPage * levelPageSize);
-
   const colorToneAtkMap = useMemo(
     () => new Map(Object.values(resultBreakPointAtk?.colorTone ?? {}).map((t) => [t.number, t.color])),
     [resultBreakPointAtk]
@@ -356,7 +377,12 @@ const CalculatePoint = () => {
     <Fragment>
       <div className="row !tw-m-0 tw-overflow-x-hidden">
         <div className="lg:tw-flex-1 !tw-p-0">
-          <Find isHide title="Attacker Pokémon" clearStats={clearData} />
+          <Find
+            isHide
+            title="Attacker Pokémon"
+            clearStats={clearData}
+            excludedPokemonTypes={RAID_BATTLE_EXCLUDED_POKEMON_TYPES}
+          />
         </div>
         <div className="calculate-point-defender lg:tw-flex-1 tw-flex tw-justify-center !tw-p-0">
           <Find
@@ -368,20 +394,12 @@ const CalculatePoint = () => {
             title="Defender Pokémon"
             clearStats={clearData}
             isObjective
+            excludedPokemonTypes={RAID_BATTLE_EXCLUDED_POKEMON_TYPES}
           />
         </div>
       </div>
       <hr />
       <div className="tw-container tw-mb-3">
-        <div className="tw-flex tw-flex-wrap tw-items-center tw-justify-between tw-gap-2 tw-mb-3">
-          <span className="caption">Level rows</span>
-          <Pagination
-            size="small"
-            page={levelPage}
-            count={Math.max(1, Math.ceil(getLevelList().length / levelPageSize))}
-            onChange={(_, page) => setLevelPage(page)}
-          />
-        </div>
         <TabsPanel
           tabs={[
             {
@@ -411,8 +429,8 @@ const CalculatePoint = () => {
                           <Checkbox
                             checked={weatherBoosts}
                             onChange={(_, check) => {
-                              setResultBreakPointAtk(undefined);
                               setWeatherBoosts(check);
+                              clearData();
                             }}
                           />
                         }
@@ -424,8 +442,8 @@ const CalculatePoint = () => {
                           <Checkbox
                             checked={pvpDmg}
                             onChange={(_, check) => {
-                              setResultBreakPointAtk(undefined);
                               setPvpDmg(check);
+                              clearData();
                             }}
                           />
                         }
@@ -447,7 +465,7 @@ const CalculatePoint = () => {
                           <p>
                             {'- Damage: '}
                             <b>
-                              {move.pvePower}
+                              {movePower(move)}
                               {findStabType(searchingToolCurrentData?.form?.form?.types, move.type) && (
                                 <span className="caption-small tw-text-success"> (x1.2)</span>
                               )}
@@ -491,29 +509,27 @@ const CalculatePoint = () => {
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {visibleLevelRows(resultBreakPointAtk?.levels ?? getLevelList()).map(
-                              ({ level, index: i }) => (
-                                <tr key={level}>
-                                  <td>{level}</td>
-                                  {(resultBreakPointAtk?.ivs ?? ivIndices).map((_, index) => (
-                                    <td
-                                      className={combineClasses(
-                                        'text-iv',
-                                        showDiffBorder ? getBorderHighlight(i, index, resultBreakPointAtk?.data) : ''
-                                      )}
-                                      style={{
-                                        backgroundColor: resultBreakPointAtk
-                                          ? computeColor(colorToneAtkMap.get(resultBreakPointAtk.data[i][index]))
-                                          : '',
-                                      }}
-                                      key={index}
-                                    >
-                                      {resultBreakPointAtk && `${resultBreakPointAtk.data[i][index]}`}
-                                    </td>
-                                  ))}
-                                </tr>
-                              )
-                            )}
+                            {(resultBreakPointAtk?.levels ?? getLevelList()).map((level, i) => (
+                              <tr key={level}>
+                                <td>{level}</td>
+                                {(resultBreakPointAtk?.ivs ?? ivIndices).map((_, index) => (
+                                  <td
+                                    className={combineClasses(
+                                      'text-iv',
+                                      showDiffBorder ? getBorderHighlight(i, index, resultBreakPointAtk?.data) : ''
+                                    )}
+                                    style={{
+                                      backgroundColor: resultBreakPointAtk
+                                        ? computeColor(colorToneAtkMap.get(resultBreakPointAtk.data[i][index]))
+                                        : '',
+                                    }}
+                                    key={index}
+                                  >
+                                    {resultBreakPointAtk && `${resultBreakPointAtk.data[i][index]}`}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>
@@ -549,8 +565,8 @@ const CalculatePoint = () => {
                           <Checkbox
                             checked={weatherBoosts}
                             onChange={(_, check) => {
-                              setResultBreakPointDef(undefined);
                               setWeatherBoosts(check);
+                              clearData();
                             }}
                           />
                         }
@@ -562,8 +578,8 @@ const CalculatePoint = () => {
                           <Checkbox
                             checked={pvpDmg}
                             onChange={(_, check) => {
-                              setResultBreakPointDef(undefined);
                               setPvpDmg(check);
+                              clearData();
                             }}
                           />
                         }
@@ -585,7 +601,7 @@ const CalculatePoint = () => {
                           <p>
                             {'- Damage: '}
                             <b>
-                              {moveDef.pvePower}
+                              {movePower(moveDef)}
                               {findStabType(searchingToolObjectData?.form?.form?.types, moveDef.type) && (
                                 <span className="caption-small tw-text-success"> (x1.2)</span>
                               )}
@@ -629,29 +645,27 @@ const CalculatePoint = () => {
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {visibleLevelRows(resultBreakPointDef?.levels ?? getLevelList()).map(
-                              ({ level, index: i }) => (
-                                <tr key={level}>
-                                  <td>{level}</td>
-                                  {(resultBreakPointDef?.ivs ?? ivIndices).map((_, index) => (
-                                    <td
-                                      className={combineClasses(
-                                        'text-iv',
-                                        showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataDef) : ''
-                                      )}
-                                      style={{
-                                        backgroundColor: resultBreakPointDef
-                                          ? computeColor(colorToneDefMap.get(resultBreakPointDef.dataDef[i][index]))
-                                          : '',
-                                      }}
-                                      key={index}
-                                    >
-                                      {resultBreakPointDef && `${resultBreakPointDef.dataDef[i][index]}`}
-                                    </td>
-                                  ))}
-                                </tr>
-                              )
-                            )}
+                            {(resultBreakPointDef?.levels ?? getLevelList()).map((level, i) => (
+                              <tr key={level}>
+                                <td>{level}</td>
+                                {(resultBreakPointDef?.ivs ?? ivIndices).map((_, index) => (
+                                  <td
+                                    className={combineClasses(
+                                      'text-iv',
+                                      showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataDef) : ''
+                                    )}
+                                    style={{
+                                      backgroundColor: resultBreakPointDef
+                                        ? computeColor(colorToneDefMap.get(resultBreakPointDef.dataDef[i][index]))
+                                        : '',
+                                    }}
+                                    key={index}
+                                  >
+                                    {resultBreakPointDef && `${resultBreakPointDef.dataDef[i][index]}`}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>
@@ -682,29 +696,27 @@ const CalculatePoint = () => {
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {visibleLevelRows(resultBreakPointDef?.levels ?? getLevelList()).map(
-                              ({ level, index: i }) => (
-                                <tr key={level}>
-                                  <td>{level}</td>
-                                  {(resultBreakPointDef?.ivs ?? ivIndices).map((_, index) => (
-                                    <td
-                                      className={combineClasses(
-                                        'text-iv',
-                                        showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataSta) : ''
-                                      )}
-                                      style={{
-                                        backgroundColor: resultBreakPointDef
-                                          ? computeColor(colorToneStaMap.get(resultBreakPointDef.dataSta[i][index]))
-                                          : '',
-                                      }}
-                                      key={index}
-                                    >
-                                      {resultBreakPointDef && `${resultBreakPointDef.dataSta[i][index]}`}
-                                    </td>
-                                  ))}
-                                </tr>
-                              )
-                            )}
+                            {(resultBreakPointDef?.levels ?? getLevelList()).map((level, i) => (
+                              <tr key={level}>
+                                <td>{level}</td>
+                                {(resultBreakPointDef?.ivs ?? ivIndices).map((_, index) => (
+                                  <td
+                                    className={combineClasses(
+                                      'text-iv',
+                                      showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataSta) : ''
+                                    )}
+                                    style={{
+                                      backgroundColor: resultBreakPointDef
+                                        ? computeColor(colorToneStaMap.get(resultBreakPointDef.dataSta[i][index]))
+                                        : '',
+                                    }}
+                                    key={index}
+                                  >
+                                    {resultBreakPointDef && `${resultBreakPointDef.dataSta[i][index]}`}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>
@@ -714,7 +726,7 @@ const CalculatePoint = () => {
               ),
             },
             {
-              label: 'Breakpoint Attacker',
+              label: 'Bulkpoint Defender',
               renderChildren: () => (
                 <div className="tab-body">
                   <div className="row">
@@ -752,7 +764,7 @@ const CalculatePoint = () => {
                             <p>
                               {'- Damage: '}
                               <b>
-                                {fMove.pvePower}
+                                {movePower(fMove)}
                                 {findStabType(searchingToolObjectData?.form?.form?.types, fMove.type) && (
                                   <span className="caption-small tw-text-success"> (x1.2)</span>
                                 )}
@@ -793,7 +805,7 @@ const CalculatePoint = () => {
                             <p>
                               {'- Damage: '}
                               <b>
-                                {cMove.pvePower}
+                                {movePower(cMove)}
                                 {findStabType(searchingToolObjectData?.form?.form?.types, cMove.type) && (
                                   <span className="caption-small tw-text-success"> (x1.2)</span>
                                 )}
@@ -807,8 +819,8 @@ const CalculatePoint = () => {
                           <Checkbox
                             checked={weatherBoosts}
                             onChange={(_, check) => {
-                              setResultBulkPointDef(undefined);
                               setWeatherBoosts(check);
+                              clearData();
                             }}
                           />
                         }
@@ -820,8 +832,8 @@ const CalculatePoint = () => {
                           <Checkbox
                             checked={pvpDmg}
                             onChange={(_, check) => {
-                              setResultBulkPointDef(undefined);
                               setPvpDmg(check);
+                              clearData();
                             }}
                           />
                         }
@@ -909,34 +921,32 @@ const CalculatePoint = () => {
                             </tr>
                           </thead>
                           <tbody className="tw-text-center">
-                            {visibleLevelRows(resultBulkPointDef?.levels ?? getLevelList()).map(
-                              ({ level, index: i }) => (
-                                <tr key={level}>
-                                  <td>{level}</td>
-                                  {resultBulkPointDef ? (
-                                    <Fragment>
-                                      {resultBulkPointDef.data[i].map((value, index) => (
-                                        <td
-                                          className={combineClasses(
-                                            'text-iv-bulk',
-                                            value === 0 && showDiffBorder ? getBorderSplit(i, index) : ''
-                                          )}
-                                          key={index}
-                                        >
-                                          {value}
-                                        </td>
-                                      ))}
-                                    </Fragment>
-                                  ) : (
-                                    <Fragment>
-                                      {[...Array(12).keys()].map((_, index) => (
-                                        <td key={index} />
-                                      ))}
-                                    </Fragment>
-                                  )}
-                                </tr>
-                              )
-                            )}
+                            {(resultBulkPointDef?.levels ?? getLevelList()).map((level, i) => (
+                              <tr key={level}>
+                                <td>{level}</td>
+                                {resultBulkPointDef ? (
+                                  <Fragment>
+                                    {resultBulkPointDef.data[i].map((value, index) => (
+                                      <td
+                                        className={combineClasses(
+                                          'text-iv-bulk',
+                                          value === 0 && showDiffBorder ? getBorderSplit(i, index) : ''
+                                        )}
+                                        key={index}
+                                      >
+                                        {value}
+                                      </td>
+                                    ))}
+                                  </Fragment>
+                                ) : (
+                                  <Fragment>
+                                    {[...Array(12).keys()].map((_, index) => (
+                                      <td key={index} />
+                                    ))}
+                                  </Fragment>
+                                )}
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>

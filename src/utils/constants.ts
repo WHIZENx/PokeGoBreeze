@@ -4,6 +4,7 @@ import { DynamicObj } from './extension';
 import { LeagueBattleType } from '../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
+import { PokemonType } from '../enums/type.enum';
 
 // Parameters
 export class Params {
@@ -18,13 +19,13 @@ export class Params {
 export const RAID_BOSS_TIER: DynamicObj<ITier> = {
   1: Tier.create({
     level: 20,
-    CPm: 0.61,
+    CPm: 0.5974,
     sta: 600,
     timer: 180,
   }),
   2: Tier.create({
     level: 25,
-    CPm: 0.6679,
+    CPm: 0.667934,
     sta: 1800,
     timer: 180,
   }),
@@ -38,21 +39,23 @@ export const RAID_BOSS_TIER: DynamicObj<ITier> = {
     level: 40,
     CPm: 0.7903,
     sta: 9000,
-    timer: 180,
+    timer: 300,
   }),
   5: Tier.create({
     level: 40,
-    CPm: 0.79,
+    CPm: 0.7903,
     sta: 15000,
     timer: 300,
   }),
   6: Tier.create({
     level: 40,
-    CPm: 0.79,
+    CPm: 0.7903,
     sta: 22500,
     timer: 300,
   }),
 };
+
+export const RAID_BATTLE_EXCLUDED_POKEMON_TYPES: readonly PokemonType[] = [PokemonType.GMax];
 
 export const genList: DynamicObj<number[]> = {
   1: [1, 151],

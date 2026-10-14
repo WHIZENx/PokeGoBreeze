@@ -121,6 +121,8 @@ export interface IFindComponent {
   title?: string;
   isSwap?: boolean;
   isObjective?: boolean;
+  excludedPokemonTypes?: readonly PokemonType[];
+  pokemonFilter?: (pokemon: IPokemonData) => boolean;
 }
 
 export interface IFormSelectComponent {
@@ -138,6 +140,8 @@ export interface IFormSelectComponent {
   setForm?: (form: IPokemonFormModify | undefined) => void;
   onHandleSetStats?: (type: TypeAction, value: number) => void;
   isObjective?: boolean;
+  excludedPokemonTypes?: readonly PokemonType[];
+  pokemonFilter?: (pokemon: IPokemonData) => boolean;
 }
 
 export interface IToolsComponent {

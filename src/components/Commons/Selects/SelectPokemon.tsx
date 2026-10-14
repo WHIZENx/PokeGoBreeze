@@ -3,20 +3,30 @@ import CardPokemon from '../../Card/CardPokemon';
 import React from 'react';
 
 import './Select.scss';
-import { addSelectMovesByType } from '../../../utils/utils';
+import { addSelectMovesByType, isSpecialMegaFormType } from '../../../utils/utils';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
-import APIService from '../../../services/api.service';
 import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
 import usePokemon from '../../../composables/usePokemon';
 import SelectCardPokemon from './SelectCardPokemon';
+import PokemonTableIcon from '../../Sprites/PokemonTableIcon/PokemonTableIcon';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
 
   const changePokemon = (value: IPokemonData) => {
-    const pokemonToPass = props.defaultSetting ? { ...value, stats: props.defaultSetting } : value;
+    const pokemonToPass = props.defaultSetting
+      ? {
+          ...value,
+          stats: {
+            ...props.defaultSetting,
+            pokemonType: isSpecialMegaFormType(value.pokemonType)
+              ? value.pokemonType
+              : props.defaultSetting.pokemonType,
+          },
+        }
+      : value;
     if (props.setCurrentPokemon) {
       props.setCurrentPokemon(pokemonToPass);
     }
@@ -56,7 +66,11 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   return (
     <SelectCardPokemon
-      pokemonList={getFilteredPokemons()}
+      pokemonList={getFilteredPokemons(
+        (pokemon) =>
+          !props.excludedPokemonTypes?.includes(pokemon.pokemonType) &&
+          (!props.pokemonFilter || props.pokemonFilter(pokemon))
+      )}
       value={formatPokemonDisplayName(props.pokemon?.name)}
       onSetPokemon={(pokemon) => changePokemon(pokemon)}
       isFit
@@ -68,8 +82,8 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       cardElement={(pokemon) => <CardPokemon value={pokemon} />}
       maxHeight={props.maxHeight}
       isShowPokemonIcon
-      sprite={props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined}
-      onSprite={(pokemon) => pokemon?.sprite}
+      selectedPokemonIcon={props.pokemon && <PokemonTableIcon {...props.pokemon} size={40} />}
+      renderSelectedPokemonIcon={(pokemon) => <PokemonTableIcon {...pokemon} size={40} />}
       isDisable={props.isDisable}
     />
   );

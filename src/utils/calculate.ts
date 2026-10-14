@@ -109,6 +109,9 @@ export const calculateCP = (atk: number, def: number, sta: number, level: number
 export const calculateRaidStat = (stat: number | undefined, tier: number) =>
   Math.floor((toNumber(stat) + maxIv()) * RAID_BOSS_TIER[tier].CPm);
 
+export const calculateRaidBattleStat = (stat: number | undefined, tier: number) =>
+  (toNumber(stat) + maxIv()) * RAID_BOSS_TIER[tier].CPm;
+
 export const calculateRaidCP = (atk: number, def: number, tier: number) =>
   Math.floor(((atk + maxIv()) * Math.sqrt(def + maxIv()) * Math.sqrt(RAID_BOSS_TIER[tier].sta)) / 10);
 

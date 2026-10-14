@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import APIService from '../../services/api.service';
 import FormSelect from './FormSelect';
 
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
@@ -14,6 +13,8 @@ import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 import InputMuiSearch from '../Commons/Inputs/InputMuiSearch';
 import { Skeleton } from '@mui/material';
+import PokemonTableIcon from '../Sprites/PokemonTableIcon/PokemonTableIcon';
+import { isNearScrollEnd } from '../../utils/scroll';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -22,7 +23,7 @@ const Find = (props: IFindComponent) => {
   const cardHeight = useRef(65);
 
   const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
-  const { mappingPokemonName, getPokemonById } = usePokemon();
+  const { mappingPokemonName, getPokemonById, getPokemonNavigation, getFilteredPokemons } = usePokemon();
 
   const [id, setId] = useState(
     searchingToolData
@@ -41,8 +42,24 @@ const Find = (props: IFindComponent) => {
 
   useEffect(() => {
     const result = mappingPokemonName();
-    setPokemonList(result);
-  }, [mappingPokemonName]);
+    if (!props.pokemonFilter) {
+      setPokemonList(result);
+      return;
+    }
+    const eligibleIds = new Set(getFilteredPokemons(props.pokemonFilter).map((pokemon) => pokemon.num));
+    setPokemonList(result.filter((pokemon) => eligibleIds.has(pokemon.id)));
+  }, [getFilteredPokemons, mappingPokemonName, props.pokemonFilter]);
+
+  useEffect(() => {
+    if (!props.pokemonFilter || !isNotEmpty(pokemonList) || pokemonList.some((pokemon) => pokemon.id === id)) {
+      return;
+    }
+    const fallbackPokemon = pokemonList[0];
+    setId(fallbackPokemon.id);
+    props.setId?.(fallbackPokemon.id);
+    props.setName?.(fallbackPokemon.name);
+    props.clearStats?.();
+  }, [id, pokemonList, props.clearStats, props.pokemonFilter, props.setId, props.setName]);
 
   const debouncedFilter = useRef(
     debounce((list: IPokemonSearching[], term: string) => {
@@ -65,10 +82,11 @@ const Find = (props: IFindComponent) => {
   const currentPokemonName = useMemo(() => pokemonList.find((item) => item.id === id)?.name, [pokemonList, id]);
 
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = ele.currentTarget.scrollTop;
-    const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
-      setStartIndex(startIndex + 1);
+    if (isNearScrollEnd(ele.currentTarget)) {
+      setStartIndex((current) => {
+        const visibleCount = firstInit.current + eachCounter.current * current;
+        return visibleCount < pokemonListFilter.length ? current + 1 : current;
+      });
     }
   };
 
@@ -97,19 +115,22 @@ const Find = (props: IFindComponent) => {
   };
 
   const modifyId = (modify: number) => {
-    const currentPokemon = getPokemonById(id);
-    if (currentPokemon) {
-      const current = getPokemonById(currentPokemon.id + modify);
-      if (current) {
-        setId(current.id);
-        if (props.setId) {
-          props.setId(current.id);
-        }
-        if (props.setName) {
-          props.setName(current.name);
-        }
-        ensurePokemonVisibility(current.id);
+    const navigation = getPokemonNavigation(id);
+    const currentIndex = pokemonList.findIndex((pokemon) => pokemon.id === id);
+    const filteredTarget =
+      props.pokemonFilter && currentIndex >= 0
+        ? pokemonList[(currentIndex + modify + pokemonList.length) % pokemonList.length]
+        : undefined;
+    const targetPokemon = filteredTarget ?? (modify < 0 ? navigation.prev : navigation.next);
+    if (targetPokemon) {
+      setId(targetPokemon.id);
+      if (props.setId) {
+        props.setId(targetPokemon.id);
       }
+      if (props.setName) {
+        props.setName(targetPokemon.name);
+      }
+      ensurePokemonVisibility(targetPokemon.id);
     }
     if (props.clearStats) {
       props.clearStats();
@@ -163,17 +184,7 @@ const Find = (props: IFindComponent) => {
               onMouseDown={() => getInfoPoke(value)}
             >
               <b>#{value.id}</b>
-              <img
-                width={36}
-                height={36}
-                className="img-search"
-                alt="Pokémon Image"
-                src={value.sprites}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeIconSprite();
-                }}
-              />
+              <PokemonTableIcon num={value.id} name={value.name} className="img-search" size={36} />
               {value.name}
             </div>
           ))}
@@ -201,6 +212,8 @@ const Find = (props: IFindComponent) => {
             onSetPrev={() => modifyId(-1)}
             onSetNext={() => modifyId(1)}
             isObjective={props.isObjective}
+            excludedPokemonTypes={props.excludedPokemonTypes}
+            pokemonFilter={props.pokemonFilter}
           />
         )}
       </div>
