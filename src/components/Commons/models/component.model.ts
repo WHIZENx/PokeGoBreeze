@@ -293,6 +293,8 @@ export interface ISelectPokemonComponent {
   labelPrepend?: string;
   isNoWrap?: boolean;
   isFit?: boolean;
+  excludedPokemonTypes?: readonly PokemonType[];
+  pokemonFilter?: (pokemon: IPokemonData) => boolean;
 }
 
 export interface ISelectBadgeComponent {

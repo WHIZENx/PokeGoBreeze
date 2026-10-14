@@ -56,7 +56,11 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   return (
     <SelectCardPokemon
-      pokemonList={getFilteredPokemons()}
+      pokemonList={getFilteredPokemons(
+        (pokemon) =>
+          !props.excludedPokemonTypes?.includes(pokemon.pokemonType) &&
+          (!props.pokemonFilter || props.pokemonFilter(pokemon))
+      )}
       value={formatPokemonDisplayName(props.pokemon?.name)}
       onSetPokemon={(pokemon) => changePokemon(pokemon)}
       isFit

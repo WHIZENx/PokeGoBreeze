@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 
 import { raidEgg } from '../../utils/compute';
 import { RAID_BOSS_TIER } from '../../utils/constants';
-import { calculateRaidCP, calculateRaidStat } from '../../utils/calculate';
+import { calculateRaidBattleStat, calculateRaidCP } from '../../utils/calculate';
 
 import { isSpecialMegaFormType } from '../../utils/utils';
 import { IRaidComponent } from '../models/component.model';
@@ -39,12 +39,12 @@ const Raid = (props: IRaidComponent) => {
       props.setTierBoss(tier);
     }
     if (props.setStatBossATK && props.setStatBossDEF && props.setStatBossHP) {
-      props.setStatBossATK(calculateRaidStat(props.statATK, tier));
-      props.setStatBossDEF(calculateRaidStat(props.statDEF, tier));
+      props.setStatBossATK(calculateRaidBattleStat(props.statATK, tier));
+      props.setStatBossDEF(calculateRaidBattleStat(props.statDEF, tier));
       props.setStatBossHP(RAID_BOSS_TIER[tier].sta);
     }
     if (props.setTimeAllow) {
-      props.setTimeAllow(RAID_BOSS_TIER[tier].timer);
+      props.setTimeAllow(tier === 4 && !isSpecialMegaFormType(props.pokemonType) ? 180 : RAID_BOSS_TIER[tier].timer);
     }
   }, [
     tier,

@@ -23,7 +23,7 @@ const Find = (props: IFindComponent) => {
   const cardHeight = useRef(65);
 
   const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
-  const { mappingPokemonName, getPokemonById, getPokemonNavigation } = usePokemon();
+  const { mappingPokemonName, getPokemonById, getPokemonNavigation, getFilteredPokemons } = usePokemon();
 
   const [id, setId] = useState(
     searchingToolData
@@ -42,8 +42,24 @@ const Find = (props: IFindComponent) => {
 
   useEffect(() => {
     const result = mappingPokemonName();
-    setPokemonList(result);
-  }, [mappingPokemonName]);
+    if (!props.pokemonFilter) {
+      setPokemonList(result);
+      return;
+    }
+    const eligibleIds = new Set(getFilteredPokemons(props.pokemonFilter).map((pokemon) => pokemon.num));
+    setPokemonList(result.filter((pokemon) => eligibleIds.has(pokemon.id)));
+  }, [getFilteredPokemons, mappingPokemonName, props.pokemonFilter]);
+
+  useEffect(() => {
+    if (!props.pokemonFilter || !isNotEmpty(pokemonList) || pokemonList.some((pokemon) => pokemon.id === id)) {
+      return;
+    }
+    const fallbackPokemon = pokemonList[0];
+    setId(fallbackPokemon.id);
+    props.setId?.(fallbackPokemon.id);
+    props.setName?.(fallbackPokemon.name);
+    props.clearStats?.();
+  }, [id, pokemonList, props.clearStats, props.pokemonFilter, props.setId, props.setName]);
 
   const debouncedFilter = useRef(
     debounce((list: IPokemonSearching[], term: string) => {
@@ -100,7 +116,12 @@ const Find = (props: IFindComponent) => {
 
   const modifyId = (modify: number) => {
     const navigation = getPokemonNavigation(id);
-    const targetPokemon = modify < 0 ? navigation.prev : navigation.next;
+    const currentIndex = pokemonList.findIndex((pokemon) => pokemon.id === id);
+    const filteredTarget =
+      props.pokemonFilter && currentIndex >= 0
+        ? pokemonList[(currentIndex + modify + pokemonList.length) % pokemonList.length]
+        : undefined;
+    const targetPokemon = filteredTarget ?? (modify < 0 ? navigation.prev : navigation.next);
     if (targetPokemon) {
       setId(targetPokemon.id);
       if (props.setId) {
@@ -191,6 +212,8 @@ const Find = (props: IFindComponent) => {
             onSetPrev={() => modifyId(-1)}
             onSetNext={() => modifyId(1)}
             isObjective={props.isObjective}
+            excludedPokemonTypes={props.excludedPokemonTypes}
+            pokemonFilter={props.pokemonFilter}
           />
         )}
       </div>

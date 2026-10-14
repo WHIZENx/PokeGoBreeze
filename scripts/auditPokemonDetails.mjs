@@ -25,12 +25,8 @@ const fromId = Number.parseInt(args.get('from') ?? '1', 10);
 const timeoutMs = Number.parseInt(args.get('timeout') ?? '20000', 10);
 const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
 const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
-const outputPath = resolve(
-  workspaceRoot,
-  args.get('output') ?? 'artifacts/pokemon-details-audit.json'
-);
-const chromePath =
-  args.get('chrome') ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const outputPath = resolve(workspaceRoot, args.get('output') ?? 'artifacts/pokemon-details-audit.json');
+const chromePath = args.get('chrome') ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 const normalize = (value) =>
   String(value ?? '')
@@ -40,7 +36,10 @@ const normalize = (value) =>
     .toUpperCase();
 
 const normalizeForm = (value) => normalize(value) || 'NORMAL';
-const normalizeMove = (value) => normalize(value).replace(/^V\d{4}_MOVE_/, '').replace(/_FAST$/, '');
+const normalizeMove = (value) =>
+  normalize(value)
+    .replace(/^V\d{4}_MOVE_/, '')
+    .replace(/_FAST$/, '');
 const normalizePokemonType = (value) => (Number(value) === 0 ? 1 : Number(value));
 
 const pokemons = JSON.parse(await readFile(resolve(workspaceRoot, 'modules/api/data/pokemons.json'), 'utf8'));
@@ -147,7 +146,16 @@ const normalizeCanonicalIdentity = (id, value) => {
   }
   if (id === 555) identity = identity.replace(/_GALARIAN_STANDARD$/, '_GALARIAN');
   if ((id === 664 || id === 665) && !identity.includes('_')) identity += '_ICY_SNOW';
+  if (id === 664 || id === 665) identity = identity.replace(/POKE_BALL$/, 'POKEBALL');
   if (id === 716) identity = identity.replace(/_ACTIVE$/, '');
+  if (id === 1007) {
+    identity = identity.replace(/_APEX$/, '_APEX_BUILD');
+    if (identity === 'KORAIDON') identity = 'KORAIDON_APEX_BUILD';
+  }
+  if (id === 1008) {
+    identity = identity.replace(/_ULTIMATE$/, '_ULTIMATE_MODE');
+    if (identity === 'MIRAIDON') identity = 'MIRAIDON_ULTIMATE_MODE';
+  }
   if (id === 875 && identity === 'EISCUE') identity = 'EISCUE_ICE';
   if (id === 877 && identity === 'MORPEKO') identity = 'MORPEKO_FULL_BELLY';
   if (id === 925 && identity === 'MAUSHOLD') identity = 'MAUSHOLD_FAMILY_OF_FOUR';
@@ -173,12 +181,18 @@ const moveCount = (row) =>
 const preferredGoRows = (id, rows) =>
   rows.filter((row) => {
     const identity = normalizeCanonicalIdentity(id, row.fullName);
-    const rowPriority = moveCount(row) * 2 + Number(normalizeForm(row.form) !== 'NORMAL');
+    const rowPriority =
+      Number(normalizeForm(row.form) !== 'NORMAL') * 8 +
+      Number(Boolean(row.releasedGO)) * 4 +
+      Number(moveCount(row) > 0) * 2;
     return !rows.some(
       (candidate) =>
         candidate !== row &&
         normalizeCanonicalIdentity(id, candidate.fullName) === identity &&
-        moveCount(candidate) * 2 + Number(normalizeForm(candidate.form) !== 'NORMAL') > rowPriority
+        Number(normalizeForm(candidate.form) !== 'NORMAL') * 8 +
+          Number(Boolean(candidate.releasedGO)) * 4 +
+          Number(moveCount(candidate) > 0) * 2 >
+          rowPriority
     );
   });
 
@@ -384,11 +398,7 @@ const navigate = async (id, isInitial) => {
   return waitFor(
     readPage,
     (page) =>
-      page?.id === id &&
-      !page.busy &&
-      page.buttons.length > 0 &&
-      page.detailFullName &&
-      page.title.includes(`#${id}`),
+      page?.id === id && !page.busy && page.buttons.length > 0 && page.detailFullName && page.title.includes(`#${id}`),
     `Pokémon #${id}`
   );
 };
@@ -409,11 +419,14 @@ const expectedMoves = (row) => ({
 
 const validateExpectedRow = (issues, id, row, button, page) => {
   const context = { fullName: row.fullName, form: row.form, pokemonType: row.pokemonType };
-  if (normalizeForm(page.detailForm) !== normalizeForm(row.form)) {
-    addIssue(issues, id, 'detail_form_mismatch', { ...context, actual: page.detailForm });
-  }
-  if (normalize(page.detailFullName) !== normalize(row.fullName)) {
-    addIssue(issues, id, 'detail_full_name_mismatch', { ...context, actual: page.detailFullName });
+  const expectedCanonicalIdentity = normalizeCanonicalIdentity(id, row.fullName);
+  const actualCanonicalIdentity = normalizeCanonicalIdentity(id, page.detailFullName);
+  if (actualCanonicalIdentity !== expectedCanonicalIdentity) {
+    addIssue(issues, id, 'detail_identity_mismatch', {
+      ...context,
+      actualFullName: page.detailFullName,
+      actualForm: page.detailForm,
+    });
   }
   if (normalizePokemonType(page.detailPokemonType) !== normalizePokemonType(row.pokemonType)) {
     addIssue(issues, id, 'detail_pokemon_type_mismatch', { ...context, actual: page.detailPokemonType });
@@ -527,21 +540,14 @@ const main = async () => {
           history.pushState({}, '', ${JSON.stringify(`/pokemon/${id}`)});
           window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
         })()`);
-        const loadingPage = await waitFor(
-          readPage,
-          (value) => value?.busy,
-          `Pokémon #${id} loading state`
-        );
+        const loadingPage = await waitFor(readPage, (value) => value?.busy, `Pokémon #${id} loading state`);
         if (loadingPage.id !== previousPage.id) {
           addIssue(issues, id, 'loading_snapshot_id_changed', {
             expected: previousPage.id,
             actual: loadingPage.id,
           });
         }
-        if (
-          loadingPage.bodyWeight !== previousPage.bodyWeight ||
-          loadingPage.bodyHeight !== previousPage.bodyHeight
-        ) {
+        if (loadingPage.bodyWeight !== previousPage.bodyWeight || loadingPage.bodyHeight !== previousPage.bodyHeight) {
           addIssue(issues, id, 'loading_body_snapshot_changed', {
             expected: { weight: previousPage.bodyWeight, height: previousPage.bodyHeight },
             actual: { weight: loadingPage.bodyWeight, height: loadingPage.bodyHeight },
@@ -570,6 +576,21 @@ const main = async () => {
 
       if (!page.title.includes(`#${id}`)) addIssue(issues, id, 'title_id_mismatch', { actual: page.title });
       if (/\b(undefined|NaN)\b/.test(page.bodyText)) addIssue(issues, id, 'invalid_text_rendered');
+
+      const buttonsByIdentity = new Map();
+      for (const button of page.buttons) {
+        const key = `${normalizeCanonicalIdentity(id, button.name)}:${normalizePokemonType(button.pokemonType)}`;
+        buttonsByIdentity.set(key, [...(buttonsByIdentity.get(key) ?? []), button]);
+      }
+      for (const [identity, buttons] of buttonsByIdentity) {
+        // Canonical PokéAPI varieties can intentionally share one GO identity
+        // (for example Battle Bond or Own Tempo). The regression we need to
+        // reject is a synthetic "Only in GO" button duplicating an existing
+        // canonical variety/form.
+        if (buttons.length > 1 && buttons.some((button) => button.formId <= 0)) {
+          addIssue(issues, id, 'duplicate_form_buttons', { identity, buttons });
+        }
+      }
 
       for (const row of rows) {
         const buttonIndex = findButtonIndexForRow(id, page.buttons, row);
@@ -699,10 +720,7 @@ try {
   client?.close();
   if (browser?.chrome && !browser.chrome.killed) {
     browser.chrome.kill('SIGTERM');
-    await Promise.race([
-      new Promise((resolveExit) => browser.chrome.once('exit', resolveExit)),
-      delay(2000),
-    ]);
+    await Promise.race([new Promise((resolveExit) => browser.chrome.once('exit', resolveExit)), delay(2000)]);
   }
   if (browser?.profilePath) {
     try {

@@ -13,6 +13,8 @@ import { IPokemonRaidComponent } from '../models/component.model';
 import { SelectMovePokemonModel } from '../Commons/Inputs/models/select-move.model';
 import SelectCardMove from '../Commons/Selects/SelectCardMove';
 import ButtonMui from '../Commons/Buttons/ButtonMui';
+import { RAID_BATTLE_EXCLUDED_POKEMON_TYPES } from '../../utils/constants';
+import { isRaidBattlePokemonEligible } from '../../utils/raid-battle';
 
 const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
@@ -72,7 +74,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               <ButtonMui
                 isRound
                 className="ic-copy-small !tw-p-0 !tw-min-w-8 !tw-h-8"
-                disabled={!dataTargetPokemon || props.id < 0}
+                disabled={!dataTargetPokemon || props.id < 0 || props.data.length >= 6}
                 title="Copy"
                 label={<ContentCopyIcon color="inherit" className="!tw-title-medium" />}
                 onClick={() => props.onCopyPokemon(props.id)}
@@ -101,6 +103,8 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         setFMovePokemon={setFMoveTargetPokemon}
         setCMovePokemon={setCMoveTargetPokemon}
         maxHeight={120}
+        excludedPokemonTypes={RAID_BATTLE_EXCLUDED_POKEMON_TYPES}
+        pokemonFilter={isRaidBattlePokemonEligible}
       />
       <span className="input-group-text tw-justify-center">
         <b>Fast Move</b>

@@ -52,9 +52,29 @@ export interface BattleLeagueSearchApiResponse {
 }
 
 export type BreakpointApiResult =
-  | { mode: 'attacker'; data: number[][]; levels: number[]; ivs: number[] }
-  | { mode: 'defender'; dataDef: number[][]; dataSta: number[][]; levels: number[]; ivs: number[] }
-  | { mode: 'bulk'; data: number[][]; maxLength: number; levels: number[]; ivs: number[] };
+  | {
+      mode: 'attacker';
+      data: number[][];
+      levels: number[];
+      ivs: number[];
+      target: { level: number; iv: number };
+    }
+  | {
+      mode: 'defender';
+      dataDef: number[][];
+      dataSta: number[][];
+      levels: number[];
+      ivs: number[];
+      target: { level: number; iv: number };
+    }
+  | {
+      mode: 'bulk';
+      data: number[][];
+      maxLength: number;
+      levels: number[];
+      ivs: number[];
+      target: { level: number; iv: number };
+    };
 
 export interface RaidApiResponse {
   data: IPokemonMoveData[];
@@ -63,7 +83,17 @@ export interface RaidApiResponse {
       dps?: { min: number; max: number; average: number };
       tdo?: { min: number; max: number; average: number };
       hp?: { min: number; max: number; average: number };
-      suggestedPlayers?: { hard: number; easy: number };
+      suggestedPlayers?: {
+        minimum?: number;
+        recommended?: number;
+        hard?: number;
+        easy?: number;
+        teamSize?: number;
+        recommendedEfficiency?: number;
+        relobby?: boolean;
+        relobbyDelaySeconds?: number;
+        model?: 'six-pokemon-team-v2';
+      };
     };
   };
 }
@@ -74,6 +104,7 @@ export interface RaidBattleRequest {
     form?: string;
     fast: string;
     charged: string;
+    tier: number;
     atk: number;
     def: number;
     hp: number;
@@ -109,10 +140,17 @@ export interface RaidBattleApiResponse {
       tdoAtk: number;
       tdoDef: number;
       timer: number;
+      duration: number;
       bossHp: number;
+      bossHpRemaining: number;
     };
   }>;
-  meta: { section: 'raidBattle' };
+  meta: {
+    section: 'raidBattle';
+    outcome: 'win' | 'timeout' | 'team_fainted';
+    elapsedTime: number;
+    bossHpRemaining: number;
+  };
 }
 
 export interface CalculateStatsRequest {

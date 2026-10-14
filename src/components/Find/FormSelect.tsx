@@ -37,6 +37,7 @@ import usePokemon from '../../composables/usePokemon';
 import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
+import { deduplicatePokemonFormSelections } from '../../utils/pokemon-form-identity';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -47,7 +48,8 @@ interface OptionsPokemon {
 const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
   const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
-  const { generatePokemonGoForms, getPokemonDetails, getPokemonNavigation, findPokemonById } = usePokemon();
+  const { generatePokemonGoForms, getPokemonDetails, getPokemonNavigation, findPokemonById, retrieveMoves } =
+    usePokemon();
 
   const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
@@ -99,10 +101,26 @@ const FormSelect = (props: IFormSelectComponent) => {
 
       generatePokemonGoForms(dataFormList, formListResult, specie.id, specie.name);
 
-      setPokeData(dataPokeList);
-      setFormList(formListResult);
+      const selectableFormList = deduplicatePokemonFormSelections(formListResult)
+        .map((forms) =>
+          forms.filter((form) => {
+            const pokemonType = form.form.pokemonType ?? PokemonType.None;
+            if (props.excludedPokemonTypes?.includes(pokemonType)) {
+              return false;
+            }
+            if (!props.pokemonFilter) {
+              return true;
+            }
+            const pokemon = retrieveMoves(specie.id, form.form.formName ?? form.form.name ?? form.name, pokemonType);
+            return !!pokemon && props.pokemonFilter(pokemon);
+          })
+        )
+        .filter(isNotEmpty);
 
-      const flatForms = formListResult.flatMap((value) => value);
+      setPokeData(dataPokeList);
+      setFormList(selectableFormList);
+
+      const flatForms = selectableFormList.flatMap((value) => value);
       const defaultForm = flatForms.filter((item) => item.form.isDefault);
       let currentForm = defaultForm.find((item) => item.form.id === specie.id);
       if (searchingToolData) {
@@ -127,7 +145,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
       setData(specie);
     },
-    [searchingToolData]
+    [searchingToolData, props.excludedPokemonTypes, props.pokemonFilter, retrieveMoves]
   );
 
   const queryPokemon = useCallback(

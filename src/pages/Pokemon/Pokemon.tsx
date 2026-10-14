@@ -66,6 +66,7 @@ import {
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonType, TypeAction } from '../../enums/type.enum';
+import { deduplicatePokemonFormSelections } from '../../utils/pokemon-form-identity';
 import { useNavigateToTop } from '../../components/Link/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
@@ -272,6 +273,8 @@ const Pokemon = (props: IPokemonPage) => {
           });
         })
       );
+
+      formListResult = deduplicatePokemonFormSelections(formListResult);
 
       setFormList(formListResult);
 
