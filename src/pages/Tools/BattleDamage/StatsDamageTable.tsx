@@ -10,7 +10,7 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import { IStatsDamageTableComponent } from '../../models/page.model';
 import { PokemonType } from '../../../enums/type.enum';
-import { toNumber } from '../../../utils/extension';
+import { toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { maxIv, minLevel, maxLevel, maxPokemonLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import type { DamageCalculatedStats } from '../../../services/models/tools-api.model';
 
@@ -20,11 +20,15 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
   const [calculatedStats, setCalculatedStats] = useState<DamageCalculatedStats[]>([]);
 
   useEffect(() => {
-    if (props.setStatType && currStatType === PokemonType.Shadow && isSpecialMegaFormType(props.pokemonType)) {
+    if (
+      props.setStatType &&
+      [PokemonType.Shadow, PokemonType.Purified].includes(currStatType) &&
+      (!props.hasShadowForm || isSpecialMegaFormType(props.pokemonType))
+    ) {
       setCurrStatType(PokemonType.Normal);
       props.setStatType(PokemonType.Normal);
     }
-  }, [props.setStatType, currStatType, props.pokemonType]);
+  }, [props.setStatType, currStatType, props.pokemonType, props.hasShadowForm]);
 
   useEffect(() => {
     if (props.statATK === undefined || props.statDEF === undefined || props.statSTA === undefined) {
@@ -37,6 +41,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
       base: { atk: props.statATK, def: props.statDEF, sta: props.statSTA },
       pokemonType: currStatType,
       iv: maxIv(),
+      pvp: props.pvp,
       config: { minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
     })
       .then((response) => {
@@ -52,7 +57,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
     return () => {
       active = false;
     };
-  }, [props.statATK, props.statDEF, props.statSTA, currStatType]);
+  }, [props.statATK, props.statDEF, props.statSTA, props.pvp, currStatType]);
 
   const onHandleLevel = useCallback(
     (v: number) => {
@@ -111,12 +116,23 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
             />
             <FormControlLabel
               value={PokemonType.Shadow}
-              disabled={isSpecialMegaFormType(props.pokemonType)}
+              disabled={!props.hasShadowForm || isSpecialMegaFormType(props.pokemonType)}
               control={<Radio />}
               label={
                 <div className="tw-flex tw-items-center tw-gap-2">
                   <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />{' '}
                   <span>{getKeyWithData(PokemonType, PokemonType.Shadow)}</span>
+                </div>
+              }
+            />
+            <FormControlLabel
+              value={PokemonType.Purified}
+              disabled={!props.hasShadowForm || isSpecialMegaFormType(props.pokemonType)}
+              control={<Radio />}
+              label={
+                <div className="tw-flex tw-items-center tw-gap-2">
+                  <img height={32} alt="Image Purified" src={APIService.getPokePurified()} />{' '}
+                  <span>{getKeyWithData(PokemonType, PokemonType.Purified)}</span>
                 </div>
               }
             />
@@ -156,7 +172,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>ATK</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">{displayStats ? Math.floor(displayStats.atk) : '-'}</td>
+                <td className="!tw-text-center">{displayStats ? toFloatWithPadding(displayStats.atk, 2) : '-'}</td>
               </tr>
               <tr>
                 <td>
@@ -165,7 +181,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>DEF</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">{displayStats ? Math.floor(displayStats.def) : '-'}</td>
+                <td className="!tw-text-center">{displayStats ? toFloatWithPadding(displayStats.def, 2) : '-'}</td>
               </tr>
               <tr>
                 <td>
@@ -174,7 +190,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>HP</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">{displayStats ? Math.floor(displayStats.sta) : '-'}</td>
+                <td className="!tw-text-center">{displayStats ? displayStats.sta : '-'}</td>
               </tr>
             </tbody>
           </table>

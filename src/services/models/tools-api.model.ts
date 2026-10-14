@@ -14,6 +14,7 @@ export interface BattleLeagueApiItem extends Omit<IQueryStatesEvoChain, 'battleL
   def: number;
   sta: number;
   evolutionCandy: number;
+  eligible: boolean;
   battleLeague: {
     little: IBattleBaseStats;
     great: IBattleBaseStats;
@@ -26,6 +27,7 @@ export interface BattleLeagueSearchRequest {
   id: number;
   form?: string;
   cp: number;
+  level?: number;
   iv: { atk: number; def: number; sta: number };
   config: {
     minLevel: number;
@@ -157,6 +159,7 @@ export interface CalculateStatsRequest {
   id: number;
   form?: string;
   cp: number;
+  level?: number;
   pokemonType: number;
   iv: { atk: number; def: number; sta: number };
   config: { minCp: number; minLevel: number; maxLevel: number; step: number };
@@ -201,6 +204,7 @@ export interface DamageStatsRequest {
   base: { atk: number; def: number; sta: number };
   pokemonType: number;
   iv: number;
+  pvp: boolean;
   config: { minLevel: number; maxLevel: number; step: number };
 }
 

@@ -1,13 +1,14 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import Card from '../../Card/Card';
 import { addSelectMovesByType, splitAndCapitalize } from '../../../utils/utils';
-import { MoveType, TypeMove } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ISelectMoveModel } from '../Inputs/models/select-move.model';
 import { ISelectCustomMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../../utils/extension';
 import usePokemon from '../../../composables/usePokemon';
 import useCombats from '../../../composables/useCombats';
 import './SelectCustomMove.scss';
+import { filterBattleModifierMoves } from './move-availability';
 
 const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
   const { findMoveByName } = useCombats();
@@ -33,10 +34,11 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
       if (!props.type || props.type === TypeMove.Charged) {
         simpleMove = addSelectMovesByType(result, TypeMove.Charged, simpleMove);
       }
-      setCountCM(simpleMove.length - fastMoveCount);
       if ((!props.type && props.includeMaxMoves) || props.type === TypeMove.Max) {
         simpleMove = addSelectMovesByType(result, TypeMove.Max, simpleMove);
       }
+      simpleMove = filterBattleModifierMoves(simpleMove, props.pokemonType ?? PokemonType.Normal);
+      setCountCM(simpleMove.filter((item) => item.moveType !== MoveType.Max).length - fastMoveCount);
       if (props.maxMoveType) {
         simpleMove = simpleMove.filter(
           (item) =>

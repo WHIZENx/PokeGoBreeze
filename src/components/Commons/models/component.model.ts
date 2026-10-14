@@ -93,6 +93,13 @@ export interface IDynamicInputCPComponent {
   ivSta: number;
   searchCP: string;
   setSearchCP: React.Dispatch<React.SetStateAction<string>>;
+  setSearchLevel?: React.Dispatch<React.SetStateAction<number | undefined>>;
+  minLevel?: number;
+  maxLevel?: number;
+  levelStep?: number;
+  minIv?: number;
+  maxIv?: number;
+  minCp?: number;
   label?: string;
   width?: number | string;
   minWidth?: number | string;

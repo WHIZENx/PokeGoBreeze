@@ -465,10 +465,11 @@ class APIService {
     );
   }
 
-  postBattleLeagueSearch(payload: BattleLeagueSearchRequest) {
+  postBattleLeagueSearch(payload: BattleLeagueSearchRequest, signal?: AbortSignal) {
     return this.axios.post<BattleLeagueSearchApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/battle-league-search`,
-      payload
+      payload,
+      { signal }
     );
   }
 
