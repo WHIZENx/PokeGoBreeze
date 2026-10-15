@@ -7,7 +7,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
-const webRoot = resolve(scriptDir, '..');
+const webRoot = resolve(scriptDir, '../..');
 const workspaceRoot = resolve(webRoot, '../..');
 
 const args = new Map();
@@ -23,6 +23,8 @@ for (let index = 2; index < process.argv.length; index += 1) {
 const baseUrl = (args.get('base-url') ?? 'http://localhost:9000').replace(/\/$/, '');
 const fromId = Number.parseInt(args.get('from') ?? '1', 10);
 const timeoutMs = Number.parseInt(args.get('timeout') ?? '20000', 10);
+const viewportWidth = Math.max(320, Number.parseInt(args.get('viewport-width') ?? '1280', 10));
+const viewportHeight = Math.max(568, Number.parseInt(args.get('viewport-height') ?? '900', 10));
 const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
 const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
 const outputPath = resolve(workspaceRoot, args.get('output') ?? 'artifacts/pokemon-details-audit.json');
@@ -41,8 +43,42 @@ const normalizeMove = (value) =>
     .replace(/^V\d{4}_MOVE_/, '')
     .replace(/_FAST$/, '');
 const normalizePokemonType = (value) => (Number(value) === 0 ? 1 : Number(value));
+const normalizeIconCandidate = (value, pokemonType) => {
+  let identity = String(value ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+  if (['', 'unknown', 'unknownpokemon'].includes(identity)) return '';
+  if ([2, 3].includes(normalizePokemonType(pokemonType))) {
+    identity = identity.replace(/(?:shadow|purified)$/, '');
+  }
+  return identity
+    .replaceAll('hisuian', 'hisui')
+    .replaceAll('galarian', 'galar')
+    .replaceAll('alolan', 'alola')
+    .replaceAll('paldean', 'paldea')
+    .replace(/breed$/, '')
+    .replace(/female(?=mega$)/, 'f')
+    .replace(/male(?=mega$)/, 'm')
+    .replace(/exclamationpoint$/, 'exclamation')
+    .replace(/questionmark$/, 'question')
+    .replace(/eastsea$/, 'east')
+    .replace(/female$/, 'f')
+    .replace(/complete(?:fifty|ten)percent$/, 'complete')
+    .replace(/tenpercent$/, '10')
+    .replace(/originalcolor$/, 'original')
+    .replace(/familyoffour$/, 'four')
+    .replace(/crownedsword$/, 'crowned')
+    .replace(/crownedshield$/, 'crowned')
+    .replace(/icerider$/, 'ice')
+    .replace(/shadowrider$/, 'shadow')
+    .replace(/standard$/, '');
+};
 
 const pokemons = JSON.parse(await readFile(resolve(workspaceRoot, 'modules/api/data/pokemons.json'), 'utf8'));
+const iconManifest = JSON.parse(
+  await readFile(resolve(webRoot, 'src/assets/generated/pokemon-icons/pokemon-icon-index.json'), 'utf8')
+);
+const iconIndexes = iconManifest.indexes;
 const lastPokemonId = Math.max(...pokemons.map((pokemon) => Number(pokemon.num) || 0));
 const toId = Math.min(Number.parseInt(args.get('to') ?? String(lastPokemonId), 10), lastPokemonId);
 const requestedIds = new Set(
@@ -222,6 +258,21 @@ const findButtonIndexForRow = (id, buttons, row) => {
   return bestIndex;
 };
 
+const expectedFormCardIconIndex = (id, button) => {
+  const baseForms = new Set(['', 'normal', 'ordinary', 'standard', 'hero']);
+  const formId = normalizeIconCandidate(button.form, button.pokemonType);
+  const candidates = [
+    button.name,
+    button.iconName,
+    !baseForms.has(formId) && button.iconBaseSpecies ? `${button.iconBaseSpecies}-${button.form}` : '',
+    button.form,
+  ]
+    .map((value) => normalizeIconCandidate(value, button.pokemonType))
+    .filter(Boolean);
+  const alternate = candidates.find((candidate) => iconIndexes[candidate] !== undefined);
+  return alternate ? iconIndexes[alternate] : Math.min(Math.max(Math.trunc(id), 0), 1025);
+};
+
 const startChrome = async () => {
   const profilePath = await mkdtemp(join(tmpdir(), 'pokebreeze-pokemon-audit-'));
   const chrome = spawn(
@@ -232,6 +283,7 @@ const startChrome = async () => {
       '--disable-background-networking',
       '--no-first-run',
       '--no-default-browser-check',
+      `--window-size=${viewportWidth},${viewportHeight}`,
       '--remote-debugging-port=0',
       `--user-data-dir=${profilePath}`,
       'about:blank',
@@ -298,30 +350,52 @@ const readPage = () =>
     const page = document.querySelector('[data-testid="pokemon-details-page"]');
     if (!page) return null;
     const infoTable = document.querySelector('[data-testid="pokemon-info-table"]');
-    const buttons = [...document.querySelectorAll('.form-container button[data-form]')].map((button, index) => ({
-      index,
-      name: button.dataset.formName ?? '',
-      form: button.dataset.form ?? '',
-      pokemonType: Number(button.dataset.pokemonType),
-      formId: Number(button.dataset.formId),
-      active: button.getAttribute('aria-pressed') === 'true',
-      label: button.innerText.trim().replace(/\\s+/g, ' '),
-    }));
+    const buttons = [...document.querySelectorAll('.form-container button[data-form]')].map((button, index) => {
+      const icon = button.querySelector('[data-pokemon-icon-index]');
+      return {
+        index,
+        name: button.dataset.formName ?? '',
+        form: button.dataset.form ?? '',
+        iconName: button.dataset.iconName ?? '',
+        iconBaseSpecies: button.dataset.iconBaseSpecies ?? '',
+        pokemonType: Number(button.dataset.pokemonType),
+        formId: Number(button.dataset.formId),
+        active: button.getAttribute('aria-pressed') === 'true',
+        label: button.innerText.trim().replace(/\\s+/g, ' '),
+        iconIndex: icon ? Number(icon.dataset.pokemonIconIndex) : null,
+      };
+    });
     const moves = (selector) => [...document.querySelectorAll(selector + ' tr')]
       .map((row) => [...row.querySelectorAll('a span.tw-mr-1')]
         .map((span) => span.textContent?.trim() ?? '')
-        .find(Boolean) ?? '')
+      .find(Boolean) ?? '')
       .filter(Boolean);
+    const bounds = (element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        centerX: rect.left + rect.width / 2,
+        centerY: rect.top + rect.height / 2,
+      };
+    };
     const evolutionNodes = [...document.querySelectorAll('[data-testid="evolution-node"]')].map((node) => ({
       key: (node.dataset.evolutionStage ?? '') + ':' + (node.dataset.evolutionIndex ?? ''),
       stage: Number(node.dataset.evolutionStage),
       id: Number(node.dataset.evolutionId),
       form: node.dataset.evolutionForm ?? '',
+      bounds: bounds(node),
     }));
     const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => ({
       source: edge.dataset.evolutionSource ?? '',
       target: edge.dataset.evolutionTarget ?? '',
       targetForm: edge.dataset.evolutionTargetForm ?? '',
+      labelAnchor: edge.dataset.evolutionLabelAnchor ?? '',
+      bounds: bounds(edge),
     }));
     return {
       id: Number(page.dataset.pokemonId),
@@ -473,12 +547,75 @@ const validateExpectedRow = (issues, id, row, button, page) => {
   }
 };
 
+const validateEvolutionDetailAlignment = (issues, id, context, page) => {
+  const nodesByKey = new Map(page.evolutionNodes.map((node) => [node.key, node]));
+  const anchoredEdges = page.evolutionEdges.filter((item) => ['source', 'target'].includes(item.labelAnchor));
+  for (const edge of anchoredEdges) {
+    const anchorKey = edge.labelAnchor === 'source' ? edge.source : edge.target;
+    const anchorNode = nodesByKey.get(anchorKey);
+    if (!anchorNode) continue;
+    const candidates = page.evolutionNodes.filter((node) => node.stage === anchorNode.stage);
+    const nearestTarget = candidates.reduce((nearest, node) =>
+      Math.abs(node.bounds.centerY - edge.bounds.centerY) < Math.abs(nearest.bounds.centerY - edge.bounds.centerY)
+        ? node
+        : nearest
+    );
+    if (nearestTarget.key !== anchorNode.key) {
+      addIssue(issues, id, 'evolution_detail_target_mismatch', {
+        ...context,
+        edge: { source: edge.source, target: edge.target, targetForm: edge.targetForm },
+        labelAnchor: edge.labelAnchor,
+        nearestTarget: nearestTarget.key,
+        detailCenterY: edge.bounds.centerY,
+        anchorCenterY: anchorNode.bounds.centerY,
+      });
+    }
+    const verticalDistance = Math.abs(anchorNode.bounds.centerY - edge.bounds.centerY);
+    const alignmentTolerance = Math.max(24, (anchorNode.bounds.height + edge.bounds.height) / 2);
+    if (verticalDistance > alignmentTolerance) {
+      addIssue(issues, id, 'evolution_detail_detached_from_target', {
+        ...context,
+        edge: { source: edge.source, target: edge.target, targetForm: edge.targetForm },
+        labelAnchor: edge.labelAnchor,
+        verticalDistance,
+        alignmentTolerance,
+      });
+    }
+  }
+  for (let index = 0; index < anchoredEdges.length; index += 1) {
+    const edge = anchoredEdges[index];
+    const anchorKey = edge.labelAnchor === 'source' ? edge.source : edge.target;
+    const anchorStage = anchorKey.split(':')[0];
+    for (const sibling of anchoredEdges.slice(index + 1)) {
+      const siblingAnchorKey = sibling.labelAnchor === 'source' ? sibling.source : sibling.target;
+      if (sibling.labelAnchor !== edge.labelAnchor || siblingAnchorKey.split(':')[0] !== anchorStage) continue;
+      const horizontalOverlap =
+        Math.min(edge.bounds.right, sibling.bounds.right) - Math.max(edge.bounds.left, sibling.bounds.left);
+      const verticalOverlap =
+        Math.min(edge.bounds.bottom, sibling.bounds.bottom) - Math.max(edge.bounds.top, sibling.bounds.top);
+      if (horizontalOverlap > 1 && verticalOverlap > 1) {
+        addIssue(issues, id, 'evolution_details_overlap', {
+          ...context,
+          edges: [
+            { source: edge.source, target: edge.target, targetForm: edge.targetForm },
+            { source: sibling.source, target: sibling.target, targetForm: sibling.targetForm },
+          ],
+          horizontalOverlap,
+          verticalOverlap,
+        });
+      }
+    }
+  }
+};
+
 const main = async () => {
   const startedAt = new Date().toISOString();
   const issues = [];
   const browserErrors = [];
   let auditedIds = 0;
   let auditedForms = 0;
+  let auditedFormIcons = 0;
+  let auditedEvolutionDetails = 0;
   let delayPokemonRequests = false;
 
   const chromeRuntime = await startChrome();
@@ -592,6 +729,19 @@ const main = async () => {
         }
       }
 
+      for (const button of page.buttons) {
+        auditedFormIcons += 1;
+        const expectedIconIndex = expectedFormCardIconIndex(id, button);
+        if (button.iconIndex === null) {
+          addIssue(issues, id, 'form_card_icon_missing', { button, expectedIconIndex });
+        } else if (button.iconIndex !== expectedIconIndex) {
+          addIssue(issues, id, 'form_card_icon_mismatch', {
+            button,
+            expectedIconIndex,
+          });
+        }
+      }
+
       for (const row of rows) {
         const buttonIndex = findButtonIndexForRow(id, page.buttons, row);
         if (buttonIndex < 0) {
@@ -631,6 +781,13 @@ const main = async () => {
         page = await readPage();
         auditedForms += 1;
         validateExpectedRow(issues, id, row, page.buttons[buttonIndex], page);
+        validateEvolutionDetailAlignment(
+          issues,
+          id,
+          { fullName: row.fullName, form: row.form, pokemonType: row.pokemonType },
+          page
+        );
+        auditedEvolutionDetails += page.evolutionEdges.length;
         if (!page.bodyWeight || !page.bodyHeight) {
           addIssue(issues, id, 'form_body_value_missing', {
             fullName: row.fullName,
@@ -643,25 +800,27 @@ const main = async () => {
       for (let index = 0; index < page.buttons.length; index += 1) {
         const target = page.buttons[index];
         const targetKey = `${normalizeForm(target.form)}:${normalizePokemonType(target.pokemonType)}`;
-        if (target.active || testedForms.has(targetKey)) continue;
-        await startBodyTransitionCapture();
-        await evaluate(`document.querySelectorAll('.form-container button[data-form]')[${index}].click()`);
-        page = await waitFor(
-          readPage,
-          (value) =>
-            value?.id === id &&
-            value.buttons[index]?.active &&
-            normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
-            normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
-          `Pokémon #${id} displayed form ${target.label}`
-        );
-        await delay(0);
-        validateBodyTransition(
-          issues,
-          id,
-          { form: target.form, pokemonType: target.pokemonType, label: target.label },
-          await readBodyTransitions()
-        );
+        if (testedForms.has(targetKey)) continue;
+        if (!target.active) {
+          await startBodyTransitionCapture();
+          await evaluate(`document.querySelectorAll('.form-container button[data-form]')[${index}].click()`);
+          page = await waitFor(
+            readPage,
+            (value) =>
+              value?.id === id &&
+              value.buttons[index]?.active &&
+              normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
+              normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
+            `Pokémon #${id} displayed form ${target.label}`
+          );
+          await delay(0);
+          validateBodyTransition(
+            issues,
+            id,
+            { form: target.form, pokemonType: target.pokemonType, label: target.label },
+            await readBodyTransitions()
+          );
+        }
         await delay(50);
         page = await readPage();
         if (!page.bodyWeight || !page.bodyHeight) {
@@ -671,6 +830,13 @@ const main = async () => {
             label: target.label,
           });
         }
+        validateEvolutionDetailAlignment(
+          issues,
+          id,
+          { form: target.form, pokemonType: target.pokemonType, label: target.label },
+          page
+        );
+        auditedEvolutionDetails += page.evolutionEdges.length;
         auditedForms += 1;
         testedForms.add(targetKey);
       }
@@ -695,6 +861,7 @@ const main = async () => {
     completedAt: new Date().toISOString(),
     source: 'Pokémon GO generated data + rendered Pokémon detail page',
     baseUrl,
+    viewport: { width: viewportWidth, height: viewportHeight },
     range: { from: fromId, to: toId, latestPokemonGoId: lastPokemonId },
     multipleFormsOnly,
     summary: {
@@ -702,6 +869,8 @@ const main = async () => {
       auditedIds,
       expectedGoForms: [...rowsById.values()].reduce((total, rows) => total + rows.length, 0),
       auditedForms,
+      auditedFormIcons,
+      auditedEvolutionDetails,
       issues: issues.length,
       browserErrors: browserErrors.length,
     },

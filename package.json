@@ -56,16 +56,17 @@
     "_deploy:inner:development": "npm run lint && node sitemap/buildSitemap.js && cross-env VITE_CJS_IGNORE_WARNING=true vite build --mode development && npm run prerender:seo",
     "generate:sitemap": "node sitemap/buildSitemap.js",
     "prerender:seo": "node sitemap/prerenderSeo.js",
-    "audit:pokemon-details": "node scripts/auditPokemonDetails.mjs",
-    "audit:pokemon-form-identities": "node --experimental-strip-types scripts/auditPokemonFormIdentities.mjs",
-    "audit:pokemon-navigation": "node --experimental-strip-types scripts/auditPokemonNavigation.mjs",
-    "audit:pokemon-icon-sheet": "node scripts/auditPokemonIconSheet.mjs",
-    "audit:local-ui-assets": "node scripts/auditLocalUiAssets.mjs",
-    "test:tool-mechanics": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/testToolMechanics.mjs",
-    "update:local-ui-assets": "node scripts/updateLocalUiAssets.mjs",
-    "update:pokemon-icon-sheet": "node scripts/updatePokemonIconSheet.mjs",
-    "audit:pvp-details": "node scripts/auditPvpPokemonDetails.mjs",
-    "audit:theme": "node scripts/auditTheme.mjs"
+    "audit:pokemon-details": "node scripts/audits/auditPokemonDetails.mjs",
+    "audit:pokemon-form-identities": "node --experimental-strip-types scripts/audits/auditPokemonFormIdentities.mjs",
+    "audit:pokemon-navigation": "node --experimental-strip-types scripts/audits/auditPokemonNavigation.mjs",
+    "audit:pokemon-icon-sheet": "node scripts/audits/auditPokemonIconSheet.mjs",
+    "audit:local-ui-assets": "node scripts/audits/auditLocalUiAssets.mjs",
+    "audit:pvp-details": "node scripts/audits/auditPvpPokemonDetails.mjs",
+    "audit:theme": "node scripts/audits/auditTheme.mjs",
+    "test:pokemon-display-names": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokemonDisplayNames.mjs",
+    "test:tool-mechanics": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testToolMechanics.mjs",
+    "update:local-ui-assets": "node scripts/data/updateLocalUiAssets.mjs",
+    "update:pokemon-icon-sheet": "node scripts/data/updatePokemonIconSheet.mjs"
   },
   "browserslist": {
     "production": [

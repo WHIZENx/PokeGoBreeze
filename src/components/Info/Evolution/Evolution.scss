@@ -30,10 +30,56 @@
 
 .evo-arrow-details {
   transform: translateY(calc(50% + 0.75rem));
-  width: calc(var(--evo-gap) - 1rem);
+  box-sizing: border-box;
+  display: flex;
+  width: min(calc(var(--evo-gap) - 2.5rem), 11rem);
+  padding: 0.35rem 0.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--custom-default);
   text-align: center;
   white-space: normal;
   overflow-wrap: break-word;
+}
+
+.evo-arrow-details--target {
+  transform: translateX(-1rem);
+}
+
+.evo-arrow-details--source {
+  transform: translateX(1rem);
+}
+
+.evo-arrow-details--simple {
+  width: auto;
+  min-width: 4.5rem;
+}
+
+.evo-arrow-cost {
+  display: flex;
+  min-height: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.evo-arrow-requirements {
+  display: flex;
+  width: 100%;
+  padding-top: 0.3rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.evo-arrow-requirements > .caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
 .evo-quest-action {
@@ -60,5 +106,7 @@
 @media (width <= 640px) {
   .evo-chain {
     --evo-gap: 10rem;
+
+    padding-inline: 2.5rem;
   }
 }

@@ -409,6 +409,7 @@ export interface ISelectCardPokemonComponent<T> {
   selectedPokemonIcon?: React.ReactNode;
   renderSelectedPokemonIcon?: (pokemon: T) => React.ReactNode;
   isDisable?: boolean;
+  preserveSearchOnSelect?: boolean;
 }
 
 export interface IStatsTableComponent {

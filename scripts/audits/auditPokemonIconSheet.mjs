@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const assetRoot = resolve(webRoot, 'src/assets/generated/pokemon-icons');
 const manifest = JSON.parse(await readFile(resolve(assetRoot, 'pokemon-icon-index.json'), 'utf8'));
 const sheet = await readFile(resolve(assetRoot, 'pokemonicons-sheet.png'));
@@ -12,10 +12,14 @@ const pokemon = JSON.parse(await readFile(resolve(webRoot, '../api/data/pokemons
 const fail = (message) => {
   throw new Error(message);
 };
-const toId = (value = '') => String(value).toLowerCase().replace(/[^a-z0-9]+/g, '');
-const normalize = (value = '') => {
+const toId = (value = '') =>
+  String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+const normalize = (value = '', pokemonType = 1) => {
   let id = toId(value);
   if (['', 'unknown', 'unknownpokemon'].includes(id)) return '';
+  if ([2, 3].includes(Number(pokemonType))) id = id.replace(/(?:shadow|purified)$/, '');
   return id
     .replaceAll('hisuian', 'hisui')
     .replaceAll('galarian', 'galar')
@@ -33,16 +37,17 @@ const normalize = (value = '') => {
     .replace(/crownedsword$/, 'crowned')
     .replace(/crownedshield$/, 'crowned')
     .replace(/icerider$/, 'ice')
-    .replace(/shadowrider$/, 'shadow');
+    .replace(/shadowrider$/, 'shadow')
+    .replace(/standard$/, '');
 };
 const candidates = (entry) => {
-  const base = normalize(entry.baseSpecies);
+  const base = normalize(entry.baseSpecies, entry.pokemonType);
   return [
-    normalize(entry.sprite),
-    normalize(entry.slug),
-    normalize(entry.fullName),
-    normalize(entry.name),
-    base ? normalize(`${base}-${entry.form}`) : '',
+    normalize(entry.sprite, entry.pokemonType),
+    normalize(entry.slug, entry.pokemonType),
+    normalize(entry.fullName, entry.pokemonType),
+    normalize(entry.name, entry.pokemonType),
+    base ? normalize(`${base}-${entry.form}`, entry.pokemonType) : '',
   ].filter(Boolean);
 };
 const alternateIndex = (entry) => {
@@ -61,8 +66,7 @@ if (createHash('sha256').update(sheet).digest('hex') !== manifest.source.sheetSh
 }
 
 const cellCount =
-  (manifest.sheet.imageWidth / manifest.sheet.cellWidth) *
-  (manifest.sheet.imageHeight / manifest.sheet.cellHeight);
+  (manifest.sheet.imageWidth / manifest.sheet.cellWidth) * (manifest.sheet.imageHeight / manifest.sheet.cellHeight);
 for (const [key, index] of Object.entries(manifest.indexes)) {
   if (!Number.isInteger(index) || index < 0 || index >= cellCount) fail(`${key} has an invalid sheet index: ${index}`);
 }
@@ -88,7 +92,46 @@ for (const [identity, expectedKey] of expectedForms) {
   const entry = pokemon.find((item) => item.pokemonId === pokemonId && item.form === form);
   if (!entry) fail(`Fixture ${identity} is missing from the API Pokémon data.`);
   const resolved = alternateIndex(entry);
-  if (resolved?.key !== expectedKey) fail(`${identity} resolved to ${resolved?.key ?? 'base species'}, not ${expectedKey}.`);
+  if (resolved?.key !== expectedKey)
+    fail(`${identity} resolved to ${resolved?.key ?? 'base species'}, not ${expectedKey}.`);
+}
+
+const detailFormCardFixtures = [
+  [
+    { fullName: 'darmanitan-galar-standard', form: 'galar-standard', baseSpecies: 'darmanitan', pokemonType: 1 },
+    'darmanitangalar',
+  ],
+  [
+    {
+      fullName: 'darmanitan-galar-standard-shadow',
+      form: 'galar-standard-shadow',
+      baseSpecies: 'darmanitan',
+      pokemonType: 2,
+    },
+    'darmanitangalar',
+  ],
+  [
+    {
+      fullName: 'darmanitan-galar-standard-purified',
+      form: 'galar-standard-purified',
+      baseSpecies: 'darmanitan',
+      pokemonType: 3,
+    },
+    'darmanitangalar',
+  ],
+  [
+    { fullName: 'darmanitan-galar-zen-shadow', form: 'galar-zen-shadow', baseSpecies: 'darmanitan', pokemonType: 2 },
+    'darmanitangalarzen',
+  ],
+  [{ fullName: 'calyrex-shadow-rider', form: 'shadow-rider', baseSpecies: 'calyrex', pokemonType: 1 }, 'calyrexshadow'],
+];
+for (const [entry, expectedKey] of detailFormCardFixtures) {
+  const resolved = alternateIndex(entry);
+  if (resolved?.key !== expectedKey) {
+    fail(
+      `Pokémon Detail form card ${entry.fullName} resolved to ${resolved?.key ?? 'base species'}, not ${expectedKey}.`
+    );
+  }
 }
 
 const tableFiles = [
@@ -116,7 +159,8 @@ const dropdownIconFiles = [
 ];
 for (const relativePath of dropdownIconFiles) {
   const source = await readFile(resolve(webRoot, relativePath), 'utf8');
-  if (!source.includes('<PokemonTableIcon')) fail(`${relativePath} is not using the local sheet in its Pokémon picker.`);
+  if (!source.includes('<PokemonTableIcon'))
+    fail(`${relativePath} is not using the local sheet in its Pokémon picker.`);
   if (/\b(?:sprite|onSprite)=/.test(source)) {
     fail(`${relativePath} still passes the legacy per-Pokémon icon props to a picker.`);
   }

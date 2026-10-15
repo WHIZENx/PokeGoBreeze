@@ -277,7 +277,7 @@ const CalculatePoint = () => {
         <Badge color="primary" overlap="circular" badgeContent={isRaid && isObjective ? `Tier ${tier}` : undefined}>
           <span className="tw-relative tw-inline-flex tw-w-24 tw-items-center tw-justify-center">
             <img
-              className="tw-absolute tw-left-0 tw-top-0 tw-z-10"
+              className="tw-absolute tw-left-0 tw-top-0 tw-z-[1]"
               alt="Image Logo"
               height={36}
               src={action === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`}

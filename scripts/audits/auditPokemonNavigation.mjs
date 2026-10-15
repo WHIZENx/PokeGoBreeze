@@ -2,9 +2,9 @@
 
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { buildPokemonSpeciesNavigation, findPokemonSpeciesNavigation } from '../src/utils/pokemon-navigation.ts';
+import { buildPokemonSpeciesNavigation, findPokemonSpeciesNavigation } from '../../src/utils/pokemon-navigation.ts';
 
-const pokemons = JSON.parse(await readFile(resolve(import.meta.dirname, '../../api/data/pokemons.json'), 'utf8'));
+const pokemons = JSON.parse(await readFile(resolve(import.meta.dirname, '../../../api/data/pokemons.json'), 'utf8'));
 const species = buildPokemonSpeciesNavigation(pokemons);
 const failures = [];
 
