@@ -467,6 +467,13 @@ const readPage = () =>
             zIndex: getComputedStyle(evolutionContainer).zIndex,
           }
         : null,
+      evolutionOverflow: evolutionContainer
+        ? {
+            clientHeight: evolutionContainer.clientHeight,
+            scrollHeight: evolutionContainer.scrollHeight,
+            vertical: evolutionContainer.scrollHeight > evolutionContainer.clientHeight + 2,
+          }
+        : null,
       buttons,
       fastMoves: moves('[data-testid="pokemon-fast-moves"]'),
       chargedMoves: moves('[data-testid="pokemon-charged-moves"]'),
@@ -595,6 +602,12 @@ const validateExpectedRow = (issues, id, row, button, page) => {
     addIssue(issues, id, 'evolution_stacking_context_missing', {
       ...context,
       actual: page.evolutionStackingContext,
+    });
+  }
+  if (page.evolutionEdges.length && page.evolutionOverflow?.vertical) {
+    addIssue(issues, id, 'evolution_vertical_overflow', {
+      ...context,
+      overflow: page.evolutionOverflow,
     });
   }
   for (const edge of page.evolutionEdges) {

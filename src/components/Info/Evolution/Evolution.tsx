@@ -20,7 +20,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import QuestRequirements from './QuestRequirements';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Xarrow from 'react-xarrows';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/api.service';
@@ -102,6 +102,8 @@ class PokemonEvo implements IPokemonEvo {
 const Evolution = (props: IEvolutionComponent) => {
   const { findPokemonByIdAndForm, getEvolutionParents, getPokemonById } = usePokemon();
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
+  const [evolutionMinHeight, setEvolutionMinHeight] = useState(0);
+  const evolutionContainerRef = useRef<HTMLDivElement>(null);
 
   const pokeSetName = (name: string) => name.replace(`_${formNormal()}`, '').replaceAll('_', '-').replace('MR', 'MR.');
 
@@ -249,6 +251,58 @@ const Evolution = (props: IEvolutionComponent) => {
       }
     }
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
+
+  useLayoutEffect(() => {
+    const container = evolutionContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    let animationFrame = 0;
+    const resizeObserver = new ResizeObserver(() => scheduleMeasurement());
+    const observeContent = () => {
+      const chain = container.querySelector<HTMLElement>('.evo-chain');
+      if (chain) {
+        resizeObserver.observe(chain);
+      }
+      container.querySelectorAll<HTMLElement>('[data-testid="evolution-edge"]').forEach((edge) => {
+        resizeObserver.observe(edge);
+      });
+    };
+    const measureContent = () => {
+      const chain = container.querySelector<HTMLElement>('.evo-chain');
+      if (!chain) {
+        setEvolutionMinHeight(0);
+        return;
+      }
+      const containerTop = container.getBoundingClientRect().top;
+      const content = [chain, ...container.querySelectorAll<HTMLElement>('[data-testid="evolution-edge"]')];
+      const contentBottom = Math.max(...content.map((element) => element.getBoundingClientRect().bottom));
+      const nextHeight = Math.max(0, Math.ceil(contentBottom - containerTop + 16));
+      setEvolutionMinHeight((current) => (Math.abs(current - nextHeight) > 1 ? nextHeight : current));
+    };
+    const scheduleMeasurement = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(measureContent);
+    };
+    const mutationObserver = new MutationObserver(() => {
+      resizeObserver.disconnect();
+      observeContent();
+      scheduleMeasurement();
+    });
+
+    observeContent();
+    mutationObserver.observe(container, { childList: true, subtree: true });
+    window.addEventListener('resize', scheduleMeasurement);
+    scheduleMeasurement();
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      window.removeEventListener('resize', scheduleMeasurement);
+    };
+  }, [arrEvoList]);
 
   const getIncomingEvolutions = (target: IPokemonEvo, stage: number) =>
     (arrEvoList[stage - 1] ?? []).flatMap((source, index) => {
@@ -870,7 +924,12 @@ const Evolution = (props: IEvolutionComponent) => {
           </button>
         </Tooltips>
       </h4>
-      <div className="evo-container scroll-evolution" data-testid="evolution-container">
+      <div
+        ref={evolutionContainerRef}
+        className="evo-container scroll-evolution"
+        data-testid="evolution-container"
+        style={evolutionMinHeight ? { minHeight: `${evolutionMinHeight}px` } : undefined}
+      >
         {reload(
           <ul className="ul-evo evo-chain tw-inline-flex">
             {arrEvoList.map((values, evo) => (
