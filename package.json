@@ -60,6 +60,7 @@
     "audit:pokemon-form-identities": "node --experimental-strip-types scripts/audits/auditPokemonFormIdentities.mjs",
     "audit:pokemon-navigation": "node --experimental-strip-types scripts/audits/auditPokemonNavigation.mjs",
     "audit:pokemon-icon-sheet": "node scripts/audits/auditPokemonIconSheet.mjs",
+    "audit:stickers": "node scripts/audits/auditStickers.mjs",
     "audit:local-ui-assets": "node scripts/audits/auditLocalUiAssets.mjs",
     "audit:pvp-details": "node scripts/audits/auditPvpPokemonDetails.mjs",
     "audit:theme": "node scripts/audits/auditTheme.mjs",
