@@ -7,7 +7,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
-const webRoot = resolve(scriptDir, '..');
+const webRoot = resolve(scriptDir, '../..');
 const workspaceRoot = resolve(webRoot, '../..');
 
 const args = new Map();
@@ -23,7 +23,10 @@ for (let index = 2; index < process.argv.length; index += 1) {
 const baseUrl = (args.get('base-url') ?? 'http://localhost:9000').replace(/\/$/, '');
 const fromId = Number.parseInt(args.get('from') ?? '1', 10);
 const timeoutMs = Number.parseInt(args.get('timeout') ?? '20000', 10);
+const viewportWidth = Math.max(320, Number.parseInt(args.get('viewport-width') ?? '1280', 10));
+const viewportHeight = Math.max(568, Number.parseInt(args.get('viewport-height') ?? '900', 10));
 const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
+const auditEvolutionTooltip = args.get('audit-evolution-tooltip') === 'true';
 const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
 const outputPath = resolve(workspaceRoot, args.get('output') ?? 'artifacts/pokemon-details-audit.json');
 const chromePath = args.get('chrome') ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -41,8 +44,42 @@ const normalizeMove = (value) =>
     .replace(/^V\d{4}_MOVE_/, '')
     .replace(/_FAST$/, '');
 const normalizePokemonType = (value) => (Number(value) === 0 ? 1 : Number(value));
+const normalizeIconCandidate = (value, pokemonType) => {
+  let identity = String(value ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+  if (['', 'unknown', 'unknownpokemon'].includes(identity)) return '';
+  if ([2, 3].includes(normalizePokemonType(pokemonType))) {
+    identity = identity.replace(/(?:shadow|purified)$/, '');
+  }
+  return identity
+    .replaceAll('hisuian', 'hisui')
+    .replaceAll('galarian', 'galar')
+    .replaceAll('alolan', 'alola')
+    .replaceAll('paldean', 'paldea')
+    .replace(/breed$/, '')
+    .replace(/female(?=mega$)/, 'f')
+    .replace(/male(?=mega$)/, 'm')
+    .replace(/exclamationpoint$/, 'exclamation')
+    .replace(/questionmark$/, 'question')
+    .replace(/eastsea$/, 'east')
+    .replace(/female$/, 'f')
+    .replace(/complete(?:fifty|ten)percent$/, 'complete')
+    .replace(/tenpercent$/, '10')
+    .replace(/originalcolor$/, 'original')
+    .replace(/familyoffour$/, 'four')
+    .replace(/crownedsword$/, 'crowned')
+    .replace(/crownedshield$/, 'crowned')
+    .replace(/icerider$/, 'ice')
+    .replace(/shadowrider$/, 'shadow')
+    .replace(/standard$/, '');
+};
 
 const pokemons = JSON.parse(await readFile(resolve(workspaceRoot, 'modules/api/data/pokemons.json'), 'utf8'));
+const iconManifest = JSON.parse(
+  await readFile(resolve(webRoot, 'src/assets/generated/pokemon-icons/pokemon-icon-index.json'), 'utf8')
+);
+const iconIndexes = iconManifest.indexes;
 const lastPokemonId = Math.max(...pokemons.map((pokemon) => Number(pokemon.num) || 0));
 const toId = Math.min(Number.parseInt(args.get('to') ?? String(lastPokemonId), 10), lastPokemonId);
 const requestedIds = new Set(
@@ -222,6 +259,21 @@ const findButtonIndexForRow = (id, buttons, row) => {
   return bestIndex;
 };
 
+const expectedFormCardIconIndex = (id, button) => {
+  const baseForms = new Set(['', 'normal', 'ordinary', 'standard', 'hero']);
+  const formId = normalizeIconCandidate(button.form, button.pokemonType);
+  const candidates = [
+    button.name,
+    button.iconName,
+    !baseForms.has(formId) && button.iconBaseSpecies ? `${button.iconBaseSpecies}-${button.form}` : '',
+    button.form,
+  ]
+    .map((value) => normalizeIconCandidate(value, button.pokemonType))
+    .filter(Boolean);
+  const alternate = candidates.find((candidate) => iconIndexes[candidate] !== undefined);
+  return alternate ? iconIndexes[alternate] : Math.min(Math.max(Math.trunc(id), 0), 1025);
+};
+
 const startChrome = async () => {
   const profilePath = await mkdtemp(join(tmpdir(), 'pokebreeze-pokemon-audit-'));
   const chrome = spawn(
@@ -232,6 +284,7 @@ const startChrome = async () => {
       '--disable-background-networking',
       '--no-first-run',
       '--no-default-browser-check',
+      `--window-size=${viewportWidth},${viewportHeight}`,
       '--remote-debugging-port=0',
       `--user-data-dir=${profilePath}`,
       'about:blank',
@@ -298,31 +351,80 @@ const readPage = () =>
     const page = document.querySelector('[data-testid="pokemon-details-page"]');
     if (!page) return null;
     const infoTable = document.querySelector('[data-testid="pokemon-info-table"]');
-    const buttons = [...document.querySelectorAll('.form-container button[data-form]')].map((button, index) => ({
-      index,
-      name: button.dataset.formName ?? '',
-      form: button.dataset.form ?? '',
-      pokemonType: Number(button.dataset.pokemonType),
-      formId: Number(button.dataset.formId),
-      active: button.getAttribute('aria-pressed') === 'true',
-      label: button.innerText.trim().replace(/\\s+/g, ' '),
-    }));
+    const buttons = [...document.querySelectorAll('.form-container button[data-form]')].map((button, index) => {
+      const icon = button.querySelector('[data-pokemon-icon-index]');
+      return {
+        index,
+        name: button.dataset.formName ?? '',
+        form: button.dataset.form ?? '',
+        iconName: button.dataset.iconName ?? '',
+        iconBaseSpecies: button.dataset.iconBaseSpecies ?? '',
+        pokemonType: Number(button.dataset.pokemonType),
+        formId: Number(button.dataset.formId),
+        active: button.getAttribute('aria-pressed') === 'true',
+        label: button.innerText.trim().replace(/\\s+/g, ' '),
+        iconIndex: icon ? Number(icon.dataset.pokemonIconIndex) : null,
+      };
+    });
     const moves = (selector) => [...document.querySelectorAll(selector + ' tr')]
       .map((row) => [...row.querySelectorAll('a span.tw-mr-1')]
         .map((span) => span.textContent?.trim() ?? '')
-        .find(Boolean) ?? '')
+      .find(Boolean) ?? '')
       .filter(Boolean);
+    const bounds = (element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        centerX: rect.left + rect.width / 2,
+        centerY: rect.top + rect.height / 2,
+      };
+    };
     const evolutionNodes = [...document.querySelectorAll('[data-testid="evolution-node"]')].map((node) => ({
       key: (node.dataset.evolutionStage ?? '') + ':' + (node.dataset.evolutionIndex ?? ''),
       stage: Number(node.dataset.evolutionStage),
       id: Number(node.dataset.evolutionId),
       form: node.dataset.evolutionForm ?? '',
+      sprite: node.querySelector('img')?.getAttribute('src') ?? '',
+      bounds: bounds(node),
     }));
-    const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => ({
-      source: edge.dataset.evolutionSource ?? '',
-      target: edge.dataset.evolutionTarget ?? '',
-      targetForm: edge.dataset.evolutionTargetForm ?? '',
-    }));
+    const evolutionContainer = document.querySelector('[data-testid="evolution-container"]');
+    const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => {
+      const edgeBounds = bounds(edge);
+      let lineOverlapsCard = false;
+      for (let x = edgeBounds.left + 2; x < edgeBounds.right && !lineOverlapsCard; x += 4) {
+        for (let y = edgeBounds.top + 2; y < edgeBounds.bottom; y += 4) {
+          const stack = document.elementsFromPoint(x, y);
+          const cardIndex = stack.findIndex((element) => element === edge || edge.contains(element));
+          const arrowIndex = stack.findIndex(
+            (element) => element.matches?.('path[fill="transparent"][stroke]') && !edge.contains(element)
+          );
+          if (cardIndex >= 0 && arrowIndex >= 0 && arrowIndex < cardIndex) {
+            lineOverlapsCard = true;
+            break;
+          }
+        }
+      }
+      return {
+        source: edge.dataset.evolutionSource ?? '',
+        target: edge.dataset.evolutionTarget ?? '',
+        targetForm: edge.dataset.evolutionTargetForm ?? '',
+        labelAnchor: edge.dataset.evolutionLabelAnchor ?? '',
+        layer: Number(edge.dataset.evolutionLayer),
+        sourceGenderRequirement: edge.dataset.evolutionGenderRequirement ?? '',
+        genderRequirement: edge.querySelector('[data-testid="MaleIcon"]')
+          ? 'MALE'
+          : edge.querySelector('[data-testid="FemaleIcon"]')
+            ? 'FEMALE'
+            : '',
+        lineOverlapsCard,
+        bounds: edgeBounds,
+      };
+    });
     return {
       id: Number(page.dataset.pokemonId),
       busy: page.getAttribute('aria-busy') === 'true',
@@ -340,6 +442,38 @@ const readPage = () =>
       title: document.title,
       href: location.href,
       bodyText: document.body.innerText,
+      evolutionInfoButton: Boolean(document.querySelector('[data-testid="evolution-info-button"]')),
+      evolutionTooltipOpen: Boolean(document.querySelector('.MuiTooltip-popper .info-evo')),
+      evolutionTooltipConditions: [
+        ...new Set(
+          [...document.querySelectorAll('.MuiTooltip-popper [data-evolution-condition]')].flatMap((item) =>
+            (item.dataset.evolutionCondition ?? '').split(' ').filter(Boolean)
+          )
+        ),
+      ],
+      evolutionTooltipIcons: [...document.querySelectorAll('.MuiTooltip-popper [data-evolution-condition]')].map(
+        (item) => ({
+          conditions: (item.dataset.evolutionCondition ?? '').split(' ').filter(Boolean),
+          icon: item.dataset.evolutionIcon ?? '',
+        })
+      ),
+      evolutionDetailConditions: [...document.querySelectorAll('[data-evolution-detail-condition]')].map((item) => ({
+        condition: item.dataset.evolutionDetailCondition ?? '',
+        icon: item.dataset.evolutionIcon ?? '',
+      })),
+      evolutionStackingContext: evolutionContainer
+        ? {
+            isolation: getComputedStyle(evolutionContainer).isolation,
+            zIndex: getComputedStyle(evolutionContainer).zIndex,
+          }
+        : null,
+      evolutionOverflow: evolutionContainer
+        ? {
+            clientHeight: evolutionContainer.clientHeight,
+            scrollHeight: evolutionContainer.scrollHeight,
+            vertical: evolutionContainer.scrollHeight > evolutionContainer.clientHeight + 2,
+          }
+        : null,
       buttons,
       fastMoves: moves('[data-testid="pokemon-fast-moves"]'),
       chargedMoves: moves('[data-testid="pokemon-charged-moves"]'),
@@ -461,14 +595,134 @@ const validateExpectedRow = (issues, id, row, button, page) => {
   }
   if (!button.active) addIssue(issues, id, 'clicked_form_not_active', { ...context, button });
   const nodeKeys = new Set(page.evolutionNodes.map((node) => node.key));
+  if (
+    page.evolutionEdges.length &&
+    (page.evolutionStackingContext?.isolation !== 'isolate' || page.evolutionStackingContext?.zIndex !== '0')
+  ) {
+    addIssue(issues, id, 'evolution_stacking_context_missing', {
+      ...context,
+      actual: page.evolutionStackingContext,
+    });
+  }
+  if (page.evolutionEdges.length && page.evolutionOverflow?.vertical) {
+    addIssue(issues, id, 'evolution_vertical_overflow', {
+      ...context,
+      overflow: page.evolutionOverflow,
+    });
+  }
   for (const edge of page.evolutionEdges) {
     if (!nodeKeys.has(edge.source) || !nodeKeys.has(edge.target)) {
       addIssue(issues, id, 'evolution_edge_endpoint_missing', { ...context, edge });
+    }
+    if (edge.lineOverlapsCard) {
+      addIssue(issues, id, 'evolution_line_overlaps_detail_card', { ...context, edge });
+    }
+    const sourceGenderRequirement = normalize(edge.sourceGenderRequirement);
+    if (['MALE', 'FEMALE'].includes(sourceGenderRequirement) && edge.genderRequirement !== sourceGenderRequirement) {
+      addIssue(issues, id, 'evolution_gender_requirement_mismatch', {
+        ...context,
+        expectedGender: sourceGenderRequirement,
+        edge,
+      });
+    }
+  }
+  const layeredEdges = [...page.evolutionEdges]
+    .filter((edge) => Number.isFinite(edge.layer) && edge.layer > 0)
+    .sort((left, right) => {
+      const [leftStage, leftIndex] = left.target.split(':').map(Number);
+      const [rightStage, rightIndex] = right.target.split(':').map(Number);
+      return leftStage - rightStage || leftIndex - rightIndex;
+    });
+  for (let index = 1; index < layeredEdges.length; index += 1) {
+    const previous = layeredEdges[index - 1];
+    const current = layeredEdges[index];
+    const previousStage = Number(previous.target.split(':')[0]);
+    const currentStage = Number(current.target.split(':')[0]);
+    if (previous.target !== current.target && previousStage === currentStage && previous.layer <= current.layer) {
+      addIssue(issues, id, 'evolution_edge_layer_order_invalid', {
+        ...context,
+        previous,
+        current,
+      });
     }
   }
   for (const node of page.evolutionNodes.filter((item) => item.stage > 0)) {
     if (!page.evolutionEdges.some((edge) => edge.target === node.key && edge.targetForm === node.form)) {
       addIssue(issues, id, 'evolution_node_missing_incoming_edge', { ...context, node });
+    }
+  }
+  if (id === 678) {
+    const expectedForm = normalizeForm(row.form) === 'FEMALE' ? 'FEMALE' : 'NORMAL';
+    const expectedSprite = expectedForm === 'FEMALE' ? 'meowstic-f.gif' : 'meowstic.gif';
+    const currentNode = page.evolutionNodes.find((node) => node.id === id && normalizeForm(node.form) === expectedForm);
+    if (!currentNode || !currentNode.sprite.endsWith(`/${expectedSprite}`)) {
+      addIssue(issues, id, 'evolution_form_sprite_mismatch', {
+        ...context,
+        expectedForm,
+        expectedSprite,
+        actual: currentNode,
+      });
+    }
+  }
+};
+
+const validateEvolutionDetailAlignment = (issues, id, context, page) => {
+  const nodesByKey = new Map(page.evolutionNodes.map((node) => [node.key, node]));
+  const anchoredEdges = page.evolutionEdges.filter((item) => ['source', 'target'].includes(item.labelAnchor));
+  for (const edge of anchoredEdges) {
+    const anchorKey = edge.labelAnchor === 'source' ? edge.source : edge.target;
+    const anchorNode = nodesByKey.get(anchorKey);
+    if (!anchorNode) continue;
+    const candidates = page.evolutionNodes.filter((node) => node.stage === anchorNode.stage);
+    const nearestTarget = candidates.reduce((nearest, node) =>
+      Math.abs(node.bounds.centerY - edge.bounds.centerY) < Math.abs(nearest.bounds.centerY - edge.bounds.centerY)
+        ? node
+        : nearest
+    );
+    if (nearestTarget.key !== anchorNode.key) {
+      addIssue(issues, id, 'evolution_detail_target_mismatch', {
+        ...context,
+        edge: { source: edge.source, target: edge.target, targetForm: edge.targetForm },
+        labelAnchor: edge.labelAnchor,
+        nearestTarget: nearestTarget.key,
+        detailCenterY: edge.bounds.centerY,
+        anchorCenterY: anchorNode.bounds.centerY,
+      });
+    }
+    const verticalDistance = Math.abs(anchorNode.bounds.centerY - edge.bounds.centerY);
+    const alignmentTolerance = Math.max(24, (anchorNode.bounds.height + edge.bounds.height) / 2);
+    if (verticalDistance > alignmentTolerance) {
+      addIssue(issues, id, 'evolution_detail_detached_from_target', {
+        ...context,
+        edge: { source: edge.source, target: edge.target, targetForm: edge.targetForm },
+        labelAnchor: edge.labelAnchor,
+        verticalDistance,
+        alignmentTolerance,
+      });
+    }
+  }
+  for (let index = 0; index < anchoredEdges.length; index += 1) {
+    const edge = anchoredEdges[index];
+    const anchorKey = edge.labelAnchor === 'source' ? edge.source : edge.target;
+    const anchorStage = anchorKey.split(':')[0];
+    for (const sibling of anchoredEdges.slice(index + 1)) {
+      const siblingAnchorKey = sibling.labelAnchor === 'source' ? sibling.source : sibling.target;
+      if (sibling.labelAnchor !== edge.labelAnchor || siblingAnchorKey.split(':')[0] !== anchorStage) continue;
+      const horizontalOverlap =
+        Math.min(edge.bounds.right, sibling.bounds.right) - Math.max(edge.bounds.left, sibling.bounds.left);
+      const verticalOverlap =
+        Math.min(edge.bounds.bottom, sibling.bounds.bottom) - Math.max(edge.bounds.top, sibling.bounds.top);
+      if (horizontalOverlap > 1 && verticalOverlap > 1) {
+        addIssue(issues, id, 'evolution_details_overlap', {
+          ...context,
+          edges: [
+            { source: edge.source, target: edge.target, targetForm: edge.targetForm },
+            { source: sibling.source, target: sibling.target, targetForm: sibling.targetForm },
+          ],
+          horizontalOverlap,
+          verticalOverlap,
+        });
+      }
     }
   }
 };
@@ -479,6 +733,9 @@ const main = async () => {
   const browserErrors = [];
   let auditedIds = 0;
   let auditedForms = 0;
+  let auditedFormIcons = 0;
+  let auditedEvolutionDetails = 0;
+  let auditedEvolutionTooltips = 0;
   let delayPokemonRequests = false;
 
   const chromeRuntime = await startChrome();
@@ -577,6 +834,75 @@ const main = async () => {
       if (!page.title.includes(`#${id}`)) addIssue(issues, id, 'title_id_mismatch', { actual: page.title });
       if (/\b(undefined|NaN)\b/.test(page.bodyText)) addIssue(issues, id, 'invalid_text_rendered');
 
+      if (auditEvolutionTooltip && page.evolutionInfoButton) {
+        await evaluate(`document.querySelector('[data-testid="evolution-info-button"]').click()`);
+        page = await waitFor(readPage, (value) => value?.evolutionTooltipOpen, `Pokémon #${id} evolution tooltip open`);
+        const expectedConditions = [
+          'candyCost',
+          'evolutionItemRequirement',
+          'isRandomEvolution',
+          'genderRequirement',
+          'kmBuddyDistanceRequirement',
+          'isMustBeBuddy',
+          'isOnlyDaytime',
+          'isOnlyNighttime',
+          'isOnlyFullMoon',
+          'isOnlyDuskPeriod',
+          'lureItemRequirement',
+          'isOnlyUpsideDown',
+          'noCandyCostViaTrade',
+          'highestIv',
+          'nickname',
+          'QUEST_CATCH_POKEMON',
+          'QUEST_COMPLETE_BATTLE',
+          'QUEST_COMPLETE_RAID_BATTLE',
+          'QUEST_FIGHT_POKEMON',
+          'QUEST_LAND_THROW',
+          'QUEST_BUDDY_EARN_AFFECTION_POINTS',
+          'QUEST_BUDDY_FEED',
+          'QUEST_BUDDY_EVOLUTION_WALK',
+          'QUEST_USE_INCENSE',
+        ];
+        const missingConditions = expectedConditions.filter(
+          (condition) => !page.evolutionTooltipConditions.includes(condition)
+        );
+        if (missingConditions.length) {
+          addIssue(issues, id, 'evolution_tooltip_condition_missing', {
+            missingConditions,
+            actualConditions: page.evolutionTooltipConditions,
+          });
+        }
+        const iconOwners = new Map();
+        for (const row of page.evolutionTooltipIcons) {
+          if (!row.icon) {
+            addIssue(issues, id, 'evolution_tooltip_icon_missing', { conditions: row.conditions });
+            continue;
+          }
+          const existing = iconOwners.get(row.icon);
+          if (existing && JSON.stringify(existing) !== JSON.stringify(row.conditions)) {
+            addIssue(issues, id, 'evolution_tooltip_icon_reused', {
+              icon: row.icon,
+              conditions: [...existing, ...row.conditions],
+            });
+          } else {
+            iconOwners.set(row.icon, row.conditions);
+          }
+        }
+        for (const detail of page.evolutionDetailConditions) {
+          const tooltip = page.evolutionTooltipIcons.find((row) => row.conditions.includes(detail.condition));
+          if (!tooltip || tooltip.icon !== detail.icon) {
+            addIssue(issues, id, 'evolution_detail_tooltip_icon_mismatch', { detail, tooltip });
+          }
+        }
+        await evaluate(`document.querySelector('[data-testid="evolution-info-button"]').click()`);
+        page = await waitFor(
+          readPage,
+          (value) => !value?.evolutionTooltipOpen,
+          `Pokémon #${id} evolution tooltip close`
+        );
+        auditedEvolutionTooltips += 1;
+      }
+
       const buttonsByIdentity = new Map();
       for (const button of page.buttons) {
         const key = `${normalizeCanonicalIdentity(id, button.name)}:${normalizePokemonType(button.pokemonType)}`;
@@ -589,6 +915,19 @@ const main = async () => {
         // canonical variety/form.
         if (buttons.length > 1 && buttons.some((button) => button.formId <= 0)) {
           addIssue(issues, id, 'duplicate_form_buttons', { identity, buttons });
+        }
+      }
+
+      for (const button of page.buttons) {
+        auditedFormIcons += 1;
+        const expectedIconIndex = expectedFormCardIconIndex(id, button);
+        if (button.iconIndex === null) {
+          addIssue(issues, id, 'form_card_icon_missing', { button, expectedIconIndex });
+        } else if (button.iconIndex !== expectedIconIndex) {
+          addIssue(issues, id, 'form_card_icon_mismatch', {
+            button,
+            expectedIconIndex,
+          });
         }
       }
 
@@ -631,6 +970,13 @@ const main = async () => {
         page = await readPage();
         auditedForms += 1;
         validateExpectedRow(issues, id, row, page.buttons[buttonIndex], page);
+        validateEvolutionDetailAlignment(
+          issues,
+          id,
+          { fullName: row.fullName, form: row.form, pokemonType: row.pokemonType },
+          page
+        );
+        auditedEvolutionDetails += page.evolutionEdges.length;
         if (!page.bodyWeight || !page.bodyHeight) {
           addIssue(issues, id, 'form_body_value_missing', {
             fullName: row.fullName,
@@ -643,25 +989,27 @@ const main = async () => {
       for (let index = 0; index < page.buttons.length; index += 1) {
         const target = page.buttons[index];
         const targetKey = `${normalizeForm(target.form)}:${normalizePokemonType(target.pokemonType)}`;
-        if (target.active || testedForms.has(targetKey)) continue;
-        await startBodyTransitionCapture();
-        await evaluate(`document.querySelectorAll('.form-container button[data-form]')[${index}].click()`);
-        page = await waitFor(
-          readPage,
-          (value) =>
-            value?.id === id &&
-            value.buttons[index]?.active &&
-            normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
-            normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
-          `Pokémon #${id} displayed form ${target.label}`
-        );
-        await delay(0);
-        validateBodyTransition(
-          issues,
-          id,
-          { form: target.form, pokemonType: target.pokemonType, label: target.label },
-          await readBodyTransitions()
-        );
+        if (testedForms.has(targetKey)) continue;
+        if (!target.active) {
+          await startBodyTransitionCapture();
+          await evaluate(`document.querySelectorAll('.form-container button[data-form]')[${index}].click()`);
+          page = await waitFor(
+            readPage,
+            (value) =>
+              value?.id === id &&
+              value.buttons[index]?.active &&
+              normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
+              normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
+            `Pokémon #${id} displayed form ${target.label}`
+          );
+          await delay(0);
+          validateBodyTransition(
+            issues,
+            id,
+            { form: target.form, pokemonType: target.pokemonType, label: target.label },
+            await readBodyTransitions()
+          );
+        }
         await delay(50);
         page = await readPage();
         if (!page.bodyWeight || !page.bodyHeight) {
@@ -671,6 +1019,13 @@ const main = async () => {
             label: target.label,
           });
         }
+        validateEvolutionDetailAlignment(
+          issues,
+          id,
+          { form: target.form, pokemonType: target.pokemonType, label: target.label },
+          page
+        );
+        auditedEvolutionDetails += page.evolutionEdges.length;
         auditedForms += 1;
         testedForms.add(targetKey);
       }
@@ -695,6 +1050,7 @@ const main = async () => {
     completedAt: new Date().toISOString(),
     source: 'Pokémon GO generated data + rendered Pokémon detail page',
     baseUrl,
+    viewport: { width: viewportWidth, height: viewportHeight },
     range: { from: fromId, to: toId, latestPokemonGoId: lastPokemonId },
     multipleFormsOnly,
     summary: {
@@ -702,6 +1058,9 @@ const main = async () => {
       auditedIds,
       expectedGoForms: [...rowsById.values()].reduce((total, rows) => total + rows.length, 0),
       auditedForms,
+      auditedFormIcons,
+      auditedEvolutionDetails,
+      auditedEvolutionTooltips,
       issues: issues.length,
       browserErrors: browserErrors.length,
     },

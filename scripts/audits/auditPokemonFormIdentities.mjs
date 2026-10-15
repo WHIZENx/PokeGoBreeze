@@ -8,7 +8,7 @@ import {
   pokemonGoFormIdentityKey,
   pokemonGoFormIdentityPriority,
   selectPreferredPokemonGoFormIdentity,
-} from '../src/utils/pokemon-form-identity.ts';
+} from '../../src/utils/pokemon-form-identity.ts';
 
 const duplicateSelectionFixture = [
   [
@@ -26,7 +26,7 @@ assert.deepEqual(
   'Exact Shadow/Purified form selections must be deduplicated across variety groups'
 );
 
-const pokemons = JSON.parse(await readFile(resolve(import.meta.dirname, '../../api/data/pokemons.json'), 'utf8'));
+const pokemons = JSON.parse(await readFile(resolve(import.meta.dirname, '../../../api/data/pokemons.json'), 'utf8'));
 const groups = new Map();
 
 pokemons.forEach((pokemon) => {

@@ -55,7 +55,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonData>>(
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
         <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
-          <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-10">
+          <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-[1]">
             <PokemonTableIcon {...row} />
           </PokemonIconType>
         </span>

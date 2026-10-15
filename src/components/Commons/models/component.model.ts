@@ -409,6 +409,7 @@ export interface ISelectCardPokemonComponent<T> {
   selectedPokemonIcon?: React.ReactNode;
   renderSelectedPokemonIcon?: (pokemon: T) => React.ReactNode;
   isDisable?: boolean;
+  preserveSearchOnSelect?: boolean;
 }
 
 export interface IStatsTableComponent {
@@ -538,6 +539,7 @@ export interface IStatBarComponent extends LinearProgressProps {
 
 export interface ITooltip extends TooltipProps {
   children: React.ReactElement;
+  openOnClick?: boolean;
   id?: string;
   className?: string;
   hideBackground?: boolean;

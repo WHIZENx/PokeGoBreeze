@@ -50,7 +50,7 @@ const Gender = (props: IGenderComponent) => {
                     )
               }
             />
-            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-10" />
+            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />
           </div>
           <span className="caption">Default</span>
         </div>
@@ -80,7 +80,7 @@ const Gender = (props: IGenderComponent) => {
                     )
               }
             />
-            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-10" />
+            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />
           </div>
           <span className="caption">Shiny</span>
         </div>
