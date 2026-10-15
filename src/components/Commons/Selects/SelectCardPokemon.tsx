@@ -175,7 +175,7 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
                   if (props.onSetPokemon) {
                     props.onSetPokemon(value);
                   }
-                  if (selectedLabel !== undefined) {
+                  if (selectedLabel !== undefined && !props.preserveSearchOnSelect) {
                     setSearch(formatPokemonDisplayName(selectedLabel));
                   }
                   if (props.isShowPokemonIcon && props.renderSelectedPokemonIcon) {

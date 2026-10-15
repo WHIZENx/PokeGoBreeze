@@ -26,11 +26,11 @@
 .result-move-select {
   text-align: start !important;
 
-  @apply tw-absolute tw-z-2 tw-w-auto tw-max-h-[180px] tw-overflow-y-auto;
+  @apply tw-absolute tw-z-20 tw-w-auto tw-max-h-[180px] tw-overflow-y-auto;
 }
 
 .result-move-select-default {
-  @apply tw-absolute tw-z-2 tw-w-[298px] tw-max-h-[300px] tw-overflow-y-auto;
+  @apply tw-absolute tw-z-20 tw-w-[298px] tw-max-h-[300px] tw-overflow-y-auto;
 }
 
 .select-down {

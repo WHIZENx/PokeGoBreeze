@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const manifestPath = resolve(webRoot, 'src/assets/generated/pokemon-go-ui/manifest.json');
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 const expectedTypeCount = 18;

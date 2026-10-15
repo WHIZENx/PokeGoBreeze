@@ -4,10 +4,10 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
-const outputDirectory = resolve(scriptDirectory, '../src/assets/generated/pokemon-go-ui');
-const hqTypeOutputDirectory = resolve(scriptDirectory, '../src/assets/generated/move-type-hq');
-const typeMaskOutputDirectory = resolve(scriptDirectory, '../src/assets/generated/move-type-mask');
-const typeOutputDirectory = resolve(scriptDirectory, '../src/assets/types');
+const outputDirectory = resolve(scriptDirectory, '../../src/assets/generated/pokemon-go-ui');
+const hqTypeOutputDirectory = resolve(scriptDirectory, '../../src/assets/generated/move-type-hq');
+const typeMaskOutputDirectory = resolve(scriptDirectory, '../../src/assets/generated/move-type-mask');
+const typeOutputDirectory = resolve(scriptDirectory, '../../src/assets/types');
 const pokeMinersSourceRoot = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/';
 const wikiSourceRoot = 'https://static.wikia.nocookie.net/pokemongo/images/';
 const typeMaskSourceRoot =

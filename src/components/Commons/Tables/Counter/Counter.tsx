@@ -21,7 +21,6 @@ import {
   isInclude,
   isNotEmpty,
   isNullOrUndefined,
-  toFloat,
   toFloatWithPadding,
   toNumber,
 } from '../../../../utils/extension';
@@ -111,12 +110,6 @@ const customStyles: TableStyles = {
   },
 };
 
-const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
-  const a = toFloat(rowA.ratio);
-  const b = toFloat(rowB.ratio);
-  return a - b;
-};
-
 const Counter = (props: ICounterComponent) => {
   const { findAssetForm } = useAssets();
   const { optionsCounter, setCounterOptions } = useOptionStore();
@@ -124,6 +117,7 @@ const Counter = (props: ICounterComponent) => {
   const [showFrame, setShowFrame] = useState(true);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
+  const [ratioSortOrder, setRatioSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState('');
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const latestRequestRef = useRef(0);
@@ -154,11 +148,11 @@ const Counter = (props: ICounterComponent) => {
 
   useEffect(() => {
     resetPagination();
-  }, [defense, typesKey, showMegaPrimal, releasedGO, enableBest, isSearchId, isMatch, resetPagination]);
+  }, [defense, typesKey, showMegaPrimal, releasedGO, enableBest, isSearchId, isMatch, ratioSortOrder, resetPagination]);
 
   const skipStalePageRequest = useSkipStalePageRequest(
     page,
-    `${defense}|${typesKey}|${showMegaPrimal}|${releasedGO}|${enableBest}|${isSearchId}|${isMatch}`
+    `${defense}|${typesKey}|${showMegaPrimal}|${releasedGO}|${enableBest}|${isSearchId}|${isMatch}|${ratioSortOrder}`
   );
 
   const menuItems = createDataRows<IMenuItem<ICounterModel>>(
@@ -279,7 +273,6 @@ const Counter = (props: ICounterComponent) => {
       selector: (row) =>
         toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })),
       sortable: true,
-      sortFunction: numSortRatio,
       width: '20%',
     }
   );
@@ -334,6 +327,8 @@ const Counter = (props: ICounterComponent) => {
         searchId: isSearchId,
         matchId: isMatch,
         q: searchTerm,
+        sort: 'ratio',
+        order: ratioSortOrder,
         page,
         limit: 100,
       }),
@@ -367,6 +362,7 @@ const Counter = (props: ICounterComponent) => {
     isSearchId,
     isMatch,
     searchTerm,
+    ratioSortOrder,
     page,
     skipStalePageRequest,
   ]);
@@ -437,7 +433,13 @@ const Counter = (props: ICounterComponent) => {
           }
           pagination
           paginationServer
+          sortServer
           paginationTotalRows={totalRows}
+          onSort={(column, direction) => {
+            if (column.id === ColumnType.Percent) {
+              setRatioSortOrder(direction === 'asc' ? 'asc' : 'desc');
+            }
+          }}
           onChangePage={setPage}
           paginationDefaultPage={1}
           paginationResetDefaultPage={resetPaginationToggle}
