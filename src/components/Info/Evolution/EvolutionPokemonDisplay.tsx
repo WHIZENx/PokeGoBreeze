@@ -27,7 +27,10 @@ const EvolutionPokemonDisplay = ({
   const image = (
     <PokemonIconType pokemonType={pokemonType} size={30}>
       <img
+        key={`${id}-${sprite}`}
         className="pokemon-sprite"
+        data-testid="evolution-pokemon-image"
+        data-evolution-sprite={sprite}
         alt={name}
         src={
           formVaries

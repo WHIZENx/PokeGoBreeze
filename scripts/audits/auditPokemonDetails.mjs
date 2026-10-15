@@ -26,6 +26,7 @@ const timeoutMs = Number.parseInt(args.get('timeout') ?? '20000', 10);
 const viewportWidth = Math.max(320, Number.parseInt(args.get('viewport-width') ?? '1280', 10));
 const viewportHeight = Math.max(568, Number.parseInt(args.get('viewport-height') ?? '900', 10));
 const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
+const auditEvolutionTooltip = args.get('audit-evolution-tooltip') === 'true';
 const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
 const outputPath = resolve(workspaceRoot, args.get('output') ?? 'artifacts/pokemon-details-audit.json');
 const chromePath = args.get('chrome') ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -388,15 +389,42 @@ const readPage = () =>
       stage: Number(node.dataset.evolutionStage),
       id: Number(node.dataset.evolutionId),
       form: node.dataset.evolutionForm ?? '',
+      sprite: node.querySelector('img')?.getAttribute('src') ?? '',
       bounds: bounds(node),
     }));
-    const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => ({
-      source: edge.dataset.evolutionSource ?? '',
-      target: edge.dataset.evolutionTarget ?? '',
-      targetForm: edge.dataset.evolutionTargetForm ?? '',
-      labelAnchor: edge.dataset.evolutionLabelAnchor ?? '',
-      bounds: bounds(edge),
-    }));
+    const evolutionContainer = document.querySelector('[data-testid="evolution-container"]');
+    const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => {
+      const edgeBounds = bounds(edge);
+      let lineOverlapsCard = false;
+      for (let x = edgeBounds.left + 2; x < edgeBounds.right && !lineOverlapsCard; x += 4) {
+        for (let y = edgeBounds.top + 2; y < edgeBounds.bottom; y += 4) {
+          const stack = document.elementsFromPoint(x, y);
+          const cardIndex = stack.findIndex((element) => element === edge || edge.contains(element));
+          const arrowIndex = stack.findIndex(
+            (element) => element.matches?.('path[fill="transparent"][stroke]') && !edge.contains(element)
+          );
+          if (cardIndex >= 0 && arrowIndex >= 0 && arrowIndex < cardIndex) {
+            lineOverlapsCard = true;
+            break;
+          }
+        }
+      }
+      return {
+        source: edge.dataset.evolutionSource ?? '',
+        target: edge.dataset.evolutionTarget ?? '',
+        targetForm: edge.dataset.evolutionTargetForm ?? '',
+        labelAnchor: edge.dataset.evolutionLabelAnchor ?? '',
+        layer: Number(edge.dataset.evolutionLayer),
+        sourceGenderRequirement: edge.dataset.evolutionGenderRequirement ?? '',
+        genderRequirement: edge.querySelector('[data-testid="MaleIcon"]')
+          ? 'MALE'
+          : edge.querySelector('[data-testid="FemaleIcon"]')
+            ? 'FEMALE'
+            : '',
+        lineOverlapsCard,
+        bounds: edgeBounds,
+      };
+    });
     return {
       id: Number(page.dataset.pokemonId),
       busy: page.getAttribute('aria-busy') === 'true',
@@ -414,6 +442,38 @@ const readPage = () =>
       title: document.title,
       href: location.href,
       bodyText: document.body.innerText,
+      evolutionInfoButton: Boolean(document.querySelector('[data-testid="evolution-info-button"]')),
+      evolutionTooltipOpen: Boolean(document.querySelector('.MuiTooltip-popper .info-evo')),
+      evolutionTooltipConditions: [
+        ...new Set(
+          [...document.querySelectorAll('.MuiTooltip-popper [data-evolution-condition]')].flatMap((item) =>
+            (item.dataset.evolutionCondition ?? '').split(' ').filter(Boolean)
+          )
+        ),
+      ],
+      evolutionTooltipIcons: [...document.querySelectorAll('.MuiTooltip-popper [data-evolution-condition]')].map(
+        (item) => ({
+          conditions: (item.dataset.evolutionCondition ?? '').split(' ').filter(Boolean),
+          icon: item.dataset.evolutionIcon ?? '',
+        })
+      ),
+      evolutionDetailConditions: [...document.querySelectorAll('[data-evolution-detail-condition]')].map((item) => ({
+        condition: item.dataset.evolutionDetailCondition ?? '',
+        icon: item.dataset.evolutionIcon ?? '',
+      })),
+      evolutionStackingContext: evolutionContainer
+        ? {
+            isolation: getComputedStyle(evolutionContainer).isolation,
+            zIndex: getComputedStyle(evolutionContainer).zIndex,
+          }
+        : null,
+      evolutionOverflow: evolutionContainer
+        ? {
+            clientHeight: evolutionContainer.clientHeight,
+            scrollHeight: evolutionContainer.scrollHeight,
+            vertical: evolutionContainer.scrollHeight > evolutionContainer.clientHeight + 2,
+          }
+        : null,
       buttons,
       fastMoves: moves('[data-testid="pokemon-fast-moves"]'),
       chargedMoves: moves('[data-testid="pokemon-charged-moves"]'),
@@ -535,14 +595,73 @@ const validateExpectedRow = (issues, id, row, button, page) => {
   }
   if (!button.active) addIssue(issues, id, 'clicked_form_not_active', { ...context, button });
   const nodeKeys = new Set(page.evolutionNodes.map((node) => node.key));
+  if (
+    page.evolutionEdges.length &&
+    (page.evolutionStackingContext?.isolation !== 'isolate' || page.evolutionStackingContext?.zIndex !== '0')
+  ) {
+    addIssue(issues, id, 'evolution_stacking_context_missing', {
+      ...context,
+      actual: page.evolutionStackingContext,
+    });
+  }
+  if (page.evolutionEdges.length && page.evolutionOverflow?.vertical) {
+    addIssue(issues, id, 'evolution_vertical_overflow', {
+      ...context,
+      overflow: page.evolutionOverflow,
+    });
+  }
   for (const edge of page.evolutionEdges) {
     if (!nodeKeys.has(edge.source) || !nodeKeys.has(edge.target)) {
       addIssue(issues, id, 'evolution_edge_endpoint_missing', { ...context, edge });
+    }
+    if (edge.lineOverlapsCard) {
+      addIssue(issues, id, 'evolution_line_overlaps_detail_card', { ...context, edge });
+    }
+    const sourceGenderRequirement = normalize(edge.sourceGenderRequirement);
+    if (['MALE', 'FEMALE'].includes(sourceGenderRequirement) && edge.genderRequirement !== sourceGenderRequirement) {
+      addIssue(issues, id, 'evolution_gender_requirement_mismatch', {
+        ...context,
+        expectedGender: sourceGenderRequirement,
+        edge,
+      });
+    }
+  }
+  const layeredEdges = [...page.evolutionEdges]
+    .filter((edge) => Number.isFinite(edge.layer) && edge.layer > 0)
+    .sort((left, right) => {
+      const [leftStage, leftIndex] = left.target.split(':').map(Number);
+      const [rightStage, rightIndex] = right.target.split(':').map(Number);
+      return leftStage - rightStage || leftIndex - rightIndex;
+    });
+  for (let index = 1; index < layeredEdges.length; index += 1) {
+    const previous = layeredEdges[index - 1];
+    const current = layeredEdges[index];
+    const previousStage = Number(previous.target.split(':')[0]);
+    const currentStage = Number(current.target.split(':')[0]);
+    if (previous.target !== current.target && previousStage === currentStage && previous.layer <= current.layer) {
+      addIssue(issues, id, 'evolution_edge_layer_order_invalid', {
+        ...context,
+        previous,
+        current,
+      });
     }
   }
   for (const node of page.evolutionNodes.filter((item) => item.stage > 0)) {
     if (!page.evolutionEdges.some((edge) => edge.target === node.key && edge.targetForm === node.form)) {
       addIssue(issues, id, 'evolution_node_missing_incoming_edge', { ...context, node });
+    }
+  }
+  if (id === 678) {
+    const expectedForm = normalizeForm(row.form) === 'FEMALE' ? 'FEMALE' : 'NORMAL';
+    const expectedSprite = expectedForm === 'FEMALE' ? 'meowstic-f.gif' : 'meowstic.gif';
+    const currentNode = page.evolutionNodes.find((node) => node.id === id && normalizeForm(node.form) === expectedForm);
+    if (!currentNode || !currentNode.sprite.endsWith(`/${expectedSprite}`)) {
+      addIssue(issues, id, 'evolution_form_sprite_mismatch', {
+        ...context,
+        expectedForm,
+        expectedSprite,
+        actual: currentNode,
+      });
     }
   }
 };
@@ -616,6 +735,7 @@ const main = async () => {
   let auditedForms = 0;
   let auditedFormIcons = 0;
   let auditedEvolutionDetails = 0;
+  let auditedEvolutionTooltips = 0;
   let delayPokemonRequests = false;
 
   const chromeRuntime = await startChrome();
@@ -713,6 +833,75 @@ const main = async () => {
 
       if (!page.title.includes(`#${id}`)) addIssue(issues, id, 'title_id_mismatch', { actual: page.title });
       if (/\b(undefined|NaN)\b/.test(page.bodyText)) addIssue(issues, id, 'invalid_text_rendered');
+
+      if (auditEvolutionTooltip && page.evolutionInfoButton) {
+        await evaluate(`document.querySelector('[data-testid="evolution-info-button"]').click()`);
+        page = await waitFor(readPage, (value) => value?.evolutionTooltipOpen, `Pokémon #${id} evolution tooltip open`);
+        const expectedConditions = [
+          'candyCost',
+          'evolutionItemRequirement',
+          'isRandomEvolution',
+          'genderRequirement',
+          'kmBuddyDistanceRequirement',
+          'isMustBeBuddy',
+          'isOnlyDaytime',
+          'isOnlyNighttime',
+          'isOnlyFullMoon',
+          'isOnlyDuskPeriod',
+          'lureItemRequirement',
+          'isOnlyUpsideDown',
+          'noCandyCostViaTrade',
+          'highestIv',
+          'nickname',
+          'QUEST_CATCH_POKEMON',
+          'QUEST_COMPLETE_BATTLE',
+          'QUEST_COMPLETE_RAID_BATTLE',
+          'QUEST_FIGHT_POKEMON',
+          'QUEST_LAND_THROW',
+          'QUEST_BUDDY_EARN_AFFECTION_POINTS',
+          'QUEST_BUDDY_FEED',
+          'QUEST_BUDDY_EVOLUTION_WALK',
+          'QUEST_USE_INCENSE',
+        ];
+        const missingConditions = expectedConditions.filter(
+          (condition) => !page.evolutionTooltipConditions.includes(condition)
+        );
+        if (missingConditions.length) {
+          addIssue(issues, id, 'evolution_tooltip_condition_missing', {
+            missingConditions,
+            actualConditions: page.evolutionTooltipConditions,
+          });
+        }
+        const iconOwners = new Map();
+        for (const row of page.evolutionTooltipIcons) {
+          if (!row.icon) {
+            addIssue(issues, id, 'evolution_tooltip_icon_missing', { conditions: row.conditions });
+            continue;
+          }
+          const existing = iconOwners.get(row.icon);
+          if (existing && JSON.stringify(existing) !== JSON.stringify(row.conditions)) {
+            addIssue(issues, id, 'evolution_tooltip_icon_reused', {
+              icon: row.icon,
+              conditions: [...existing, ...row.conditions],
+            });
+          } else {
+            iconOwners.set(row.icon, row.conditions);
+          }
+        }
+        for (const detail of page.evolutionDetailConditions) {
+          const tooltip = page.evolutionTooltipIcons.find((row) => row.conditions.includes(detail.condition));
+          if (!tooltip || tooltip.icon !== detail.icon) {
+            addIssue(issues, id, 'evolution_detail_tooltip_icon_mismatch', { detail, tooltip });
+          }
+        }
+        await evaluate(`document.querySelector('[data-testid="evolution-info-button"]').click()`);
+        page = await waitFor(
+          readPage,
+          (value) => !value?.evolutionTooltipOpen,
+          `Pokémon #${id} evolution tooltip close`
+        );
+        auditedEvolutionTooltips += 1;
+      }
 
       const buttonsByIdentity = new Map();
       for (const button of page.buttons) {
@@ -871,6 +1060,7 @@ const main = async () => {
       auditedForms,
       auditedFormIcons,
       auditedEvolutionDetails,
+      auditedEvolutionTooltips,
       issues: issues.length,
       browserErrors: browserErrors.length,
     },

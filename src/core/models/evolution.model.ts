@@ -159,6 +159,7 @@ export class PokemonTypeCost implements IPokemonTypeCost {
 
 export interface IEvolution {
   pokemonId?: string;
+  sprite?: string;
   prev?: string;
   id: number;
   name: string;
@@ -173,6 +174,7 @@ export interface IEvolution {
 
 export class EvolutionModel implements IEvolution {
   pokemonId?: string;
+  sprite?: string;
   prev?: string;
   id = 0;
   name = '';

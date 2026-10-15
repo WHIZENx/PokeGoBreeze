@@ -1,23 +1,165 @@
-.sticker-detail {
-  @apply tw-inline-block tw-m-2.5 tw-text-center tw-p-[5px];
+.sticker-page {
+  @apply tw-pb-10;
 }
 
-.sticker-container {
-  @apply tw-my-[15px] tw-mx-0 tw-max-h-[75vh] tw-overflow-y-auto;
+.sticker-filters {
+  background: var(--custom-default);
+  border: 1px solid var(--custom-table-border);
+
+  @apply tw-grid tw-grid-cols-1 tw-items-end tw-gap-3 tw-rounded-xl tw-p-4 md:tw-grid-cols-2 xl:tw-grid-cols-12;
 }
 
-.sticker-container .sticker-group {
-  @apply tw-p-2.5;
+.sticker-filter-field {
+  @apply tw-flex tw-min-w-0 tw-flex-col tw-gap-1.5 xl:tw-col-span-3;
 }
 
-.sticker-container h5 {
-  @apply tw-sticky tw-top-0 tw-py-[15px] tw-px-0 tw-z-2 tw-text-white;
+.sticker-filter-field > label {
+  @apply tw-text-sm tw-font-semibold;
 }
 
-.sticker-container h5 span {
-  @apply tw-ml-[15px];
+.sticker-search-field,
+.sticker-shop-filter {
+  @apply xl:tw-col-span-4;
 }
 
-.icon-shop {
-  @apply tw-absolute -tw-top-2.5 -tw-left-2.5 tw-p-[5px] tw-rounded-full tw-bg-orange-500;
+.sticker-shop-filter .MuiToggleButton-root {
+  color: var(--default);
+
+  @apply tw-whitespace-nowrap tw-px-2;
+}
+
+.sticker-reset {
+  @apply tw-h-10 xl:tw-col-span-1;
+}
+
+.sticker-results-heading {
+  @apply tw-flex tw-items-center tw-justify-between tw-px-1 tw-pb-2 tw-pt-5;
+}
+
+.sticker-grid {
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+
+  @apply tw-grid tw-gap-3;
+}
+
+.sticker-grid.is-refreshing {
+  transform: translateY(2px);
+
+  @apply tw-pointer-events-none tw-opacity-60;
+}
+
+.sticker-card,
+.sticker-card-skeleton {
+  min-height: 244px;
+}
+
+.sticker-card {
+  background: var(--custom-default);
+  border: 1px solid var(--custom-table-border);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+
+  @apply tw-overflow-hidden tw-rounded-xl;
+}
+
+.sticker-card:hover {
+  border-color: var(--primary-main);
+  box-shadow: 0 10px 24px #00000026;
+  transform: translateY(-2px);
+}
+
+.sticker-artwork {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--primary-main) 10%, transparent), transparent 60%),
+    var(--custom-gray);
+
+  @apply tw-relative tw-flex tw-h-36 tw-items-center tw-justify-center tw-p-3;
+}
+
+.sticker-artwork img {
+  @apply tw-h-28 tw-w-28 tw-object-contain;
+}
+
+.sticker-shop-status {
+  background: color-mix(in srgb, var(--custom-default) 88%, transparent);
+
+  @apply tw-absolute tw-right-2 tw-top-2 tw-inline-flex tw-items-center tw-gap-1 tw-rounded-full tw-px-2 tw-py-1 tw-text-xs tw-font-semibold;
+}
+
+.sticker-shop-status.is-available {
+  @apply tw-bg-orange-500 tw-text-white;
+}
+
+.sticker-card-body {
+  @apply tw-p-3;
+}
+
+.sticker-card-body h3 {
+  @apply tw-m-0 tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-text-base tw-font-bold;
+}
+
+.sticker-pokemon {
+  min-height: 1.25rem;
+
+  @apply tw-mt-1 tw-block tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-text-sm tw-opacity-75;
+}
+
+.sticker-meta {
+  border-top: 1px solid var(--custom-table-border);
+
+  @apply tw-mt-3 tw-flex tw-items-center tw-justify-between tw-pt-2 tw-text-xs tw-opacity-80;
+}
+
+.sticker-pack-list {
+  @apply tw-flex tw-items-center tw-gap-1;
+}
+
+.sticker-max-badge {
+  background: color-mix(in srgb, var(--primary-main) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-main) 45%, transparent);
+  color: var(--primary-main);
+
+  @apply tw-inline-flex tw-items-center tw-gap-1 tw-rounded-full tw-px-2 tw-py-0.5 tw-font-medium;
+}
+
+.sticker-pack-badge {
+  @apply tw-rounded-full tw-border tw-border-orange-500/50 tw-bg-orange-500/15 tw-px-2 tw-py-0.5 tw-font-semibold tw-text-orange-500;
+}
+
+.sticker-empty {
+  border: 1px dashed var(--custom-table-border);
+
+  @apply tw-flex tw-min-h-64 tw-flex-col tw-items-center tw-justify-center tw-gap-2 tw-rounded-xl tw-p-6 tw-text-center;
+}
+
+.sticker-empty > svg {
+  @apply tw-text-5xl tw-opacity-50;
+}
+
+.sticker-load-more {
+  @apply tw-flex tw-min-h-16 tw-items-center tw-justify-center tw-pt-4;
+}
+
+@media (width <= 575px) {
+  .sticker-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sticker-card,
+  .sticker-card-skeleton {
+    min-height: 224px;
+  }
+
+  .sticker-artwork {
+    @apply tw-h-32;
+  }
+
+  .sticker-artwork img {
+    @apply tw-h-24 tw-w-24;
+  }
 }

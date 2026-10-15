@@ -539,6 +539,7 @@ export interface IStatBarComponent extends LinearProgressProps {
 
 export interface ITooltip extends TooltipProps {
   children: React.ReactElement;
+  openOnClick?: boolean;
   id?: string;
   className?: string;
   hideBackground?: boolean;

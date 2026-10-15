@@ -1,7 +1,7 @@
 .evo-container {
   white-space: initial !important;
 
-  @apply tw-text-center;
+  @apply tw-isolate tw-z-0 tw-text-center;
 }
 
 .ul-evo {
@@ -83,7 +83,10 @@
 }
 
 .evo-quest-action {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
   white-space: normal;
 }
 
