@@ -1,7 +1,16 @@
 import React from 'react';
 import PetsIcon from '@mui/icons-material/Pets';
+import CallMadeIcon from '@mui/icons-material/CallMade';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+import StadiumIcon from '@mui/icons-material/Stadium';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import type { IEvolutionRequirement } from '../../../core/models/evolution.model';
 import IconType from '../../Sprites/Icon/Type/Type';
+import APIService from '../../../services/api.service';
+import { getItemSpritePath } from '../../../utils/utils';
+import { ItemName } from '../../../pages/News/enums/item-type.enum';
 
 const labels: Record<string, string> = {
   QUEST_CATCH_POKEMON: 'Catch',
@@ -13,6 +22,40 @@ const labels: Record<string, string> = {
   QUEST_BUDDY_FEED: 'Feeds',
   QUEST_BUDDY_EVOLUTION_WALK: 'km',
   QUEST_USE_INCENSE: 'Incense',
+};
+
+const iconKeys: Record<string, string> = {
+  QUEST_CATCH_POKEMON: 'catch',
+  QUEST_COMPLETE_BATTLE: 'complete-battle',
+  QUEST_COMPLETE_RAID_BATTLE: 'raid',
+  QUEST_FIGHT_POKEMON: 'battle-pokemon',
+  QUEST_LAND_THROW: 'throw',
+  QUEST_BUDDY_EARN_AFFECTION_POINTS: 'buddy-hearts',
+  QUEST_BUDDY_FEED: 'buddy-feed',
+  QUEST_USE_INCENSE: 'incense',
+};
+
+const requirementIcon = (type: string | undefined) => {
+  switch (type) {
+    case 'QUEST_CATCH_POKEMON':
+      return <img alt="Pokémon" height={20} src={APIService.getPokeSprite()} />;
+    case 'QUEST_COMPLETE_RAID_BATTLE':
+      return <StadiumIcon fontSize="small" />;
+    case 'QUEST_COMPLETE_BATTLE':
+      return <EmojiEventsIcon fontSize="small" />;
+    case 'QUEST_FIGHT_POKEMON':
+      return <SportsMartialArtsIcon fontSize="small" />;
+    case 'QUEST_LAND_THROW':
+      return <CallMadeIcon fontSize="small" />;
+    case 'QUEST_BUDDY_EARN_AFFECTION_POINTS':
+      return <FavoriteIcon className="tw-text-accent-red" fontSize="small" />;
+    case 'QUEST_BUDDY_FEED':
+      return <RestaurantIcon fontSize="small" />;
+    case 'QUEST_USE_INCENSE':
+      return <img alt="Incense" width={20} height={20} src={getItemSpritePath(ItemName.Incense)} />;
+    default:
+      return null;
+  }
 };
 
 const QuestRequirements = ({ requirements }: { requirements: IEvolutionRequirement[] }) => (
@@ -71,8 +114,14 @@ const QuestRequirements = ({ requirements }: { requirements: IEvolutionRequireme
             ].includes(condition.type ?? '')
         );
         return (
-          <span key={`${requirement.templateId}-${index}`} className="caption evo-quest-detail">
+          <span
+            key={`${requirement.templateId}-${index}`}
+            className="caption evo-quest-detail"
+            data-evolution-detail-condition={requirement.type}
+            data-evolution-icon={iconKeys[requirement.type ?? ''] ?? 'unknown-task'}
+          >
             <span className="evo-quest-action">
+              {requirementIcon(requirement.type)}
               {win ? 'Win ' : defeat ? 'Defeat ' : ''}
               {requirement.goal} {throwType ? `${throwType} ` : ''}
               {battleLabel}
