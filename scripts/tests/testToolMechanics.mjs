@@ -4,9 +4,9 @@ import assert from 'node:assert/strict';
 import {
   encounterProbabilityPercent,
   encounterTimeSeconds,
-} from '../src/pages/Tools/CatchChance/catch-chance-display.ts';
-import { pokemonGoAppraisalStars } from '../src/pages/Tools/FindTable/appraisal.ts';
-import { filterBattleModifierMoves } from '../src/components/Commons/Selects/move-availability.ts';
+} from '../../src/pages/Tools/CatchChance/catch-chance-display.ts';
+import { pokemonGoAppraisalStars } from '../../src/pages/Tools/FindTable/appraisal.ts';
+import { filterBattleModifierMoves } from '../../src/components/Commons/Selects/move-availability.ts';
 
 const ivsWithTotal = (total) => ({ atk: Math.min(total, 15), def: Math.min(Math.max(total - 15, 0), 15), sta: Math.max(total - 30, 0) });
 const expectedRanges = [

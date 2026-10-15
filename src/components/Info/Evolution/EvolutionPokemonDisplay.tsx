@@ -55,7 +55,7 @@ const EvolutionPokemonDisplay = ({
     <>
       {formLabel ? (
         <Badge
-          color="secondary"
+          color={pokemonType === PokemonType.Purified ? 'info' : 'secondary'}
           overlap="circular"
           badgeContent={formLabel}
           anchorOrigin={{ vertical: 'top', horizontal: 'left' }}

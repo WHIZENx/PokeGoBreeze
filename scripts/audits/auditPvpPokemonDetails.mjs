@@ -7,7 +7,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
-const workspaceRoot = resolve(scriptDir, '../../..');
+const workspaceRoot = resolve(scriptDir, '../../../..');
 const args = new Map();
 for (let index = 2; index < process.argv.length; index += 1) {
   const argument = process.argv[index];

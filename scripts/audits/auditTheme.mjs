@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// Audits rendered application routes in both supported themes.
+
 import { spawn } from 'node:child_process';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';

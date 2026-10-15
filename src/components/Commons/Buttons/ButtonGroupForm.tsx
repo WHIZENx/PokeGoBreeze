@@ -28,6 +28,8 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                   aria-pressed={value.form.id === props.id}
                   data-form-name={value.form.name}
                   data-form={value.form.formName ?? ''}
+                  data-icon-name={value.name}
+                  data-icon-base-species={value.defaultName}
                   data-pokemon-type={value.form.pokemonType ?? ''}
                   data-form-id={value.form.id}
                   onClick={() => props.changeForm(value)}
@@ -43,7 +45,7 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                           <PokemonIconType
                             pokemonType={value.form.pokemonType}
                             size={24}
-                            className="!tw-bottom-1 tw-right-0 tw-z-10"
+                            className="!tw-bottom-1 tw-right-0 tw-z-[1]"
                           >
                             <PokemonTableIcon
                               num={value.defaultId}
@@ -52,6 +54,7 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                               slug={value.form.name}
                               form={value.form.formName}
                               baseSpecies={value.defaultName}
+                              pokemonType={value.form.pokemonType}
                               size={64}
                             />
                           </PokemonIconType>

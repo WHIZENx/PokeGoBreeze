@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
-const outputDirectory = resolve(scriptDirectory, '../src/assets/generated/pokemon-icons');
+const outputDirectory = resolve(scriptDirectory, '../../src/assets/generated/pokemon-icons');
 const sheetUrl = 'https://play.pokemonshowdown.com/sprites/pokemonicons-sheet.png';
 const indexUrl =
   'https://raw.githubusercontent.com/smogon/pokemon-showdown-client/master/play.pokemonshowdown.com/src/battle-dex-data.ts';

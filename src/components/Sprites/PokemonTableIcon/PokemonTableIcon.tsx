@@ -2,6 +2,7 @@ import React from 'react';
 
 import iconManifest from '../../../assets/generated/pokemon-icons/pokemon-icon-index.json';
 import iconSheet from '../../../assets/generated/pokemon-icons/pokemonicons-sheet.png';
+import { PokemonType } from '../../../enums/type.enum';
 
 interface PokemonTableIconProps {
   num: number;
@@ -11,6 +12,7 @@ interface PokemonTableIconProps {
   sprite?: string;
   form?: string;
   baseSpecies?: string;
+  pokemonType?: PokemonType;
   className?: string;
   size?: number;
 }
@@ -20,10 +22,14 @@ const BASE_FORMS = new Set(['', 'normal', 'ordinary', 'standard', 'hero']);
 
 const toId = (value?: string) => (value ?? '').toLowerCase().replaceAll(/[^a-z0-9]+/g, '');
 
-const normalizeCandidate = (value?: string) => {
+const normalizeCandidate = (value?: string, pokemonType?: PokemonType) => {
   let id = toId(value);
   if (UNKNOWN_SPRITES.has(id)) {
     return '';
+  }
+
+  if (pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified) {
+    id = id.replace(/(?:shadow|purified)$/, '');
   }
 
   id = id
@@ -32,6 +38,8 @@ const normalizeCandidate = (value?: string) => {
     .replaceAll('alolan', 'alola')
     .replaceAll('paldean', 'paldea')
     .replace(/breed$/, '')
+    .replace(/female(?=mega$)/, 'f')
+    .replace(/male(?=mega$)/, 'm')
     .replace(/exclamationpoint$/, 'exclamation')
     .replace(/questionmark$/, 'question')
     .replace(/eastsea$/, 'east')
@@ -43,7 +51,8 @@ const normalizeCandidate = (value?: string) => {
     .replace(/crownedsword$/, 'crowned')
     .replace(/crownedshield$/, 'crowned')
     .replace(/icerider$/, 'ice')
-    .replace(/shadowrider$/, 'shadow');
+    .replace(/shadowrider$/, 'shadow')
+    .replace(/standard$/, '');
   return id;
 };
 
@@ -55,15 +64,16 @@ export const resolvePokemonIconIndex = ({
   sprite,
   form,
   baseSpecies,
+  pokemonType,
 }: Omit<PokemonTableIconProps, 'className' | 'size'>) => {
-  const baseId = normalizeCandidate(baseSpecies);
-  const formId = normalizeCandidate(form);
+  const baseId = normalizeCandidate(baseSpecies, pokemonType);
+  const formId = normalizeCandidate(form, pokemonType);
   const candidates = [
-    normalizeCandidate(sprite),
-    normalizeCandidate(slug),
-    normalizeCandidate(fullName),
-    normalizeCandidate(name),
-    !BASE_FORMS.has(formId) && baseId ? normalizeCandidate(`${baseId}-${form}`) : '',
+    normalizeCandidate(sprite, pokemonType),
+    normalizeCandidate(slug, pokemonType),
+    normalizeCandidate(fullName, pokemonType),
+    normalizeCandidate(name, pokemonType),
+    !BASE_FORMS.has(formId) && baseId ? normalizeCandidate(`${baseId}-${form}`, pokemonType) : '',
   ];
   const indexes = iconManifest.indexes as Record<string, number>;
   const alternate = candidates.find((candidate) => candidate && indexes[candidate] !== undefined);
@@ -85,6 +95,7 @@ const PokemonTableIcon = ({ className = '', size = 48, ...pokemon }: PokemonTabl
     <span
       aria-label={`${label} icon`}
       className={`tw-inline-block tw-shrink-0 tw-bg-no-repeat tw-align-middle [image-rendering:pixelated] ${className}`}
+      data-pokemon-icon-index={index}
       role="img"
       style={{
         width: cellWidth * scale,

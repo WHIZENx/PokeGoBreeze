@@ -204,6 +204,7 @@ const Search = () => {
           }}
           onChangeSelect={onChangeSelect}
           onSetPokemon={(pokemon) => getInfoPoke(pokemon.num)}
+          preserveSearchOnSelect
           isFit
           label="Search"
           onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.num })}

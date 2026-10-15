@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { formatPokemonDisplayName } from '../src/utils/pokemon-display-name.ts';
+import { formatPokemonDisplayName } from '../../src/utils/pokemon-display-name.ts';
 
 for (const [input, expected] of [
   ['Furfrou-natural', 'Furfrou Natural'],
