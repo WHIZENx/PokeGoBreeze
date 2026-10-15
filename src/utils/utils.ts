@@ -15,12 +15,7 @@ import {
 } from '../core/models/stats.model';
 import { IPokemonDetail, IPokemonDetailInfo, Stats } from '../core/models/API/info.model';
 import { versionList } from './constants';
-import {
-  IPokemonFormModify,
-  IPokemonSprite,
-  PokemonFormModifyModel,
-  PokemonSprite,
-} from '../core/models/API/form.model';
+import { IPokemonFormModify, IPokemonSprite, PokemonFormModifyModel } from '../core/models/API/form.model';
 import APIService from '../services/api.service';
 import { TableStyles } from 'react-data-table-component';
 import {
@@ -964,7 +959,7 @@ export const generatePokemonGoShadowForms = (
         generateFormName(p.name, PokemonType.Shadow, '-'),
         versionList[0].replace(' ', '-'),
         p.types,
-        new PokemonSprite(),
+        p.sprites,
         index,
         PokemonType.Shadow
       );
@@ -977,7 +972,7 @@ export const generatePokemonGoShadowForms = (
         generateFormName(p.name, PokemonType.Purified, '-'),
         versionList[0].replace(' ', '-'),
         p.types,
-        new PokemonSprite(),
+        p.sprites,
         index,
         PokemonType.Purified
       );
