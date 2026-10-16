@@ -933,10 +933,13 @@ const Evolution = (props: IEvolutionComponent) => {
         {reload(
           <ul className="ul-evo evo-chain tw-inline-flex">
             {arrEvoList.map((values, evo) => (
-              <li key={evo} className="img-form-gender-group li-evo">
+              <li key={evo} className="img-form-gender-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0">
                 <ul className="ul-evo tw-flex tw-flex-col">
                   {values.map((value, index) => (
-                    <li key={index} className="img-form-gender-group img-evo-group li-evo">
+                    <li
+                      key={index}
+                      className="img-form-gender-group img-evo-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0"
+                    >
                       {value.formVaries ? (
                         <div className="select-evo" title="Vivillon pattern depends on the Scatterbug encounter">
                           {renderImageEvo(value, values, evo, index, arrEvoList.length)}

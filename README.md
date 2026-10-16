@@ -517,6 +517,17 @@ npm install -g vercel
 vercel --prod
 ```
 
+#### Cloudflare Pages
+```bash
+# Build the same static output used by the other hosting providers
+REACT_APP_DEPLOYMENT_MODE=production npm run deploy
+
+# Deploy dist/ with the committed _headers cache rules
+npx wrangler pages deploy dist --project-name pokego-breeze
+```
+
+Vercel remains the canonical SEO origin. Firebase Hosting and Cloudflare Pages serve the same prerendered loading shell and application bundle directly, while fingerprinted files under `/static/` use immutable caching on every provider. Cloudflare Pages uses its built-in SPA fallback because the build has no top-level `404.html`.
+
 ### Project Scripts
 
 | Script | Description |

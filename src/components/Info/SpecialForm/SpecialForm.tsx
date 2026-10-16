@@ -83,115 +83,149 @@ const SpecialForm = (props: IFormSpecialComponent) => {
     );
   };
 
+  const renderEnergyIcon = () => (
+    <img
+      alt={`${getKeyWithData(PokemonType, pokemonType)} energy`}
+      width={25}
+      height={25}
+      src={
+        pokemonType === PokemonType.Mega
+          ? APIService.getIconSprite('ic_mega')
+          : APIService.getIconMegaPrimalSprite(
+              props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
+            )
+      }
+    />
+  );
+
   return (
     <Fragment>
       {isNotEmpty(arrEvoList) && (
-        <div className={props.className} style={props.style}>
+        <div className={props.className} style={props.style} data-testid="mega-evolution-section">
           <h4 className="title-evo">
             <b>{pokemonType === PokemonType.Primal ? 'Primal Reversion' : 'Mega Evolution'}</b>
           </h4>
           <div className="form-special-container scroll-evolution">
-            <ul className="ul-evo tw-flex tw-justify-center tw-gap-3">
-              {arrEvoList?.map((value, evo) => (
-                <li key={evo} className="img-form-gender-group li-evo !tw-w-fit !tw-h-fit">
-                  <img
-                    id="Pokémon Image"
-                    height="96"
-                    alt="Pokémon Image"
-                    src={APIService.getPokeGifSprite(value.name)}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = APIService.getPokeSprite();
-                    }}
-                  />
-                  <div id="id-pokemon">
-                    <b>#{props.id}</b>
-                  </div>
-                  <div>
-                    <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
-                  </div>
-                  <span className="caption">
-                    {`Initial energy (base): `}
-                    <img
-                      alt={`img-${getKeyWithData(PokemonType, pokemonType)?.toLowerCase()}`}
-                      width={25}
-                      height={25}
-                      src={
-                        pokemonType === PokemonType.Mega
-                          ? APIService.getIconSprite('ic_mega')
-                          : APIService.getIconMegaPrimalSprite(
-                              props.id === 382
-                                ? 'pokemon_details_primal_alpha_energy'
-                                : 'pokemon_details_primal_omega_energy'
-                            )
-                      }
-                    />
-                    <b>{getQuestEvo(value.name).firstTempEvolution}</b>
-                  </span>
-                  {getQuestEvo(value.name).energyVariant && (
-                    <span className="caption">Energy: Mega Energy {getQuestEvo(value.name).energyVariant}</span>
-                  )}
-                  {getQuestEvo(value.name).superMax && (
-                    <>
-                      <span className="caption">Super Max · Requires Max Level</span>
-                      {getQuestEvo(value.name).superMax?.unlockEnergy !== undefined && (
-                        <span className="caption">
-                          Unlock energy (base): <b>x{getQuestEvo(value.name).superMax?.unlockEnergy}</b>
+            <ul className="ul-evo tw-flex tw-items-start tw-justify-center tw-gap-3 tw-pb-2">
+              {arrEvoList?.map((value, evo) => {
+                const quest = getQuestEvo(value.name);
+                return (
+                  <li
+                    key={evo}
+                    data-testid="mega-evolution-card"
+                    data-mega-level-count={quest.megaLevels?.length ?? 0}
+                    className="li-evo !tw-mr-0 tw-flex tw-w-[22rem] tw-flex-none tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start"
+                  >
+                    <div className="tw-flex tw-items-center tw-gap-3">
+                      <img
+                        className="tw-h-24 tw-w-24 tw-flex-none tw-object-contain"
+                        height="96"
+                        width="96"
+                        alt={splitAndCapitalize(value.name, '-', ' ')}
+                        src={APIService.getPokeGifSprite(value.name)}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = APIService.getPokeSprite();
+                        }}
+                      />
+                      <div className="tw-min-w-0">
+                        <b className="tw-block tw-text-sm">#{props.id}</b>
+                        <b className="link-title tw-block tw-text-lg tw-leading-tight">
+                          {splitAndCapitalize(value.name, '-', ' ')}
+                        </b>
+                        {quest.energyVariant && (
+                          <span className="caption tw-mt-1 tw-block">Mega Energy {quest.energyVariant}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="tw-grid tw-grid-cols-2 tw-gap-2">
+                      <div className="tw-rounded tw-bg-custom-default tw-p-2">
+                        <span className="caption tw-block">Initial energy</span>
+                        <span className="tw-flex tw-items-center tw-gap-1">
+                          {renderEnergyIcon()}
+                          <b>{quest.firstTempEvolution}</b>
                         </span>
-                      )}
-                      {getQuestEvo(value.name).superMax?.restHours !== undefined && (
-                        <span className="caption">
-                          Super Max rest: <b>{getQuestEvo(value.name).superMax?.restHours}h</b>
+                      </div>
+                      <div className="tw-rounded tw-bg-custom-default tw-p-2">
+                        <span className="caption tw-block">Repeat energy</span>
+                        <span className="tw-flex tw-items-center tw-gap-1">
+                          {renderEnergyIcon()}
+                          <b>{quest.tempEvolution}</b>
                         </span>
-                      )}
-                    </>
-                  )}
-                  {getQuestEvo(value.name).additionalMove && (
-                    <span className="caption tw-flex tw-items-center tw-justify-center tw-gap-1">
-                      <span>Mega attack:</span>
-                      {renderMoveLink(
-                        getQuestEvo(value.name).additionalMove?.name ?? '',
-                        getQuestEvo(value.name).additionalMove?.type
-                      )}
-                    </span>
-                  )}
-                  {getQuestEvo(value.name).megaLevels?.map((megaLevel) => (
-                    <span className="caption" key={megaLevel.level}>
-                      <b>{['', 'Base', 'High', 'Max'][megaLevel.level] ?? `Level ${megaLevel.level}`}</b>
-                      {` · ${megaLevel.cooldownHours / 24}d cooldown · bypass ${megaLevel.bypassEnergy} energy`}
-                      {` · Candy +${megaLevel.sameTypeExtraCatchCandy}`}
-                      {megaLevel.sameTypeExtraCatchXp !== undefined ? ` · XP +${megaLevel.sameTypeExtraCatchXp}` : ''}
-                      {megaLevel.sameTypeExtraCatchCandyXlChance !== undefined
-                        ? ` · XL chance +${megaLevel.sameTypeExtraCatchCandyXlChance * 100}%`
-                        : ''}
-                    </span>
-                  ))}
-                  <span className="caption">
-                    {`Repeat energy (base): `}
-                    <img
-                      alt="Image Primal"
-                      width={25}
-                      height={25}
-                      src={
-                        pokemonType === PokemonType.Mega
-                          ? APIService.getIconSprite('ic_mega')
-                          : APIService.getIconMegaPrimalSprite(
-                              props.id === 382
-                                ? 'pokemon_details_primal_alpha_energy'
-                                : 'pokemon_details_primal_omega_energy'
-                            )
-                      }
-                    />
-                    <b>{getQuestEvo(value.name).tempEvolution}</b>
-                  </span>
-                  {getQuestEvo(value.name).requireMove && (
-                    <span className="caption tw-flex tw-items-center tw-justify-center tw-gap-1">
-                      {`Require move: `}
-                      {renderMoveLink(getQuestEvo(value.name).requireMove ?? '')}
-                    </span>
-                  )}
-                </li>
-              ))}
+                      </div>
+                    </div>
+
+                    {quest.superMax && (
+                      <section className="tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-p-2">
+                        <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
+                          <b>Super Max</b>
+                          <span className="caption">Requires Max Level</span>
+                        </div>
+                        <div className="caption tw-mt-1 tw-flex tw-flex-wrap tw-gap-x-3 tw-gap-y-1">
+                          {quest.superMax.unlockEnergy !== undefined && (
+                            <span>
+                              Unlock: <b>x{quest.superMax.unlockEnergy}</b>
+                            </span>
+                          )}
+                          {quest.superMax.restHours !== undefined && (
+                            <span>
+                              Rest: <b>{quest.superMax.restHours}h</b>
+                            </span>
+                          )}
+                        </div>
+                      </section>
+                    )}
+
+                    {quest.additionalMove && (
+                      <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
+                        <span className="caption">Mega attack</span>
+                        {renderMoveLink(quest.additionalMove.name ?? '', quest.additionalMove.type)}
+                      </div>
+                    )}
+                    {quest.requireMove && (
+                      <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
+                        <span className="caption">Required move</span>
+                        {renderMoveLink(quest.requireMove)}
+                      </div>
+                    )}
+
+                    {Boolean(quest.megaLevels?.length) && (
+                      <details
+                        data-testid="mega-level-benefits"
+                        className="tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-p-2"
+                      >
+                        <summary className="tw-cursor-pointer tw-font-bold">
+                          Mega Level Benefits ({quest.megaLevels?.length})
+                        </summary>
+                        <div className="tw-mt-2 tw-flex tw-flex-col tw-gap-2">
+                          {quest.megaLevels?.map((megaLevel) => (
+                            <div
+                              className="tw-rounded tw-bg-custom-default tw-p-2"
+                              key={megaLevel.level}
+                              data-testid="mega-level-row"
+                            >
+                              <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
+                                <b>{['', 'Base', 'High', 'Max'][megaLevel.level] ?? `Level ${megaLevel.level}`}</b>
+                                <span className="caption">{megaLevel.cooldownHours / 24}d cooldown</span>
+                              </div>
+                              <div className="caption tw-mt-1">
+                                {`Bypass ${megaLevel.bypassEnergy} energy · Candy +${megaLevel.sameTypeExtraCatchCandy}`}
+                                {megaLevel.sameTypeExtraCatchXp !== undefined
+                                  ? ` · XP +${megaLevel.sameTypeExtraCatchXp}`
+                                  : ''}
+                                {megaLevel.sameTypeExtraCatchCandyXlChance !== undefined
+                                  ? ` · XL +${megaLevel.sameTypeExtraCatchCandyXlChance * 100}%`
+                                  : ''}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </details>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

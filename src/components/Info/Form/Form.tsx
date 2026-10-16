@@ -290,10 +290,12 @@ const FormComponent = (props: IFormInfoComponent) => {
       <hr className="tw-w-full" />
       {searchingMainDetails?.pokemonType !== PokemonType.GMax &&
       !isSpecialFormType(searchingMainDetails?.pokemonType) ? (
-        <div className="row tw-w-full !tw-m-0 !tw-p-0">
-          <div className="xl:tw-flex-1 tw-h-full tw-relative">{renderEvolution()}</div>
+        <div className="tw-w-full">
+          <div className="tw-w-full tw-relative" data-testid="evolution-section">
+            {renderEvolution()}
+          </div>
           <SpecialForm
-            className="xl:tw-flex-1 tw-h-full tw-relative !tw-p-0"
+            className="tw-mt-8 tw-w-full tw-relative !tw-p-0"
             formList={props.formList}
             id={props.defaultId}
           />
