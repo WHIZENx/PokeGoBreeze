@@ -3,6 +3,7 @@ import APIService from '../../services/api.service';
 import { versionList } from '../../utils/constants';
 import { getValueOrDefault, toNumber } from '../../utils/extension';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
+import { buildPokedexCardImageCandidates } from '../../utils/pokedex-card-image';
 import { convertPokemonImageName, splitAndCapitalize } from '../../utils/utils';
 import { IImage, ImageModel } from './asset.model';
 import { IPokemonData } from './pokemon.model';
@@ -45,7 +46,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
   image: IImage;
   pokemonType = PokemonType.Normal;
 
-  constructor(item: IPokemonData, assetForm: IImage | undefined) {
+  constructor(item: IPokemonData & { spriteUrl?: string | null }, assetForm: IImage | undefined) {
     this.id = toNumber(item.num);
     this.name = item.name;
     this.form = assetForm?.default
@@ -62,10 +63,20 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.goStats = item.statsGO ?? new StatsPokemonGO();
     this.pokemonClass = item.pokemonClass;
     this.releasedGO = item.releasedGO;
+    const pokemonGoAsset = assetForm?.default ? APIService.getPokemonModel(assetForm.default) : undefined;
+    const profileImage = APIService.getPokeFullSprite(
+      item.num,
+      convertPokemonImageName(splitAndCapitalize(item.form, '_', '-'))
+    );
+    const cardImages = buildPokedexCardImageCandidates(
+      pokemonGoAsset,
+      profileImage,
+      item.spriteUrl,
+      APIService.getPokeFullAsset(item.num)
+    );
     this.image = new ImageModel({
-      default: assetForm?.default
-        ? APIService.getPokemonModel(assetForm.default)
-        : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.form, '_', '-'))),
+      default: cardImages[0] ?? APIService.getPokeSprite(item.num),
+      fallbacks: cardImages.slice(1),
       shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : undefined,
       pokemonType: item.pokemonType,
     });

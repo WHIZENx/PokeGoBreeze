@@ -25,6 +25,10 @@ import ToggleType from '../../components/Commons/Buttons/ToggleType';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import BackdropMui from '../../components/Commons/Backdrops/BackdropMui';
 import useSkipStalePageRequest from '../../utils/hooks/useSkipStalePageRequest';
+import { serializePokedexSelection } from '../../utils/pokedex-query';
+
+const generationOptions = Object.values(genList).map((_, index) => index);
+const versionOptions = versionList.map((_, index) => index);
 
 interface IFilter {
   isMatch: boolean;
@@ -95,12 +99,7 @@ const Pokedex = (props: IStyleSheetData) => {
   const subItem = useRef(100);
   const latestRequestRef = useRef(0);
 
-  const [filters, setFilters] = useState(
-    Filter.setFilterGenAndVersion(
-      Object.values(genList).map((_, index) => index),
-      versionList.map((_, index) => index)
-    )
-  );
+  const [filters, setFilters] = useState(Filter.setFilterGenAndVersion(generationOptions, versionOptions));
 
   const { isMatch, releasedGO, isShiny, gen, version, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast } =
     filters;
@@ -189,8 +188,8 @@ const Pokedex = (props: IStyleSheetData) => {
         match: isMatch,
         released: releasedGO,
         types: selectTypes.join(','),
-        generations: gen.map((value) => value + 1).join(','),
-        versions: version.map((value) => versionList[value]).join(','),
+        generations: serializePokedexSelection(gen, generationOptions, (value) => value + 1),
+        versions: serializePokedexSelection(version, versionOptions, (value) => versionList[value]),
         pokemonType,
         pokemonClass,
         page,
@@ -279,11 +278,7 @@ const Pokedex = (props: IStyleSheetData) => {
         isSelectGen: !btnSelected.isSelectGen,
       });
     }
-    const gen = !isSelect
-      ? value.sort((a, b) => a - b)
-      : btnSelected.isSelectGen
-        ? []
-        : Object.values(genList).map((_, index) => index);
+    const gen = !isSelect ? value.sort((a, b) => a - b) : btnSelected.isSelectGen ? [] : generationOptions;
 
     setFilters({
       ...filters,
@@ -299,11 +294,7 @@ const Pokedex = (props: IStyleSheetData) => {
         isSelectVersion: !btnSelected.isSelectVersion,
       });
     }
-    const version = !isSelect
-      ? value.sort((a, b) => a - b)
-      : btnSelected.isSelectVersion
-        ? []
-        : versionList.map((_, index) => index);
+    const version = !isSelect ? value.sort((a, b) => a - b) : btnSelected.isSelectVersion ? [] : versionOptions;
 
     setFilters({
       ...filters,

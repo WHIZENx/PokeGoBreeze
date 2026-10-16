@@ -71,7 +71,7 @@ const EvolutionPokemonDisplay = ({
       <span className="tw-block">
         <b className="tw-text-default">#{id}</b>
       </span>
-      <span className="tw-block">
+      <span className="tw-block tw-whitespace-nowrap" data-testid="evolution-pokemon-name">
         <b className="link-title">{name}</b>
       </span>
     </>

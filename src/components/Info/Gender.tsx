@@ -27,6 +27,7 @@ const Gender = (props: IGenderComponent) => {
         <div className="img-form-gender-group">
           <div className="img-gender-group tw-relative">
             <img
+              data-testid="pokemon-form-default-sprite"
               width={96}
               height={96}
               alt="Pokémon Image"
@@ -57,6 +58,7 @@ const Gender = (props: IGenderComponent) => {
         <div className="img-form-gender-group">
           <div className="img-gender-group tw-relative">
             <img
+              data-testid="pokemon-form-shiny-sprite"
               width={96}
               height={96}
               alt="Pokémon Image"

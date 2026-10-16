@@ -1,7 +1,11 @@
 export interface PokemonGoFormIdentity {
   num: number;
+  name?: string;
   form?: string | number;
+  fullName?: string;
   pokemonType?: number;
+  types?: string[];
+  hasShadowForm?: boolean;
   releasedGO?: boolean;
   quickMoves?: unknown[];
   cinematicMoves?: unknown[];
@@ -94,7 +98,11 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
 };
 
 export const pokemonGoFormIdentityKey = (pokemon: PokemonGoFormIdentity) => {
-  const identity = normalizePokemonFormIdentity(pokemon.num, pokemon.form);
+  const rawForm = normalizeSelectionIdentity(String(pokemon.form ?? ''));
+  const battleModifier = pokemon.pokemonType === 2 ? 'SHADOW' : pokemon.pokemonType === 3 ? 'PURIFIED' : undefined;
+  const baseForm = battleModifier ? rawForm.replace(new RegExp(`_${battleModifier}$`), '') || 'NORMAL' : rawForm;
+  const baseIdentity = normalizePokemonFormIdentity(pokemon.num, baseForm);
+  const identity = battleModifier ? `${baseIdentity}_${battleModifier}` : baseIdentity;
   const canonicalDefaultForm = canonicalDefaultFormById[pokemon.num];
   const pokemonType =
     canonicalDefaultForm === identity && (pokemon.pokemonType === 0 || pokemon.pokemonType === 1)
@@ -122,7 +130,11 @@ export const selectPreferredPokemonGoFormIdentity = <T extends PokemonGoFormIden
     }
     return current;
   }, undefined);
-  return preferred && pokemons.some((pokemon) => pokemon.releasedGO)
-    ? ({ ...preferred, releasedGO: true } as T)
+  return preferred
+    ? ({
+        ...preferred,
+        ...(pokemons.some((pokemon) => pokemon.releasedGO) ? { releasedGO: true } : {}),
+        ...(pokemons.some((pokemon) => pokemon.hasShadowForm) ? { hasShadowForm: true } : {}),
+      } as T)
     : preferred;
 };

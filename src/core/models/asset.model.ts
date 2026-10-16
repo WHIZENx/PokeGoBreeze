@@ -7,6 +7,7 @@ export interface IImage {
   pokemonId?: number;
   form?: string;
   default: string;
+  fallbacks?: string[];
   shiny: string | undefined;
   pokemonType?: PokemonType;
 }
@@ -16,6 +17,7 @@ export class ImageModel implements IImage {
   pokemonId?: number;
   form?: string;
   default = '';
+  fallbacks?: string[];
   shiny = '';
   pokemonType = PokemonType.Normal;
 
