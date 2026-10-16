@@ -11,6 +11,7 @@ import { PokemonClass } from '../../enums/type.enum';
 import usePokemon from '../../composables/usePokemon';
 import StatsTable from '../Commons/Tables/Stats/StatsTable';
 import SelectTierMui from '../Commons/Selects/SelectTierMui';
+import { normalizeRaidTier } from '../../utils/raid-tier';
 
 const Raid = (props: IRaidComponent) => {
   const { findPokemonById } = usePokemon();
@@ -19,21 +20,14 @@ const Raid = (props: IRaidComponent) => {
 
   useEffect(() => {
     const pokemonClass = findPokemonById(props.id)?.pokemonClass;
-    if (pokemonClass) {
-      setPokemonClass(pokemonClass);
-    }
+    setPokemonClass(pokemonClass ?? PokemonClass.None);
   }, [props.id, findPokemonById]);
 
   useEffect(() => {
-    if (tier > 5 && props.pokemonType && !isSpecialMegaFormType(props.pokemonType)) {
-      setTier(5);
-    } else if (
-      tier === 5 &&
-      props.pokemonType &&
-      isSpecialMegaFormType(props.pokemonType) &&
-      pokemonClass !== PokemonClass.None
-    ) {
-      setTier(6);
+    const normalizedTier = normalizeRaidTier(tier, props.pokemonType, pokemonClass);
+    if (normalizedTier !== tier) {
+      setTier(normalizedTier);
+      return;
     }
     if (props.setTierBoss) {
       props.setTierBoss(tier);

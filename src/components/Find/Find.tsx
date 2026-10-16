@@ -213,6 +213,7 @@ const Find = (props: IFindComponent) => {
             onSetNext={() => modifyId(1)}
             isObjective={props.isObjective}
             excludedPokemonTypes={props.excludedPokemonTypes}
+            includePokemonGoBattleModifiers={props.includePokemonGoBattleModifiers}
             pokemonFilter={props.pokemonFilter}
           />
         )}

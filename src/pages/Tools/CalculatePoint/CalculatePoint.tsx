@@ -381,6 +381,7 @@ const CalculatePoint = () => {
             isHide
             title="Attacker Pokémon"
             clearStats={clearData}
+            includePokemonGoBattleModifiers
             excludedPokemonTypes={RAID_BATTLE_EXCLUDED_POKEMON_TYPES}
           />
         </div>
@@ -394,6 +395,7 @@ const CalculatePoint = () => {
             title="Defender Pokémon"
             clearStats={clearData}
             isObjective
+            includePokemonGoBattleModifiers
             excludedPokemonTypes={RAID_BATTLE_EXCLUDED_POKEMON_TYPES}
           />
         </div>

@@ -13,6 +13,7 @@ import {
   PokemonFormModifyModel,
   PokemonFormDetail,
   IPokemonFormDetail,
+  IPokemonSprite,
   PokemonSprite,
 } from '../../core/models/API/form.model';
 import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfoEvo } from '../../core/models/API/info.model';
@@ -98,6 +99,20 @@ class TypeCost implements ITypeCost {
     Object.assign(this, props);
   }
 }
+
+const withPokemonGoAssetSprites = (sprites: IPokemonSprite | undefined, asset: PokemonGoFormCatalogEntry['asset']) => {
+  const result = Object.assign(new PokemonSprite(), sprites);
+  if (!asset) {
+    return result;
+  }
+  const defaultSprite = APIService.getPokemonModel(asset.default);
+  const shinySprite = asset.shiny ? APIService.getPokemonModel(asset.shiny) : '';
+  result.frontDefault ||= defaultSprite;
+  result.frontHome ||= defaultSprite;
+  result.frontArtwork ||= defaultSprite;
+  result.frontShiny ||= shinySprite;
+  return result;
+};
 
 const Pokemon = (props: IPokemonPage) => {
   const { spinnerIsLoading } = useSpinner();
@@ -235,7 +250,7 @@ const Pokemon = (props: IPokemonPage) => {
       const isShadow = Boolean(
         pokemon?.hasShadowForm && toNumber(pokemon.purified?.candy) >= 0 && toNumber(pokemon.purified?.stardust) >= 0
       );
-      let formListResult = dataFormList
+      let formListResult: IPokemonFormModify[][] = dataFormList
         .map((item) =>
           item
             .map((item) => {
@@ -283,6 +298,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       if (bundledPokemonGoForms.length) {
         const selectedKeys = new Set<string>();
+        const selectedForms = new Map<string, IPokemonFormModify>();
         formListResult.flat().forEach((item) => {
           const selectedPokemonType = item.form.pokemonType ?? PokemonType.None;
           const pokemon = retrieveMoves(
@@ -296,18 +312,22 @@ const Pokemon = (props: IPokemonPage) => {
               (item.form.isDefault && selectedPokemonType === PokemonType.None
                 ? PokemonType.Normal
                 : selectedPokemonType));
-          selectedKeys.add(
-            pokemonGoFormIdentityKey({
-              num: specie.id,
-              form: item.form.formName || pokemon?.form,
-              pokemonType,
-            })
-          );
+          const key = pokemonGoFormIdentityKey({
+            num: specie.id,
+            form: item.form.formName || pokemon?.form,
+            pokemonType,
+          });
+          selectedKeys.add(key);
+          selectedForms.set(key, item);
         });
 
         bundledPokemonGoForms.forEach((pokemon, index) => {
           const key = pokemonGoFormIdentityKey(pokemon);
           if (selectedKeys.has(key)) {
+            const selectedForm = selectedForms.get(key);
+            if (selectedForm && pokemon.asset) {
+              selectedForm.form.sprites = withPokemonGoAssetSprites(selectedForm.form.sprites, pokemon.asset);
+            }
             return;
           }
           selectedKeys.add(key);
@@ -323,7 +343,7 @@ const Pokemon = (props: IPokemonPage) => {
               pokemon.fullName?.replaceAll('_', '-').toLowerCase(),
               versionList[0].replace(' ', '-'),
               pokemon.types ?? [],
-              new PokemonSprite(),
+              withPokemonGoAssetSprites(undefined, pokemon.asset),
               -100_000 - index,
               pokemon.pokemonType ?? PokemonType.Normal,
               false
@@ -780,6 +800,12 @@ const Pokemon = (props: IPokemonPage) => {
     mainImageCandidates,
     APIService.getPokeSprite()
   );
+  const profileModifier =
+    searchingMainForm?.form?.pokemonType === PokemonType.Shadow
+      ? 'shadow'
+      : searchingMainForm?.form?.pokemonType === PokemonType.Purified
+        ? 'purified'
+        : '';
 
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
@@ -810,7 +836,15 @@ const Pokemon = (props: IPokemonPage) => {
       >
         <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
           <AlertReleased formName={formName} pokemonType={searchingMainForm?.form?.pokemonType} icon={iconData} />
-          <div className="tw-inline-block img-desc" aria-busy={isMainImageLoading}>
+          <div
+            className={combineClasses(
+              'tw-relative tw-isolate tw-inline-block tw-overflow-visible img-desc pokemon-profile-aura',
+              profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
+            )}
+            aria-busy={isMainImageLoading}
+            data-testid="pokemon-profile-image"
+            data-profile-modifier={profileModifier}
+          >
             <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
           </div>
           <div className="tw-inline-block tw-align-bottom">

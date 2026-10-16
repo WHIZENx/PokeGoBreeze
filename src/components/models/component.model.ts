@@ -122,6 +122,7 @@ export interface IFindComponent {
   isSwap?: boolean;
   isObjective?: boolean;
   excludedPokemonTypes?: readonly PokemonType[];
+  includePokemonGoBattleModifiers?: boolean;
   pokemonFilter?: (pokemon: IPokemonData) => boolean;
 }
 
@@ -141,6 +142,7 @@ export interface IFormSelectComponent {
   onHandleSetStats?: (type: TypeAction, value: number) => void;
   isObjective?: boolean;
   excludedPokemonTypes?: readonly PokemonType[];
+  includePokemonGoBattleModifiers?: boolean;
   pokemonFilter?: (pokemon: IPokemonData) => boolean;
 }
 
@@ -153,6 +155,7 @@ export interface IToolsComponent {
   tier: number;
   setTier: (tier: number) => void;
   isHide?: boolean;
+  isObjective?: boolean;
 }
 
 export interface IAssetPokemonModelComponent {

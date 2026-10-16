@@ -1,7 +1,7 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { LevelSlider, TypeRadioGroup, getKeyWithData, isSpecialMegaFormType } from '../../../utils/utils';
+import { LevelSlider, TypeRadioGroup, getKeyWithData, isSpecialFormType } from '../../../utils/utils';
 
 import APIService from '../../../services/api.service';
 
@@ -10,7 +10,7 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import { IStatsDamageTableComponent } from '../../models/page.model';
 import { PokemonType } from '../../../enums/type.enum';
-import { toFloatWithPadding, toNumber } from '../../../utils/extension';
+import { toNumber } from '../../../utils/extension';
 import { maxIv, minLevel, maxLevel, maxPokemonLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import type { DamageCalculatedStats } from '../../../services/models/tools-api.model';
 
@@ -18,17 +18,12 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
   const [currStatLevel, setCurrStatLevel] = useState(1);
   const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
   const [calculatedStats, setCalculatedStats] = useState<DamageCalculatedStats[]>([]);
+  const formPokemonType = isSpecialFormType(props.pokemonType) ? props.pokemonType : undefined;
+  const calculatedPokemonType = formPokemonType ?? currStatType;
 
   useEffect(() => {
-    if (
-      props.setStatType &&
-      [PokemonType.Shadow, PokemonType.Purified].includes(currStatType) &&
-      (!props.hasShadowForm || isSpecialMegaFormType(props.pokemonType))
-    ) {
-      setCurrStatType(PokemonType.Normal);
-      props.setStatType(PokemonType.Normal);
-    }
-  }, [props.setStatType, currStatType, props.pokemonType, props.hasShadowForm]);
+    props.setStatType?.(calculatedPokemonType);
+  }, [props.setStatType, calculatedPokemonType]);
 
   useEffect(() => {
     if (props.statATK === undefined || props.statDEF === undefined || props.statSTA === undefined) {
@@ -39,7 +34,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
     APIService.postDamageSimulator({
       mode: 'stats',
       base: { atk: props.statATK, def: props.statDEF, sta: props.statSTA },
-      pokemonType: currStatType,
+      pokemonType: calculatedPokemonType,
       iv: maxIv(),
       pvp: props.pvp,
       config: { minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
@@ -57,7 +52,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
     return () => {
       active = false;
     };
-  }, [props.statATK, props.statDEF, props.statSTA, props.pvp, currStatType]);
+  }, [props.statATK, props.statDEF, props.statSTA, props.pvp, calculatedPokemonType]);
 
   const onHandleLevel = useCallback(
     (v: number) => {
@@ -91,53 +86,33 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
   return (
     <div className="tw-container">
       <div>
-        <div className="tw-flex tw-justify-center tw-text-center">
-          <TypeRadioGroup
-            row
-            aria-labelledby="row-types-group-label"
-            name="row-types-group"
-            value={currStatType}
-            onChange={(e) => onHandleType(toNumber(e.target.value))}
-          >
-            <FormControlLabel
-              value={PokemonType.Normal}
-              control={<Radio />}
-              label={<span>{getKeyWithData(PokemonType, PokemonType.Normal)}</span>}
-            />
-            <FormControlLabel
-              value={PokemonType.Buddy}
-              control={<Radio />}
-              label={
-                <div className="tw-flex tw-items-center tw-gap-2">
-                  <img height={28} alt="Image Buddy" src={APIService.getPokeBuddy()} />{' '}
-                  <span>{getKeyWithData(PokemonType, PokemonType.Buddy)}</span>
-                </div>
-              }
-            />
-            <FormControlLabel
-              value={PokemonType.Shadow}
-              disabled={!props.hasShadowForm || isSpecialMegaFormType(props.pokemonType)}
-              control={<Radio />}
-              label={
-                <div className="tw-flex tw-items-center tw-gap-2">
-                  <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />{' '}
-                  <span>{getKeyWithData(PokemonType, PokemonType.Shadow)}</span>
-                </div>
-              }
-            />
-            <FormControlLabel
-              value={PokemonType.Purified}
-              disabled={!props.hasShadowForm || isSpecialMegaFormType(props.pokemonType)}
-              control={<Radio />}
-              label={
-                <div className="tw-flex tw-items-center tw-gap-2">
-                  <img height={32} alt="Image Purified" src={APIService.getPokePurified()} />{' '}
-                  <span>{getKeyWithData(PokemonType, PokemonType.Purified)}</span>
-                </div>
-              }
-            />
-          </TypeRadioGroup>
-        </div>
+        {!formPokemonType && (
+          <div className="tw-flex tw-justify-center tw-text-center">
+            <TypeRadioGroup
+              row
+              aria-labelledby="row-types-group-label"
+              name="row-types-group"
+              value={currStatType}
+              onChange={(e) => onHandleType(toNumber(e.target.value))}
+            >
+              <FormControlLabel
+                value={PokemonType.Normal}
+                control={<Radio />}
+                label={<span>{getKeyWithData(PokemonType, PokemonType.Normal)}</span>}
+              />
+              <FormControlLabel
+                value={PokemonType.Buddy}
+                control={<Radio />}
+                label={
+                  <div className="tw-flex tw-items-center tw-gap-2">
+                    <img height={28} alt="Image Buddy" src={APIService.getPokeBuddy()} />{' '}
+                    <span>{getKeyWithData(PokemonType, PokemonType.Buddy)}</span>
+                  </div>
+                }
+              />
+            </TypeRadioGroup>
+          </div>
+        )}
         <div className="tw-flex tw-justify-center tw-text-center tw-h-20">
           <Box className="tw-w-3/5 tw-min-w-content">
             <div className="tw-flex tw-justify-between">
@@ -151,7 +126,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
               valueLabelDisplay="off"
               step={stepLevel()}
               min={minLevel()}
-              max={currStatType === PokemonType.Buddy ? maxLevel() : maxPokemonLevel()}
+              max={calculatedPokemonType === PokemonType.Buddy ? maxLevel() : maxPokemonLevel()}
               onChange={(_, v) => onHandleLevel(v as number)}
             />
           </Box>
@@ -172,7 +147,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>ATK</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">{displayStats ? toFloatWithPadding(displayStats.atk, 2) : '-'}</td>
+                <td className="!tw-text-center">{displayStats ? Math.round(displayStats.atk) : '-'}</td>
               </tr>
               <tr>
                 <td>
@@ -181,7 +156,7 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
                     <span>DEF</span>
                   </div>
                 </td>
-                <td className="!tw-text-center">{displayStats ? toFloatWithPadding(displayStats.def, 2) : '-'}</td>
+                <td className="!tw-text-center">{displayStats ? Math.round(displayStats.def) : '-'}</td>
               </tr>
               <tr>
                 <td>

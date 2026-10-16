@@ -117,20 +117,58 @@ try {
         expression: `(() => {
           const shell = document.querySelector('#seo-content');
           const bar = document.querySelector('.seo-shell-bar');
+          const toolbar = document.querySelector('.seo-shell-toolbar');
           const brand = document.querySelector('.seo-shell-brand');
+          const brandLockup = document.querySelector('.seo-shell-brand-lockup');
           const brandIcon = document.querySelector('.seo-shell-brand-icon');
+          const mobileMenu = document.querySelector('.seo-shell-mobile-menu');
+          const mobileMenuIcon = mobileMenu?.querySelector('svg');
+          const themeToggle = document.querySelector('.seo-shell-theme-toggle');
+          const themeSun = document.querySelector('.seo-shell-theme-sun');
+          const themeMoon = document.querySelector('.seo-shell-theme-moon');
+          const themeSunPath = themeSun?.querySelector('path');
           const progress = document.querySelector('.seo-shell-progress');
           const title = document.querySelector('#seo-shell-title');
-          if (!shell || !bar || !brand || !brandIcon || !progress || !title) return { missing: true };
+          if (
+            !shell ||
+            !bar ||
+            !toolbar ||
+            !brand ||
+            !brandLockup ||
+            !brandIcon ||
+            !mobileMenu ||
+            !mobileMenuIcon ||
+            !themeToggle ||
+            !themeSun ||
+            !themeMoon ||
+            !themeSunPath ||
+            !progress ||
+            !title
+          ) return { missing: true };
           const progressRect = progress.getBoundingClientRect();
+          const barRect = bar.getBoundingClientRect();
+          const toolbarRect = toolbar.getBoundingClientRect();
           const brandRect = brand.getBoundingClientRect();
+          const brandLockupStyle = getComputedStyle(brandLockup);
           const brandIconRect = brandIcon.getBoundingClientRect();
+          const mobileMenuRect = mobileMenu.getBoundingClientRect();
+          const mobileMenuIconRect = mobileMenuIcon.getBoundingClientRect();
+          const mobileMenuStyle = getComputedStyle(mobileMenu);
+          const themeToggleRect = themeToggle.getBoundingClientRect();
+          const themeSunRect = themeSun.getBoundingClientRect();
+          const themeSunPathBox = themeSunPath.getBBox();
+          const themeSunStyle = getComputedStyle(themeSun);
+          const themeSunPathStyle = getComputedStyle(themeSunPath);
+          const lightThemeSunDisplay = themeSunStyle.display;
+          const lightThemeMoonDisplay = getComputedStyle(themeMoon).display;
           const brandStyle = getComputedStyle(brand);
           const barStyle = getComputedStyle(bar);
           document.documentElement.setAttribute('data-theme', 'dark');
           const darkBarStyle = getComputedStyle(bar);
           const darkBarBackground = darkBarStyle.backgroundColor;
           const darkBarOverlay = darkBarStyle.backgroundImage;
+          const darkThemeSunDisplay = getComputedStyle(themeSun).display;
+          const darkThemeMoonDisplay = getComputedStyle(themeMoon).display;
           document.documentElement.setAttribute('data-theme', 'light');
           return {
             missing: false,
@@ -139,6 +177,10 @@ try {
             progressLeft: progressRect.left,
             progressRight: progressRect.right,
             progressHeight: progressRect.height,
+            progressTop: progressRect.top,
+            barTop: barRect.top,
+            toolbarLeft: toolbarRect.left,
+            toolbarRight: toolbarRect.right,
             hasBlockingCard: Boolean(document.querySelector('.seo-shell-card, .seo-shell-spinner')),
             titleSize: Number.parseFloat(getComputedStyle(title).fontSize),
             barHeight: bar.getBoundingClientRect().height,
@@ -150,6 +192,26 @@ try {
             brandGap: brandRect.left - brandIconRect.right,
             brandFontSize: Number.parseFloat(brandStyle.fontSize),
             brandLineHeight: Number.parseFloat(brandStyle.lineHeight),
+            brandDisplay: brandLockupStyle.display,
+            mobileMenuDisplay: mobileMenuStyle.display,
+            mobileMenuWidth: mobileMenuRect.width,
+            mobileMenuHeight: mobileMenuRect.height,
+            mobileMenuIconWidth: mobileMenuIconRect.width,
+            mobileMenuIconHeight: mobileMenuIconRect.height,
+            themeToggleWidth: themeToggleRect.width,
+            themeToggleHeight: themeToggleRect.height,
+            themeToggleRight: themeToggleRect.right,
+            themeSunWidth: themeSunRect.width,
+            themeSunHeight: themeSunRect.height,
+            themeSunPathWidth: themeSunPathBox.width,
+            themeSunPathHeight: themeSunPathBox.height,
+            themeSunOpacity: themeSunStyle.opacity,
+            themeSunVisibility: themeSunStyle.visibility,
+            themeSunFill: themeSunPathStyle.fill,
+            lightThemeSunDisplay,
+            lightThemeMoonDisplay,
+            darkThemeSunDisplay,
+            darkThemeMoonDisplay,
             background: getComputedStyle(shell).backgroundColor,
           };
         })()`,
@@ -162,16 +224,42 @@ try {
       layout.documentWidth > viewport.width + 1 ||
       layout.progressLeft < -1 ||
       layout.progressRight > viewport.width + 1 ||
+      layout.toolbarLeft < -1 ||
+      layout.toolbarRight > viewport.width + 1 ||
       layout.progressHeight > 3 ||
+      Math.abs(layout.progressTop - layout.barTop) > 1 ||
       layout.hasBlockingCard ||
       layout.titleSize > 20 ||
       layout.barHeight !== 56 ||
       layout.barBackground !== 'rgb(7, 94, 184)' ||
       layout.darkBarBackground !== 'rgb(51, 51, 51)' ||
       !layout.darkBarOverlay.includes('rgba(255, 255, 255, 0.09)') ||
-      layout.brandIconWidth !== 30 ||
-      layout.brandIconHeight !== 30 ||
-      layout.brandGap !== 8 ||
+      (viewport.mobile
+        ? layout.brandDisplay !== 'none' ||
+          layout.mobileMenuDisplay !== 'grid' ||
+          layout.mobileMenuWidth !== 48 ||
+          layout.mobileMenuHeight !== 48 ||
+          layout.mobileMenuIconWidth !== 24 ||
+          layout.mobileMenuIconHeight !== 24
+        : layout.brandDisplay !== 'flex' ||
+          layout.mobileMenuDisplay !== 'none' ||
+          layout.brandIconWidth !== 30 ||
+          layout.brandIconHeight !== 30 ||
+          layout.brandGap !== 8) ||
+      layout.themeToggleWidth !== 36 ||
+      layout.themeToggleHeight !== 36 ||
+      layout.themeToggleRight > viewport.width + 1 ||
+      layout.themeSunWidth !== 36 ||
+      layout.themeSunHeight !== 36 ||
+      layout.themeSunPathWidth <= 0 ||
+      layout.themeSunPathHeight <= 0 ||
+      layout.themeSunOpacity !== '1' ||
+      layout.themeSunVisibility !== 'visible' ||
+      layout.themeSunFill !== 'rgb(255, 255, 255)' ||
+      layout.lightThemeSunDisplay !== 'block' ||
+      layout.lightThemeMoonDisplay !== 'none' ||
+      layout.darkThemeSunDisplay !== 'none' ||
+      layout.darkThemeMoonDisplay !== 'block' ||
       layout.brandFontSize !== 16 ||
       layout.brandLineHeight !== 24 ||
       layout.background === 'rgba(0, 0, 0, 0)'

@@ -64,3 +64,110 @@ a b.link-title,
 .next-block .text-navigate {
   @apply tw-pl-[8%];
 }
+
+.pokemon-profile-aura::before,
+.pokemon-profile-aura::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.pokemon-profile-aura .pokemon-main-sprite {
+  position: relative;
+  z-index: 1;
+}
+
+.pokemon-profile-aura--shadow::before,
+.pokemon-profile-aura--shadow::after {
+  display: none;
+}
+
+.pokemon-profile-aura--shadow .pokemon-main-sprite {
+  will-change: filter;
+  animation: pokemon-shadow-silhouette-aura 4s ease-in-out infinite;
+}
+
+.pokemon-profile-aura--purified::before,
+.pokemon-profile-aura--purified::after {
+  display: none;
+}
+
+.pokemon-profile-aura--purified .pokemon-main-sprite {
+  will-change: filter;
+  animation: pokemon-purified-silhouette-aura 4.4s ease-in-out infinite;
+}
+
+@keyframes pokemon-shadow-silhouette-aura {
+  0%,
+  100% {
+    filter:
+      drop-shadow(0 0 3px rgb(116 42 160 / 55%))
+      drop-shadow(0 0 8px rgb(73 18 105 / 42%))
+      drop-shadow(0 5px 13px rgb(44 8 68 / 28%));
+  }
+
+  33% {
+    filter:
+      drop-shadow(0 0 4px rgb(221 126 255 / 82%))
+      drop-shadow(0 0 11px rgb(170 69 224 / 62%))
+      drop-shadow(0 6px 16px rgb(92 25 130 / 42%));
+  }
+
+  66% {
+    filter:
+      drop-shadow(0 0 4px rgb(151 111 255 / 76%))
+      drop-shadow(0 0 10px rgb(113 62 210 / 58%))
+      drop-shadow(0 5px 15px rgb(58 24 116 / 38%));
+  }
+}
+
+@keyframes pokemon-purified-silhouette-aura {
+  0%,
+  100% {
+    filter:
+      drop-shadow(0 0 3px rgb(213 252 255 / 64%))
+      drop-shadow(0 0 8px rgb(83 207 232 / 42%))
+      drop-shadow(0 5px 13px rgb(34 139 174 / 25%));
+  }
+
+  33% {
+    filter:
+      drop-shadow(0 0 4px rgb(255 255 255 / 92%))
+      drop-shadow(0 0 11px rgb(159 241 255 / 68%))
+      drop-shadow(0 6px 16px rgb(64 196 226 / 38%));
+  }
+
+  66% {
+    filter:
+      drop-shadow(0 0 4px rgb(190 247 255 / 84%))
+      drop-shadow(0 0 10px rgb(71 218 241 / 60%))
+      drop-shadow(0 5px 15px rgb(42 164 201 / 34%));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pokemon-profile-aura--shadow .pokemon-main-sprite,
+  .pokemon-profile-aura--purified .pokemon-main-sprite,
+  .pokemon-profile-aura--shadow::before,
+  .pokemon-profile-aura--shadow::after,
+  .pokemon-profile-aura--purified::before,
+  .pokemon-profile-aura--purified::after {
+    animation: none;
+  }
+
+  .pokemon-profile-aura--shadow .pokemon-main-sprite {
+    filter:
+      drop-shadow(0 0 4px rgb(187 94 232 / 70%))
+      drop-shadow(0 0 10px rgb(105 38 157 / 48%));
+  }
+
+  .pokemon-profile-aura--purified .pokemon-main-sprite {
+    filter:
+      drop-shadow(0 0 4px rgb(236 254 255 / 82%))
+      drop-shadow(0 0 10px rgb(83 215 238 / 52%));
+  }
+}

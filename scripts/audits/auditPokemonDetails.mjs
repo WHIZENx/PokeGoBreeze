@@ -415,6 +415,7 @@ const readPage = () =>
       };
     });
     const megaSection = document.querySelector('[data-testid="mega-evolution-section"]');
+    const megaScroll = document.querySelector('[data-testid="mega-evolution-scroll"]');
     const evolutionSection = document.querySelector('[data-testid="evolution-section"]');
     const megaSectionStyle = megaSection ? getComputedStyle(megaSection) : null;
     const formChangeSection = document.querySelector('[data-testid="form-change-section"]');
@@ -428,6 +429,10 @@ const readPage = () =>
           horizontalOverflow: detail.scrollWidth > detail.clientWidth + 2,
         }))
       : [];
+    const fusionSection = document.querySelector('[data-testid="fusion-section"]');
+    const fusionOrigins = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-origin"]')] : [];
+    const fusionTargets = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-target"]')] : [];
+    const profileImage = document.querySelector('[data-testid="pokemon-profile-image"]');
     const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => {
       const edgeBounds = bounds(edge);
       let lineOverlapsCard = false;
@@ -462,6 +467,7 @@ const readPage = () =>
     });
     return {
       id: Number(page.dataset.pokemonId),
+      viewportWidth: window.innerWidth,
       busy: page.getAttribute('aria-busy') === 'true',
       selectedName: page.dataset.selectedName ?? '',
       selectedForm: page.dataset.selectedForm ?? '',
@@ -472,6 +478,13 @@ const readPage = () =>
       bodyFormNames: (page.dataset.bodyFormNames ?? '').split(',').filter(Boolean),
       detailPokemonType: Number(page.dataset.detailPokemonType),
       detailTypes: (page.dataset.detailTypes ?? '').split(',').filter(Boolean),
+      profileAura: profileImage
+        ? {
+            modifier: profileImage.dataset.profileModifier ?? '',
+            beforeBackground: getComputedStyle(profileImage, '::before').backgroundImage,
+            afterBackground: getComputedStyle(profileImage, '::after').backgroundImage,
+          }
+        : null,
       bodyWeight: infoTable?.dataset.bodyWeight ?? '',
       bodyHeight: infoTable?.dataset.bodyHeight ?? '',
       title: document.title,
@@ -504,6 +517,9 @@ const readPage = () =>
         : null,
       evolutionOverflow: evolutionContainer
         ? {
+            bounds: bounds(evolutionContainer),
+            firstNode: evolutionNodes[0]?.bounds ?? null,
+            scrollLeft: evolutionContainer.scrollLeft,
             clientHeight: evolutionContainer.clientHeight,
             scrollHeight: evolutionContainer.scrollHeight,
             vertical: evolutionContainer.scrollHeight > evolutionContainer.clientHeight + 2,
@@ -511,6 +527,16 @@ const readPage = () =>
         : null,
       buttons,
       megaCards,
+      megaScrollLayout:
+        megaScroll && megaCards.length
+          ? {
+              bounds: bounds(megaScroll),
+              firstCard: bounds(document.querySelector('[data-testid="mega-evolution-card"]')),
+              scrollLeft: megaScroll.scrollLeft,
+              clientWidth: megaScroll.clientWidth,
+              scrollWidth: megaScroll.scrollWidth,
+            }
+          : null,
       megaSectionSeparator: megaSectionStyle
         ? {
             borderTop: megaSectionStyle.borderTopStyle,
@@ -527,12 +553,20 @@ const readPage = () =>
       formChangeLayout:
         formChangeSection && formChangeOrigin
           ? {
+              bounds: bounds(formChangeSection),
               path: formChangeSection.dataset.formChangePath ?? '',
               origin: bounds(formChangeOrigin),
               targets: formChangeTargets.map(bounds),
               details: formChangeDetails,
             }
           : null,
+      fusionLayout: fusionSection
+        ? {
+            bounds: bounds(fusionSection),
+            origins: fusionOrigins.map(bounds),
+            targets: fusionTargets.map(bounds),
+          }
+        : null,
       renderedFormSprites: {
         defaults: [...document.querySelectorAll('[data-testid="pokemon-form-default-sprite"]')]
           .map((image) => image.getAttribute('src') ?? '')
@@ -641,6 +675,19 @@ const validateModifierFormSprites = (issues, id, context, button, page) => {
 
 const validateExpectedRow = (issues, id, row, button, page) => {
   const context = { fullName: row.fullName, form: row.form, pokemonType: row.pokemonType };
+  const expectedProfileModifier = button.pokemonType === 2 ? 'shadow' : button.pokemonType === 3 ? 'purified' : '';
+  if (
+    !page.profileAura ||
+    page.profileAura.modifier !== expectedProfileModifier ||
+    (expectedProfileModifier &&
+      (page.profileAura.beforeBackground === 'none' || page.profileAura.afterBackground === 'none'))
+  ) {
+    addIssue(issues, id, 'profile_modifier_aura_mismatch', {
+      ...context,
+      expected: expectedProfileModifier,
+      actual: page.profileAura,
+    });
+  }
   const expectedCanonicalIdentity = normalizeCanonicalIdentity(id, row.fullName);
   const actualCanonicalIdentity = normalizeCanonicalIdentity(id, page.detailFullName);
   if (actualCanonicalIdentity !== expectedCanonicalIdentity) {
@@ -696,6 +743,18 @@ const validateExpectedRow = (issues, id, row, button, page) => {
     if (card.horizontalOverflow) addIssue(issues, id, 'mega_card_horizontal_overflow', { ...context, cardIndex });
   }
   if (page.megaCards.length) {
+    const scrollLayout = page.megaScrollLayout;
+    if (
+      !scrollLayout ||
+      scrollLayout.scrollLeft > 1 ||
+      scrollLayout.firstCard.left < scrollLayout.bounds.left - 1 ||
+      scrollLayout.firstCard.left > scrollLayout.bounds.right + 1
+    ) {
+      addIssue(issues, id, 'mega_evolution_invalid_initial_scroll_position', {
+        ...context,
+        layout: scrollLayout,
+      });
+    }
     if (page.megaSectionSeparator?.borderTop !== 'none' || page.megaSectionSeparator?.borderLeft !== 'none') {
       addIssue(issues, id, 'mega_evolution_section_divider_present', {
         ...context,
@@ -716,7 +775,7 @@ const validateExpectedRow = (issues, id, row, button, page) => {
     }
     const primaryTarget = page.formChangeLayout.targets[0];
     const axisDifference =
-      viewportWidth >= 640
+      page.viewportWidth >= 640
         ? Math.abs(page.formChangeLayout.origin.centerY - primaryTarget.centerY)
         : Math.abs(page.formChangeLayout.origin.centerX - primaryTarget.centerX);
     if (axisDifference > 2) {
@@ -734,6 +793,29 @@ const validateExpectedRow = (issues, id, row, button, page) => {
           detail,
         });
       }
+      if (
+        page.viewportWidth < 640 &&
+        (detail.bounds.left < page.formChangeLayout.bounds.left - 1 ||
+          detail.bounds.right > page.formChangeLayout.bounds.right + 1)
+      ) {
+        addIssue(issues, id, 'form_change_detail_outside_mobile_viewport', {
+          ...context,
+          detailIndex,
+          detail,
+        });
+      }
+    }
+  }
+  if (page.viewportWidth < 640 && page.fusionLayout) {
+    for (const [nodeIndex, node] of [...page.fusionLayout.origins, ...page.fusionLayout.targets].entries()) {
+      if (node.left < page.fusionLayout.bounds.left - 1 || node.right > page.fusionLayout.bounds.right + 1) {
+        addIssue(issues, id, 'fusion_node_outside_mobile_section', {
+          ...context,
+          nodeIndex,
+          node,
+          section: page.fusionLayout.bounds,
+        });
+      }
     }
   }
   const nodeKeys = new Set(page.evolutionNodes.map((node) => node.key));
@@ -748,6 +830,16 @@ const validateExpectedRow = (issues, id, row, button, page) => {
   }
   if (page.evolutionEdges.length && page.evolutionOverflow?.vertical) {
     addIssue(issues, id, 'evolution_vertical_overflow', {
+      ...context,
+      overflow: page.evolutionOverflow,
+    });
+  }
+  if (
+    page.evolutionOverflow?.firstNode &&
+    (page.evolutionOverflow.scrollLeft > 1 ||
+      page.evolutionOverflow.firstNode.left < page.evolutionOverflow.bounds.left - 1)
+  ) {
+    addIssue(issues, id, 'evolution_invalid_initial_scroll_position', {
       ...context,
       overflow: page.evolutionOverflow,
     });
@@ -917,6 +1009,16 @@ const main = async () => {
   });
   await client.send('Page.enable', {}, sessionId);
   await client.send('Runtime.enable', {}, sessionId);
+  await client.send(
+    'Emulation.setDeviceMetricsOverride',
+    {
+      width: viewportWidth,
+      height: viewportHeight,
+      deviceScaleFactor: 1,
+      mobile: viewportWidth < 640,
+    },
+    sessionId
+  );
 
   let isInitial = true;
   let previousPage;

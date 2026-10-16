@@ -75,7 +75,7 @@ const StatsTable = (props: IStatsTableComponent) => {
         {
           value: (
             <>
-              <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} /> HP
+              <img className="tw-mr-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} /> STA
             </>
           ),
         },
