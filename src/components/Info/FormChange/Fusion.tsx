@@ -34,7 +34,7 @@ const Fusion = ({ options, componentId, componentName }: FusionProps) => {
   };
 
   return (
-    <section>
+    <section data-testid="fusion-section">
       <h4 className="title-evo">
         <b>Fusion</b>
       </h4>
@@ -47,6 +47,7 @@ const Fusion = ({ options, componentId, componentName }: FusionProps) => {
             >
               <div
                 id={`${arrowId}-fusion-${index}-origin`}
+                data-testid="fusion-origin"
                 className="tw-flex tw-w-full tw-min-w-0 tw-items-center tw-justify-center tw-gap-2 sm:tw-w-auto sm:tw-gap-3"
               >
                 <span className="tw-min-w-0 tw-flex-1 sm:tw-flex-none">
@@ -59,7 +60,11 @@ const Fusion = ({ options, componentId, componentName }: FusionProps) => {
                   {renderPokemon(componentId, componentName)}
                 </span>
               </div>
-              <div id={`${arrowId}-fusion-${index}-target`} className="tw-min-w-0 tw-text-center">
+              <div
+                id={`${arrowId}-fusion-${index}-target`}
+                className="tw-min-w-0 tw-text-center"
+                data-testid="fusion-target"
+              >
                 {renderPokemon(option.baseId, option.targetName, option.targetForm)}
               </div>
               <Xarrow

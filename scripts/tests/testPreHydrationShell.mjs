@@ -48,6 +48,24 @@ const checks = [
       responsiveAppBarSource.includes('PokéGoBreeze'),
   ],
   [
+    'mobile header matches React breakpoint',
+    indexHtml.includes('@media (width < 900px)') && responsiveAppBarSource.includes('min-[900px]:tw-hidden'),
+  ],
+  [
+    'mobile header controls match MUI dimensions',
+    indexHtml.includes('class="seo-shell-mobile-menu"') &&
+      indexHtml.includes('width: 48px') &&
+      indexHtml.includes('width: 24px') &&
+      indexHtml.includes('class="seo-shell-theme-toggle"') &&
+      indexHtml.includes('width: 36px'),
+  ],
+  [
+    'pre-hydration theme icons switch without overlap',
+    indexHtml.includes('.seo-shell-theme-toggle .seo-shell-theme-moon') &&
+      indexHtml.includes(":root[data-theme='dark'] .seo-shell-theme-toggle .seo-shell-theme-sun") &&
+      indexHtml.includes(":root[data-theme='dark'] .seo-shell-theme-toggle .seo-shell-theme-moon"),
+  ],
+  [
     'header typography matches MUI',
     indexHtml.includes("font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif") &&
       indexHtml.includes('font-size: 16px') &&
@@ -70,12 +88,24 @@ const checks = [
   ['no blocking loading card', !indexHtml.includes('seo-shell-card') && !indexHtml.includes('seo-shell-spinner')],
   ['header icon matches React', renderedHeaderIcon.equals(headerIcon)],
   ['viewport-safe progress width', indexHtml.includes('.seo-shell-progress {') && indexHtml.includes('width: 100%')],
+  [
+    'progress indicator aligns with rendered header top',
+    indexHtml.includes('position: absolute') &&
+      indexHtml.includes('top: 0') &&
+      indexHtml.includes('<header class="seo-shell-bar">') &&
+      indexHtml.indexOf('class="seo-shell-progress"') < indexHtml.indexOf('</header>'),
+  ],
   ['reduced-motion support', indexHtml.includes('@media (prefers-reduced-motion: reduce)')],
   [
     'replaceable shell markers',
     indexHtml.includes('<!--seo-shell-start-->') && indexHtml.includes('<!--seo-shell-end-->'),
   ],
   ['route-specific shell renderer', prerenderSource.includes('renderLoadingShell(route.title.split')],
+  [
+    'route-specific responsive header',
+    prerenderSource.includes('class="seo-shell-mobile-menu"') &&
+      prerenderSource.includes('class="seo-shell-theme-toggle"'),
+  ],
   ['Vercel production asset cache', hasVercelImmutableCache(vercelConfig)],
   ['Vercel preview asset cache', hasVercelImmutableCache(vercelPreviewConfig)],
   [
