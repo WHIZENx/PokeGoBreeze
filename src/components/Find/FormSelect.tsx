@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import './FormSelect.scss';
 import APIService from '../../services/api.service';
-import type { PokemonBundleVariety } from '../../core/models/API/pokemon-bundle.model';
+import type { PokemonBundleVariety, PokemonGoFormCatalogEntry } from '../../core/models/API/pokemon-bundle.model';
 import Tools from './Tools';
 
 import {
@@ -11,6 +11,7 @@ import {
   getPreferredPokemonFormSprite,
   getPokemonType,
   getValidPokemonImgPath,
+  isSpecialFormType,
   splitAndCapitalize,
   TypeRadioGroup,
 } from '../../utils/utils';
@@ -22,8 +23,10 @@ import {
   Form,
   IPokemonFormModify,
   PokemonFormModify,
+  PokemonFormModifyModel,
   PokemonFormDetail,
   IPokemonFormDetail,
+  PokemonSprite,
 } from '../../core/models/API/form.model';
 import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo } from '../../core/models/API/info.model';
 import { IFormSelectComponent } from '../models/component.model';
@@ -37,7 +40,21 @@ import usePokemon from '../../composables/usePokemon';
 import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
-import { deduplicatePokemonFormSelections } from '../../utils/pokemon-form-identity';
+import { deduplicatePokemonFormSelections, pokemonGoFormIdentityKey } from '../../utils/pokemon-form-identity';
+
+const pokemonGoAssetSprites = (asset: PokemonGoFormCatalogEntry['asset']) => {
+  const sprites = new PokemonSprite();
+  if (!asset) {
+    return sprites;
+  }
+  const defaultSprite = APIService.getPokemonModel(asset.default);
+  const shinySprite = asset.shiny ? APIService.getPokemonModel(asset.shiny) : '';
+  sprites.frontDefault = defaultSprite;
+  sprites.frontHome = defaultSprite;
+  sprites.frontArtwork = defaultSprite;
+  sprites.frontShiny = shinySprite;
+  return sprites;
+};
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -62,12 +79,13 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
 
   const [currentForm, setCurrentForm] = useState<IPokemonFormModify>();
+  const isBattleModifierForm = isSpecialFormType(currentForm?.form.pokemonType);
 
   const axiosSource = useRef(APIService.getCancelToken());
   const { showSnackbar } = useSnackbar();
 
   const fetchMap = useCallback(
-    (specie: IPokemonSpecie, varieties: PokemonBundleVariety[]) => {
+    (specie: IPokemonSpecie, varieties: PokemonBundleVariety[], pokemonGoForms: PokemonGoFormCatalogEntry[] = []) => {
       setFormList([]);
       setPokeData([]);
       const dataPokeList: IPokemonDetailInfo[] = [];
@@ -100,6 +118,46 @@ const FormSelect = (props: IFormSelectComponent) => {
         .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
       generatePokemonGoForms(dataFormList, formListResult, specie.id, specie.name);
+
+      if (props.includePokemonGoBattleModifiers) {
+        const selectedKeys = new Set(
+          formListResult.flatMap((forms) =>
+            forms.map((item) =>
+              pokemonGoFormIdentityKey({
+                num: specie.id,
+                form: item.form.formName ?? item.form.name,
+                pokemonType: item.form.pokemonType,
+              })
+            )
+          )
+        );
+        pokemonGoForms
+          .filter((pokemon) => isSpecialFormType(pokemon.pokemonType))
+          .forEach((pokemon, index) => {
+            const key = pokemonGoFormIdentityKey(pokemon);
+            if (selectedKeys.has(key)) {
+              return;
+            }
+            selectedKeys.add(key);
+            formListResult.push([
+              new PokemonFormModifyModel(
+                specie.id,
+                specie.name,
+                pokemon.name?.replaceAll('_', '-').toLowerCase(),
+                String(pokemon.form ?? '')
+                  .replaceAll('_', '-')
+                  .toLowerCase(),
+                pokemon.fullName?.replaceAll('_', '-').toLowerCase(),
+                'pokemon-go',
+                pokemon.types ?? [],
+                pokemonGoAssetSprites(pokemon.asset),
+                -200_000 - index,
+                pokemon.pokemonType ?? PokemonType.Normal,
+                false
+              ),
+            ]);
+          });
+      }
 
       const selectableFormList = deduplicatePokemonFormSelections(formListResult)
         .map((forms) =>
@@ -145,7 +203,13 @@ const FormSelect = (props: IFormSelectComponent) => {
 
       setData(specie);
     },
-    [searchingToolData, props.excludedPokemonTypes, props.pokemonFilter, retrieveMoves]
+    [
+      searchingToolData,
+      props.excludedPokemonTypes,
+      props.includePokemonGoBattleModifiers,
+      props.pokemonFilter,
+      retrieveMoves,
+    ]
   );
 
   const queryPokemon = useCallback(
@@ -158,7 +222,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         .then((res) => {
           if (res.data.data) {
             const result = PokemonSpecie.create(res.data.data.species);
-            fetchMap(result, res.data.data.varieties);
+            fetchMap(result, res.data.data.varieties, res.data.data.pokemonGo?.forms);
           }
         })
         .catch((error: unknown) => {
@@ -251,7 +315,11 @@ const FormSelect = (props: IFormSelectComponent) => {
       return;
     }
     setCurrentForm(value);
-    dispatch(SearchingActions.SetToolPokemonForm.create(value));
+    dispatch(
+      props.isObjective
+        ? SearchingActions.SetToolObjectPokemonForm.create(value)
+        : SearchingActions.SetToolPokemonForm.create(value)
+    );
     props.onClearStats?.();
     props.setName?.(splitAndCapitalize(value.form.name, '-', ' '));
     props.setForm?.(value);
@@ -277,6 +345,16 @@ const FormSelect = (props: IFormSelectComponent) => {
     },
     [props.setRaid, props.onClearStats]
   );
+
+  useEffect(() => {
+    if (!isBattleModifierForm || !isRaid) {
+      return;
+    }
+    setTypePoke(TypeRaid.Pokemon);
+    setIsRaid(false);
+    props.setRaid?.(false);
+    props.onClearStats?.(true);
+  }, [isBattleModifierForm, isRaid, props.setRaid, props.onClearStats]);
 
   const selectedHybridImage = APIService.getPokeFullSprite(
     dataStorePokemon?.current?.id,
@@ -383,6 +461,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             />
             <FormControlLabel
               value={TypeRaid.Boss}
+              disabled={isBattleModifierForm}
               control={<Radio />}
               label={
                 <div className="tw-flex tw-items-center tw-gap-2">
@@ -412,6 +491,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         dataPoke={pokeData}
         onSetStats={props.onHandleSetStats}
         onClearStats={props.onClearStats}
+        isObjective={props.isObjective}
       />
     </Fragment>
   );

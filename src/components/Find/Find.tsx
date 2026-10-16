@@ -195,7 +195,7 @@ const Find = (props: IFindComponent) => {
 
   const showPokemon = () => (
     <div className="col tw-flex tw-justify-center tw-text-center">
-      <div>
+      <div className="tw-w-full">
         {isNotEmpty(pokemonList) && (
           <FormSelect
             isHide={props.isHide}
@@ -213,6 +213,7 @@ const Find = (props: IFindComponent) => {
             onSetNext={() => modifyId(1)}
             isObjective={props.isObjective}
             excludedPokemonTypes={props.excludedPokemonTypes}
+            includePokemonGoBattleModifiers={props.includePokemonGoBattleModifiers}
             pokemonFilter={props.pokemonFilter}
           />
         )}

@@ -61,15 +61,16 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
     .trim()
     .replaceAll('-', '_')
     .replaceAll(' ', '_')
-    .toUpperCase();
+    .toUpperCase()
+    .replace(/(^|_)GALAR(?=_|$)/g, '$1GALARIAN')
+    .replace(/(^|_)HISUI(?=_|$)/g, '$1HISUIAN')
+    .replace(/(^|_)POKE_BALL(?=_|$)/g, '$1POKEBALL');
 
   if (id === 718) {
     identity = identity.replace(/_10$/, '_TEN_PERCENT').replace(/_50$/, '_FIFTY_PERCENT');
     identity = identity.replace(/^10$/, 'TEN_PERCENT').replace(/^50$/, 'FIFTY_PERCENT');
   } else if (id === 741) {
     identity = identity.replace(/POM_POM$/, 'POMPOM');
-  } else if (id === 80) {
-    identity = identity.replace(/_GALAR$/, '_GALARIAN').replace(/^GALAR$/, 'GALARIAN');
   } else if (id === 801) {
     identity = identity.replace(/_ORIGINAL$/, '_ORIGINAL_COLOR').replace(/^ORIGINAL$/, 'ORIGINAL_COLOR');
   } else if (id === 888) {
@@ -81,8 +82,6 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
     identity = identity.replace(/_SHADOW$/, '_SHADOW_RIDER').replace(/^SHADOW$/, 'SHADOW_RIDER');
   } else if (id === 716) {
     identity = identity.replace(/_ACTIVE$/, '').replace(/^ACTIVE$/, 'NORMAL');
-  } else if (id === 664 || id === 665) {
-    identity = identity.replace(/POKE_BALL$/, 'POKEBALL');
   } else if (id === 931) {
     identity = identity.replace(/_PLUMAGE$/, '');
   } else if (id === 982) {

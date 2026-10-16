@@ -77,6 +77,8 @@ const throws = createDataRows<ThrowThreshold>(
   { name: 'Excellent Throw', threshold: [], throwType: ThrowType.Excellent }
 );
 
+const CATCH_CHANCE_EXCLUDED_POKEMON_TYPES = [PokemonType.Purified] as const;
+
 const CatchChance = () => {
   const { searchingToolCurrentDetails } = useSearch();
   const circleDistance = useRef(200);
@@ -100,7 +102,8 @@ const CatchChance = () => {
   const [isEncounter, setIsEncounter] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [options, setOptions] = useState(new PokeBallOption());
-  const { isAdvance, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, isShadow } = options;
+  const { isAdvance, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps } = options;
+  const isShadow = form?.form.pokemonType === PokemonType.Shadow;
 
   useTitle({
     title: 'Calculate Catch Chance - Tool',
@@ -128,8 +131,7 @@ const CatchChance = () => {
     if (!form?.defaultId || !data || !medal.typePri) {
       return;
     }
-    const selectedForm =
-      searchingToolCurrentDetails?.form ?? getPokemonFormWithNoneSpecialForm(form.form.formName, form.form.pokemonType);
+    const selectedForm = getPokemonFormWithNoneSpecialForm(form.form.formName, form.form.pokemonType);
     const url = APIService.getCatchChance({
       id: form.defaultId,
       form: selectedForm,
@@ -189,7 +191,6 @@ const CatchChance = () => {
     form?.defaultId,
     form?.form.formName,
     form?.form.pokemonType,
-    searchingToolCurrentDetails?.form,
     data?.baseCaptureRate,
     data?.shadowBaseCaptureRate,
     radius,
@@ -309,6 +310,8 @@ const CatchChance = () => {
               setStatDEF={setStatDEF}
               setStatSTA={setStatSTA}
               setForm={setForm}
+              includePokemonGoBattleModifiers
+              excludedPokemonTypes={CATCH_CHANCE_EXCLUDED_POKEMON_TYPES}
             />
           </div>
         </div>
@@ -494,26 +497,6 @@ const CatchChance = () => {
               </div>
             </div>
           </div>
-          {data?.shadowBaseCaptureRate && (
-            <div className="tw-flex tw-justify-center">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isShadow}
-                    onChange={(_, check) => {
-                      setOptions(PokeBallOption.create({ ...options, isShadow: check }));
-                    }}
-                  />
-                }
-                label={
-                  <div className="tw-flex tw-gap-2 tw-items-center">
-                    <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />{' '}
-                    <span>{getKeyWithData(PokemonType, PokemonType.Shadow)}</span>
-                  </div>
-                }
-              />
-            </div>
-          )}
           <div className="tw-flex tw-justify-center">
             <FormControlLabel
               control={

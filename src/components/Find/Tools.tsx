@@ -25,7 +25,8 @@ import SelectTierMui from '../Commons/Selects/SelectTierMui';
 
 const Tools = (props: IToolsComponent) => {
   const { statsData } = useStats();
-  const { searchingToolCurrentData } = useSearch();
+  const { searchingToolCurrentData, searchingToolObjectData } = useSearch();
+  const searchingToolData = props.isObjective ? searchingToolObjectData : searchingToolCurrentData;
   const [currTier, setCurrTier] = useState(props.tier);
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
@@ -35,22 +36,22 @@ const Tools = (props: IToolsComponent) => {
       getFormFromForms(
         stats,
         props.id,
-        searchingToolCurrentData?.form?.form?.formName,
-        searchingToolCurrentData?.form?.form?.pokemonType
+        searchingToolData?.form?.form?.formName,
+        searchingToolData?.form?.form?.pokemonType
       ),
-    [props.id, searchingToolCurrentData?.form?.form?.formName, searchingToolCurrentData?.form?.form?.pokemonType]
+    [props.id, searchingToolData?.form?.form?.formName, searchingToolData?.form?.form?.pokemonType]
   );
 
   useEffect(() => {
-    if (props.tier > 5 && searchingToolCurrentData?.form?.form?.pokemonType !== PokemonType.Mega) {
+    if (props.tier > 5 && searchingToolData?.form?.form?.pokemonType !== PokemonType.Mega) {
       setCurrTier(5);
       if (props.setTier) {
         props.setTier(5);
       }
     } else if (
       props.tier === 5 &&
-      searchingToolCurrentData?.form?.form?.pokemonType === PokemonType.Mega &&
-      searchingToolCurrentData?.pokemon?.pokemonClass !== PokemonClass.None
+      searchingToolData?.form?.form?.pokemonType === PokemonType.Mega &&
+      searchingToolData?.pokemon?.pokemonClass !== PokemonClass.None
     ) {
       setCurrTier(6);
       if (props.setTier) {
@@ -58,11 +59,11 @@ const Tools = (props: IToolsComponent) => {
       }
     }
   }, [
-    searchingToolCurrentData?.form?.form?.formName,
+    searchingToolData?.form?.form?.formName,
     props.id,
     props.setTier,
     props.tier,
-    searchingToolCurrentData?.pokemon?.pokemonClass,
+    searchingToolData?.pokemon?.pokemonClass,
   ]);
 
   useEffect(() => {
@@ -95,7 +96,7 @@ const Tools = (props: IToolsComponent) => {
         prod: props.isRaid && props.tier && !props.isHide ? undefined : formResult.prod,
       });
       if (
-        searchingToolCurrentData?.form?.form &&
+        searchingToolData?.form?.form &&
         isNotEmpty(props.dataPoke) &&
         props.onSetStats &&
         !isUndefined(formResult.atk) &&
@@ -124,7 +125,7 @@ const Tools = (props: IToolsComponent) => {
     }
   }, [
     filterFormList,
-    searchingToolCurrentData?.form?.form,
+    searchingToolData?.form?.form,
     props.dataPoke,
     props.id,
     statsData,
@@ -143,13 +144,13 @@ const Tools = (props: IToolsComponent) => {
             setTier={props.setTier}
             setCurrTier={setCurrTier}
             clearData={() => props.onClearStats?.(true)}
-            pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
-            pokemonClass={searchingToolCurrentData?.pokemon?.pokemonClass}
+            pokemonType={searchingToolData?.form?.form?.pokemonType}
+            pokemonClass={searchingToolData?.pokemon?.pokemonClass}
           />
           <StatsTable
             isLoadedForms={!!statsPokemon}
             tier={currTier}
-            pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
+            pokemonType={searchingToolData?.form?.form?.pokemonType}
             statATK={statsPokemon?.atk?.attack}
             statDEF={statsPokemon?.def?.defense}
             statSTA={statsPokemon?.sta?.stamina}
@@ -162,9 +163,9 @@ const Tools = (props: IToolsComponent) => {
           statDEF={statsPokemon?.def}
           statSTA={statsPokemon?.sta}
           statProd={statsPokemon?.prod}
-          stats={searchingToolCurrentData?.pokemon?.statsGO}
+          stats={searchingToolData?.pokemon?.statsGO}
           id={props.id}
-          form={searchingToolCurrentData?.pokemon?.form}
+          form={searchingToolData?.pokemon?.form}
         />
       )}
     </Fragment>

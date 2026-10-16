@@ -58,7 +58,6 @@ export interface IDamageTableComponent {
 
 export interface IStatsDamageTableComponent {
   pokemonType?: PokemonType;
-  hasShadowForm?: boolean;
   pvp: boolean;
   setStatType?: React.Dispatch<React.SetStateAction<PokemonType>>;
   setStatLevel?: React.Dispatch<React.SetStateAction<number>>;
