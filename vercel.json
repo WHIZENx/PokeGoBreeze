@@ -4,6 +4,17 @@
   "installCommand": "env -u npm_config_cache_dir -u NPM_CONFIG_CACHE_DIR npm ci",
   "buildCommand": "env -u npm_config_cache_dir -u NPM_CONFIG_CACHE_DIR npm run deploy",
   "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/pvp/:cp/:serie/:pokemon",

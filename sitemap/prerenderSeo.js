@@ -20,6 +20,23 @@ const replaceTagValue = (html, id, attribute, value) =>
     `$1${escapeHtml(value)}$2`
   );
 
+const renderLoadingShell = (title, description) => `<!--seo-shell-start-->
+      <main id="seo-content" aria-busy="true">
+        <header class="seo-shell-bar">
+          <span class="seo-shell-brand-mark" aria-hidden="true"></span>
+          <span class="seo-shell-brand">PokéGo Breeze</span>
+        </header>
+        <div class="seo-shell-body">
+          <section class="seo-shell-card" aria-labelledby="seo-shell-title">
+            <span class="seo-shell-spinner" aria-hidden="true"></span>
+            <p class="seo-shell-status" role="status">Loading Pokémon data…</p>
+            <h1 id="seo-shell-title">${escapeHtml(title)}</h1>
+            <p class="seo-shell-description">${escapeHtml(description)}</p>
+          </section>
+        </div>
+      </main>
+      <!--seo-shell-end-->`;
+
 const breadcrumbs = (route) => {
   const segments = route.path.split('/').filter(Boolean);
   const items = [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${canonicalOrigin}/` }];
@@ -98,10 +115,10 @@ const renderRoute = (template, route, isProduction) => {
       '@graph': graph,
     })}</script>`
   );
-  const shell = `<main id="seo-content"><h1>${escapeHtml(route.title.split('|')[0].trim())}</h1><p>${escapeHtml(
-    route.description
-  )}</p></main>`;
-  return html.replace('<div id="root"></div>', `<div id="root">${shell}</div>`);
+  return html.replace(
+    /<!--seo-shell-start-->[\s\S]*?<!--seo-shell-end-->/i,
+    renderLoadingShell(route.title.split('|')[0].trim(), route.description)
+  );
 };
 
 const deploymentMode = process.env.APP_DEPLOYMENT_MODE || process.env.REACT_APP_DEPLOYMENT_MODE;

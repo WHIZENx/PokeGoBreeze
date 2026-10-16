@@ -151,29 +151,22 @@ jobs:
             stage)   HOST="https://pokego-breeze-stage.web.app" ;;
             develop) HOST="https://pokego-breeze-develop.web.app" ;;
           esac
-          if [[ "$GITHUB_REF_NAME" == "main" ]]; then
-            REDIRECT_HEADERS_FILE="$RUNNER_TEMP/firebase-redirect-headers.txt"
-            curl --silent --show-error --retry 5 --retry-all-errors \
-              "$HOST/game-master-updates" \
-              --dump-header "$REDIRECT_HEADERS_FILE" \
-              --output /dev/null
-            grep --extended-regexp --ignore-case --quiet '^HTTP/[^ ]+ 308' "$REDIRECT_HEADERS_FILE"
-            grep --fixed-strings --ignore-case --quiet \
-              'location: https://poke-go-breeze.vercel.app/game-master-updates' \
-              "$REDIRECT_HEADERS_FILE"
-            exit 0
-          fi
           HEADERS_FILE="$RUNNER_TEMP/firebase-headers.txt"
+          BODY_FILE="$RUNNER_TEMP/firebase-index.html"
           curl --fail --silent --show-error --retry 5 --retry-all-errors \
-            "$HOST/game-master-updates" \
+            "$HOST/" \
             --dump-header "$HEADERS_FILE" \
-            --output /dev/null
+            --output "$BODY_FILE"
           grep --fixed-strings --ignore-case --quiet \
             "cache-control: public, max-age=0, must-revalidate" \
             "$HEADERS_FILE"
-          grep --fixed-strings --ignore-case --quiet \
-            "x-robots-tag: noindex, nofollow, noarchive" \
-            "$HEADERS_FILE"
+          if [[ "$GITHUB_REF_NAME" != "main" ]]; then
+            grep --fixed-strings --ignore-case --quiet \
+              "x-robots-tag: noindex, nofollow, noarchive" \
+              "$HEADERS_FILE"
+          fi
+
+          grep --fixed-strings --quiet 'class="seo-shell-card"' "$BODY_FILE"
 
           ASSET_PATH=$(find dist/static/js -maxdepth 1 -type f -name '*.js' -printf '%P\n' | head -n 1)
           ASSET_HEADERS_FILE="$RUNNER_TEMP/firebase-asset-headers.txt"

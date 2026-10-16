@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="light" style="color-scheme: light">
   <head>
-    <base href="/">
+    <base href="/" />
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/og-image.png" />
@@ -20,9 +20,186 @@
           .setAttribute('content', theme === 'dark' ? '#222222' : '#f3f4f6');
       })();
     </script>
+    <style id="pre-hydration-shell-styles">
+      html,
+      body,
+      #root {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: #f3f4f6;
+        color: #111;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      }
+
+      #seo-content {
+        min-height: 100vh;
+        min-height: 100svh;
+        box-sizing: border-box;
+        background: #f3f4f6;
+      }
+
+      .seo-shell-bar {
+        height: 56px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-sizing: border-box;
+        padding: 0 16px;
+        background: #075eb8;
+        color: #fff;
+        box-shadow: 0 2px 6px rgb(0 0 0 / 28%);
+      }
+
+      .seo-shell-brand-mark,
+      .seo-shell-spinner {
+        position: relative;
+        display: inline-block;
+        flex: 0 0 auto;
+        box-sizing: border-box;
+        border: 3px solid #37474f;
+        border-radius: 50%;
+        background: linear-gradient(#ff3d00 0 44%, #37474f 44% 56%, #fff 56% 100%);
+      }
+
+      .seo-shell-brand-mark {
+        width: 28px;
+        height: 28px;
+        border-width: 2px;
+      }
+
+      .seo-shell-brand-mark::after,
+      .seo-shell-spinner::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 24%;
+        height: 24%;
+        transform: translate(-50%, -50%);
+        border: 2px solid #37474f;
+        border-radius: 50%;
+        background: #fff;
+      }
+
+      .seo-shell-brand {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.1px;
+      }
+
+      .seo-shell-body {
+        min-height: calc(100vh - 56px);
+        min-height: calc(100svh - 56px);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        place-items: center;
+        box-sizing: border-box;
+        padding: 24px 16px;
+      }
+
+      .seo-shell-card {
+        width: 100%;
+        max-width: 440px;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 24px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #fff;
+        text-align: center;
+        box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+      }
+
+      .seo-shell-spinner {
+        width: 56px;
+        height: 56px;
+        animation: seo-shell-turn 1.1s linear infinite;
+      }
+
+      .seo-shell-status {
+        margin: 12px 0 16px;
+        color: #5f6368;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .seo-shell-card h1 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+      }
+
+      .seo-shell-description {
+        margin: 8px 0 0;
+        color: #5f6368;
+        font-size: 14px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+
+      :root[data-theme='dark'] body,
+      :root[data-theme='dark'] #seo-content {
+        background: #222;
+        color: #fff;
+      }
+
+      :root[data-theme='dark'] .seo-shell-bar {
+        background: #333;
+      }
+
+      :root[data-theme='dark'] .seo-shell-card {
+        border-color: #555;
+        background: #2b2b2b;
+        box-shadow: 0 8px 24px rgb(0 0 0 / 40%);
+      }
+
+      :root[data-theme='dark'] .seo-shell-status,
+      :root[data-theme='dark'] .seo-shell-description {
+        color: #b0b0b0;
+      }
+
+      @keyframes seo-shell-turn {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .seo-shell-spinner {
+          animation: none;
+        }
+      }
+
+      @media (max-width: 575px) {
+        .seo-shell-body {
+          align-items: start;
+          padding-top: 20vh;
+        }
+
+        .seo-shell-card {
+          padding: 20px 16px;
+        }
+
+        .seo-shell-card h1 {
+          font-size: 18px;
+        }
+      }
+    </style>
     <meta name="application-name" content="PokéGo Breeze" />
-    <meta name="description" id="meta-description" content="Comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and simulation tools. Find the best Pokémon for battles, raids, and more." />
-    <meta name="keywords" id="meta-keywords" content="Pokemon, Pokémon, Pokémon GO, PokéGo, Pokémon database, PVP, raids, battle simulator, Pokémon stats, Pokémon moves, Pokémon counters, Pokemon GO, Pokemon Go Breeze, Pokemon Go Tools" />
+    <meta
+      name="description"
+      id="meta-description"
+      content="Comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and simulation tools. Find the best Pokémon for battles, raids, and more."
+    />
+    <meta
+      name="keywords"
+      id="meta-keywords"
+      content="Pokemon, Pokémon, Pokémon GO, PokéGo, Pokémon database, PVP, raids, battle simulator, Pokémon stats, Pokémon moves, Pokémon counters, Pokemon GO, Pokemon Go Breeze, Pokemon Go Tools"
+    />
     <meta name="author" content="PokéGoBreeze" />
     <meta name="publisher" content="PokéGoBreeze" />
     <meta name="robots" content="index, follow" />
@@ -32,7 +209,11 @@
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" id="og-url" content="https://poke-go-breeze.vercel.app/" />
     <meta property="og:title" id="og-title" content="PokéGo Breeze - Comprehensive Pokémon GO Database &amp; Tools" />
-    <meta property="og:description" id="og-description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
+    <meta
+      property="og:description"
+      id="og-description"
+      content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!"
+    />
     <meta property="og:image" id="og-image" content="https://poke-go-breeze.vercel.app/og-image.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
@@ -43,8 +224,16 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" id="twitter-url" content="https://poke-go-breeze.vercel.app/" />
-    <meta name="twitter:title" id="twitter-title" content="PokéGo Breeze - Comprehensive Pokémon GO Database &amp; Tools" />
-    <meta name="twitter:description" id="twitter-description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
+    <meta
+      name="twitter:title"
+      id="twitter-title"
+      content="PokéGo Breeze - Comprehensive Pokémon GO Database &amp; Tools"
+    />
+    <meta
+      name="twitter:description"
+      id="twitter-description"
+      content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!"
+    />
     <meta name="twitter:image" id="twitter-image" content="https://poke-go-breeze.vercel.app/og-image.png" />
     <meta name="twitter:image:alt" id="twitter-image-alt" content="PokéGo Breeze – Pokémon GO Database &amp; Tools" />
 
@@ -104,7 +293,7 @@
               if (data.image) ldData.image = data.image;
               ldScript.textContent = JSON.stringify(ldData);
             } catch (e) {}
-          }
+          },
         };
       })();
     </script>
@@ -115,11 +304,28 @@
     <noscript>
       <h1>PokéGo Breeze - Pokémon GO Database &amp; Tools</h1>
       <p>
-        PokéGo Breeze is a comprehensive Pokémon GO database with stats, moves, counters, PVP rankings,
-        raid guides, and battle simulation tools. JavaScript must be enabled to use the application.
+        PokéGo Breeze is a comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and
+        battle simulation tools. JavaScript must be enabled to use the application.
       </p>
     </noscript>
-    <div id="root"></div>
+    <div id="root">
+      <!--seo-shell-start-->
+      <main id="seo-content" aria-busy="true">
+        <header class="seo-shell-bar">
+          <span class="seo-shell-brand-mark" aria-hidden="true"></span>
+          <span class="seo-shell-brand">PokéGo Breeze</span>
+        </header>
+        <div class="seo-shell-body">
+          <section class="seo-shell-card" aria-labelledby="seo-shell-title">
+            <span class="seo-shell-spinner" aria-hidden="true"></span>
+            <p class="seo-shell-status" role="status">Loading Pokémon data…</p>
+            <h1 id="seo-shell-title">PokéGo Breeze - Pokémon GO Database &amp; Tools</h1>
+            <p class="seo-shell-description">Explore Pokémon GO stats, moves, counters, rankings, and battle tools.</p>
+          </section>
+        </div>
+      </main>
+      <!--seo-shell-end-->
+    </div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
