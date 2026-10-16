@@ -17,7 +17,6 @@ import {
   getKeyWithData,
   getValidPokemonImgPath,
   isSpecialFormType,
-  splitAndCapitalize,
 } from '../../../utils/utils';
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Commons/Tables/Move/MoveTable';
@@ -41,6 +40,7 @@ import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
@@ -49,7 +49,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
     selector: (row) => (
       <LinkToTop
         to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}
-        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
+        title={`#${row.num} ${formatPokemonDisplayName(row.name)}`}
       >
         <VisibilityIcon className="view-pokemon tw-text-default" fontSize="small" />
       </LinkToTop>
@@ -74,7 +74,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
             <PokemonTableIcon {...row} />
           </PokemonIconType>
         </span>
-        {splitAndCapitalize(row.name.replaceAll('_', '-'), '-', ' ')}
+        {formatPokemonDisplayName(row.name)}
       </>
     ),
     minWidth: '200px',

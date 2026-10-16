@@ -81,6 +81,7 @@ import AccordionMui from '../../components/Commons/Accordions/AccordionMui';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { formatMaxMoveEffect, getMaxMoveVariantLabel } from '../../utils/max-move';
 import useDataStore from '../../composables/useDataStore';
+import { formatPokemonDisplayName } from '../../utils/pokemon-display-name';
 
 interface MoveApiResponse {
   data: { move: ICombat; topPokemon: IPokemonTopMove[] };
@@ -123,7 +124,7 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
             <PokemonTableIcon {...row} />
           </PokemonIconType>
         </span>
-        {row.name}
+        {formatPokemonDisplayName(row.name)}
       </LinkToTop>
     ),
     sortable: true,

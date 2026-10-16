@@ -65,6 +65,7 @@ import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
 import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { ProcessedDataPage } from '../../../services/processed-data.service';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -138,7 +139,7 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
     selector: (row) => (
       <LinkToTop
         to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.form, row.pokemonType)}`}
-        title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
+        title={`#${row.pokemon.num} ${formatPokemonDisplayName(row.pokemon.name)}`}
         className="tw-flex tw-items-center"
       >
         <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
@@ -146,7 +147,7 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
             <PokemonTableIcon {...row.pokemon} />
           </PokemonIconType>
         </span>
-        {splitAndCapitalize(row.pokemon.name, '-', ' ')}
+        {formatPokemonDisplayName(row.pokemon.name)}
       </LinkToTop>
     ),
     sortable: true,

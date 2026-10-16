@@ -45,6 +45,7 @@ import InputReleased from '../../Inputs/InputReleased';
 import FormControlMui from '../../Forms/FormControlMui';
 import { IMenuItem } from '../../models/menu.model';
 import { ProcessedDataPage } from '../../../../services/processed-data.service';
+import { formatPokemonDisplayName } from '../../../../utils/pokemon-display-name';
 
 const customStyles: TableStyles = {
   table: {
@@ -273,7 +274,7 @@ const Counter = (props: ICounterComponent) => {
               </div>
             </div>
             <span className="caption text-overflow !tw-text-default tw-font-medium">
-              #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
+              #{row.pokemonId} {formatPokemonDisplayName(row.pokemonName)}
             </span>
           </LinkToTop>
         );
@@ -483,11 +484,7 @@ const Counter = (props: ICounterComponent) => {
           isAutoSearch
           menuItems={menuItems}
           searchFunction={(item, searchTerm) =>
-            isInclude(
-              splitAndCapitalize(item.pokemonName, '-', ' '),
-              searchTerm,
-              IncludeMode.IncludeIgnoreCaseSensitive
-            ) ||
+            isInclude(formatPokemonDisplayName(item.pokemonName), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
             (isSearchId && (isMatch ? isEqual(item.pokemonId, searchTerm) : isInclude(item.pokemonId, searchTerm)))
           }
           pagination

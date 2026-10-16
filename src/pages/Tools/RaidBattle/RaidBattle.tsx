@@ -73,6 +73,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import { StatsIV } from '../../../core/models/stats.model';
 import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
 import useAssets from '../../../composables/useAssets';
@@ -745,7 +746,7 @@ const RaidBattle = () => {
             </PokemonIconType>
           </div>
           <div>
-            <b>{splitAndCapitalize(pokemon.name, '-', ' ')}</b>
+            <b>{formatPokemonDisplayName(pokemon.name)}</b>
           </div>
         </div>
         <form className="tw-mt-2">
@@ -1349,7 +1350,7 @@ const RaidBattle = () => {
                   <div className="tw-flex tw-justify-center tw-w-full">{renderPokemon(value)}</div>
                   <span className="tw-flex tw-justify-center tw-gap-2 tw-font-bold tw-w-full">
                     <span>#{value.pokemon?.num}</span>
-                    <span>{splitAndCapitalize(value.pokemon?.name, '-', ' ')}</span>
+                    <span>{formatPokemonDisplayName(value.pokemon?.name)}</span>
                   </span>
                   <span className="tw-flex tw-gap-2">
                     <span>DPS:</span>
@@ -1489,8 +1490,8 @@ const RaidBattle = () => {
                 <b>
                   {searchingToolCurrentData?.form ? `#${searchingToolCurrentData?.form?.defaultId}` : ''}{' '}
                   {searchingToolCurrentData?.form
-                    ? splitAndCapitalize(searchingToolCurrentData?.form.form?.name, '-', ' ')
-                    : splitAndCapitalize(searchingToolCurrentData?.pokemon?.fullName, '_', ' ')}{' '}
+                    ? formatPokemonDisplayName(searchingToolCurrentData?.form.form?.name)
+                    : formatPokemonDisplayName(searchingToolCurrentData?.pokemon?.fullName)}{' '}
                   {isSuperMegaRaidLevel(raidLevel) ? `Super Mega Tier ${tier}` : `Tier ${tier}`}
                 </b>
               </h3>
@@ -1609,7 +1610,7 @@ const RaidBattle = () => {
                                           </PokemonIconType>
                                         </span>
                                         <span className="caption link-url">
-                                          {splitAndCapitalize(data.pokemon?.name.replaceAll('_', '-'), '-', ' ')}
+                                          {formatPokemonDisplayName(data.pokemon?.name)}
                                         </span>
                                       </div>
                                     </span>
