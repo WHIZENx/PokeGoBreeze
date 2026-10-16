@@ -335,6 +335,8 @@ export interface ITableMoveComponent {
   pokemonType?: PokemonType;
   isLoading?: boolean;
   maxHeight?: number | string;
+  tabValue?: number;
+  onTabChange?: (value: number) => void;
 }
 
 export interface IPokemonTableComponent {
@@ -473,6 +475,8 @@ export interface ITab extends IDefaultOption<number> {
 
 export interface TabPanelComponent {
   defaultValue?: number;
+  value?: number;
+  onChange?: (value: number) => void;
   className?: string;
   tabs: ITab[];
 }

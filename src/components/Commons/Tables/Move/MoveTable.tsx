@@ -16,7 +16,7 @@ import { LinkToTop } from '../../../Link/LinkToTop';
 import { FloatPaddingOption } from '../../../../utils/models/extension.model';
 import IconType from '../../../Sprites/Icon/Type/Type';
 import TabsPanel from '../../Tabs/TabsPanel';
-import CircularProgress from '@mui/material/CircularProgress';
+import Skeleton from '@mui/material/Skeleton';
 import Tooltips from '../../Tooltips/Tooltips';
 import {
   formatMaxMoveLevelSummary,
@@ -82,18 +82,22 @@ const TableMove = (props: ITableMoveComponent) => {
   const cachedMoveData = useRef(props.moveData);
   const cachedRankMoveData = useRef(props.rankMoveData);
   const isLoading = props.isLoading ?? (!props.moveData || !props.rankMoveData);
-  // Keep previous rows only during a request, not after an empty result.
-  if (props.moveData || !isLoading) {
+  const hasFreshMoveData = Boolean(props.moveData && props.rankMoveData);
+  // Swap both datasets together so the old rows remain coherent while the
+  // next Pokémon/form request is in flight.
+  if (hasFreshMoveData) {
     cachedMoveData.current = props.moveData;
-  }
-  if (props.rankMoveData || !isLoading) {
     cachedRankMoveData.current = props.rankMoveData;
   }
 
-  const move = props.rankMoveData ?? cachedRankMoveData.current ?? emptyMoveRanking;
-  const moveOrigin = props.moveData ?? cachedMoveData.current;
-  const showMaxMoves = Boolean(moveOrigin?.dynamaxMoves.length);
+  const hasCachedMoveData = Boolean(cachedMoveData.current && cachedRankMoveData.current);
+  const isUpdating = isLoading || (!hasFreshMoveData && hasCachedMoveData);
 
+  const move = (hasFreshMoveData ? props.rankMoveData : cachedRankMoveData.current) ?? emptyMoveRanking;
+  const moveOrigin = hasFreshMoveData ? props.moveData : cachedMoveData.current;
+  const showMaxMoves = Boolean(moveOrigin?.dynamaxMoves.length);
+  const getMoveRowKey = (value: ICombat) =>
+    `${value.typeMove ?? 'move'}:${value.moveType ?? 'regular'}:${value.id}:${value.name}:${value.type ?? 'unknown'}`;
   const [stateSorted, setStateSorted] = useState(
     new TableSort({
       offensive: {
@@ -180,9 +184,7 @@ const TableMove = (props: ITableMoveComponent) => {
           <tbody>
             {[...move.data]
               .sort((a, b) => sortFunc(a, b, table))
-              .map((value, index) => (
-                <Fragment key={index}>{renderBestMovesetTable(value, max, table)}</Fragment>
-              ))}
+              .map((value) => renderBestMovesetTable(value, max, table))}
           </tbody>
         </table>
       </div>
@@ -199,7 +201,9 @@ const TableMove = (props: ITableMoveComponent) => {
       FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })
     );
     return (
-      <tr>
+      <tr
+        key={`${type}:${getMoveRowKey(value.fMove)}:${getMoveRowKey(value.cMove)}:${value.eDPS.offensive}:${value.eDPS.defensive}`}
+      >
         <td className="text-origin tw-bg-table-primary">
           <LinkToTop to={`../move/${value.fMove.id}`} className="tw-block">
             <div className="tw-inline-block tw-mr-1 tw-align-text-bottom">
@@ -247,8 +251,8 @@ const TableMove = (props: ITableMoveComponent) => {
 
   const renderMoveSetTable = (data: ICombat[]) => (
     <Fragment>
-      {data.map((value, index) => (
-        <tr key={index}>
+      {data.map((value) => (
+        <tr key={getMoveRowKey(value)}>
           <td className="text-origin tw-bg-table-primary">
             <span className="tw-inline-flex tw-items-center">
               <LinkToTop to={`../move/${value.id}`} className="tw-inline-flex tw-items-center">
@@ -357,9 +361,16 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   return (
-    <div className="move-tables-wrapper" aria-busy={isLoading}>
-      <div className={combineClasses('move-tables-content', isLoading ? 'is-loading' : '')}>
+    <div className="move-tables-wrapper" aria-busy={isUpdating}>
+      {isUpdating && (
+        <div className="slide-container !tw-left-0 !tw-right-0 !tw-bottom-0 !tw-top-12 !tw-p-0 !tw-w-full !tw-h-auto !tw-absolute tw-z-2 !tw-bg-spinner-default">
+          <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
+        </div>
+      )}
+      <div className={combineClasses('move-tables-content', isUpdating ? 'is-loading' : '')}>
         <TabsPanel
+          value={props.tabValue}
+          onChange={props.onTabChange}
           tabs={[
             {
               label: 'Moves List',
@@ -526,12 +537,6 @@ const TableMove = (props: ITableMoveComponent) => {
           className="lg-2"
         />
       </div>
-      {isLoading && (
-        <div className="move-tables-loading" role="status" aria-live="polite">
-          <CircularProgress size={28} />
-          <span>Loading moves...</span>
-        </div>
-      )}
     </div>
   );
 };

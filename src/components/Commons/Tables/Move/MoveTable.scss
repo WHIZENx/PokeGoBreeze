@@ -21,6 +21,10 @@
   @apply tw-font-bold;
 }
 
+.move-tables-content:not(.is-loading) .table-moves tbody tr {
+  animation: move-table-row-enter 160ms ease-out both;
+}
+
 .main-move {
   @apply tw-w-2/5;
 }
@@ -34,13 +38,23 @@
 }
 
 .move-tables-content {
-  transition: opacity 180ms ease;
-
   &.is-loading {
-    @apply tw-opacity-30 tw-pointer-events-none tw-select-none;
+    @apply tw-select-none;
   }
 }
 
-.move-tables-loading {
-  @apply tw-absolute tw-inset-0 tw-z-10 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium;
+@keyframes move-table-row-enter {
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .move-tables-content:not(.is-loading) .table-moves tbody tr {
+    animation: none;
+  }
 }
