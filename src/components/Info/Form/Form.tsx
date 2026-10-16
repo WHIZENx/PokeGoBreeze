@@ -75,6 +75,7 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
   const [genderRatio, setGenderRatio] = useState(new PokemonGenderRatio());
+  const [moveTabValue, setMoveTabValue] = useState(0);
   const moveRanking = props.moveRankings.find(
     (item) =>
       normalizePokemonType(item.pokemonType) === normalizePokemonType(searchingMainDetails?.pokemonType) &&
@@ -278,13 +279,14 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
         <div className="md:tw-col-span-7 tw-min-w-0">
           <TableMove
-            key={`${props.defaultId}-${searchingMainDetails?.fullName ?? searchingMainDetails?.form ?? ''}-${searchingMainDetails?.pokemonType ?? ''}`}
             moveData={moveRanking?.moves}
             rankMoveData={moveRanking?.bestMoves}
             pokemonType={searchingMainDetails?.pokemonType}
-            isLoading={!props.isLoadedForms}
+            isLoading={!props.isLoadedForms || !moveRanking}
+            tabValue={moveTabValue}
+            onTabChange={setMoveTabValue}
           />
-          <Counter pokemonData={searchingMainDetails} />
+          <Counter pokemonData={searchingMainDetails} isLoading={!props.isLoadedForms || !moveRanking} />
         </div>
       </div>
       <hr className="tw-w-full" />

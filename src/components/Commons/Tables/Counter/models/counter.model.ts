@@ -3,6 +3,7 @@ import { MoveType, PokemonType } from '../../../../../enums/type.enum';
 import { getPokemonType } from '../../../../../utils/utils';
 
 export interface ICounterModel {
+  tableKey?: string;
   cMove: ICombat;
   dps: number;
   fMove: ICombat;
@@ -15,6 +16,7 @@ export interface ICounterModel {
 }
 
 export class CounterModel implements ICounterModel {
+  tableKey = '';
   cMove = new Combat();
   dps = 0;
   fMove = new Combat();
@@ -34,6 +36,7 @@ export class CounterModel implements ICounterModel {
       props.pokemonType = getPokemonType(props.pokemonForm, false, false);
     }
     Object.assign(this, props);
+    this.tableKey = [this.pokemonId, this.pokemonForm ?? '', this.pokemonType, this.fMove.id, this.cMove.id].join(':');
   }
 }
 

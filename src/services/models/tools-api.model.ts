@@ -94,7 +94,20 @@ export interface RaidApiResponse {
         recommendedEfficiency?: number;
         relobby?: boolean;
         relobbyDelaySeconds?: number;
-        model?: 'six-pokemon-team-v2';
+        model?: 'six-pokemon-team-v3';
+        minimumTeamModel?: 'optimized-repeat-team';
+        recommendedTeamModel?: 'diverse-six-pokemon-team';
+        damageMinimum?: number;
+        damageRecommended?: number;
+        constraint?: {
+          minimum: number;
+          recommended: number;
+          mechanic: 'super-mega-shields';
+          status: 'provisional';
+          shieldCount?: number;
+          requiresMegaPokemon: true;
+          assumesNoShieldBreakingAdventureEffect: true;
+        };
       };
     };
   };
@@ -107,6 +120,7 @@ export interface RaidBattleRequest {
     fast: string;
     charged: string;
     tier: number;
+    raidLevel?: string;
     atk: number;
     def: number;
     hp: number;

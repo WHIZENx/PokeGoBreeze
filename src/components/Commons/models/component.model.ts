@@ -183,10 +183,12 @@ export interface ISelectTierComponent {
   pokemonType: PokemonType | undefined;
   pokemonClass?: PokemonClass;
   tier: number;
+  raidLevel?: string;
   boxClassName?: string;
   className?: string;
   setCurrTier?: (tier: number) => void;
   setTier?: (tier: number) => void;
+  setRaidLevel?: (raidLevel: string) => void;
   clearData?: () => void;
 }
 
@@ -333,6 +335,8 @@ export interface ITableMoveComponent {
   pokemonType?: PokemonType;
   isLoading?: boolean;
   maxHeight?: number | string;
+  tabValue?: number;
+  onTabChange?: (value: number) => void;
 }
 
 export interface IPokemonTableComponent {
@@ -471,6 +475,8 @@ export interface ITab extends IDefaultOption<number> {
 
 export interface TabPanelComponent {
   defaultValue?: number;
+  value?: number;
+  onChange?: (value: number) => void;
   className?: string;
   tabs: ITab[];
 }

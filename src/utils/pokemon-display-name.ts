@@ -32,7 +32,7 @@ export const formatPokemonDisplayName = (name?: string | null): string => {
   if (!name) {
     return '';
   }
-  const normalized = name.trim().toLowerCase().replaceAll('_', '-');
+  const normalized = name.trim().toLowerCase().replaceAll('_', '-').replace(/\s+/g, '-');
   for (const [key, display] of Object.entries(speciesNames)) {
     if (normalized === key) {
       return display;
@@ -43,3 +43,6 @@ export const formatPokemonDisplayName = (name?: string | null): string => {
   }
   return titleCase(normalized);
 };
+
+export const formatPokemonSpeciesDisplayName = (name?: string | null, baseSpecies?: string | null): string =>
+  formatPokemonDisplayName(baseSpecies || name);

@@ -64,6 +64,10 @@
   color: var(--text-caption) !important;
 }
 
+.move-link-text {
+  @apply tw-text-link tw-font-normal tw-no-underline;
+}
+
 .vertical-center {
   transform: translate(-50%, -50%);
 

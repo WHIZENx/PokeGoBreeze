@@ -36,6 +36,13 @@ export interface BattleResult {
   recommendationTeamSize: number;
   recommendationEfficiency: number;
   recommendationRelobbyDelay: number;
+  playerConstraint?: {
+    mechanic: 'super-mega-shields';
+    status: 'provisional';
+    shieldCount?: number;
+    requiresMegaPokemon: true;
+    assumesNoShieldBreakingAdventureEffect: true;
+  };
 }
 
 interface IRaidSummary {

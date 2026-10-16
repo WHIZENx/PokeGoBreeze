@@ -483,21 +483,23 @@ const FindTable = () => {
         </h1>
         <form className="tw-flex tw-justify-center tw-mt-2" onSubmit={onFindStats.bind(this)}>
           <Box className="tw-w-1/2">
-            <InputMui
-              labelPrepend="CP"
-              className="tw-mb-3 tw-justify-center"
-              width="calc(100% + 2rem)"
-              placeholder="Enter CP"
-              value={searchCP}
-              onChange={(value) => setSearchCP(value)}
-              inputProps={{
-                type: 'number',
-                min: minCp(),
-                max: 100000,
-                step: 1,
-                required: true,
-              }}
-            />
+            <div className="-tw-ml-4 tw-w-[calc(100%+2rem)]">
+              <InputMui
+                labelPrepend="CP"
+                className="tw-mb-3 tw-justify-center"
+                fullWidth
+                placeholder="Enter CP"
+                value={searchCP}
+                onChange={(value) => setSearchCP(value)}
+                inputProps={{
+                  type: 'number',
+                  min: minCp(),
+                  max: 100000,
+                  step: 1,
+                  required: true,
+                }}
+              />
+            </div>
             <div className="btn-search tw-flex tw-justify-center tw-text-center">
               <ButtonMui type="submit" label="Search" />
             </div>

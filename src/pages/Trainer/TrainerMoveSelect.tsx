@@ -5,6 +5,7 @@ import { SelectMovePokemonModel } from '../../components/Commons/Inputs/models/s
 import { ICombat } from '../../core/models/combat.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { getMoveType } from '../../utils/utils';
+import { filterBattleModifierMoves } from '../../components/Commons/Selects/move-availability';
 
 export interface TrainerMoveSelection {
   fastMove?: string;
@@ -48,14 +49,17 @@ const TrainerMoveSelect = ({ pokemon, combats, selection, onChange }: TrainerMov
   );
   const chargedMoves = useMemo(
     () =>
-      resolveMoves([
-        ...(pokemon.cinematicMoves ?? []),
-        ...(pokemon.eliteCinematicMoves ?? []),
-        ...(pokemon.shadowMoves ?? []),
-        ...(pokemon.purifiedMoves ?? []),
-        ...(pokemon.specialMoves ?? []),
-        ...(pokemon.exclusiveMoves ?? []),
-      ]),
+      filterBattleModifierMoves(
+        resolveMoves([
+          ...(pokemon.cinematicMoves ?? []),
+          ...(pokemon.eliteCinematicMoves ?? []),
+          ...(pokemon.shadowMoves ?? []),
+          ...(pokemon.purifiedMoves ?? []),
+          ...(pokemon.specialMoves ?? []),
+          ...(pokemon.exclusiveMoves ?? []),
+        ]),
+        pokemon.pokemonType
+      ),
     [combatByName, pokemon]
   );
 

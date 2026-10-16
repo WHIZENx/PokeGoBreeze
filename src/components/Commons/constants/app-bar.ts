@@ -35,7 +35,7 @@ export const BATTLE_LEAGUES = 'battle-leagues';
 // export const TRAINER_LAB = 'trainer-lab';
 
 const subMenuNews: IAppMenuItem<string>[] = [
-  { label: 'Latest News', value: LATEST_NEWS, path: '/news' },
+  { label: 'Event Tickets', value: LATEST_NEWS, path: '/news' },
   { label: 'Game Master Updates', value: GAME_MASTER_UPDATES, path: '/game-master-updates' },
 ];
 

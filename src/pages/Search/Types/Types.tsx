@@ -31,6 +31,8 @@ import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageReques
 import { formatMaxMoveLevelSummary, getMaxMoveVariantLabel } from '../../../utils/max-move';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import { Params } from '../../../utils/constants';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -52,14 +54,14 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonData>>(
     selector: (row) => (
       <LinkToTop
         to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}
-        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
+        title={`#${row.num} ${formatPokemonDisplayName(row.name)}`}
       >
         <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
           <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-[1]">
             <PokemonTableIcon {...row} />
           </PokemonIconType>
         </span>
-        {splitAndCapitalize(row.name, '-', ' ')}
+        {formatPokemonDisplayName(row.name)}
       </LinkToTop>
     ),
     sortable: true,
@@ -110,7 +112,7 @@ const columnMove = createDataRows<TableColumnModify<ICombat>>(
   {
     id: ColumnType.Type,
     name: 'ID',
-    selector: (row) => row.id,
+    selector: (row) => row.track,
     sortable: true,
     width: '100px',
   },
@@ -120,7 +122,7 @@ const columnMove = createDataRows<TableColumnModify<ICombat>>(
     selector: (row) => (
       <LinkToTop
         className="tw-flex tw-items-center"
-        to={`/move/${row.id}`}
+        to={`/move/${row.track}${row.isMultipleWithType && row.type ? `?${Params.MoveType}=${row.type.toLowerCase()}` : ''}`}
         title={`${splitAndCapitalize(row.name, '_', ' ')}`}
       >
         {splitAndCapitalize(row.name, '_', ' ')}
@@ -202,7 +204,7 @@ const typeSortField = (kind: TypeResultKind, columnId: string | number | undefin
     case ColumnType.Id:
       return kind.startsWith('pokemon') ? 'num' : 'id';
     case ColumnType.Type:
-      return kind.startsWith('pokemon') ? 'name' : 'id';
+      return kind.startsWith('pokemon') ? 'name' : 'track';
     case ColumnType.Atk:
       return 'atk';
     case ColumnType.Def:
@@ -224,32 +226,26 @@ const typeSortField = (kind: TypeResultKind, columnId: string | number | undefin
   }
 };
 
-const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean) => {
+const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean, enabled: boolean) => {
   const [data, setData] = useState<T[]>([]);
   const [total, setTotal] = useState(0);
   const [counts, setCounts] = useState<TypeCounts>();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [sort, setSort] = useState({ field: 'name', order: 'asc' as 'asc' | 'desc' });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const latestRequestRef = useRef(0);
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => setDebouncedSearch(search.trim()), 300);
-    return () => window.clearTimeout(timeoutId);
-  }, [search]);
-
-  useEffect(() => {
     setPage(1);
     setResetPaginationToggle((value) => !value);
-  }, [kind, type, released, debouncedSearch]);
+  }, [kind, type, released, search]);
 
-  const skipStalePageRequest = useSkipStalePageRequest(page, JSON.stringify([kind, type, released, debouncedSearch]));
+  const skipStalePageRequest = useSkipStalePageRequest(page, JSON.stringify([kind, type, released, search]));
 
   useEffect(() => {
-    if (skipStalePageRequest) {
+    if (!enabled || skipStalePageRequest) {
       return;
     }
     const requestId = ++latestRequestRef.current;
@@ -260,7 +256,7 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
         kind,
         type,
         released,
-        q: debouncedSearch,
+        q: search.trim(),
         page,
         limit: 50,
         sort: sort.field,
@@ -288,7 +284,7 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
         }
       });
     return () => controller.abort();
-  }, [kind, type, released, debouncedSearch, page, sort, skipStalePageRequest]);
+  }, [enabled, kind, type, released, search, page, sort, skipStalePageRequest]);
 
   const onSort = (columnId: string | number | undefined, order: 'asc' | 'desc') => {
     setSort({ field: typeSortField(kind, columnId), order });
@@ -301,15 +297,15 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
 const SearchTypes = (props: IStyleSheetData) => {
   const typesEffective = getTypeEffective();
   const [releasedGO, setReleaseGO] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
 
   const [currentType, setCurrentType] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
-  const singlePokemon = useTypeResult<IPokemonData>('pokemon-single', currentType, releasedGO);
-  const dualPokemon = useTypeResult<IPokemonData>('pokemon-dual', currentType, releasedGO);
-  const fastMoves = useTypeResult<ICombat>('fast', currentType, releasedGO);
-  const chargedMoves = useTypeResult<ICombat>('charged', currentType, releasedGO);
-  const maxMoves = useTypeResult<ICombat>('max', currentType, releasedGO);
-  const counts =
-    singlePokemon.counts ?? dualPokemon.counts ?? fastMoves.counts ?? chargedMoves.counts ?? maxMoves.counts;
+  const singlePokemon = useTypeResult<IPokemonData>('pokemon-single', currentType, releasedGO, activeTab === 0);
+  const dualPokemon = useTypeResult<IPokemonData>('pokemon-dual', currentType, releasedGO, activeTab === 1);
+  const fastMoves = useTypeResult<ICombat>('fast', currentType, releasedGO, activeTab === 2);
+  const chargedMoves = useTypeResult<ICombat>('charged', currentType, releasedGO, activeTab === 3);
+  const maxMoves = useTypeResult<ICombat>('max', currentType, releasedGO, activeTab === 4);
+  const counts = [singlePokemon, dualPokemon, fastMoves, chargedMoves, maxMoves][activeTab]?.counts;
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PokéGO Breeze - Type',
@@ -414,6 +410,8 @@ const SearchTypes = (props: IStyleSheetData) => {
 
       <section className="type-search-results">
         <TabsPanel
+          value={activeTab}
+          onChange={setActiveTab}
           tabs={[
             {
               label: 'Single Type',
