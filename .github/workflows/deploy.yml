@@ -166,7 +166,7 @@ jobs:
               "$HEADERS_FILE"
           fi
 
-          grep --fixed-strings --quiet 'class="seo-shell-card"' "$BODY_FILE"
+          grep --fixed-strings --quiet 'class="seo-shell-bar"' "$BODY_FILE"
 
           ASSET_PATH=$(find dist/static/js -maxdepth 1 -type f -name '*.js' -printf '%P\n' | head -n 1)
           ASSET_HEADERS_FILE="$RUNNER_TEMP/firebase-asset-headers.txt"
