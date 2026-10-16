@@ -89,7 +89,6 @@ interface IPokeBallOption {
   isRazzBerry: boolean;
   isGoldenRazzBerry: boolean;
   isSilverPinaps: boolean;
-  isShadow: boolean;
 }
 
 export class PokeBallOption implements IPokeBallOption {
@@ -98,7 +97,6 @@ export class PokeBallOption implements IPokeBallOption {
   isRazzBerry = false;
   isGoldenRazzBerry = false;
   isSilverPinaps = false;
-  isShadow = false;
 
   static create(value: IPokeBallOption) {
     const obj = new PokeBallOption();

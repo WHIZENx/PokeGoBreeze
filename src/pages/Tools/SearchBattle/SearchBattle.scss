@@ -27,19 +27,19 @@
 }
 
 .rank-max {
-  @apply tw-text-error tw-bg-[#ecc8c8];
+  @apply tw-text-red-800 tw-bg-[#ecc8c8];
 }
 
 .rank-excellent {
-  @apply tw-text-[#8a2be2] tw-bg-[#ecc8ec];
+  @apply tw-text-purple-800 tw-bg-[#ecc8ec];
 }
 
 .rank-great {
-  @apply tw-text-success tw-bg-[#c8ecc8];
+  @apply tw-text-green-800 tw-bg-[#c8ecc8];
 }
 
 .rank-nice {
-  @apply tw-text-orange-600 tw-bg-[#ececc8];
+  @apply tw-text-orange-800 tw-bg-[#ececc8];
 }
 
 .pokemon-best-league {

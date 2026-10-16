@@ -45,6 +45,7 @@
     "lint:code": "eslint \"src/**/*.{ts,tsx,js,jsx}\"",
     "lint:style": "stylelint \"src/**/*.{css,scss}\"",
     "lint": "npm run lint:code && npm run lint:style",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit --incremental && tsc -p tsconfig.node.json --noEmit --incremental",
     "format": "npm run format:code && npm run format:style",
     "develop": "node scripts/withConfig.js vite",
     "test-vite": "cross-env VITE_CJS_IGNORE_WARNING=true vite",

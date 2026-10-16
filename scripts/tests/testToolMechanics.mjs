@@ -7,8 +7,18 @@ import {
 } from '../../src/pages/Tools/CatchChance/catch-chance-display.ts';
 import { pokemonGoAppraisalStars } from '../../src/pages/Tools/FindTable/appraisal.ts';
 import { filterBattleModifierMoves } from '../../src/components/Commons/Selects/move-availability.ts';
+import { availableRaidTiers, normalizeRaidTier } from '../../src/utils/raid-tier.ts';
+import {
+  displayPokemonGoStat,
+  displayPokemonGoStatDifference,
+} from '../../src/pages/Tools/CalculateStats/calculate-stats-display.ts';
+import { formatBattleStatsPokemonName } from '../../src/pages/Tools/SearchBattle/search-battle-display.ts';
 
-const ivsWithTotal = (total) => ({ atk: Math.min(total, 15), def: Math.min(Math.max(total - 15, 0), 15), sta: Math.max(total - 30, 0) });
+const ivsWithTotal = (total) => ({
+  atk: Math.min(total, 15),
+  def: Math.min(Math.max(total - 15, 0), 15),
+  sta: Math.max(total - 30, 0),
+});
 const expectedRanges = [
   [0, 22, 0],
   [23, 29, 1],
@@ -39,6 +49,23 @@ assert.deepEqual(
   filterBattleModifierMoves(modifierMoves, 1).map(({ name }) => name),
   ['TACKLE']
 );
+
+assert.deepEqual(availableRaidTiers(1), [1, 3, 5, 2, 4]);
+assert.deepEqual(availableRaidTiers(4), [4]);
+assert.deepEqual(availableRaidTiers(4, 1), [6]);
+assert.deepEqual(availableRaidTiers(5, 1), [6]);
+assert.equal(normalizeRaidTier(1, 4), 4);
+assert.equal(normalizeRaidTier(5, 5, 1), 6);
+assert.equal(displayPokemonGoStat(118.99), 118);
+assert.equal(displayPokemonGoStat(128), 128);
+assert.equal(displayPokemonGoStat(undefined), '-');
+assert.equal(displayPokemonGoStatDifference(115.08, 19.18, 'increase'), 20);
+assert.equal(displayPokemonGoStatDifference(80.2, 8.91, 'decrease'), 9);
+assert.equal(displayPokemonGoStatDifference(undefined, undefined, 'increase'), 0);
+assert.equal(formatBattleStatsPokemonName('BULBASAUR', 'NORMAL'), 'Bulbasaur');
+assert.equal(formatBattleStatsPokemonName('DUDUNSPARCE', 'ORDINARY'), 'Dudunsparce');
+assert.equal(formatBattleStatsPokemonName('SLOWBRO', 'GALARIAN'), 'Slowbro Galarian');
+assert.equal(formatBattleStatsPokemonName('MEOWSTIC_FEMALE', 'FEMALE'), 'Meowstic Female');
 assert.deepEqual(
   filterBattleModifierMoves(modifierMoves, 2).map(({ name }) => name),
   ['TACKLE', 'FRUSTRATION']
@@ -49,5 +76,5 @@ assert.deepEqual(
 );
 
 console.log(
-  'Tool mechanics regression passed: appraisal IV bands, encounter values, and Shadow/Purified move availability are correct.'
+  'Tool mechanics regression passed: appraisal IV bands, encounter values, modifier moves, Raid tiers, integer stats, and Battle League labels are correct.'
 );

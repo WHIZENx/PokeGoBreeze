@@ -27,6 +27,10 @@ export interface PokemonGoFormCatalogEntry {
   pokemonType?: PokemonType;
   types?: string[];
   releasedGO?: boolean;
+  asset?: {
+    default: string;
+    shiny?: string;
+  } | null;
 }
 
 export interface PokemonMoveRanking {
