@@ -361,6 +361,12 @@ const readPage = () =>
         iconBaseSpecies: button.dataset.iconBaseSpecies ?? '',
         pokemonType: Number(button.dataset.pokemonType),
         formId: Number(button.dataset.formId),
+        sprites: {
+          frontDefault: button.dataset.spriteFrontDefault ?? '',
+          frontFemale: button.dataset.spriteFrontFemale ?? '',
+          frontShiny: button.dataset.spriteFrontShiny ?? '',
+          frontShinyFemale: button.dataset.spriteFrontShinyFemale ?? '',
+        },
         active: button.getAttribute('aria-pressed') === 'true',
         label: button.innerText.trim().replace(/\\s+/g, ' '),
         iconIndex: icon ? Number(icon.dataset.pokemonIconIndex) : null,
@@ -385,6 +391,12 @@ const readPage = () =>
       };
     };
     const evolutionNodes = [...document.querySelectorAll('[data-testid="evolution-node"]')].map((node) => ({
+      ...(() => {
+        const name = node.querySelector('[data-testid="evolution-pokemon-name"]');
+        if (!name) return { nameLines: 0 };
+        const lineHeight = Number.parseFloat(getComputedStyle(name).lineHeight);
+        return { nameLines: Number.isFinite(lineHeight) ? Math.round(name.getBoundingClientRect().height / lineHeight) : 0 };
+      })(),
       key: (node.dataset.evolutionStage ?? '') + ':' + (node.dataset.evolutionIndex ?? ''),
       stage: Number(node.dataset.evolutionStage),
       id: Number(node.dataset.evolutionId),
@@ -393,6 +405,29 @@ const readPage = () =>
       bounds: bounds(node),
     }));
     const evolutionContainer = document.querySelector('[data-testid="evolution-container"]');
+    const megaCards = [...document.querySelectorAll('[data-testid="mega-evolution-card"]')].map((card) => {
+      const benefits = card.querySelector('[data-testid="mega-level-benefits"]');
+      return {
+        benefitsOpen: benefits?.hasAttribute('open') ?? false,
+        expectedLevelRows: Number(card.dataset.megaLevelCount ?? 0),
+        levelRows: card.querySelectorAll('[data-testid="mega-level-row"]').length,
+        horizontalOverflow: card.scrollWidth > card.clientWidth + 2,
+      };
+    });
+    const megaSection = document.querySelector('[data-testid="mega-evolution-section"]');
+    const evolutionSection = document.querySelector('[data-testid="evolution-section"]');
+    const megaSectionStyle = megaSection ? getComputedStyle(megaSection) : null;
+    const formChangeSection = document.querySelector('[data-testid="form-change-section"]');
+    const formChangeOrigin = formChangeSection?.querySelector('[data-testid="form-change-origin"]');
+    const formChangeTargets = formChangeSection
+      ? [...formChangeSection.querySelectorAll('[data-testid="form-change-target"]')]
+      : [];
+    const formChangeDetails = formChangeSection
+      ? [...formChangeSection.querySelectorAll('[data-testid="form-change-detail"]')].map((detail) => ({
+          bounds: bounds(detail),
+          horizontalOverflow: detail.scrollWidth > detail.clientWidth + 2,
+        }))
+      : [];
     const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => {
       const edgeBounds = bounds(edge);
       let lineOverlapsCard = false;
@@ -475,6 +510,37 @@ const readPage = () =>
           }
         : null,
       buttons,
+      megaCards,
+      megaSectionSeparator: megaSectionStyle
+        ? {
+            borderTop: megaSectionStyle.borderTopStyle,
+            borderLeft: megaSectionStyle.borderLeftStyle,
+          }
+        : null,
+      megaSectionLayout:
+        megaSection && evolutionSection
+          ? {
+              evolution: bounds(evolutionSection),
+              mega: bounds(megaSection),
+            }
+          : null,
+      formChangeLayout:
+        formChangeSection && formChangeOrigin
+          ? {
+              path: formChangeSection.dataset.formChangePath ?? '',
+              origin: bounds(formChangeOrigin),
+              targets: formChangeTargets.map(bounds),
+              details: formChangeDetails,
+            }
+          : null,
+      renderedFormSprites: {
+        defaults: [...document.querySelectorAll('[data-testid="pokemon-form-default-sprite"]')]
+          .map((image) => image.getAttribute('src') ?? '')
+          .filter(Boolean),
+        shiny: [...document.querySelectorAll('[data-testid="pokemon-form-shiny-sprite"]')]
+          .map((image) => image.getAttribute('src') ?? '')
+          .filter(Boolean),
+      },
       fastMoves: moves('[data-testid="pokemon-fast-moves"]'),
       chargedMoves: moves('[data-testid="pokemon-charged-moves"]'),
       evolutionNodes,
@@ -551,6 +617,28 @@ const expectedMoves = (row) => ({
   ].map(normalizeMove),
 });
 
+const validateModifierFormSprites = (issues, id, context, button, page) => {
+  if (![2, 3].includes(normalizePokemonType(button.pokemonType))) return;
+  const expectedDefaults = [button.sprites.frontDefault, button.sprites.frontFemale].filter(Boolean);
+  const expectedShiny = [button.sprites.frontShiny, button.sprites.frontShinyFemale].filter(Boolean);
+  if (!expectedDefaults.length || !expectedShiny.length) {
+    addIssue(issues, id, 'modifier_form_sprite_source_missing', {
+      ...context,
+      buttonSprites: button.sprites,
+    });
+    return;
+  }
+  const invalidDefaults = page.renderedFormSprites.defaults.filter((sprite) => !expectedDefaults.includes(sprite));
+  const invalidShiny = page.renderedFormSprites.shiny.filter((sprite) => !expectedShiny.includes(sprite));
+  if (invalidDefaults.length || invalidShiny.length) {
+    addIssue(issues, id, 'modifier_form_sprite_mismatch', {
+      ...context,
+      expected: { defaults: expectedDefaults, shiny: expectedShiny },
+      actual: page.renderedFormSprites,
+    });
+  }
+};
+
 const validateExpectedRow = (issues, id, row, button, page) => {
   const context = { fullName: row.fullName, form: row.form, pokemonType: row.pokemonType };
   const expectedCanonicalIdentity = normalizeCanonicalIdentity(id, row.fullName);
@@ -594,6 +682,60 @@ const validateExpectedRow = (issues, id, row, button, page) => {
     }
   }
   if (!button.active) addIssue(issues, id, 'clicked_form_not_active', { ...context, button });
+  validateModifierFormSprites(issues, id, context, button, page);
+  for (const [cardIndex, card] of page.megaCards.entries()) {
+    if (card.benefitsOpen) addIssue(issues, id, 'mega_level_benefits_expanded_by_default', { ...context, cardIndex });
+    if (card.levelRows !== card.expectedLevelRows) {
+      addIssue(issues, id, 'mega_level_benefits_mismatch', {
+        ...context,
+        cardIndex,
+        expected: card.expectedLevelRows,
+        actual: card.levelRows,
+      });
+    }
+    if (card.horizontalOverflow) addIssue(issues, id, 'mega_card_horizontal_overflow', { ...context, cardIndex });
+  }
+  if (page.megaCards.length) {
+    if (page.megaSectionSeparator?.borderTop !== 'none' || page.megaSectionSeparator?.borderLeft !== 'none') {
+      addIssue(issues, id, 'mega_evolution_section_divider_present', {
+        ...context,
+        separator: page.megaSectionSeparator,
+      });
+    }
+    const layout = page.megaSectionLayout;
+    if (!layout || layout.mega.top < layout.evolution.bottom + 24) {
+      addIssue(issues, id, 'mega_evolution_section_not_stacked', { ...context, layout });
+    }
+  }
+  if (page.formChangeLayout?.targets.length) {
+    if (page.formChangeLayout.path !== 'grid') {
+      addIssue(issues, id, 'form_change_connector_not_grid', {
+        ...context,
+        path: page.formChangeLayout.path,
+      });
+    }
+    const primaryTarget = page.formChangeLayout.targets[0];
+    const axisDifference =
+      viewportWidth >= 640
+        ? Math.abs(page.formChangeLayout.origin.centerY - primaryTarget.centerY)
+        : Math.abs(page.formChangeLayout.origin.centerX - primaryTarget.centerX);
+    if (axisDifference > 2) {
+      addIssue(issues, id, 'form_change_primary_nodes_misaligned', {
+        ...context,
+        axisDifference,
+        layout: page.formChangeLayout,
+      });
+    }
+    for (const [detailIndex, detail] of page.formChangeLayout.details.entries()) {
+      if (detail.horizontalOverflow) {
+        addIssue(issues, id, 'form_change_detail_horizontal_overflow', {
+          ...context,
+          detailIndex,
+          detail,
+        });
+      }
+    }
+  }
   const nodeKeys = new Set(page.evolutionNodes.map((node) => node.key));
   if (
     page.evolutionEdges.length &&
@@ -667,6 +809,9 @@ const validateExpectedRow = (issues, id, row, button, page) => {
 };
 
 const validateEvolutionDetailAlignment = (issues, id, context, page) => {
+  for (const node of page.evolutionNodes.filter((item) => item.nameLines !== 1)) {
+    addIssue(issues, id, 'evolution_name_wrapped', { ...context, node });
+  }
   const nodesByKey = new Map(page.evolutionNodes.map((node) => [node.key, node]));
   const anchoredEdges = page.evolutionEdges.filter((item) => ['source', 'target'].includes(item.labelAnchor));
   for (const edge of anchoredEdges) {
@@ -734,6 +879,7 @@ const main = async () => {
   let auditedIds = 0;
   let auditedForms = 0;
   let auditedFormIcons = 0;
+  let auditedModifierFormSprites = 0;
   let auditedEvolutionDetails = 0;
   let auditedEvolutionTooltips = 0;
   let delayPokemonRequests = false;
@@ -969,6 +1115,7 @@ const main = async () => {
         await delay(50);
         page = await readPage();
         auditedForms += 1;
+        if ([2, 3].includes(normalizePokemonType(target.pokemonType))) auditedModifierFormSprites += 1;
         validateExpectedRow(issues, id, row, page.buttons[buttonIndex], page);
         validateEvolutionDetailAlignment(
           issues,
@@ -1012,6 +1159,14 @@ const main = async () => {
         }
         await delay(50);
         page = await readPage();
+        validateModifierFormSprites(
+          issues,
+          id,
+          { form: target.form, pokemonType: target.pokemonType, label: target.label },
+          page.buttons[index],
+          page
+        );
+        if ([2, 3].includes(normalizePokemonType(target.pokemonType))) auditedModifierFormSprites += 1;
         if (!page.bodyWeight || !page.bodyHeight) {
           addIssue(issues, id, 'displayed_form_body_value_missing', {
             form: target.form,
@@ -1059,6 +1214,7 @@ const main = async () => {
       expectedGoForms: [...rowsById.values()].reduce((total, rows) => total + rows.length, 0),
       auditedForms,
       auditedFormIcons,
+      auditedModifierFormSprites,
       auditedEvolutionDetails,
       auditedEvolutionTooltips,
       issues: issues.length,

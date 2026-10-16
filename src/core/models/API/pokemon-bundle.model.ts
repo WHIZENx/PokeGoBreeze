@@ -19,6 +19,16 @@ export interface PokemonFusionOption {
   targetForm: string;
 }
 
+export interface PokemonGoFormCatalogEntry {
+  num: number;
+  name?: string;
+  fullName?: string;
+  form?: string;
+  pokemonType?: PokemonType;
+  types?: string[];
+  releasedGO?: boolean;
+}
+
 export interface PokemonMoveRanking {
   num: number;
   form?: string;
@@ -46,6 +56,7 @@ export interface PokemonBundle {
   evolutionChain: PokemonInfoEvo | null;
   moveRankings?: PokemonMoveRanking[];
   pokemonGo?: {
+    forms?: PokemonGoFormCatalogEntry[];
     fusionOptions?: PokemonFusionOption[];
     asset: IAsset | null;
     evolutionChains: IEvolutionChain[];

@@ -32,6 +32,10 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                   data-icon-base-species={value.defaultName}
                   data-pokemon-type={value.form.pokemonType ?? ''}
                   data-form-id={value.form.id}
+                  data-sprite-front-default={value.form.sprites?.frontDefault ?? ''}
+                  data-sprite-front-female={value.form.sprites?.frontFemale ?? ''}
+                  data-sprite-front-shiny={value.form.sprites?.frontShiny ?? ''}
+                  data-sprite-front-shiny-female={value.form.sprites?.frontShinyFemale ?? ''}
                   onClick={() => props.changeForm(value)}
                   className={combineClasses(
                     index + subIndex === 0 ? '' : '!tw-ml-3',

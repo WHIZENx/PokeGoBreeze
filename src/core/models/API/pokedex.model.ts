@@ -3,6 +3,7 @@ import { IPokemonData } from '../pokemon.model';
 
 export interface PokedexApiPokemon extends IPokemonData {
   assetForm?: IImage;
+  spriteUrl?: string | null;
 }
 
 export interface PokedexApiResponse {

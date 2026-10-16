@@ -15,16 +15,10 @@
           "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
         }
       ],
-      "redirects": [
+      "rewrites": [
         {
-          "source": "/",
-          "destination": "https://poke-go-breeze.vercel.app/",
-          "type": 308
-        },
-        {
-          "source": "/:path*",
-          "destination": "https://poke-go-breeze.vercel.app/:path",
-          "type": 308
+          "source": "!/@(static)/**",
+          "destination": "/index.html"
         }
       ]
     },

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { computeBgType } from '../../utils/compute';
-import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../utils/utils';
+import { generateParamForm, setNextPokemonImageFallback, splitAndCapitalize } from '../../utils/utils';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
 
@@ -17,6 +17,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
 
   const imageRef: React.LegacyRef<HTMLImageElement> = useRef(null);
   const shinyRef: React.LegacyRef<HTMLImageElement> = useRef(null);
+  const displayGoStat = (value: number) => (value > 0 ? value : '—');
 
   const onTouchEnd = () => {
     if (!isMobile || props.isDefaultImg) {
@@ -93,15 +94,15 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
                   title={`#${props.id} ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}
                   src={props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default}
                   onError={(e) => {
-                    const form =
-                      props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default;
-                    const formList = form.split('/');
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = getValidPokemonImgPath(
-                      e.currentTarget.src,
-                      props.id,
-                      formList[formList.length - 1].replace('.png', '')
-                    );
+                    if (
+                      !setNextPokemonImageFallback(e.currentTarget, [
+                        props.image.default,
+                        ...(props.image.fallbacks ?? []),
+                        APIService.getPokeSprite(),
+                      ])
+                    ) {
+                      e.currentTarget.onerror = null;
+                    }
                   }}
                 />
               </span>
@@ -118,17 +119,17 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           <div>
             <div className="tw-flex tw-items-center tw-justify-center tw-w-full">
               <b>
-                <span className="caption !tw-text-error">{`ATK ${props.pokemonStat.atk}`}</span>
+                <span className="caption !tw-text-error">{`ATK ${displayGoStat(props.pokemonStat.atk)}`}</span>
               </b>
             </div>
             <div className="tw-flex tw-items-center tw-justify-center tw-w-full">
               <b>
-                <span className="caption !tw-text-success">{`DEF ${props.pokemonStat.def}`}</span>
+                <span className="caption !tw-text-success">{`DEF ${displayGoStat(props.pokemonStat.def)}`}</span>
               </b>
             </div>
             <div className="tw-flex tw-items-center tw-justify-center tw-w-full">
               <b>
-                <span className="caption !tw-text-cyan-600">{`STA ${props.pokemonStat.sta}`}</span>
+                <span className="caption !tw-text-cyan-600">{`STA ${displayGoStat(props.pokemonStat.sta)}`}</span>
               </b>
             </div>
           </div>
