@@ -1,4 +1,4 @@
-import { Checkbox, LinearProgress, Skeleton } from '@mui/material';
+import { Checkbox, Skeleton } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../../services/api.service';
 import {
@@ -47,6 +47,21 @@ import { IMenuItem } from '../../models/menu.model';
 import { ProcessedDataPage } from '../../../../services/processed-data.service';
 
 const customStyles: TableStyles = {
+  table: {
+    style: {
+      backgroundColor: 'transparent',
+    },
+  },
+  tableWrapper: {
+    style: {
+      backgroundColor: 'transparent',
+    },
+  },
+  responsiveWrapper: {
+    style: {
+      backgroundColor: 'transparent',
+    },
+  },
   head: {
     style: {
       height: '2.25rem',
@@ -90,6 +105,7 @@ const customStyles: TableStyles = {
         borderRightWidth: 1,
         borderRightStyle: 'solid',
         borderRightColor: 'var(--custom-table-background-sub-head-border)',
+        color: 'var(--text-primary)',
       },
       borderBottomWidth: 1,
       borderBottomStyle: 'solid',
@@ -97,7 +113,7 @@ const customStyles: TableStyles = {
       justifyContent: 'center',
       textAlign: 'center',
       padding: '0.25rem 0.5rem',
-      fontWeight: 'lighter',
+      fontWeight: 'normal',
       '&:first-of-type': {
         fontSize: '0.75rem',
       },
@@ -106,6 +122,40 @@ const customStyles: TableStyles = {
         color: 'var(--custom-table-background-sub-head-text)',
         fontSize: '1rem',
       },
+    },
+  },
+  rows: {
+    style: {
+      color: 'var(--text-primary)',
+      backgroundColor: 'transparent',
+      '&:not(:last-of-type)': {
+        borderBottomColor: 'var(--background-table-divided)',
+      },
+    },
+    stripedStyle: {
+      color: 'var(--text-primary)',
+      backgroundColor: 'transparent',
+    },
+    highlightOnHoverStyle: {
+      backgroundColor: 'var(--background-table-hover)',
+    },
+  },
+  pagination: {
+    style: {
+      color: 'var(--text-primary)',
+      backgroundColor: 'transparent',
+      borderTopColor: 'var(--background-table-divided)',
+    },
+  },
+  noData: {
+    style: {
+      color: 'var(--text-primary)',
+      backgroundColor: 'transparent',
+    },
+  },
+  progress: {
+    style: {
+      backgroundColor: 'transparent',
     },
   },
 };
@@ -121,6 +171,8 @@ const Counter = (props: ICounterComponent) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const latestRequestRef = useRef(0);
+  const hasResolvedCountersRef = useRef(false);
+  const resolvedCounterRequestKeyRef = useRef('');
   const searchTermRef = useRef('');
 
   const [options, setOptions] = useState(optionsCounter);
@@ -128,6 +180,21 @@ const Counter = (props: ICounterComponent) => {
   const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
   const defense = toNumber(props.pokemonData?.statsGO?.def);
   const typesKey = props.pokemonData?.types?.join(',') ?? '';
+  const counterRequestKey = [
+    defense,
+    typesKey,
+    showMegaPrimal,
+    releasedGO,
+    enableBest,
+    isSearchId,
+    isMatch,
+    searchTerm,
+    ratioSortOrder,
+    page,
+  ].join('|');
+  const hasValidCounterTarget = defense > 0 && Boolean(typesKey);
+  const hasFreshCounters = resolvedCounterRequestKeyRef.current === counterRequestKey;
+  const isUpdating = Boolean(props.isLoading || showFrame || (hasValidCounterTarget && !hasFreshCounters));
 
   const resetPagination = useCallback(() => {
     setPage(1);
@@ -205,7 +272,7 @@ const Counter = (props: ICounterComponent) => {
                 </PokemonIconType>
               </div>
             </div>
-            <span className="caption text-overflow tw-text-default">
+            <span className="caption text-overflow !tw-text-default tw-font-medium">
               #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
             </span>
           </LinkToTop>
@@ -221,9 +288,9 @@ const Counter = (props: ICounterComponent) => {
           <div className="tw-mr-1 tw-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
-          <span className="tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
+          <b className="move-link-text tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
-          </span>
+          </b>
           <span className="tw-w-full">
             {row.fMove.moveType !== MoveType.None && (
               <span
@@ -248,9 +315,9 @@ const Counter = (props: ICounterComponent) => {
           <div className="tw-mr-1 tw-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
-          <span className="tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
+          <b className="move-link-text tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
-          </span>
+          </b>
           <span className="tw-w-full">
             {row.cMove.moveType !== MoveType.None && (
               <span
@@ -277,25 +344,12 @@ const Counter = (props: ICounterComponent) => {
     }
   );
 
-  const CounterLoader = () => (
-    <div className="tw-w-full counter-none tw-align-top">
-      <div className="text-origin tw-text-center tw-bg-table-primary">
-        <div className="slide-container">
-          <div className="slide-col tw-bg-table-primary !tw-m-0 !tw-p-0 tw-gap-2">
-            {[...Array(5).keys()].map((_, index) => (
-              <div key={index} className="tw-flex tw-gap-[5%]">
-                <Skeleton variant="rectangular" animation="wave" height={100} width={'25%'} />
-                <Skeleton variant="rectangular" animation="wave" height={100} width={'70%'} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   useEffect(() => {
-    if (skipStalePageRequest) {
+    if (skipStalePageRequest || props.isLoading) {
+      return;
+    }
+    if (hasResolvedCountersRef.current && resolvedCounterRequestKeyRef.current === counterRequestKey) {
+      setShowFrame(false);
       return;
     }
     const requestId = ++latestRequestRef.current;
@@ -304,9 +358,7 @@ const Counter = (props: ICounterComponent) => {
     }
 
     if (defense <= 0) {
-      setCounterList([]);
-      setTotalRows(0);
-      setShowFrame(true);
+      setShowFrame(false);
       return;
     }
     setShowFrame(true);
@@ -338,14 +390,16 @@ const Counter = (props: ICounterComponent) => {
         if (requestId !== latestRequestRef.current) {
           return;
         }
+        hasResolvedCountersRef.current = true;
+        resolvedCounterRequestKeyRef.current = counterRequestKey;
         setCounterList(data.data.map((row) => new CounterModel(row)));
         setTotalRows(data.meta.total);
         setShowFrame(false);
       })
       .catch((error) => {
         if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
-          setCounterList([]);
-          setTotalRows(0);
+          hasResolvedCountersRef.current = true;
+          resolvedCounterRequestKeyRef.current = counterRequestKey;
           setShowFrame(false);
         }
       });
@@ -365,6 +419,8 @@ const Counter = (props: ICounterComponent) => {
     ratioSortOrder,
     page,
     skipStalePageRequest,
+    props.isLoading,
+    counterRequestKey,
   ]);
 
   useEffect(() => {
@@ -408,15 +464,18 @@ const Counter = (props: ICounterComponent) => {
       <div className="sub-header input-group tw-items-center tw-justify-center">
         <span className="sub-title">Best Pokémon Counter</span>
       </div>
-      <div className="tw-relative" aria-busy={showFrame}>
-        {showFrame && isNotEmpty(counterList) && (
-          <LinearProgress
-            className="!tw-absolute tw-left-0 tw-right-0 tw-top-0 tw-z-10"
-            aria-label="Updating counters"
-          />
+      <div
+        className={combineClasses('tw-relative counter-table-content', isUpdating ? 'is-loading' : '')}
+        aria-busy={isUpdating}
+      >
+        {isUpdating && (
+          <div className="slide-container !tw-left-0 !tw-right-0 !tw-bottom-0 !tw-top-[41px] !tw-p-0 !tw-w-full !tw-h-auto !tw-absolute tw-z-2 !tw-bg-spinner-default">
+            <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
+          </div>
         )}
         <CustomDataTable
           className="table-counter-container"
+          keyField="tableKey"
           customColumns={columns}
           defaultSortFieldId={ColumnType.Percent}
           defaultSortAsc={false}
@@ -453,8 +512,6 @@ const Counter = (props: ICounterComponent) => {
           }}
           noDataComponent={null}
           paginationPerPage={100}
-          progressPending={showFrame && !isNotEmpty(counterList)}
-          progressComponent={<CounterLoader />}
           data={counterList}
           isXFixed
           isShowModalOptions

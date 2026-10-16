@@ -431,7 +431,6 @@ const StatsRanking = () => {
           {select && (
             <div className="xl:tw-col-span-7 tw-min-w-0">
               <TableMove
-                key={`${select.num}-${select.fullName ?? select.form ?? ''}-${select.pokemonType ?? ''}`}
                 moveData={moveRanking?.moves}
                 rankMoveData={moveRanking?.bestMoves}
                 pokemonType={select.pokemonType}

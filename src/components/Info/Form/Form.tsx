@@ -286,7 +286,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             tabValue={moveTabValue}
             onTabChange={setMoveTabValue}
           />
-          <Counter pokemonData={searchingMainDetails} />
+          <Counter pokemonData={searchingMainDetails} isLoading={!props.isLoadedForms || !moveRanking} />
         </div>
       </div>
       <hr className="tw-w-full" />
