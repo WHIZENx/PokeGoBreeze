@@ -5,23 +5,15 @@ import { calculateRaidStat } from '../../utils/calculate';
 import { RAID_BOSS_TIER } from '../../utils/constants';
 
 import { getFormFromForms } from '../../utils/utils';
-import {
-  IStatsAtk,
-  IStatsDef,
-  IStatsProd,
-  StatsRankingPokemonGO,
-  IStatsSta,
-  StatsAtk,
-  StatsDef,
-  StatsSta,
-} from '../../core/models/stats.model';
+import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
-import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
+import { TypeAction } from '../../enums/type.enum';
 import { isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
 import useStats from '../../composables/useStats';
 import useSearch from '../../composables/useSearch';
 import StatsTable from '../Commons/Tables/Stats/StatsTable';
 import SelectTierMui from '../Commons/Selects/SelectTierMui';
+import { normalizeRaidTier } from '../../utils/raid-tier';
 
 const Tools = (props: IToolsComponent) => {
   const { statsData } = useStats();
@@ -43,23 +35,18 @@ const Tools = (props: IToolsComponent) => {
   );
 
   useEffect(() => {
-    if (props.tier > 5 && searchingToolData?.form?.form?.pokemonType !== PokemonType.Mega) {
-      setCurrTier(5);
-      if (props.setTier) {
-        props.setTier(5);
-      }
-    } else if (
-      props.tier === 5 &&
-      searchingToolData?.form?.form?.pokemonType === PokemonType.Mega &&
-      searchingToolData?.pokemon?.pokemonClass !== PokemonClass.None
-    ) {
-      setCurrTier(6);
-      if (props.setTier) {
-        props.setTier(6);
-      }
+    const normalizedTier = normalizeRaidTier(
+      props.tier,
+      searchingToolData?.form?.form?.pokemonType,
+      searchingToolData?.pokemon?.pokemonClass
+    );
+    setCurrTier(normalizedTier);
+    if (normalizedTier !== props.tier) {
+      props.setTier?.(normalizedTier);
     }
   }, [
     searchingToolData?.form?.form?.formName,
+    searchingToolData?.form?.form?.pokemonType,
     props.id,
     props.setTier,
     props.tier,
@@ -81,18 +68,9 @@ const Tools = (props: IToolsComponent) => {
       };
 
       setStatsPokemon({
-        atk:
-          props.isRaid && props.tier > 0 && !props.isHide && formResult.atk
-            ? StatsAtk.create({ ...formResult.atk, attack: calculateRaidStat(formResult.atk.attack, props.tier) })
-            : formResult.atk,
-        def:
-          props.isRaid && props.tier > 0 && !props.isHide && formResult.def
-            ? StatsDef.create({ ...formResult.def, defense: calculateRaidStat(formResult.def.defense, props.tier) })
-            : formResult.def,
-        sta:
-          props.isRaid && props.tier > 0 && !props.isHide && formResult.sta
-            ? StatsSta.create({ ...formResult.sta, stamina: RAID_BOSS_TIER[props.tier]?.sta })
-            : formResult.sta,
+        atk: formResult.atk,
+        def: formResult.def,
+        sta: formResult.sta,
         prod: props.isRaid && props.tier && !props.isHide ? undefined : formResult.prod,
       });
       if (

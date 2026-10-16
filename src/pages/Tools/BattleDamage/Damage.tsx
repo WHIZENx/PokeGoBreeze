@@ -174,6 +174,11 @@ const Damage = () => {
         showSnackbar('Please select move for pokémon!', 'error');
         return;
       }
+      const typeMove = move.typeMove;
+      if (typeMove === undefined) {
+        showSnackbar('The selected move has no battle category.', 'error');
+        return;
+      }
       const attacker = searchingToolCurrentData?.pokemon?.statsGO;
       const defender = searchingToolObjectData?.pokemon?.statsGO;
       if (!attacker || !defender) {
@@ -199,8 +204,8 @@ const Damage = () => {
           move: {
             type: getValueOrDefault(String, move.type),
             power: selectedMovePower,
-            charged: move.typeMove === TypeMove.Charged,
-            typeMove: move.typeMove,
+            charged: typeMove === TypeMove.Charged,
+            typeMove,
           },
           battle: {
             isWb: battleState.isWeather,

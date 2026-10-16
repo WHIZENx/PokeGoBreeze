@@ -250,7 +250,7 @@ const Pokemon = (props: IPokemonPage) => {
       const isShadow = Boolean(
         pokemon?.hasShadowForm && toNumber(pokemon.purified?.candy) >= 0 && toNumber(pokemon.purified?.stardust) >= 0
       );
-      let formListResult = dataFormList
+      let formListResult: IPokemonFormModify[][] = dataFormList
         .map((item) =>
           item
             .map((item) => {

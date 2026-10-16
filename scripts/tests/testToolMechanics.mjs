@@ -7,8 +7,13 @@ import {
 } from '../../src/pages/Tools/CatchChance/catch-chance-display.ts';
 import { pokemonGoAppraisalStars } from '../../src/pages/Tools/FindTable/appraisal.ts';
 import { filterBattleModifierMoves } from '../../src/components/Commons/Selects/move-availability.ts';
+import { availableRaidTiers, normalizeRaidTier } from '../../src/utils/raid-tier.ts';
 
-const ivsWithTotal = (total) => ({ atk: Math.min(total, 15), def: Math.min(Math.max(total - 15, 0), 15), sta: Math.max(total - 30, 0) });
+const ivsWithTotal = (total) => ({
+  atk: Math.min(total, 15),
+  def: Math.min(Math.max(total - 15, 0), 15),
+  sta: Math.max(total - 30, 0),
+});
 const expectedRanges = [
   [0, 22, 0],
   [23, 29, 1],
@@ -39,6 +44,13 @@ assert.deepEqual(
   filterBattleModifierMoves(modifierMoves, 1).map(({ name }) => name),
   ['TACKLE']
 );
+
+assert.deepEqual(availableRaidTiers(1), [1, 3, 5, 2, 4]);
+assert.deepEqual(availableRaidTiers(4), [4]);
+assert.deepEqual(availableRaidTiers(4, 1), [6]);
+assert.deepEqual(availableRaidTiers(5, 1), [6]);
+assert.equal(normalizeRaidTier(1, 4), 4);
+assert.equal(normalizeRaidTier(5, 5, 1), 6);
 assert.deepEqual(
   filterBattleModifierMoves(modifierMoves, 2).map(({ name }) => name),
   ['TACKLE', 'FRUSTRATION']
@@ -49,5 +61,5 @@ assert.deepEqual(
 );
 
 console.log(
-  'Tool mechanics regression passed: appraisal IV bands, encounter values, and Shadow/Purified move availability are correct.'
+  'Tool mechanics regression passed: appraisal IV bands, encounter values, modifier moves, and Raid tier profiles are correct.'
 );
