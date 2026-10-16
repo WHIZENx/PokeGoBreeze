@@ -432,6 +432,7 @@ const readPage = () =>
     const fusionSection = document.querySelector('[data-testid="fusion-section"]');
     const fusionOrigins = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-origin"]')] : [];
     const fusionTargets = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-target"]')] : [];
+    const profileImage = document.querySelector('[data-testid="pokemon-profile-image"]');
     const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => {
       const edgeBounds = bounds(edge);
       let lineOverlapsCard = false;
@@ -477,6 +478,13 @@ const readPage = () =>
       bodyFormNames: (page.dataset.bodyFormNames ?? '').split(',').filter(Boolean),
       detailPokemonType: Number(page.dataset.detailPokemonType),
       detailTypes: (page.dataset.detailTypes ?? '').split(',').filter(Boolean),
+      profileAura: profileImage
+        ? {
+            modifier: profileImage.dataset.profileModifier ?? '',
+            beforeBackground: getComputedStyle(profileImage, '::before').backgroundImage,
+            afterBackground: getComputedStyle(profileImage, '::after').backgroundImage,
+          }
+        : null,
       bodyWeight: infoTable?.dataset.bodyWeight ?? '',
       bodyHeight: infoTable?.dataset.bodyHeight ?? '',
       title: document.title,
@@ -667,6 +675,19 @@ const validateModifierFormSprites = (issues, id, context, button, page) => {
 
 const validateExpectedRow = (issues, id, row, button, page) => {
   const context = { fullName: row.fullName, form: row.form, pokemonType: row.pokemonType };
+  const expectedProfileModifier = button.pokemonType === 2 ? 'shadow' : button.pokemonType === 3 ? 'purified' : '';
+  if (
+    !page.profileAura ||
+    page.profileAura.modifier !== expectedProfileModifier ||
+    (expectedProfileModifier &&
+      (page.profileAura.beforeBackground === 'none' || page.profileAura.afterBackground === 'none'))
+  ) {
+    addIssue(issues, id, 'profile_modifier_aura_mismatch', {
+      ...context,
+      expected: expectedProfileModifier,
+      actual: page.profileAura,
+    });
+  }
   const expectedCanonicalIdentity = normalizeCanonicalIdentity(id, row.fullName);
   const actualCanonicalIdentity = normalizeCanonicalIdentity(id, page.detailFullName);
   if (actualCanonicalIdentity !== expectedCanonicalIdentity) {

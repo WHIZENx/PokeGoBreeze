@@ -68,6 +68,8 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
     identity = identity.replace(/^10$/, 'TEN_PERCENT').replace(/^50$/, 'FIFTY_PERCENT');
   } else if (id === 741) {
     identity = identity.replace(/POM_POM$/, 'POMPOM');
+  } else if (id === 80) {
+    identity = identity.replace(/_GALAR$/, '_GALARIAN').replace(/^GALAR$/, 'GALARIAN');
   } else if (id === 801) {
     identity = identity.replace(/_ORIGINAL$/, '_ORIGINAL_COLOR').replace(/^ORIGINAL$/, 'ORIGINAL_COLOR');
   } else if (id === 888) {

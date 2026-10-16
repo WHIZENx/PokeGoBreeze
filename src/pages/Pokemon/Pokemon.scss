@@ -64,3 +64,141 @@ a b.link-title,
 .next-block .text-navigate {
   @apply tw-pl-[8%];
 }
+
+.pokemon-profile-aura::before,
+.pokemon-profile-aura::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.pokemon-profile-aura .pokemon-main-sprite {
+  position: relative;
+  z-index: 1;
+}
+
+.pokemon-profile-aura--shadow::before {
+  width: 82%;
+  height: 78%;
+  background:
+    radial-gradient(circle at 24% 36%, rgb(209 122 255 / 72%) 0 5%, transparent 18%),
+    radial-gradient(circle at 76% 30%, rgb(180 85 235 / 68%) 0 6%, transparent 20%),
+    radial-gradient(ellipse at 50% 68%, rgb(94 28 132 / 68%) 0 30%, rgb(74 20 105 / 42%) 48%, transparent 72%);
+  filter: blur(8px);
+  box-shadow:
+    0 0 18px 7px rgb(142 54 190 / 42%),
+    0 10px 28px 8px rgb(57 10 82 / 35%);
+  transform: translate(-50%, -48%);
+  animation: pokemon-shadow-aura 2.8s ease-in-out infinite;
+}
+
+.pokemon-profile-aura--shadow::after {
+  width: 90%;
+  height: 86%;
+  background:
+    radial-gradient(ellipse at 17% 73%, rgb(165 72 217 / 52%) 0 7%, transparent 22%),
+    radial-gradient(ellipse at 82% 67%, rgb(194 97 239 / 48%) 0 8%, transparent 24%),
+    radial-gradient(ellipse at 48% 18%, rgb(133 44 178 / 45%) 0 6%, transparent 20%);
+  filter: blur(5px);
+  transform: translate(-50%, -50%) rotate(-4deg);
+  animation: pokemon-shadow-wisps 4.2s ease-in-out infinite alternate;
+}
+
+.pokemon-profile-aura--purified::before {
+  width: 78%;
+  height: 74%;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(255 255 255 / 90%) 0,
+    rgb(169 241 255 / 72%) 38%,
+    rgb(70 202 230 / 38%) 58%,
+    transparent 74%
+  );
+  filter: blur(7px);
+  box-shadow:
+    0 0 18px 7px rgb(209 250 255 / 72%),
+    0 0 34px 10px rgb(70 202 230 / 38%);
+  transform: translate(-50%, -49%);
+  animation: pokemon-purified-glow 3s ease-in-out infinite;
+}
+
+.pokemon-profile-aura--purified::after {
+  width: 88%;
+  height: 84%;
+  background:
+    radial-gradient(circle at 20% 30%, white 0 1.8%, rgb(63 205 232 / 95%) 2.4%, transparent 5%),
+    radial-gradient(circle at 78% 25%, white 0 2%, rgb(85 216 238 / 92%) 2.7%, transparent 5.4%),
+    radial-gradient(circle at 87% 63%, white 0 1.6%, rgb(63 205 232 / 90%) 2.3%, transparent 4.7%),
+    radial-gradient(circle at 28% 77%, white 0 1.8%, rgb(85 216 238 / 92%) 2.5%, transparent 5.2%),
+    radial-gradient(circle at 58% 12%, white 0 1.5%, rgb(63 205 232 / 88%) 2.2%, transparent 4.4%);
+  filter: drop-shadow(0 0 5px rgb(88 219 240 / 95%));
+  transform: translate(-50%, -50%);
+  animation: pokemon-purified-sparkles 4.8s linear infinite;
+}
+
+@keyframes pokemon-shadow-aura {
+  0%,
+  100% {
+    opacity: 0.76;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -52%) scale(1.05);
+  }
+}
+
+@keyframes pokemon-shadow-wisps {
+  from {
+    opacity: 0.65;
+    transform: translate(-50%, -48%) rotate(-5deg) scale(0.98);
+  }
+
+  to {
+    opacity: 0.95;
+    transform: translate(-50%, -54%) rotate(5deg) scale(1.05);
+  }
+}
+
+@keyframes pokemon-purified-glow {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: translate(-50%, -49%) scale(0.98);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -49%) scale(1.04);
+  }
+}
+
+@keyframes pokemon-purified-sparkles {
+  0% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pokemon-profile-aura--shadow::before,
+  .pokemon-profile-aura--shadow::after,
+  .pokemon-profile-aura--purified::before,
+  .pokemon-profile-aura--purified::after {
+    animation: none;
+  }
+}
