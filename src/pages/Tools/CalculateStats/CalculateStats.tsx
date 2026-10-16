@@ -1,6 +1,7 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
 import {
+  getPokemonFormWithNoneSpecialForm,
   getItemSpritePath,
   getKeyWithData,
   LevelSlider,
@@ -43,6 +44,8 @@ import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import useSpinner from '../../../composables/useSpinner';
 import type { CalculateStatsLevelResult } from '../../../services/models/tools-api.model';
+import type { IPokemonFormModify } from '../../../core/models/API/form.model';
+import { displayPokemonGoStat, displayPokemonGoStatDifference } from './calculate-stats-display';
 
 const Calculate = () => {
   useTitle({
@@ -68,6 +71,10 @@ const Calculate = () => {
   const [STAIv, setSTAIv] = useState(0);
 
   const [typePoke, setTypePoke] = useState(PokemonType.Normal);
+  const [selectedForm, setSelectedForm] = useState<IPokemonFormModify>();
+  const selectedFormType = selectedForm?.form.pokemonType;
+  const isBattleModifierForm = selectedFormType === PokemonType.Shadow || selectedFormType === PokemonType.Purified;
+  const calculatedPokemonType = isBattleModifierForm ? selectedFormType : typePoke;
 
   const [pokeStats, setPokeStats] = useState<IStatsCalculate>();
   const [statLevel, setStatLevel] = useState(1);
@@ -114,10 +121,12 @@ const Calculate = () => {
     try {
       const response = await APIService.postCalculateStats({
         id: pokemonId,
-        form: searchingToolCurrentDetails?.fullName,
+        form: selectedForm
+          ? getPokemonFormWithNoneSpecialForm(selectedForm.form.formName, selectedForm.form.pokemonType)
+          : searchingToolCurrentDetails?.fullName,
         cp: selectedCP,
         level: searchLevel,
-        pokemonType: typePoke,
+        pokemonType: calculatedPokemonType,
         iv: { atk: ATKIv, def: DEFIv, sta: STAIv },
         config: { minCp: minCp(), minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
       });
@@ -137,7 +146,7 @@ const Calculate = () => {
         return;
       }
       showSnackbar(
-        `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} found in ${getKeyWithData(PokemonType, typePoke)} ${name}`,
+        `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} found in ${getKeyWithData(PokemonType, calculatedPokemonType)} ${name}`,
         'success'
       );
       setPokeStats(result.stats);
@@ -168,7 +177,8 @@ const Calculate = () => {
     searchCP,
     searchLevel,
     searchingToolCurrentDetails?.fullName,
-    typePoke,
+    selectedForm,
+    calculatedPokemonType,
     showSnackbar,
     showSpinner,
     hideSpinner,
@@ -189,6 +199,17 @@ const Calculate = () => {
       setStatData(result);
     }
   };
+
+  const shadowAtkDisplayDifference = displayPokemonGoStatDifference(
+    statData?.atkStat,
+    statData?.atkStatDiff,
+    'increase'
+  );
+  const shadowDefDisplayDifference = displayPokemonGoStatDifference(
+    statData?.defStat,
+    statData?.defStatDiff,
+    'decrease'
+  );
 
   const renderLeague = (cp: BattleLeagueCPType, dataLeague: IBattleLeagueCalculate | undefined) => (
     <>
@@ -280,7 +301,7 @@ const Calculate = () => {
             <img alt="Image League" width={20} height={20} src={ATK_LOGO} />
             {dataLeague?.isElidge ? (
               <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-success' : ''}>
-                {dataLeague.stats?.atk}
+                {displayPokemonGoStat(dataLeague.stats?.atk)}
               </span>
             ) : (
               '-'
@@ -292,7 +313,7 @@ const Calculate = () => {
             <img alt="Image League" width={20} height={20} src={DEF_LOGO} />
             {dataLeague?.isElidge ? (
               <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-error' : ''}>
-                {dataLeague.stats?.def}
+                {displayPokemonGoStat(dataLeague.stats?.def)}
               </span>
             ) : (
               '-'
@@ -302,7 +323,7 @@ const Calculate = () => {
         <td className="tw-text-center">
           <div className="tw-flex tw-items-center tw-gap-2">
             <img alt="Image League" width={20} height={20} src={HP_LOGO} />
-            <span>{dataLeague?.isElidge ? dataLeague.stats?.sta : '-'}</span>
+            <span>{dataLeague?.isElidge ? displayPokemonGoStat(dataLeague.stats?.sta) : '-'}</span>
           </div>
         </td>
       </tr>
@@ -312,7 +333,7 @@ const Calculate = () => {
   return (
     <Fragment>
       <div className="tw-container tw-mt-2 calculate-stats-page">
-        <Find isHide clearStats={clearArrStats} />
+        <Find isHide clearStats={clearArrStats} setForm={setSelectedForm} includePokemonGoBattleModifiers />
         <h1 id="main" className="tw-text-center">
           Calculate Stats
         </h1>
@@ -331,7 +352,7 @@ const Calculate = () => {
                   setSearchCP={setSearchCP}
                   setSearchLevel={setSearchLevel}
                   minLevel={minLevel()}
-                  maxLevel={typePoke === PokemonType.Buddy ? maxLevel() : maxPokemonLevel()}
+                  maxLevel={calculatedPokemonType === PokemonType.Buddy ? maxLevel() : maxPokemonLevel()}
                   levelStep={stepLevel()}
                   minIv={minIv()}
                   maxIv={maxIv()}
@@ -404,73 +425,55 @@ const Calculate = () => {
               />
             </Box>
           </div>
-          <div className="tw-flex tw-justify-center tw-text-center">
-            <TypeRadioGroup
-              row
-              aria-labelledby="row-types-group-label"
-              name="row-types-group"
-              defaultValue={PokemonType.Normal}
-              onChange={(e) => {
-                setSearchCP('');
-                setSearchLevel(undefined);
-                setPokeStats(undefined);
-                setStatData(undefined);
-                setLevelResults([]);
-                setStatLevel(0);
-                setDataLittleLeague(undefined);
-                setDataGreatLeague(undefined);
-                setDataUltraLeague(undefined);
-                setDataMasterLeague(undefined);
-                setTypePoke(toNumber(e.target.value));
-              }}
-            >
-              <FormControlLabel
-                value={PokemonType.Normal}
-                control={<Radio />}
-                label={<span>{getKeyWithData(PokemonType, PokemonType.Normal)}</span>}
-              />
-              <FormControlLabel
-                value={PokemonType.Buddy}
-                control={<Radio />}
-                label={
-                  <div className="tw-flex tw-items-center tw-gap-2">
-                    <img height={28} alt="Image Buddy" src={APIService.getPokeBuddy()} />
-                    <span>{getKeyWithData(PokemonType, PokemonType.Buddy)}</span>
-                  </div>
-                }
-              />
-              <FormControlLabel
-                value={PokemonType.Lucky}
-                control={<Radio />}
-                label={
-                  <div className="tw-flex tw-items-center tw-gap-2">
-                    <img height={28} alt="Image Lucky" src={APIService.getPokeLucky()} />
-                    <span>{getKeyWithData(PokemonType, PokemonType.Lucky)}</span>
-                  </div>
-                }
-              />
-              <FormControlLabel
-                value={PokemonType.Shadow}
-                control={<Radio />}
-                label={
-                  <div className="tw-flex tw-items-center tw-gap-2">
-                    <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />
-                    <span>{getKeyWithData(PokemonType, PokemonType.Shadow)}</span>
-                  </div>
-                }
-              />
-              <FormControlLabel
-                value={PokemonType.Purified}
-                control={<Radio />}
-                label={
-                  <div className="tw-flex tw-items-center tw-gap-2">
-                    <img height={32} alt="Image Purified" src={APIService.getPokePurified()} />
-                    <span>{getKeyWithData(PokemonType, PokemonType.Purified)}</span>
-                  </div>
-                }
-              />
-            </TypeRadioGroup>
-          </div>
+          {!isBattleModifierForm && (
+            <div className="tw-flex tw-justify-center tw-text-center">
+              <TypeRadioGroup
+                row
+                aria-labelledby="row-types-group-label"
+                name="row-types-group"
+                defaultValue={PokemonType.Normal}
+                onChange={(e) => {
+                  setSearchCP('');
+                  setSearchLevel(undefined);
+                  setPokeStats(undefined);
+                  setStatData(undefined);
+                  setLevelResults([]);
+                  setStatLevel(0);
+                  setDataLittleLeague(undefined);
+                  setDataGreatLeague(undefined);
+                  setDataUltraLeague(undefined);
+                  setDataMasterLeague(undefined);
+                  setTypePoke(toNumber(e.target.value));
+                }}
+              >
+                <FormControlLabel
+                  value={PokemonType.Normal}
+                  control={<Radio />}
+                  label={<span>{getKeyWithData(PokemonType, PokemonType.Normal)}</span>}
+                />
+                <FormControlLabel
+                  value={PokemonType.Buddy}
+                  control={<Radio />}
+                  label={
+                    <div className="tw-flex tw-items-center tw-gap-2">
+                      <img height={28} alt="Image Buddy" src={APIService.getPokeBuddy()} />
+                      <span>{getKeyWithData(PokemonType, PokemonType.Buddy)}</span>
+                    </div>
+                  }
+                />
+                <FormControlLabel
+                  value={PokemonType.Lucky}
+                  control={<Radio />}
+                  label={
+                    <div className="tw-flex tw-items-center tw-gap-2">
+                      <img height={28} alt="Image Lucky" src={APIService.getPokeLucky()} />
+                      <span>{getKeyWithData(PokemonType, PokemonType.Lucky)}</span>
+                    </div>
+                  }
+                />
+              </TypeRadioGroup>
+            </div>
+          )}
           <div className="form-group tw-flex tw-justify-center tw-text-center tw-mt-2">
             <ButtonMui type="submit" label="Calculate" />
           </div>
@@ -489,7 +492,7 @@ const Calculate = () => {
                 valueLabelDisplay="off"
                 step={stepLevel()}
                 min={minLevel()}
-                max={typePoke === PokemonType.Buddy ? maxLevel() : maxPokemonLevel()}
+                max={calculatedPokemonType === PokemonType.Buddy ? maxLevel() : maxPokemonLevel()}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={!pokeStats}
                 onChange={(_, value) => onHandleLevel(value as number)}
@@ -650,12 +653,12 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              statData.stats.atk
+                              displayPokemonGoStat(statData.stats.atk)
                             ) : (
                               <Fragment>
-                                {statData.atkStat}
-                                {toNumber(statData.atkStatDiff) > 0 && (
-                                  <span className="tw-text-success tw-font-medium">{` (+${statData.atkStatDiff})`}</span>
+                                {displayPokemonGoStat(statData.atkStat)}
+                                {shadowAtkDisplayDifference > 0 && (
+                                  <span className="tw-text-success tw-font-medium">{` (+${shadowAtkDisplayDifference})`}</span>
                                 )}
                               </Fragment>
                             )
@@ -674,12 +677,12 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              statData.stats.def
+                              displayPokemonGoStat(statData.stats.def)
                             ) : (
                               <Fragment>
-                                {statData.defStat}
-                                {toNumber(statData.defStatDiff) > 0 && (
-                                  <span className="tw-text-error tw-font-medium">{` (-${statData.defStatDiff})`}</span>
+                                {displayPokemonGoStat(statData.defStat)}
+                                {shadowDefDisplayDifference > 0 && (
+                                  <span className="tw-text-error tw-font-medium">{` (-${shadowDefDisplayDifference})`}</span>
                                 )}
                               </Fragment>
                             )
@@ -695,7 +698,7 @@ const Calculate = () => {
                             <span>HP</span>
                           </div>
                         </td>
-                        <td>{statData ? statData.stats.sta : '-'}</td>
+                        <td>{statData ? displayPokemonGoStat(statData.stats.sta) : '-'}</td>
                       </tr>
                     </tbody>
                   </table>

@@ -486,6 +486,7 @@ const FindTable = () => {
             <InputMui
               labelPrepend="CP"
               className="tw-mb-3 tw-justify-center"
+              width="calc(100% + 2rem)"
               placeholder="Enter CP"
               value={searchCP}
               onChange={(value) => setSearchCP(value)}

@@ -105,8 +105,8 @@ const SpecialForm = (props: IFormSpecialComponent) => {
           <h4 className="title-evo">
             <b>{pokemonType === PokemonType.Primal ? 'Primal Reversion' : 'Mega Evolution'}</b>
           </h4>
-          <div className="form-special-container scroll-evolution">
-            <ul className="ul-evo tw-flex tw-items-start tw-justify-center tw-gap-3 tw-pb-2">
+          <div className="form-special-container scroll-evolution" data-testid="mega-evolution-scroll">
+            <ul className="ul-evo tw-flex tw-w-max tw-min-w-full tw-items-start tw-justify-center tw-gap-3 tw-pb-2">
               {arrEvoList?.map((value, evo) => {
                 const quest = getQuestEvo(value.name);
                 return (
@@ -114,7 +114,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     key={evo}
                     data-testid="mega-evolution-card"
                     data-mega-level-count={quest.megaLevels?.length ?? 0}
-                    className="li-evo !tw-mr-0 tw-flex tw-w-[22rem] tw-flex-none tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start"
+                    className="li-evo !tw-mr-0 tw-flex tw-w-[calc(100vw-3rem)] tw-max-w-[22rem] tw-flex-none tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start"
                   >
                     <div className="tw-flex tw-items-center tw-gap-3">
                       <img

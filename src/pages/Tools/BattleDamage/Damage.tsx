@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { Fragment, useCallback, useMemo, useState } from 'react';
 
-import { capitalize, getKeyWithData, LevelRating } from '../../../utils/utils';
+import { capitalize, getKeyWithData, isSpecialFormType, LevelRating } from '../../../utils/utils';
 
 import './Damage.scss';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -111,6 +111,12 @@ const Damage = () => {
   const [battleState, setBattleState] = useState(new Filter());
   const { isWeather, isDodge, isTrainer } = battleState;
   const [result, setResult] = useState(new PokemonDmgOption());
+  const attackerFormType = searchingToolCurrentData?.form?.form?.pokemonType;
+  const defenderFormType = searchingToolObjectData?.form?.form?.pokemonType;
+  const attackerBattleModifier = isSpecialFormType(attackerFormType) ? attackerFormType : undefined;
+  const defenderBattleModifier = isSpecialFormType(defenderFormType) ? defenderFormType : undefined;
+  const calculatedStatType = attackerBattleModifier ?? statType;
+  const calculatedStatTypeObj = defenderBattleModifier ?? statTypeObj;
 
   const { showSnackbar } = useSnackbar();
   const { showSpinner, hideSpinner } = useSpinner();
@@ -168,6 +174,11 @@ const Damage = () => {
         showSnackbar('Please select move for pokémon!', 'error');
         return;
       }
+      const typeMove = move.typeMove;
+      if (typeMove === undefined) {
+        showSnackbar('The selected move has no battle category.', 'error');
+        return;
+      }
       const attacker = searchingToolCurrentData?.pokemon?.statsGO;
       const defender = searchingToolObjectData?.pokemon?.statsGO;
       if (!attacker || !defender) {
@@ -181,20 +192,20 @@ const Damage = () => {
           attacker: {
             base: attacker,
             level: statLevel,
-            pokemonType: statType,
+            pokemonType: calculatedStatType,
             types: searchingToolCurrentData?.form?.form?.types ?? [],
           },
           defender: {
             base: defender,
             level: statLevelObj,
-            pokemonType: statTypeObj,
+            pokemonType: calculatedStatTypeObj,
             types: searchingToolObjectData?.form?.form?.types ?? [],
           },
           move: {
             type: getValueOrDefault(String, move.type),
             power: selectedMovePower,
-            charged: move.typeMove === TypeMove.Charged,
-            typeMove: move.typeMove,
+            charged: typeMove === TypeMove.Charged,
+            typeMove,
           },
           battle: {
             isWb: battleState.isWeather,
@@ -222,8 +233,8 @@ const Damage = () => {
             hp: data.hp,
             currPoke: searchingToolCurrentData?.form,
             objPoke: searchingToolObjectData?.form,
-            type: statType,
-            typeObj: statTypeObj,
+            type: calculatedStatType,
+            typeObj: calculatedStatTypeObj,
             currLevel: statLevel,
             objLevel: statLevelObj,
           })
@@ -244,8 +255,8 @@ const Damage = () => {
       move,
       searchingToolCurrentData?.form,
       searchingToolObjectData?.form,
-      statType,
-      statTypeObj,
+      calculatedStatType,
+      calculatedStatTypeObj,
       statLevel,
       statLevelObj,
       showSnackbar,
@@ -276,9 +287,9 @@ const Damage = () => {
 
   return (
     <Fragment>
-      <div className="row battle-game">
-        <div className="lg:tw-flex-1 border-window">
-          <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
+      <div className="battle-game tw-grid tw-w-full tw-grid-cols-1 lg:tw-grid-cols-2">
+        <div className="border-window tw-flex tw-min-w-0 tw-w-full tw-flex-col tw-items-center">
+          <Find isHide title="Attacker Pokémon" clearStats={clearMove} includePokemonGoBattleModifiers />
           <StatsDamageTable
             pvp={isTrainer}
             setStatLevel={setStatLevel}
@@ -287,11 +298,17 @@ const Damage = () => {
             statDEF={searchingToolCurrentData?.pokemon?.statsGO?.def}
             statSTA={searchingToolCurrentData?.pokemon?.statsGO?.sta}
             pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
-            hasShadowForm={searchingToolCurrentData?.pokemon?.hasShadowForm}
           />
         </div>
-        <div className="lg:tw-flex-1 border-window">
-          <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
+        <div className="border-window tw-flex tw-min-w-0 tw-w-full tw-flex-col tw-items-center">
+          <Find
+            isHide
+            title="Defender Pokémon"
+            isSwap
+            clearStats={clearData}
+            isObjective
+            includePokemonGoBattleModifiers
+          />
           <StatsDamageTable
             pvp={isTrainer}
             setStatLevel={setStatLevelObj}
@@ -300,7 +317,6 @@ const Damage = () => {
             statDEF={searchingToolObjectData?.pokemon?.statsGO?.def}
             statSTA={searchingToolObjectData?.pokemon?.statsGO?.sta}
             pokemonType={searchingToolObjectData?.form?.form?.pokemonType}
-            hasShadowForm={searchingToolObjectData?.pokemon?.hasShadowForm}
           />
         </div>
       </div>
@@ -338,7 +354,7 @@ const Damage = () => {
                 includeMaxMoves
                 maxMoveType={MaxMoveType.Attack}
                 isHighlight
-                pokemonType={statType}
+                pokemonType={calculatedStatType}
               />
               <div className="tw-mt-2">
                 {move && (

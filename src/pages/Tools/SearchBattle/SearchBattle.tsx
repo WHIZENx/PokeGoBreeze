@@ -37,6 +37,7 @@ import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import type { BattleLeagueApiItem } from '../../../services/models/tools-api.model';
+import { formatBattleStatsPokemonName } from './search-battle-display';
 
 const FindBattle = () => {
   useTitle({
@@ -359,15 +360,14 @@ const FindBattle = () => {
                   to={`/pokemon/${value.id}${generateParamForm(value.form, value.pokemonType)}`}
                   className="tw-inline-block contain-poke-best-league border-best-poke"
                   key={index}
-                  title={`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}
+                  title={`#${value.id} ${formatBattleStatsPokemonName(value.name, value.form)}`}
                 >
                   <div className="tw-flex tw-items-center tw-h-full">
                     <div className="border-best-poke tw-h-full">
                       {renderPokemon(value, 'poke-best-league', 102)}
                       <span className="caption border-best-poke best-name">
                         <b>
-                          #{value.id} {splitAndCapitalize(value.name, '_', ' ')}{' '}
-                          {splitAndCapitalize(value.form, '_', ' ')}
+                          #{value.id} {formatBattleStatsPokemonName(value.name, value.form)}
                         </b>
                       </span>
                     </div>
@@ -389,7 +389,7 @@ const FindBattle = () => {
                         <div>
                           <b>{toFloatWithPadding(value.ratio, 2)}</b>
                         </div>
-                        <span className="caption caption-constant text-shadow">CP: {value.CP}</span>
+                        <span className="tw-block tw-text-xs !tw-text-inherit">CP: {value.CP}</span>
                       </div>
                       <span className="caption !tw-text-black border-best-poke">
                         <b>#{value.rank}</b>
@@ -422,16 +422,13 @@ const FindBattle = () => {
                                 <div className="pokemon-best-league">
                                   <LinkToTop
                                     to={`/pokemon/${item.id}${generateParamForm(item.form, item.pokemonType)}`}
-                                    title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
+                                    title={`#${item.id} ${formatBattleStatsPokemonName(item.name, item.form)}`}
                                   >
                                     <Badge color="primary" overlap="circular" badgeContent={index + 1}>
                                       {renderPokemon(item)}
                                     </Badge>
                                     <div>
-                                      <b>
-                                        {`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')} `}
-                                        {splitAndCapitalize(item.form, '_', ' ')}
-                                      </b>
+                                      <b>{`#${item.id} ${formatBattleStatsPokemonName(item.name, item.form)}`}</b>
                                     </div>
                                   </LinkToTop>
                                 </div>

@@ -10,7 +10,7 @@ const CardPokemon = (props: ICardPokemonComponent) => {
     <div className="tw-flex tw-items-center tw-w-full">
       <div className="tw-relative">
         <PokemonIconType pokemonType={props.pokemonType} size={24}>
-          <PokemonTableIcon {...props.value} className="tw-mr-2" size={38} />
+          <PokemonTableIcon {...props.value} num={props.value?.num ?? 0} className="tw-mr-2" size={38} />
         </PokemonIconType>
       </div>
       <span className="tw-truncate">{formatPokemonDisplayName(props.value?.name)}</span>
