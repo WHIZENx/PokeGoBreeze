@@ -5,6 +5,7 @@ import { IPokemonTableComponent } from '../../models/component.model';
 import { combineClasses, isNumber, isUndefined, toFloatWithPadding, toNumber } from '../../../../utils/extension';
 import { Skeleton } from '@mui/material';
 import './PokemonTable.scss';
+import { formatPokemonDisplayName } from '../../../../utils/pokemon-display-name';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
   const reload = (element: JSX.Element, hasValue = false, color = 'var(--loading-custom-bg)') => {
@@ -49,7 +50,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
           <td colSpan={2}>
             {reload(
               <h5 className="tw-flex">
-                <b>{splitAndCapitalize(props.formName, '-', ' ')}</b>
+                <b>{formatPokemonDisplayName(props.formName)}</b>
               </h5>,
               Boolean(props.formName)
             )}

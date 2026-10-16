@@ -359,7 +359,7 @@ export interface GlobalEventTicket {
   clientEventEndTimeUtcMs: string;
   ticketItem?: string;
   giftable?: boolean;
-  giftItem?: string;
+  giftItem?: string | number;
   displayV2Enabled?: boolean;
   backgroundImageUrl?: string;
   titleImageUrl?: string;

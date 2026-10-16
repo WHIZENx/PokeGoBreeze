@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TableColumn } from 'react-data-table-component';
 
-import { createDataRows, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
+import { createDataRows, marks, PokeGoSlider } from '../../../utils/utils';
 import Find from '../../../components/Find/Find';
 import { leaguesTeamBattle } from '../../../utils/constants';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
@@ -30,6 +30,7 @@ import { useSnackbar } from '../../../contexts/snackbar.context';
 import APIService from '../../../services/api.service';
 import { ProcessedDataPage } from '../../../services/processed-data.service';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -375,7 +376,7 @@ const StatsInfo = () => {
         </div>
       </form>
       <CustomDataTable
-        title={`Stat Battle for ${splitAndCapitalize(searchingToolCurrentDetails?.fullName, '_', ' ')}`}
+        title={`Stat Battle for ${formatPokemonDisplayName(searchingToolCurrentDetails?.fullName)}`}
         columns={columnsStats}
         data={statsBattle}
         pagination

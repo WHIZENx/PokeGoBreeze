@@ -23,6 +23,10 @@ import './TrainerLab.scss';
 import { formatPokemonDisplayName } from '../../utils/pokemon-display-name';
 import DismissibleAlert from '../../components/Commons/Alerts/DismissibleAlert';
 import PokemonTableIcon from '../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
+import TrainerPokemonSettings, {
+  createDefaultTrainerPokemonBuild,
+  type TrainerPokemonBuild,
+} from './TrainerPokemonSettings';
 
 type TrainerTab = 'battle' | 'rewards';
 type League = ITrainerBattlePreset['league'];
@@ -36,17 +40,26 @@ const leagueLabels: Record<League, string> = {
 
 const displayPokemonName = (value: string) => splitAndCapitalize(value.replace(/_NORMAL$/, ''), '_', ' ');
 const normalizeMoveName = (value: string) => value.toUpperCase().replaceAll('-', '_');
+const normalizeTrainerForm = (pokemonId: string, form?: string) => {
+  const normalizedId = normalizeMoveName(pokemonId);
+  const normalizedForm = normalizeMoveName(form ?? '');
+  const prefix = `${normalizedId}_`;
+  return normalizedForm.startsWith(prefix) ? normalizedForm.slice(prefix.length) : normalizedForm;
+};
 
 const emptyTrainerMoves = (): TrainerMoveSelection => ({ chargedMoves: [undefined, undefined] });
 
 const TrainerLab = () => {
-  const { pokemonsData, combatsData, trainerBattlePresetsData } = useDataStore();
+  const { pokemonsData, combatsData, trainerBattlePresetsData, cpmData, optionsData } = useDataStore();
   const [tab, setTab] = useState<TrainerTab>('battle');
   const [league, setLeague] = useState<League>('great');
   const [presetId, setPresetId] = useState('');
   const [team, setTeam] = useState<Array<IPokemonData | undefined>>([undefined, undefined, undefined]);
   const [teamMoves, setTeamMoves] = useState<TrainerMoveSelection[]>(() =>
     Array.from({ length: 3 }, emptyTrainerMoves)
+  );
+  const [teamBuilds, setTeamBuilds] = useState<TrainerPokemonBuild[]>(() =>
+    Array.from({ length: 3 }, createDefaultTrainerPokemonBuild)
   );
   const [shields, setShields] = useState(2);
   const [seed, setSeed] = useState(1);
@@ -81,7 +94,21 @@ const TrainerLab = () => {
     const moves = teamMoves[index];
     return Boolean(pokemon && moves.fastMove && moves.chargedMoves.some(Boolean));
   });
-  const isBattleReady = hasCompleteTeam && hasUniqueTeam && hasCompleteMoves;
+  const maxPokemonLevel = optionsData.playerSetting.maxNormalUpgradeLevel || 50;
+  const selectableLevels = useMemo(
+    () =>
+      cpmData
+        .filter(({ level }) => level >= 1 && level <= maxPokemonLevel)
+        .map(({ level }) => level)
+        .sort((left, right) => left - right),
+    [cpmData, maxPokemonLevel]
+  );
+  const hasValidBuilds = teamBuilds.every(
+    ({ level, iv }) =>
+      (level === undefined || selectableLevels.includes(level)) &&
+      Object.values(iv).every((value) => Number.isInteger(value) && value >= 0 && value <= 15)
+  );
+  const isBattleReady = hasCompleteTeam && hasUniqueTeam && hasCompleteMoves && hasValidBuilds;
 
   useEffect(() => {
     if (presets.length && !presets.some((item) => item.id === presetId)) {
@@ -96,10 +123,12 @@ const TrainerLab = () => {
         String(pokemon.pokemonId).toUpperCase() === pokemonId.toUpperCase() ||
         pokemon.fullName?.toUpperCase() === pokemonId.toUpperCase()
     );
-    if (form) {
+    const requestedForm = normalizeTrainerForm(pokemonId, form);
+    if (requestedForm) {
       return matches.find(
         (pokemon) =>
-          pokemon.form?.toUpperCase() === form.toUpperCase() || pokemon.fullName?.toUpperCase() === form.toUpperCase()
+          normalizeMoveName(pokemon.form ?? '') === requestedForm ||
+          normalizeMoveName(pokemon.fullName ?? '') === requestedForm
       );
     }
     return matches.find((pokemon) => pokemon.form?.toUpperCase() === 'NORMAL') ?? matches[0];
@@ -112,6 +141,9 @@ const TrainerLab = () => {
         slot === index ? (pokemon ? createDefaultTrainerMoveSelection(pokemon) : emptyTrainerMoves()) : moves
       )
     );
+    setTeamBuilds((current) =>
+      current.map((build, slot) => (slot === index ? createDefaultTrainerPokemonBuild() : build))
+    );
     setResult(undefined);
     setError('');
   };
@@ -120,8 +152,13 @@ const TrainerLab = () => {
     setResult(undefined);
     setError('');
   };
+  const setTeamBuild = (index: number, build: TrainerPokemonBuild) => {
+    setTeamBuilds((current) => current.map((value, slot) => (slot === index ? build : value)));
+    setResult(undefined);
+    setError('');
+  };
 
-  const simulate = async () => {
+  const simulate = async (simulationSeed = seed) => {
     if (!hasCompleteTeam) {
       setError(`Select ${3 - selectedTeam.length} more Pokemon to complete your team.`);
       return;
@@ -132,6 +169,10 @@ const TrainerLab = () => {
     }
     if (!hasCompleteMoves) {
       setError('Select a Fast Move and at least one Charged Move for every Pokémon.');
+      return;
+    }
+    if (!hasValidBuilds) {
+      setError('Use a valid Pokémon level and whole-number IVs from 0 to 15 for every team member.');
       return;
     }
     if (!preset) {
@@ -148,12 +189,14 @@ const TrainerLab = () => {
           return {
             pokemonId: String(pokemon.pokemonId ?? pokemon.fullName ?? ''),
             form: pokemon.form,
+            level: teamBuilds[index].level,
+            iv: teamBuilds[index].iv,
             fastMove: moves.fastMove,
             chargedMoves: moves.chargedMoves.filter((move): move is string => !!move),
           };
         }),
         shields,
-        seed,
+        seed: simulationSeed,
       });
       setResult(response.data.data);
     } catch (requestError) {
@@ -166,8 +209,12 @@ const TrainerLab = () => {
         code === 'duplicate_team_species'
           ? 'A Trainer Battle team cannot contain duplicate Pokémon species.'
           : code === 'pokemon_not_eligible'
-            ? `${displayPokemonName(pokemon ?? '')} cannot fit this league with the current default build.`
-            : 'The simulation could not be completed. Please adjust the team and try again.'
+            ? `${displayPokemonName(pokemon ?? '')} cannot fit this league with the selected Level/IV build.`
+            : code === 'invalid_pokemon_level'
+              ? `${displayPokemonName(pokemon ?? '')} has a Level that is not available in Pokémon GO.`
+              : code === 'moves_not_eligible'
+                ? `${displayPokemonName(pokemon ?? '')} cannot use the selected moves in this form.`
+                : 'The simulation could not be completed. Please adjust the team and try again.'
       );
     } finally {
       setLoading(false);
@@ -299,7 +346,7 @@ const TrainerLab = () => {
                           const pokemon = findPokemon(member.pokemonId, member.form);
                           return (
                             <Box key={`${member.pokemonId}-${member.form ?? ''}`} className="trainer-opponent-pokemon">
-                              {pokemon && <img src={APIService.getPokeIconSprite(pokemon.sprite)} alt="" />}
+                              {pokemon && <PokemonTableIcon {...pokemon} size={38} />}
                               <span>{displayPokemonName(member.form ?? member.pokemonId)}</span>
                             </Box>
                           );
@@ -317,8 +364,8 @@ const TrainerLab = () => {
                   Your team
                 </Typography>
                 <Typography variant="body2" color="text.secondary" className="tw-mb-3">
-                  Pick three different Pokémon, then customize one Fast Move and up to two Charged Moves for each team
-                  member. The API chooses the highest eligible 15/15/15 build.
+                  Pick three different Pokémon, then set each member&apos;s Level, IVs, Fast Move, and up to two Charged
+                  Moves. Auto Level chooses the highest eligible level for the selected league.
                 </Typography>
                 <Chip
                   className="tw-mb-3"
@@ -351,13 +398,20 @@ const TrainerLab = () => {
                         cardElement={renderPokemon}
                       />
                       {selected && (
-                        <TrainerMoveSelect
-                          key={`moves-${selected.fullName}`}
-                          pokemon={selected}
-                          combats={combatsData}
-                          selection={teamMoves[index]}
-                          onChange={(selection) => setTeamMoveSelection(index, selection)}
-                        />
+                        <>
+                          <TrainerPokemonSettings
+                            levels={selectableLevels}
+                            build={teamBuilds[index]}
+                            onChange={(build) => setTeamBuild(index, build)}
+                          />
+                          <TrainerMoveSelect
+                            key={`moves-${selected.fullName}`}
+                            pokemon={selected}
+                            combats={combatsData}
+                            selection={teamMoves[index]}
+                            onChange={(selection) => setTeamMoveSelection(index, selection)}
+                          />
+                        </>
                       )}
                     </Box>
                   ))}
@@ -369,20 +423,24 @@ const TrainerLab = () => {
                         <SportsMmaIcon fontSize="small" /> Simulate battle
                       </>
                     }
-                    onClick={simulate}
+                    onClick={() => void simulate()}
                     disabled={loading || !isBattleReady}
                   />
                   <ButtonMui
                     variant="outlined"
                     label={
                       <>
-                        <RestartAltIcon fontSize="small" /> New seed
+                        <RestartAltIcon fontSize="small" /> Randomize &amp; simulate
                       </>
                     }
                     onClick={() => {
-                      setSeed((value) => value + 1);
-                      setResult(undefined);
+                      const randomValues = new Uint32Array(1);
+                      crypto.getRandomValues(randomValues);
+                      const nextSeed = randomValues[0] === seed ? (seed + 1) >>> 0 : randomValues[0];
+                      setSeed(nextSeed);
+                      void simulate(nextSeed);
                     }}
+                    disabled={loading || !isBattleReady}
                   />
                   <Chip label={`Seed ${seed}`} variant="outlined" />
                 </Box>
@@ -419,43 +477,49 @@ const TrainerLab = () => {
                       <Typography variant="h6">
                         {side === 'player' ? 'Your team' : capitalize(preset?.trainer ?? 'Opponent')}
                       </Typography>
-                      {result[side].team.map((pokemon) => (
-                        <Box
-                          key={`${side}-${pokemon.pokemonId}-${pokemon.form ?? ''}`}
-                          className="trainer-result-pokemon"
-                        >
-                          <img src={APIService.getPokeIconSprite(pokemon.sprite)} alt="" />
-                          <Box className="tw-flex-1">
-                            <Box className="tw-flex tw-justify-between tw-gap-2">
-                              <strong>{pokemon.name}</strong>
-                              <span>CP {pokemon.cp}</span>
-                            </Box>
-                            <LinearProgress variant="determinate" value={(pokemon.remainingHp / pokemon.maxHp) * 100} />
-                            <Typography variant="caption" color="text.secondary">
-                              Lv. {pokemon.level}
-                            </Typography>
-                            <Box className="trainer-result-moves">
-                              {renderMoveBadge(
-                                'Fast Move',
-                                pokemon.fastMove,
-                                findPokemon(pokemon.pokemonId, pokemon.form)
-                              )}
-                              {pokemon.chargedMoves.map((move, index) =>
-                                renderMoveBadge(
-                                  `Charged Move ${index + 1}`,
-                                  move,
-                                  findPokemon(pokemon.pokemonId, pokemon.form)
-                                )
-                              )}
+                      {result[side].team.map((pokemon) => {
+                        const resolvedPokemon = findPokemon(pokemon.pokemonId, pokemon.form);
+                        return (
+                          <Box
+                            key={`${side}-${pokemon.pokemonId}-${pokemon.form ?? ''}`}
+                            className="trainer-result-pokemon"
+                          >
+                            <PokemonTableIcon
+                              {...resolvedPokemon}
+                              num={resolvedPokemon?.num ?? 0}
+                              name={resolvedPokemon?.name ?? pokemon.name}
+                              fullName={resolvedPokemon?.fullName ?? pokemon.form ?? pokemon.pokemonId}
+                              sprite={resolvedPokemon?.sprite ?? pokemon.sprite}
+                              form={resolvedPokemon?.form ?? pokemon.form}
+                              size={54}
+                            />
+                            <Box className="tw-flex-1">
+                              <Box className="tw-flex tw-justify-between tw-gap-2">
+                                <strong>{pokemon.name}</strong>
+                                <span>CP {pokemon.cp}</span>
+                              </Box>
+                              <LinearProgress
+                                variant="determinate"
+                                value={(pokemon.remainingHp / pokemon.maxHp) * 100}
+                              />
+                              <Typography variant="caption" color="text.secondary">
+                                Lv. {pokemon.level} · IV {pokemon.iv.atk}/{pokemon.iv.def}/{pokemon.iv.sta}
+                              </Typography>
+                              <Box className="trainer-result-moves">
+                                {renderMoveBadge('Fast Move', pokemon.fastMove, resolvedPokemon)}
+                                {pokemon.chargedMoves.map((move, index) =>
+                                  renderMoveBadge(`Charged Move ${index + 1}`, move, resolvedPokemon)
+                                )}
+                              </Box>
                             </Box>
                           </Box>
-                        </Box>
-                      ))}
+                        );
+                      })}
                     </CardContent>
                   </Card>
                 ))}
               </Box>
-              <Typography variant="h6" className="tw-mt-3">
+              <Typography variant="h6" className="trainer-key-events-title">
                 Key events
               </Typography>
               <TrainerBattleTimeline

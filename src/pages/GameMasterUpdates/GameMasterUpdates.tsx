@@ -802,6 +802,12 @@ const PatchEntry = ({
             <Typography component="h4" variant="overline" className="game-master-updates__change-label">
               Changes
             </Typography>
+            {change.changedFieldCount > displayFields.length && (
+              <Typography variant="caption" color="text.secondary">
+                Showing {displayFields.length.toLocaleString()} of {change.changedFieldCount.toLocaleString()} changed
+                fields.
+              </Typography>
+            )}
             <Box component="ul" className="game-master-updates__change-list">
               {displayFields.map((field) => (
                 <Box component="li" key={field.path} className="game-master-updates__change-item">

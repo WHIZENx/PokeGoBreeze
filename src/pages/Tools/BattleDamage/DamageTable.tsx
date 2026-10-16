@@ -7,6 +7,7 @@ import HP_LOGO from '../../../assets/hp.png';
 import APIService from '../../../services/api.service';
 
 import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import { IDamageTableComponent } from '../../models/page.model';
 import { LabelDamage } from '../../../core/models/damage.model';
 import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
@@ -64,7 +65,7 @@ const DamageTable = (props: IDamageTableComponent) => {
                     {props.result.type === PokemonType.Buddy && (
                       <img height={20} className="tw-mr-2" alt="Image Buddy" src={APIService.getPokeBuddy()} />
                     )}
-                    {`${splitAndCapitalize(props.result.currPoke?.form?.name, '-', ' ')} `}
+                    {`${formatPokemonDisplayName(props.result.currPoke?.form?.name)} `}
                     {props.result.type === PokemonType.Shadow && (
                       <img
                         height={20}
@@ -96,7 +97,7 @@ const DamageTable = (props: IDamageTableComponent) => {
                     {props.result.typeObj === PokemonType.Buddy && (
                       <img height={20} className="tw-mr-2" alt="Image Buddy" src={APIService.getPokeBuddy()} />
                     )}
-                    {`${splitAndCapitalize(props.result.objPoke.form?.name, '-', ' ')} `}
+                    {`${formatPokemonDisplayName(props.result.objPoke.form?.name)} `}
                     {props.result.typeObj === PokemonType.Shadow && (
                       <img
                         height={20}

@@ -13,13 +13,16 @@ import useStats from '../../composables/useStats';
 import useSearch from '../../composables/useSearch';
 import StatsTable from '../Commons/Tables/Stats/StatsTable';
 import SelectTierMui from '../Commons/Selects/SelectTierMui';
-import { normalizeRaidTier } from '../../utils/raid-tier';
+import { normalizeRaidSelection } from '../../utils/raid-tier';
+import useDataStore from '../../composables/useDataStore';
 
 const Tools = (props: IToolsComponent) => {
   const { statsData } = useStats();
   const { searchingToolCurrentData, searchingToolObjectData } = useSearch();
+  const { optionsData } = useDataStore();
   const searchingToolData = props.isObjective ? searchingToolObjectData : searchingToolCurrentData;
   const [currTier, setCurrTier] = useState(props.tier);
+  const [raidLevel, setRaidLevel] = useState<string>();
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
 
@@ -35,14 +38,23 @@ const Tools = (props: IToolsComponent) => {
   );
 
   useEffect(() => {
-    const normalizedTier = normalizeRaidTier(
+    const enhancedRaidLevels = new Set(optionsData?.raid.entryCosts.map((entry) => entry.raidLevel) ?? []);
+    const selection = normalizeRaidSelection(
       props.tier,
+      raidLevel,
       searchingToolData?.form?.form?.pokemonType,
-      searchingToolData?.pokemon?.pokemonClass
+      searchingToolData?.pokemon?.pokemonClass,
+      enhancedRaidLevels
     );
-    setCurrTier(normalizedTier);
-    if (normalizedTier !== props.tier) {
-      props.setTier?.(normalizedTier);
+    if (!selection?.tier || !selection.value) {
+      return;
+    }
+    setCurrTier(selection.tier);
+    if (selection.value !== raidLevel) {
+      setRaidLevel(selection.value);
+    }
+    if (selection.tier !== props.tier) {
+      props.setTier?.(selection.tier);
     }
   }, [
     searchingToolData?.form?.form?.formName,
@@ -50,6 +62,8 @@ const Tools = (props: IToolsComponent) => {
     props.id,
     props.setTier,
     props.tier,
+    raidLevel,
+    optionsData?.raid.entryCosts,
     searchingToolData?.pokemon?.pokemonClass,
   ]);
 
@@ -119,8 +133,10 @@ const Tools = (props: IToolsComponent) => {
           <SelectTierMui
             className="tw-text-left"
             tier={currTier}
+            raidLevel={raidLevel}
             setTier={props.setTier}
             setCurrTier={setCurrTier}
+            setRaidLevel={setRaidLevel}
             clearData={() => props.onClearStats?.(true)}
             pokemonType={searchingToolData?.form?.form?.pokemonType}
             pokemonClass={searchingToolData?.pokemon?.pokemonClass}

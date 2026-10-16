@@ -86,6 +86,15 @@
       "bytes": 25635,
       "sha256": "7254263d1eecdc67c71f7360a0d5f9f5ff01b3c04bf9c71194dceae7eced0a07"
     },
+    "experience": {
+      "source": "PokeMiners/pogo_assets",
+      "sourcePath": "Today View/TodayView_Icon_XP.png",
+      "url": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Today View/TodayView_Icon_XP.png",
+      "file": "experience.png",
+      "localPath": "src/assets/generated/pokemon-go-ui/experience.png",
+      "bytes": 5347,
+      "sha256": "8a4059c73a17c0271251d3f2e67962fb5859a5d0966d71aed67fb9b02a7455ba"
+    },
     "typeBug": {
       "source": "PokeMiners/pogo_assets",
       "sourcePath": "Types/POKEMON_TYPE_BUG.png",

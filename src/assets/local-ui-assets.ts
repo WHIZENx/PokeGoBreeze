@@ -58,6 +58,7 @@ import ChargedMove from './generated/pokemon-go-ui/chargedMove.png?no-inline';
 import FastMove from './generated/pokemon-go-ui/fastMove.png?no-inline';
 import GenderFemale from './generated/pokemon-go-ui/genderFemale.png?no-inline';
 import GenderMale from './generated/pokemon-go-ui/genderMale.png?no-inline';
+import Experience from './generated/pokemon-go-ui/experience.png?no-inline';
 import Purified from './generated/pokemon-go-ui/purified.png?no-inline';
 import Shadow from './generated/pokemon-go-ui/shadow.png?no-inline';
 import Shiny from './generated/pokemon-go-ui/shiny.png?no-inline';
@@ -130,6 +131,7 @@ const itemIcons: Record<string, string> = {
   Item_1201: FastMove,
   Item_1202: ChargedMove,
   stardust_painted: Stardust,
+  experience: Experience,
 };
 
 const genderIcons: Record<string, string> = {

@@ -11,11 +11,14 @@ import { PokemonClass } from '../../enums/type.enum';
 import usePokemon from '../../composables/usePokemon';
 import StatsTable from '../Commons/Tables/Stats/StatsTable';
 import SelectTierMui from '../Commons/Selects/SelectTierMui';
-import { normalizeRaidTier } from '../../utils/raid-tier';
+import { normalizeRaidSelection } from '../../utils/raid-tier';
+import useDataStore from '../../composables/useDataStore';
 
 const Raid = (props: IRaidComponent) => {
   const { findPokemonById } = usePokemon();
+  const { optionsData } = useDataStore();
   const [tier, setTier] = useState(1);
+  const [raidLevel, setRaidLevel] = useState<string>();
   const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
 
   useEffect(() => {
@@ -24,14 +27,20 @@ const Raid = (props: IRaidComponent) => {
   }, [props.id, findPokemonById]);
 
   useEffect(() => {
-    const normalizedTier = normalizeRaidTier(tier, props.pokemonType, pokemonClass);
-    if (normalizedTier !== tier) {
-      setTier(normalizedTier);
+    const enhancedRaidLevels = new Set(optionsData?.raid.entryCosts.map((entry) => entry.raidLevel) ?? []);
+    const selection = normalizeRaidSelection(tier, raidLevel, props.pokemonType, pokemonClass, enhancedRaidLevels);
+    if (!selection?.tier || !selection.value) {
+      return;
+    }
+    if (selection.tier !== tier || selection.value !== raidLevel) {
+      setTier(selection.tier);
+      setRaidLevel(selection.value);
       return;
     }
     if (props.setTierBoss) {
       props.setTierBoss(tier);
     }
+    props.setRaidLevelBoss?.(raidLevel);
     if (props.setStatBossATK && props.setStatBossDEF && props.setStatBossHP) {
       props.setStatBossATK(calculateRaidBattleStat(props.statATK, tier));
       props.setStatBossDEF(calculateRaidBattleStat(props.statDEF, tier));
@@ -42,16 +51,19 @@ const Raid = (props: IRaidComponent) => {
     }
   }, [
     tier,
+    raidLevel,
     pokemonClass,
     props.pokemonType,
     props.id,
     props.setTierBoss,
+    props.setRaidLevelBoss,
     props.setStatBossATK,
     props.setStatBossDEF,
     props.setStatBossHP,
     props.statATK,
     props.statDEF,
     props.setTimeAllow,
+    optionsData?.raid.entryCosts,
   ]);
 
   return (
@@ -60,8 +72,10 @@ const Raid = (props: IRaidComponent) => {
         <SelectTierMui
           boxClassName="tw-w-1/2"
           tier={tier}
+          raidLevel={raidLevel}
           setTier={setTier}
-          clearData={() => props.clearData?.(false)}
+          setRaidLevel={setRaidLevel}
+          clearData={props.clearData}
           pokemonType={props.pokemonType}
           pokemonClass={pokemonClass}
         />
