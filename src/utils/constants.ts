@@ -5,6 +5,7 @@ import { LeagueBattleType } from '../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { PokemonType } from '../enums/type.enum';
+import { SUPER_MEGA_RAID_PROFILE } from './raid-tier';
 
 // Parameters
 export class Params {
@@ -52,6 +53,14 @@ export const RAID_BOSS_TIER: DynamicObj<ITier> = {
     CPm: 0.7903,
     sta: 22500,
     timer: 300,
+  }),
+  // Provisional Super Mega profile owned and validated by the API. The
+  // current Game Master names the enhanced raid levels but omits boss HP/CPM.
+  7: Tier.create({
+    level: SUPER_MEGA_RAID_PROFILE.level,
+    CPm: SUPER_MEGA_RAID_PROFILE.cpm,
+    sta: SUPER_MEGA_RAID_PROFILE.hp,
+    timer: SUPER_MEGA_RAID_PROFILE.timer,
   }),
 };
 

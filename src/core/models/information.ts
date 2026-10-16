@@ -10,6 +10,7 @@ export interface RewardPokemon {
   pokemonId: string;
   costume?: string;
   form?: string;
+  detailForm?: string;
 }
 
 export interface RewardCandy {
@@ -80,7 +81,7 @@ export interface IInformation {
   bannerUrl: string | undefined;
   backgroundImgUrl: string | undefined;
   titleImgUrl: string | undefined;
-  giftItem?: string;
+  giftItem?: string | number;
   giftAble: boolean;
   detailsLink?: string;
   rewards: ITicketReward[];
@@ -97,7 +98,7 @@ export class Information implements IInformation {
   bannerUrl: string | undefined;
   backgroundImgUrl: string | undefined;
   titleImgUrl: string | undefined;
-  giftItem?: string;
+  giftItem?: string | number;
   giftAble = false;
   detailsLink?: string;
   rewards: ITicketReward[] = [];

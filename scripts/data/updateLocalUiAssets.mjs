@@ -22,6 +22,7 @@ const assets = {
   fastMove: 'Items/Item_1201.png',
   chargedMove: 'Items/Item_1202.png',
   stardust: 'Items/stardust_painted.png',
+  experience: 'Today View/TodayView_Icon_XP.png',
 };
 const pokemonTypes = [
   'BUG',

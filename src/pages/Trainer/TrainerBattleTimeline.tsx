@@ -94,7 +94,10 @@ const TrainerBattleTimeline = ({ events, combats, durationSeconds, opponentLabel
       </Box>
       {TimelineFit(player, opponent, timelineRef, playLineRef, ignoreTimelineMove, false)}
       <Box className="trainer-timeline-footer">
-        <Typography variant="caption">0s</Typography>
+        <Box className="trainer-timeline-time-axis">
+          <Typography variant="caption">0s</Typography>
+          <Typography variant="caption">{durationSeconds.toFixed(1)}s</Typography>
+        </Box>
         <Box className="trainer-timeline-legend">
           <span>
             <i className="trainer-legend-charge" /> Charged
@@ -106,7 +109,6 @@ const TrainerBattleTimeline = ({ events, combats, durationSeconds, opponentLabel
             <CloseIcon color="error" /> Fainted
           </span>
         </Box>
-        <Typography variant="caption">{durationSeconds.toFixed(1)}s</Typography>
       </Box>
     </Box>
   );

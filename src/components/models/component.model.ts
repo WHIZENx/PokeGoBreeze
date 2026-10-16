@@ -233,6 +233,7 @@ export interface IPokemonRaidComponent {
 export interface IRaidComponent {
   clearData?: (isForceClear?: boolean) => void;
   setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
+  setRaidLevelBoss?: React.Dispatch<React.SetStateAction<string | undefined>>;
   pokemonType: PokemonType | undefined;
   id: number | undefined;
   statATK: number | undefined;
@@ -396,4 +397,5 @@ export interface IWeatherComponent {
 
 export interface ICounterComponent {
   pokemonData: Partial<IPokemonDetail> | undefined;
+  isLoading?: boolean;
 }

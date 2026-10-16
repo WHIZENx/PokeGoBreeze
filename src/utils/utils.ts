@@ -49,6 +49,7 @@ import { LeagueBattleType } from '../core/enums/league.enum';
 import { BattleLeagueCPType } from './enums/compute.enum';
 import { IStyleData } from './models/util.model';
 import { getPokemonFormWithNoneSpecialForm } from './pokemon-form-routing';
+import { getItemSpriteAssetName } from './item-sprite';
 export { generateParamForm, getPokemonFormWithNoneSpecialForm, getPokemonType } from './pokemon-form-routing';
 import {
   classLegendary,
@@ -1221,48 +1222,12 @@ const ITEM_EVOLUTION_MAP: Partial<Record<ItemEvolutionType, ItemEvolutionRequire
 
 export const getItemEvolutionType = (itemEvolution: ItemEvolutionType) => ITEM_EVOLUTION_MAP[itemEvolution];
 
-const ITEM_SPRITE_MAP: Partial<Record<string, string>> = {
-  [ItemName.RaidTicket]: 'Item_1401',
-  [ItemName.RareCandy]: 'Item_1301',
-  [ItemName.XlRareCandy]: 'RareXLCandy_PSD',
-  [ItemName.PokeBall]: 'pokeball_sprite',
-  [ItemName.GreatBall]: 'greatball_sprite',
-  [ItemName.UltraBall]: 'ultraball_sprite',
-  [ItemName.MasterBall]: 'masterball_sprite',
-  [ItemName.RazzBerry]: 'Item_0701',
-  [ItemName.NanabBerry]: 'Item_0703',
-  [ItemName.PinapBerry]: 'Item_0705',
-  [ItemName.GoldenPinapBerry]: 'Item_0707',
-  [ItemName.LuckyEgg]: 'luckyegg',
-};
-
-const ITEM_INCLUDE_SPRITES: [string, string][] = [
-  [ItemName.PaidRaidTicket, 'Item_1402'],
-  [ItemName.StarPice, 'starpiece'],
-  [ItemName.Poffin, 'Item_0704'],
-  [ItemName.EliteFastAttack, 'Item_1203'],
-  [ItemName.EliteSpecialAttack, 'Item_1204'],
-  [ItemName.IncubatorBasic, 'EggIncubatorIAP_Empty'],
-  [ItemName.IncubatorSuper, 'EggIncubatorSuper_Empty'],
-  [ItemName.Incense, 'Incense_0'],
-  [ItemName.Potion, 'Item_0101'],
-  [ItemName.SuperPotion, 'Item_0102'],
-  [ItemName.HyperPotion, 'Item_0103'],
-  [ItemName.MaxPotion, 'Item_0104'],
-  [ItemName.Revive, 'Item_0201'],
-  [ItemName.MaxRevive, 'Item_0202'],
-];
-
 export const getItemSpritePath = (itemName: string | null | undefined) => {
-  const exactSprite = itemName ? ITEM_SPRITE_MAP[itemName] : undefined;
-  if (exactSprite) {
-    return APIService.getItemSprite(exactSprite);
-  }
   if (isInclude(itemName, ItemName.Troy)) {
     return APIService.getItemTroy(getLureItemType(itemName));
   }
-  const match = ITEM_INCLUDE_SPRITES.find(([key]) => isInclude(itemName, key));
-  return match ? APIService.getItemSprite(match[1]) : APIService.getPokeSprite();
+  const sprite = getItemSpriteAssetName(itemName);
+  return sprite ? APIService.getItemSprite(sprite) : APIService.getPokeSprite();
 };
 
 export const getValidPokemonImgPath = (src: string | undefined | null, id?: number, form?: string | null) => {

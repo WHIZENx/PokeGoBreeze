@@ -19,6 +19,7 @@ const expectedUiKeys = [
   'fastMove',
   'chargedMove',
   'stardust',
+  'experience',
 ];
 const entries = Object.entries(manifest.assets);
 

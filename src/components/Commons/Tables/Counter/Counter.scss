@@ -6,12 +6,28 @@
   @apply tw-w-full tw-h-full;
 }
 
-.counter-none {
-  @apply tw-h-[550px];
-}
-
 .group-pokemon-sprite {
   @apply tw-w-16;
+}
+
+.counter-table-content:not(.is-loading) .rdt_TableBody .rdt_TableRow {
+  animation: counter-table-row-enter 160ms ease-out both;
+}
+
+@keyframes counter-table-row-enter {
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .counter-table-content:not(.is-loading) .rdt_TableBody .rdt_TableRow {
+    animation: none;
+  }
 }
 
 .sub-header {

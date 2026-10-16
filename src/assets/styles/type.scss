@@ -62,27 +62,6 @@
   background-color: #6890f0;
 }
 
-// Use a dark foreground on the lighter type colors. This keeps compact type
-// labels readable in both application themes without changing their canonical
-// background colors.
-.type-icon-small:is(
-  .bug,
-  .electric,
-  .fire,
-  .flying,
-  .fairy,
-  .ground,
-  .grass,
-  .ice,
-  .normal,
-  .psychic,
-  .rock,
-  .steel,
-  .water
-) {
-  color: var(--text-constant) !important;
-}
-
 .bug-border {
   border-color: #9cb820;
 }

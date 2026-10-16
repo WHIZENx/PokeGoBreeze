@@ -81,12 +81,6 @@
 
   background: rgb(127 127 127 / 12%);
 
-  img {
-    width: 38px;
-    height: 38px;
-    object-fit: contain;
-  }
-
   span {
     @apply tw-text-xs tw-font-semibold;
   }
@@ -106,6 +100,21 @@
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 8px;
   margin-top: 8px;
+
+  > div {
+    min-width: 0;
+  }
+}
+
+.trainer-slot-build {
+  @apply tw-mt-3;
+}
+
+.trainer-slot-stats {
+  display: grid;
+  grid-template-columns: minmax(190px, 1.4fr) repeat(3, minmax(100px, 1fr));
+  gap: 8px;
+  margin-top: 4px;
 
   > div {
     min-width: 0;
@@ -159,15 +168,14 @@
     border-top: 1px solid rgb(127 127 127 / 16%);
   }
 
-  > img {
-    width: 54px;
-    height: 54px;
-    object-fit: contain;
-  }
 }
 
 .trainer-result-moves {
   @apply tw-flex tw-flex-wrap tw-items-end tw-gap-3 tw-mt-2;
+}
+
+.trainer-key-events-title {
+  @apply tw-mt-6;
 }
 
 .trainer-battle-timeline {
@@ -177,7 +185,7 @@
   background: rgb(127 127 127 / 5%);
 
   .fit-timeline {
-    height: 120px;
+    height: 150px;
   }
 
   .play-line {
@@ -187,13 +195,14 @@
 
 .trainer-timeline-lanes,
 .trainer-timeline-footer,
+.trainer-timeline-time-axis,
 .trainer-timeline-legend,
 .trainer-timeline-legend span {
   @apply tw-flex tw-items-center;
 }
 
 .trainer-timeline-lanes,
-.trainer-timeline-footer {
+.trainer-timeline-time-axis {
   @apply tw-justify-between tw-gap-3;
 }
 
@@ -202,11 +211,17 @@
 }
 
 .trainer-timeline-footer {
+  @apply tw-mt-3 tw-flex-col tw-gap-3;
+
   color: var(--text-secondary);
 }
 
+.trainer-timeline-time-axis {
+  @apply tw-w-full;
+}
+
 .trainer-timeline-legend {
-  @apply tw-flex-wrap tw-justify-center tw-gap-3;
+  @apply tw-w-full tw-flex-wrap tw-justify-center tw-gap-3;
 
   span {
     @apply tw-gap-1 tw-text-xs;
@@ -254,12 +269,15 @@
     @apply tw-items-start tw-flex-col;
   }
 
-  .trainer-timeline-footer {
-    @apply tw-flex-wrap;
+  .trainer-slot-stats {
+    grid-template-columns: 1fr 1fr;
+  }
 
-    .trainer-timeline-legend {
-      order: 3;
-      width: 100%;
-    }
+  .trainer-battle-timeline {
+    @apply tw-p-3;
+  }
+
+  .trainer-timeline-legend {
+    @apply tw-gap-x-3 tw-gap-y-2;
   }
 }

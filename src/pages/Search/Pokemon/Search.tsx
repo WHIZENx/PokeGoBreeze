@@ -13,7 +13,7 @@ import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
-import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
+import { formatPokemonSpeciesDisplayName } from '../../../utils/pokemon-display-name';
 import SelectCardPokemon from '../../../components/Commons/Selects/SelectCardPokemon';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
@@ -207,14 +207,17 @@ const Search = () => {
           preserveSearchOnSelect
           isFit
           label="Search"
-          onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.num })}
+          onFilter={(pokemon) => ({
+            name: pokemon.speciesName ?? pokemon.baseSpecies ?? pokemon.name,
+            id: pokemon.num,
+          })}
           onIsSelectedPokemon={(pokemon) => pokemon.num === selectId}
           maxHeight={570}
           cardElement={(pokemon) => (
             <>
               <b>#{pokemon.num}</b>
               <PokemonTableIcon {...pokemon} className="img-search" size={36} />
-              {formatPokemonDisplayName(pokemon.name)}
+              {formatPokemonSpeciesDisplayName(pokemon.name, pokemon.speciesName ?? pokemon.baseSpecies)}
             </>
           )}
         />

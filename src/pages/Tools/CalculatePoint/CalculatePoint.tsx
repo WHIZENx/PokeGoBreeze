@@ -4,7 +4,7 @@ import Find from '../../../components/Find/Find';
 import './CalculatePoint.scss';
 import SelectCustomMove from '../../../components/Commons/Selects/SelectCustomMove';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
-import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
+import { capitalize, getKeyWithData, marks, PokeGoSlider } from '../../../utils/utils';
 import { findStabType } from '../../../utils/compute';
 import { getLevelList } from '../../../utils/compute';
 import { getTypeEffective } from '../../../utils/calculate';
@@ -28,6 +28,7 @@ import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/
 import { Color } from '../../../core/models/candy.model';
 import { minLevel, maxLevel, minIv, maxIv, stepLevel } from '../../../utils/helpers/options-context.helpers';
 import useSearch from '../../../composables/useSearch';
+import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import TabsPanel from '../../../components/Commons/Tabs/TabsPanel';
 import { useSnackbar } from '../../../contexts/snackbar.context';
@@ -298,7 +299,7 @@ const CalculatePoint = () => {
             )}
           </span>
         </Badge>
-        <span className="caption">{splitAndCapitalize(form?.form?.name, '-', ' ')}</span>
+        <span className="caption">{formatPokemonDisplayName(form?.form?.name)}</span>
         <span className="caption">
           <b>{action === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
         </span>

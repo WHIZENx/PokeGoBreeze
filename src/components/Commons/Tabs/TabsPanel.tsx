@@ -23,10 +23,14 @@ const a11yProps = (value: number) => {
 };
 
 const TabsPanel = (props: TabPanelComponent) => {
-  const [value, setValue] = useState(props.defaultValue || 0);
+  const [internalValue, setInternalValue] = useState(props.defaultValue ?? 0);
+  const value = props.value ?? internalValue;
 
   const handleChange = (_: React.SyntheticEvent, tabValue: number) => {
-    setValue(tabValue);
+    if (props.value === undefined) {
+      setInternalValue(tabValue);
+    }
+    props.onChange?.(tabValue);
   };
 
   return (
