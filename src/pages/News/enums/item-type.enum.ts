@@ -26,6 +26,9 @@ export enum ItemName {
   Revive = 'ITEM_REVIVE',
   MaxRevive = 'ITEM_MAX_REVIVE',
   Incense = 'ITEM_INCENSE_ORDINARY',
+  LeaderMap = 'ITEM_LEADER_MAP',
+  Meteorite = 'ITEM_MOVE_REROLL_OTHER_SPECIAL_ATTACK_A',
+  MaxParticles = 'ITEM_MP',
 }
 
 export enum TitleName {
