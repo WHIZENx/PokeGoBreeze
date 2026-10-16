@@ -45,6 +45,7 @@ import { useSnackbar } from '../../../contexts/snackbar.context';
 import useSpinner from '../../../composables/useSpinner';
 import type { CalculateStatsLevelResult } from '../../../services/models/tools-api.model';
 import type { IPokemonFormModify } from '../../../core/models/API/form.model';
+import { displayPokemonGoStat, displayPokemonGoStatDifference } from './calculate-stats-display';
 
 const Calculate = () => {
   useTitle({
@@ -199,6 +200,17 @@ const Calculate = () => {
     }
   };
 
+  const shadowAtkDisplayDifference = displayPokemonGoStatDifference(
+    statData?.atkStat,
+    statData?.atkStatDiff,
+    'increase'
+  );
+  const shadowDefDisplayDifference = displayPokemonGoStatDifference(
+    statData?.defStat,
+    statData?.defStatDiff,
+    'decrease'
+  );
+
   const renderLeague = (cp: BattleLeagueCPType, dataLeague: IBattleLeagueCalculate | undefined) => (
     <>
       <tr className="tw-text-center">
@@ -289,7 +301,7 @@ const Calculate = () => {
             <img alt="Image League" width={20} height={20} src={ATK_LOGO} />
             {dataLeague?.isElidge ? (
               <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-success' : ''}>
-                {dataLeague.stats?.atk}
+                {displayPokemonGoStat(dataLeague.stats?.atk)}
               </span>
             ) : (
               '-'
@@ -301,7 +313,7 @@ const Calculate = () => {
             <img alt="Image League" width={20} height={20} src={DEF_LOGO} />
             {dataLeague?.isElidge ? (
               <span className={statData?.pokemonType === PokemonType.Shadow ? '!tw-text-error' : ''}>
-                {dataLeague.stats?.def}
+                {displayPokemonGoStat(dataLeague.stats?.def)}
               </span>
             ) : (
               '-'
@@ -311,7 +323,7 @@ const Calculate = () => {
         <td className="tw-text-center">
           <div className="tw-flex tw-items-center tw-gap-2">
             <img alt="Image League" width={20} height={20} src={HP_LOGO} />
-            <span>{dataLeague?.isElidge ? dataLeague.stats?.sta : '-'}</span>
+            <span>{dataLeague?.isElidge ? displayPokemonGoStat(dataLeague.stats?.sta) : '-'}</span>
           </div>
         </td>
       </tr>
@@ -641,12 +653,12 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              statData.stats.atk
+                              displayPokemonGoStat(statData.stats.atk)
                             ) : (
                               <Fragment>
-                                {statData.atkStat}
-                                {toNumber(statData.atkStatDiff) > 0 && (
-                                  <span className="tw-text-success tw-font-medium">{` (+${statData.atkStatDiff})`}</span>
+                                {displayPokemonGoStat(statData.atkStat)}
+                                {shadowAtkDisplayDifference > 0 && (
+                                  <span className="tw-text-success tw-font-medium">{` (+${shadowAtkDisplayDifference})`}</span>
                                 )}
                               </Fragment>
                             )
@@ -665,12 +677,12 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              statData.stats.def
+                              displayPokemonGoStat(statData.stats.def)
                             ) : (
                               <Fragment>
-                                {statData.defStat}
-                                {toNumber(statData.defStatDiff) > 0 && (
-                                  <span className="tw-text-error tw-font-medium">{` (-${statData.defStatDiff})`}</span>
+                                {displayPokemonGoStat(statData.defStat)}
+                                {shadowDefDisplayDifference > 0 && (
+                                  <span className="tw-text-error tw-font-medium">{` (-${shadowDefDisplayDifference})`}</span>
                                 )}
                               </Fragment>
                             )
@@ -686,7 +698,7 @@ const Calculate = () => {
                             <span>HP</span>
                           </div>
                         </td>
-                        <td>{statData ? statData.stats.sta : '-'}</td>
+                        <td>{statData ? displayPokemonGoStat(statData.stats.sta) : '-'}</td>
                       </tr>
                     </tbody>
                   </table>
