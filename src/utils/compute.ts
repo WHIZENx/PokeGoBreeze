@@ -115,6 +115,8 @@ export const raidEgg = (tier: number, pokemonType?: PokemonType, pokemonClass?: 
       }
       return APIService.getRaidSprite('raid_egg_4_icon');
     }
+    case 7:
+      return APIService.getRaidSprite('raid_egg_3_icon');
     default:
       return APIService.getRaidSprite('ic_raid_small');
   }

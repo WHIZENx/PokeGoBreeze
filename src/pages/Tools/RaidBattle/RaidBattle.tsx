@@ -90,6 +90,7 @@ import Tooltips from '../../../components/Commons/Tooltips/Tooltips';
 import type { RaidApiResponse, RaidBattleRequest } from '../../../services/models/tools-api.model';
 import useDataStore from '../../../composables/useDataStore';
 import DismissibleAlert from '../../../components/Commons/Alerts/DismissibleAlert';
+import { isSuperMegaRaidLevel } from '../../../utils/raid-tier';
 
 const SORT_MENU_ITEMS = [
   { value: SortType.DPS, label: 'Damage Per Second' },
@@ -133,6 +134,7 @@ const RaidBattle = () => {
   const [statBossHP, setStatBossHP] = useState(0);
 
   const [tier, setTier] = useState(1);
+  const [raidLevel, setRaidLevel] = useState<string>();
 
   const [fMove, setFMove] = useState<ISelectMoveModel>();
   const [cMove, setCMove] = useState<ISelectMoveModel>();
@@ -379,6 +381,8 @@ const RaidBattle = () => {
           targetAtk: statBossATK,
           targetDef: statBossDEF,
           targetHp: statBossHP,
+          tier,
+          raidLevel,
           bossBoost: options.isWeatherBoss,
           counterBoost: options.isWeatherCounter,
           timeAllow,
@@ -404,6 +408,7 @@ const RaidBattle = () => {
         recommendationTeamSize: summary.suggestedPlayers.teamSize ?? 6,
         recommendationEfficiency: summary.suggestedPlayers.recommendedEfficiency ?? 0.85,
         recommendationRelobbyDelay: summary.suggestedPlayers.relobbyDelaySeconds ?? 10,
+        playerConstraint: summary.suggestedPlayers.constraint,
       });
       setDisableSearch(true);
     } catch {
@@ -449,6 +454,7 @@ const RaidBattle = () => {
         fast: fMove.name,
         charged: cMove.name,
         tier,
+        raidLevel,
         atk: statBossATK,
         def: statBossDEF,
         hp: statBossHP,
@@ -731,14 +737,10 @@ const RaidBattle = () => {
         <div className="tw-w-full tw-flex tw-flex-col tw-items-center">
           <div className="tw-relative tw-w-24">
             <PokemonIconType pokemonType={showSettingPokemon.pokemon?.stats?.pokemonType} size={36}>
-              <img
-                alt="Pokémon Image"
-                className="pokemon-sprite-large"
-                src={APIService.getPokeIconSprite(pokemon.sprite)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeIconSprite();
-                }}
+              <PokemonTableIcon
+                {...pokemon}
+                pokemonType={pokemon.stats?.pokemonType ?? pokemon.pokemonType}
+                size={96}
               />
             </PokemonIconType>
           </div>
@@ -1104,6 +1106,13 @@ const RaidBattle = () => {
         relobby delays, network latency, or Max Battles. Legacy raid tiers remain available only for historical
         comparisons.
       </DismissibleAlert>
+      {isSuperMegaRaidLevel(raidLevel) && (
+        <DismissibleAlert severity="info" className="!tw-m-3">
+          Super Mega uses the provisional Tier {tier} research profile: 25,000 HP, 0.79 CPM, and a 300-second timer. The
+          estimate does not include its shield phase because the current Game Master does not expose the shield count,
+          trigger, or damage reduction.
+        </DismissibleAlert>
+      )}
       {optionsData.raid.maxPlayersPerLobby > 0 ? (
         <DismissibleAlert severity="info" className="!tw-m-3 tw-flex tw-items-center">
           <span>
@@ -1218,6 +1227,7 @@ const RaidBattle = () => {
             <Raid
               clearData={clearDataBoss}
               setTierBoss={setTier}
+              setRaidLevelBoss={setRaidLevel}
               setTimeAllow={setTimeAllow}
               pokemonType={searchingToolCurrentData?.form?.form?.pokemonType}
               id={searchingToolCurrentData?.form?.defaultId}
@@ -1481,7 +1491,7 @@ const RaidBattle = () => {
                   {searchingToolCurrentData?.form
                     ? splitAndCapitalize(searchingToolCurrentData?.form.form?.name, '-', ' ')
                     : splitAndCapitalize(searchingToolCurrentData?.pokemon?.fullName, '_', ' ')}{' '}
-                  Tier {tier}
+                  {isSuperMegaRaidLevel(raidLevel) ? `Super Mega Tier ${tier}` : `Tier ${tier}`}
                 </b>
               </h3>
               <TypeInfo arr={searchingToolCurrentData?.form?.form?.types} />
@@ -1540,12 +1550,21 @@ const RaidBattle = () => {
                         <span className="caption !tw-text-success">Recommended</span>
                       </div>
                     </div>
-                    <p className="caption tw-w-full tw-mt-2 tw-text-center">
-                      Minimum assumes an optimized team of {resultBoss.recommendationTeamSize} counters and about{' '}
-                      {resultBoss.recommendationRelobbyDelay}s to relobby after a full team faints. Recommended includes
-                      a {Math.round((1 - resultBoss.recommendationEfficiency) * 100)}% margin. Fewer than the minimum is
-                      unlikely to finish in time; the range between them may be difficult.
-                    </p>
+                    {resultBoss.playerConstraint?.mechanic === 'super-mega-shields' ? (
+                      <p className="caption tw-w-full tw-mt-2 tw-text-center">
+                        Minimum is constrained by Super Mega shields and assumes every Trainer brings an eligible Mega
+                        Pokémon, without a shield-breaking Adventure Effect. Recommended also applies the in-game
+                        player-count warning threshold and the DPS margin.
+                      </p>
+                    ) : (
+                      <p className="caption tw-w-full tw-mt-2 tw-text-center">
+                        Minimum assumes an optimized team of {resultBoss.recommendationTeamSize} counters and about{' '}
+                        {resultBoss.recommendationRelobbyDelay}s to relobby after a full team faints. Recommended uses a
+                        varied six-Pokémon counter team with a{' '}
+                        {Math.round((1 - resultBoss.recommendationEfficiency) * 100)}% execution margin. Fewer than the
+                        minimum is unlikely to finish in time; the range between them may be difficult.
+                      </p>
+                    )}
                   </div>
                 </div>
               </Fragment>

@@ -7,7 +7,13 @@ import {
 } from '../../src/pages/Tools/CatchChance/catch-chance-display.ts';
 import { pokemonGoAppraisalStars } from '../../src/pages/Tools/FindTable/appraisal.ts';
 import { filterBattleModifierMoves } from '../../src/components/Commons/Selects/move-availability.ts';
-import { availableRaidTiers, normalizeRaidTier } from '../../src/utils/raid-tier.ts';
+import {
+  availableRaidTiers,
+  normalizeRaidSelection,
+  normalizeRaidTier,
+  raidTierMenuItems,
+  SUPER_MEGA_RAID_PROFILE,
+} from '../../src/utils/raid-tier.ts';
 import {
   displayPokemonGoStat,
   displayPokemonGoStatDifference,
@@ -56,6 +62,25 @@ assert.deepEqual(availableRaidTiers(4, 1), [6]);
 assert.deepEqual(availableRaidTiers(5, 1), [6]);
 assert.equal(normalizeRaidTier(1, 4), 4);
 assert.equal(normalizeRaidTier(5, 5, 1), 6);
+const megaRaidMenuItems = raidTierMenuItems(4, 0, new Set(['RAID_LEVEL_4_MEGA_ENHANCED']));
+assert.deepEqual(
+  megaRaidMenuItems.filter(({ tier }) => tier === 4).map(({ label }) => label),
+  ['Mega Raid (Tier 4)']
+);
+assert.equal(
+  megaRaidMenuItems.find(({ label }) => label === 'Super Mega Raid (Tier 7)')?.value,
+  'RAID_LEVEL_4_MEGA_ENHANCED'
+);
+assert.deepEqual(
+  SUPER_MEGA_RAID_PROFILE,
+  { tier: 7, level: 40, cpm: 0.79, hp: 25_000, timer: 300 }
+);
+assert.equal(megaRaidMenuItems.find(({ value }) => value === 'RAID_LEVEL_4_MEGA_ENHANCED')?.tier, 7);
+assert.equal(
+  normalizeRaidSelection(7, 'RAID_LEVEL_4_MEGA_ENHANCED', 4, 0, new Set(['RAID_LEVEL_4_MEGA_ENHANCED']))
+    ?.value,
+  'RAID_LEVEL_4_MEGA_ENHANCED'
+);
 assert.equal(displayPokemonGoStat(118.99), 118);
 assert.equal(displayPokemonGoStat(128), 128);
 assert.equal(displayPokemonGoStat(undefined), '-');

@@ -183,10 +183,12 @@ export interface ISelectTierComponent {
   pokemonType: PokemonType | undefined;
   pokemonClass?: PokemonClass;
   tier: number;
+  raidLevel?: string;
   boxClassName?: string;
   className?: string;
   setCurrTier?: (tier: number) => void;
   setTier?: (tier: number) => void;
+  setRaidLevel?: (raidLevel: string) => void;
   clearData?: () => void;
 }
 
