@@ -195,7 +195,7 @@ const Find = (props: IFindComponent) => {
 
   const showPokemon = () => (
     <div className="col tw-flex tw-justify-center tw-text-center">
-      <div className="tw-w-full">
+      <div>
         {isNotEmpty(pokemonList) && (
           <FormSelect
             isHide={props.isHide}

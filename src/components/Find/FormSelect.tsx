@@ -430,7 +430,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         </b>
       </h4>
       <ButtonGroupForm
-        className="tw-my-1"
+        className="tw-mx-auto tw-my-1"
         width={350}
         height={180}
         isLoaded={toNumber(currentForm?.defaultId) > 0 && isNotEmpty(pokeData) && isNotEmpty(formList)}
