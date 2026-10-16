@@ -4,7 +4,8 @@
     <base href="/" />
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/og-image.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preload" as="image" href="/app-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f3f4f6" />
     <script>
@@ -44,101 +45,83 @@
       .seo-shell-bar {
         height: 56px;
         display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
         align-items: center;
-        gap: 10px;
+        justify-content: center;
+        width: 100%;
         box-sizing: border-box;
         padding: 0 16px;
         background: #075eb8;
         color: #fff;
-        box-shadow: 0 2px 6px rgb(0 0 0 / 28%);
+        box-shadow:
+          0 2px 4px -1px rgb(0 0 0 / 20%),
+          0 4px 5px 0 rgb(0 0 0 / 14%),
+          0 1px 10px 0 rgb(0 0 0 / 12%);
+        position: sticky;
+        z-index: 1100;
+        top: 0;
       }
 
-      .seo-shell-brand-mark,
-      .seo-shell-spinner {
-        position: relative;
-        display: inline-block;
+      .seo-shell-brand-lockup {
+        width: 100%;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .seo-shell-brand-icon {
+        display: block;
         flex: 0 0 auto;
         box-sizing: border-box;
-        border: 3px solid #37474f;
-        border-radius: 50%;
-        background: linear-gradient(#ff3d00 0 44%, #37474f 44% 56%, #fff 56% 100%);
-      }
-
-      .seo-shell-brand-mark {
-        width: 28px;
-        height: 28px;
-        border-width: 2px;
-      }
-
-      .seo-shell-brand-mark::after,
-      .seo-shell-spinner::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 24%;
-        height: 24%;
-        transform: translate(-50%, -50%);
-        border: 2px solid #37474f;
-        border-radius: 50%;
-        background: #fff;
+        object-fit: contain;
+        width: 30px;
+        height: 30px;
       }
 
       .seo-shell-brand {
-        font-size: 18px;
+        font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+        font-size: 16px;
         font-weight: 700;
-        letter-spacing: 0.1px;
+        line-height: 24px;
+        letter-spacing: 0.00938em;
+        white-space: nowrap;
       }
 
-      .seo-shell-body {
-        min-height: calc(100vh - 56px);
-        min-height: calc(100svh - 56px);
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        place-items: center;
-        box-sizing: border-box;
-        padding: 24px 16px;
-      }
-
-      .seo-shell-card {
+      .seo-shell-progress {
         width: 100%;
-        max-width: 440px;
-        min-width: 0;
-        box-sizing: border-box;
-        padding: 24px;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        background: #fff;
-        text-align: center;
-        box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+        height: 2px;
+        overflow: hidden;
+        background: transparent;
+        opacity: 0;
+        animation: seo-shell-reveal 1ms linear 450ms forwards;
       }
 
-      .seo-shell-spinner {
-        width: 56px;
-        height: 56px;
-        animation: seo-shell-turn 1.1s linear infinite;
+      .seo-shell-progress::after {
+        content: '';
+        display: block;
+        width: 35%;
+        height: 100%;
+        background: #1976d2;
+        transform: translateX(-120%);
+        animation: seo-shell-progress 1.1s ease-in-out infinite;
       }
 
-      .seo-shell-status {
-        margin: 12px 0 16px;
-        color: #5f6368;
-        font-size: 14px;
-        font-weight: 600;
+      .seo-shell-seo-copy {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
 
-      .seo-shell-card h1 {
-        margin: 0;
-        font-size: 20px;
-        line-height: 1.3;
-        overflow-wrap: anywhere;
-      }
-
-      .seo-shell-description {
-        margin: 8px 0 0;
-        color: #5f6368;
-        font-size: 14px;
-        line-height: 1.5;
-        overflow-wrap: anywhere;
+      .seo-shell-seo-copy h1 {
+        font-size: inherit;
       }
 
       :root[data-theme='dark'] body,
@@ -149,43 +132,34 @@
 
       :root[data-theme='dark'] .seo-shell-bar {
         background: #333;
+        background-image: linear-gradient(rgb(255 255 255 / 9%), rgb(255 255 255 / 9%));
       }
 
-      :root[data-theme='dark'] .seo-shell-card {
-        border-color: #555;
-        background: #2b2b2b;
-        box-shadow: 0 8px 24px rgb(0 0 0 / 40%);
+      :root[data-theme='dark'] .seo-shell-progress::after {
+        background: #90caf9;
       }
 
-      :root[data-theme='dark'] .seo-shell-status,
-      :root[data-theme='dark'] .seo-shell-description {
-        color: #b0b0b0;
-      }
-
-      @keyframes seo-shell-turn {
+      @keyframes seo-shell-reveal {
         to {
-          transform: rotate(360deg);
+          opacity: 1;
+        }
+      }
+
+      @keyframes seo-shell-progress {
+        from {
+          transform: translateX(-120%);
+        }
+
+        to {
+          transform: translateX(405%);
         }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .seo-shell-spinner {
+        .seo-shell-progress::after {
+          width: 100%;
+          transform: none;
           animation: none;
-        }
-      }
-
-      @media (max-width: 575px) {
-        .seo-shell-body {
-          align-items: start;
-          padding-top: 20vh;
-        }
-
-        .seo-shell-card {
-          padding: 20px 16px;
-        }
-
-        .seo-shell-card h1 {
-          font-size: 18px;
         }
       }
     </style>
@@ -312,16 +286,15 @@
       <!--seo-shell-start-->
       <main id="seo-content" aria-busy="true">
         <header class="seo-shell-bar">
-          <span class="seo-shell-brand-mark" aria-hidden="true"></span>
-          <span class="seo-shell-brand">PokéGo Breeze</span>
+          <div class="seo-shell-brand-lockup">
+            <img class="seo-shell-brand-icon" src="/app-icon.png" width="30" height="30" alt="" />
+            <span class="seo-shell-brand">PokéGoBreeze</span>
+          </div>
         </header>
-        <div class="seo-shell-body">
-          <section class="seo-shell-card" aria-labelledby="seo-shell-title">
-            <span class="seo-shell-spinner" aria-hidden="true"></span>
-            <p class="seo-shell-status" role="status">Loading Pokémon data…</p>
-            <h1 id="seo-shell-title">PokéGo Breeze - Pokémon GO Database &amp; Tools</h1>
-            <p class="seo-shell-description">Explore Pokémon GO stats, moves, counters, rankings, and battle tools.</p>
-          </section>
+        <div class="seo-shell-progress" role="progressbar" aria-label="Loading"></div>
+        <div class="seo-shell-seo-copy">
+          <h1 id="seo-shell-title">PokéGo Breeze - Pokémon GO Database &amp; Tools</h1>
+          <p>Explore Pokémon GO stats, moves, counters, rankings, and battle tools.</p>
         </div>
       </main>
       <!--seo-shell-end-->

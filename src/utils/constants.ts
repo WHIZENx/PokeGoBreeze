@@ -97,12 +97,16 @@ export const versionList = [
   'Omega Ruby Alpha Sapphire',
   'Platinum',
   'Red Blue',
+  'Red Green Japan',
   'Ruby Sapphire',
   'Sun Moon',
   'Sword Shield',
   'Ultra Sun Ultra Moon',
   'X Y',
   'Scarlet Violet',
+  'The Teal Mask',
+  'The Indigo Disk',
+  'Mega Dimension',
 ];
 
 export const leaguesTeamBattle: PVPInfo[] = [

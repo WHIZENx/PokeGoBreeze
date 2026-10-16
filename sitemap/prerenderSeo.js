@@ -23,16 +23,15 @@ const replaceTagValue = (html, id, attribute, value) =>
 const renderLoadingShell = (title, description) => `<!--seo-shell-start-->
       <main id="seo-content" aria-busy="true">
         <header class="seo-shell-bar">
-          <span class="seo-shell-brand-mark" aria-hidden="true"></span>
-          <span class="seo-shell-brand">PokéGo Breeze</span>
+          <div class="seo-shell-brand-lockup">
+            <img class="seo-shell-brand-icon" src="/app-icon.png" width="30" height="30" alt="" />
+            <span class="seo-shell-brand">PokéGoBreeze</span>
+          </div>
         </header>
-        <div class="seo-shell-body">
-          <section class="seo-shell-card" aria-labelledby="seo-shell-title">
-            <span class="seo-shell-spinner" aria-hidden="true"></span>
-            <p class="seo-shell-status" role="status">Loading Pokémon data…</p>
-            <h1 id="seo-shell-title">${escapeHtml(title)}</h1>
-            <p class="seo-shell-description">${escapeHtml(description)}</p>
-          </section>
+        <div class="seo-shell-progress" role="progressbar" aria-label="Loading"></div>
+        <div class="seo-shell-seo-copy">
+          <h1 id="seo-shell-title">${escapeHtml(title)}</h1>
+          <p>${escapeHtml(description)}</p>
         </div>
       </main>
       <!--seo-shell-end-->`;

@@ -66,7 +66,10 @@
     "audit:pvp-details": "node scripts/audits/auditPvpPokemonDetails.mjs",
     "audit:theme": "node scripts/audits/auditTheme.mjs",
     "test:pokemon-display-names": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokemonDisplayNames.mjs",
+    "test:pokedex-query": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokedexQuery.mjs",
+    "test:pokedex-card-images": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokedexCardImages.mjs",
     "test:pre-hydration-shell": "node scripts/tests/testPreHydrationShell.mjs",
+    "test:seo-assets": "node scripts/tests/testSeoAssets.mjs",
     "test:tool-mechanics": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testToolMechanics.mjs",
     "update:local-ui-assets": "node scripts/data/updateLocalUiAssets.mjs",
     "update:pokemon-icon-sheet": "node scripts/data/updatePokemonIconSheet.mjs"

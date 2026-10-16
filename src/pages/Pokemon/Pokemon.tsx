@@ -10,8 +10,10 @@ import {
   FormSoundCry,
   IPokemonFormModify,
   PokemonFormModify,
+  PokemonFormModifyModel,
   PokemonFormDetail,
   IPokemonFormDetail,
+  PokemonSprite,
 } from '../../core/models/API/form.model';
 import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfoEvo } from '../../core/models/API/info.model';
 import {
@@ -25,6 +27,7 @@ import APIService from '../../services/api.service';
 import type {
   PokemonBundleVariety,
   PokemonFusionOption,
+  PokemonGoFormCatalogEntry,
   PokemonMoveRanking,
 } from '../../core/models/API/pokemon-bundle.model';
 import type { IAsset } from '../../core/models/asset.model';
@@ -48,7 +51,7 @@ import PokemonTable from '../../components/Commons/Tables/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { regionList, Params } from '../../utils/constants';
+import { regionList, Params, versionList } from '../../utils/constants';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
@@ -66,7 +69,7 @@ import {
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonType, TypeAction } from '../../enums/type.enum';
-import { deduplicatePokemonFormSelections } from '../../utils/pokemon-form-identity';
+import { deduplicatePokemonFormSelections, pokemonGoFormIdentityKey } from '../../utils/pokemon-form-identity';
 import { useNavigateToTop } from '../../components/Link/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
@@ -109,6 +112,7 @@ const Pokemon = (props: IPokemonPage) => {
     generatePokemonGoForms,
     getPokemonDetails,
     getPokemonNavigation,
+    retrieveMoves,
   } = usePokemon();
   const { searchingMainData, searchingMainForm, searchingMainDetails } = useSearch();
 
@@ -188,6 +192,7 @@ const Pokemon = (props: IPokemonPage) => {
       varieties: PokemonBundleVariety[],
       bundledEvolutionChain: PokemonInfoEvo | null,
       bundledMoveRankings: PokemonMoveRanking[] = [],
+      bundledPokemonGoForms: PokemonGoFormCatalogEntry[] = [],
       bundledPokemonGoAsset?: IAsset | null,
       bundledPokemonGoEvolutionChains: IEvolutionChain[] = [],
       bundledFusionOptions: PokemonFusionOption[] = []
@@ -276,6 +281,57 @@ const Pokemon = (props: IPokemonPage) => {
 
       formListResult = deduplicatePokemonFormSelections(formListResult);
 
+      if (bundledPokemonGoForms.length) {
+        const selectedKeys = new Set<string>();
+        formListResult.flat().forEach((item) => {
+          const selectedPokemonType = item.form.pokemonType ?? PokemonType.None;
+          const pokemon = retrieveMoves(
+            specie.id,
+            item.form.formName ?? item.form.name ?? item.name,
+            selectedPokemonType
+          );
+          const pokemonType = [PokemonType.Shadow, PokemonType.Purified].includes(selectedPokemonType)
+            ? selectedPokemonType
+            : (pokemon?.pokemonType ??
+              (item.form.isDefault && selectedPokemonType === PokemonType.None
+                ? PokemonType.Normal
+                : selectedPokemonType));
+          selectedKeys.add(
+            pokemonGoFormIdentityKey({
+              num: specie.id,
+              form: item.form.formName || pokemon?.form,
+              pokemonType,
+            })
+          );
+        });
+
+        bundledPokemonGoForms.forEach((pokemon, index) => {
+          const key = pokemonGoFormIdentityKey(pokemon);
+          if (selectedKeys.has(key)) {
+            return;
+          }
+          selectedKeys.add(key);
+          const formName = String(pokemon.form ?? '')
+            .replaceAll('_', '-')
+            .toLowerCase();
+          formListResult.push([
+            new PokemonFormModifyModel(
+              specie.id,
+              specie.name,
+              pokemon.name?.replaceAll('_', '-').toLowerCase(),
+              formName,
+              pokemon.fullName?.replaceAll('_', '-').toLowerCase(),
+              versionList[0].replace(' ', '-'),
+              pokemon.types ?? [],
+              new PokemonSprite(),
+              -100_000 - index,
+              pokemon.pokemonType ?? PokemonType.Normal,
+              false
+            ),
+          ]);
+        });
+      }
+
       setFormList(formListResult);
 
       // Set Default Form
@@ -344,7 +400,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     },
-    [getFindPokemon, searchParams, dispatch]
+    [getFindPokemon, retrieveMoves, searchParams, dispatch]
   );
 
   const queryPokemon = useCallback(
@@ -362,6 +418,7 @@ const Pokemon = (props: IPokemonPage) => {
               res.data.data.varieties,
               res.data.data.evolutionChain,
               res.data.data.moveRankings ?? [],
+              res.data.data.pokemonGo?.forms ?? [],
               res.data.data.pokemonGo?.asset,
               res.data.data.pokemonGo?.evolutionChains,
               res.data.data.pokemonGo?.fusionOptions

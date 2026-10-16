@@ -117,20 +117,39 @@ try {
         expression: `(() => {
           const shell = document.querySelector('#seo-content');
           const bar = document.querySelector('.seo-shell-bar');
-          const card = document.querySelector('.seo-shell-card');
-          const title = card?.querySelector('h1');
-          if (!shell || !bar || !card || !title) return { missing: true };
-          const rect = card.getBoundingClientRect();
+          const brand = document.querySelector('.seo-shell-brand');
+          const brandIcon = document.querySelector('.seo-shell-brand-icon');
+          const progress = document.querySelector('.seo-shell-progress');
+          const title = document.querySelector('#seo-shell-title');
+          if (!shell || !bar || !brand || !brandIcon || !progress || !title) return { missing: true };
+          const progressRect = progress.getBoundingClientRect();
+          const brandRect = brand.getBoundingClientRect();
+          const brandIconRect = brandIcon.getBoundingClientRect();
+          const brandStyle = getComputedStyle(brand);
+          const barStyle = getComputedStyle(bar);
+          document.documentElement.setAttribute('data-theme', 'dark');
+          const darkBarStyle = getComputedStyle(bar);
+          const darkBarBackground = darkBarStyle.backgroundColor;
+          const darkBarOverlay = darkBarStyle.backgroundImage;
+          document.documentElement.setAttribute('data-theme', 'light');
           return {
             missing: false,
             innerWidth,
             documentWidth: document.documentElement.scrollWidth,
-            cardLeft: rect.left,
-            cardRight: rect.right,
-            cardWidth: rect.width,
-            cardOverflow: card.scrollWidth > card.clientWidth + 1,
+            progressLeft: progressRect.left,
+            progressRight: progressRect.right,
+            progressHeight: progressRect.height,
+            hasBlockingCard: Boolean(document.querySelector('.seo-shell-card, .seo-shell-spinner')),
             titleSize: Number.parseFloat(getComputedStyle(title).fontSize),
             barHeight: bar.getBoundingClientRect().height,
+            barBackground: barStyle.backgroundColor,
+            darkBarBackground,
+            darkBarOverlay,
+            brandIconWidth: brandIconRect.width,
+            brandIconHeight: brandIconRect.height,
+            brandGap: brandRect.left - brandIconRect.right,
+            brandFontSize: Number.parseFloat(brandStyle.fontSize),
+            brandLineHeight: Number.parseFloat(brandStyle.lineHeight),
             background: getComputedStyle(shell).backgroundColor,
           };
         })()`,
@@ -141,11 +160,20 @@ try {
     if (
       layout.missing ||
       layout.documentWidth > viewport.width + 1 ||
-      layout.cardLeft < -1 ||
-      layout.cardRight > viewport.width + 1 ||
-      layout.cardOverflow ||
+      layout.progressLeft < -1 ||
+      layout.progressRight > viewport.width + 1 ||
+      layout.progressHeight > 3 ||
+      layout.hasBlockingCard ||
       layout.titleSize > 20 ||
-      layout.barHeight < 48 ||
+      layout.barHeight !== 56 ||
+      layout.barBackground !== 'rgb(7, 94, 184)' ||
+      layout.darkBarBackground !== 'rgb(51, 51, 51)' ||
+      !layout.darkBarOverlay.includes('rgba(255, 255, 255, 0.09)') ||
+      layout.brandIconWidth !== 30 ||
+      layout.brandIconHeight !== 30 ||
+      layout.brandGap !== 8 ||
+      layout.brandFontSize !== 16 ||
+      layout.brandLineHeight !== 24 ||
       layout.background === 'rgba(0, 0, 0, 0)'
     ) {
       findings.push({ viewport: viewport.name, layout });
