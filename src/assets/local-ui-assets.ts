@@ -52,6 +52,8 @@ import MaskPsychic from './generated/move-type-mask/psychic.png?no-inline';
 import MaskRock from './generated/move-type-mask/rock.png?no-inline';
 import MaskSteel from './generated/move-type-mask/steel.png?no-inline';
 import MaskWater from './generated/move-type-mask/water.png?no-inline';
+// Theme-safe derivative of PokeMiners' Pokémon GO circular question icon
+// (Images/Menu Icons/btn_question_02_normal_white_shadow.png).
 import UnknownPokemon from './error.png?no-inline';
 import BuddyCrown from './generated/pokemon-go-ui/buddyCrown.png?no-inline';
 import ChargedMove from './generated/pokemon-go-ui/chargedMove.png?no-inline';

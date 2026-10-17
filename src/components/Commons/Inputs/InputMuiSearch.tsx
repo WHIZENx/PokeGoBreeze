@@ -44,6 +44,10 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
     props.onKeyUp?.(event);
   };
 
+  const handleOnKeyDownSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    props.onKeyDown?.(event);
+  };
+
   const handleClear = () => {
     setSearchTerm('');
     if (onRemove) {
@@ -106,6 +110,7 @@ const InputMuiSearch = (props: IInputMuiSearchComponent) => {
         value={searchTerm}
         size={props.size || 'small'}
         onChange={props.onChange ? handleOnChangeSearch : undefined}
+        onKeyDown={props.onKeyDown ? handleOnKeyDownSearch : undefined}
         onKeyUp={props.onKeyUp ? handleOnKeyUpSearch : undefined}
         InputProps={{
           startAdornment: isHideIcon

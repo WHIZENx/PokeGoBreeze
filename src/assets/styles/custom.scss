@@ -38,6 +38,18 @@
   @include hover-effect;
 }
 
+.result.keyboard-navigation {
+  .card-pokemon:hover:not(.selected),
+  .MuiMenuItem-root:hover:not(.Mui-selected) {
+    @include theme-background(var(--custom-selected-bg), true);
+  }
+
+  .card-pokemon.selected:hover,
+  .MuiMenuItem-root.Mui-selected:hover {
+    @include theme-background(var(--custom-selected), true);
+  }
+}
+
 // Error message classes
 .moveset-error {
   @include theme-background(var(--background-paper));

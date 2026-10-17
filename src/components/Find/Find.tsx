@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
 import FormSelect from './FormSelect';
 
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
@@ -15,6 +15,8 @@ import InputMuiSearch from '../Commons/Inputs/InputMuiSearch';
 import { Skeleton } from '@mui/material';
 import PokemonTableIcon from '../Sprites/PokemonTableIcon/PokemonTableIcon';
 import { isNearScrollEnd } from '../../utils/scroll';
+import { toolPokemonOptionId } from './find-navigation';
+import { getPokemonKeyboardIndex, getScrollTopToReveal } from '../../utils/pokemon-keyboard-navigation';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -32,11 +34,15 @@ const Find = (props: IFindComponent) => {
         : toNumber(searchingToolCurrentData?.pokemon?.id, 1)
       : 1
   );
+  const [activePokemonId, setActivePokemonId] = useState(id);
+  const instanceId = useId().replace(/:/g, '');
+  const listboxId = `tool-pokemon-list-${instanceId}`;
 
   const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
+  const [isKeyboardNavigating, setIsKeyboardNavigating] = useState(false);
 
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -56,10 +62,31 @@ const Find = (props: IFindComponent) => {
     }
     const fallbackPokemon = pokemonList[0];
     setId(fallbackPokemon.id);
+    setActivePokemonId(fallbackPokemon.id);
     props.setId?.(fallbackPokemon.id);
     props.setName?.(fallbackPokemon.name);
     props.clearStats?.();
   }, [id, pokemonList, props.clearStats, props.pokemonFilter, props.setId, props.setName]);
+
+  useEffect(() => {
+    setActivePokemonId((current) => {
+      if (!isNotEmpty(pokemonListFilter)) {
+        return id;
+      }
+      if (pokemonListFilter.some((pokemon) => pokemon.id === current)) {
+        return current;
+      }
+      return pokemonListFilter.find((pokemon) => pokemon.id === id)?.id ?? pokemonListFilter[0].id;
+    });
+  }, [id, pokemonListFilter]);
+
+  useEffect(() => {
+    const activeIndex = pokemonListFilter.findIndex((pokemon) => pokemon.id === activePokemonId);
+    const visibleCount = firstInit.current + eachCounter.current * startIndex;
+    if (activeIndex >= visibleCount) {
+      setStartIndex(Math.ceil((activeIndex + 1 - firstInit.current) / eachCounter.current));
+    }
+  }, [activePokemonId, pokemonListFilter, startIndex]);
 
   const debouncedFilter = useRef(
     debounce((list: IPokemonSearching[], term: string) => {
@@ -79,6 +106,10 @@ const Find = (props: IFindComponent) => {
     };
   }, [pokemonList, searchTerm]);
 
+  useEffect(() => {
+    setStartIndex(0);
+  }, [searchTerm]);
+
   const currentPokemonName = useMemo(() => pokemonList.find((item) => item.id === id)?.name, [pokemonList, id]);
 
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -93,6 +124,7 @@ const Find = (props: IFindComponent) => {
   const getInfoPoke = (value: IPokemonSearching) => {
     const currentPokemon = getPokemonById(value.id);
     setId(value.id);
+    setActivePokemonId(value.id);
     if (props.setId) {
       props.setId(value.id);
     }
@@ -124,6 +156,7 @@ const Find = (props: IFindComponent) => {
     const targetPokemon = filteredTarget ?? (modify < 0 ? navigation.prev : navigation.next);
     if (targetPokemon) {
       setId(targetPokemon.id);
+      setActivePokemonId(targetPokemon.id);
       if (props.setId) {
         props.setId(targetPokemon.id);
       }
@@ -145,13 +178,56 @@ const Find = (props: IFindComponent) => {
     }
 
     setTimeout(() => {
-      if (resultRef.current) {
-        const selectedElement = resultRef.current.querySelector('.card-pokemon.selected');
-        if (selectedElement) {
-          selectedElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+      const container = resultRef.current;
+      const selectedElement = container?.querySelector(
+        `#${toolPokemonOptionId(instanceId, pokemonId)}`
+      ) as HTMLElement | null;
+      if (!container || !selectedElement) {
+        return;
       }
-    }, 50);
+
+      const containerRect = container.getBoundingClientRect();
+      const elementRect = selectedElement.getBoundingClientRect();
+      const nextScrollTop = getScrollTopToReveal(
+        container.scrollTop,
+        containerRect.top,
+        containerRect.bottom,
+        elementRect.top,
+        elementRect.bottom
+      );
+      if (nextScrollTop !== container.scrollTop) {
+        container.scrollTo({ top: nextScrollTop, behavior: 'auto' });
+      }
+    });
+  };
+
+  const handlePokemonKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      const activePokemon = pokemonListFilter.find((pokemon) => pokemon.id === activePokemonId);
+      if (activePokemon) {
+        event.preventDefault();
+        getInfoPoke(activePokemon);
+      }
+      return;
+    }
+
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+      return;
+    }
+
+    event.preventDefault();
+    setIsKeyboardNavigating(true);
+    const currentIndex = pokemonListFilter.findIndex((pokemon) => pokemon.id === activePokemonId);
+    const targetIndex = getPokemonKeyboardIndex(
+      pokemonListFilter.length,
+      currentIndex,
+      event.key === 'ArrowDown' ? 1 : -1
+    );
+    const targetPokemon = pokemonListFilter[targetIndex];
+    if (targetPokemon) {
+      setActivePokemonId(targetPokemon.id);
+      ensurePokemonVisibility(targetPokemon.id);
+    }
   };
 
   const searchPokemon = () => (
@@ -169,19 +245,40 @@ const Find = (props: IFindComponent) => {
       <InputMuiSearch
         value={searchTerm}
         onChange={(value) => setSearchTerm(value)}
+        onKeyDown={handlePokemonKeyDown}
         placeholder="Enter Name or ID"
         width={300}
+        inputProps={{
+          role: 'combobox',
+          'aria-controls': listboxId,
+          'aria-expanded': true,
+          'aria-activedescendant': toolPokemonOptionId(instanceId, activePokemonId),
+        }}
       />
-      <div className="result tools" ref={resultRef} onScroll={listenScrollEvent.bind(this)}>
+      <div
+        id={listboxId}
+        role="listbox"
+        className={combineClasses('result tools', isKeyboardNavigating ? 'keyboard-navigation' : '')}
+        ref={resultRef}
+        onScroll={listenScrollEvent.bind(this)}
+        onMouseMove={() => setIsKeyboardNavigating(false)}
+        onWheel={() => setIsKeyboardNavigating(false)}
+      >
         <Fragment>
-          {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
+          {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value) => (
             <div
               className={combineClasses(
                 'tw-container card-pokemon tw-flex tw-items-center',
-                value.id === id ? 'selected' : ''
+                value.id === activePokemonId ? 'selected' : ''
               )}
-              key={index}
-              onMouseDown={() => getInfoPoke(value)}
+              id={toolPokemonOptionId(instanceId, value.id)}
+              key={value.id}
+              role="option"
+              aria-selected={value.id === activePokemonId}
+              onMouseDown={() => {
+                setIsKeyboardNavigating(false);
+                getInfoPoke(value);
+              }}
             >
               <b>#{value.id}</b>
               <PokemonTableIcon num={value.id} name={value.name} className="img-search" size={36} />
