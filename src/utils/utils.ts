@@ -50,6 +50,7 @@ import { BattleLeagueCPType } from './enums/compute.enum';
 import { IStyleData } from './models/util.model';
 import { getPokemonFormWithNoneSpecialForm } from './pokemon-form-routing';
 import { getItemSpriteAssetName } from './item-sprite';
+import { pokemonGoStatProduct } from './pokemon-go-stats';
 export { generateParamForm, getPokemonFormWithNoneSpecialForm, getPokemonType } from './pokemon-form-routing';
 import {
   classLegendary,
@@ -1097,9 +1098,11 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction
 };
 
 export const getStatProd = (statATK: number, statDEF: number, statSTA: number, form = PokemonType.Normal) =>
-  Math.floor(statATK * getDmgMultiplyBonus(form, TypeAction.Atk)) *
-  Math.floor(statDEF * getDmgMultiplyBonus(form, TypeAction.Def)) *
-  Math.round(statSTA);
+  pokemonGoStatProduct(
+    statATK * getDmgMultiplyBonus(form, TypeAction.Atk),
+    statDEF * getDmgMultiplyBonus(form, TypeAction.Def),
+    statSTA
+  );
 
 export const addSelectMovesByType = (
   pokemonData: IPokemonData,
