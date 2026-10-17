@@ -67,6 +67,7 @@ const FromChange = (props: IFromChangeComponent) => {
           <EvolutionPokemonDisplay
             id={pokemonId}
             name={displayName(fullName)}
+            form={form}
             sprite={sprite}
             pokemonType={pokemon.pokemonType}
           />

@@ -73,6 +73,7 @@
     "test:seo-assets": "node scripts/tests/testSeoAssets.mjs",
     "test:tool-mechanics": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testToolMechanics.mjs",
     "test:news-item-assets": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testNewsItemAssets.mjs",
+    "test:evolution-assets": "node scripts/tests/testEvolutionAssets.mjs",
     "update:local-ui-assets": "node scripts/data/updateLocalUiAssets.mjs",
     "update:pokemon-icon-sheet": "node scripts/data/updatePokemonIconSheet.mjs"
   },
