@@ -639,17 +639,20 @@ const navigate = async (id, isInitial) => {
 
 const addIssue = (issues, id, code, details = {}) => issues.push({ id, code, ...details });
 
-const expectedMoves = (row) => ({
-  fast: [...(row.quickMoves ?? []), ...(row.eliteQuickMoves ?? [])].map(normalizeMove),
-  charged: [
-    ...(row.cinematicMoves ?? []),
-    ...(row.eliteCinematicMoves ?? []),
-    ...(row.purifiedMoves ?? []),
-    ...(row.shadowMoves ?? []),
-    ...(row.specialMoves ?? []),
-    ...(row.exclusiveMoves ?? []),
-  ].map(normalizeMove),
-});
+const expectedMoves = (row) => {
+  const pokemonType = normalizePokemonType(row.pokemonType);
+  return {
+    fast: [...(row.quickMoves ?? []), ...(row.eliteQuickMoves ?? [])].map(normalizeMove),
+    charged: [
+      ...(row.cinematicMoves ?? []),
+      ...(row.eliteCinematicMoves ?? []),
+      ...(pokemonType === 3 ? (row.purifiedMoves ?? []) : []),
+      ...(pokemonType === 2 ? (row.shadowMoves ?? []) : []),
+      ...(row.specialMoves ?? []),
+      ...(row.exclusiveMoves ?? []),
+    ].map(normalizeMove),
+  };
+};
 
 const validateModifierFormSprites = (issues, id, context, button, page) => {
   if (![2, 3].includes(normalizePokemonType(button.pokemonType))) return;

@@ -47,7 +47,7 @@ const normalizeTrainerForm = (pokemonId: string, form?: string) => {
   return normalizedForm.startsWith(prefix) ? normalizedForm.slice(prefix.length) : normalizedForm;
 };
 
-const emptyTrainerMoves = (): TrainerMoveSelection => ({ chargedMoves: [undefined, undefined] });
+const emptyTrainerMoves = (): TrainerMoveSelection => ({ chargedMoves: [undefined, undefined, undefined] });
 
 const TrainerLab = () => {
   const { pokemonsData, combatsData, trainerBattlePresetsData, cpmData, optionsData } = useDataStore();

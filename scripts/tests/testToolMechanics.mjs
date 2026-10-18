@@ -21,6 +21,7 @@ import {
 } from '../../src/pages/Tools/CalculateStats/calculate-stats-display.ts';
 import { formatBattleStatsPokemonName } from '../../src/pages/Tools/SearchBattle/search-battle-display.ts';
 import { pokemonGoBattleHp, pokemonGoStatProduct } from '../../src/utils/pokemon-go-stats.ts';
+import { includeGameMasterSpecialMoves } from '../../src/pages/PVP/pvp-move-options.ts';
 
 const ivsWithTotal = (total) => ({
   atk: Math.min(total, 15),
@@ -100,9 +101,29 @@ assert.deepEqual(
   filterBattleModifierMoves(modifierMoves, 3).map(({ name }) => name),
   ['TACKLE', 'RETURN']
 );
+assert.deepEqual(
+  includeGameMasterSpecialMoves(
+    [{ moveId: 'OUTRAGE_PLUS', uses: 12 }],
+    ['OUTRAGE+']
+  ),
+  [{ moveId: 'OUTRAGE_PLUS', uses: 12 }]
+);
+assert.deepEqual(
+  includeGameMasterSpecialMoves([], ['OUTRAGE+']),
+  [{ moveId: 'OUTRAGE+', uses: 0 }]
+);
 
-const [dpsTdoSource, moveSource, searchMovesSource, pokemonSource, counterSource, pokemonFormSource, genderSource] =
-  await Promise.all([
+const [
+  dpsTdoSource,
+  moveSource,
+  searchMovesSource,
+  pokemonSource,
+  counterSource,
+  pokemonFormSource,
+  genderSource,
+  utilsSource,
+  trainerMoveSelectSource,
+] = await Promise.all([
     readFile(new URL('../../src/pages/Sheets/DpsTdo/DpsTdo.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Search/Moves/SearchMoves.tsx', import.meta.url), 'utf8'),
@@ -110,10 +131,13 @@ const [dpsTdoSource, moveSource, searchMovesSource, pokemonSource, counterSource
     readFile(new URL('../../src/components/Commons/Tables/Counter/Counter.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/utils/utils.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Trainer/TrainerMoveSelect.tsx', import.meta.url), 'utf8'),
   ]);
 assert.match(dpsTdoSource, /max=\{maxTrainerFriendshipLevel\(\)\}/);
 assert.match(moveSource, /PVE Power \/ Second/);
 assert.match(moveSource, /Scaled PVE Power/);
+assert.match(moveSource, /className="tw-inline-flex tw-items-center tw-gap-2"/);
 assert.doesNotMatch(searchMovesSource, /name: 'PvE DPS'/);
 assert.match(searchMovesSource, /name: 'PvE Power \/ Second'/);
 assert.doesNotMatch(pokemonSource, /details\.statsGO\.def \* getDmgMultiplyBonus/);
@@ -126,6 +150,9 @@ assert.match(pokemonFormSource, /primary: pokeApiSprites \?\? selectedSprites/);
 assert.match(pokemonFormSource, /fallback: pokeApiSprites \? selectedSprites : undefined/);
 assert.match(genderSource, /setNextPokemonImageFallback\(e\.currentTarget, defaultSpriteCandidates\)/);
 assert.match(genderSource, /tw-object-contain/);
+assert.match(utilsSource, /replace\(\/_PLUS\$\/, '\+'\)/);
+assert.match(trainerMoveSelectSource, /index === 2 \? 'Mega Attack'/);
+assert.match(trainerMoveSelectSource, /pokemon\.specialMoves/);
 assert.match(
   pokemonFormSource,
   /moveData=\{moveRanking\?\.moves \?\? \(props\.isLoadedForms \? unavailablePokemonMoves/

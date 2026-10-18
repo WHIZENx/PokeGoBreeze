@@ -1023,7 +1023,7 @@ const PVP_MOVE_TO_GAME_MASTER: Readonly<Record<string, string>> = {
 
 export const replaceTempMovePvpName = (name: string) => {
   const moveId = name.trim().replaceAll('-', '_').replaceAll(' ', '_').toUpperCase();
-  return PVP_MOVE_TO_GAME_MASTER[moveId] ?? moveId;
+  return (PVP_MOVE_TO_GAME_MASTER[moveId] ?? moveId).replace(/_PLUS$/, '+');
 };
 
 export const reverseReplaceTempMovePvpName = (name: string | undefined) => {

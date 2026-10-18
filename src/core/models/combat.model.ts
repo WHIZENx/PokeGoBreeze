@@ -194,6 +194,8 @@ export interface ICombat {
   maxMoveEffect?: MaxMoveEffect;
   maxMoveLevels?: number[];
   maxMoveCosts?: MaxMoveUpgradeCost[];
+  isMegaAttack?: boolean;
+  megaLevelPowerMultipliers?: number[];
   bonus?: IBonus;
 }
 
@@ -225,6 +227,8 @@ export class Combat implements ICombat {
   maxMoveEffect?: MaxMoveEffect;
   maxMoveLevels?: number[];
   maxMoveCosts?: MaxMoveUpgradeCost[];
+  isMegaAttack?: boolean;
+  megaLevelPowerMultipliers?: number[];
   bonus?: IBonus;
 
   static create(value: ICombat) {

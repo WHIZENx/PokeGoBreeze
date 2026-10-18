@@ -76,9 +76,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       .flatMap((forms) => forms)
       .filter(
         (item) =>
-          !isSpecialFormType(item.form.pokemonType) &&
-          (item.form.id ?? 0) > 0 &&
-          hasSpriteImage(item.form.sprites)
+          !isSpecialFormType(item.form.pokemonType) && (item.form.id ?? 0) > 0 && hasSpriteImage(item.form.sprites)
       );
     const matchingBaseForm = pokeApiBaseForms.find((item) =>
       isEqual(
