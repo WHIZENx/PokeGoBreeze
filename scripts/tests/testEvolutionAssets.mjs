@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [display, selector, viteConfig] = await Promise.all([
+const [display, evolutionStyles, selector, viteConfig, iconManifest] = await Promise.all([
   readFile(new URL('../../src/components/Info/Evolution/EvolutionPokemonDisplay.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Evolution/Evolution.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/utils/pokemon-animation-assets.ts', import.meta.url), 'utf8'),
   readFile(new URL('../../vite.config.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/assets/generated/pokemon-icons/pokemon-icon-index.json', import.meta.url), 'utf8').then(
+    JSON.parse
+  ),
 ]);
 
 assert.match(display, /findAnimationForm\(id, form, pokemonType\)/);
@@ -13,6 +17,15 @@ assert.match(display, /if \(formVaries\)/);
 assert.match(display, /sortAnimationSources\(animation\?\.sources \?\? \[\]\)/);
 assert.match(display, /loading="lazy"/);
 assert.match(display, /referrerPolicy="no-referrer"/);
+assert.match(display, /resolveExactPokemonIconIndex/);
+assert.match(display, /<PokemonTableIcon/);
+assert.match(display, /exactMiniIcon !== undefined/);
+assert.equal(iconManifest.indexes.darkraimega, 1438, 'Darkrai Mega must have an exact vendored minisprite fallback');
+assert.match(display, /className="evolution-form-badge"/);
+assert.match(display, /title=\{formLabel\}/);
+assert.match(evolutionStyles, /\.evolution-form-badge > \.MuiBadge-badge/);
+assert.match(evolutionStyles, /text-overflow: ellipsis/);
+assert.match(evolutionStyles, /white-space: nowrap/);
 assert.doesNotMatch(display, /getPokeSprite\(id\)/, 'Evolution must not fall back to a different default form by ID');
 assert.match(
   selector,

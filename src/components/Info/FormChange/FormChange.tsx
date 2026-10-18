@@ -142,7 +142,7 @@ const FromChange = (props: IFromChangeComponent) => {
                     end={`${arrowId}-${index}-${target}`}
                   />
                   <div
-                    className="tw-mt-4 tw-flex tw-w-full tw-max-w-md tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start"
+                    className="tw-mt-4 tw-flex tw-w-full tw-min-w-0 tw-max-w-full tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start sm:tw-w-fit sm:tw-min-w-[20rem] sm:tw-max-w-sm"
                     data-testid="form-change-detail"
                   >
                     {(fusion || separate || partner) && (
@@ -202,7 +202,7 @@ const FromChange = (props: IFromChangeComponent) => {
                       </div>
                     )}
                     {hasAdditionalDetails && (
-                      <div className="caption tw-flex tw-flex-col tw-gap-2 tw-border-0 tw-border-t tw-border-solid tw-border-gray-500 tw-pt-3">
+                      <div className="tw-flex tw-flex-col tw-gap-2 tw-border-0 tw-border-t tw-border-solid tw-border-gray-500 tw-pt-3 tw-text-xs tw-text-[var(--text-caption)]">
                         {separate && <span>Separation: Free · Re-fusion costs apply</span>}
                         {!separate && !hasCost && <span>Cost: Not listed</span>}
                         {change.requiredBreadMoves?.length ? <span>Previously unlocked form</span> : null}

@@ -12,6 +12,7 @@
   --evo-gap: 14rem;
 
   column-gap: var(--evo-gap);
+  padding-top: 1.5rem;
 }
 
 .li-evo {
@@ -26,6 +27,26 @@
   -ms-flex-negative: 0;
 
   @apply tw-relative tw-inline-flex tw-align-middle tw-flex-shrink-0 tw-w-24;
+}
+
+.evolution-pokemon-mini-icon {
+  margin-block: 0.75rem;
+}
+
+.evolution-form-badge > .MuiBadge-badge {
+  top: 0;
+  right: auto;
+  left: 0;
+  z-index: 2;
+  width: max-content;
+  max-width: min(10rem, calc(var(--evo-gap) - 1rem));
+  height: 1.5rem;
+  padding-inline: 0.6rem;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  line-height: 1.5rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .evo-arrow-details {
@@ -111,5 +132,9 @@
     --evo-gap: 10rem;
 
     padding-inline: 2.5rem;
+  }
+
+  .evolution-form-badge > .MuiBadge-badge {
+    max-width: calc(var(--evo-gap) - 1rem);
   }
 }
