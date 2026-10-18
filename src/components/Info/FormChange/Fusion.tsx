@@ -27,7 +27,7 @@ const Fusion = ({ options, componentId, componentName }: FusionProps) => {
     return (
       <LinkToTop to={to}>
         <span className="tw-flex tw-min-w-0 tw-flex-col tw-items-center tw-gap-1 tw-text-center">
-          <EvolutionPokemonDisplay id={id} name={label} sprite={sprite} />
+          <EvolutionPokemonDisplay id={id} name={label} form={form} sprite={sprite} />
         </span>
       </LinkToTop>
     );

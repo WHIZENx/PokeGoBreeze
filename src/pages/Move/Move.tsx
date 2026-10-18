@@ -554,7 +554,7 @@ const Move = (props: IMovePage) => {
                   </tr>
                   <tr>
                     <td>
-                      PVE Power
+                      Scaled PVE Power
                       <span className="caption">(STAB + Weather + Shadow)</span>
                     </td>
                     <td colSpan={2}>
@@ -703,7 +703,7 @@ const Move = (props: IMovePage) => {
                 <th colSpan={2}>
                   {move?.typeMove === TypeMove.Max
                     ? `Pokémon with ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`
-                    : `Damage ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} Simulator`}
+                    : `${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} Move Rates`}
                 </th>
               </tr>
             </thead>
@@ -716,19 +716,19 @@ const Move = (props: IMovePage) => {
                     </td>
                   </tr>
                   <tr>
-                    <td>DPS</td>
+                    <td>PVE Power / Second</td>
                     <td>{move && `${toFloatWithPadding(move.pvePower / (move.durationMs / 1000), 2)}`}</td>
                   </tr>
                   <tr>
                     <td>
-                      DPS
+                      PVE Power / Second
                       <span className="caption">(STAB)</span>
                     </td>
                     <td>{move && `${toFloatWithPadding((move.pvePower * pveStab) / (move.durationMs / 1000), 2)}`}</td>
                   </tr>
                   <tr>
                     <td>
-                      DPS
+                      PVE Power / Second
                       <span className="caption">(STAB + Weather)</span>
                     </td>
                     <td>
@@ -738,7 +738,7 @@ const Move = (props: IMovePage) => {
                   </tr>
                   <tr>
                     <td>
-                      DPS
+                      PVE Power / Second
                       <span className="caption">(STAB+Weather+Shadow Bonus)</span>
                     </td>
                     <td>

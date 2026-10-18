@@ -20,7 +20,6 @@ import {
   isEqual,
   isInclude,
   isNotEmpty,
-  isNullOrUndefined,
   toFloatWithPadding,
   toNumber,
 } from '../../../../utils/extension';
@@ -180,9 +179,11 @@ const Counter = (props: ICounterComponent) => {
 
   const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
   const defense = toNumber(props.pokemonData?.statsGO?.def);
+  const targetPokemonType = props.pokemonType ?? props.pokemonData?.pokemonType ?? PokemonType.Normal;
   const typesKey = props.pokemonData?.types?.join(',') ?? '';
   const counterRequestKey = [
     defense,
+    targetPokemonType,
     typesKey,
     showMegaPrimal,
     releasedGO,
@@ -216,11 +217,22 @@ const Counter = (props: ICounterComponent) => {
 
   useEffect(() => {
     resetPagination();
-  }, [defense, typesKey, showMegaPrimal, releasedGO, enableBest, isSearchId, isMatch, ratioSortOrder, resetPagination]);
+  }, [
+    defense,
+    targetPokemonType,
+    typesKey,
+    showMegaPrimal,
+    releasedGO,
+    enableBest,
+    isSearchId,
+    isMatch,
+    ratioSortOrder,
+    resetPagination,
+  ]);
 
   const skipStalePageRequest = useSkipStalePageRequest(
     page,
-    `${defense}|${typesKey}|${showMegaPrimal}|${releasedGO}|${enableBest}|${isSearchId}|${isMatch}|${ratioSortOrder}`
+    `${defense}|${targetPokemonType}|${typesKey}|${showMegaPrimal}|${releasedGO}|${enableBest}|${isSearchId}|${isMatch}|${ratioSortOrder}`
   );
 
   const menuItems = createDataRows<IMenuItem<ICounterModel>>(
@@ -338,8 +350,16 @@ const Counter = (props: ICounterComponent) => {
     {
       id: ColumnType.Percent,
       name: '%',
-      selector: (row) =>
-        toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })),
+      selector: (row) => (
+        <div className="tw-flex tw-flex-col tw-items-center tw-leading-tight">
+          <span>
+            {toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 }))}
+          </span>
+          <span className="tw-text-xs tw-font-normal tw-text-[var(--text-secondary)]">
+            {toFloatWithPadding(row.dps, 2)} DPS
+          </span>
+        </div>
+      ),
       sortable: true,
       width: '20%',
     }
@@ -354,11 +374,12 @@ const Counter = (props: ICounterComponent) => {
       return;
     }
     const requestId = ++latestRequestRef.current;
-    if (isNullOrUndefined(props.pokemonData) || !typesKey) {
-      return;
-    }
-
-    if (defense <= 0) {
+    if (!hasValidCounterTarget) {
+      latestRequestRef.current += 1;
+      hasResolvedCountersRef.current = true;
+      resolvedCounterRequestKeyRef.current = counterRequestKey;
+      setCounterList([]);
+      setTotalRows(0);
       setShowFrame(false);
       return;
     }
@@ -367,6 +388,7 @@ const Counter = (props: ICounterComponent) => {
     APIService.getFetchUrl<ProcessedDataPage<ICounterModel>>(
       APIService.getCounters({
         def: defense,
+        pokemonType: targetPokemonType,
         types: typesKey,
         iv: maxIv(),
         level: defaultPokemonLevel(),
@@ -410,6 +432,7 @@ const Counter = (props: ICounterComponent) => {
     };
   }, [
     defense,
+    targetPokemonType,
     typesKey,
     showMegaPrimal,
     releasedGO,
@@ -421,6 +444,7 @@ const Counter = (props: ICounterComponent) => {
     page,
     skipStalePageRequest,
     props.isLoading,
+    hasValidCounterTarget,
     counterRequestKey,
   ]);
 

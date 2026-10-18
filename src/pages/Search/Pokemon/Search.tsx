@@ -9,7 +9,6 @@ import { Action } from 'history';
 import { PokemonType } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
 import { SearchOption } from './models/pokemon-search.model';
-import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context.helpers';
 import useRouter from '../../../composables/useRouter';
 import usePokemon from '../../../composables/usePokemon';
 import useSearch from '../../../composables/useSearch';
@@ -22,6 +21,8 @@ import {
   type PokedexApiPokemon,
   type PokedexApiResponse,
 } from '../../../core/models/API/pokedex.model';
+import { pokemonSearchOptionId } from './pokemon-search-navigation';
+import { getPokemonKeyboardIndex, getScrollTopToReveal } from '../../../utils/pokemon-keyboard-navigation';
 
 const Search = () => {
   useTitle({
@@ -31,7 +32,7 @@ const Search = () => {
     keywords: ['Pokémon search', 'find Pokémon', 'Pokémon filter', 'Pokémon GO search', 'Pokémon database'],
   });
   const { routerAction } = useRouter();
-  const { getPokemonById, getPokemonNavigation } = usePokemon();
+  const { getPokemonNavigation } = usePokemon();
   const { searchingMainData } = useSearch();
 
   const [searchOption, setSearchOption] = useState<SearchOption>({
@@ -123,21 +124,27 @@ const Search = () => {
   };
 
   const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const currentPokemon = getPokemonById(selectId);
-    if (currentPokemon) {
-      const { prev, next } = getPokemonNavigation(currentPokemon.id);
-      if (event.keyCode === keyEnter()) {
-        inputRef.current?.blur();
-        setSearchOption({ id: selectId });
-      } else if (prev && event.keyCode === keyUp()) {
+    if (event.key === 'Enter') {
+      const activePokemon = searchResults.find((pokemon) => pokemon.num === selectId);
+      if (activePokemon) {
         event.preventDefault();
-        setSelectId(prev.id);
-        scrollToSelectedItem(prev.id);
-      } else if (next && event.keyCode === keyDown()) {
-        event.preventDefault();
-        setSelectId(next.id);
-        scrollToSelectedItem(next.id);
+        setSelectId(activePokemon.num);
+        setSearchOption({ id: activePokemon.num });
       }
+      return;
+    }
+
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+      return;
+    }
+
+    event.preventDefault();
+    const currentIndex = searchResults.findIndex((pokemon) => pokemon.num === selectId);
+    const targetIndex = getPokemonKeyboardIndex(searchResults.length, currentIndex, event.key === 'ArrowDown' ? 1 : -1);
+    const targetPokemon = searchResults[targetIndex];
+    if (targetPokemon) {
+      setSelectId(targetPokemon.num);
+      scrollToSelectedItem(targetPokemon.num);
     }
   };
 
@@ -152,31 +159,22 @@ const Search = () => {
         return;
       }
 
-      const selectedElement = container.querySelector(`#pokemon-card-${id}`) as HTMLElement;
+      const selectedElement = container.querySelector(`#${pokemonSearchOptionId(id)}`) as HTMLElement;
       if (!selectedElement) {
         return;
       }
 
       const containerRect = container.getBoundingClientRect();
-      const containerTop = container.scrollTop;
-      const containerBottom = containerTop + containerRect.height;
-      const elementTop = selectedElement.offsetTop;
-      const elementBottom = elementTop + selectedElement.offsetHeight;
-
-      const isInView = elementTop >= containerTop && elementBottom <= containerBottom;
-
-      if (!isInView) {
-        if (elementTop < containerTop) {
-          container.scrollTo({
-            top: elementTop,
-            behavior: 'smooth',
-          });
-        } else if (elementBottom > containerBottom) {
-          container.scrollTo({
-            top: elementBottom - containerRect.height,
-            behavior: 'smooth',
-          });
-        }
+      const elementRect = selectedElement.getBoundingClientRect();
+      const nextScrollTop = getScrollTopToReveal(
+        container.scrollTop,
+        containerRect.top,
+        containerRect.bottom,
+        elementRect.top,
+        elementRect.bottom
+      );
+      if (nextScrollTop !== container.scrollTop) {
+        container.scrollTo({ top: nextScrollTop, behavior: 'auto' });
       }
     });
   };
@@ -189,6 +187,7 @@ const Search = () => {
         </h1>
         <SelectCardPokemon
           inputRef={inputRef}
+          resultsContainerRef={resultsContainerRef}
           pokemonList={searchResults}
           isRemoteSearch
           isLoading={isSearchLoading}
@@ -212,6 +211,7 @@ const Search = () => {
             id: pokemon.num,
           })}
           onIsSelectedPokemon={(pokemon) => pokemon.num === selectId}
+          getOptionId={(pokemon) => pokemonSearchOptionId(pokemon.num)}
           maxHeight={570}
           cardElement={(pokemon) => (
             <>

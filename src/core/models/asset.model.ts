@@ -12,6 +12,19 @@ export interface IImage {
   pokemonType?: PokemonType;
 }
 
+export type PokemonAnimationSource = 'project' | 'pokeapi' | 'showdown';
+
+export interface IPokemonAnimationSource {
+  source: PokemonAnimationSource;
+  url: string;
+}
+
+export interface IPokemonAnimation {
+  form: string;
+  pokemonType: PokemonType;
+  sources: IPokemonAnimationSource[];
+}
+
 export class ImageModel implements IImage {
   gender?: GenderType;
   pokemonId?: number;
@@ -60,6 +73,7 @@ export interface IAsset {
   id?: number;
   name: string;
   image: IImage[];
+  animation?: IPokemonAnimation[];
   sound: ISound;
 }
 
@@ -67,5 +81,6 @@ export class Asset implements IAsset {
   id = 0;
   name = '';
   image: IImage[] = [];
+  animation: IPokemonAnimation[] = [];
   sound = new Sound();
 }

@@ -670,6 +670,7 @@ const Evolution = (props: IEvolutionComponent) => {
             })}
           <EvolutionPokemonDisplay
             id={value.id}
+            form={value.dataForm}
             sprite={value.sprite}
             pokemonType={props.pokemonData?.pokemonType}
             stage={evoCount > 1 ? evo + 1 : undefined}

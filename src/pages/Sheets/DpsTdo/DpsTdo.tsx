@@ -49,6 +49,7 @@ import {
   defaultEnemyAtkDelay,
   getWeatherTypes,
   maxIv,
+  maxTrainerFriendshipLevel,
   minIv,
   minLevel,
 } from '../../../utils/helpers/options-context.helpers';
@@ -1181,7 +1182,7 @@ const DpsTdo = () => {
                         })
                       );
                     }}
-                    max={4}
+                    max={maxTrainerFriendshipLevel()}
                     size="large"
                     value={toNumber(pokemonFriendLevel)}
                     emptyIcon={<FavoriteBorder fontSize="inherit" />}

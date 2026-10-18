@@ -8,12 +8,14 @@ import { SelectPosition } from './enums/select-type.enum';
 import { debounce } from 'lodash';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
-import { isNearScrollEnd } from '../../../utils/scroll';
+import { getViewportPrefetchThreshold, isNearScrollEnd, shouldPreventScrollChaining } from '../../../utils/scroll';
+import { getScrollTopToReveal } from '../../../utils/pokemon-keyboard-navigation';
 
 const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
   const [showPokemon, setShowPokemon] = useState(props.isShowPokemon);
   const [search, setSearch] = useState(props.value);
   const [startIndex, setStartIndex] = useState(0);
+  const [isKeyboardNavigating, setIsKeyboardNavigating] = useState(false);
 
   const [pokemonIcon, setPokemonIcon] = useState<React.ReactNode>(props.selectedPokemonIcon);
 
@@ -23,12 +25,15 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
   const [pokemonListFilter, setPokemonListFilter] = useState<T[]>([]);
   const firstInit = useRef(20);
   const eachCounter = useRef(10);
-  const resultsContainerRef = useRef<HTMLDivElement>(null);
+  const internalResultsContainerRef = useRef<HTMLDivElement>(null);
+  const resultsContainerRef = props.resultsContainerRef ?? internalResultsContainerRef;
   const scrollDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const pokemonListFilterSlice = props.isRemoteSearch
     ? pokemonListFilter
     : pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex);
+  const activeOption = pokemonListFilterSlice.find((pokemon) => props.onIsSelectedPokemon?.(pokemon));
+  const activeDescendantId = activeOption === undefined ? undefined : props.getOptionId?.(activeOption);
 
   useEffect(() => {
     setPokemonIcon(props.selectedPokemonIcon);
@@ -74,8 +79,38 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
     setStartIndex(0);
   }, [search]);
 
+  useEffect(() => {
+    if (!showPokemon || !activeDescendantId) {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      const container = resultsContainerRef.current;
+      const activeElement = document.getElementById(activeDescendantId);
+      if (!container || !activeElement || !container.contains(activeElement)) {
+        return;
+      }
+
+      const containerRect = container.getBoundingClientRect();
+      const activeRect = activeElement.getBoundingClientRect();
+      const nextScrollTop = getScrollTopToReveal(
+        container.scrollTop,
+        containerRect.top,
+        containerRect.bottom,
+        activeRect.top,
+        activeRect.bottom
+      );
+      if (nextScrollTop !== container.scrollTop) {
+        container.scrollTo({ top: nextScrollTop, behavior: 'auto' });
+      }
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [activeDescendantId, resultsContainerRef, showPokemon]);
+
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    if (isNearScrollEnd(ele.currentTarget)) {
+    const prefetchThreshold = props.isRemoteSearch ? getViewportPrefetchThreshold(ele.currentTarget) : undefined;
+    if (isNearScrollEnd(ele.currentTarget, prefetchThreshold)) {
       if (scrollDebounceRef.current) {
         clearTimeout(scrollDebounceRef.current);
       }
@@ -109,7 +144,12 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
         }
       }}
       placeholder={props.placeholder || 'Enter Name or ID'}
-      onKeyUp={(e) => props.onChangeSelect?.(e)}
+      onKeyDown={(event) => {
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+          setIsKeyboardNavigating(true);
+        }
+        props.onChangeSelect?.(event);
+      }}
       onFocus={() => setShowPokemon(true)}
       onBlur={() => setShowPokemon(false)}
       labelPrepend={props.label}
@@ -140,6 +180,7 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
       }}
       isShowRemove={props.isShowPokemonIcon && !!pokemonIcon}
       customIconStart={props.customIconStart}
+      inputProps={{ 'aria-activedescendant': activeDescendantId }}
       className="!tw-p-0"
     />
   );
@@ -149,8 +190,24 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
     !props.isDisable && (
       <div
         ref={resultsContainerRef}
-        className={combineClasses('result', position === SelectPosition.Up ? 'pos-up tw-mb-1' : 'tw-mt-1')}
+        className={combineClasses(
+          'result',
+          isKeyboardNavigating ? 'keyboard-navigation' : '',
+          props.isRemoteSearch ? 'tw-overscroll-contain' : '',
+          position === SelectPosition.Up ? 'pos-up tw-mb-1' : 'tw-mt-1'
+        )}
         onScroll={listenScrollEvent.bind(this)}
+        onMouseMove={() => setIsKeyboardNavigating(false)}
+        onWheel={(event) => {
+          setIsKeyboardNavigating(false);
+          if (!props.isRemoteSearch) {
+            return;
+          }
+          event.stopPropagation();
+          if (shouldPreventScrollChaining(event.currentTarget, event.deltaY)) {
+            event.preventDefault();
+          }
+        }}
         style={{
           maxHeight: props.maxHeight ?? 274,
           left: prependRef.current?.clientWidth,
@@ -168,9 +225,12 @@ const SelectCardPokemon = <T,>(props: ISelectCardPokemonComponent<T>) => {
             {pokemonListFilterSlice.map((value, index) => (
               <MenuItem
                 key={index}
+                id={props.getOptionId?.(value)}
+                className={props.onIsSelectedPokemon?.(value) ? 'selected' : undefined}
                 disabled={props.isLoading && !props.isRemoteSearch}
                 selected={props.onIsSelectedPokemon?.(value)}
                 onMouseDown={() => {
+                  setIsKeyboardNavigating(false);
                   const selectedLabel = props.onSelect?.(value) ?? props.onFilter?.(value).name;
                   if (props.onSetPokemon) {
                     props.onSetPokemon(value);

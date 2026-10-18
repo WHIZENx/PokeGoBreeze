@@ -161,6 +161,7 @@ export interface IInputMuiComponent extends BaseTextFieldProps {
 export interface IInputMuiSearchComponent extends IInputMuiComponent {
   value?: string;
   onChange?: (value: string) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -407,8 +408,10 @@ export interface ISelectCardPokemonComponent<T> {
   onSelect?: (pokemon: T) => string | undefined;
   customIconStart?: JSX.Element;
   onIsSelectedPokemon?: (pokemon: T) => boolean;
+  getOptionId?: (pokemon: T) => string;
   onFilter?: (pokemon: T) => { name: string | undefined; id: number };
   inputRef?: React.RefObject<HTMLInputElement>;
+  resultsContainerRef?: React.RefObject<HTMLDivElement>;
   isShowPokemonIcon?: boolean;
   selectedPokemonIcon?: React.ReactNode;
   renderSelectedPokemonIcon?: (pokemon: T) => React.ReactNode;

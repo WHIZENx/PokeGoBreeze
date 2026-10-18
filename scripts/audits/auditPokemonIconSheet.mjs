@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
 
 const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const assetRoot = resolve(webRoot, 'src/assets/generated/pokemon-icons');
@@ -12,6 +13,34 @@ const pokemon = JSON.parse(await readFile(resolve(webRoot, '../api/data/pokemons
 const fail = (message) => {
   throw new Error(message);
 };
+const hasLegacyPokemonPickerProps = (source, fileName = 'picker.tsx') => {
+  const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  let legacyPropsFound = false;
+  const visit = (node) => {
+    if (
+      (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) &&
+      node.tagName.getText(sourceFile) === 'SelectCardPokemon'
+    ) {
+      legacyPropsFound = node.attributes.properties.some(
+        (attribute) =>
+          ts.isJsxAttribute(attribute) && ['sprite', 'onSprite'].includes(attribute.name.getText(sourceFile))
+      );
+    }
+    if (!legacyPropsFound) ts.forEachChild(node, visit);
+  };
+  visit(sourceFile);
+  return legacyPropsFound;
+};
+
+if (!hasLegacyPokemonPickerProps('<SelectCardPokemon sprite="legacy.png" />')) {
+  fail('Legacy Pokémon picker prop audit no longer detects sprite.');
+}
+if (!hasLegacyPokemonPickerProps('<SelectCardPokemon onSprite={() => "legacy"} />')) {
+  fail('Legacy Pokémon picker prop audit no longer detects onSprite.');
+}
+if (hasLegacyPokemonPickerProps('<PokemonTableIcon sprite="darkrai-mega" />')) {
+  fail('Pokémon icon sprite identity must not be treated as a legacy picker prop.');
+}
 const toId = (value = '') =>
   String(value)
     .toLowerCase()
@@ -161,7 +190,7 @@ for (const relativePath of dropdownIconFiles) {
   const source = await readFile(resolve(webRoot, relativePath), 'utf8');
   if (!source.includes('<PokemonTableIcon'))
     fail(`${relativePath} is not using the local sheet in its Pokémon picker.`);
-  if (/\b(?:sprite|onSprite)=/.test(source)) {
+  if (hasLegacyPokemonPickerProps(source, relativePath)) {
     fail(`${relativePath} still passes the legacy per-Pokémon icon props to a picker.`);
   }
 }
