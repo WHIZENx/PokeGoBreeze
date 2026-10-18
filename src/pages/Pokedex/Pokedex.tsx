@@ -306,7 +306,7 @@ const Pokedex = (props: IStyleSheetData) => {
     <div className="tw-relative">
       <div className="tw-relative tw-text-center tw-w-full">
         {!isNotEmpty(listOfPokemon) && isLoading && (
-          <div className="slide-container !tw-p-0 !tw-w-full !tw-h-full !tw-absolute tw-z-2 !tw-bg-spinner-default">
+          <div className="slide-container !tw-p-0 !tw-w-full !tw-h-full !tw-absolute tw-z-2">
             <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
           </div>
         )}

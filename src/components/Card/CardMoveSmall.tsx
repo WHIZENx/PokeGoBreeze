@@ -41,7 +41,8 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
           {(props.value || props.name) && move && (
             <div
               className={combineClasses(
-                'tw-flex tw-items-center tw-w-full tw-h-full tw-overflow-x-hidden tw-text-nowrap',
+                'tw-flex tw-items-center tw-w-full tw-min-w-0 tw-max-w-full tw-h-full tw-text-nowrap',
+                props.isScrollable ? 'tw-overflow-x-auto' : 'tw-overflow-x-hidden',
                 props.isDisable && 'disable-card-move'
               )}
             >
@@ -49,10 +50,10 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                 width={18}
                 height={18}
                 alt="Pokémon GO Type Logo"
-                className={combineClasses('tw-mr-2', props.isDisable && 'filter-gray')}
+                className={combineClasses('tw-mr-2 tw-shrink-0', props.isDisable && 'filter-gray')}
                 type={move.type}
               />
-              <span className="tw-mr-1">{splitAndCapitalize(move.name, '_', ' ')}</span>
+              <span className="tw-mr-1 tw-shrink-0">{splitAndCapitalize(move.name, '_', ' ')}</span>
               {!props.isHideType && isHaveMoveType() && (
                 <span
                   className={combineClasses(
@@ -61,7 +62,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                       props.isDisable ? MoveType.Disable : (props.moveType ?? move.moveType)
                     )?.toLowerCase()}-ic`,
                     props.isDisable && '!tw-text-lightgray',
-                    'type-icon-small ic !tw-flex tw-items-center tw-h-3'
+                    'type-icon-small ic !tw-flex tw-items-center tw-h-3 tw-shrink-0'
                   )}
                 >
                   {getKeyWithData(MoveType, props.moveType ?? move.moveType)}

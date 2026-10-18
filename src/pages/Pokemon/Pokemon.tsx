@@ -68,14 +68,17 @@ import {
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonType } from '../../enums/type.enum';
-import { deduplicatePokemonFormSelections, pokemonGoFormIdentityKey } from '../../utils/pokemon-form-identity';
+import {
+  deduplicatePokemonFormSelections,
+  hasPokemonGoBattleModifierCatalog,
+  pokemonGoFormIdentityKey,
+} from '../../utils/pokemon-form-identity';
 import { useNavigateToTop } from '../../components/Link/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
 import { formStandard } from '../../utils/helpers/options-context.helpers';
 import useIcon from '../../composables/useIcon';
-import useSpinner from '../../composables/useSpinner';
 import useRouter from '../../composables/useRouter';
 import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
@@ -112,14 +115,12 @@ const withPokemonGoAssetSprites = (sprites: IPokemonSprite | undefined, asset: P
 };
 
 const Pokemon = (props: IPokemonPage) => {
-  const { spinnerIsLoading } = useSpinner();
   const { routerAction } = useRouter();
   const dispatch = useDispatch();
   const { iconData } = useIcon();
   const {
     getFilteredPokemons,
     getFindPokemon,
-    getPokemonById,
     checkPokemonIncludeShadowForm,
     generatePokemonGoForms,
     getPokemonDetails,
@@ -139,6 +140,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   const [data, setData] = useState<IPokemonSpecie>();
   const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
+  const navigationIdRef = useRef(0);
 
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
@@ -170,6 +172,28 @@ const Pokemon = (props: IPokemonPage) => {
     }
     return id;
   }, [params.id, props.searchOption?.id, getFilteredPokemons, getFindPokemon]);
+
+  const navigatePokemon = useCallback(
+    (direction: -1 | 1, replace = false) => {
+      const currentId = navigationIdRef.current || getPokemonIdByParam();
+      const navigation = getPokemonNavigation(currentId);
+      const target = direction < 0 ? navigation.prev : navigation.next;
+      if (!target) {
+        return;
+      }
+
+      navigationIdRef.current = target.id;
+      setDataStorePokemon(getPokemonNavigation(target.id));
+      if (params.id) {
+        navigate(`/pokemon/${target.id}`, { replace });
+      } else if (direction < 0) {
+        props.onDecId?.();
+      } else {
+        props.onIncId?.();
+      }
+    },
+    [getPokemonIdByParam, getPokemonNavigation, navigate, params.id, props.onDecId, props.onIncId]
+  );
 
   const convertPokemonForm = (
     formName: string | undefined,
@@ -265,7 +289,10 @@ const Pokemon = (props: IPokemonPage) => {
 
       const indexPokemonGO = generatePokemonGoForms(dataFormList, formListResult, specie.id, specie.name);
 
-      if (isShadow) {
+      // The API catalog expands each exact Game Master form into its own
+      // Shadow/Purified variants. Only synthesize the old generic variants
+      // when an older API response does not provide that authoritative catalog.
+      if (isShadow && !hasPokemonGoBattleModifierCatalog(bundledPokemonGoForms)) {
         generatePokemonGoShadowForms(dataPokeList, formListResult, specie.id, specie.name, indexPokemonGO);
       }
 
@@ -546,50 +573,31 @@ const Pokemon = (props: IPokemonPage) => {
   useEffect(() => {
     if (!data) {
       const id = getPokemonIdByParam();
-      setDataStorePokemon({
-        current: new PokemonModel(id),
-      });
+      const navigation = getPokemonNavigation(id);
+      navigationIdRef.current = id;
+      setDataStorePokemon(navigation.current ? navigation : { current: new PokemonModel(id) });
       setCostModifier(undefined);
     }
-  }, [data]);
+  }, [data, getPokemonIdByParam, getPokemonNavigation]);
 
   useEffect(() => {
     const id = getPokemonIdByParam();
     if (id > 0 && isNotEmpty(getFilteredPokemons())) {
       const keyDownHandler = (event: KeyboardEvent) => {
-        if (spinnerIsLoading) {
-          return;
-        }
         const isLeft = event.key === 'ArrowLeft';
         const isRight = event.key === 'ArrowRight';
         if (!isLeft && !isRight) {
           return;
         }
-        const currentPokemon = getPokemonById(id);
-        if (!currentPokemon) {
-          return;
-        }
-        const navigation = getPokemonNavigation(currentPokemon.id);
-        if (isLeft) {
-          const prev = navigation.prev;
-          if (prev) {
-            event.preventDefault();
-            params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
-          }
-        } else {
-          const next = navigation.next;
-          if (next) {
-            event.preventDefault();
-            params.id ? navigate(`/pokemon/${next.id}`, { replace: true }) : props.onIncId?.();
-          }
-        }
+        event.preventDefault();
+        navigatePokemon(isLeft ? -1 : 1, true);
       };
       document.addEventListener('keyup', keyDownHandler);
       return () => {
         document.removeEventListener('keyup', keyDownHandler);
       };
     }
-  }, [params.id, props.searchOption?.id, spinnerIsLoading, getFilteredPokemons, getPokemonById, getPokemonNavigation]);
+  }, [params.id, props.searchOption?.id, getFilteredPokemons, navigatePokemon]);
 
   const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined) => {
     if (!form) {
@@ -735,17 +743,12 @@ const Pokemon = (props: IPokemonPage) => {
         }
       }
       if (currentForm && pokemonCurrentData) {
-        const pokemonDetails = PokemonDetail.setDetails(pokemonCurrentData);
-        pokemonDetails.pokemonType = currentForm.form.pokemonType;
-        dispatch(
-          SearchingActions.SetMainPokemonSelection.create({
-            form: currentForm,
-            pokemon: pokemonDetails,
-          })
-        );
         const originForm = splitAndCapitalize(currentForm.form.formName, '-', '-');
         setOriginForm(originForm);
         setFormName(convertSexName(currentForm.form.name));
+        // checkReleased resolves the selected form against the Game Master and
+        // dispatches the form/details pair atomically. Dispatching the raw
+        // PokéAPI body first briefly made move rankings look unavailable.
         checkReleased(id, currentForm);
       }
     }
@@ -754,23 +757,20 @@ const Pokemon = (props: IPokemonPage) => {
   useEffect(() => {
     const id = getPokemonIdByParam();
     if (id > 0 && isNotEmpty(getFilteredPokemons())) {
-      const displayedId = toNumber(data?.id);
-      if (displayedId > 0 && displayedId !== id && !progress.isLoadedForms) {
-        return;
-      }
-      const navigation = getPokemonNavigation(displayedId || id);
+      navigationIdRef.current = id;
+      const navigation = getPokemonNavigation(id);
       if (navigation.current) {
         setDataStorePokemon(navigation);
       }
     }
-  }, [getFilteredPokemons, getPokemonNavigation, params.id, props.searchOption?.id, data?.id, progress.isLoadedForms]);
+  }, [getFilteredPokemons, getPokemonIdByParam, getPokemonNavigation, params.id, props.searchOption?.id]);
 
-  const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
+  const reload = (element: JSX.Element) => {
     if (progress.isLoadedForms) {
       return element;
     }
     return (
-      <div className="slide-container !tw-w-3/4 !tw-m-0 !tw-p-0 !tw-h-6 tw-opacity-50" style={{ background: color }}>
+      <div className="slide-container !tw-w-3/4 !tw-m-0 !tw-p-0 !tw-h-6">
         <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
       </div>
     );
@@ -804,9 +804,9 @@ const Pokemon = (props: IPokemonPage) => {
     <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-w-full row prev-next-block tw-sticky tw-top-14">
         {params.id ? (
-          <SearchBarMain data={dataStorePokemon} />
+          <SearchBarMain data={dataStorePokemon} onNavigate={navigatePokemon} />
         ) : (
-          <SearchBar data={dataStorePokemon} onDecId={props.onDecId} onIncId={props.onIncId} />
+          <SearchBar data={dataStorePokemon} onDecId={() => navigatePokemon(-1)} onIncId={() => navigatePokemon(1)} />
         )}
       </div>
       <div

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import APIService from '../../../services/api.service';
 import { getKeyWithData, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
 import './SpecialForm.scss';
@@ -11,6 +11,52 @@ import { LinkToTop } from '../../Link/LinkToTop';
 import IconType from '../../Sprites/Icon/Type/Type';
 import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
+import useAssets from '../../../composables/useAssets';
+import { sortAnimationSources } from '../../../utils/pokemon-animation-assets';
+
+interface SpecialFormPokemonImageProps {
+  id: number;
+  form: IForm;
+}
+
+const SpecialFormPokemonImage = ({ id, form }: SpecialFormPokemonImageProps) => {
+  const { findAnimationForm, findExactAssetForm } = useAssets();
+  const formName = form.formName ?? form.name;
+  const pokemonType = form.pokemonType ?? PokemonType.Mega;
+  const animation = findAnimationForm(id, formName, pokemonType);
+  const staticAsset = findExactAssetForm(id, formName);
+  const imageSources = useMemo(() => {
+    const sources = sortAnimationSources(animation?.sources ?? []).map((source) => source.url);
+    if (staticAsset) {
+      sources.push(APIService.getPokemonSqModel(staticAsset));
+    }
+    return [...new Set(sources)];
+  }, [animation, staticAsset]);
+  const [sourceIndex, setSourceIndex] = useState(0);
+
+  useEffect(() => setSourceIndex(0), [imageSources]);
+
+  const activeSource = imageSources[sourceIndex] ?? APIService.getPokeSprite();
+  return (
+    <img
+      key={`${id}-${formName}-${activeSource}`}
+      className="tw-h-24 tw-w-24 tw-flex-none tw-object-contain"
+      data-testid="mega-evolution-pokemon-image"
+      height="96"
+      width="96"
+      alt={splitAndCapitalize(form.name, '-', ' ')}
+      src={activeSource}
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
+      onError={() => {
+        if (sourceIndex < imageSources.length) {
+          setSourceIndex((current) => current + 1);
+        }
+      }}
+    />
+  );
+};
 
 const SpecialForm = (props: IFormSpecialComponent) => {
   const { getFindPokemon } = usePokemon();
@@ -61,7 +107,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
   };
 
   const renderMoveLink = (name: string, fallbackType?: string) => {
-    const normalizedName = name.trim().replace(/\+$/, '').replaceAll(' ', '_').toUpperCase();
+    const normalizedName = name.trim().replaceAll(' ', '_').toUpperCase();
     const move = findMoveByName(normalizedName) ?? findMoveByName(replaceTempMovePvpName(normalizedName));
     const content = (
       <>
@@ -117,17 +163,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     className="li-evo !tw-mr-0 tw-flex tw-w-[calc(100vw-3rem)] tw-max-w-[22rem] tw-flex-none tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start"
                   >
                     <div className="tw-flex tw-items-center tw-gap-3">
-                      <img
-                        className="tw-h-24 tw-w-24 tw-flex-none tw-object-contain"
-                        height="96"
-                        width="96"
-                        alt={splitAndCapitalize(value.name, '-', ' ')}
-                        src={APIService.getPokeGifSprite(value.name)}
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = APIService.getPokeSprite();
-                        }}
-                      />
+                      <SpecialFormPokemonImage id={props.id ?? 0} form={value} />
                       <div className="tw-min-w-0">
                         <b className="tw-block tw-text-sm">#{props.id}</b>
                         <b className="link-title tw-block tw-text-lg tw-leading-tight">
@@ -158,20 +194,22 @@ const SpecialForm = (props: IFormSpecialComponent) => {
 
                     {quest.superMax && (
                       <section className="tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-p-2">
-                        <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
-                          <b>Super Max</b>
-                          <span className="caption">Requires Max Level</span>
+                        <div>
+                          <b className="tw-block">Super Max</b>
+                          <span className="caption tw-block">Requires Max Level</span>
                         </div>
-                        <div className="caption tw-mt-1 tw-flex tw-flex-wrap tw-gap-x-3 tw-gap-y-1">
+                        <div className="tw-mt-2 tw-grid tw-grid-cols-1 tw-gap-2 sm:tw-grid-cols-2">
                           {quest.superMax.unlockEnergy !== undefined && (
-                            <span>
-                              Unlock: <b>x{quest.superMax.unlockEnergy}</b>
-                            </span>
+                            <div className="tw-rounded tw-bg-custom-default tw-p-2">
+                              <span className="caption tw-block">Unlock energy</span>
+                              <b className="tw-block">x{quest.superMax.unlockEnergy}</b>
+                            </div>
                           )}
                           {quest.superMax.restHours !== undefined && (
-                            <span>
-                              Rest: <b>{quest.superMax.restHours}h</b>
-                            </span>
+                            <div className="tw-rounded tw-bg-custom-default tw-p-2">
+                              <span className="caption tw-block">Rest time</span>
+                              <b className="tw-block">{quest.superMax.restHours}h</b>
+                            </div>
                           )}
                         </div>
                       </section>

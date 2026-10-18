@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [display, evolutionStyles, selector, viteConfig, iconManifest] = await Promise.all([
+const [display, specialForm, evolutionStyles, selector, moveDetail, viteConfig, iconManifest] = await Promise.all([
   readFile(new URL('../../src/components/Info/Evolution/EvolutionPokemonDisplay.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/SpecialForm/SpecialForm.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Evolution/Evolution.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/utils/pokemon-animation-assets.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../vite.config.ts', import.meta.url), 'utf8'),
   readFile(new URL('../../src/assets/generated/pokemon-icons/pokemon-icon-index.json', import.meta.url), 'utf8').then(
     JSON.parse
@@ -27,6 +29,25 @@ assert.match(evolutionStyles, /\.evolution-form-badge > \.MuiBadge-badge/);
 assert.match(evolutionStyles, /text-overflow: ellipsis/);
 assert.match(evolutionStyles, /white-space: nowrap/);
 assert.doesNotMatch(display, /getPokeSprite\(id\)/, 'Evolution must not fall back to a different default form by ID');
+assert.match(specialForm, /findAnimationForm\(id, formName, pokemonType\)/);
+assert.match(specialForm, /findExactAssetForm\(id, formName\)/);
+assert.match(specialForm, /sortAnimationSources\(animation\?\.sources \?\? \[\]\)/);
+assert.match(specialForm, /data-testid="mega-evolution-pokemon-image"/);
+assert.match(specialForm, /loading="lazy"/);
+assert.match(specialForm, /referrerPolicy="no-referrer"/);
+assert.match(specialForm, /name\.trim\(\)\.replaceAll\(' ', '_'\)\.toUpperCase\(\)/);
+assert.doesNotMatch(
+  specialForm,
+  /replace\(\/\\\+\$\//,
+  'Mega attack links must preserve + so their unique Game Master move resolves'
+);
+assert.match(moveDetail, /move\?\.isMegaAttack/);
+assert.match(moveDetail, /move\.megaLevelPowerMultipliers/);
+assert.doesNotMatch(
+  specialForm,
+  /getPokeGifSprite\(value\.name\)/,
+  'Mega Evolution cards must resolve the generated animation manifest instead of a legacy name URL'
+);
 assert.match(
   selector,
   /normalizedPokemonType === PokemonType\.Shadow \|\| normalizedPokemonType === PokemonType\.Purified/

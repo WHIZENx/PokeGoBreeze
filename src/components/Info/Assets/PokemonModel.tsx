@@ -76,7 +76,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         />
       </h4>
       {!props.isLoadedForms ? (
-        <div className="slide-container !tw-m-0 !tw-h-44 !tw-w-full !tw-bg-custom-default !tw-p-0 tw-opacity-50">
+        <div className="slide-container !tw-m-0 !tw-h-44 !tw-w-full !tw-p-0">
           <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
         </div>
       ) : (
@@ -136,7 +136,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
-        <div className="slide-container !tw-m-0 !tw-w-full !tw-bg-custom-default !tw-p-0 tw-h-9 tw-opacity-50">
+        <div className="slide-container !tw-m-0 !tw-w-full !tw-p-0 tw-h-9">
           <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
         </div>
       ) : (
@@ -172,7 +172,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       )}
       <h6 className="tw-mt-2">Pokémon GO:</h6>
       {!props.isLoadedForms ? (
-        <div className="slide-container !tw-m-0 !tw-w-full !tw-bg-custom-default !tw-p-0 tw-h-9 tw-opacity-50">
+        <div className="slide-container !tw-m-0 !tw-w-full !tw-p-0 tw-h-9">
           <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
         </div>
       ) : (

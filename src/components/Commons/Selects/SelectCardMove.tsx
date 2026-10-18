@@ -57,11 +57,16 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
 
   return (
     <Box
-      className={combineClasses('input-control-group', props.isNoWrap ? '!tw-flex-nowrap' : '', props.className)}
+      className={combineClasses(
+        'input-control-group tw-min-w-0 tw-max-w-full',
+        props.isNoWrap ? '!tw-flex-nowrap' : '',
+        props.className
+      )}
       style={props.style}
     >
       {props.labelPrepend && <div className="input-group-text">{props.labelPrepend}</div>}
       <SelectMui
+        formClassName="tw-min-w-0 tw-max-w-full"
         displayEmpty={!props.isHideEmpty}
         menuItems={resultMove.map((value) => ({
           value: value?.name,
@@ -83,6 +88,7 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
           return (
             <CardMoveSmall
               isDisable={props.isDisable}
+              isScrollable
               name={name}
               moveType={selectedMove?.moveType}
               pokemonId={props.pokemon?.id}
@@ -94,14 +100,16 @@ const SelectCardMove = <T extends ISelectMoveModel | ICombat>(props: ISelectCard
         value={props.move?.name && resultMove.some((move) => move?.name === props.move?.name) ? props.move?.name : ''}
         onChangeSelect={(value) => changeMove(value)}
         disabled={props.isDisable || (props.pokemon && !isNotEmpty(resultMove))}
-        SelectDisplayProps={
-          props.clearData &&
-          props.move && {
-            style: {
-              paddingRight: 12,
-            },
-          }
-        }
+        SelectDisplayProps={{
+          className: '!tw-min-w-0 !tw-overflow-hidden',
+          ...(props.clearData && props.move
+            ? {
+                style: {
+                  paddingRight: 12,
+                },
+              }
+            : {}),
+        }}
         isNoneBorder
         fullWidth
       />

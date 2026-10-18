@@ -174,6 +174,8 @@ export class StatsGO implements IStatsGO {
 interface TempEvoOverrides {
   tempEvoId: string;
   stats: IStatsGO;
+  averageHeightM?: number;
+  averageWeightKg?: number;
   typeOverride1: string;
   typeOverride2?: string;
 }

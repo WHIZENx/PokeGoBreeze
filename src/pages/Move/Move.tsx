@@ -118,13 +118,16 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
     id: ColumnType.Name,
     name: 'Name',
     selector: (row) => (
-      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}>
-        <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
+      <LinkToTop
+        to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}
+        className="tw-inline-flex tw-items-center tw-gap-2"
+      >
+        <span className="tw-relative tw-inline-flex tw-items-center tw-justify-center">
           <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-[1]">
             <PokemonTableIcon {...row} />
           </PokemonIconType>
         </span>
-        {formatPokemonDisplayName(row.name)}
+        <span>{formatPokemonDisplayName(row.name)}</span>
       </LinkToTop>
     ),
     sortable: true,
@@ -499,6 +502,26 @@ const Move = (props: IMovePage) => {
                     <td colSpan={2}>
                       <b>Max Battles only</b>
                       <span className="caption tw-block">Unavailable in Trainer Battles and GO Battle League</span>
+                    </td>
+                  </tr>
+                </Fragment>
+              )}
+              {move?.isMegaAttack && (
+                <Fragment>
+                  <tr>
+                    <td>Battle Availability</td>
+                    <td colSpan={2}>
+                      <b>Mega Evolution only</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Mega Level Power</td>
+                    <td colSpan={2}>
+                      <b>
+                        {(move.megaLevelPowerMultipliers ?? [])
+                          .map((multiplier, index) => `${['Base', 'High', 'Max', 'Super Max'][index]} ×${multiplier}`)
+                          .join(' · ')}
+                      </b>
                     </td>
                   </tr>
                 </Fragment>

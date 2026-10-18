@@ -52,6 +52,7 @@ export interface ICardSmallComponent {
   isDisable?: boolean;
   isShow?: boolean;
   isSelect?: boolean;
+  isScrollable?: boolean;
   moveType?: MoveType;
   isHideType?: boolean;
   clearData?: () => void;
@@ -215,6 +216,7 @@ export interface IGenderComponent {
   pokemonType?: PokemonType;
   ratio?: IPokemonGenderRatio;
   sprite?: IPokemonSprite;
+  fallbackSprite?: IPokemonSprite;
 }
 
 export interface IPokemonRaidComponent {

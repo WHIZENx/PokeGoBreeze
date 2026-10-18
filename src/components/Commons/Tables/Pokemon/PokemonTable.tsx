@@ -8,7 +8,7 @@ import './PokemonTable.scss';
 import { formatPokemonDisplayName } from '../../../../utils/pokemon-display-name';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
-  const reload = (element: JSX.Element, hasValue = false, color = 'var(--loading-custom-bg)') => {
+  const reload = (element: JSX.Element, hasValue = false) => {
     if (props.isLoadedForms) {
       return element;
     }
@@ -16,7 +16,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
       return <div className="tw-opacity-60 tw-animate-pulse">{element}</div>;
     }
     return (
-      <div className="slide-container tw-w-full !tw-h-full !tw-m-0 !tw-p-0 tw-opacity-50" style={{ background: color }}>
+      <div className="slide-container tw-w-full !tw-h-full !tw-m-0 !tw-p-0">
         <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
       </div>
     );
@@ -73,8 +73,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                   </>
                 )}
               </h5>,
-              !isUndefined(props.gen) && isNumber(props.gen),
-              'var(--background-btn-type)'
+              !isUndefined(props.gen) && isNumber(props.gen)
             )}
           </td>
         </tr>
@@ -95,8 +94,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
               <h5 className="tw-flex">
                 {splitAndCapitalize(props.version, '-', ' ').replace(/GO$/i, 'GO').replace(/X y$/i, 'X-Y')}
               </h5>,
-              Boolean(props.version),
-              'var(--background-btn-type)'
+              Boolean(props.version)
             )}
           </td>
         </tr>
