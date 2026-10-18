@@ -65,24 +65,36 @@ const FormComponent = (props: IFormInfoComponent) => {
   const { searchingMainDetails, searchingMainForm } = useSearch();
 
   const selectedPokemonType = searchingMainForm?.form?.pokemonType;
-  const displaySprites = useMemo(() => {
+  const displaySpriteSources = useMemo(() => {
     const selectedSprites = searchingMainForm?.form?.sprites;
-    if (!isSpecialFormType(selectedPokemonType) || hasSpriteImage(selectedSprites)) {
-      return selectedSprites;
+    if (!isSpecialFormType(selectedPokemonType)) {
+      return { primary: selectedSprites };
     }
 
-    const baseForms = props.formList
+    const selectedBaseForm = getPokemonFormWithNoneSpecialForm(searchingMainForm?.form?.formName, selectedPokemonType);
+    const pokeApiBaseForms = props.formList
       .flatMap((forms) => forms)
-      .filter((item) => !isSpecialFormType(item.form.pokemonType) && hasSpriteImage(item.form.sprites));
-    const matchingBaseForm = baseForms.find(
-      (item) => item.form.isDefault && isEqual(item.name, searchingMainForm?.name)
+      .filter(
+        (item) =>
+          !isSpecialFormType(item.form.pokemonType) &&
+          (item.form.id ?? 0) > 0 &&
+          hasSpriteImage(item.form.sprites)
+      );
+    const matchingBaseForm = pokeApiBaseForms.find((item) =>
+      isEqual(
+        getPokemonFormWithNoneSpecialForm(item.form.formName, item.form.pokemonType),
+        selectedBaseForm,
+        EqualMode.IgnoreCaseSensitive
+      )
     );
-    const matchingVariety = baseForms.find((item) => isEqual(item.name, searchingMainForm?.name));
-    const defaultForm = baseForms.find((item) => item.defaultId === props.defaultId && item.form.isDefault);
+    const matchingVariety = pokeApiBaseForms.find((item) => isEqual(item.name, searchingMainForm?.name));
+    const defaultForm = pokeApiBaseForms.find((item) => item.defaultId === props.defaultId && item.form.isDefault);
+    const pokeApiSprites = matchingBaseForm?.form.sprites ?? matchingVariety?.form.sprites ?? defaultForm?.form.sprites;
 
-    return (
-      matchingBaseForm?.form.sprites ?? matchingVariety?.form.sprites ?? defaultForm?.form.sprites ?? selectedSprites
-    );
+    return {
+      primary: pokeApiSprites ?? selectedSprites,
+      fallback: pokeApiSprites ? selectedSprites : undefined,
+    };
   }, [props.defaultId, props.formList, searchingMainForm, selectedPokemonType]);
 
   const params = useParams();
@@ -91,11 +103,18 @@ const FormComponent = (props: IFormInfoComponent) => {
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
   const [genderRatio, setGenderRatio] = useState(new PokemonGenderRatio());
   const [moveTabValue, setMoveTabValue] = useState(0);
+  const selectedMoveForm = getPokemonFormWithNoneSpecialForm(
+    searchingMainForm?.form?.formName,
+    searchingMainForm?.form?.pokemonType
+  );
   const moveRanking = props.moveRankings.find(
     (item) =>
       normalizePokemonType(item.pokemonType) === normalizePokemonType(searchingMainDetails?.pokemonType) &&
-      ((item.fullName && isEqual(item.fullName, searchingMainDetails?.fullName)) ||
-        isEqual(item.form, searchingMainDetails?.form))
+      ((item.fullName &&
+        (isEqual(item.fullName, searchingMainDetails?.fullName) ||
+          isEqual(item.fullName, searchingMainForm?.form?.name))) ||
+        isEqual(item.form, searchingMainDetails?.form) ||
+        isEqual(item.form, selectedMoveForm))
   );
 
   useEffect(() => {
@@ -250,19 +269,31 @@ const FormComponent = (props: IFormInfoComponent) => {
       {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
         <div className="tw-flex tw-flex-wrap tw-gap-y-3 tw-gap-x-12.5">
           {genderRatio.M !== 0 && (
-            <Gender ratio={genderRatio} sex={TypeSex.Male} sprite={displaySprites} pokemonType={selectedPokemonType} />
+            <Gender
+              ratio={genderRatio}
+              sex={TypeSex.Male}
+              sprite={displaySpriteSources.primary}
+              fallbackSprite={displaySpriteSources.fallback}
+              pokemonType={selectedPokemonType}
+            />
           )}
           {genderRatio.F !== 0 && (
             <Gender
               ratio={genderRatio}
               sex={TypeSex.Female}
-              sprite={displaySprites}
+              sprite={displaySpriteSources.primary}
+              fallbackSprite={displaySpriteSources.fallback}
               pokemonType={selectedPokemonType}
             />
           )}
         </div>
       ) : (
-        <Gender sex={TypeSex.Genderless} sprite={displaySprites} pokemonType={selectedPokemonType} />
+        <Gender
+          sex={TypeSex.Genderless}
+          sprite={displaySpriteSources.primary}
+          fallbackSprite={displaySpriteSources.fallback}
+          pokemonType={selectedPokemonType}
+        />
       )}
       <Stats
         pokemonType={searchingMainForm?.form?.pokemonType}

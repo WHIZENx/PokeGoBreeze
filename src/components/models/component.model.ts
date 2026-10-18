@@ -215,6 +215,7 @@ export interface IGenderComponent {
   pokemonType?: PokemonType;
   ratio?: IPokemonGenderRatio;
   sprite?: IPokemonSprite;
+  fallbackSprite?: IPokemonSprite;
 }
 
 export interface IPokemonRaidComponent {

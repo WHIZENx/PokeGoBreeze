@@ -68,7 +68,11 @@ import {
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonType } from '../../enums/type.enum';
-import { deduplicatePokemonFormSelections, pokemonGoFormIdentityKey } from '../../utils/pokemon-form-identity';
+import {
+  deduplicatePokemonFormSelections,
+  hasPokemonGoBattleModifierCatalog,
+  pokemonGoFormIdentityKey,
+} from '../../utils/pokemon-form-identity';
 import { useNavigateToTop } from '../../components/Link/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { useTitle } from '../../utils/hooks/useTitle';
@@ -285,7 +289,10 @@ const Pokemon = (props: IPokemonPage) => {
 
       const indexPokemonGO = generatePokemonGoForms(dataFormList, formListResult, specie.id, specie.name);
 
-      if (isShadow) {
+      // The API catalog expands each exact Game Master form into its own
+      // Shadow/Purified variants. Only synthesize the old generic variants
+      // when an older API response does not provide that authoritative catalog.
+      if (isShadow && !hasPokemonGoBattleModifierCatalog(bundledPokemonGoForms)) {
         generatePokemonGoShadowForms(dataPokeList, formListResult, specie.id, specie.name, indexPokemonGO);
       }
 
@@ -736,17 +743,12 @@ const Pokemon = (props: IPokemonPage) => {
         }
       }
       if (currentForm && pokemonCurrentData) {
-        const pokemonDetails = PokemonDetail.setDetails(pokemonCurrentData);
-        pokemonDetails.pokemonType = currentForm.form.pokemonType;
-        dispatch(
-          SearchingActions.SetMainPokemonSelection.create({
-            form: currentForm,
-            pokemon: pokemonDetails,
-          })
-        );
         const originForm = splitAndCapitalize(currentForm.form.formName, '-', '-');
         setOriginForm(originForm);
         setFormName(convertSexName(currentForm.form.name));
+        // checkReleased resolves the selected form against the Game Master and
+        // dispatches the form/details pair atomically. Dispatching the raw
+        // PokéAPI body first briefly made move rankings look unavailable.
         checkReleased(id, currentForm);
       }
     }
