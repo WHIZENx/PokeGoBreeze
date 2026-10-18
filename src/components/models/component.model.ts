@@ -397,5 +397,6 @@ export interface IWeatherComponent {
 
 export interface ICounterComponent {
   pokemonData: Partial<IPokemonDetail> | undefined;
+  pokemonType?: PokemonType;
   isLoading?: boolean;
 }

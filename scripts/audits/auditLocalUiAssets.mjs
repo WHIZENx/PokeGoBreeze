@@ -84,9 +84,17 @@ if (!/getTypeIcon[\s\S]*?getLocalTypeMaskIcon\(type\)/.test(service)) {
 
 const placeholder = await readFile(resolve(webRoot, 'src/assets/error.png'));
 if (placeholder.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a') fail('Local placeholder is not a PNG.');
+if (placeholder.readUInt32BE(16) !== 192 || placeholder.readUInt32BE(20) !== 192 || placeholder[25] !== 6) {
+  fail('Local placeholder must preserve the transparent 192x192 circular artwork.');
+}
+const placeholderSha256 = createHash('sha256').update(placeholder).digest('hex');
+if (placeholderSha256 !== '90e954b3f2d4f8c6460d4a7f8916fb844369c045101e6320d40444d49c4b85fe') {
+  fail('Local placeholder does not match the approved theme-safe circular question icon.');
+}
 if (!service.includes('LocalPokemonGoUi.placeholder')) fail('APIService does not use the local placeholder.');
 
 console.log(
   `Local UI asset audit passed: ${entries.length + 1} PNG files, ${totalBytes + placeholder.byteLength} bytes, ` +
-    'checksums verified for generated assets.'
+    'checksums verified for generated assets. Placeholder reference: PokeMiners/pogo_assets@df0598b84318f68a5bbe5494caa4292c9b49caae ' +
+    '(Images/Menu Icons/btn_question_02_normal_white_shadow.png), adapted for dual-theme contrast.'
 );

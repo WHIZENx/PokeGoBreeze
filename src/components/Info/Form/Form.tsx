@@ -36,6 +36,21 @@ import ButtonGroupForm from '../../Commons/Buttons/ButtonGroupForm';
 import { IPokemonFormModify, IPokemonSprite } from '../../../core/models/API/form.model';
 import { Skeleton } from '@mui/material';
 import Fusion from '../FormChange/Fusion';
+import { PokemonMoves } from '../../../core/models/API/pokemon-bundle.model';
+import { IPokemonQueryRankMove } from '../../../utils/models/pokemon-top-move.model';
+
+const unavailablePokemonMoves: PokemonMoves = {
+  fastMoves: [],
+  chargedMoves: [],
+  eliteFastMoves: [],
+  eliteChargedMoves: [],
+  purifiedMoves: [],
+  shadowMoves: [],
+  specialMoves: [],
+  exclusiveMoves: [],
+  dynamaxMoves: [],
+};
+const unavailableBestMoves: IPokemonQueryRankMove = { data: [] };
 
 const hasSpriteImage = (sprite: IPokemonSprite | undefined) =>
   Object.values(sprite ?? {}).some((value) => typeof value === 'string' && Boolean(value.trim()));
@@ -117,6 +132,7 @@ const FormComponent = (props: IFormInfoComponent) => {
     currentData ??= props.pokeData.find((p) => p.isDefault);
     if (currentForm && currentData) {
       const pokemonDetails = PokemonDetail.setDetails(currentData);
+      pokemonDetails.pokemonType = currentForm.form.pokemonType;
       dispatch(
         SearchingActions.SetMainPokemonSelection.create({
           form: currentForm,
@@ -279,14 +295,18 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
         <div className="md:tw-col-span-7 tw-min-w-0">
           <TableMove
-            moveData={moveRanking?.moves}
-            rankMoveData={moveRanking?.bestMoves}
+            moveData={moveRanking?.moves ?? (props.isLoadedForms ? unavailablePokemonMoves : undefined)}
+            rankMoveData={moveRanking?.bestMoves ?? (props.isLoadedForms ? unavailableBestMoves : undefined)}
             pokemonType={searchingMainDetails?.pokemonType}
-            isLoading={!props.isLoadedForms || !moveRanking}
+            isLoading={!props.isLoadedForms}
             tabValue={moveTabValue}
             onTabChange={setMoveTabValue}
           />
-          <Counter pokemonData={searchingMainDetails} isLoading={!props.isLoadedForms || !moveRanking} />
+          <Counter
+            pokemonData={searchingMainDetails}
+            pokemonType={selectedPokemonType}
+            isLoading={!props.isLoadedForms}
+          />
         </div>
       </div>
       <hr className="tw-w-full" />

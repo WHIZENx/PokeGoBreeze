@@ -170,7 +170,6 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       hmr: {
         overlay: true,
-        port: 9001,
       },
     },
     optimizeDeps: {
