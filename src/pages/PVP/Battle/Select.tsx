@@ -19,6 +19,7 @@ import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
 import StatsCalculationService from '../../../services/stats-calculation.service';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
+import { includeGameMasterSpecialMoves } from '../pvp-move-options';
 
 const createMoveAudio = (sound: string | undefined) => {
   const audio = new Audio(APIService.getSoundMove(sound));
@@ -39,8 +40,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   const [score, setScore] = useState(0);
 
-  const rankingMoves = (moves = pokemon?.moves.fastMoves) =>
-    (moves ?? [])
+  const rankingMoves = (moves = pokemon?.moves.fastMoves, specialMoves?: string[]) =>
+    includeGameMasterSpecialMoves(moves, specialMoves)
       .map((value) => {
         const move = findMoveByName(replaceTempMovePvpName(value.moveId));
         return move ? Combat.create({ ...move, moveType: getMoveType(pokemon?.pokemon, move.name) }) : new Combat();
@@ -287,7 +288,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           move={cMovePri}
           setMovePokemon={(value) => selectCMovePri(value)}
           isDisable={props.pokemonBattle.disableCMovePri}
-          moves={rankingMoves(pokemon?.moves.chargedMoves).filter((value) => !isEqual(value.name, cMoveSec?.name))}
+          moves={rankingMoves(pokemon?.moves.chargedMoves, pokemon?.pokemon.specialMoves).filter(
+            (value) => !isEqual(value.name, cMoveSec?.name)
+          )}
         />
       </div>
       <h5 className="tw-mt-3">Charged Moves Secondary</h5>
@@ -319,7 +322,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           setMovePokemon={(value) => selectCMoveSec(value)}
           isDisable={props.pokemonBattle.disableCMoveSec}
           clearData={props.pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
-          moves={rankingMoves(pokemon?.moves.chargedMoves).filter((value) => !isEqual(value.name, cMovePri?.name))}
+          moves={rankingMoves(pokemon?.moves.chargedMoves, pokemon?.pokemon.specialMoves).filter(
+            (value) => !isEqual(value.name, cMovePri?.name)
+          )}
         />
       </div>
     </Fragment>

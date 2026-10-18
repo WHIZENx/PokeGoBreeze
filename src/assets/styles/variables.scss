@@ -181,7 +181,7 @@ $dark-link: #6ea8fe;
   --shadow-hover: #{$v000000cc};
 
   // Placeholder
-  --loading-spinner: #{$ffffff60};
+  --loading-spinner: rgb(238 238 238 / 60%);
   --loading-spinner-bg: #{$f8f8f8};
   --loading-custom-bg: #{$white-smoke};
   --loading-spinner-bg-start: #{$v464646b3};

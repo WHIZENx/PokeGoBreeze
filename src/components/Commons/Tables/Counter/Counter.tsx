@@ -195,8 +195,11 @@ const Counter = (props: ICounterComponent) => {
     page,
   ].join('|');
   const hasValidCounterTarget = defense > 0 && Boolean(typesKey);
+  const isCounterTargetPending = props.pokemonData === undefined;
   const hasFreshCounters = resolvedCounterRequestKeyRef.current === counterRequestKey;
-  const isUpdating = Boolean(props.isLoading || showFrame || (hasValidCounterTarget && !hasFreshCounters));
+  const isUpdating = Boolean(
+    props.isLoading || isCounterTargetPending || showFrame || (hasValidCounterTarget && !hasFreshCounters)
+  );
 
   const resetPagination = useCallback(() => {
     setPage(1);
@@ -373,16 +376,12 @@ const Counter = (props: ICounterComponent) => {
       setShowFrame(false);
       return;
     }
-    const requestId = ++latestRequestRef.current;
     if (!hasValidCounterTarget) {
       latestRequestRef.current += 1;
-      hasResolvedCountersRef.current = true;
-      resolvedCounterRequestKeyRef.current = counterRequestKey;
-      setCounterList([]);
-      setTotalRows(0);
       setShowFrame(false);
       return;
     }
+    const requestId = ++latestRequestRef.current;
     setShowFrame(true);
     const controller = new AbortController();
     APIService.getFetchUrl<ProcessedDataPage<ICounterModel>>(
@@ -494,7 +493,7 @@ const Counter = (props: ICounterComponent) => {
         aria-busy={isUpdating}
       >
         {isUpdating && (
-          <div className="slide-container !tw-left-0 !tw-right-0 !tw-bottom-0 !tw-top-[41px] !tw-p-0 !tw-w-full !tw-h-auto !tw-absolute tw-z-2 !tw-bg-spinner-default">
+          <div className="slide-container !tw-left-0 !tw-right-0 !tw-bottom-0 !tw-top-[41px] !tw-p-0 !tw-w-full !tw-h-auto !tw-absolute tw-z-2">
             <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
           </div>
         )}

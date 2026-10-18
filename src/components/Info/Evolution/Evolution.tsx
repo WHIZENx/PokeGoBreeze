@@ -700,7 +700,7 @@ const Evolution = (props: IEvolutionComponent) => {
     );
   };
 
-  const reload = (element: JSX.Element, color = 'var(--custom-default)') => {
+  const reload = (element: JSX.Element) => {
     if (
       props.isLoadedForms ||
       (isNotEmpty(arrEvoList) && arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id)))
@@ -708,10 +708,7 @@ const Evolution = (props: IEvolutionComponent) => {
       return element;
     }
     return (
-      <div
-        className="slide-container !tw-w-3/4 !tw-p-0 !tw-m-auto !tw-h-30 tw-opacity-50"
-        style={{ background: color }}
-      >
+      <div className="slide-container !tw-w-3/4 !tw-p-0 !tw-m-auto !tw-h-30">
         <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
       </div>
     );

@@ -12,15 +12,12 @@ import { isUndefined } from '../../../../utils/extension';
 import { Skeleton } from '@mui/material';
 
 const StatsTable = (props: IStatsTableComponent) => {
-  const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
+  const reload = (element: JSX.Element) => {
     if (props.isLoadedForms) {
       return element;
     }
     return (
-      <div
-        className="slide-container tw-w-full tw-min-w-7.5 !tw-p-0 !tw-m-auto !tw-h-4 tw-opacity-50"
-        style={{ background: color }}
-      >
+      <div className="slide-container tw-w-full tw-min-w-7.5 !tw-p-0 !tw-m-auto !tw-h-4">
         <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
       </div>
     );

@@ -5,10 +5,12 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import {
   deduplicatePokemonFormSelections,
+  hasPokemonGoBattleModifierCatalog,
   pokemonGoFormIdentityKey,
   pokemonGoFormIdentityPriority,
   selectPreferredPokemonGoFormIdentity,
 } from '../../src/utils/pokemon-form-identity.ts';
+import { buildPokemonFormCatalog } from '../../../api/src/pokemon/forms.ts';
 
 const duplicateSelectionFixture = [
   [
@@ -27,6 +29,58 @@ assert.deepEqual(
 );
 
 const pokemons = JSON.parse(await readFile(resolve(import.meta.dirname, '../../../api/data/pokemons.json'), 'utf8'));
+const pokemonIds = new Set(pokemons.map((pokemon) => pokemon.num));
+const detailCatalog = buildPokemonFormCatalog(pokemons);
+const detailCatalogById = new Map();
+
+detailCatalog.forEach((pokemon) => {
+  const forms = detailCatalogById.get(pokemon.num) ?? [];
+  forms.push(pokemon);
+  detailCatalogById.set(pokemon.num, forms);
+});
+
+assert.equal(detailCatalogById.size, pokemonIds.size, 'Pokémon Detail form catalog must cover every generated ID');
+assert.equal(
+  new Set(detailCatalog.map(pokemonGoFormIdentityKey)).size,
+  detailCatalog.length,
+  'Pokémon Detail form catalog contains duplicate semantic form identities'
+);
+
+const shadowSpecies = new Set(pokemons.filter((pokemon) => pokemon.hasShadowForm).map((pokemon) => pokemon.num));
+shadowSpecies.forEach((id) => {
+  assert.equal(
+    hasPokemonGoBattleModifierCatalog(detailCatalogById.get(id) ?? []),
+    true,
+    `Pokémon Detail catalog is missing authoritative Shadow/Purified forms for ID ${id}`
+  );
+});
+
+const namedDefaultModifierRows = pokemons.filter((pokemon) => {
+  const form = String(pokemon.form ?? '').toUpperCase();
+  const baseForm = String(pokemon.baseForme ?? '').toUpperCase();
+  return pokemon.hasShadowForm && baseForm && baseForm !== 'NORMAL' && form === baseForm;
+});
+
+namedDefaultModifierRows.forEach((pokemon) => {
+  const catalog = detailCatalogById.get(pokemon.num) ?? [];
+  for (const [pokemonType, modifier] of [
+    [2, 'SHADOW'],
+    [3, 'PURIFIED'],
+  ]) {
+    const expectedForm = `${String(pokemon.form).toUpperCase()}_${modifier}`;
+    assert(
+      catalog.some(
+        (entry) => entry.pokemonType === pokemonType && String(entry.form).toUpperCase() === expectedForm
+      ),
+      `ID ${pokemon.num} is missing canonical ${expectedForm}`
+    );
+    assert(
+      !catalog.some((entry) => entry.pokemonType === pokemonType && String(entry.form).toUpperCase() === modifier),
+      `ID ${pokemon.num} duplicates named default ${expectedForm} with generic ${modifier}`
+    );
+  }
+});
+
 const groups = new Map();
 
 pokemons.forEach((pokemon) => {
@@ -87,6 +141,8 @@ assert.deepEqual(
 const affectedSpecies = [...new Set(collisions.flatMap(([, group]) => group.map((pokemon) => pokemon.num)))];
 console.log(
   `Pokémon form identity audit passed: ${pokemons.length} GO rows across ` +
-    `${new Set(pokemons.map((pokemon) => pokemon.num)).size} species; ` +
-    `${collisions.length} alias-collision groups resolved across IDs ${affectedSpecies.join(', ')}.`
+    `${pokemonIds.size} species; ${detailCatalog.length} Detail selections are unique; ` +
+    `${collisions.length} alias-collision groups resolved across IDs ${affectedSpecies.join(', ')}; ` +
+    `${namedDefaultModifierRows.length} named-default modifier cases audited across IDs ` +
+    `${namedDefaultModifierRows.map((pokemon) => pokemon.num).join(', ')}.`
 );

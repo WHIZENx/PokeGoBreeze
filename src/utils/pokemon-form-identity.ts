@@ -11,6 +11,9 @@ export interface PokemonGoFormIdentity {
   cinematicMoves?: unknown[];
 }
 
+export const hasPokemonGoBattleModifierCatalog = (pokemons: PokemonGoFormIdentity[]) =>
+  pokemons.some((pokemon) => pokemon.pokemonType === 2 || pokemon.pokemonType === 3);
+
 interface PokemonFormSelectionIdentity {
   form?: {
     name?: string;
