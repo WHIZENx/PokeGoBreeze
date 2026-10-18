@@ -367,7 +367,7 @@ const TableMove = (props: ITableMoveComponent) => {
   return (
     <div className="move-tables-wrapper" aria-busy={isUpdating}>
       {isUpdating && (
-        <div className="slide-container !tw-left-0 !tw-right-0 !tw-bottom-0 !tw-top-12 !tw-p-0 !tw-w-full !tw-h-auto !tw-absolute tw-z-2 !tw-bg-spinner-default">
+        <div className="slide-container !tw-left-0 !tw-right-0 !tw-bottom-0 !tw-top-12 !tw-p-0 !tw-w-full !tw-h-auto !tw-absolute tw-z-2">
           <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
         </div>
       )}

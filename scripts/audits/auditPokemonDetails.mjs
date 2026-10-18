@@ -639,25 +639,47 @@ const navigate = async (id, isInitial) => {
 
 const addIssue = (issues, id, code, details = {}) => issues.push({ id, code, ...details });
 
-const expectedMoves = (row) => ({
-  fast: [...(row.quickMoves ?? []), ...(row.eliteQuickMoves ?? [])].map(normalizeMove),
-  charged: [
-    ...(row.cinematicMoves ?? []),
-    ...(row.eliteCinematicMoves ?? []),
-    ...(row.purifiedMoves ?? []),
-    ...(row.shadowMoves ?? []),
-    ...(row.specialMoves ?? []),
-    ...(row.exclusiveMoves ?? []),
-  ].map(normalizeMove),
-});
+const expectedMoves = (row) => {
+  const pokemonType = normalizePokemonType(row.pokemonType);
+  return {
+    fast: [...(row.quickMoves ?? []), ...(row.eliteQuickMoves ?? [])].map(normalizeMove),
+    charged: [
+      ...(row.cinematicMoves ?? []),
+      ...(row.eliteCinematicMoves ?? []),
+      ...(pokemonType === 3 ? (row.purifiedMoves ?? []) : []),
+      ...(pokemonType === 2 ? (row.shadowMoves ?? []) : []),
+      ...(row.specialMoves ?? []),
+      ...(row.exclusiveMoves ?? []),
+    ].map(normalizeMove),
+  };
+};
 
 const validateModifierFormSprites = (issues, id, context, button, page) => {
   if (![2, 3].includes(normalizePokemonType(button.pokemonType))) return;
-  const expectedDefaults = [button.sprites.frontDefault, button.sprites.frontFemale].filter(Boolean);
-  const expectedShiny = [button.sprites.frontShiny, button.sprites.frontShinyFemale].filter(Boolean);
+  const modifier = normalizePokemonType(button.pokemonType) === 2 ? 'SHADOW' : 'PURIFIED';
+  const baseForm = normalizeForm(normalizeForm(button.form).replace(new RegExp(`_${modifier}$|^${modifier}$`), ''));
+  const pokeApiBaseButton = page.buttons.find(
+    (candidate) =>
+      ![2, 3].includes(normalizePokemonType(candidate.pokemonType)) &&
+      candidate.formId > 0 &&
+      normalizeForm(candidate.form) === baseForm
+  );
+  const baseDefaults = [pokeApiBaseButton?.sprites.frontDefault, pokeApiBaseButton?.sprites.frontFemale].filter(
+    Boolean
+  );
+  const baseShiny = [pokeApiBaseButton?.sprites.frontShiny, pokeApiBaseButton?.sprites.frontShinyFemale].filter(
+    Boolean
+  );
+  const expectedDefaults = baseDefaults.length
+    ? baseDefaults
+    : [button.sprites.frontDefault, button.sprites.frontFemale].filter(Boolean);
+  const expectedShiny = baseShiny.length
+    ? baseShiny
+    : [button.sprites.frontShiny, button.sprites.frontShinyFemale].filter(Boolean);
   if (!expectedDefaults.length || !expectedShiny.length) {
     addIssue(issues, id, 'modifier_form_sprite_source_missing', {
       ...context,
+      pokeApiBaseButton,
       buttonSprites: button.sprites,
     });
     return;
@@ -667,6 +689,7 @@ const validateModifierFormSprites = (issues, id, context, button, page) => {
   if (invalidDefaults.length || invalidShiny.length) {
     addIssue(issues, id, 'modifier_form_sprite_mismatch', {
       ...context,
+      source: pokeApiBaseButton ? 'pokeapi-base-form' : 'pokemon-go-fallback',
       expected: { defaults: expectedDefaults, shiny: expectedShiny },
       actual: page.renderedFormSprites,
     });

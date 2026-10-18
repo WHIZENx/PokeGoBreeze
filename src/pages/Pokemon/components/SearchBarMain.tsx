@@ -24,6 +24,12 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
             to={`/pokemon/${props.data.prev.id}`}
             className="tw-flex tw-justify-start tw-items-center tw-h-full"
             title={`#${props.data.prev.id} ${splitAndCapitalize(props.data.prev.name, '-', ' ')}`}
+            onClick={(event) => {
+              if (props.onNavigate && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+                event.preventDefault();
+                props.onNavigate(-1);
+              }
+            }}
           >
             <div className="tw-cursor-pointer">
               <b>
@@ -63,6 +69,12 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
             to={`/pokemon/${props.data.next.id}`}
             className="tw-flex tw-justify-end tw-items-center tw-h-full"
             title={`#${props.data.next.id} ${splitAndCapitalize(props.data.next.name, '-', ' ')}`}
+            onClick={(event) => {
+              if (props.onNavigate && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+                event.preventDefault();
+                props.onNavigate(1);
+              }
+            }}
           >
             <div className="tw-w-full tw-cursor-pointer tw-text-right tw-overflow-hidden">
               <div className="tw-text-right">

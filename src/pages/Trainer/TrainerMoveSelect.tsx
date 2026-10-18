@@ -9,7 +9,7 @@ import { filterBattleModifierMoves } from '../../components/Commons/Selects/move
 
 export interface TrainerMoveSelection {
   fastMove?: string;
-  chargedMoves: [string | undefined, string | undefined];
+  chargedMoves: [string | undefined, string | undefined, string | undefined];
 }
 
 interface TrainerMoveSelectProps {
@@ -24,9 +24,10 @@ const unique = (values: Array<string | undefined>) => [...new Set(values.filter(
 
 export const createDefaultTrainerMoveSelection = (pokemon: IPokemonData): TrainerMoveSelection => {
   const chargedMoves = unique([...(pokemon.cinematicMoves ?? []), ...(pokemon.eliteCinematicMoves ?? [])]).slice(0, 2);
+  const megaAttack = unique(pokemon.specialMoves ?? [])[0];
   return {
     fastMove: unique([...(pokemon.quickMoves ?? []), ...(pokemon.eliteQuickMoves ?? [])])[0],
-    chargedMoves: [chargedMoves[0], chargedMoves[1]],
+    chargedMoves: [chargedMoves[0], chargedMoves[1], megaAttack],
   };
 };
 
@@ -88,27 +89,32 @@ const TrainerMoveSelect = ({ pokemon, combats, selection, onChange }: TrainerMov
           setMovePokemon={(move) => onChange({ ...selection, fastMove: move?.name })}
         />
       </Box>
-      {([0, 1] as const).map((index) => (
-        <Box key={index}>
-          <Typography variant="caption" fontWeight={700}>
-            Charged Move {index + 1}
-          </Typography>
-          <SelectCardMove<ICombat>
-            isHideEmpty
-            pokemon={selectPokemon}
-            move={selectedChargedMoves[index]}
-            moves={chargedMoves.filter(
-              (move) =>
-                !selection.chargedMoves.some(
-                  (selected, selectedIndex) =>
-                    selectedIndex !== index && normalize(selected ?? '') === normalize(move.name)
-                )
-            )}
-            setMovePokemon={(move) => setChargedMove(index, move)}
-            clearData={index === 1 ? () => undefined : undefined}
-          />
-        </Box>
-      ))}
+      {([0, 1, 2] as const)
+        .filter((index) => index < 2 || Boolean(pokemon.specialMoves?.length))
+        .map((index) => (
+          <Box key={index}>
+            <Typography variant="caption" fontWeight={700}>
+              {index === 2 ? 'Mega Attack' : `Charged Move ${index + 1}`}
+            </Typography>
+            <SelectCardMove<ICombat>
+              isHideEmpty
+              pokemon={selectPokemon}
+              move={selectedChargedMoves[index]}
+              moves={chargedMoves.filter((move) => {
+                const isMegaAttack = pokemon.specialMoves?.some((name) => normalize(name) === normalize(move.name));
+                return (
+                  (index === 2 ? isMegaAttack : !isMegaAttack) &&
+                  !selection.chargedMoves.some(
+                    (selected, selectedIndex) =>
+                      selectedIndex !== index && normalize(selected ?? '') === normalize(move.name)
+                  )
+                );
+              })}
+              setMovePokemon={(move) => setChargedMove(index, move)}
+              clearData={index > 0 ? () => undefined : undefined}
+            />
+          </Box>
+        ))}
     </Box>
   );
 };

@@ -2,11 +2,49 @@ import React from 'react';
 import APIService from '../../services/api.service';
 import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
-import { getKeyWithData } from '../../utils/utils';
-import { getValueOrDefault } from '../../utils/extension';
+import { getKeyWithData, setNextPokemonImageFallback } from '../../utils/utils';
 import PokemonIconType from '../Sprites/PokemonIconType/PokemonIconType';
 
 const Gender = (props: IGenderComponent) => {
+  const defaultSpriteCandidates =
+    props.sex === TypeSex.Male
+      ? [
+          props.sprite?.frontDefault,
+          props.sprite?.frontFemale,
+          props.sprite?.frontHome,
+          props.sprite?.frontArtwork,
+          props.fallbackSprite?.frontDefault,
+          props.fallbackSprite?.frontFemale,
+          APIService.getPokeSprite(),
+        ]
+      : [
+          props.sprite?.frontFemale,
+          props.sprite?.frontDefault,
+          props.sprite?.frontHome,
+          props.sprite?.frontArtwork,
+          props.fallbackSprite?.frontFemale,
+          props.fallbackSprite?.frontDefault,
+          APIService.getPokeSprite(),
+        ];
+  const shinySpriteCandidates =
+    props.sex === TypeSex.Male
+      ? [
+          props.sprite?.frontShiny,
+          props.sprite?.frontShinyFemale,
+          props.fallbackSprite?.frontShiny,
+          props.fallbackSprite?.frontShinyFemale,
+          APIService.getPokeSprite(),
+        ]
+      : [
+          props.sprite?.frontShinyFemale,
+          props.sprite?.frontShiny,
+          props.fallbackSprite?.frontShinyFemale,
+          props.fallbackSprite?.frontShiny,
+          APIService.getPokeSprite(),
+        ];
+  const defaultSprite = defaultSpriteCandidates.find(Boolean) ?? APIService.getPokeSprite();
+  const shinySprite = shinySpriteCandidates.find(Boolean) ?? APIService.getPokeSprite();
+
   return (
     <div className="tw-mt-3 tw-mr-3">
       <div className="tw-flex tw-items-center tw-gap-x-3">
@@ -28,28 +66,14 @@ const Gender = (props: IGenderComponent) => {
           <div className="img-gender-group tw-relative">
             <img
               data-testid="pokemon-form-default-sprite"
+              className="tw-h-24 tw-w-24 tw-object-contain"
               width={96}
               height={96}
               alt="Pokémon Image"
               onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeSprite();
+                setNextPokemonImageFallback(e.currentTarget, defaultSpriteCandidates);
               }}
-              src={
-                props.sex === TypeSex.Male
-                  ? getValueOrDefault(
-                      String,
-                      props.sprite?.frontDefault,
-                      props.sprite?.frontFemale,
-                      APIService.getPokeSprite()
-                    )
-                  : getValueOrDefault(
-                      String,
-                      props.sprite?.frontFemale,
-                      props.sprite?.frontDefault,
-                      APIService.getPokeSprite()
-                    )
-              }
+              src={defaultSprite}
             />
             <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />
           </div>
@@ -59,28 +83,14 @@ const Gender = (props: IGenderComponent) => {
           <div className="img-gender-group tw-relative">
             <img
               data-testid="pokemon-form-shiny-sprite"
+              className="tw-h-24 tw-w-24 tw-object-contain"
               width={96}
               height={96}
               alt="Pokémon Image"
               onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeSprite();
+                setNextPokemonImageFallback(e.currentTarget, shinySpriteCandidates);
               }}
-              src={
-                props.sex === TypeSex.Male
-                  ? getValueOrDefault(
-                      String,
-                      props.sprite?.frontShiny,
-                      props.sprite?.frontShinyFemale,
-                      APIService.getPokeSprite()
-                    )
-                  : getValueOrDefault(
-                      String,
-                      props.sprite?.frontShinyFemale,
-                      props.sprite?.frontShiny,
-                      APIService.getPokeSprite()
-                    )
-              }
+              src={shinySprite}
             />
             <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />
           </div>

@@ -15,6 +15,13 @@ export const getDesignThemes = (mode: TypeTheme) =>
       },
     },
     components: {
+      MuiSkeleton: {
+        styleOverrides: {
+          root: {
+            backgroundColor: 'var(--loading-spinner)',
+          },
+        },
+      },
       MuiInputBase: {
         styleOverrides: {
           root: {
