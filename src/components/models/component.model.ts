@@ -52,6 +52,7 @@ export interface ICardSmallComponent {
   isDisable?: boolean;
   isShow?: boolean;
   isSelect?: boolean;
+  isScrollable?: boolean;
   moveType?: MoveType;
   isHideType?: boolean;
   clearData?: () => void;

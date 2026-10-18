@@ -123,6 +123,8 @@ const [
   genderSource,
   utilsSource,
   trainerMoveSelectSource,
+  selectCardMoveSource,
+  cardMoveSmallSource,
 ] = await Promise.all([
     readFile(new URL('../../src/pages/Sheets/DpsTdo/DpsTdo.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
@@ -133,6 +135,8 @@ const [
     readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/utils/utils.ts', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Trainer/TrainerMoveSelect.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Commons/Selects/SelectCardMove.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Card/CardMoveSmall.tsx', import.meta.url), 'utf8'),
   ]);
 assert.match(dpsTdoSource, /max=\{maxTrainerFriendshipLevel\(\)\}/);
 assert.match(moveSource, /PVE Power \/ Second/);
@@ -153,6 +157,9 @@ assert.match(genderSource, /tw-object-contain/);
 assert.match(utilsSource, /replace\(\/_PLUS\$\/, '\+'\)/);
 assert.match(trainerMoveSelectSource, /index === 2 \? 'Mega Attack'/);
 assert.match(trainerMoveSelectSource, /pokemon\.specialMoves/);
+assert.match(selectCardMoveSource, /isScrollable/);
+assert.match(selectCardMoveSource, /tw-min-w-0 tw-max-w-full/);
+assert.match(cardMoveSmallSource, /tw-overflow-x-auto/);
 assert.match(
   pokemonFormSource,
   /moveData=\{moveRanking\?\.moves \?\? \(props\.isLoadedForms \? unavailablePokemonMoves/
