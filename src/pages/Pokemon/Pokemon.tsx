@@ -38,12 +38,10 @@ import {
   convertPokemonImageName,
   convertSexName,
   generatePokemonGoShadowForms,
-  getDmgMultiplyBonus,
   getKeyWithData,
   getPokemonFormWithNoneSpecialForm,
   getPreferredPokemonFormSprite,
   getPokemonType,
-  isSpecialFormType,
   splitAndCapitalize,
 } from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
@@ -69,11 +67,10 @@ import {
 } from '../../utils/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
-import { PokemonType, TypeAction } from '../../enums/type.enum';
+import { PokemonType } from '../../enums/type.enum';
 import { deduplicatePokemonFormSelections, pokemonGoFormIdentityKey } from '../../utils/pokemon-form-identity';
 import { useNavigateToTop } from '../../components/Link/LinkToTop';
 import { SearchingActions } from '../../store/actions';
-import { StatsPokemonGO } from '../../core/models/stats.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
 import { formStandard } from '../../utils/helpers/options-context.helpers';
@@ -404,6 +401,7 @@ const Pokemon = (props: IPokemonPage) => {
       defaultData ??= dataPokeList.find((value) => isEqual(value.name, currentForm?.name));
       if (defaultData && currentForm) {
         const pokemonDetails = PokemonDetail.setDetails(defaultData);
+        pokemonDetails.pokemonType = currentForm.form.pokemonType;
         dispatch(
           SearchingActions.SetMainPokemonSelection.create({
             form: currentForm,
@@ -604,12 +602,6 @@ const Pokemon = (props: IPokemonPage) => {
     const formName = [form.form?.formName, form.form?.name, form.defaultName].find((value) => isNotEmpty(value));
     const details = getPokemonDetails(id, formName, form.form?.pokemonType, form.form?.isDefault);
     details.pokemonType = form.form?.pokemonType ?? PokemonType.Normal;
-    if (isSpecialFormType(details.pokemonType)) {
-      const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, TypeAction.Atk);
-      const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, TypeAction.Def);
-      const sta = details.statsGO.sta;
-      details.statsGO = StatsPokemonGO.create(atk, def, sta);
-    }
     const pokemonDetails = PokemonDetail.setData(details);
     const normalizeBodyName = (value: string | undefined) => value?.replaceAll('_', '-').toLowerCase();
     const normalizedFullName = normalizeBodyName(details.fullName);
@@ -744,6 +736,7 @@ const Pokemon = (props: IPokemonPage) => {
       }
       if (currentForm && pokemonCurrentData) {
         const pokemonDetails = PokemonDetail.setDetails(pokemonCurrentData);
+        pokemonDetails.pokemonType = currentForm.form.pokemonType;
         dispatch(
           SearchingActions.SetMainPokemonSelection.create({
             form: currentForm,

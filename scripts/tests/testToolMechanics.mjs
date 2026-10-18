@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import {
   encounterProbabilityPercent,
   encounterTimeSeconds,
@@ -19,6 +20,7 @@ import {
   displayPokemonGoStatDifference,
 } from '../../src/pages/Tools/CalculateStats/calculate-stats-display.ts';
 import { formatBattleStatsPokemonName } from '../../src/pages/Tools/SearchBattle/search-battle-display.ts';
+import { pokemonGoBattleHp, pokemonGoStatProduct } from '../../src/utils/pokemon-go-stats.ts';
 
 const ivsWithTotal = (total) => ({
   atk: Math.min(total, 15),
@@ -91,6 +93,9 @@ assert.equal(formatBattleStatsPokemonName('BULBASAUR', 'NORMAL'), 'Bulbasaur');
 assert.equal(formatBattleStatsPokemonName('DUDUNSPARCE', 'ORDINARY'), 'Dudunsparce');
 assert.equal(formatBattleStatsPokemonName('SLOWBRO', 'GALARIAN'), 'Slowbro Galarian');
 assert.equal(formatBattleStatsPokemonName('MEOWSTIC_FEMALE', 'FEMALE'), 'Meowstic Female');
+assert.equal(pokemonGoBattleHp(132.99), 132);
+assert.equal(pokemonGoBattleHp(9.99), 10);
+assert.equal(pokemonGoStatProduct(118.05, 121.95, 132.99), 118.05 * 121.95 * 132);
 assert.deepEqual(
   filterBattleModifierMoves(modifierMoves, 2).map(({ name }) => name),
   ['TACKLE', 'FRUSTRATION']
@@ -100,6 +105,31 @@ assert.deepEqual(
   ['TACKLE', 'RETURN']
 );
 
+const [dpsTdoSource, moveSource, searchMovesSource, pokemonSource, counterSource, pokemonFormSource] = await Promise.all([
+  readFile(new URL('../../src/pages/Sheets/DpsTdo/DpsTdo.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Search/Moves/SearchMoves.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Tables/Counter/Counter.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
+]);
+assert.match(dpsTdoSource, /max=\{maxTrainerFriendshipLevel\(\)\}/);
+assert.match(moveSource, /PVE Power \/ Second/);
+assert.match(moveSource, /Scaled PVE Power/);
+assert.doesNotMatch(searchMovesSource, /name: 'PvE DPS'/);
+assert.match(searchMovesSource, /name: 'PvE Power \/ Second'/);
+assert.doesNotMatch(pokemonSource, /details\.statsGO\.def \* getDmgMultiplyBonus/);
+assert.match(counterSource, /pokemonType: targetPokemonType/);
+assert.match(counterSource, /props\.pokemonType \?\? props\.pokemonData\?\.pokemonType/);
+assert.match(pokemonFormSource, /pokemonType=\{selectedPokemonType\}/);
+assert.match(pokemonFormSource, /moveData=\{moveRanking\?\.moves \?\? \(props\.isLoadedForms \? unavailablePokemonMoves/);
+assert.match(pokemonFormSource, /<Counter[\s\S]*pokemonData=\{searchingMainDetails\}/);
+assert.doesNotMatch(pokemonFormSource, /pokemonData=\{moveRanking \?/);
+assert.doesNotMatch(pokemonFormSource, /isLoading=\{!props\.isLoadedForms \|\| !moveRanking\}/);
+assert.match(counterSource, /if \(!hasValidCounterTarget\)[\s\S]*setCounterList\(\[\]\)[\s\S]*setShowFrame\(false\)/);
+assert.match(counterSource, /toFloatWithPadding\(row\.dps, 2\).*DPS/s);
+assert.match(counterSource, /tw-text-\[var\(--text-secondary\)\]/);
+
 console.log(
-  'Tool mechanics regression passed: appraisal IV bands, encounter values, modifier moves, Raid tiers, integer stats, and Battle League labels are correct.'
+  'Tool mechanics regression passed: appraisal IV bands, encounter values, modifier moves, Raid tiers, integer stats, PvP stat products, move-rate labels, Friendship levels, Shadow counters, and Battle League labels are correct.'
 );

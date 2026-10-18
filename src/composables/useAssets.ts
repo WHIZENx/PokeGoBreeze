@@ -7,6 +7,8 @@ import { useCallback } from 'react';
 import { convertPokemonAPIDataFormName } from '../utils/utils';
 import { GenderType } from '../core/enums/asset.enum';
 import { IImage } from '../core/models/asset.model';
+import { PokemonType } from '../enums/type.enum';
+import { selectAnimationForm } from '../utils/pokemon-animation-assets';
 
 const genderRank = (gender: GenderType | undefined) =>
   gender === GenderType.Male ? 0 : gender === GenderType.GenderLess ? 1 : 2;
@@ -74,6 +76,17 @@ export const useAssets = () => {
     [findAssetsById]
   );
 
+  const queryExactAssetForm = useCallback(
+    (id: number | undefined, formName = formNormal()) => {
+      const pokemonAssets = findAssetsById(id);
+      if (!pokemonAssets) {
+        return;
+      }
+      return selectAssetForm(pokemonAssets.image, formName.replaceAll('-', '_'), pokemonAssets.name);
+    },
+    [findAssetsById]
+  );
+
   const findAssetForm = useCallback(
     (id: number | undefined, formName = formNormal(), formType = FormType.Default) => {
       const form = queryAssetForm(id, formName);
@@ -89,6 +102,28 @@ export const useAssets = () => {
       return;
     },
     [queryAssetForm]
+  );
+
+  const findExactAssetForm = useCallback(
+    (id: number | undefined, formName = formNormal(), formType = FormType.Default) => {
+      const form = queryExactAssetForm(id, formName);
+      if (!form) {
+        return;
+      }
+      return formType === FormType.Shiny ? form.shiny : form.default;
+    },
+    [queryExactAssetForm]
+  );
+
+  const findAnimationForm = useCallback(
+    (id: number | undefined, formName = formNormal(), pokemonType = PokemonType.Normal) => {
+      const pokemonAssets = findAssetsById(id);
+      if (!pokemonAssets?.animation) {
+        return;
+      }
+      return selectAnimationForm(pokemonAssets.animation, formName, pokemonType);
+    },
+    [findAssetsById]
   );
 
   const getAssetNameById = useCallback(
@@ -107,6 +142,8 @@ export const useAssets = () => {
   return {
     findAssetsById,
     findAssetForm,
+    findExactAssetForm,
+    findAnimationForm,
     queryAssetForm,
     getAssetNameById,
   };

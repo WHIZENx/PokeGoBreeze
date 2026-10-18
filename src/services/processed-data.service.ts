@@ -2,7 +2,7 @@ import APIService from './api.service';
 import { APIUrl } from './constants';
 import type { AxiosRequestConfig } from 'axios';
 
-export const PROCESSED_DATA_SCHEMA_VERSION = 5;
+export const PROCESSED_DATA_SCHEMA_VERSION = 6;
 
 export class UnsupportedProcessedDataSchemaError extends Error {
   constructor(actualVersion: unknown) {
@@ -31,6 +31,12 @@ export interface ProcessedDataMeta {
     candy?: number;
     candyCommitSha?: string;
     pvp: number;
+    animation?: {
+      projectCommitSha: string;
+      pokeApiSpriteCommitSha: string;
+      pokeApiDataCommitSha: string;
+      showdownCheckedAt: string;
+    };
   };
   sections: Record<string, number>;
   sectionHashes?: Record<string, string>;

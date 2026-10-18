@@ -66,6 +66,31 @@ export const resolvePokemonIconIndex = ({
   baseSpecies,
   pokemonType,
 }: Omit<PokemonTableIconProps, 'className' | 'size'>) => {
+  const alternate = resolveExactPokemonIconIndex({
+    num,
+    name,
+    fullName,
+    slug,
+    sprite,
+    form,
+    baseSpecies,
+    pokemonType,
+  });
+
+  // Pokémon Showdown indexes base species by National Pokédex number. GO-only
+  // costumes that have no dedicated cell intentionally fall back to this icon.
+  return alternate ?? Math.min(Math.max(Math.trunc(num), 0), 1025);
+};
+
+export const resolveExactPokemonIconIndex = ({
+  name,
+  fullName,
+  slug,
+  sprite,
+  form,
+  baseSpecies,
+  pokemonType,
+}: Omit<PokemonTableIconProps, 'className' | 'size' | 'num'> & Pick<PokemonTableIconProps, 'num'>) => {
   const baseId = normalizeCandidate(baseSpecies, pokemonType);
   const formId = normalizeCandidate(form, pokemonType);
   const candidates = [
@@ -76,11 +101,8 @@ export const resolvePokemonIconIndex = ({
     !BASE_FORMS.has(formId) && baseId ? normalizeCandidate(`${baseId}-${form}`, pokemonType) : '',
   ];
   const indexes = iconManifest.indexes as Record<string, number>;
-  const alternate = candidates.find((candidate) => candidate && indexes[candidate] !== undefined);
-
-  // Pokémon Showdown indexes base species by National Pokédex number. GO-only
-  // costumes that have no dedicated cell intentionally fall back to this icon.
-  return alternate ? indexes[alternate] : Math.min(Math.max(Math.trunc(num), 0), 1025);
+  const exact = candidates.find((candidate) => candidate && indexes[candidate] !== undefined);
+  return exact ? indexes[exact] : undefined;
 };
 
 const PokemonTableIcon = ({ className = '', size = 48, ...pokemon }: PokemonTableIconProps) => {
