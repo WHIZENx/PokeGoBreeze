@@ -52,7 +52,7 @@ const normalizeIconCandidate = (value, pokemonType) => {
   if ([2, 3].includes(normalizePokemonType(pokemonType))) {
     identity = identity.replace(/(?:shadow|purified)$/, '');
   }
-  return identity
+  identity = identity
     .replaceAll('hisuian', 'hisui')
     .replaceAll('galarian', 'galar')
     .replaceAll('alolan', 'alola')
@@ -72,7 +72,11 @@ const normalizeIconCandidate = (value, pokemonType) => {
     .replace(/crownedshield$/, 'crowned')
     .replace(/icerider$/, 'ice')
     .replace(/shadowrider$/, 'shadow')
+    .replace(/totemalola$/, 'alolatotem')
+    .replace(/totembusted$/, 'bustedtotem')
+    .replace(/totemdisguised$/, 'totem')
     .replace(/standard$/, '');
+  return identity === 'marowaktotem' ? 'marowakalolatotem' : identity;
 };
 
 const pokemons = JSON.parse(await readFile(resolve(workspaceRoot, 'modules/api/data/pokemons.json'), 'utf8'));
@@ -175,6 +179,8 @@ const normalizeCanonicalIdentity = (id, value) => {
     identity = identity.replace(/_ICE$/, '_ICE_RIDER').replace(/_SHADOW$/, '_SHADOW_RIDER');
   }
   if (id === 386) identity = identity.replace(/_NORMAL$/, '');
+  if (id === 20) identity = identity.replace(/_TOTEM_ALOLA$/, '_ALOLA_TOTEM');
+  if (id === 105) identity = identity.replace(/^MAROWAK_TOTEM$/, 'MAROWAK_ALOLA_TOTEM');
   if (id === 778) {
     identity = identity
       .replace(/_TOTEM_DISGUISED$/, '_TOTEM')

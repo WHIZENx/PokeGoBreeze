@@ -15,6 +15,7 @@ export const hasPokemonGoBattleModifierCatalog = (pokemons: PokemonGoFormIdentit
   pokemons.some((pokemon) => pokemon.pokemonType === 2 || pokemon.pokemonType === 3);
 
 interface PokemonFormSelectionIdentity {
+  defaultId?: number;
   form?: {
     name?: string;
     formName?: string;
@@ -31,7 +32,10 @@ export const deduplicatePokemonFormSelections = <T extends PokemonFormSelectionI
     .map((group) =>
       group.filter((selection) => {
         const form = selection.form;
-        const identity = normalizeSelectionIdentity(form?.name) || normalizeSelectionIdentity(form?.formName);
+        const identity = normalizePokemonFormIdentity(
+          selection.defaultId ?? 0,
+          normalizeSelectionIdentity(form?.name) || normalizeSelectionIdentity(form?.formName)
+        );
         const key = `${form?.pokemonType ?? 0}:${identity}`;
         if (!identity || !seen.has(key)) {
           seen.add(key);
@@ -59,6 +63,8 @@ const canonicalDefaultFormById: Readonly<Record<number, string>> = {
   1013: 'UNREMARKABLE',
 };
 
+const maleDefaultFormIds = new Set([592, 593, 668, 678, 902, 916]);
+
 export const normalizePokemonFormIdentity = (id: number, value: string | number | undefined) => {
   let identity = String(value ?? '')
     .trim()
@@ -68,6 +74,22 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
     .replace(/(^|_)GALAR(?=_|$)/g, '$1GALARIAN')
     .replace(/(^|_)HISUI(?=_|$)/g, '$1HISUIAN')
     .replace(/(^|_)POKE_BALL(?=_|$)/g, '$1POKEBALL');
+
+  if (id === 25) {
+    identity = identity.replace(/_CAP$/, '').replace(/^CAP$/, 'NORMAL');
+  } else if (id === 128) {
+    identity = identity.replace(/_BREED$/, '');
+  } else if (id === 422 || id === 423) {
+    identity = identity
+      .replace(/_WEST$/, '_WEST_SEA')
+      .replace(/^WEST$/, 'WEST_SEA')
+      .replace(/_EAST$/, '_EAST_SEA')
+      .replace(/^EAST$/, 'EAST_SEA');
+  } else if (id === 555) {
+    identity = identity.replace(/_GALARIAN_STANDARD$/, '_GALARIAN').replace(/^GALARIAN_STANDARD$/, 'GALARIAN');
+  } else if (maleDefaultFormIds.has(id)) {
+    identity = identity.replace(/_MALE$/, '').replace(/^MALE$/, 'NORMAL');
+  }
 
   if (id === 718) {
     identity = identity.replace(/_10$/, '_TEN_PERCENT').replace(/_50$/, '_FIFTY_PERCENT');
@@ -83,6 +105,13 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
   } else if (id === 898) {
     identity = identity.replace(/_ICE$/, '_ICE_RIDER').replace(/^ICE$/, 'ICE_RIDER');
     identity = identity.replace(/_SHADOW$/, '_SHADOW_RIDER').replace(/^SHADOW$/, 'SHADOW_RIDER');
+  } else if (id === 20) {
+    identity = identity.replace(/_TOTEM_ALOLA$/, '_ALOLA_TOTEM').replace(/^TOTEM_ALOLA$/, 'ALOLA_TOTEM');
+  } else if (id === 105) {
+    identity = identity.replace(/^MAROWAK_TOTEM$/, 'MAROWAK_ALOLA_TOTEM').replace(/^TOTEM$/, 'ALOLA_TOTEM');
+  } else if (id === 778) {
+    identity = identity.replace(/_TOTEM_DISGUISED$/, '_TOTEM').replace(/^TOTEM_DISGUISED$/, 'TOTEM');
+    identity = identity.replace(/_TOTEM_BUSTED$/, '_BUSTED_TOTEM').replace(/^TOTEM_BUSTED$/, 'BUSTED_TOTEM');
   } else if (id === 716) {
     identity = identity.replace(/_ACTIVE$/, '').replace(/^ACTIVE$/, 'NORMAL');
   } else if (id === 931) {

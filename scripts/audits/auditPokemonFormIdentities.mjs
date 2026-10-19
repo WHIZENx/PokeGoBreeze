@@ -6,6 +6,7 @@ import { resolve } from 'node:path';
 import {
   deduplicatePokemonFormSelections,
   hasPokemonGoBattleModifierCatalog,
+  normalizePokemonFormIdentity,
   pokemonGoFormIdentityKey,
   pokemonGoFormIdentityPriority,
   selectPreferredPokemonGoFormIdentity,
@@ -27,6 +28,114 @@ assert.deepEqual(
   duplicateSelectionFixture[0],
   'Exact Shadow/Purified form selections must be deduplicated across variety groups'
 );
+
+const upstreamAliasSelectionFixture = [
+  [
+    {
+      defaultId: 20,
+      form: { name: 'raticate-totem-alola', formName: 'totem-alola', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 20,
+      form: { name: 'raticate-alola-totem', formName: 'alola-totem', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 105,
+      form: { name: 'marowak-totem', formName: 'totem', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 105,
+      form: { name: 'marowak-alola-totem', formName: 'alola-totem', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 778,
+      form: { name: 'mimikyu-totem-disguised', formName: 'totem-disguised', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 778,
+      form: { name: 'mimikyu-totem', formName: 'totem', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 778,
+      form: { name: 'mimikyu-totem-busted', formName: 'totem-busted', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 778,
+      form: { name: 'mimikyu-busted-totem', formName: 'busted-totem', pokemonType: 0 },
+    },
+  ],
+];
+assert.equal(
+  deduplicatePokemonFormSelections(upstreamAliasSelectionFixture).flat().length,
+  4,
+  'PokéAPI/GO form aliases must collapse to Raticate and Marowak Alola Totem plus both Mimikyu Totem states'
+);
+
+const darmanitanGalarSelectionFixture = [
+  [
+    {
+      defaultId: 555,
+      form: { name: 'darmanitan-galar-standard', formName: 'galar-standard', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 555,
+      form: { name: 'darmanitan-galarian', formName: 'galarian', pokemonType: 0 },
+    },
+  ],
+];
+assert.equal(
+  deduplicatePokemonFormSelections(darmanitanGalarSelectionFixture).flat().length,
+  1,
+  'Darmanitan Galar Standard/Galarian selections must collapse to one canonical form'
+);
+
+const canonicalSourceAliasCases = [
+  [25, 'PIKACHU_ORIGINAL_CAP', 'PIKACHU_ORIGINAL'],
+  [25, 'PIKACHU_HOENN_CAP', 'PIKACHU_HOENN'],
+  [25, 'PIKACHU_SINNOH_CAP', 'PIKACHU_SINNOH'],
+  [25, 'PIKACHU_UNOVA_CAP', 'PIKACHU_UNOVA'],
+  [25, 'PIKACHU_KALOS_CAP', 'PIKACHU_KALOS'],
+  [25, 'PIKACHU_ALOLA_CAP', 'PIKACHU_ALOLA'],
+  [25, 'PIKACHU_PARTNER_CAP', 'PIKACHU_PARTNER'],
+  [25, 'PIKACHU_WORLD_CAP', 'PIKACHU_WORLD'],
+  [128, 'TAUROS_PALDEA_COMBAT_BREED', 'TAUROS_PALDEA_COMBAT'],
+  [128, 'TAUROS_PALDEA_BLAZE_BREED', 'TAUROS_PALDEA_BLAZE'],
+  [128, 'TAUROS_PALDEA_AQUA_BREED', 'TAUROS_PALDEA_AQUA'],
+  [422, 'SHELLOS_WEST', 'SHELLOS_WEST_SEA'],
+  [422, 'SHELLOS_EAST', 'SHELLOS_EAST_SEA'],
+  [423, 'GASTRODON_WEST', 'GASTRODON_WEST_SEA'],
+  [423, 'GASTRODON_EAST', 'GASTRODON_EAST_SEA'],
+  [555, 'DARMANITAN_GALARIAN_STANDARD', 'DARMANITAN_GALARIAN'],
+  [592, 'FRILLISH_MALE', 'FRILLISH'],
+  [593, 'JELLICENT_MALE', 'JELLICENT'],
+  [668, 'PYROAR_MALE', 'PYROAR'],
+  [678, 'MEOWSTIC_MALE', 'MEOWSTIC'],
+  [902, 'BASCULEGION_MALE', 'BASCULEGION'],
+  [916, 'OINKOLOGNE_MALE', 'OINKOLOGNE'],
+];
+canonicalSourceAliasCases.forEach(([id, pokeApiIdentity, pokemonGoIdentity]) => {
+  assert.equal(
+    normalizePokemonFormIdentity(id, pokeApiIdentity),
+    normalizePokemonFormIdentity(id, pokemonGoIdentity),
+    `PokéAPI/GO identity mismatch for ID ${id}: ${pokeApiIdentity}/${pokemonGoIdentity}`
+  );
+});
 
 const pokemons = JSON.parse(await readFile(resolve(import.meta.dirname, '../../../api/data/pokemons.json'), 'utf8'));
 const pokemonIds = new Set(pokemons.map((pokemon) => pokemon.num));
@@ -143,6 +252,9 @@ console.log(
   `Pokémon form identity audit passed: ${pokemons.length} GO rows across ` +
     `${pokemonIds.size} species; ${detailCatalog.length} Detail selections are unique; ` +
     `${collisions.length} alias-collision groups resolved across IDs ${affectedSpecies.join(', ')}; ` +
+    `${upstreamAliasSelectionFixture.length} PokéAPI/GO alias selections collapse to 4 canonical forms; ` +
+    `${darmanitanGalarSelectionFixture.length} Darmanitan Galar aliases collapse to 1 canonical form; ` +
+    `${canonicalSourceAliasCases.length} cross-source aliases match; ` +
     `${namedDefaultModifierRows.length} named-default modifier cases audited across IDs ` +
     `${namedDefaultModifierRows.map((pokemon) => pokemon.num).join(', ')}.`
 );
