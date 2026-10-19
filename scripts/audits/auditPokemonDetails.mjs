@@ -79,7 +79,25 @@ const normalizeIconCandidate = (value, pokemonType) => {
   return identity === 'marowaktotem' ? 'marowakalolatotem' : identity;
 };
 
-const pokemons = JSON.parse(await readFile(resolve(workspaceRoot, 'modules/api/data/pokemons.json'), 'utf8'));
+const [pokemons, pokemonAssets] = await Promise.all([
+  readFile(resolve(workspaceRoot, 'modules/api/data/pokemons.json'), 'utf8').then(JSON.parse),
+  readFile(resolve(workspaceRoot, 'modules/api/data/assets.json'), 'utf8').then(JSON.parse),
+]);
+const pokemonAssetsById = new Map(pokemonAssets.map((asset) => [Number(asset.id), asset]));
+const hasAnimationForForm = (id, form, pokemonType) => {
+  const normalizedForm = normalizeForm(form);
+  const candidateTypes = [2, 3].includes(Number(pokemonType)) ? [Number(pokemonType), 1, 0] : [Number(pokemonType)];
+  return candidateTypes.some((candidateType) =>
+    pokemonAssetsById
+      .get(Number(id))
+      ?.animation?.some(
+        (animation) =>
+          normalizeForm(animation.form) === normalizedForm &&
+          Number(animation.pokemonType) === candidateType &&
+          animation.sources?.length
+      )
+  );
+};
 const iconManifest = JSON.parse(
   await readFile(resolve(webRoot, 'src/assets/generated/pokemon-icons/pokemon-icon-index.json'), 'utf8')
 );
@@ -265,6 +283,15 @@ const findButtonIndexForRow = (id, buttons, row) => {
   return bestIndex;
 };
 
+const profileBaseIdentity = (id, button) => {
+  const pokemonType = normalizePokemonType(button.pokemonType);
+  const modifier = pokemonType === 2 ? 'SHADOW' : pokemonType === 3 ? 'PURIFIED' : undefined;
+  const form = modifier
+    ? normalizeForm(button.form).replace(new RegExp(`_${modifier}$|^${modifier}$`), '') || 'NORMAL'
+    : normalizeForm(button.form);
+  return normalizeCanonicalIdentity(id, form || 'NORMAL');
+};
+
 const expectedFormCardIconIndex = (id, button) => {
   const baseForms = new Set(['', 'normal', 'ordinary', 'standard', 'hero']);
   const formId = normalizeIconCandidate(button.form, button.pokemonType);
@@ -372,6 +399,8 @@ const readPage = () =>
           frontFemale: button.dataset.spriteFrontFemale ?? '',
           frontShiny: button.dataset.spriteFrontShiny ?? '',
           frontShinyFemale: button.dataset.spriteFrontShinyFemale ?? '',
+          frontHome: button.dataset.spriteFrontHome ?? '',
+          frontArtwork: button.dataset.spriteFrontArtwork ?? '',
         },
         active: button.getAttribute('aria-pressed') === 'true',
         label: button.innerText.trim().replace(/\\s+/g, ' '),
@@ -407,7 +436,7 @@ const readPage = () =>
       stage: Number(node.dataset.evolutionStage),
       id: Number(node.dataset.evolutionId),
       form: node.dataset.evolutionForm ?? '',
-      sprite: node.querySelector('img')?.getAttribute('src') ?? '',
+      sprite: node.querySelector('[data-testid="evolution-pokemon-image"]')?.getAttribute('src') ?? '',
       bounds: bounds(node),
     }));
     const evolutionContainer = document.querySelector('[data-testid="evolution-container"]');
@@ -487,6 +516,7 @@ const readPage = () =>
       profileAura: profileImage
         ? {
             modifier: profileImage.dataset.profileModifier ?? '',
+            src: profileImage.querySelector('img')?.currentSrc || profileImage.querySelector('img')?.getAttribute('src') || '',
             beforeBackground: getComputedStyle(profileImage, '::before').backgroundImage,
             afterBackground: getComputedStyle(profileImage, '::after').backgroundImage,
           }
@@ -570,7 +600,12 @@ const readPage = () =>
         ? {
             bounds: bounds(fusionSection),
             origins: fusionOrigins.map(bounds),
-            targets: fusionTargets.map(bounds),
+            targets: fusionTargets.map((target) => ({
+              ...bounds(target),
+              form: target.dataset.fusionTargetForm ?? '',
+              pokemonType: Number(target.dataset.fusionTargetPokemonType),
+              imageSrc: target.querySelector('[data-testid="evolution-pokemon-image"]')?.getAttribute('src') ?? '',
+            })),
           }
         : null,
       renderedFormSprites: {
@@ -664,12 +699,33 @@ const validateModifierFormSprites = (issues, id, context, button, page) => {
   if (![2, 3].includes(normalizePokemonType(button.pokemonType))) return;
   const modifier = normalizePokemonType(button.pokemonType) === 2 ? 'SHADOW' : 'PURIFIED';
   const baseForm = normalizeForm(normalizeForm(button.form).replace(new RegExp(`_${modifier}$|^${modifier}$`), ''));
+  for (const node of page.evolutionNodes) {
+    if (hasAnimationForForm(node.id, node.form, button.pokemonType) && !/\.gif(?:$|\?)/i.test(node.sprite)) {
+      addIssue(issues, id, 'modifier_evolution_gif_missing', {
+        ...context,
+        evolutionId: node.id,
+        evolutionForm: node.form,
+        imageSrc: node.sprite,
+      });
+    }
+  }
   const pokeApiBaseButton = page.buttons.find(
     (candidate) =>
       ![2, 3].includes(normalizePokemonType(candidate.pokemonType)) &&
-      candidate.formId > 0 &&
-      normalizeForm(candidate.form) === baseForm
+      normalizeCanonicalIdentity(id, candidate.form) === normalizeCanonicalIdentity(id, baseForm)
   );
+  const expectedProfile = [
+    pokeApiBaseButton?.sprites.frontArtwork,
+    pokeApiBaseButton?.sprites.frontHome,
+    pokeApiBaseButton?.sprites.frontDefault,
+  ].find(Boolean);
+  if (expectedProfile && page.profileAura?.src !== expectedProfile) {
+    addIssue(issues, id, 'modifier_profile_sprite_mismatch', {
+      ...context,
+      expected: expectedProfile,
+      actual: page.profileAura?.src,
+    });
+  }
   const baseDefaults = [pokeApiBaseButton?.sprites.frontDefault, pokeApiBaseButton?.sprites.frontFemale].filter(
     Boolean
   );
@@ -682,6 +738,14 @@ const validateModifierFormSprites = (issues, id, context, button, page) => {
   const expectedShiny = baseShiny.length
     ? baseShiny
     : [button.sprites.frontShiny, button.sprites.frontShinyFemale].filter(Boolean);
+  const renderedSprites = [...page.renderedFormSprites.defaults, ...page.renderedFormSprites.shiny];
+  if (
+    !pokeApiBaseButton &&
+    renderedSprites.length &&
+    renderedSprites.every((sprite) => sprite.includes('PokeAPI/sprites'))
+  ) {
+    return;
+  }
   if (!expectedDefaults.length || !expectedShiny.length) {
     addIssue(issues, id, 'modifier_form_sprite_source_missing', {
       ...context,
@@ -845,6 +909,17 @@ const validateExpectedRow = (issues, id, row, button, page) => {
           section: page.fusionLayout.bounds,
         });
       }
+    }
+  }
+  for (const [targetIndex, target] of (page.fusionLayout?.targets ?? []).entries()) {
+    if (!/\.gif(?:$|\?)/i.test(target.imageSrc)) {
+      addIssue(issues, id, 'fusion_target_gif_missing', {
+        ...context,
+        targetIndex,
+        targetForm: target.form,
+        targetPokemonType: target.pokemonType,
+        imageSrc: target.imageSrc,
+      });
     }
   }
   const nodeKeys = new Set(page.evolutionNodes.map((node) => node.key));
@@ -1107,6 +1182,15 @@ const main = async () => {
       isInitial = false;
       auditedIds += 1;
       const testedForms = new Set();
+      const profileSources = [];
+      const recordProfileSource = (button, selectedPage) => {
+        profileSources.push({
+          identity: profileBaseIdentity(id, button),
+          pokemonType: normalizePokemonType(button.pokemonType),
+          form: button.form,
+          src: selectedPage.profileAura?.src ?? '',
+        });
+      };
 
       if (!page.title.includes(`#${id}`)) addIssue(issues, id, 'title_id_mismatch', { actual: page.title });
       if (/\b(undefined|NaN)\b/.test(page.bodyText)) addIssue(issues, id, 'invalid_text_rendered');
@@ -1245,6 +1329,7 @@ const main = async () => {
         }
         await delay(50);
         page = await readPage();
+        recordProfileSource(page.buttons[buttonIndex], page);
         auditedForms += 1;
         if ([2, 3].includes(normalizePokemonType(target.pokemonType))) auditedModifierFormSprites += 1;
         validateExpectedRow(issues, id, row, page.buttons[buttonIndex], page);
@@ -1290,6 +1375,7 @@ const main = async () => {
         }
         await delay(50);
         page = await readPage();
+        recordProfileSource(page.buttons[index], page);
         validateModifierFormSprites(
           issues,
           id,
@@ -1314,6 +1400,18 @@ const main = async () => {
         auditedEvolutionDetails += page.evolutionEdges.length;
         auditedForms += 1;
         testedForms.add(targetKey);
+      }
+      for (const modifierSource of profileSources.filter((source) => [2, 3].includes(source.pokemonType))) {
+        const baseSource = profileSources.find(
+          (source) => ![2, 3].includes(source.pokemonType) && source.identity === modifierSource.identity
+        );
+        if (baseSource?.src && modifierSource.src !== baseSource.src) {
+          addIssue(issues, id, 'modifier_profile_differs_from_base', {
+            identity: modifierSource.identity,
+            base: baseSource,
+            modifier: modifierSource,
+          });
+        }
       }
       previousPage = page;
     } catch (error) {

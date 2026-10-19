@@ -65,6 +65,7 @@
     "audit:stickers": "node scripts/audits/auditStickers.mjs",
     "audit:local-ui-assets": "node scripts/audits/auditLocalUiAssets.mjs",
     "audit:pvp-details": "node scripts/audits/auditPvpPokemonDetails.mjs",
+    "audit:pvp-navigation": "node scripts/audits/auditPvpNavigation.mjs",
     "audit:theme": "node scripts/audits/auditTheme.mjs",
     "test:pokemon-display-names": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokemonDisplayNames.mjs",
     "test:pokedex-query": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokedexQuery.mjs",
@@ -74,6 +75,7 @@
     "test:tool-mechanics": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testToolMechanics.mjs",
     "test:news-item-assets": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testNewsItemAssets.mjs",
     "test:evolution-assets": "node scripts/tests/testEvolutionAssets.mjs",
+    "test:pvp-navigation": "node scripts/tests/testPvpNavigation.mjs",
     "update:local-ui-assets": "node scripts/data/updateLocalUiAssets.mjs",
     "update:pokemon-icon-sheet": "node scripts/data/updatePokemonIconSheet.mjs"
   },

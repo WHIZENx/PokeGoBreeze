@@ -29,6 +29,17 @@ assert.deepEqual(
   'Exact Shadow/Purified form selections must be deduplicated across variety groups'
 );
 
+assert.equal(
+  pokemonGoFormIdentityKey({ num: 373, form: 'SHADOW', pokemonType: 2 }),
+  '373:2:NORMAL_SHADOW',
+  'A generic Shadow modifier must resolve to the default NORMAL base form'
+);
+assert.equal(
+  pokemonGoFormIdentityKey({ num: 373, form: 'PURIFIED', pokemonType: 3 }),
+  '373:3:NORMAL_PURIFIED',
+  'A generic Purified modifier must resolve to the default NORMAL base form'
+);
+
 const upstreamAliasSelectionFixture = [
   [
     {
@@ -178,9 +189,7 @@ namedDefaultModifierRows.forEach((pokemon) => {
   ]) {
     const expectedForm = `${String(pokemon.form).toUpperCase()}_${modifier}`;
     assert(
-      catalog.some(
-        (entry) => entry.pokemonType === pokemonType && String(entry.form).toUpperCase() === expectedForm
-      ),
+      catalog.some((entry) => entry.pokemonType === pokemonType && String(entry.form).toUpperCase() === expectedForm),
       `ID ${pokemon.num} is missing canonical ${expectedForm}`
     );
     assert(

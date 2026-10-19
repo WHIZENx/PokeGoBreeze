@@ -133,7 +133,9 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
 export const pokemonGoFormIdentityKey = (pokemon: PokemonGoFormIdentity) => {
   const rawForm = normalizeSelectionIdentity(String(pokemon.form ?? ''));
   const battleModifier = pokemon.pokemonType === 2 ? 'SHADOW' : pokemon.pokemonType === 3 ? 'PURIFIED' : undefined;
-  const baseForm = battleModifier ? rawForm.replace(new RegExp(`_${battleModifier}$`), '') || 'NORMAL' : rawForm;
+  const baseForm = battleModifier
+    ? rawForm.replace(new RegExp(`_${battleModifier}$|^${battleModifier}$`), '') || 'NORMAL'
+    : rawForm;
   const baseIdentity = normalizePokemonFormIdentity(pokemon.num, baseForm);
   const identity = battleModifier ? `${baseIdentity}_${battleModifier}` : baseIdentity;
   const canonicalDefaultForm = canonicalDefaultFormById[pokemon.num];

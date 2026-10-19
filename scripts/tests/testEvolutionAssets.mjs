@@ -1,17 +1,19 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [display, specialForm, evolutionStyles, selector, moveDetail, viteConfig, iconManifest] = await Promise.all([
-  readFile(new URL('../../src/components/Info/Evolution/EvolutionPokemonDisplay.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Info/SpecialForm/SpecialForm.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Info/Evolution/Evolution.scss', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/utils/pokemon-animation-assets.ts', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../vite.config.ts', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/assets/generated/pokemon-icons/pokemon-icon-index.json', import.meta.url), 'utf8').then(
-    JSON.parse
-  ),
-]);
+const [display, fusion, specialForm, evolutionStyles, selector, moveDetail, viteConfig, iconManifest] =
+  await Promise.all([
+    readFile(new URL('../../src/components/Info/Evolution/EvolutionPokemonDisplay.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/FormChange/Fusion.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/SpecialForm/SpecialForm.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/Evolution/Evolution.scss', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/utils/pokemon-animation-assets.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../vite.config.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/assets/generated/pokemon-icons/pokemon-icon-index.json', import.meta.url), 'utf8').then(
+      JSON.parse
+    ),
+  ]);
 
 assert.match(display, /findAnimationForm\(id, form, pokemonType\)/);
 assert.match(display, /findExactAssetForm\(id, form\)/);
@@ -25,6 +27,9 @@ assert.match(display, /exactMiniIcon !== undefined/);
 assert.equal(iconManifest.indexes.darkraimega, 1438, 'Darkrai Mega must have an exact vendored minisprite fallback');
 assert.match(display, /className="evolution-form-badge"/);
 assert.match(display, /title=\{formLabel\}/);
+assert.match(fusion, /option\.targetPokemonType/);
+assert.match(fusion, /pokemonType=\{pokemonType\}/);
+assert.match(fusion, /data-fusion-target-pokemon-type=\{option\.targetPokemonType\}/);
 assert.match(evolutionStyles, /\.evolution-form-badge > \.MuiBadge-badge/);
 assert.match(evolutionStyles, /text-overflow: ellipsis/);
 assert.match(evolutionStyles, /white-space: nowrap/);
@@ -52,6 +57,8 @@ assert.match(
   selector,
   /normalizedPokemonType === PokemonType\.Shadow \|\| normalizedPokemonType === PokemonType\.Purified/
 );
+assert.match(selector, /\[PokemonType\.Normal, PokemonType\.None\]/);
+assert.match(selector, /animation\.pokemonType === basePokemonType/);
 assert.match(selector, /pokemonType === PokemonType\.None \? PokemonType\.Normal : pokemonType/);
 assert.match(selector, /\['project', 'pokeapi', 'showdown'\]/);
 assert.match(
