@@ -36,9 +36,13 @@ export const selectAnimationForm = (
   }
 
   if (normalizedPokemonType === PokemonType.Shadow || normalizedPokemonType === PokemonType.Purified) {
-    return animations.find(
-      (animation) => animation.form.toUpperCase() === normalizedForm && animation.pokemonType === PokemonType.Normal
-    );
+    return [PokemonType.Normal, PokemonType.None]
+      .map((basePokemonType) =>
+        animations.find(
+          (animation) => animation.form.toUpperCase() === normalizedForm && animation.pokemonType === basePokemonType
+        )
+      )
+      .find(Boolean);
   }
   return;
 };

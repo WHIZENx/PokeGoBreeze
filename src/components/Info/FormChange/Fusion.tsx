@@ -5,6 +5,7 @@ import type { PokemonFusionOption } from '../../../core/models/API/pokemon-bundl
 import { Params } from '../../../utils/constants';
 import { convertModelSpritName } from '../../../utils/utils';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
+import { PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../Link/LinkToTop';
 import EvolutionPokemonDisplay from '../Evolution/EvolutionPokemonDisplay';
 
@@ -17,7 +18,7 @@ interface FusionProps {
 const Fusion = ({ options, componentId, componentName }: FusionProps) => {
   const isMobileLayout = useMediaQuery('(max-width:639px)');
   const arrowId = useId().replaceAll(':', '');
-  const renderPokemon = (id: number, name: string, form = 'NORMAL') => {
+  const renderPokemon = (id: number, name: string, form = 'NORMAL', pokemonType = PokemonType.Normal) => {
     const label = formatPokemonDisplayName(name);
     const to = `/pokemon/${id}${form === 'NORMAL' ? '' : `?${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}`}`;
     const normalizedName = name.replaceAll('-', '_').toUpperCase();
@@ -27,7 +28,7 @@ const Fusion = ({ options, componentId, componentName }: FusionProps) => {
     return (
       <LinkToTop to={to}>
         <span className="tw-flex tw-min-w-0 tw-flex-col tw-items-center tw-gap-1 tw-text-center">
-          <EvolutionPokemonDisplay id={id} name={label} form={form} sprite={sprite} />
+          <EvolutionPokemonDisplay id={id} name={label} form={form} sprite={sprite} pokemonType={pokemonType} />
         </span>
       </LinkToTop>
     );
@@ -64,8 +65,10 @@ const Fusion = ({ options, componentId, componentName }: FusionProps) => {
                 id={`${arrowId}-fusion-${index}-target`}
                 className="tw-min-w-0 tw-text-center"
                 data-testid="fusion-target"
+                data-fusion-target-form={option.targetForm}
+                data-fusion-target-pokemon-type={option.targetPokemonType}
               >
-                {renderPokemon(option.baseId, option.targetName, option.targetForm)}
+                {renderPokemon(option.baseId, option.targetName, option.targetForm, option.targetPokemonType)}
               </div>
               <Xarrow
                 strokeWidth={2}
