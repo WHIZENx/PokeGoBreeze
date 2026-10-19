@@ -8,10 +8,10 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../..
 import { BattleLeagueIconType } from '../../../utils/enums/compute.enum';
 import apiService from '../../../services/api.service';
 import { EqualMode } from '../../../utils/enums/string.enum';
-import { useNavigate } from 'react-router-dom';
+import { useNavigateToTop } from '../../Link/LinkToTop';
 
 const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
-  const navigate = useNavigate();
+  const navigateToTop = useNavigateToTop();
 
   const renderLeagueName = (name: string | undefined, cp: number) => {
     if (isEqual(name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
@@ -51,10 +51,12 @@ const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
                 onClick={() =>
                   props.onClick
                     ? props.onClick(value)
-                    : navigate(
+                    : navigateToTop(
                         `/pvp${props.path ? `/${props.path}` : ''}${props.data ? `/${props.data.id}` : ''}/${value}`
                       )
                 }
+                data-testid="pvp-league-card"
+                data-pvp-card-path={props.path ?? 'home'}
                 active={props.value === value}
                 color="default"
                 className="btn-default !tw-min-h-selection-button"

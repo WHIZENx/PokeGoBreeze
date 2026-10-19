@@ -17,6 +17,7 @@ export interface PokemonFusionOption {
   baseName: string;
   targetName: string;
   targetForm: string;
+  targetPokemonType: PokemonType;
 }
 
 export interface PokemonGoFormCatalogEntry {

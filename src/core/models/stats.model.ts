@@ -182,6 +182,7 @@ interface OptionsStats {
   rank: number;
   id?: number;
   form?: string;
+  source?: 'game-master' | 'pokeapi-theoretical';
 }
 
 export interface IStatsAtk extends Partial<OptionsStats> {

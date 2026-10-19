@@ -71,6 +71,7 @@ import { PokemonType } from '../../enums/type.enum';
 import {
   deduplicatePokemonFormSelections,
   hasPokemonGoBattleModifierCatalog,
+  normalizePokemonFormIdentity,
   pokemonGoFormIdentityKey,
 } from '../../utils/pokemon-form-identity';
 import { useNavigateToTop } from '../../components/Link/LinkToTop';
@@ -89,6 +90,12 @@ import { Skeleton } from '@mui/material';
 interface ITypeCost {
   purified: PokemonTypeCost;
   thirdMove: PokemonTypeCost;
+}
+
+interface ReleasedAlertSnapshot {
+  formName: string | undefined;
+  pokemonType: PokemonType | undefined;
+  releasedGO: boolean;
 }
 
 class TypeCost implements ITypeCost {
@@ -156,6 +163,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [pokemonGoFusionOptions, setPokemonGoFusionOptions] = useState<PokemonFusionOption[]>([]);
   const [pokemonGoEvolutionChains, setPokemonGoEvolutionChains] = useState<IEvolutionChain[]>([]);
   const [moveRankings, setMoveRankings] = useState<PokemonMoveRanking[]>([]);
+  const [releasedAlert, setReleasedAlert] = useState<ReleasedAlertSnapshot>();
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
@@ -323,6 +331,7 @@ const Pokemon = (props: IPokemonPage) => {
       if (bundledPokemonGoForms.length) {
         const selectedKeys = new Set<string>();
         const selectedForms = new Map<string, IPokemonFormModify>();
+        const baseFormSprites = new Map<string, IPokemonSprite | undefined>();
         formListResult.flat().forEach((item) => {
           const selectedPokemonType = item.form.pokemonType ?? PokemonType.None;
           const pokemon = retrieveMoves(
@@ -343,14 +352,40 @@ const Pokemon = (props: IPokemonPage) => {
           });
           selectedKeys.add(key);
           selectedForms.set(key, item);
+          if (![PokemonType.Shadow, PokemonType.Purified].includes(selectedPokemonType)) {
+            const identity = normalizePokemonFormIdentity(
+              specie.id,
+              item.form.formName || pokemon?.form || item.form.name
+            );
+            const existingSprites = baseFormSprites.get(identity);
+            if (!existingSprites || getPreferredPokemonFormSprite(item.form.sprites)) {
+              baseFormSprites.set(identity, item.form.sprites);
+            }
+          }
         });
 
         bundledPokemonGoForms.forEach((pokemon, index) => {
           const key = pokemonGoFormIdentityKey(pokemon);
+          const modifier =
+            pokemon.pokemonType === PokemonType.Shadow
+              ? 'SHADOW'
+              : pokemon.pokemonType === PokemonType.Purified
+                ? 'PURIFIED'
+                : undefined;
+          const baseIdentity = normalizePokemonFormIdentity(
+            specie.id,
+            modifier
+              ? String(pokemon.form ?? '').replace(new RegExp(`_${modifier}$|^${modifier}$`), '') || 'NORMAL'
+              : pokemon.form
+          );
+          const inheritedSprites = modifier ? baseFormSprites.get(baseIdentity) : undefined;
           if (selectedKeys.has(key)) {
             const selectedForm = selectedForms.get(key);
             if (selectedForm && pokemon.asset) {
-              selectedForm.form.sprites = withPokemonGoAssetSprites(selectedForm.form.sprites, pokemon.asset);
+              selectedForm.form.sprites = withPokemonGoAssetSprites(
+                inheritedSprites ?? selectedForm.form.sprites,
+                pokemon.asset
+              );
             }
             return;
           }
@@ -367,7 +402,7 @@ const Pokemon = (props: IPokemonPage) => {
               pokemon.fullName?.replaceAll('_', '-').toLowerCase(),
               versionList[0].replace(' ', '-'),
               pokemon.types ?? [],
-              withPokemonGoAssetSprites(undefined, pokemon.asset),
+              withPokemonGoAssetSprites(inheritedSprites, pokemon.asset),
               -100_000 - index,
               pokemon.pokemonType ?? PokemonType.Normal,
               false
@@ -599,7 +634,7 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [params.id, props.searchOption?.id, getFilteredPokemons, navigatePokemon]);
 
-  const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined) => {
+  const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined, releasedAlertFormName?: string) => {
     if (!form) {
       return false;
     }
@@ -641,6 +676,11 @@ const Pokemon = (props: IPokemonPage) => {
         pokemon: pokemonDetails,
       })
     );
+    setReleasedAlert({
+      formName: releasedAlertFormName,
+      pokemonType: form.form?.pokemonType,
+      releasedGO: details.releasedGO,
+    });
     return details.releasedGO;
   };
 
@@ -701,7 +741,7 @@ const Pokemon = (props: IPokemonPage) => {
           ),
         });
       }
-      checkReleased(id, searchingMainForm);
+      checkReleased(id, searchingMainForm, convertSexName(nameInfo));
     } else {
       clearData();
     }
@@ -749,7 +789,7 @@ const Pokemon = (props: IPokemonPage) => {
         // checkReleased resolves the selected form against the Game Master and
         // dispatches the form/details pair atomically. Dispatching the raw
         // PokéAPI body first briefly made move rankings look unavailable.
-        checkReleased(id, currentForm);
+        checkReleased(id, currentForm, convertSexName(currentForm.form.name));
       }
     }
   }, [pokeData, formList, data?.id, props.searchOption?.id, params.id, searchParams]);
@@ -785,8 +825,8 @@ const Pokemon = (props: IPokemonPage) => {
     )
   );
   const mainImageCandidates = [
-    hybridImage,
     getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites),
+    hybridImage,
     APIService.getPokeFullAsset(dataStorePokemon?.current?.id),
   ];
   const { displayedUrl: mainImage, isLoading: isMainImageLoading } = usePreloadedImage(
@@ -828,7 +868,12 @@ const Pokemon = (props: IPokemonPage) => {
         )}
       >
         <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
-          <AlertReleased formName={formName} pokemonType={searchingMainForm?.form?.pokemonType} icon={iconData} />
+          <AlertReleased
+            formName={releasedAlert?.formName}
+            pokemonType={releasedAlert?.pokemonType}
+            icon={iconData}
+            releasedGO={releasedAlert?.releasedGO}
+          />
           <div
             className={combineClasses(
               'tw-relative tw-isolate tw-inline-block tw-overflow-visible img-desc pokemon-profile-aura',

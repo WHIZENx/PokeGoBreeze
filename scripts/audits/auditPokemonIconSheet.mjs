@@ -49,7 +49,7 @@ const normalize = (value = '', pokemonType = 1) => {
   let id = toId(value);
   if (['', 'unknown', 'unknownpokemon'].includes(id)) return '';
   if ([2, 3].includes(Number(pokemonType))) id = id.replace(/(?:shadow|purified)$/, '');
-  return id
+  id = id
     .replaceAll('hisuian', 'hisui')
     .replaceAll('galarian', 'galar')
     .replaceAll('alolan', 'alola')
@@ -67,7 +67,11 @@ const normalize = (value = '', pokemonType = 1) => {
     .replace(/crownedshield$/, 'crowned')
     .replace(/icerider$/, 'ice')
     .replace(/shadowrider$/, 'shadow')
+    .replace(/totemalola$/, 'alolatotem')
+    .replace(/totembusted$/, 'bustedtotem')
+    .replace(/totemdisguised$/, 'totem')
     .replace(/standard$/, '');
+  return id === 'marowaktotem' ? 'marowakalolatotem' : id;
 };
 const candidates = (entry) => {
   const base = normalize(entry.baseSpecies, entry.pokemonType);
@@ -126,6 +130,22 @@ for (const [identity, expectedKey] of expectedForms) {
 }
 
 const detailFormCardFixtures = [
+  [
+    { fullName: 'raticate-totem-alola', form: 'totem-alola', baseSpecies: 'raticate', pokemonType: 0 },
+    'raticatealolatotem',
+  ],
+  [
+    { fullName: 'marowak-totem', form: 'totem', baseSpecies: 'marowak', pokemonType: 0 },
+    'marowakalolatotem',
+  ],
+  [
+    { fullName: 'mimikyu-totem-disguised', form: 'totem-disguised', baseSpecies: 'mimikyu', pokemonType: 0 },
+    'mimikyutotem',
+  ],
+  [
+    { fullName: 'mimikyu-totem-busted', form: 'totem-busted', baseSpecies: 'mimikyu', pokemonType: 0 },
+    'mimikyubustedtotem',
+  ],
   [
     { fullName: 'darmanitan-galar-standard', form: 'galar-standard', baseSpecies: 'darmanitan', pokemonType: 1 },
     'darmanitangalar',

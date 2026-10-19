@@ -36,6 +36,8 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                   data-sprite-front-female={value.form.sprites?.frontFemale ?? ''}
                   data-sprite-front-shiny={value.form.sprites?.frontShiny ?? ''}
                   data-sprite-front-shiny-female={value.form.sprites?.frontShinyFemale ?? ''}
+                  data-sprite-front-home={value.form.sprites?.frontHome ?? ''}
+                  data-sprite-front-artwork={value.form.sprites?.frontArtwork ?? ''}
                   onClick={() => props.changeForm(value)}
                   className={combineClasses(
                     index + subIndex === 0 ? '' : '!tw-ml-3',
