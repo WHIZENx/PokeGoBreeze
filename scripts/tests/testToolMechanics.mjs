@@ -22,6 +22,7 @@ import {
 import { formatBattleStatsPokemonName } from '../../src/pages/Tools/SearchBattle/search-battle-display.ts';
 import { pokemonGoBattleHp, pokemonGoStatProduct } from '../../src/utils/pokemon-go-stats.ts';
 import { includeGameMasterSpecialMoves } from '../../src/pages/PVP/pvp-move-options.ts';
+import { isStatsRankingNavigationDisabled } from '../../src/components/Commons/Progress/stat-bar-navigation.ts';
 
 const ivsWithTotal = (total) => ({
   atk: Math.min(total, 15),
@@ -112,6 +113,13 @@ assert.deepEqual(
   includeGameMasterSpecialMoves([], ['OUTRAGE+']),
   [{ moveId: 'OUTRAGE+', uses: 0 }]
 );
+assert.equal(isStatsRankingNavigationDisabled(false, 1, true), false);
+assert.equal(isStatsRankingNavigationDisabled(false, '1', true), false);
+assert.equal(isStatsRankingNavigationDisabled(false, 'Unavailable', true), true);
+assert.equal(isStatsRankingNavigationDisabled(false, ' unavailable ', true), true);
+assert.equal(isStatsRankingNavigationDisabled(false, undefined, true), true);
+assert.equal(isStatsRankingNavigationDisabled(false, 1, false), true);
+assert.equal(isStatsRankingNavigationDisabled(true, 1, true), true);
 
 const [
   dpsTdoSource,
@@ -125,6 +133,7 @@ const [
   trainerMoveSelectSource,
   selectCardMoveSource,
   cardMoveSmallSource,
+  alertReleasedSource,
 ] = await Promise.all([
     readFile(new URL('../../src/pages/Sheets/DpsTdo/DpsTdo.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
@@ -137,6 +146,7 @@ const [
     readFile(new URL('../../src/pages/Trainer/TrainerMoveSelect.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/components/Commons/Selects/SelectCardMove.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/components/Card/CardMoveSmall.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Pokemon/components/AlertReleased.tsx', import.meta.url), 'utf8'),
   ]);
 assert.match(dpsTdoSource, /max=\{maxTrainerFriendshipLevel\(\)\}/);
 assert.match(moveSource, /PVE Power \/ Second/);
@@ -171,6 +181,9 @@ assert.match(counterSource, /if \(!hasValidCounterTarget\)[\s\S]*setShowFrame\(f
 assert.doesNotMatch(counterSource, /if \(!hasValidCounterTarget\)[\s\S]{0,200}setCounterList\(\[\]\)/);
 assert.match(counterSource, /toFloatWithPadding\(row\.dps, 2\).*DPS/s);
 assert.match(counterSource, /tw-text-\[var\(--text-secondary\)\]/);
+assert.match(alertReleasedSource, /props\.releasedGO === false/);
+assert.doesNotMatch(alertReleasedSource, /useSearch/);
+assert.match(pokemonSource, /setReleasedAlert\(\{/);
 
 console.log(
   'Tool mechanics regression passed: appraisal IV bands, encounter values, modifier moves, Raid tiers, integer stats, PvP stat products, move-rate labels, Friendship levels, Shadow counters, and Battle League labels are correct.'

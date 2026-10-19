@@ -187,7 +187,7 @@ function App() {
           errorProgress({ message: `Load page data error: ${e}`, isError: true });
         }
       });
-  }, [isBootstrapLoaded, routeDataKey]);
+  }, [isBootstrapLoaded, location.key, routeDataKey]);
 
   useEffect(() => {
     if (isBootstrapLoaded && loadedRouteDataKey === routeDataKey) {

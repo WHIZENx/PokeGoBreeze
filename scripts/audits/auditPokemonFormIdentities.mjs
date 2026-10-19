@@ -6,6 +6,7 @@ import { resolve } from 'node:path';
 import {
   deduplicatePokemonFormSelections,
   hasPokemonGoBattleModifierCatalog,
+  normalizePokemonFormIdentity,
   pokemonGoFormIdentityKey,
   pokemonGoFormIdentityPriority,
   selectPreferredPokemonGoFormIdentity,
@@ -27,6 +28,142 @@ assert.deepEqual(
   duplicateSelectionFixture[0],
   'Exact Shadow/Purified form selections must be deduplicated across variety groups'
 );
+
+assert.equal(
+  pokemonGoFormIdentityKey({ num: 373, form: 'SHADOW', pokemonType: 2 }),
+  '373:2:NORMAL_SHADOW',
+  'A generic Shadow modifier must resolve to the default NORMAL base form'
+);
+assert.equal(
+  pokemonGoFormIdentityKey({ num: 373, form: 'PURIFIED', pokemonType: 3 }),
+  '373:3:NORMAL_PURIFIED',
+  'A generic Purified modifier must resolve to the default NORMAL base form'
+);
+
+const upstreamAliasSelectionFixture = [
+  [
+    {
+      defaultId: 20,
+      form: { name: 'raticate-totem-alola', formName: 'totem-alola', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 20,
+      form: { name: 'raticate-alola-totem', formName: 'alola-totem', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 105,
+      form: { name: 'marowak-totem', formName: 'totem', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 105,
+      form: { name: 'marowak-alola-totem', formName: 'alola-totem', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 778,
+      form: { name: 'mimikyu-totem-disguised', formName: 'totem-disguised', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 778,
+      form: { name: 'mimikyu-totem', formName: 'totem', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 778,
+      form: { name: 'mimikyu-totem-busted', formName: 'totem-busted', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 778,
+      form: { name: 'mimikyu-busted-totem', formName: 'busted-totem', pokemonType: 0 },
+    },
+  ],
+];
+assert.equal(
+  deduplicatePokemonFormSelections(upstreamAliasSelectionFixture).flat().length,
+  4,
+  'PokéAPI/GO form aliases must collapse to Raticate and Marowak Alola Totem plus both Mimikyu Totem states'
+);
+
+const darmanitanGalarSelectionFixture = [
+  [
+    {
+      defaultId: 555,
+      form: { name: 'darmanitan-galar-standard', formName: 'galar-standard', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 555,
+      form: { name: 'darmanitan-galarian', formName: 'galarian', pokemonType: 0 },
+    },
+  ],
+];
+assert.equal(
+  deduplicatePokemonFormSelections(darmanitanGalarSelectionFixture).flat().length,
+  1,
+  'Darmanitan Galar Standard/Galarian selections must collapse to one canonical form'
+);
+
+const canonicalSourceAliasCases = [
+  [25, 'PIKACHU_ORIGINAL_CAP', 'PIKACHU_ORIGINAL'],
+  [25, 'PIKACHU_HOENN_CAP', 'PIKACHU_HOENN'],
+  [25, 'PIKACHU_SINNOH_CAP', 'PIKACHU_SINNOH'],
+  [25, 'PIKACHU_UNOVA_CAP', 'PIKACHU_UNOVA'],
+  [25, 'PIKACHU_KALOS_CAP', 'PIKACHU_KALOS'],
+  [25, 'PIKACHU_ALOLA_CAP', 'PIKACHU_ALOLA'],
+  [25, 'PIKACHU_PARTNER_CAP', 'PIKACHU_PARTNER'],
+  [25, 'PIKACHU_WORLD_CAP', 'PIKACHU_WORLD'],
+  [128, 'TAUROS_PALDEA_COMBAT_BREED', 'TAUROS_PALDEA_COMBAT'],
+  [128, 'TAUROS_PALDEA_BLAZE_BREED', 'TAUROS_PALDEA_BLAZE'],
+  [128, 'TAUROS_PALDEA_AQUA_BREED', 'TAUROS_PALDEA_AQUA'],
+  [422, 'SHELLOS_WEST', 'SHELLOS_WEST_SEA'],
+  [422, 'SHELLOS_EAST', 'SHELLOS_EAST_SEA'],
+  [423, 'GASTRODON_WEST', 'GASTRODON_WEST_SEA'],
+  [423, 'GASTRODON_EAST', 'GASTRODON_EAST_SEA'],
+  [555, 'DARMANITAN_GALARIAN_STANDARD', 'DARMANITAN_GALARIAN'],
+  [999, 'GIMMIGHOUL_ROAMING', 'GIMMIGHOUL'],
+  [592, 'FRILLISH_MALE', 'FRILLISH'],
+  [593, 'JELLICENT_MALE', 'JELLICENT'],
+  [668, 'PYROAR_MALE', 'PYROAR'],
+  [678, 'MEOWSTIC_MALE', 'MEOWSTIC'],
+  [902, 'BASCULEGION_MALE', 'BASCULEGION'],
+  [916, 'OINKOLOGNE_MALE', 'OINKOLOGNE'],
+  [201, 'UNOWN_EXCLAMATION', 'UNOWN_EXCLAMATION_POINT'],
+  [201, 'UNOWN_QUESTION', 'UNOWN_QUESTION_MARK'],
+  [718, 'ZYGARDE_10_POWER_CONSTRUCT', 'ZYGARDE_TEN_PERCENT'],
+  [718, 'ZYGARDE_50_POWER_CONSTRUCT', 'ZYGARDE_FIFTY_PERCENT'],
+  [744, 'ROCKRUFF_OWN_TEMPO', 'ROCKRUFF_DUSK'],
+  [774, 'MINIOR_BLUE_METEOR', 'MINIOR_METEOR'],
+  [774, 'MINIOR_GREEN_METEOR', 'MINIOR_METEOR'],
+  [774, 'MINIOR_INDIGO_METEOR', 'MINIOR_METEOR'],
+  [774, 'MINIOR_ORANGE_METEOR', 'MINIOR_METEOR'],
+  [774, 'MINIOR_RED_METEOR', 'MINIOR_METEOR'],
+  [774, 'MINIOR_VIOLET_METEOR', 'MINIOR_METEOR'],
+  [774, 'MINIOR_YELLOW_METEOR', 'MINIOR_METEOR'],
+  [800, 'NECROZMA_DAWN', 'NECROZMA_DAWN_WINGS'],
+  [800, 'NECROZMA_DUSK', 'NECROZMA_DUSK_MANE'],
+  [888, 'NORMAL', 'HERO'],
+  [889, 'NORMAL', 'HERO'],
+];
+canonicalSourceAliasCases.forEach(([id, pokeApiIdentity, pokemonGoIdentity]) => {
+  assert.equal(
+    normalizePokemonFormIdentity(id, pokeApiIdentity),
+    normalizePokemonFormIdentity(id, pokemonGoIdentity),
+    `PokéAPI/GO identity mismatch for ID ${id}: ${pokeApiIdentity}/${pokemonGoIdentity}`
+  );
+});
 
 const pokemons = JSON.parse(await readFile(resolve(import.meta.dirname, '../../../api/data/pokemons.json'), 'utf8'));
 const pokemonIds = new Set(pokemons.map((pokemon) => pokemon.num));
@@ -69,9 +206,7 @@ namedDefaultModifierRows.forEach((pokemon) => {
   ]) {
     const expectedForm = `${String(pokemon.form).toUpperCase()}_${modifier}`;
     assert(
-      catalog.some(
-        (entry) => entry.pokemonType === pokemonType && String(entry.form).toUpperCase() === expectedForm
-      ),
+      catalog.some((entry) => entry.pokemonType === pokemonType && String(entry.form).toUpperCase() === expectedForm),
       `ID ${pokemon.num} is missing canonical ${expectedForm}`
     );
     assert(
@@ -143,6 +278,9 @@ console.log(
   `Pokémon form identity audit passed: ${pokemons.length} GO rows across ` +
     `${pokemonIds.size} species; ${detailCatalog.length} Detail selections are unique; ` +
     `${collisions.length} alias-collision groups resolved across IDs ${affectedSpecies.join(', ')}; ` +
+    `${upstreamAliasSelectionFixture.length} PokéAPI/GO alias selections collapse to 4 canonical forms; ` +
+    `${darmanitanGalarSelectionFixture.length} Darmanitan Galar aliases collapse to 1 canonical form; ` +
+    `${canonicalSourceAliasCases.length} cross-source aliases match; ` +
     `${namedDefaultModifierRows.length} named-default modifier cases audited across IDs ` +
     `${namedDefaultModifierRows.map((pokemon) => pokemon.num).join(', ')}.`
 );

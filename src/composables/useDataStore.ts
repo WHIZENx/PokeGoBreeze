@@ -170,8 +170,11 @@ export const useDataStore = () => {
     }
   };
 
-  const loadProcessedSections = async (sections: ProcessedDataSection[]) => {
+  const loadProcessedSections = async (sections: ProcessedDataSection[], refreshRevision = true) => {
     const uniqueSections = [...new Set(sections)];
+    if (refreshRevision) {
+      await ProcessedDataService.getMeta();
+    }
     const values = await Promise.all(uniqueSections.map((section) => ProcessedDataService.getSection(section)));
     uniqueSections.forEach((section, index) => applyProcessedSection(section, values[index]));
   };
@@ -184,7 +187,7 @@ export const useDataStore = () => {
     try {
       const meta = await ProcessedDataService.getMeta();
       setProgress(20);
-      await loadProcessedSections(['options', 'candy']);
+      await loadProcessedSections(['options', 'candy'], false);
       setProgress(70);
       dispatch(TimestampActions.SetSnapshotGeneratedAt.create(meta.generatedAt));
       dispatch(TimestampActions.SetTimestampGameMaster.create(meta.source.gameMaster));

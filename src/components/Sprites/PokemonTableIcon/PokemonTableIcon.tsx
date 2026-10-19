@@ -52,7 +52,15 @@ const normalizeCandidate = (value?: string, pokemonType?: PokemonType) => {
     .replace(/crownedshield$/, 'crowned')
     .replace(/icerider$/, 'ice')
     .replace(/shadowrider$/, 'shadow')
+    // PokéAPI names Totem varieties by encounter form first, while the
+    // vendored Pokémon Showdown icon sheet uses the visual form first.
+    .replace(/totemalola$/, 'alolatotem')
+    .replace(/totembusted$/, 'bustedtotem')
+    .replace(/totemdisguised$/, 'totem')
     .replace(/standard$/, '');
+  if (id === 'marowaktotem') {
+    return 'marowakalolatotem';
+  }
   return id;
 };
 

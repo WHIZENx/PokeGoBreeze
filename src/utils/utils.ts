@@ -51,6 +51,7 @@ import { IStyleData } from './models/util.model';
 import { getPokemonFormWithNoneSpecialForm } from './pokemon-form-routing';
 import { getItemSpriteAssetName } from './item-sprite';
 import { pokemonGoStatProduct } from './pokemon-go-stats';
+import { findPokemonStatsForm } from './pokemon-form-identity';
 export { generateParamForm, getPokemonFormWithNoneSpecialForm, getPokemonType } from './pokemon-form-routing';
 import {
   classLegendary,
@@ -576,7 +577,9 @@ const getRankLookup = <T extends { rank?: number }>(
   if (!lookup) {
     lookup = new Map<number, number>();
     for (const item of ranking) {
-      lookup.set(item[statKey] as unknown as number, toNumber(item.rank));
+      if (item.rank !== undefined) {
+        lookup.set(item[statKey] as unknown as number, toNumber(item.rank));
+      }
     }
     rankLookupCache.set(ranking, lookup);
   }
@@ -990,13 +993,8 @@ export const getFormFromForms = (
   form: string | undefined,
   pokemonType = PokemonType.None
 ) => {
-  const forms = stats?.filter((i) => i.id === id);
   form = getPokemonFormWithNoneSpecialForm(form, pokemonType);
-  return (
-    forms?.find((item) => isEqual(item.form, getValueOrDefault(String, form, formNormal()))) ??
-    forms?.find((item) => item.form === formNormal()) ??
-    forms?.at(0)
-  );
+  return findPokemonStatsForm(stats, id, getValueOrDefault(String, form, formNormal()));
 };
 
 export const replaceTempMoveName = (name: string | number) => {
