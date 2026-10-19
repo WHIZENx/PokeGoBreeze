@@ -87,6 +87,8 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
       .replace(/^EAST$/, 'EAST_SEA');
   } else if (id === 555) {
     identity = identity.replace(/_GALARIAN_STANDARD$/, '_GALARIAN').replace(/^GALARIAN_STANDARD$/, 'GALARIAN');
+  } else if (id === 999) {
+    identity = identity.replace(/_ROAMING$/, '').replace(/^ROAMING$/, 'NORMAL');
   } else if (maleDefaultFormIds.has(id)) {
     identity = identity.replace(/_MALE$/, '').replace(/^MALE$/, 'NORMAL');
   }
