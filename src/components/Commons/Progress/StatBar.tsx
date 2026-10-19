@@ -6,6 +6,7 @@ import { combineClasses, getValueOrDefault, isUndefined } from '../../../utils/e
 import { generateParamForm } from '../../../utils/utils';
 import { Params } from '../../../utils/constants';
 import { useNavigateToTop } from '../../Link/LinkToTop';
+import { isStatsRankingNavigationDisabled } from './stat-bar-navigation';
 
 const StatBar = (props: IStatBarComponent) => {
   const navigateToTop = useNavigateToTop();
@@ -31,16 +32,24 @@ const StatBar = (props: IStatBarComponent) => {
     setProgress(statsPercent);
   }, [statsPercent]);
 
+  const isNavigationDisabled = isStatsRankingNavigationDisabled(isDisabled, rank, Boolean(pokemonStatsRank));
+
   return (
     <Box
-      className={combineClasses('tw-w-full tw-relative progress', !isDisabled && 'progress-hover')}
-      onClick={() =>
-        !isDisabled &&
-        navigateToTop(
-          `/stats-ranking?${Params.Id}=${id}${generateParamForm(form, pokemonType, '&')}&${
-            Params.StatsType
-          }=${statType}`
-        )
+      aria-disabled={isNavigationDisabled}
+      className={combineClasses('tw-w-full tw-relative progress', !isNavigationDisabled && 'progress-hover')}
+      data-stat-tag={tag}
+      data-stat-value={currentStats}
+      data-testid="pokemon-stat-bar"
+      onClick={
+        isNavigationDisabled
+          ? undefined
+          : () =>
+              navigateToTop(
+                `/stats-ranking?${Params.Id}=${id}${generateParamForm(form, pokemonType, '&')}&${
+                  Params.StatsType
+                }=${statType}`
+              )
       }
     >
       <div className="tw-absolute box-text stats-text tw-z-2 tw-flex tw-justify-start tw-w-full">

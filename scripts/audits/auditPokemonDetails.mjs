@@ -456,7 +456,10 @@ const readPage = () =>
     const formChangeSection = document.querySelector('[data-testid="form-change-section"]');
     const formChangeOrigin = formChangeSection?.querySelector('[data-testid="form-change-origin"]');
     const formChangeTargets = formChangeSection
-      ? [...formChangeSection.querySelectorAll('[data-testid="form-change-target"]')]
+      ? [...formChangeSection.querySelectorAll('[data-testid="form-change-target"]')].map((target) => ({
+          ...bounds(target),
+          target: target.dataset.formChangeTarget ?? '',
+        }))
       : [];
     const formChangeDetails = formChangeSection
       ? [...formChangeSection.querySelectorAll('[data-testid="form-change-detail"]')].map((detail) => ({
@@ -468,6 +471,12 @@ const readPage = () =>
     const fusionOrigins = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-origin"]')] : [];
     const fusionTargets = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-target"]')] : [];
     const profileImage = document.querySelector('[data-testid="pokemon-profile-image"]');
+    const stats = Object.fromEntries(
+      [...document.querySelectorAll('[data-testid="pokemon-stat-bar"]')].map((stat) => [
+        stat.dataset.statTag ?? '',
+        Number(stat.dataset.statValue),
+      ])
+    );
     const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => {
       const edgeBounds = bounds(edge);
       let lineOverlapsCard = false;
@@ -521,6 +530,7 @@ const readPage = () =>
             afterBackground: getComputedStyle(profileImage, '::after').backgroundImage,
           }
         : null,
+      stats,
       bodyWeight: infoTable?.dataset.bodyWeight ?? '',
       bodyHeight: infoTable?.dataset.bodyHeight ?? '',
       title: document.title,
@@ -592,7 +602,7 @@ const readPage = () =>
               bounds: bounds(formChangeSection),
               path: formChangeSection.dataset.formChangePath ?? '',
               origin: bounds(formChangeOrigin),
-              targets: formChangeTargets.map(bounds),
+              targets: formChangeTargets,
               details: formChangeDetails,
             }
           : null,
@@ -860,6 +870,13 @@ const validateExpectedRow = (issues, id, row, button, page) => {
     }
   }
   if (page.formChangeLayout?.targets.length) {
+    const targetIdentities = page.formChangeLayout.targets.map((target) => target.target).filter(Boolean);
+    if (new Set(targetIdentities).size !== targetIdentities.length) {
+      addIssue(issues, id, 'form_change_duplicate_target', {
+        ...context,
+        targets: targetIdentities,
+      });
+    }
     if (page.formChangeLayout.path !== 'grid') {
       addIssue(issues, id, 'form_change_connector_not_grid', {
         ...context,
@@ -1001,6 +1018,18 @@ const validateExpectedRow = (issues, id, row, button, page) => {
         actual: currentNode,
       });
     }
+  }
+};
+
+const validateDisplayedStats = (issues, id, button, page) => {
+  const invalid = Object.entries(page.stats ?? {}).filter(([, value]) => !Number.isFinite(value) || value <= 0);
+  if (invalid.length || Object.keys(page.stats ?? {}).length !== 4) {
+    addIssue(issues, id, 'displayed_form_stats_missing', {
+      form: button.form,
+      label: button.label,
+      pokemonType: button.pokemonType,
+      stats: page.stats,
+    });
   }
 };
 
@@ -1333,6 +1362,7 @@ const main = async () => {
         auditedForms += 1;
         if ([2, 3].includes(normalizePokemonType(target.pokemonType))) auditedModifierFormSprites += 1;
         validateExpectedRow(issues, id, row, page.buttons[buttonIndex], page);
+        validateDisplayedStats(issues, id, page.buttons[buttonIndex], page);
         validateEvolutionDetailAlignment(
           issues,
           id,
@@ -1376,6 +1406,7 @@ const main = async () => {
         await delay(50);
         page = await readPage();
         recordProfileSource(page.buttons[index], page);
+        validateDisplayedStats(issues, id, page.buttons[index], page);
         validateModifierFormSprites(
           issues,
           id,

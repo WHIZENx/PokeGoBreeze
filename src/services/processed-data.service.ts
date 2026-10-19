@@ -71,6 +71,7 @@ const endpoint = (path: string) => `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/${pat
 class ProcessedDataService {
   private sectionRequests = new Map<ProcessedDataSection, Promise<unknown>>();
   private generatedAt?: string;
+  private sectionHashes?: Record<string, string>;
 
   isConfigured() {
     return Boolean(APIUrl.POKEGO_BREEZE_API_URL);
@@ -83,8 +84,15 @@ class ProcessedDataService {
     }
     if (this.generatedAt && this.generatedAt !== meta.generatedAt) {
       this.sectionRequests.clear();
+    } else if (this.sectionHashes && meta.sectionHashes) {
+      this.sectionRequests.forEach((_request, section) => {
+        if (this.sectionHashes?.[section] !== meta.sectionHashes?.[section]) {
+          this.sectionRequests.delete(section);
+        }
+      });
     }
     this.generatedAt = meta.generatedAt;
+    this.sectionHashes = meta.sectionHashes;
     return meta;
   }
 

@@ -52,6 +52,8 @@ const canonicalDefaultFormById: Readonly<Record<number, string>> = {
   665: 'ICY_SNOW',
   875: 'ICE',
   877: 'FULL_BELLY',
+  888: 'HERO',
+  889: 'HERO',
   925: 'FAMILY_OF_FOUR',
   931: 'GREEN',
   964: 'ZERO',
@@ -94,10 +96,34 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
   }
 
   if (id === 718) {
-    identity = identity.replace(/_10$/, '_TEN_PERCENT').replace(/_50$/, '_FIFTY_PERCENT');
+    identity = identity
+      .replace(/_10_POWER_CONSTRUCT$/, '_TEN_PERCENT')
+      .replace(/_50_POWER_CONSTRUCT$/, '_FIFTY_PERCENT')
+      .replace(/^10_POWER_CONSTRUCT$/, 'TEN_PERCENT')
+      .replace(/^50_POWER_CONSTRUCT$/, 'FIFTY_PERCENT')
+      .replace(/_10$/, '_TEN_PERCENT')
+      .replace(/_50$/, '_FIFTY_PERCENT');
     identity = identity.replace(/^10$/, 'TEN_PERCENT').replace(/^50$/, 'FIFTY_PERCENT');
   } else if (id === 741) {
     identity = identity.replace(/POM_POM$/, 'POMPOM');
+  } else if (id === 744) {
+    identity = identity.replace(/_OWN_TEMPO$/, '_DUSK').replace(/^OWN_TEMPO$/, 'DUSK');
+  } else if (id === 774) {
+    identity = identity
+      .replace(/_(?:BLUE|GREEN|INDIGO|ORANGE|RED|VIOLET|YELLOW)_METEOR$/, '_METEOR')
+      .replace(/^(?:BLUE|GREEN|INDIGO|ORANGE|RED|VIOLET|YELLOW)_METEOR$/, 'METEOR');
+  } else if (id === 800) {
+    identity = identity
+      .replace(/_DAWN$/, '_DAWN_WINGS')
+      .replace(/^DAWN$/, 'DAWN_WINGS')
+      .replace(/_DUSK$/, '_DUSK_MANE')
+      .replace(/^DUSK$/, 'DUSK_MANE');
+  } else if (id === 201) {
+    identity = identity
+      .replace(/_EXCLAMATION$/, '_EXCLAMATION_POINT')
+      .replace(/^EXCLAMATION$/, 'EXCLAMATION_POINT')
+      .replace(/_QUESTION$/, '_QUESTION_MARK')
+      .replace(/^QUESTION$/, 'QUESTION_MARK');
   } else if (id === 801) {
     identity = identity.replace(/_ORIGINAL$/, '_ORIGINAL_COLOR').replace(/^ORIGINAL$/, 'ORIGINAL_COLOR');
   } else if (id === 888) {
@@ -130,6 +156,18 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
   }
 
   return identity;
+};
+
+export const findPokemonStatsForm = <T extends { id?: number; form?: string | number }>(
+  forms: readonly T[] | undefined,
+  id: number | undefined,
+  form: string | number | undefined
+) => {
+  const pokemonId = id ?? 0;
+  const requestedIdentity = normalizePokemonFormIdentity(pokemonId, form ?? 'NORMAL');
+  return forms?.find(
+    (item) => item.id === pokemonId && normalizePokemonFormIdentity(pokemonId, item.form) === requestedIdentity
+  );
 };
 
 export const pokemonGoFormIdentityKey = (pokemon: PokemonGoFormIdentity) => {

@@ -59,6 +59,7 @@
     "prerender:seo": "node sitemap/prerenderSeo.js",
     "audit:pokemon-details": "node scripts/audits/auditPokemonDetails.mjs",
     "audit:pokemon-form-identities": "node --experimental-strip-types scripts/audits/auditPokemonFormIdentities.mjs",
+    "audit:stats-ranking": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/audits/auditStatsRankingCoverage.mjs",
     "audit:pokemon-navigation": "node --experimental-strip-types scripts/audits/auditPokemonNavigation.mjs",
     "audit:pre-hydration-shell": "node scripts/audits/auditPreHydrationShell.mjs",
     "audit:pokemon-icon-sheet": "node scripts/audits/auditPokemonIconSheet.mjs",
@@ -75,6 +76,7 @@
     "test:tool-mechanics": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testToolMechanics.mjs",
     "test:news-item-assets": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testNewsItemAssets.mjs",
     "test:evolution-assets": "node scripts/tests/testEvolutionAssets.mjs",
+    "test:form-change": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testFormChangeGroups.mjs",
     "test:pvp-navigation": "node scripts/tests/testPvpNavigation.mjs",
     "update:local-ui-assets": "node scripts/data/updateLocalUiAssets.mjs",
     "update:pokemon-icon-sheet": "node scripts/data/updatePokemonIconSheet.mjs"

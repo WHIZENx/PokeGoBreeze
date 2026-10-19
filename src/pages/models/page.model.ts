@@ -24,6 +24,7 @@ export interface IAlertReleasedComponent {
   formName: string | undefined;
   pokemonType?: PokemonType;
   icon: string | undefined;
+  releasedGO?: boolean;
 }
 
 export interface ISearchBarComponent {

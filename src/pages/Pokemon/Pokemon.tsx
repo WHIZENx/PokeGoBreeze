@@ -92,6 +92,12 @@ interface ITypeCost {
   thirdMove: PokemonTypeCost;
 }
 
+interface ReleasedAlertSnapshot {
+  formName: string | undefined;
+  pokemonType: PokemonType | undefined;
+  releasedGO: boolean;
+}
+
 class TypeCost implements ITypeCost {
   purified = new PokemonTypeCost();
   thirdMove = new PokemonTypeCost();
@@ -157,6 +163,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [pokemonGoFusionOptions, setPokemonGoFusionOptions] = useState<PokemonFusionOption[]>([]);
   const [pokemonGoEvolutionChains, setPokemonGoEvolutionChains] = useState<IEvolutionChain[]>([]);
   const [moveRankings, setMoveRankings] = useState<PokemonMoveRanking[]>([]);
+  const [releasedAlert, setReleasedAlert] = useState<ReleasedAlertSnapshot>();
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
@@ -627,7 +634,7 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [params.id, props.searchOption?.id, getFilteredPokemons, navigatePokemon]);
 
-  const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined) => {
+  const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined, releasedAlertFormName?: string) => {
     if (!form) {
       return false;
     }
@@ -669,6 +676,11 @@ const Pokemon = (props: IPokemonPage) => {
         pokemon: pokemonDetails,
       })
     );
+    setReleasedAlert({
+      formName: releasedAlertFormName,
+      pokemonType: form.form?.pokemonType,
+      releasedGO: details.releasedGO,
+    });
     return details.releasedGO;
   };
 
@@ -729,7 +741,7 @@ const Pokemon = (props: IPokemonPage) => {
           ),
         });
       }
-      checkReleased(id, searchingMainForm);
+      checkReleased(id, searchingMainForm, convertSexName(nameInfo));
     } else {
       clearData();
     }
@@ -777,7 +789,7 @@ const Pokemon = (props: IPokemonPage) => {
         // checkReleased resolves the selected form against the Game Master and
         // dispatches the form/details pair atomically. Dispatching the raw
         // PokéAPI body first briefly made move rankings look unavailable.
-        checkReleased(id, currentForm);
+        checkReleased(id, currentForm, convertSexName(currentForm.form.name));
       }
     }
   }, [pokeData, formList, data?.id, props.searchOption?.id, params.id, searchParams]);
@@ -856,7 +868,12 @@ const Pokemon = (props: IPokemonPage) => {
         )}
       >
         <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
-          <AlertReleased formName={formName} pokemonType={searchingMainForm?.form?.pokemonType} icon={iconData} />
+          <AlertReleased
+            formName={releasedAlert?.formName}
+            pokemonType={releasedAlert?.pokemonType}
+            icon={iconData}
+            releasedGO={releasedAlert?.releasedGO}
+          />
           <div
             className={combineClasses(
               'tw-relative tw-isolate tw-inline-block tw-overflow-visible img-desc pokemon-profile-aura',
