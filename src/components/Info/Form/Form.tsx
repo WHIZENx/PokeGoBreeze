@@ -72,19 +72,17 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
 
     const selectedBaseForm = getPokemonFormWithNoneSpecialForm(searchingMainForm?.form?.formName, selectedPokemonType);
-    const pokeApiBaseForms = props.formList
+    const baseForms = props.formList
       .flatMap((forms) => forms)
-      .filter(
-        (item) =>
-          !isSpecialFormType(item.form.pokemonType) && (item.form.id ?? 0) > 0 && hasSpriteImage(item.form.sprites)
-      );
-    const matchingBaseForm = pokeApiBaseForms.find((item) =>
+      .filter((item) => !isSpecialFormType(item.form.pokemonType) && hasSpriteImage(item.form.sprites));
+    const matchingBaseForm = baseForms.find((item) =>
       isEqual(
         getPokemonFormWithNoneSpecialForm(item.form.formName, item.form.pokemonType),
         selectedBaseForm,
         EqualMode.IgnoreCaseSensitive
       )
     );
+    const pokeApiBaseForms = baseForms.filter((item) => (item.form.id ?? 0) > 0);
     const matchingVariety = pokeApiBaseForms.find((item) => isEqual(item.name, searchingMainForm?.name));
     const defaultForm = pokeApiBaseForms.find((item) => item.defaultId === props.defaultId && item.form.isDefault);
     const pokeApiSprites = matchingBaseForm?.form.sprites ?? matchingVariety?.form.sprites ?? defaultForm?.form.sprites;
