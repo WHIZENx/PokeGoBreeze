@@ -16,6 +16,7 @@ import { useIcon } from '../../../composables/useIcon';
 import { useSearch } from '../../../composables/useSearch';
 import { Skeleton } from '@mui/material';
 import { useAssets } from '../../../composables/useAssets';
+import { getAvailableOriginSoundCries, getPokemonGoCryFormLabel } from './pokemon-sound.utils';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const { iconData } = useIcon();
@@ -25,6 +26,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const [gender, setGender] = useState<PokemonGender>();
   const [asset, setAsset] = useState<IAsset>();
+  const availableOriginSoundCries = getAvailableOriginSoundCries(props.originSoundCry);
 
   const getImageList = (id: number | undefined, genderRatio: IPokemonGenderRatio) => {
     const pokemonAsset = props.asset?.id === id ? props.asset : findAssetsById(id);
@@ -141,11 +143,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         </div>
       ) : (
         <Fragment>
-          {!isNotEmpty(props.originSoundCry) ? (
+          {!isNotEmpty(availableOriginSoundCries) ? (
             <div className="tw-text-error">&emsp;Sound in Pokémon unavailable.</div>
           ) : (
             <ul className="!tw-m-0">
-              {props.originSoundCry.map((value, index) => (
+              {availableOriginSoundCries.map((value, index) => (
                 <li key={index} className="tw-list-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
                   <ul className="!tw-m-0">
@@ -183,7 +185,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
             <ul className="!tw-m-0">
               {asset?.sound.cry.map((value, index) => (
                 <li key={index} className="tw-list-disc">
-                  <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
+                  <h6>Form: {getPokemonGoCryFormLabel(value.form, value.path)}</h6>
                   <audio
                     src={APIService.getSoundPokemonGO(value.path)}
                     className="tw-w-full tw-h-8"

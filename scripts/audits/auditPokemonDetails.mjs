@@ -27,7 +27,9 @@ const viewportWidth = Math.max(320, Number.parseInt(args.get('viewport-width') ?
 const viewportHeight = Math.max(568, Number.parseInt(args.get('viewport-height') ?? '900', 10));
 const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
 const auditEvolutionTooltip = args.get('audit-evolution-tooltip') === 'true';
+const auditEvolutionOverlap = args.get('audit-evolution-overlap') !== 'false';
 const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
+const formSwitchCycles = Math.max(1, Number.parseInt(args.get('form-switch-cycles') ?? '1', 10));
 const outputPath = resolve(workspaceRoot, args.get('output') ?? 'artifacts/pokemon-details-audit.json');
 const chromePath = args.get('chrome') ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
@@ -39,11 +41,26 @@ const normalize = (value) =>
     .toUpperCase();
 
 const normalizeForm = (value) => normalize(value) || 'NORMAL';
+const normalizeAssetUrl = (value) => {
+  try {
+    return decodeURI(String(value ?? ''));
+  } catch {
+    return String(value ?? '');
+  }
+};
 const normalizeMove = (value) =>
   normalize(value)
     .replace(/^V\d{4}_MOVE_/, '')
     .replace(/_FAST$/, '');
 const normalizePokemonType = (value) => (Number(value) === 0 ? 1 : Number(value));
+const profileMatchesButton = (page, index) => {
+  const button = page?.buttons?.[index];
+  if (!button || !page.profileAura?.src || page.profileAura.loading) return false;
+  const expected = [button.sprites.frontArtwork, button.sprites.frontHome, button.sprites.frontDefault]
+    .filter(Boolean)
+    .map(normalizeAssetUrl);
+  return expected.length === 0 || expected.includes(normalizeAssetUrl(page.profileAura.src));
+};
 const normalizeIconCandidate = (value, pokemonType) => {
   let identity = String(value ?? '')
     .toLowerCase()
@@ -179,7 +196,7 @@ const normalizeCanonicalIdentity = (id, value) => {
     .replace(/_BATTLE_BOND$/, '')
     .replace(/_OF_MANY_BATTLES$/, '_HERO')
     .replace(/_POM_POM$/, '_POMPOM')
-    .replace(/_OWN_TEMPO$/, '')
+    .replace(/_OWN_TEMPO$/, '_DUSK')
     .replace('NECROZMA_DAWN', 'NECROZMA_DAWN_WINGS')
     .replace('NECROZMA_DUSK', 'NECROZMA_DUSK_MANE')
     .replace('BASCULEGION_MALE', 'BASCULEGION')
@@ -190,6 +207,14 @@ const normalizeCanonicalIdentity = (id, value) => {
     .replace(/_F$/, '_FEMALE');
   if (id === 422 || id === 423) identity = identity.replace(/_EAST$/, '_EAST_SEA').replace(/_WEST$/, '_WEST_SEA');
   if (id === 718) identity = identity.replace(/_10$/, '_TEN_PERCENT').replace(/_50$/, '_FIFTY_PERCENT');
+  if (id === 201) {
+    identity = identity
+      .replace(/^UNOWN_/, '')
+      .replace(/_EXCLAMATION$/, '_EXCLAMATION_POINT')
+      .replace(/^EXCLAMATION$/, 'EXCLAMATION_POINT')
+      .replace(/_QUESTION$/, '_QUESTION_MARK')
+      .replace(/^QUESTION$/, 'QUESTION_MARK');
+  }
   if (id === 801) identity = identity.replace(/_ORIGINAL$/, '_ORIGINAL_COLOR');
   if (id === 888) identity = identity.replace(/_CROWNED$/, '_CROWNED_SWORD');
   if (id === 889) identity = identity.replace(/_CROWNED$/, '_CROWNED_SHIELD');
@@ -480,7 +505,11 @@ const readPage = () =>
     const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => {
       const edgeBounds = bounds(edge);
       let lineOverlapsCard = false;
-      for (let x = edgeBounds.left + 2; x < edgeBounds.right && !lineOverlapsCard; x += 4) {
+      for (
+        let x = edgeBounds.left + 2;
+        ${auditEvolutionOverlap ? 'x < edgeBounds.right && !lineOverlapsCard' : 'false'};
+        x += 4
+      ) {
         for (let y = edgeBounds.top + 2; y < edgeBounds.bottom; y += 4) {
           const stack = document.elementsFromPoint(x, y);
           const cardIndex = stack.findIndex((element) => element === edge || edge.contains(element));
@@ -524,6 +553,7 @@ const readPage = () =>
       detailTypes: (page.dataset.detailTypes ?? '').split(',').filter(Boolean),
       profileAura: profileImage
         ? {
+            loading: profileImage.getAttribute('aria-busy') === 'true',
             modifier: profileImage.dataset.profileModifier ?? '',
             src: profileImage.querySelector('img')?.currentSrc || profileImage.querySelector('img')?.getAttribute('src') || '',
             beforeBackground: getComputedStyle(profileImage, '::before').backgroundImage,
@@ -683,7 +713,12 @@ const navigate = async (id, isInitial) => {
   return waitFor(
     readPage,
     (page) =>
-      page?.id === id && !page.busy && page.buttons.length > 0 && page.detailFullName && page.title.includes(`#${id}`),
+      page?.id === id &&
+      !page.busy &&
+      !page.profileAura?.loading &&
+      page.buttons.length > 0 &&
+      page.detailFullName &&
+      page.title.includes(`#${id}`),
     `Pokémon #${id}`
   );
 };
@@ -703,6 +738,18 @@ const expectedMoves = (row) => {
       ...(row.exclusiveMoves ?? []),
     ].map(normalizeMove),
   };
+};
+
+const validateUniqueMoveRows = (issues, id, context, page) => {
+  for (const [moveType, moves] of [
+    ['fast', page.fastMoves.map(normalizeMove)],
+    ['charged', page.chargedMoves.map(normalizeMove)],
+  ]) {
+    const duplicates = [...new Set(moves.filter((move, index) => moves.indexOf(move) !== index))];
+    if (duplicates.length) {
+      addIssue(issues, id, 'duplicate_move_rows', { ...context, moveType, duplicates, actual: moves });
+    }
+  }
 };
 
 const validateModifierFormSprites = (issues, id, context, button, page) => {
@@ -729,7 +776,7 @@ const validateModifierFormSprites = (issues, id, context, button, page) => {
     pokeApiBaseButton?.sprites.frontHome,
     pokeApiBaseButton?.sprites.frontDefault,
   ].find(Boolean);
-  if (expectedProfile && page.profileAura?.src !== expectedProfile) {
+  if (expectedProfile && normalizeAssetUrl(page.profileAura?.src) !== normalizeAssetUrl(expectedProfile)) {
     addIssue(issues, id, 'modifier_profile_sprite_mismatch', {
       ...context,
       expected: expectedProfile,
@@ -764,8 +811,14 @@ const validateModifierFormSprites = (issues, id, context, button, page) => {
     });
     return;
   }
-  const invalidDefaults = page.renderedFormSprites.defaults.filter((sprite) => !expectedDefaults.includes(sprite));
-  const invalidShiny = page.renderedFormSprites.shiny.filter((sprite) => !expectedShiny.includes(sprite));
+  const normalizedDefaults = expectedDefaults.map(normalizeAssetUrl);
+  const normalizedShiny = expectedShiny.map(normalizeAssetUrl);
+  const invalidDefaults = page.renderedFormSprites.defaults.filter(
+    (sprite) => !normalizedDefaults.includes(normalizeAssetUrl(sprite))
+  );
+  const invalidShiny = page.renderedFormSprites.shiny.filter(
+    (sprite) => !normalizedShiny.includes(normalizeAssetUrl(sprite))
+  );
   if (invalidDefaults.length || invalidShiny.length) {
     addIssue(issues, id, 'modifier_form_sprite_mismatch', {
       ...context,
@@ -823,6 +876,7 @@ const validateExpectedRow = (issues, id, row, button, page) => {
   const expected = expectedMoves(row);
   const actualFast = page.fastMoves.map(normalizeMove);
   const actualCharged = page.chargedMoves.map(normalizeMove);
+  validateUniqueMoveRows(issues, id, context, page);
   for (const move of expected.fast) {
     if (!actualFast.includes(move)) addIssue(issues, id, 'fast_move_missing', { ...context, move, actual: actualFast });
   }
@@ -1107,6 +1161,7 @@ const main = async () => {
   let auditedModifierFormSprites = 0;
   let auditedEvolutionDetails = 0;
   let auditedEvolutionTooltips = 0;
+  let auditedFormSwitches = 0;
   let delayPokemonRequests = false;
 
   const chromeRuntime = await startChrome();
@@ -1196,6 +1251,7 @@ const main = async () => {
           (value) =>
             value?.id === id &&
             !value.busy &&
+            !value.profileAura?.loading &&
             value.buttons.length > 0 &&
             value.detailFullName &&
             value.title.includes(`#${id}`),
@@ -1343,7 +1399,9 @@ const main = async () => {
             (value) =>
               value?.id === id &&
               !value.busy &&
+              !value.profileAura?.loading &&
               value.buttons[buttonIndex]?.active &&
+              profileMatchesButton(value, buttonIndex) &&
               normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
               normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
             `Pokémon #${id} form ${row.fullName}`
@@ -1356,8 +1414,11 @@ const main = async () => {
             await readBodyTransitions()
           );
         }
-        await delay(50);
-        page = await readPage();
+        page = await waitFor(
+          readPage,
+          (value) => profileMatchesButton(value, buttonIndex),
+          `Pokémon #${id} form image`
+        );
         recordProfileSource(page.buttons[buttonIndex], page);
         auditedForms += 1;
         if ([2, 3].includes(normalizePokemonType(target.pokemonType))) auditedModifierFormSprites += 1;
@@ -1390,7 +1451,10 @@ const main = async () => {
             readPage,
             (value) =>
               value?.id === id &&
+              !value.busy &&
+              !value.profileAura?.loading &&
               value.buttons[index]?.active &&
+              profileMatchesButton(value, index) &&
               normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
               normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
             `Pokémon #${id} displayed form ${target.label}`
@@ -1403,9 +1467,18 @@ const main = async () => {
             await readBodyTransitions()
           );
         }
-        await delay(50);
-        page = await readPage();
+        page = await waitFor(
+          readPage,
+          (value) => profileMatchesButton(value, index),
+          `Pokémon #${id} displayed form image`
+        );
         recordProfileSource(page.buttons[index], page);
+        validateUniqueMoveRows(
+          issues,
+          id,
+          { form: target.form, pokemonType: target.pokemonType, label: target.label },
+          page
+        );
         validateDisplayedStats(issues, id, page.buttons[index], page);
         validateModifierFormSprites(
           issues,
@@ -1432,11 +1505,45 @@ const main = async () => {
         auditedForms += 1;
         testedForms.add(targetKey);
       }
+      if (formSwitchCycles > 1 && page.buttons.length > 1) {
+        for (let cycle = 1; cycle < formSwitchCycles; cycle += 1) {
+          for (let index = 0; index < page.buttons.length; index += 1) {
+            const target = page.buttons[index];
+            if (!target.active) {
+              await evaluate(`document.querySelectorAll('.form-container button[data-form]')[${index}].click()`);
+              page = await waitFor(
+                readPage,
+                (value) =>
+                  value?.id === id &&
+                  !value.busy &&
+                  !value.profileAura?.loading &&
+                  value.buttons[index]?.active &&
+                  profileMatchesButton(value, index) &&
+                  normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
+                  normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
+                `Pokémon #${id} repeated form switch ${cycle}:${target.label}`
+              );
+              auditedFormSwitches += 1;
+            }
+            page = await waitFor(
+              readPage,
+              (value) => profileMatchesButton(value, index),
+              `Pokémon #${id} repeated form image`
+            );
+            validateUniqueMoveRows(
+              issues,
+              id,
+              { cycle, form: target.form, pokemonType: target.pokemonType, label: target.label },
+              page
+            );
+          }
+        }
+      }
       for (const modifierSource of profileSources.filter((source) => [2, 3].includes(source.pokemonType))) {
         const baseSource = profileSources.find(
           (source) => ![2, 3].includes(source.pokemonType) && source.identity === modifierSource.identity
         );
-        if (baseSource?.src && modifierSource.src !== baseSource.src) {
+        if (baseSource?.src && normalizeAssetUrl(modifierSource.src) !== normalizeAssetUrl(baseSource.src)) {
           addIssue(issues, id, 'modifier_profile_differs_from_base', {
             identity: modifierSource.identity,
             base: baseSource,
@@ -1477,6 +1584,7 @@ const main = async () => {
       auditedModifierFormSprites,
       auditedEvolutionDetails,
       auditedEvolutionTooltips,
+      auditedFormSwitches,
       issues: issues.length,
       browserErrors: browserErrors.length,
     },
