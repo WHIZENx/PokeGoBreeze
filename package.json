@@ -71,6 +71,7 @@
     "test:pokemon-display-names": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokemonDisplayNames.mjs",
     "test:pokedex-query": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokedexQuery.mjs",
     "test:pokedex-card-images": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokedexCardImages.mjs",
+    "test:pokemon-detail-assets": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokemonDetailAssets.mjs",
     "test:pre-hydration-shell": "node scripts/tests/testPreHydrationShell.mjs",
     "test:seo-assets": "node scripts/tests/testSeoAssets.mjs",
     "test:tool-mechanics": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testToolMechanics.mjs",
