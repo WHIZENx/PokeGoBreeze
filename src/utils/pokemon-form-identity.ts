@@ -165,9 +165,24 @@ export const findPokemonStatsForm = <T extends { id?: number; form?: string | nu
 ) => {
   const pokemonId = id ?? 0;
   const requestedIdentity = normalizePokemonFormIdentity(pokemonId, form ?? 'NORMAL');
-  return forms?.find(
+  const exact = forms?.find(
     (item) => item.id === pokemonId && normalizePokemonFormIdentity(pokemonId, item.form) === requestedIdentity
   );
+  if (exact || requestedIdentity !== 'GMAX') {
+    return exact;
+  }
+
+  // PokéAPI exposes one generic Gmax form for species whose Pokémon GO
+  // templates are split by their base form (for example Toxtricity and
+  // Urshifu). Gigantamax does not alter base stats, so either matching GO
+  // Gmax ranking is a valid fallback for the generic display form.
+  return forms?.find((item) => {
+    if (item.id !== pokemonId) {
+      return false;
+    }
+    const identity = normalizePokemonFormIdentity(pokemonId, item.form);
+    return identity === 'GMAX' || identity.endsWith('_GMAX');
+  });
 };
 
 export const pokemonGoFormIdentityKey = (pokemon: PokemonGoFormIdentity) => {
