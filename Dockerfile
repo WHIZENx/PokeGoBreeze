@@ -1,18 +1,16 @@
 # build environment
-FROM node:18.17.0-alpine as builder
+FROM node:24.22.1-alpine AS builder
 WORKDIR /app
 
 # Install Python, bash, and build dependencies
 RUN apk add --no-cache python3 make g++ gcc curl bash
+RUN npm install --global npm@12.2.1
 
 # Create build directory explicitly
 RUN mkdir -p /app/dist
 
 COPY . .
-RUN npm install --location=global npm@10.8.2
-
-# Try to run the build, but continue even if it fails
-RUN npm install && npm run deploy
+RUN npm ci && npm run deploy
 
 
 # production environment
