@@ -38,6 +38,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
     "start": "node scripts/withConfig.js vite",
     "build": "npm run generate:sitemap && cross-env VITE_CJS_IGNORE_WARNING=true vite build && npm run prerender:seo",
     "format:code": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
@@ -150,7 +151,7 @@
     "source-map-js": "1.2.2"
   },
   "allowScripts": {
-    "@parcel/watcher@2.5.1": true,
+    "@parcel/watcher@2.6.0": true,
     "esbuild@0.25.0": true,
     "fsevents@2.3.3": true
   }
