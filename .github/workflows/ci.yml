@@ -25,11 +25,14 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: 24
+          node-version: 24.22.1
           cache: npm
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Audit production dependencies
+        run: npm run audit:prod
 
       - name: Lint code and styles
         run: npm run lint
