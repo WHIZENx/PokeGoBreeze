@@ -234,6 +234,13 @@ class APIService {
     return `${APIUrl.POKE_ASSETS}${id}.png`;
   }
 
+  getPokeOfficialArtwork(id = 0) {
+    if (!id) {
+      return '';
+    }
+    return `${APIUrl.POKE_OFFICIAL_ARTWORK_ASSETS}${id}.png`;
+  }
+
   getPokeFullSprite(id?: number | string, form?: string) {
     if (id) {
       if (form) {
