@@ -7,6 +7,7 @@ const defaultDataApiUrl =
 export class APIUrl {
   public static POKEGO_BREEZE_API_URL = (configuredDataApiUrl || defaultDataApiUrl).replace(/\/$/, '');
   public static POKE_ASSETS = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
+  public static POKE_OFFICIAL_ARTWORK_ASSETS = `${APIUrl.POKE_ASSETS}other/official-artwork/`;
 
   public static POGO_PROD_ASSET_URL = 'https://storage.googleapis.com/prod-public-images/';
   public static POGO_PRODHOLOHOLO_ASSET_URL = 'https://prodholoholo-public-images.nianticlabs.com/';

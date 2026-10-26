@@ -816,23 +816,31 @@ const Pokemon = (props: IPokemonPage) => {
     );
   };
 
+  const currentPokemonId = dataStorePokemon?.current?.id;
+  const isMainImageReady = Boolean(
+    currentPokemonId && searchingMainForm?.form && searchingMainForm.defaultId === currentPokemonId
+  );
   const hybridImage = APIService.getPokeFullSprite(
-    dataStorePokemon?.current?.id,
+    currentPokemonId,
     convertPokemonImageName(
       searchingMainForm && originForm && searchingMainForm.defaultId === searchingMainForm.form?.id
         ? ''
         : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
     )
   );
-  const mainImageCandidates = [
-    getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites),
-    hybridImage,
-    APIService.getPokeFullAsset(dataStorePokemon?.current?.id),
-  ];
+  const mainImageCandidates = isMainImageReady
+    ? [
+        getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites),
+        APIService.getPokeOfficialArtwork(currentPokemonId),
+        hybridImage,
+        APIService.getPokeFullAsset(currentPokemonId),
+      ]
+    : [];
   const { displayedUrl: mainImage, isLoading: isMainImageLoading } = usePreloadedImage(
     mainImageCandidates,
     APIService.getPokeSprite()
   );
+  const showMainImageSkeleton = !isMainImageReady || isMainImageLoading;
   const profileModifier =
     searchingMainForm?.form?.pokemonType === PokemonType.Shadow
       ? 'shadow'
@@ -876,14 +884,23 @@ const Pokemon = (props: IPokemonPage) => {
           />
           <div
             className={combineClasses(
-              'tw-relative tw-isolate tw-inline-block tw-overflow-visible img-desc pokemon-profile-aura',
+              'tw-relative tw-isolate tw-inline-flex tw-align-bottom tw-items-center tw-justify-center tw-overflow-visible img-desc pokemon-profile-aura',
               profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
             )}
-            aria-busy={isMainImageLoading}
+            aria-busy={showMainImageSkeleton}
             data-testid="pokemon-profile-image"
             data-profile-modifier={profileModifier}
           >
-            <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
+            {showMainImageSkeleton ? (
+              <Skeleton
+                variant="rounded"
+                animation="wave"
+                className="!tw-h-[205px] !tw-w-[205px]"
+                data-testid="pokemon-profile-image-skeleton"
+              />
+            ) : (
+              <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
+            )}
           </div>
           <div className="tw-inline-block tw-align-bottom">
             <PokemonTable

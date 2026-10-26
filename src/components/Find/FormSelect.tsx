@@ -16,7 +16,7 @@ import {
   TypeRadioGroup,
 } from '../../utils/utils';
 import TypeInfo from '../Sprites/Type/Type';
-import { FormControlLabel, Radio } from '@mui/material';
+import { FormControlLabel, Radio, Skeleton } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { IPokemonName, IPokemonSpecie, PokemonSpecie } from '../../core/models/pokemon.model';
 import {
@@ -356,19 +356,25 @@ const FormSelect = (props: IFormSelectComponent) => {
     props.onClearStats?.(true);
   }, [isBattleModifierForm, isRaid, props.setRaid, props.onClearStats]);
 
+  const currentPokemonId = dataStorePokemon?.current?.id;
+  const isSelectedImageReady = Boolean(currentPokemonId && currentForm?.defaultId === currentPokemonId);
   const selectedHybridImage = APIService.getPokeFullSprite(
-    dataStorePokemon?.current?.id,
+    currentPokemonId,
     convertPokemonImageName(currentForm?.form.formName)
   );
-  const selectedImageCandidates = [
-    selectedHybridImage,
-    getPreferredPokemonFormSprite(currentForm?.form.sprites),
-    APIService.getPokeFullAsset(dataStorePokemon?.current?.id),
-  ];
+  const selectedImageCandidates = isSelectedImageReady
+    ? [
+        getPreferredPokemonFormSprite(currentForm?.form.sprites),
+        APIService.getPokeOfficialArtwork(currentPokemonId),
+        selectedHybridImage,
+        APIService.getPokeFullAsset(currentPokemonId),
+      ]
+    : [];
   const { displayedUrl: selectedImage, isLoading: isSelectedImageLoading } = usePreloadedImage(
     selectedImageCandidates,
     APIService.getPokeSprite()
   );
+  const showSelectedImageSkeleton = !isSelectedImageReady || isSelectedImageLoading;
 
   return (
     <Fragment>
@@ -395,10 +401,19 @@ const FormSelect = (props: IFormSelectComponent) => {
         )}
       </div>
       <span
-        aria-busy={isSelectedImageLoading}
+        aria-busy={showSelectedImageSkeleton}
         className="tw-inline-flex tw-h-[216px] tw-w-[216px] tw-shrink-0 tw-align-middle tw-items-center tw-justify-center"
       >
-        <img className="tw-h-[200px] tw-w-[200px] tw-object-contain tw-p-2" alt="Image Pokemon" src={selectedImage} />
+        {showSelectedImageSkeleton ? (
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            className="!tw-h-[200px] !tw-w-[200px]"
+            data-testid="selected-pokemon-image-skeleton"
+          />
+        ) : (
+          <img className="tw-h-[200px] tw-w-[200px] tw-object-contain tw-p-2" alt="Image Pokemon" src={selectedImage} />
+        )}
       </span>
       <div className="tw-inline-block tw-w-16 tw-h-16">
         {dataStorePokemon?.next && (
