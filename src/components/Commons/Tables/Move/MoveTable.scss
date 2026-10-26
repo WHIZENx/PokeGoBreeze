@@ -9,12 +9,14 @@
   @apply tw-w-full tw-min-w-[250px];
 }
 
-.table-moves thead {
-  @apply tw-sticky tw-top-0;
+.table-moves thead tr th {
+  @apply tw-sticky tw-top-0 tw-z-2 tw-h-[35px] tw-bg-table-head tw-px-2.5 tw-py-[5px] tw-text-[16px] tw-text-white;
 }
 
-.table-moves thead tr th {
-  @apply tw-text-[16px] tw-py-[5px] tw-px-2.5 tw-h-[35px];
+.table-moves thead tr + tr th {
+  top: 35px;
+
+  @apply tw-z-10;
 }
 
 .table-moves tbody tr td {
