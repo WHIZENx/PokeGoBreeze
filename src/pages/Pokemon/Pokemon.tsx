@@ -891,22 +891,16 @@ const Pokemon = (props: IPokemonPage) => {
             data-testid="pokemon-profile-image"
             data-profile-modifier={profileModifier}
           >
-            {showMainImageSkeleton && (
+            {showMainImageSkeleton ? (
               <Skeleton
                 variant="rounded"
                 animation="wave"
                 className="!tw-absolute tw-inset-1 !tw-h-auto !tw-w-auto"
                 data-testid="pokemon-profile-image-skeleton"
               />
+            ) : (
+              <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
             )}
-            <img
-              className={combineClasses(
-                'pokemon-main-sprite !tw-align-baseline tw-transition-opacity',
-                showMainImageSkeleton ? 'tw-opacity-0' : 'tw-opacity-100'
-              )}
-              alt="Image Pokemon"
-              src={mainImage}
-            />
           </div>
           <div className="tw-inline-block tw-align-bottom">
             <PokemonTable

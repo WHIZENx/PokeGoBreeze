@@ -7,19 +7,22 @@ const uniqueUrls = (candidates: Array<string | null | undefined>, fallback: stri
 export const usePreloadedImage = (candidates: Array<string | null | undefined>, fallback: string) => {
   const candidateKey = JSON.stringify(uniqueUrls(candidates, fallback));
   const urls = useMemo(() => JSON.parse(candidateKey) as string[], [candidateKey]);
-  const [displayedUrl, setDisplayedUrl] = useState(fallback);
-  const [isLoading, setIsLoading] = useState(true);
+  const [imageState, setImageState] = useState({
+    candidateKey,
+    displayedUrl: fallback,
+    isLoading: true,
+  });
 
   useEffect(() => {
     let active = true;
     let candidateIndex = 0;
-    setIsLoading(true);
+    setImageState((current) => ({ ...current, candidateKey, isLoading: true }));
 
     const loadNext = () => {
       const url = urls[candidateIndex++];
       if (!url) {
         if (active) {
-          setIsLoading(false);
+          setImageState((current) => ({ ...current, candidateKey, isLoading: false }));
         }
         return;
       }
@@ -27,8 +30,7 @@ export const usePreloadedImage = (candidates: Array<string | null | undefined>, 
       const image = new Image();
       image.onload = () => {
         if (active) {
-          setDisplayedUrl(url);
-          setIsLoading(false);
+          setImageState({ candidateKey, displayedUrl: url, isLoading: false });
         }
       };
       image.onerror = loadNext;
@@ -39,7 +41,10 @@ export const usePreloadedImage = (candidates: Array<string | null | undefined>, 
     return () => {
       active = false;
     };
-  }, [urls]);
+  }, [candidateKey, urls]);
 
-  return { displayedUrl, isLoading };
+  return {
+    displayedUrl: imageState.displayedUrl,
+    isLoading: imageState.candidateKey !== candidateKey || imageState.isLoading,
+  };
 };
