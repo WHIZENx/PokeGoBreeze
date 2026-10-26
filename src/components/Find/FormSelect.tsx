@@ -402,13 +402,13 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <span
         aria-busy={showSelectedImageSkeleton}
-        className="tw-relative tw-inline-flex tw-h-[216px] tw-w-[216px] tw-shrink-0 tw-align-middle tw-items-center tw-justify-center"
+        className="tw-inline-flex tw-h-[216px] tw-w-[216px] tw-shrink-0 tw-align-middle tw-items-center tw-justify-center"
       >
         {showSelectedImageSkeleton ? (
           <Skeleton
             variant="rounded"
             animation="wave"
-            className="!tw-absolute tw-inset-2 !tw-h-auto !tw-w-auto"
+            className="!tw-h-[200px] !tw-w-[200px]"
             data-testid="selected-pokemon-image-skeleton"
           />
         ) : (

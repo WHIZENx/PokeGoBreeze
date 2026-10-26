@@ -884,7 +884,7 @@ const Pokemon = (props: IPokemonPage) => {
           />
           <div
             className={combineClasses(
-              'tw-relative tw-isolate tw-inline-block tw-overflow-visible img-desc pokemon-profile-aura',
+              'tw-relative tw-isolate tw-inline-flex tw-align-bottom tw-items-center tw-justify-center tw-overflow-visible img-desc pokemon-profile-aura',
               profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
             )}
             aria-busy={showMainImageSkeleton}
@@ -895,7 +895,7 @@ const Pokemon = (props: IPokemonPage) => {
               <Skeleton
                 variant="rounded"
                 animation="wave"
-                className="!tw-absolute tw-inset-1 !tw-h-auto !tw-w-auto"
+                className="!tw-h-[205px] !tw-w-[205px]"
                 data-testid="pokemon-profile-image-skeleton"
               />
             ) : (
