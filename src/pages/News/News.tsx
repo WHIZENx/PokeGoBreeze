@@ -268,7 +268,7 @@ const News = () => {
   return (
     <div className="tw-container tw-mb-3">
       <div className="info-main-container tw-pb-3 tw-mt-2">
-        <h1 className="tw-text-center tw-underline">Game Master Event Tickets</h1>
+        <h1 className="tw-text-center">Game Master Event Tickets</h1>
         <DismissibleAlert severity="info" className="!tw-m-3">
           This page shows ticket, schedule, and reward metadata from the latest published game data. It is not an
           official or real-time Pokémon GO news feed, and published metadata does not guarantee availability.
