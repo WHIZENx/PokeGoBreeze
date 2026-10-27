@@ -20,6 +20,8 @@ import StatsCalculationService from '../../../services/stats-calculation.service
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { includeGameMasterSpecialMoves } from '../pvp-move-options';
+import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
+import CasinoIcon from '@mui/icons-material/Casino';
 
 const createMoveAudio = (sound: string | undefined) => {
   const audio = new Audio(APIService.getSoundMove(sound));
@@ -143,6 +145,18 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     }
   };
 
+  const selectRandomPokemon = () => {
+    const validPokemon = props.data.filter((value) => isNotEmpty(value.moveset) && value.pokemon);
+    const availablePokemon = validPokemon.length > 1 ? validPokemon.filter((value) => value !== pokemon) : validPokemon;
+    if (!isNotEmpty(availablePokemon)) {
+      showSnackbar('No Pokémon available to randomize.', 'error');
+      return;
+    }
+    const value = availablePokemon[Math.floor(Math.random() * availablePokemon.length)];
+    showSpinner();
+    void selectPokemon(value);
+  };
+
   const selectFMove = (value: ICombat | undefined) => {
     props.clearData(false);
     setFMove(value);
@@ -211,10 +225,22 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   return (
     <Fragment>
-      <h5>Pokémon</h5>
+      <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
+        <h5>Pokémon</h5>
+        <ButtonMui
+          className="!tw-min-w-0 !tw-px-2 !tw-py-0.5"
+          size="small"
+          variant="outlined"
+          startIcon={<CasinoIcon fontSize="small" />}
+          label="Random"
+          disabled={!isNotEmpty(props.data)}
+          onClick={selectRandomPokemon}
+        />
+      </div>
       <SelectCardPokemon
         key={props.league}
         pokemonList={props.data}
+        value={pokemon ? splitAndCapitalize(pokemon.name?.replaceAll('_', '-'), '-', ' ') : ''}
         onSelect={(pokemon) => splitAndCapitalize(pokemon.name?.replaceAll('_', '-'), '-', ' ')}
         onFilter={(pokemon) => ({ name: pokemon.name, id: pokemon.id })}
         onIsSelectedPokemon={(result) => result === pokemon}

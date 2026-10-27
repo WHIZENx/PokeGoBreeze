@@ -3,15 +3,32 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [battlePage, battleExport] = await Promise.all([
+const [battlePage, battleExport, battleSelect] = await Promise.all([
   readFile(new URL('../../src/pages/PVP/Battle/Battle.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/utils/battle-export.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Battle/Select.tsx', import.meta.url), 'utf8'),
 ]);
+const battleModel = await readFile(new URL('../../src/pages/PVP/models/battle.model.ts', import.meta.url), 'utf8');
 
 assert.match(
   battlePage,
   /label="Reset Battle"[\s\S]*onClick=\{\(\) => void battleAnimation\(\)\}/,
   'Reset Battle must run the simulator again.'
+);
+assert.match(
+  battleSelect,
+  /label="Random"[\s\S]*onClick=\{selectRandomPokemon\}/,
+  'Each Pokémon selector must expose the Random action beside its label.'
+);
+assert.match(
+  battleSelect,
+  /availablePokemon\[Math\.floor\(Math\.random\(\) \* availablePokemon\.length\)\][\s\S]*selectPokemon\(value\)/,
+  'Random must select a valid Pokémon through the standard selection flow.'
+);
+assert.match(
+  battleSelect,
+  /<SelectCardPokemon[\s\S]*value=\{pokemon \? splitAndCapitalize/,
+  'The Pokémon input must stay synchronized with Random selection state.'
 );
 assert.match(
   battlePage,
@@ -33,6 +50,12 @@ for (const content of ['Battle timeline', 'Battle events', 'CP ', 'Level ', 'IV 
   assert.ok(battleExport.includes(content), `The battle export must include ${content.trim()}.`);
 }
 assert.match(battleExport, /getLocalTypeIcon/, 'The battle export must use the shared move type icon assets.');
+assert.match(battleModel, /score\?: number;/, 'The selected PvPoke score must remain typed in the battle model.');
+assert.match(
+  battleExport,
+  /scoreBadge:[\s\S]*data\.score[\s\S]*fillRoundedRect[\s\S]*#f8d030/,
+  'The battle export must draw the PvPoke score badge after the Pokémon identity.'
+);
 assert.match(
   battleExport,
   /\['normal', 'shadow', 'purified'\]\.includes/,

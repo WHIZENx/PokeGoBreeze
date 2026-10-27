@@ -27,6 +27,7 @@ interface BattleEventRow {
 interface PokemonInfoLine {
   text: string;
   moveType?: string;
+  scoreBadge?: string;
 }
 
 const canvasWidth = 1600;
@@ -288,7 +289,7 @@ const pokemonInfoLines = (pokemon: IPokemonBattle) => {
     .filter(Boolean)
     .join(' · ');
   const lines: PokemonInfoLine[] = [
-    { text: identity },
+    { text: identity, scoreBadge: data?.score && data.score > 0 ? String(data.score) : undefined },
     {
       text: `CP ${formatNumber(stats?.CP)} · Level ${formatNumber(stats?.level, 1)} · IV ${iv ? `${iv.atkIV}/${iv.defIV}/${iv.staIV}` : '—'}`,
     },
@@ -386,11 +387,25 @@ const drawPokemonCard = (
   pokemonInfoLines(pokemon).forEach((line, index) => {
     const lineY = y + 86 + index * 34;
     const hasIcon = drawMoveTypeIcon(context, typeIcons, line.moveType, textX, lineY - 21, 24);
-    drawText(context, line.text, textX + (hasIcon ? 34 : 0), lineY, {
+    const lineTextX = textX + (hasIcon ? 34 : 0);
+    const lineFont = `${index === 0 ? 600 : 400} 19px ${fontFamily}`;
+    drawText(context, line.text, lineTextX, lineY, {
       color: index === 0 ? colors.text : colors.muted,
-      font: `${index === 0 ? 600 : 400} 19px ${fontFamily}`,
+      font: lineFont,
       maxWidth: textWidth - (hasIcon ? 34 : 0),
     });
+    if (line.scoreBadge) {
+      context.font = `700 15px ${fontFamily}`;
+      const badgeWidth = Math.max(38, context.measureText(line.scoreBadge).width + 18);
+      context.font = lineFont;
+      const badgeX = Math.min(lineTextX + context.measureText(line.text).width + 10, textX + textWidth - badgeWidth);
+      fillRoundedRect(context, badgeX, lineY - 22, badgeWidth, 26, '#f8d030', 13);
+      drawText(context, line.scoreBadge, badgeX + badgeWidth / 2, lineY - 4, {
+        color: '#332b00',
+        font: `700 15px ${fontFamily}`,
+        align: 'center',
+      });
+    }
   });
 };
 

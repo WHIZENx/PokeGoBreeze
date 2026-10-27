@@ -34,6 +34,7 @@ export interface IPokemonBattleData {
   form?: string;
   assetForm?: string;
   id?: number;
+  score?: number;
   pokemonType: PokemonType;
   hp: number;
   stats: IStatsPokemonGO | undefined;
@@ -56,6 +57,7 @@ export class PokemonBattleData implements IPokemonBattleData {
   form?: string;
   assetForm?: string;
   id?: number;
+  score?: number;
   pokemonType = PokemonType.Normal;
   hp = 0;
   stats: IStatsPokemonGO | undefined;
