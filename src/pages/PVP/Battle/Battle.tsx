@@ -31,6 +31,8 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeDownIcon from '@mui/icons-material/VolumeDown';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -109,6 +111,7 @@ import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
+import { exportBattleReportImage } from './utils/battle-export';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -156,7 +159,7 @@ const stopPokemonAudio = (pokemon: IPokemonBattle) => {
 };
 
 const Battle = () => {
-  const { pokemonsData, combatsData, assetsData } = useDataStore();
+  const { pokemonsData, combatsData, assetsData, optionsData } = useDataStore();
   const { findPokemonByPvpokeSpeciesId, findPokemonBySlug } = usePokemon();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
@@ -286,6 +289,39 @@ const Battle = () => {
     resetTimeline();
     setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, timeline: [] }));
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
+  };
+
+  const exportBattle = async () => {
+    if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
+      showSnackbar('Battle information is unavailable.', 'error');
+      return;
+    }
+    showSpinner();
+    try {
+      await exportBattleReportImage({
+        leagueName: getPokemonBattleLeagueName(league),
+        turnDurationSeconds: optionsData.combatOptions.turnDurationSeconds || 0.5,
+        player: pokemonCurr,
+        opponent: pokemonObj,
+        playerImageUrls: [
+          APIService.getPokemonModel(pokemonCurr.pokemonData.assetForm, pokemonCurr.pokemonData.id),
+          APIService.getPokemonSqModel(pokemonCurr.pokemonData.assetForm, pokemonCurr.pokemonData.id),
+          APIService.getPokeFullSprite(pokemonCurr.pokemonData.id, pokemonCurr.pokemonData.form),
+          APIService.getPokeFullAsset(pokemonCurr.pokemonData.id),
+        ],
+        opponentImageUrls: [
+          APIService.getPokemonModel(pokemonObj.pokemonData.assetForm, pokemonObj.pokemonData.id),
+          APIService.getPokemonSqModel(pokemonObj.pokemonData.assetForm, pokemonObj.pokemonData.id),
+          APIService.getPokeFullSprite(pokemonObj.pokemonData.id, pokemonObj.pokemonData.form),
+          APIService.getPokeFullAsset(pokemonObj.pokemonData.id),
+        ],
+      });
+      showSnackbar('Battle report exported as PNG.', 'success');
+    } catch (error) {
+      showSnackbar(error instanceof globalThis.Error ? error.message : 'Unable to export battle report.', 'error');
+    } finally {
+      hideSpinner();
+    }
   };
 
   const clearData = () => {
@@ -1806,7 +1842,7 @@ const Battle = () => {
                       <ButtonMui
                         color="error"
                         startIcon={<RestartAltIcon />}
-                        label="Reset"
+                        label="Reset Timeline"
                         onClick={() => resetTimeline()}
                         disabled={playState}
                       />
@@ -1820,30 +1856,44 @@ const Battle = () => {
           </div>
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
-          <div className="tw-text-center tw-mt-2">
-            <ButtonMui
-              className="tw-h-12.5"
-              startIcon={
-                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
-                  <RestartAltIcon />
-                ) : (
+          <div className="tw-flex tw-flex-wrap tw-justify-center tw-gap-2 tw-mt-2">
+            {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
+              <>
+                <ButtonMui
+                  className="tw-h-12.5"
+                  startIcon={<RestartAltIcon />}
+                  label="Reset Battle"
+                  onClick={() => void battleAnimation()}
+                />
+                <ButtonMui
+                  className="tw-h-12.5"
+                  color="error"
+                  variant="outlined"
+                  startIcon={<DeleteSweepIcon />}
+                  label="Clear Battle"
+                  onClick={clearBattleResult}
+                />
+                <ButtonMui
+                  className="tw-h-12.5"
+                  color="success"
+                  startIcon={<FileDownloadIcon />}
+                  label="Export Battle"
+                  onClick={() => void exportBattle()}
+                />
+              </>
+            ) : (
+              <ButtonMui
+                className="tw-h-12.5"
+                startIcon={
                   <span className="tw-relative">
                     <img height={36} alt="ATK Left" src={ATK_LOGO} />
                     <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
                   </span>
-                )
-              }
-              label={
-                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)
-                  ? 'Reset Battle'
-                  : 'Battle Simulator'
-              }
-              onClick={() =>
-                isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)
-                  ? clearBattleResult()
-                  : void battleAnimation()
-              }
-            />
+                }
+                label="Battle Simulator"
+                onClick={() => void battleAnimation()}
+              />
+            )}
           </div>
         )}
       </div>
