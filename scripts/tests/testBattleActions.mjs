@@ -126,6 +126,11 @@ assert.match(
 );
 assert.match(
   battlePage,
+  /inputLabel="Speed"[\s\S]*tw-mt-3 tw-flex tw-justify-center tw-gap-x-2 lg:tw-mt-0[\s\S]*label=\{playState \? 'Stop' : 'Play'\}/,
+  'Mobile timeline playback buttons must keep vertical space below the wrapped Speed controls.'
+);
+assert.match(
+  battlePage,
   /focusBattleTimeline[\s\S]*focus\(\{ preventScroll: true \}\)[\s\S]*scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/,
   'Battle actions must smoothly align the timeline anchor to the top and move keyboard focus to it.'
 );
@@ -179,6 +184,11 @@ assert.match(
   /leagueId: selectedLeagueId,[\s\S]*playerStrategy,[\s\S]*opponentStrategy,/,
   'Battle requests must include league identity and both server-side strategy definitions.'
 );
+assert.match(
+  battlePage,
+  /response\.data\.meta\.warnings[\s\S]*warning\.message[\s\S]*showSnackbar\(warningMessages\.join\(' '\), 'warning'\)/,
+  'Unavailable simulator selections must complete the battle and surface API reasons as warning snackbars.'
+);
 for (const leagueId of ['DEFAULT_LITTLE', 'DEFAULT_GREAT', 'DEFAULT_ULTRA', 'DEFAULT_MASTER']) {
   assert.match(battlePage, new RegExp(leagueId), `The battle page must map the ${leagueId} standard league.`);
 }
@@ -224,6 +234,11 @@ assert.match(
   timelineVertical,
   /turnRowClasses[\s\S]*tw-min-h-24[\s\S]*tw-border-t[\s\S]*tw-border-\[var\(--custom-table-background-sub-head-border\)\][\s\S]*data-timeline-turn/,
   'Every vertical timeline turn must use one equal-height row with a full-width divider.'
+);
+assert.match(
+  timelineVertical,
+  /timelineLength = Math\.max\([\s\S]*tw-grid tw-grid-cols-2[\s\S]*Array\.from\(\{ length: timelineLength \}[\s\S]*renderTimelineEntry\([\s\S]*pokemonCurr\.timeline\.at\(index\)[\s\S]*renderTimelineEntry\([\s\S]*pokemonObj\.timeline\.at\(index\)/,
+  'Both sides of each vertical timeline turn must share one CSS grid row so variable badge heights cannot offset later dividers.'
 );
 assert.match(
   timelineVertical,

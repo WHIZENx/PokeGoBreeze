@@ -342,13 +342,31 @@ export interface PvpBattleSimulatorRequest {
   };
 }
 
+export interface PvpBattleSimulatorWarning {
+  code:
+    | 'unavailable_pvp_pokemon'
+    | 'unavailable_pvp_pokemon_type'
+    | 'unavailable_pvp_fast_move'
+    | 'unavailable_pvp_charged_move';
+  message: string;
+  side: 'player' | 'opponent';
+  teamIndex: number;
+  pokemonId: number;
+  pokemonName: string;
+  form: string;
+  move?: string;
+}
+
 export interface PvpBattleSimulatorApiResponse {
   data: {
     timeline: ITimeline[];
     timelineOpponent: ITimeline[];
     turns: number;
   };
-  meta: { section: 'pvpBattleSimulator' };
+  meta: {
+    section: 'pvpBattleSimulator';
+    warnings: PvpBattleSimulatorWarning[];
+  };
 }
 
 export interface TrainerBattleSimulatorRequest {

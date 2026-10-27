@@ -406,6 +406,10 @@ const Battle = () => {
       setPokemonObjBench(opponentTeam.slice(1));
       setPokemonCurrBenchExpanded(playerBenchExpanded);
       setPokemonObjBenchExpanded(opponentBenchExpanded);
+      const warningMessages = [...new Set((response.data.meta.warnings ?? []).map((warning) => warning.message))];
+      if (warningMessages.length) {
+        showSnackbar(warningMessages.join(' '), 'warning');
+      }
       focusBattleTimeline();
     } catch (error) {
       const axiosError = error as AxiosError<{ error?: string }>;
@@ -2590,7 +2594,7 @@ const Battle = () => {
                         </span>
                       </div>
                     </div>
-                    <div className="tw-flex tw-justify-center tw-gap-x-2">
+                    <div className="tw-mt-3 tw-flex tw-justify-center tw-gap-x-2 lg:tw-mt-0">
                       <ButtonMui
                         startIcon={playState ? <PauseIcon /> : <PlayArrowIcon />}
                         label={playState ? 'Stop' : 'Play'}

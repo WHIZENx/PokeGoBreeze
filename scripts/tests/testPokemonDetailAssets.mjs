@@ -7,10 +7,27 @@ import {
 } from '../../src/components/Info/Assets/pokemon-sound.utils.ts';
 import { findPokemonStatsForm } from '../../src/utils/pokemon-form-identity.ts';
 
-const [pokemons, assets] = await Promise.all([
+const [pokemons, assets, pokemonPage] = await Promise.all([
   readFile(new URL('../../../api/data/pokemons.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../../../api/data/assets.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
 ]);
+
+assert.match(
+  pokemonPage,
+  /pokemonNavigationRequestDelayMs = 100[\s\S]*pokemonRequestIdRef = useRef\(0\)[\s\S]*requestId !== pokemonRequestIdRef\.current/,
+  'Rapid Pokémon navigation must debounce requests and ignore stale responses.'
+);
+assert.match(
+  pokemonPage,
+  /APIService\.isCancel\(error\) \|\| requestId !== pokemonRequestIdRef\.current[\s\S]*if \(notFound && isDetailsRoute\)[\s\S]*setIsFound\(false\)/,
+  'Only a non-cancelled 404 from the latest Pokémon request may show the not-found page.'
+);
+assert.match(
+  pokemonPage,
+  /setIsFound\(true\)[\s\S]*return \(\) => \{[\s\S]*window\.clearTimeout\(requestTimer\)[\s\S]*pokemonRequestIdRef\.current === requestId[\s\S]*APIService\.cancel\(requestSource\)/,
+  'A new valid navigation must recover from an earlier error and clean up its own queued or active request.'
+);
 
 const speciesIds = [...new Set(pokemons.map((pokemon) => Number(pokemon.num)))].sort((left, right) => left - right);
 const assetsById = new Map();
