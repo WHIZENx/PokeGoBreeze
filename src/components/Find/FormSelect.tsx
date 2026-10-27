@@ -10,7 +10,6 @@ import {
   getItemSpritePath,
   getPreferredPokemonFormSprite,
   getPokemonType,
-  getValidPokemonImgPath,
   isSpecialFormType,
   splitAndCapitalize,
   TypeRadioGroup,
@@ -39,7 +38,7 @@ import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
 import { useSnackbar } from '../../contexts/snackbar.context';
-import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
+import { markImageAsPreloaded, usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { deduplicatePokemonFormSelections, pokemonGoFormIdentityKey } from '../../utils/pokemon-form-identity';
 
 const pokemonGoAssetSprites = (asset: PokemonGoFormCatalogEntry['asset']) => {
@@ -362,19 +361,26 @@ const FormSelect = (props: IFormSelectComponent) => {
     currentPokemonId,
     convertPokemonImageName(currentForm?.form.formName)
   );
-  const selectedImageCandidates = isSelectedImageReady
+  const selectedPreferredImage = isSelectedImageReady
+    ? getPreferredPokemonFormSprite(currentForm?.form.sprites)
+    : undefined;
+  const selectedOfficialImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
+  const cacheableSelectedOfficialImage =
+    !isSelectedImageReady || currentForm?.form.id === currentPokemonId ? selectedOfficialImage : undefined;
+  const selectedImageCandidates = currentPokemonId
     ? [
-        getPreferredPokemonFormSprite(currentForm?.form.sprites),
-        APIService.getPokeOfficialArtwork(currentPokemonId),
+        selectedPreferredImage,
+        selectedOfficialImage,
         selectedHybridImage,
         APIService.getPokeFullAsset(currentPokemonId),
       ]
     : [];
   const { displayedUrl: selectedImage, isLoading: isSelectedImageLoading } = usePreloadedImage(
     selectedImageCandidates,
-    APIService.getPokeSprite()
+    APIService.getPokeSprite(),
+    [selectedPreferredImage, cacheableSelectedOfficialImage, selectedHybridImage]
   );
-  const showSelectedImageSkeleton = !isSelectedImageReady || isSelectedImageLoading;
+  const showSelectedImageSkeleton = !currentPokemonId || isSelectedImageLoading;
 
   return (
     <Fragment>
@@ -385,10 +391,11 @@ const FormSelect = (props: IFormSelectComponent) => {
               <img
                 height={64}
                 alt="Image Pokemon"
-                src={APIService.getPokeFullSprite(dataStorePokemon.prev.id)}
+                src={APIService.getPokeOfficialArtwork(dataStorePokemon.prev.id)}
+                onLoad={(event) => markImageAsPreloaded(event.currentTarget.currentSrc || event.currentTarget.src)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon.prev?.id);
+                  e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon.prev?.id);
                 }}
               />
             </div>
@@ -409,6 +416,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             variant="rounded"
             animation="wave"
             className="!tw-h-[200px] !tw-w-[200px]"
+            data-skeleton-surface="pokemon-image"
             data-testid="selected-pokemon-image-skeleton"
           />
         ) : (
@@ -422,10 +430,11 @@ const FormSelect = (props: IFormSelectComponent) => {
               <img
                 height={64}
                 alt="Image Pokemon"
-                src={APIService.getPokeFullSprite(dataStorePokemon.next.id)}
+                src={APIService.getPokeOfficialArtwork(dataStorePokemon.next.id)}
+                onLoad={(event) => markImageAsPreloaded(event.currentTarget.currentSrc || event.currentTarget.src)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon.next?.id);
+                  e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon.next?.id);
                 }}
               />
             </div>

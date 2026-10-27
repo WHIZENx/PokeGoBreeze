@@ -1,6 +1,7 @@
 import { TypeTheme } from '../../../enums/type.enum';
 import { PaletteData } from './palette.model';
 import { ThemeOptions } from '@mui/material';
+import { DesignSystemTypography } from './typography.model';
 
 export const getDesignThemes = (mode: TypeTheme) =>
   ({
@@ -19,6 +20,9 @@ export const getDesignThemes = (mode: TypeTheme) =>
         styleOverrides: {
           root: {
             backgroundColor: 'var(--loading-spinner)',
+            '&[data-skeleton-surface="pokemon-image"]': {
+              backgroundColor: 'transparent',
+            },
           },
         },
       },
@@ -93,13 +97,6 @@ export const getDesignThemes = (mode: TypeTheme) =>
     shape: {
       borderRadius: 4,
     },
-    typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-      fontSize: 14,
-      fontWeightLight: 300,
-      fontWeightRegular: 400,
-      fontWeightMedium: 500,
-      fontWeightBold: 700,
-    },
+    typography: DesignSystemTypography,
     spacing: 8,
   }) as unknown as ThemeOptions;

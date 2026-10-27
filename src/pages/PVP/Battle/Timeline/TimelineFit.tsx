@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { getKeyWithData } from '../../../../utils/utils';
-import CloseIcon from '@mui/icons-material/Close';
 import { IPokemonBattle, ITimeline } from '../../models/battle.model';
 import { AttackType } from '../enums/attack-type.enum';
 import { combineClasses, isNotEmpty, toNumber } from '../../../../utils/extension';
 import { TypeAction } from '../../../../enums/type.enum';
 import { TimelineElement, TimelineEvent } from '../../../../utils/models/overrides/dom.model';
+import TimelineTeamEvent from './TimelineTeamEvent';
 
 const TimelineFit = (
   pokemonCurr: IPokemonBattle,
@@ -15,6 +15,8 @@ const TimelineFit = (
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
   move: TimelineElement<HTMLDivElement>,
   showTap: boolean,
+  pokemonCurrTeam: IPokemonBattle[] = [pokemonCurr],
+  pokemonObjTeam: IPokemonBattle[] = [pokemonObj],
   isHide = false
 ) => {
   const calculateWidthBasedPositions = (timeline: ITimeline[]) => {
@@ -31,8 +33,41 @@ const TimelineFit = (
     });
   };
 
-  const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle) => {
+  const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle, team: IPokemonBattle[]) => {
     const positions = calculateWidthBasedPositions(poke.timeline);
+    const hasSwitchEvents = poke.timeline.some(
+      (value) => value.type === AttackType.Switch || value.switchedFromIndex !== undefined
+    );
+    const hasFaintEvents = poke.timeline.some(
+      (value) => value.type === AttackType.Dead || value.faintedIndex !== undefined
+    );
+    const renderTeamEventLane = (eventType: 'switch' | 'faint') => (
+      <div className="tw-relative timeline-fit-container tw-h-7" data-timeline-event-lane={eventType}>
+        {poke.timeline.map((value, index) => {
+          const isVisible =
+            eventType === 'switch'
+              ? value.type === AttackType.Switch || value.switchedFromIndex !== undefined
+              : value.type === AttackType.Dead || value.faintedIndex !== undefined;
+          return (
+            isVisible && (
+              <div
+                className="!tw-flex tw-items-center tw-justify-center"
+                key={index}
+                style={{ left: positions[index], transform: 'translate(-50%, -50%)' }}
+              >
+                <TimelineTeamEvent
+                  entry={value}
+                  eventType={eventType}
+                  index={index}
+                  team={team}
+                  timeline={poke.timeline}
+                />
+              </div>
+            )
+          );
+        })}
+      </div>
+    );
     return (
       <Fragment>
         <div className="tw-mt-2">
@@ -85,6 +120,10 @@ const TimelineFit = (
                     />
                   )
               )}
+          </div>
+          <div data-timeline-lane="switch">
+            {hasFaintEvents && renderTeamEventLane('faint')}
+            {hasSwitchEvents && renderTeamEventLane('switch')}
           </div>
         </div>
         <div className="tw-relative timeline-fit-container tw-h-7.5">
@@ -139,9 +178,10 @@ const TimelineFit = (
                 />
               )}
               {value.type === AttackType.Dead && (
-                <div id={index.toString()} style={{ left: positions[index] }}>
-                  <CloseIcon color="error" />
-                </div>
+                <div id={index.toString()} className="wait-attack" style={{ left: positions[index] }} />
+              )}
+              {value.type === AttackType.Switch && (
+                <div id={index.toString()} className="wait-attack" style={{ left: positions[index] }} />
               )}
               {value.type === AttackType.Timeout && (
                 <span
@@ -178,9 +218,9 @@ const TimelineFit = (
             onMouseOver={move.bind(this)}
             onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
           >
-            {renderTimelineFit(pokemonCurr, pokemonObj)}
+            {renderTimelineFit(pokemonCurr, pokemonObj, pokemonCurrTeam)}
             <hr className="tw-w-full !tw-m-0" />
-            {renderTimelineFit(pokemonObj, pokemonCurr)}
+            {renderTimelineFit(pokemonObj, pokemonCurr, pokemonObjTeam)}
             <div id="play-line" ref={eRef} className="play-line" />
           </div>
         </div>

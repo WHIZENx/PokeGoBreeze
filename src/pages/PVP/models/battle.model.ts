@@ -34,6 +34,7 @@ export interface IPokemonBattleData {
   form?: string;
   assetForm?: string;
   id?: number;
+  score?: number;
   pokemonType: PokemonType;
   hp: number;
   stats: IStatsPokemonGO | undefined;
@@ -56,6 +57,7 @@ export class PokemonBattleData implements IPokemonBattleData {
   form?: string;
   assetForm?: string;
   id?: number;
+  score?: number;
   pokemonType = PokemonType.Normal;
   hp = 0;
   stats: IStatsPokemonGO | undefined;
@@ -97,6 +99,7 @@ export interface IPokemonBattle {
   energy: number;
   block: number;
   chargeSlot: ChargeType;
+  caughtAt?: number;
   audio?: MoveAudio;
 }
 
@@ -112,6 +115,7 @@ export class PokemonBattle implements IPokemonBattle {
   energy = 0;
   block = defaultBlock();
   chargeSlot = ChargeType.Primary;
+  caughtAt?: number;
   audio?: MoveAudio;
 
   static create(value: IPokemonBattle) {
@@ -138,6 +142,14 @@ export interface ITimeline extends TimelineConfig {
   hp: number;
   buff?: IBuff[];
   outcome?: 'win' | 'lose' | 'tie';
+  activeIndex?: number;
+  pokemonName?: string;
+  faintedPokemonName?: string;
+  faintedIndex?: number;
+  switchedFromPokemonName?: string;
+  switchedFromIndex?: number;
+  switchTurnCost?: 0 | 1;
+  battleForm?: 'shield' | 'blade';
 }
 
 export interface IPokemonTeamData {

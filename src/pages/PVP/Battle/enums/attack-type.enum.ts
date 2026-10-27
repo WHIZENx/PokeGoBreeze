@@ -9,4 +9,5 @@ export enum AttackType {
   Dead,
   Win,
   Timeout,
+  Switch,
 }

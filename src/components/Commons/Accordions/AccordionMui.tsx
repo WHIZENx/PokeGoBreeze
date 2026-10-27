@@ -95,7 +95,9 @@ MemoizedAccordionContent.displayName = 'MemoizedAccordionContent';
 const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
   const [expanded, setExpanded] = useState<T>();
   const [multiExpanded, setMultiExpanded] = useState<T[]>([]);
-  const [storeAccordions, setStoreAccordions] = useState<boolean[]>([]);
+  const [storeAccordions, setStoreAccordions] = useState<boolean[]>(() =>
+    (props.items ?? []).map((item) => item.value === props.defaultValue)
+  );
   const [isHiding, setIsHiding] = useState<boolean>(false);
   const accordionsRef = useRef<(HTMLDivElement | null)[]>([]);
 
