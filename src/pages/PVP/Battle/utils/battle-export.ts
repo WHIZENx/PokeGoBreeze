@@ -9,6 +9,8 @@ interface BattleExportOptions {
   turnDurationSeconds: number;
   player: IPokemonBattle;
   opponent: IPokemonBattle;
+  playerTeam?: IPokemonBattle[];
+  opponentTeam?: IPokemonBattle[];
   playerImageUrls?: string[];
   opponentImageUrls?: string[];
 }
@@ -93,6 +95,8 @@ const getActionText = (entry: ITimeline | undefined) => {
       return `Charged: ${detail || 'Attack'}`;
     case AttackType.Block:
       return 'Shield';
+    case AttackType.Switch:
+      return `${entry.faintedPokemonName ? `${formatName(entry.faintedPokemonName)} fainted · ` : ''}Switch to ${formatName(entry.pokemonName)}`;
     case AttackType.Dead:
       return 'Knocked out';
     case AttackType.Win:
@@ -111,6 +115,7 @@ const isReportableEvent = (entry: ITimeline | undefined) =>
         entry.type === AttackType.Prepare ||
         entry.type === AttackType.Charge ||
         entry.type === AttackType.Block ||
+        entry.type === AttackType.Switch ||
         entry.type === AttackType.Dead ||
         entry.type === AttackType.Win ||
         entry.type === AttackType.Timeout ||
@@ -358,7 +363,8 @@ const drawPokemonCard = (
   align: 'left' | 'right',
   fontFamily: string,
   typeIcons: Map<string, HTMLImageElement>,
-  statusIcons: Map<PokemonType, HTMLImageElement>
+  statusIcons: Map<PokemonType, HTMLImageElement>,
+  team: IPokemonBattle[] = [pokemon]
 ) => {
   const height = 330;
   fillRoundedRect(context, x, y, width, height, colors.surface);
@@ -407,6 +413,13 @@ const drawPokemonCard = (
       });
     }
   });
+  drawText(
+    context,
+    `Team: ${team.map((member) => formatName(member.pokemonData?.name)).join(' · ')}`,
+    x + 24,
+    y + 310,
+    { color: colors.muted, font: `500 16px ${fontFamily}`, maxWidth: width - 48 }
+  );
 };
 
 const timelineColor = (entry: ITimeline | undefined) => {
@@ -418,6 +431,8 @@ const timelineColor = (entry: ITimeline | undefined) => {
       return colors.charged;
     case AttackType.Block:
       return colors.shield;
+    case AttackType.Switch:
+      return colors.player;
     case AttackType.Dead:
       return colors.danger;
     case AttackType.Win:
@@ -474,6 +489,8 @@ export const exportBattleReportImage = async ({
   turnDurationSeconds,
   player,
   opponent,
+  playerTeam = [player],
+  opponentTeam = [opponent],
   playerImageUrls,
   opponentImageUrls,
 }: BattleExportOptions) => {
@@ -549,7 +566,8 @@ export const exportBattleReportImage = async ({
     'left',
     fontFamily,
     typeIcons,
-    statusIcons
+    statusIcons,
+    playerTeam
   );
   drawPokemonCard(
     context,
@@ -563,7 +581,8 @@ export const exportBattleReportImage = async ({
     'right',
     fontFamily,
     typeIcons,
-    statusIcons
+    statusIcons,
+    opponentTeam
   );
 
   drawText(context, 'Battle timeline', canvasPadding, 540, { font: `700 28px ${fontFamily}` });
@@ -599,6 +618,7 @@ export const exportBattleReportImage = async ({
     ['Charged', colors.charged],
     ['Shield', colors.shield],
     ['Result', colors.result],
+    ['Switch', colors.player],
   ];
   legend.forEach(([label, color], index) => {
     const x = canvasPadding + index * 170;

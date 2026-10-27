@@ -140,6 +140,10 @@ export interface ITimeline extends TimelineConfig {
   hp: number;
   buff?: IBuff[];
   outcome?: 'win' | 'lose' | 'tie';
+  activeIndex?: number;
+  pokemonName?: string;
+  faintedPokemonName?: string;
+  faintedIndex?: number;
 }
 
 export interface IPokemonTeamData {

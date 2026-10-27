@@ -52,12 +52,21 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   useEffect(() => {
     topRankController.current?.abort();
-    setPokemon(undefined);
-    setFMove(undefined);
-    setCMovePri(undefined);
-    setCMoveSec(undefined);
-    setScore(0);
-  }, [props.data]);
+    const storedPokemon = props.pokemonBattle.pokemonData;
+    const selectedPokemon = storedPokemon
+      ? props.data.find(
+          (candidate) =>
+            candidate.id === storedPokemon.id &&
+            candidate.form === storedPokemon.form &&
+            candidate.pokemonType === props.pokemonBattle.pokemonType
+        )
+      : undefined;
+    setPokemon(selectedPokemon);
+    setFMove(props.pokemonBattle.fMove);
+    setCMovePri(props.pokemonBattle.cMovePri);
+    setCMoveSec(props.pokemonBattle.cMoveSec);
+    setScore(toNumber(storedPokemon?.score));
+  }, [props.data, props.pokemonBattle]);
 
   const selectPokemon = async (value: IBattlePokemonData) => {
     if (!isNotEmpty(value.moveset) || !value.pokemon) {

@@ -7,6 +7,7 @@ import { IPokemonBattle } from '../../models/battle.model';
 import { AttackType } from '../enums/attack-type.enum';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import CloseIcon from '@mui/icons-material/Close';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 const Timeline = (
   pokemonCurr: IPokemonBattle,
@@ -98,6 +99,13 @@ const Timeline = (
               <div>
                 <CloseIcon color="error" />
               </div>
+            )}
+            {value.type === AttackType.Switch && (
+              <SwapHorizIcon
+                className="tw-text-primary"
+                fontSize="small"
+                titleAccess={`Switch to ${value.pokemonName}`}
+              />
             )}
             {value.type === AttackType.Timeout && (
               <span

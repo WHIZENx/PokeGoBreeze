@@ -279,6 +279,7 @@ export interface DamageSimulatorApiResponse {
 }
 
 export interface PvpBattlePokemonRequest {
+  name?: string;
   stats: { atk: number; def: number; sta: number };
   current: {
     level: number;
@@ -300,12 +301,16 @@ export interface PvpBattlePokemonRequest {
 export interface PvpBattleSimulatorRequest {
   pokemon: PvpBattlePokemonRequest;
   opponent: PvpBattlePokemonRequest;
+  team?: PvpBattlePokemonRequest[];
+  opponentTeam?: PvpBattlePokemonRequest[];
   config: {
     battleDelay: number;
     defaultSize: number;
     defaultPlusSize: number;
     defaultAmount: number;
     minLevel: number;
+    randomSwitch?: boolean;
+    randomSeed?: number;
   };
 }
 

@@ -10,7 +10,6 @@ import {
   getKeyWithData,
   getMoveType,
   getStatProd,
-  getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
@@ -20,7 +19,7 @@ import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
 import TimelineVertical from './Timeline/TimelineVertical';
 
-import { Checkbox, FormControlLabel, IconButton, Radio, RadioGroup, Slider } from '@mui/material';
+import { Checkbox, FormControlLabel, IconButton, Radio, RadioGroup, Slider, Switch } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -112,6 +111,7 @@ import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import { exportBattleReportImage } from './utils/battle-export';
+import BattlePokemonImage from './BattlePokemonImage';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -119,6 +119,7 @@ interface OptionsBattle {
   duration: number;
   league: number;
   volume: number;
+  randomSwitch: boolean;
 }
 
 interface IBattleState {
@@ -176,8 +177,9 @@ const Battle = () => {
     duration: 1,
     league: toNumber(params.cp, BattleLeagueCPType.Little),
     volume: 0,
+    randomSwitch: false,
   });
-  const { showTap, timelineType, duration, league, volume } = options;
+  const { showTap, timelineType, duration, league, volume, randomSwitch } = options;
 
   const timelineFit = useRef<HTMLDivElement>();
   const timelineNormal = useRef<HTMLDivElement>();
@@ -192,9 +194,32 @@ const Battle = () => {
   const atkIVObjRef = useRef<HTMLInputElement>(null);
   const defIVObjRef = useRef<HTMLInputElement>(null);
   const hpIVObjRef = useRef<HTMLInputElement>(null);
+  const pokemonCurrBenchStatRefs = useRef(
+    Array.from({ length: 2 }, () => ({
+      level: React.createRef<HTMLInputElement>(),
+      atk: React.createRef<HTMLInputElement>(),
+      def: React.createRef<HTMLInputElement>(),
+      hp: React.createRef<HTMLInputElement>(),
+    }))
+  ).current;
+  const pokemonObjBenchStatRefs = useRef(
+    Array.from({ length: 2 }, () => ({
+      level: React.createRef<HTMLInputElement>(),
+      atk: React.createRef<HTMLInputElement>(),
+      def: React.createRef<HTMLInputElement>(),
+      hp: React.createRef<HTMLInputElement>(),
+    }))
+  ).current;
 
   const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
+  const [pokemonCurrBench, setPokemonCurrBench] = useState<IPokemonBattle[]>([]);
+  const [pokemonObjBench, setPokemonObjBench] = useState<IPokemonBattle[]>([]);
+  const [leadExpanded, setLeadExpanded] = useState({ player: true, opponent: true });
+  const [pokemonCurrBenchExpanded, setPokemonCurrBenchExpanded] = useState<boolean[]>([]);
+  const [pokemonObjBenchExpanded, setPokemonObjBenchExpanded] = useState<boolean[]>([]);
+  const [activeTeamIndexes, setActiveTeamIndexes] = useState({ player: 0, opponent: 0 });
+  const [timelineCursor, setTimelineCursor] = useState(-1);
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
   const [isFound, setIsFound] = useState(true);
@@ -203,6 +228,7 @@ const Battle = () => {
     const pokemonData = pokemon.pokemonData;
     const currentStats = pokemonData?.currentStats;
     return {
+      name: pokemonData?.name,
       stats: {
         atk: toNumber(pokemonData?.stats?.atk),
         def: toNumber(pokemonData?.stats?.def),
@@ -230,23 +256,22 @@ const Battle = () => {
     };
   };
 
+  const isBattlePokemonReady = (pokemon: IPokemonBattle) =>
+    !!pokemon.pokemonData &&
+    !!pokemon.fMove &&
+    (pokemon.disableCMoveSec || !!pokemon.cMoveSec) &&
+    (pokemon.disableCMovePri || !!pokemon.cMovePri);
+
   const battleAnimation = async () => {
-    if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
-      showSnackbar('Something went wrong! Please try again.', 'error');
+    const playerTeam = [pokemonCurr, ...pokemonCurrBench];
+    const opponentTeam = [pokemonObj, ...pokemonObjBench];
+    const playerBenchExpanded = [...pokemonCurrBenchExpanded];
+    const opponentBenchExpanded = [...pokemonObjBenchExpanded];
+    if (!playerTeam.every(isBattlePokemonReady) || !opponentTeam.every(isBattlePokemonReady)) {
+      showSnackbar('Select a Pokémon and moves for every team slot.', 'error');
       return;
     }
 
-    if (
-      !pokemonCurr.fMove ||
-      !pokemonObj.fMove ||
-      (!pokemonCurr.disableCMoveSec && !pokemonCurr.cMoveSec) ||
-      (!pokemonObj.disableCMoveSec && !pokemonObj.cMoveSec) ||
-      (!pokemonCurr.disableCMovePri && !pokemonCurr.cMovePri) ||
-      (!pokemonObj.disableCMovePri && !pokemonObj.cMovePri)
-    ) {
-      showSnackbar('Required charge move', 'error');
-      return;
-    }
     arrBound.current = [];
     arrStore.current = [];
     resetTimeline();
@@ -255,12 +280,15 @@ const Battle = () => {
       const response = await APIService.postPvpBattleSimulator({
         pokemon: createBattleRequest(pokemonCurr),
         opponent: createBattleRequest(pokemonObj),
+        team: playerTeam.map(createBattleRequest),
+        opponentTeam: opponentTeam.map(createBattleRequest),
         config: {
           battleDelay: battleDelay(),
           defaultSize: defaultSize(),
           defaultPlusSize: defaultPlusSize(),
           defaultAmount: defaultAmount(),
           minLevel: minLevel(),
+          randomSwitch,
         },
       });
       setPokemonCurr(
@@ -275,6 +303,10 @@ const Battle = () => {
           timeline: response.data.data.timelineOpponent,
         })
       );
+      setPokemonCurrBench(playerTeam.slice(1));
+      setPokemonObjBench(opponentTeam.slice(1));
+      setPokemonCurrBenchExpanded(playerBenchExpanded);
+      setPokemonObjBenchExpanded(opponentBenchExpanded);
     } catch (error) {
       const axiosError = error as AxiosError<{ error?: string }>;
       showSnackbar(axiosError.response?.data?.error ?? axiosError.message, 'error');
@@ -303,6 +335,8 @@ const Battle = () => {
         turnDurationSeconds: optionsData.combatOptions.turnDurationSeconds || 0.5,
         player: pokemonCurr,
         opponent: pokemonObj,
+        playerTeam: [pokemonCurr, ...pokemonCurrBench],
+        opponentTeam: [pokemonObj, ...pokemonObjBench],
         playerImageUrls: [
           APIService.getPokemonModel(pokemonCurr.pokemonData.assetForm, pokemonCurr.pokemonData.id),
           APIService.getPokemonSqModel(pokemonCurr.pokemonData.assetForm, pokemonCurr.pokemonData.id),
@@ -329,6 +363,11 @@ const Battle = () => {
     stopPokemonAudio(pokemonObj);
     setPokemonObj(new PokemonBattle());
     setPokemonCurr(new PokemonBattle());
+    setPokemonCurrBench([]);
+    setPokemonObjBench([]);
+    setLeadExpanded({ player: true, opponent: true });
+    setPokemonCurrBenchExpanded([]);
+    setPokemonObjBenchExpanded([]);
   };
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
@@ -943,6 +982,8 @@ const Battle = () => {
   const resetTimeline = () => {
     stopTimeline();
     lastTimelineIndex.current = -1;
+    setTimelineCursor(-1);
+    setActiveTeamIndexes({ player: 0, opponent: 0 });
     const elem = playLine.current;
     if (timelineType === TimelineType.Normal && timelineNormalContainer.current) {
       timelineNormalContainer.current.scrollTo({
@@ -965,9 +1006,10 @@ const Battle = () => {
   };
 
   const checkOverlap = (offsets: number[], pos = 0, sound = false) => {
-    const index = overlappingPosFromOffsets(offsets, pos);
-    if (index >= 0 && index < offsets.length) {
-      updateTimeline(index, sound);
+    const crossedMarkerCount = overlappingPosFromOffsets(offsets, pos);
+    const eventIndex = crossedMarkerCount - 1;
+    if (eventIndex >= -1 && eventIndex < offsets.length) {
+      updateTimeline(eventIndex, sound);
     }
   };
 
@@ -1017,17 +1059,43 @@ const Battle = () => {
   };
 
   const updateTimeline = (index: number, sound = false) => {
+    if (index < 0) {
+      if (index === lastTimelineIndex.current) {
+        return;
+      }
+      lastTimelineIndex.current = -1;
+      lastSoundIndex.current = -1;
+      setTimelineCursor(-1);
+      setActiveTeamIndexes({ player: 0, opponent: 0 });
+      setPlayTimeline({
+        pokemonCurr: PokemonBattleData.setValue(
+          pokemonCurr.energy,
+          getBattleHp(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA)
+        ),
+        pokemonObj: PokemonBattleData.setValue(
+          pokemonObj.energy,
+          getBattleHp(pokemonObj.pokemonData?.currentStats?.stats?.statSTA)
+        ),
+      });
+      return;
+    }
     const pokeCurrData = pokemonCurr.timeline.at(index);
     const pokeObjData = pokemonObj.timeline.at(index);
+    const playerTeam = [pokemonCurr, ...pokemonCurrBench];
+    const opponentTeam = [pokemonObj, ...pokemonObjBench];
+    const playerIndex = pokeCurrData?.activeIndex ?? 0;
+    const opponentIndex = pokeObjData?.activeIndex ?? 0;
     if (sound && index !== lastSoundIndex.current) {
       lastSoundIndex.current = index;
-      playMoveAudio(pokemonCurr, pokeCurrData);
-      playMoveAudio(pokemonObj, pokeObjData);
+      playMoveAudio(playerTeam[playerIndex] ?? pokemonCurr, pokeCurrData);
+      playMoveAudio(opponentTeam[opponentIndex] ?? pokemonObj, pokeObjData);
     }
     if (index === lastTimelineIndex.current) {
       return;
     }
     lastTimelineIndex.current = index;
+    setTimelineCursor(index);
+    setActiveTeamIndexes({ player: playerIndex, opponent: opponentIndex });
     setPlayTimeline({
       pokemonCurr: PokemonBattleData.setValue(pokeCurrData?.energy, pokeCurrData?.hp),
       pokemonObj: PokemonBattleData.setValue(pokeObjData?.energy, pokeObjData?.hp),
@@ -1108,25 +1176,35 @@ const Battle = () => {
     );
   };
 
+  const getPokemonStatRefs = (type: BattleType, teamIndex: number) => {
+    if (teamIndex > 0) {
+      return (type === BattleType.Current ? pokemonCurrBenchStatRefs : pokemonObjBenchStatRefs)[teamIndex - 1];
+    }
+    return type === BattleType.Current
+      ? { level: levelCurrRef, atk: atkIVCurrRef, def: defIVCurrRef, hp: hpIVCurrRef }
+      : { level: levelObjRef, atk: atkIVObjRef, def: defIVObjRef, hp: hpIVObjRef };
+  };
+
   const calculateStatPokemon = (
     e: React.FormEvent<HTMLFormElement>,
     type: BattleType,
     pokemon: IPokemonBattle,
-    setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
+    setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
+    teamIndex: number
   ) => {
     e.preventDefault();
     if (!pokemon.pokemonData) {
       showSnackbar('Pokémon not found.', 'error');
       return;
     }
-    const isCurr = type === BattleType.Current;
+    const refs = getPokemonStatRefs(type, teamIndex);
     const atk = toNumber(pokemon.pokemonData.stats?.atk);
     const def = toNumber(pokemon.pokemonData.stats?.def);
     const sta = toNumber(pokemon.pokemonData.stats?.sta);
-    const atkIV = toNumber((isCurr ? atkIVCurrRef : atkIVObjRef).current?.value);
-    const defIV = toNumber((isCurr ? defIVCurrRef : defIVObjRef).current?.value);
-    const staIV = toNumber((isCurr ? hpIVCurrRef : hpIVObjRef).current?.value);
-    const level = toNumber((isCurr ? levelCurrRef : levelObjRef).current?.value);
+    const atkIV = toNumber(refs.atk.current?.value);
+    const defIV = toNumber(refs.def.current?.value);
+    const staIV = toNumber(refs.hp.current?.value);
+    const level = toNumber(refs.level.current?.value);
     const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
 
     const paramCP = toNumber(params?.cp);
@@ -1162,6 +1240,7 @@ const Battle = () => {
     type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
+    teamIndex: number,
     isRandom = false
   ) => {
     if (!pokemon.pokemonData) {
@@ -1194,11 +1273,8 @@ const Battle = () => {
       stats = pokemon.pokemonData.bestStats;
     }
 
-    const isCurr = type === BattleType.Current;
-    const levelRef = isCurr ? levelCurrRef : levelObjRef;
-    const atkIVRef = isCurr ? atkIVCurrRef : atkIVObjRef;
-    const defIVRef = isCurr ? defIVCurrRef : defIVObjRef;
-    const hpIVRef = isCurr ? hpIVCurrRef : hpIVObjRef;
+    const refs = getPokemonStatRefs(type, teamIndex);
+    const { level: levelRef, atk: atkIVRef, def: defIVRef, hp: hpIVRef } = refs;
     if (levelRef.current) {
       levelRef.current.value = getValueOrDefault(String, stats?.level?.toString());
     }
@@ -1227,13 +1303,11 @@ const Battle = () => {
   const renderInfoPokemon = (
     type: BattleType,
     pokemon: IPokemonBattle,
-    setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
+    setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
+    teamIndex: number
   ) => {
-    const isCurr = type === BattleType.Current;
-    const levelRef = isCurr ? levelCurrRef : levelObjRef;
-    const atkIVRef = isCurr ? atkIVCurrRef : atkIVObjRef;
-    const defIVRef = isCurr ? defIVCurrRef : defIVObjRef;
-    const hpIVRef = isCurr ? hpIVCurrRef : hpIVObjRef;
+    const refs = getPokemonStatRefs(type, teamIndex);
+    const { level: levelRef, atk: atkIVRef, def: defIVRef, hp: hpIVRef } = refs;
     return (
       <AccordionMui
         items={[
@@ -1245,18 +1319,11 @@ const Battle = () => {
                 <div className="tw-w-full tw-flex tw-justify-center">
                   <div className="tw-relative filter-shadow tw-w-32">
                     <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
-                      <img
-                        alt="Image League"
+                      <BattlePokemonImage
+                        alt="Pokémon"
                         className="pokemon-sprite-raid"
-                        src={APIService.getPokemonModel(pokemon.pokemonData?.assetForm, pokemon.pokemonData?.id)}
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = getValidPokemonImgPath(
-                            e.currentTarget.src,
-                            pokemon.pokemonData?.id,
-                            pokemon.pokemonData?.assetForm
-                          );
-                        }}
+                        fallbackSize={128}
+                        pokemon={pokemon.pokemonData}
                       />
                     </PokemonIconType>
                   </div>
@@ -1318,7 +1385,7 @@ const Battle = () => {
                 <form
                   className="tw-mt-2"
                   onSubmit={(e) => {
-                    calculateStatPokemon(e, type, pokemon, setPokemon);
+                    calculateStatPokemon(e, type, pokemon, setPokemon, teamIndex);
                   }}
                 >
                   <InputMui
@@ -1382,7 +1449,7 @@ const Battle = () => {
                   <ButtonMui
                     fullWidth
                     color="primary"
-                    onClick={() => onSetStats(type, pokemon, setPokemon, true)}
+                    onClick={() => onSetStats(type, pokemon, setPokemon, teamIndex, true)}
                     label="Set Random Stats"
                   />
                 </div>
@@ -1390,7 +1457,7 @@ const Battle = () => {
                   <ButtonMui
                     fullWidth
                     color="primary"
-                    onClick={() => onSetStats(type, pokemon, setPokemon)}
+                    onClick={() => onSetStats(type, pokemon, setPokemon, teamIndex)}
                     label="Set Best Stats"
                   />
                 </div>
@@ -1429,15 +1496,39 @@ const Battle = () => {
     );
   };
 
+  const updateTeamBlock = (type: BattleType, block: number) => {
+    arrBound.current = [];
+    arrStore.current = [];
+    setPlayTimeline(new BattleState());
+    if (type === BattleType.Current) {
+      setPokemonCurr((current) => PokemonBattle.create({ ...current, block, timeline: [] }));
+      setPokemonCurrBench((current) =>
+        current.map((member) => PokemonBattle.create({ ...member, block, timeline: [] }))
+      );
+      setPokemonObj((current) => PokemonBattle.create({ ...current, timeline: [] }));
+    } else {
+      setPokemonObj((current) => PokemonBattle.create({ ...current, block, timeline: [] }));
+      setPokemonObjBench((current) =>
+        current.map((member) => PokemonBattle.create({ ...member, block, timeline: [] }))
+      );
+      setPokemonCurr((current) => PokemonBattle.create({ ...current, timeline: [] }));
+    }
+  };
+
   const renderPokemonInfo = (
     type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
-    clearDataPokemon: (removeMove: boolean) => void
+    clearDataPokemon: (removeMove: boolean) => void,
+    teamIndex: number
   ) => {
     const pokemonType = getPropertyName(playTimeline, (o) =>
       type === BattleType.Object ? o.pokemonObj : o.pokemonCurr
     );
+    const displayedEnergy =
+      teamIndex === 0
+        ? toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy, pokemon.energy)
+        : pokemon.energy;
     return (
       <Fragment>
         <SelectPoke
@@ -1459,11 +1550,11 @@ const Battle = () => {
                 step: 1,
                 required: true,
               }}
-              id={`energy${type}`}
+              id={`energy${type}-${teamIndex}`}
               fullWidth
               onChange={(value) => {
                 const energy = toNumber(value);
-                if (type === BattleType.Current) {
+                if (teamIndex === 0 && type === BattleType.Current) {
                   setPlayTimeline({
                     ...playTimeline,
                     pokemonCurr: PokemonBattleData.create({
@@ -1471,7 +1562,7 @@ const Battle = () => {
                       energy,
                     }),
                   });
-                } else if (type === BattleType.Object) {
+                } else if (teamIndex === 0 && type === BattleType.Object) {
                   setPlayTimeline({
                     ...playTimeline,
                     pokemonObj: PokemonBattleData.create({
@@ -1485,29 +1576,11 @@ const Battle = () => {
             />
             <InputMui
               labelPrepend="Block"
-              defaultValue={pokemon.block}
+              value={pokemon.block}
               fullWidth
               onChange={(value) => {
                 const block = toNumber(value);
-                setPlayTimeline({
-                  ...playTimeline,
-                  pokemonCurr: PokemonBattleData.create({
-                    ...playTimeline.pokemonCurr,
-                    energy: 0,
-                  }),
-                  pokemonObj: PokemonBattleData.create({
-                    ...playTimeline.pokemonObj,
-                    energy: 0,
-                  }),
-                });
-                setPokemon(
-                  PokemonBattle.create({
-                    ...pokemon,
-                    timeline: [],
-                    energy: 0,
-                    block,
-                  })
-                );
+                updateTeamBlock(type, block);
               }}
               select
               menuItems={getArrayBySeq(defaultBlock() + 1).map((value) => ({
@@ -1571,10 +1644,7 @@ const Battle = () => {
                     size={80}
                     maxEnergy={combatMaxEnergy()}
                     moveEnergy={Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy))}
-                    energy={toNumber(
-                      (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy,
-                      pokemon.energy
-                    )}
+                    energy={displayedEnergy}
                     isDisable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && (
@@ -1584,15 +1654,12 @@ const Battle = () => {
                       size={80}
                       maxEnergy={combatMaxEnergy()}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
-                      energy={toNumber(
-                        (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy,
-                        pokemon.energy
-                      )}
+                      energy={displayedEnergy}
                       isDisable={pokemon.disableCMoveSec}
                     />
                   )}
                 </div>
-                {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) && (
+                {teamIndex === 0 && isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) && (
                   <Fragment>
                     <HpBar
                       text="HP"
@@ -1604,10 +1671,209 @@ const Battle = () => {
                 )}
               </div>
             )}
-            {renderInfoPokemon(type, pokemon, setPokemon)}
+            {renderInfoPokemon(type, pokemon, setPokemon, teamIndex)}
           </Fragment>
         )}
       </Fragment>
+    );
+  };
+
+  const getTeamMemberHp = (pokemon: IPokemonBattle, teamIndex: number, isOpponent: boolean) => {
+    const maxHp = getBattleHp(pokemon.pokemonData?.currentStats?.stats?.statSTA);
+    const timeline = (isOpponent ? pokemonObj.timeline : pokemonCurr.timeline).slice(0, timelineCursor + 1);
+    if (timeline.some((entry) => entry.faintedIndex === teamIndex)) {
+      return { hp: 0, maxHp };
+    }
+    const latest = timeline.findLast((entry) => (entry.activeIndex ?? 0) === teamIndex);
+    return { hp: Math.max(0, latest?.hp ?? maxHp), maxHp };
+  };
+
+  const renderTeamMemberSummary = (
+    pokemon: IPokemonBattle,
+    slot: number,
+    sideLabel: string,
+    isOpponent: boolean,
+    isExpanded: boolean
+  ) => {
+    const { hp, maxHp } = getTeamMemberHp(pokemon, slot - 1, isOpponent);
+    const hpRatio = maxHp > 0 ? hp / maxHp : 0;
+    const hpColor = hpRatio > 0.5 ? 'tw-bg-success' : hpRatio > 0.25 ? 'tw-bg-yellow-400' : 'tw-bg-error';
+    return (
+      <div className="tw-flex tw-min-w-0 tw-flex-1 tw-flex-col tw-overflow-hidden">
+        <div className="tw-flex tw-min-w-0 tw-items-center tw-gap-3">
+          {pokemon.pokemonData ? (
+            <span className="tw-relative tw-flex tw-h-10 tw-w-10 tw-shrink-0 tw-items-center tw-justify-center">
+              <PokemonIconType pokemonType={pokemon.pokemonType} size={20}>
+                <BattlePokemonImage
+                  alt="Pokémon"
+                  className="tw-h-10 tw-w-10 tw-object-contain"
+                  fallbackSize={40}
+                  pokemon={pokemon.pokemonData}
+                />
+              </PokemonIconType>
+            </span>
+          ) : (
+            <span className="tw-flex tw-h-8 tw-w-8 tw-shrink-0 tw-items-center tw-justify-center tw-rounded-full tw-bg-primary tw-text-revert">
+              {slot}
+            </span>
+          )}
+          <span className="tw-min-w-0 tw-flex-1 tw-overflow-hidden">
+            <b className="tw-block tw-break-words tw-leading-small">
+              {pokemon.pokemonData
+                ? splitAndCapitalize(pokemon.pokemonData.name, '-', ' ')
+                : `${sideLabel} Pokémon ${slot}`}
+            </b>
+            {pokemon.pokemonData && (
+              <span className="tw-block tw-break-words tw-text-xs tw-leading-small tw-text-[var(--text-secondary)]">
+                CP {Math.floor(toNumber(pokemon.pokemonData.currentStats?.CP))} ·{' '}
+                {splitAndCapitalize(pokemon.fMove?.name, '_', ' ')} ·{' '}
+                {splitAndCapitalize(pokemon.cMovePri?.name, '_', ' ')}
+              </span>
+            )}
+          </span>
+        </div>
+        {!isExpanded && pokemon.pokemonData && (
+          <div className="tw-mt-2 tw-flex tw-items-center tw-gap-2">
+            <div
+              className="tw-h-2 tw-min-w-0 tw-flex-1 tw-overflow-hidden tw-rounded-full tw-bg-[var(--divider)]"
+              role="progressbar"
+              aria-label={`${pokemon.pokemonData.name} HP`}
+              aria-valuemin={0}
+              aria-valuemax={maxHp}
+              aria-valuenow={hp}
+            >
+              <div
+                className={`tw-h-full tw-rounded-full tw-transition-[width] ${hpColor}`}
+                style={{ width: `${Math.max(0, Math.min(100, hpRatio * 100))}%` }}
+              />
+            </div>
+            <span className="tw-shrink-0 tw-text-caption tw-text-[var(--text-secondary)]">
+              {hp}/{maxHp}
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderLeadTeamMember = (isOpponent: boolean) => {
+    const pokemon = isOpponent ? pokemonObj : pokemonCurr;
+    const sideLabel = isOpponent ? 'Opponent' : 'Player';
+    const isExpanded = isOpponent ? leadExpanded.opponent : leadExpanded.player;
+    return (
+      <AccordionMui
+        defaultValue={1}
+        onChange={(value) =>
+          setLeadExpanded((current) => ({
+            ...current,
+            [isOpponent ? 'opponent' : 'player']: value === 1,
+          }))
+        }
+        items={[
+          {
+            value: 1,
+            label: renderTeamMemberSummary(pokemon, 1, sideLabel, isOpponent, isExpanded),
+            children: renderPokemonInfo(
+              isOpponent ? BattleType.Object : BattleType.Current,
+              pokemon,
+              isOpponent ? setPokemonObj : setPokemonCurr,
+              isOpponent ? clearDataPokemonObj : clearDataPokemonCurr,
+              0
+            ),
+          },
+        ]}
+      />
+    );
+  };
+
+  const renderBenchTeam = (isOpponent: boolean) => {
+    const bench = isOpponent ? pokemonObjBench : pokemonCurrBench;
+    const setBench = isOpponent ? setPokemonObjBench : setPokemonCurrBench;
+    const benchExpanded = isOpponent ? pokemonObjBenchExpanded : pokemonCurrBenchExpanded;
+    const setBenchExpanded = isOpponent ? setPokemonObjBenchExpanded : setPokemonCurrBenchExpanded;
+    const sideLabel = isOpponent ? 'Opponent' : 'Player';
+    const updateMember = (index: number, value: React.SetStateAction<IPokemonBattle>) => {
+      setBench((current) =>
+        current.map((member, memberIndex) =>
+          memberIndex === index ? (typeof value === 'function' ? value(member) : value) : member
+        )
+      );
+      clearBattleResult();
+    };
+    return (
+      <div className="tw-mt-3 tw-space-y-2">
+        {bench.map((pokemon, index) => (
+          <AccordionMui
+            key={`${sideLabel}-${index}`}
+            onChange={(value) =>
+              setBenchExpanded((current) =>
+                current.map((expanded, memberIndex) => (memberIndex === index ? value !== undefined : expanded))
+              )
+            }
+            items={[
+              {
+                value: index,
+                label: renderTeamMemberSummary(
+                  pokemon,
+                  index + 2,
+                  sideLabel,
+                  isOpponent,
+                  benchExpanded[index] ?? false
+                ),
+                children: (
+                  <>
+                    {renderPokemonInfo(
+                      isOpponent ? BattleType.Object : BattleType.Current,
+                      pokemon,
+                      (value) => updateMember(index, value),
+                      (removeMove) =>
+                        updateMember(
+                          index,
+                          removeMove
+                            ? PokemonBattle.create({ ...pokemon, cMoveSec: undefined, timeline: [] })
+                            : new PokemonBattle()
+                        ),
+                      index + 1
+                    )}
+                    <ButtonMui
+                      className="!tw-mt-5"
+                      fullWidth
+                      color="error"
+                      variant="outlined"
+                      startIcon={<RemoveCircleIcon />}
+                      label="Remove Pokémon"
+                      onClick={() => {
+                        stopPokemonAudio(pokemon);
+                        setBench((current) => current.filter((_, memberIndex) => memberIndex !== index));
+                        setBenchExpanded((current) => current.filter((_, memberIndex) => memberIndex !== index));
+                        clearBattleResult();
+                      }}
+                    />
+                  </>
+                ),
+              },
+            ]}
+          />
+        ))}
+        {bench.length < 2 && (
+          <ButtonMui
+            fullWidth
+            variant="outlined"
+            startIcon={<AddCircleIcon />}
+            label="Add Pokémon"
+            onClick={() => {
+              setBench((current) => [
+                ...current,
+                PokemonBattle.create({
+                  ...new PokemonBattle(),
+                  block: isOpponent ? pokemonObj.block : pokemonCurr.block,
+                }),
+              ]);
+              setBenchExpanded((current) => [...current, false]);
+            }}
+          />
+        )}
+      </div>
     );
   };
 
@@ -1617,18 +1883,11 @@ const Battle = () => {
         <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-start tw-gap-2">
           <div className="tw-relative filter-shadow tw-w-battle-icon">
             <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
-              <img
-                alt="Image League"
+              <BattlePokemonImage
+                alt="Pokémon"
                 className="sprite-type"
-                src={APIService.getPokemonModel(pokemonCurr.pokemonData?.assetForm, pokemonCurr.pokemonData?.id)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = getValidPokemonImgPath(
-                    e.currentTarget.src,
-                    pokemonCurr.pokemonData?.id,
-                    pokemonCurr.pokemonData?.assetForm
-                  );
-                }}
+                fallbackSize={40}
+                pokemon={pokemonCurr.pokemonData}
               />
             </PokemonIconType>
           </div>
@@ -1646,18 +1905,11 @@ const Battle = () => {
         <div className="tw-w-full tw-h-full pokemon-battle-header tw-flex tw-items-center tw-justify-end tw-gap-2">
           <div className="tw-relative filter-shadow tw-w-battle-icon">
             <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
-              <img
-                alt="Image League"
+              <BattlePokemonImage
+                alt="Pokémon"
                 className="sprite-type"
-                src={APIService.getPokemonModel(pokemonObj.pokemonData?.assetForm, pokemonObj.pokemonData?.id)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = getValidPokemonImgPath(
-                    e.currentTarget.src,
-                    pokemonObj.pokemonData?.id,
-                    pokemonObj.pokemonData?.assetForm
-                  );
-                }}
+                fallbackSize={40}
+                pokemon={pokemonObj.pokemonData}
               />
             </PokemonIconType>
           </div>
@@ -1698,7 +1950,8 @@ const Battle = () => {
         />
         <div className="row tw-mt-4 !tw-m-0">
           <div className="lg:tw-w-1/4 !tw-my-3">
-            {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
+            {renderLeadTeamMember(false)}
+            {renderBenchTeam(false)}
           </div>
           <Fragment>
             {!pokemonCurr.pokemonData && !pokemonObj.pokemonData && <hr className="tw-block !tw-mt-4 lg:tw-hidden" />}
@@ -1722,7 +1975,10 @@ const Battle = () => {
                         noPadding: true,
                         hideIcon: true,
                         value: 0,
-                        label: renderHeader(pokemonCurr, pokemonObj),
+                        label: renderHeader(
+                          [pokemonCurr, ...pokemonCurrBench][activeTeamIndexes.player] ?? pokemonCurr,
+                          [pokemonObj, ...pokemonObjBench][activeTeamIndexes.opponent] ?? pokemonObj
+                        ),
                         children: TimelineVertical(pokemonCurr, pokemonObj),
                       },
                     ]}
@@ -1852,9 +2108,26 @@ const Battle = () => {
               )}
           </div>
           <div className="lg:tw-w-1/4 !tw-my-3">
-            {renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}
+            {renderLeadTeamMember(true)}
+            {renderBenchTeam(true)}
           </div>
         </div>
+        {(pokemonCurrBench.length > 0 || pokemonObjBench.length > 0) && (
+          <div className="tw-flex tw-justify-center">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={randomSwitch}
+                  onChange={(_, checked) => {
+                    setOptions({ ...options, randomSwitch: checked });
+                    clearBattleResult();
+                  }}
+                />
+              }
+              label="Random Switch"
+            />
+          </div>
+        )}
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
           <div className="tw-flex tw-flex-wrap tw-justify-center tw-gap-2 tw-mt-2">
             {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (

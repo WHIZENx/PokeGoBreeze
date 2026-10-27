@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { getKeyWithData } from '../../../../utils/utils';
 import CloseIcon from '@mui/icons-material/Close';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { IPokemonBattle, ITimeline } from '../../models/battle.model';
 import { AttackType } from '../enums/attack-type.enum';
 import { combineClasses, isNotEmpty, toNumber } from '../../../../utils/extension';
@@ -142,6 +143,15 @@ const TimelineFit = (
                 <div id={index.toString()} style={{ left: positions[index] }}>
                   <CloseIcon color="error" />
                 </div>
+              )}
+              {value.type === AttackType.Switch && (
+                <SwapHorizIcon
+                  id={index.toString()}
+                  className="tw-text-primary"
+                  fontSize="small"
+                  style={{ left: positions[index] }}
+                  titleAccess={`Switch to ${value.pokemonName}`}
+                />
               )}
               {value.type === AttackType.Timeout && (
                 <span

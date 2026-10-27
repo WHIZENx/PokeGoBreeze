@@ -3,10 +3,11 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [battlePage, battleExport, battleSelect] = await Promise.all([
+const [battlePage, battleExport, battleSelect, battlePokemonImage] = await Promise.all([
   readFile(new URL('../../src/pages/PVP/Battle/Battle.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/utils/battle-export.ts', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/Select.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Battle/BattlePokemonImage.tsx', import.meta.url), 'utf8'),
 ]);
 const battleModel = await readFile(new URL('../../src/pages/PVP/models/battle.model.ts', import.meta.url), 'utf8');
 
@@ -14,6 +15,26 @@ assert.match(
   battlePage,
   /label="Reset Battle"[\s\S]*onClick=\{\(\) => void battleAnimation\(\)\}/,
   'Reset Battle must run the simulator again.'
+);
+assert.match(
+  battlePage,
+  /team: playerTeam\.map\(createBattleRequest\)[\s\S]*opponentTeam: opponentTeam\.map\(createBattleRequest\)/,
+  'The simulator must submit each side with its independently selected team size.'
+);
+assert.match(
+  battlePage,
+  /setPokemonCurrBench\(playerTeam\.slice\(1\)\)[\s\S]*setPokemonObjBench\(opponentTeam\.slice\(1\)\)/,
+  'Simulation must preserve unequal player and opponent bench selections.'
+);
+assert.match(
+  battlePage,
+  /useState\(-1\)[\s\S]*setTimelineCursor\(-1\)[\s\S]*crossedMarkerCount - 1[\s\S]*setTimelineCursor\(index\)[\s\S]*\.slice\(0, timelineCursor \+ 1\)/,
+  'Collapsed team HP bars must follow the current timeline playhead instead of showing the final result early.'
+);
+assert.match(
+  battlePage,
+  /if \(index < 0\)[\s\S]*setActiveTeamIndexes\(\{ player: 0, opponent: 0 \}\)[\s\S]*PokemonBattleData\.setValue/,
+  'Dragging before the first timeline marker must restore the pre-battle HP and active team state.'
 );
 assert.match(
   battleSelect,
@@ -29,6 +50,11 @@ assert.match(
   battleSelect,
   /<SelectCardPokemon[\s\S]*value=\{pokemon \? splitAndCapitalize/,
   'The Pokémon input must stay synchronized with Random selection state.'
+);
+assert.match(
+  battleSelect,
+  /const storedPokemon = props\.pokemonBattle\.pokemonData;[\s\S]*setPokemon\(selectedPokemon\);[\s\S]*setFMove\(props\.pokemonBattle\.fMove\);[\s\S]*setCMovePri\(props\.pokemonBattle\.cMovePri\);[\s\S]*setCMoveSec\(props\.pokemonBattle\.cMoveSec\);/,
+  'Reopened Pokémon accordions must restore the selected Pokémon and moves from parent state.'
 );
 assert.match(
   battlePage,
@@ -91,6 +117,21 @@ assert.match(
   battleExport,
   /getImageData[\s\S]*pixels\[pixel \+ 3\][\s\S]*sourceWidth/,
   'Fallback sprites must be cropped to their visible pixels before drawing.'
+);
+assert.match(
+  battlePokemonImage,
+  /getPokemonModel[\s\S]*getPokemonSqModel[\s\S]*getPokeFullSprite[\s\S]*getPokeFullAsset/,
+  'Battle images must try the complete remote asset fallback chain.'
+);
+assert.match(
+  battlePokemonImage,
+  /sourceIndex >= sources\.length[\s\S]*<PokemonTableIcon/,
+  'Battle images must use the local Pokémon icon sheet when every remote asset is unavailable.'
+);
+assert.match(
+  battlePage,
+  /renderTeamMemberSummary[\s\S]*<BattlePokemonImage/,
+  'Collapsed team summaries must use the shared Pokémon image fallback.'
 );
 
 console.log('PVP battle action regression passed.');

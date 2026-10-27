@@ -120,6 +120,19 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
               </div>
             </div>
           )}
+          {value.type === AttackType.Switch && (
+            <div
+              className={combineClasses(
+                'tw-flex tw-h-20 tw-items-center tw-text-primary turn-battle',
+                end ? 'tw-justify-end' : ''
+              )}
+            >
+              <b>
+                {value.faintedPokemonName ? `${splitAndCapitalize(value.faintedPokemonName, '-', ' ')} fainted · ` : ''}
+                Switch to {splitAndCapitalize(value.pokemonName, '-', ' ')}
+              </b>
+            </div>
+          )}
           {value.type === AttackType.Charge && (
             <div className={combineClasses('charged-attack-container turn-battle', end ? 'tw-justify-end' : '')}>
               <div className={combineClasses('charged-attack-content tw-text-center', value.color)}>
