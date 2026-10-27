@@ -14,6 +14,15 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-family-sans)'],
+      },
+      fontWeight: {
+        light: 'var(--font-weight-light)',
+        normal: 'var(--font-weight-regular)',
+        medium: 'var(--font-weight-medium)',
+        bold: 'var(--font-weight-bold)',
+      },
       zIndex: {
         ...defaultTheme.zIndex,
         2: 2,
@@ -34,6 +43,27 @@ module.exports = {
         'extra-small': '12px',
         small: '16px',
         medium: '18px',
+        body1: [
+          'var(--typography-body1-font-size)',
+          {
+            lineHeight: 'var(--typography-body1-line-height)',
+            letterSpacing: 'var(--typography-body1-letter-spacing)',
+          },
+        ],
+        body2: [
+          'var(--typography-body2-font-size)',
+          {
+            lineHeight: 'var(--typography-body2-line-height)',
+            letterSpacing: 'var(--typography-body2-letter-spacing)',
+          },
+        ],
+        caption: [
+          'var(--typography-caption-font-size)',
+          {
+            lineHeight: 'var(--typography-caption-line-height)',
+            letterSpacing: 'var(--typography-caption-letter-spacing)',
+          },
+        ],
       },
       colors: {
         ...defaultTheme.colors,
