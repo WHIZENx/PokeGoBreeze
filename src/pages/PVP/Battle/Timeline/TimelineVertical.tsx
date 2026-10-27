@@ -1,13 +1,20 @@
 import React, { Fragment } from 'react';
-import { Badge } from '@mui/material';
+import PokemonTableIcon from '../../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { ICombat } from '../../../../core/models/combat.model';
 import APIService from '../../../../services/api.service';
 import { combineClasses } from '../../../../utils/extension';
 import { splitAndCapitalize } from '../../../../utils/utils';
-import { IPokemonBattle } from '../../models/battle.model';
+import { IPokemonBattle, ITimeline } from '../../models/battle.model';
 import { AttackType } from '../enums/attack-type.enum';
+import TimelineTeamEvent from './TimelineTeamEvent';
 
-const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, isHide = false) => {
+const TimelineVertical = (
+  pokemonCurr: IPokemonBattle,
+  pokemonObj: IPokemonBattle,
+  playerTeam: IPokemonBattle[] = [pokemonCurr],
+  opponentTeam: IPokemonBattle[] = [pokemonObj],
+  isHide = false
+) => {
   const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, isShowShadow = false) => {
     if (!move) {
       return <></>;
@@ -35,165 +42,218 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
     );
   };
 
-  const renderTimeline = (pokeCurr: IPokemonBattle, pokeObj: IPokemonBattle, end = false) => (
+  const timelinePokemon = (entry: ITimeline, team: IPokemonBattle[]) => team[entry.activeIndex ?? 0] ?? team[0];
+
+  const renderPokemonIcon = (pokemon: IPokemonBattle | undefined) => (
+    <PokemonTableIcon
+      {...pokemon?.pokemonData?.pokemon}
+      className="tw-mx-0.5"
+      num={pokemon?.pokemonData?.id ?? 0}
+      name={pokemon?.pokemonData?.name}
+      form={pokemon?.pokemonData?.form}
+      pokemonType={pokemon?.pokemonType}
+      size={30}
+    />
+  );
+
+  const renderActionLabel = (
+    label: string,
+    entry: ITimeline,
+    index: number,
+    team: IPokemonBattle[],
+    timeline: ITimeline[]
+  ) => (
+    <span className="tw-flex tw-items-center tw-justify-center tw-gap-1 tw-text-sm">
+      {entry.switchedFromIndex !== undefined ? (
+        <TimelineTeamEvent entry={entry} index={index} team={team} timeline={timeline} />
+      ) : (
+        renderPokemonIcon(timelinePokemon(entry, team))
+      )}
+      <b>{label}</b>
+    </span>
+  );
+
+  const resultClasses =
+    'tw-flex tw-h-12 tw-w-full tw-items-center tw-justify-center tw-whitespace-nowrap tw-rounded tw-p-2.5 tw-text-center tw-font-bold tw-text-white';
+
+  const renderResultLabel = (
+    label: React.ReactNode,
+    entry: ITimeline,
+    index: number,
+    team: IPokemonBattle[],
+    timeline: ITimeline[],
+    fainted = false
+  ) => (
+    <span className="tw-flex tw-items-center tw-justify-center tw-gap-1.5">
+      {fainted ? (
+        <TimelineTeamEvent entry={entry} index={index} team={team} timeline={timeline} />
+      ) : (
+        renderPokemonIcon(timelinePokemon(entry, team))
+      )}
+      <span>{label}</span>
+    </span>
+  );
+
+  const turnRowClasses = (end: boolean) =>
+    combineClasses(
+      'tw-flex tw-min-h-24 tw-w-full tw-items-center tw-border-0 tw-border-t tw-border-solid tw-border-[var(--custom-table-background-sub-head-border)] tw-px-2 tw-py-1',
+      end ? 'tw-justify-end' : 'tw-justify-start'
+    );
+
+  const renderTapBadge = () => (
+    <span className="tw-shrink-0 tw-rounded-full tw-bg-primary tw-px-2 tw-py-1 tw-text-caption tw-leading-none tw-text-revert">
+      Tap
+    </span>
+  );
+
+  const renderTimeline = (pokeCurr: IPokemonBattle, pokeObj: IPokemonBattle, team: IPokemonBattle[], end = false) => (
     <Fragment>
       {pokeCurr.timeline.map((value, index) => (
-        <Fragment key={index}>
-          {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && (
-            <Fragment>
-              {value.type === AttackType.Block ? (
-                <div
-                  className={combineClasses('tw-flex tw-items-center turn-battle tw-h-20', end ? 'tw-justify-end' : '')}
-                >
-                  <div className="block-attack-container">
-                    <img
-                      className="block-spirit-timeline"
-                      alt="Image Shield"
-                      src={APIService.getPokeOtherLeague('ShieldButton')}
-                    />
-                  </div>
-                  <span className="tw-text-success">
-                    x{value.block}
-                    <span className="dec-block">-1</span>
-                  </span>
-                </div>
-              ) : (
-                <div className={combineClasses('wait-attack-container turn-battle', end ? 'tw-justify-end' : '')} />
-              )}
-            </Fragment>
+        <div className={turnRowClasses(end)} data-timeline-turn={value.timer} key={index}>
+          {value.type === AttackType.Block && (
+            <div className="tw-flex tw-items-center tw-gap-1.5">
+              {renderPokemonIcon(timelinePokemon(value, team))}
+              <div className="block-attack-container">
+                <img
+                  className="block-spirit-timeline"
+                  alt="Image Shield"
+                  src={APIService.getPokeOtherLeague('ShieldButton')}
+                />
+              </div>
+              <span className="tw-text-success">
+                x{value.block}
+                <span className="dec-block">-1</span>
+              </span>
+            </div>
           )}
           {value.type === AttackType.Fast && (
-            <Badge
-              color="primary"
-              overlap="circular"
-              badgeContent={value.isTap ? 'Tap' : undefined}
-              className={combineClasses('fast-attack-container turn-battle', end ? 'tw-justify-end' : '')}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: end ? 'right' : 'left',
-              }}
-            >
-              <div className={combineClasses('fast-attack-content tw-text-center', value.color)}>
-                <span className="tw-text-yellow-600 text-shadow-black tw-text-sm">
-                  <b>Fast Attack!</b>
+            <div className="tw-flex tw-items-center tw-gap-2">
+              {!end && value.isTap && renderTapBadge()}
+              <div
+                className={combineClasses(
+                  'fast-attack-content tw-flex tw-flex-col tw-items-center tw-gap-1 tw-text-center',
+                  value.color
+                )}
+              >
+                <span className="tw-text-yellow-600 text-shadow-black">
+                  {renderActionLabel('Fast Attack!', value, index, team, pokeCurr.timeline)}
                 </span>
-                {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
+                {renderMoveBadgeBorder(value.move, false, true)}
               </div>
-            </Badge>
+              {end && value.isTap && renderTapBadge()}
+            </div>
           )}
           {value.type === AttackType.Wait && (
-            <Badge
-              color="primary"
-              overlap="circular"
-              badgeContent={value.isTap ? 'Tap' : undefined}
+            <div
               className={combineClasses(
                 pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune
                   ? 'fast-attack-container'
                   : 'wait-attack-container',
-                end ? 'tw-justify-end' : '',
-                'turn-battle'
+                '!tw-flex !tw-h-auto tw-items-center tw-gap-2'
               )}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: end ? 'right' : 'left',
-              }}
             >
+              {!end && value.isTap && renderTapBadge()}
               {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune ? (
-                <div className={combineClasses('fast-attack-content tw-text-center', value.move?.type?.toLowerCase())}>
-                  <span className="tw-text-sm tw-text-yellow-600 text-shadow-black">
-                    <b>Fast Attack!</b>
+                <div
+                  className={combineClasses(
+                    'fast-attack-content tw-flex tw-flex-col tw-items-center tw-gap-1 tw-text-center',
+                    value.move?.type?.toLowerCase()
+                  )}
+                >
+                  <span className="tw-text-yellow-600 text-shadow-black">
+                    {renderActionLabel('Fast Attack!', value, index, team, pokeCurr.timeline)}
                   </span>
-                  {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
+                  {renderMoveBadgeBorder(value.move, false, true)}
                 </div>
               ) : (
-                <Fragment>{value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, true)}</Fragment>}</Fragment>
+                <Fragment>
+                  {value.isTap && (
+                    <div className="tw-flex tw-flex-col tw-items-center tw-gap-1">
+                      {renderActionLabel('Fast Attack!', value, index, team, pokeCurr.timeline)}
+                      {renderMoveBadgeBorder(value.move, true)}
+                    </div>
+                  )}
+                </Fragment>
               )}
-            </Badge>
+              {end && value.isTap && renderTapBadge()}
+            </div>
           )}
           {value.type === AttackType.Prepare && (
-            <div className={combineClasses('tw-flex tw-items-center turn-battle tw-h-20', end ? 'tw-justify-end' : '')}>
-              <div className={combineClasses('swipe-attack-container', `${value.color}-border`, 'tw-text-center')}>
-                <span className="tw-text-sm">
-                  <b>Swipe Charge</b>
-                </span>
-                <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>
-              </div>
+            <div
+              className={combineClasses(
+                'swipe-attack-container tw-flex tw-flex-col tw-items-center tw-gap-1',
+                `${value.color}-border`,
+                'tw-text-center'
+              )}
+            >
+              {renderActionLabel('Swipe Charge', value, index, team, pokeCurr.timeline)}
+              <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>
             </div>
           )}
           {value.type === AttackType.Switch && (
-            <div
-              className={combineClasses(
-                'tw-flex tw-h-20 tw-items-center tw-text-primary turn-battle',
-                end ? 'tw-justify-end' : ''
-              )}
-            >
-              <b>
-                {value.faintedPokemonName ? `${splitAndCapitalize(value.faintedPokemonName, '-', ' ')} fainted · ` : ''}
-                Switch to {splitAndCapitalize(value.pokemonName, '-', ' ')}
-              </b>
+            <div className="tw-flex tw-items-center tw-text-primary">
+              <TimelineTeamEvent entry={value} index={index} team={team} timeline={pokeCurr.timeline} />
             </div>
           )}
           {value.type === AttackType.Charge && (
-            <div className={combineClasses('charged-attack-container turn-battle', end ? 'tw-justify-end' : '')}>
-              <div className={combineClasses('charged-attack-content tw-text-center', value.color)}>
+            <div className="charged-attack-container !tw-h-auto">
+              <div
+                className={combineClasses(
+                  'charged-attack-content tw-flex tw-flex-col tw-items-center tw-gap-1 tw-text-center',
+                  value.color
+                )}
+              >
                 <span className="tw-text-yellow-600 text-shadow-black">
-                  <b>Charged Attack!</b>
+                  {renderActionLabel('Charged Attack!', value, index, team, pokeCurr.timeline)}
                 </span>
+                {renderMoveBadgeBorder(value.move, false, true)}
               </div>
             </div>
           )}
           {value.type === AttackType.Dead &&
           pokeObj.timeline.at(index) &&
           pokeObj.timeline.at(index)?.type === AttackType.Dead ? (
-            <div
-              className={combineClasses(
-                'winner-container bg-dark tw-text-white turn-battle',
-                end ? 'tw-justify-end' : ''
-              )}
-            >
-              TIE!
+            <div className={combineClasses(resultClasses, 'bg-dark')}>
+              {renderResultLabel('TIE!', value, index, team, pokeCurr.timeline, true)}
             </div>
           ) : (
             <Fragment>
               {value.type === AttackType.Win && (
-                <div
-                  className={combineClasses(
-                    'winner-container !tw-bg-green-600 tw-text-white turn-battle',
-                    end ? 'tw-justify-end' : ''
-                  )}
-                >
-                  WIN!
+                <div className={combineClasses(resultClasses, '!tw-bg-green-600')}>
+                  {renderResultLabel('WIN!', value, index, team, pokeCurr.timeline)}
                 </div>
               )}
               {value.type === AttackType.Dead && (
-                <div
-                  className={combineClasses(
-                    'loser-container !tw-bg-red-600 tw-text-white turn-battle',
-                    end ? 'tw-justify-end' : ''
-                  )}
-                >
-                  LOSE!
+                <div className={combineClasses(resultClasses, '!tw-bg-red-600')}>
+                  {renderResultLabel('LOSE!', value, index, team, pokeCurr.timeline, true)}
                 </div>
               )}
               {value.type === AttackType.Timeout && (
                 <div
                   className={combineClasses(
-                    'winner-container tw-text-white turn-battle',
+                    resultClasses,
                     value.outcome === 'win'
                       ? '!tw-bg-green-600'
                       : value.outcome === 'lose'
                         ? '!tw-bg-red-600'
-                        : 'bg-dark',
-                    end ? 'tw-justify-end' : ''
+                        : 'bg-dark'
                   )}
                 >
-                  {value.outcome === 'win' ? 'WIN!' : value.outcome === 'lose' ? 'LOSE!' : 'TIE!'}
-                  <span className="tw-ml-1 tw-text-xs">(TIME)</span>
+                  {renderResultLabel(
+                    <Fragment>
+                      {value.outcome === 'win' ? 'WIN!' : value.outcome === 'lose' ? 'LOSE!' : 'TIE!'}
+                      <span className="tw-ml-1 tw-text-xs">(TIME)</span>
+                    </Fragment>,
+                    value,
+                    index,
+                    team,
+                    pokeCurr.timeline
+                  )}
                 </div>
               )}
             </Fragment>
           )}
-        </Fragment>
+        </div>
       ))}
     </Fragment>
   );
@@ -203,11 +263,11 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
       {!isHide && (
         <div className="tw-flex timeline-vertical battle-container">
           <div className="tw-w-1/2">
-            <div className="tw-flex tw-flex-col tw-gap-2">{renderTimeline(pokemonCurr, pokemonObj)}</div>
+            <div className="tw-flex tw-flex-col">{renderTimeline(pokemonCurr, pokemonObj, playerTeam)}</div>
           </div>
           <div className="tw-w-1/2">
-            <div className="tw-flex tw-flex-col tw-items-end tw-gap-2">
-              {renderTimeline(pokemonObj, pokemonCurr, true)}
+            <div className="tw-flex tw-flex-col tw-items-end">
+              {renderTimeline(pokemonObj, pokemonCurr, opponentTeam, true)}
             </div>
           </div>
         </div>

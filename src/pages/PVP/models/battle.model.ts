@@ -144,6 +144,9 @@ export interface ITimeline extends TimelineConfig {
   pokemonName?: string;
   faintedPokemonName?: string;
   faintedIndex?: number;
+  switchedFromPokemonName?: string;
+  switchedFromIndex?: number;
+  switchTurnCost?: 0 | 1;
 }
 
 export interface IPokemonTeamData {

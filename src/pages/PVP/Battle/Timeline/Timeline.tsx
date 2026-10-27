@@ -6,8 +6,7 @@ import { getKeyWithData } from '../../../../utils/utils';
 import { IPokemonBattle } from '../../models/battle.model';
 import { AttackType } from '../enums/attack-type.enum';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import CloseIcon from '@mui/icons-material/Close';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import TimelineTeamEvent from './TimelineTeamEvent';
 
 const Timeline = (
   pokemonCurr: IPokemonBattle,
@@ -18,9 +17,11 @@ const Timeline = (
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
   move: TimelineElement<HTMLDivElement>,
   showTap: boolean,
+  pokemonCurrTeam: IPokemonBattle[] = [pokemonCurr],
+  pokemonObjTeam: IPokemonBattle[] = [pokemonObj],
   isHide = false
 ) => {
-  const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => (
+  const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, team: IPokemonBattle[], border = false) => (
     <Fragment>
       <div className="tw-mt-2 tw-h-3">
         <div className="tw-flex tw-gap-x-3 tw-w-max">
@@ -67,6 +68,19 @@ const Timeline = (
           ))}
         </div>
       </div>
+      <div className="tw-h-8" data-timeline-lane="switch">
+        <div className="tw-flex tw-w-max tw-gap-x-3">
+          {poke.timeline.map((value, index) => (
+            <span
+              className="tw-flex tw-shrink-0 tw-items-center tw-justify-center"
+              key={index}
+              style={{ width: value.size }}
+            >
+              <TimelineTeamEvent entry={value} index={index} team={team} timeline={poke.timeline} />
+            </span>
+          ))}
+        </div>
+      </div>
       <div
         className="tw-flex tw-items-center tw-gap-x-3 tw-w-max"
         style={{
@@ -95,18 +109,8 @@ const Timeline = (
             )}
             {(value.type === AttackType.Wait || value.type === AttackType.New) && <div className="wait-attack" />}
             {!value.type && <div className="wait-charge-attack" style={{ width: value.size, height: value.size }} />}
-            {value.type === AttackType.Dead && (
-              <div>
-                <CloseIcon color="error" />
-              </div>
-            )}
-            {value.type === AttackType.Switch && (
-              <SwapHorizIcon
-                className="tw-text-primary"
-                fontSize="small"
-                titleAccess={`Switch to ${value.pokemonName}`}
-              />
-            )}
+            {value.type === AttackType.Dead && <div className="wait-attack" />}
+            {value.type === AttackType.Switch && <div className="wait-attack" />}
             {value.type === AttackType.Timeout && (
               <span
                 className={combineClasses(
@@ -140,8 +144,8 @@ const Timeline = (
               onMouseOver={move.bind(this)}
               onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
             >
-              {renderTimeline(pokemonCurr, pokemonObj, true)}
-              {renderTimeline(pokemonObj, pokemonCurr)}
+              {renderTimeline(pokemonCurr, pokemonObj, pokemonCurrTeam, true)}
+              {renderTimeline(pokemonObj, pokemonCurr, pokemonObjTeam)}
               <div id="play-line" ref={eRef} className="play-line" />
             </div>
           </div>

@@ -3,11 +3,24 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [battlePage, battleExport, battleSelect, battlePokemonImage] = await Promise.all([
+const [
+  battlePage,
+  battleExport,
+  battleSelect,
+  battlePokemonImage,
+  timeline,
+  timelineFit,
+  timelineVertical,
+  timelineTeamEvent,
+] = await Promise.all([
   readFile(new URL('../../src/pages/PVP/Battle/Battle.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/utils/battle-export.ts', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/Select.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/BattlePokemonImage.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Battle/Timeline/Timeline.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Battle/Timeline/TimelineFit.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Battle/Timeline/TimelineVertical.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Battle/Timeline/TimelineTeamEvent.tsx', import.meta.url), 'utf8'),
 ]);
 const battleModel = await readFile(new URL('../../src/pages/PVP/models/battle.model.ts', import.meta.url), 'utf8');
 
@@ -37,6 +50,31 @@ assert.match(
   'Dragging before the first timeline marker must restore the pre-battle HP and active team state.'
 );
 assert.match(
+  battlePage,
+  /tw-w-16 tw-shrink-0 tw-text-right tw-text-caption tw-tabular-nums[\s\S]*\{hp\}\/\{maxHp\}/,
+  'Collapsed accordion HP labels must reserve a fixed width so two- and three-digit values keep equal bars.'
+);
+assert.match(
+  battlePage,
+  /isTimelineTeamMemberActive[\s\S]*timelineCursor >= 0[\s\S]*activeTeamIndexes\.opponent[\s\S]*activeTeamIndexes\.player/,
+  'Timeline playback must derive the active accordion independently for both battle sides.'
+);
+assert.match(
+  battlePage,
+  /timelineActiveAccordionSx[\s\S]*borderColor: 'var\(--primary-main\)'[\s\S]*MuiAccordionSummary-root[\s\S]*backgroundColor: 'action.selected'/,
+  'The active battle accordion must receive a theme-aware highlighted border and summary background.'
+);
+assert.match(
+  battlePage,
+  /sxHeader: timelineActiveAccordionSx\(isOpponent, 0\)[\s\S]*sxHeader: timelineActiveAccordionSx\(isOpponent, index \+ 1\)/,
+  'Lead and bench Pokémon accordions must both support timeline active highlighting.'
+);
+assert.match(
+  battlePage,
+  /pokemon\.pokemonData \? 'tw-break-words' : 'tw-whitespace-nowrap'/,
+  'Empty team-slot labels must keep their number on the same line.'
+);
+assert.match(
   battleSelect,
   /label="Random"[\s\S]*onClick=\{selectRandomPokemon\}/,
   'Each Pokémon selector must expose the Random action beside its label.'
@@ -58,8 +96,8 @@ assert.match(
 );
 assert.match(
   battlePage,
-  /label="Clear Battle"[\s\S]*onClick=\{clearBattleResult\}/,
-  'Clear Battle must clear the generated timeline.'
+  /label="Clear Battle"[\s\S]*clearBattleResult\(\);[\s\S]*focusBattleTimeline\(\);/,
+  'Clear Battle must clear the generated timeline and return focus to it.'
 );
 assert.match(
   battlePage,
@@ -68,8 +106,96 @@ assert.match(
 );
 assert.match(
   battlePage,
-  /label="Reset Timeline"/,
-  'The playback reset must be clearly distinguished from Reset Battle.'
+  /label="Reset Timeline"[\s\S]*resetTimeline\(\);[\s\S]*focusBattleTimeline\(\);/,
+  'The playback reset must be clearly distinguished and return focus to the timeline.'
+);
+assert.match(
+  battlePage,
+  /focusBattleTimeline[\s\S]*focus\(\{ preventScroll: true \}\)[\s\S]*scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/,
+  'Battle actions must smoothly align the timeline anchor to the top and move keyboard focus to it.'
+);
+assert.match(
+  battlePage,
+  /setPokemonObjBenchExpanded\(opponentBenchExpanded\);[\s\S]*focusBattleTimeline\(\);/,
+  'Battle Simulator and Reset Battle must focus the rendered timeline after a successful simulation.'
+);
+assert.match(
+  battlePage,
+  /tw-h-12\.5[\s\S]*label="Random Switch"[\s\S]*label="Battle Simulator"/,
+  'Random Switch must stay grouped with the battle simulation actions instead of timeline playback controls.'
+);
+for (const content of [timeline, timelineFit]) {
+  assert.match(
+    content,
+    /data-timeline-lane="switch"[\s\S]*<TimelineTeamEvent/,
+    'Team Switch and Faint events must render in a dedicated timeline lane.'
+  );
+  assert.match(
+    content,
+    /value\.type === AttackType\.Switch[\s\S]*className="wait-attack"/,
+    'The move-marker lane must retain an empty timing anchor for Switch events.'
+  );
+}
+assert.match(
+  timelineTeamEvent,
+  /data-timeline-event=\{isSwitch \? 'switch' : 'faint'\}[\s\S]*ArrowRightAltIcon[\s\S]*renderPokemonIcon\(target\)/,
+  'Switch events must show the source and target Pokémon icons, while Faint events remain identifiable.'
+);
+assert.match(timelineTeamEvent, /<PokemonTableIcon/, 'Timeline team events must use the shared Pokémon icons.');
+assert.match(
+  timelineVertical,
+  /<PokemonTableIcon[\s\S]*renderActionLabel[\s\S]*<TimelineTeamEvent/,
+  'Vertical timeline move badges must identify the active Pokémon and preserve switch icon events.'
+);
+assert.doesNotMatch(
+  timelineVertical,
+  /Switch to \{splitAndCapitalize/,
+  'Vertical timeline switches must use Pokémon icons instead of a text-only target name.'
+);
+assert.match(
+  timelineVertical,
+  /resultClasses =[\s\S]*tw-h-12[\s\S]*tw-justify-center/,
+  'Vertical timeline WIN, LOSE, and TIE results must share the same fixed alignment and height.'
+);
+assert.doesNotMatch(
+  timelineVertical,
+  /AttackType\.Charge[\s\S]*value\.type === AttackType\.Block \?[\s\S]*wait-attack-container/,
+  'A Charged Attack response turn must not render an extra Wait row that offsets WIN and LOSE.'
+);
+assert.match(
+  timelineVertical,
+  /turnRowClasses[\s\S]*tw-min-h-24[\s\S]*tw-border-t[\s\S]*tw-border-\[var\(--custom-table-background-sub-head-border\)\][\s\S]*data-timeline-turn/,
+  'Every vertical timeline turn must use one equal-height row with a full-width divider.'
+);
+assert.match(
+  timelineVertical,
+  /AttackType\.Block[\s\S]*renderPokemonIcon[\s\S]*AttackType\.Fast[\s\S]*renderActionLabel[\s\S]*AttackType\.Charge[\s\S]*renderActionLabel/,
+  'Shield, Fast Attack, and Charged Attack badges must identify their active Pokémon.'
+);
+assert.match(
+  timelineVertical,
+  /renderTapBadge[\s\S]*!end && value\.isTap && renderTapBadge\(\)[\s\S]*end && value\.isTap && renderTapBadge\(\)/,
+  'Tap badges must occupy their own inline space before player actions and after opponent actions.'
+);
+assert.doesNotMatch(
+  timelineVertical,
+  /MuiBadge-badge/,
+  'Vertical timeline Tap badges must not overlay action content.'
+);
+assert.match(
+  timelineTeamEvent,
+  /faintedIndex[\s\S]*AttackType\.Dead[\s\S]*<CloseIcon/,
+  'Fainted Pokémon must be marked with a red close icon in the shared team-event lane.'
+);
+assert.match(
+  timelineTeamEvent,
+  /entry\.type === AttackType\.Switch \|\| entry\.switchedFromIndex !== undefined/,
+  'Zero-turn post-Charged switches must remain visible in the dedicated team-event lane.'
+);
+assert.match(
+  timelineFit,
+  /value\.switchedFromIndex !== undefined[\s\S]*<TimelineTeamEvent/,
+  'Fit Timeline must render zero-turn switches without replacing the incoming Pokémon action.'
 );
 assert.match(battleExport, /export const createBattleEventRows/, 'The export must build a chronological event log.');
 for (const content of ['Battle timeline', 'Battle events', 'CP ', 'Level ', 'IV ', 'ATK ', 'DEF ', 'HP ']) {
@@ -105,8 +231,43 @@ assert.match(
 assert.match(battleExport, /canvas\.toBlob[\s\S]*'image\/png'/, 'The battle report must be exported as a PNG.');
 assert.match(
   battlePage,
-  /playerImageUrls:[\s\S]*getPokemonModel[\s\S]*getPokemonSqModel[\s\S]*getPokeFullSprite[\s\S]*getPokeFullAsset/,
-  'The battle export must provide the complete Pokémon image fallback chain.'
+  /playerTeamImageUrls: playerTeam\.map\(getBattleExportImageUrls\)[\s\S]*opponentTeamImageUrls: opponentTeam\.map\(getBattleExportImageUrls\)/,
+  'The battle export must provide image fallback chains for every Pokémon on both teams.'
+);
+assert.match(
+  battlePage,
+  /getBattleExportImageUrls[\s\S]*getPokemonModel[\s\S]*getPokemonSqModel[\s\S]*getPokeFullSprite[\s\S]*getPokeFullAsset/,
+  'Every exported team member must use the complete Pokémon image fallback chain.'
+);
+assert.match(
+  battleExport,
+  /getTeamMemberFinalHp[\s\S]*playerTeam\.forEach[\s\S]*opponentTeam\.forEach/,
+  'The report must draw every team member with their final HP state.'
+);
+assert.match(
+  battleExport,
+  /playerPokemon:[\s\S]*activeIndex[\s\S]*opponentPokemon:[\s\S]*activeIndex/,
+  'Multi-Pokémon battle events must identify the active Pokémon on each side.'
+);
+assert.match(
+  battleExport,
+  /switchedFromIndex[\s\S]*switchedFromPokemonName[\s\S]*Fast:/,
+  'The battle export must preserve a zero-turn switch alongside the action taken in the same turn.'
+);
+assert.match(
+  battleExport,
+  /drawTeamEventLane[\s\S]*AttackType\.Switch[\s\S]*faintedIndex[\s\S]*drawTeamTimelinePokemon/,
+  'The exported timeline must draw Pokémon switch and faint markers in a dedicated team-event lane.'
+);
+assert.match(
+  battleExport,
+  /playerTeamEventY[\s\S]*playerImages[\s\S]*opponentTeamEventY[\s\S]*opponentImages/,
+  'The exported player and opponent timelines must use their complete team images for switch and faint events.'
+);
+assert.match(
+  battleExport,
+  /pokego-team-battle-\$\{playerTeam\.length\}v\$\{opponentTeam\.length\}-\$\{playerName\}-vs-\$\{opponentName\}\.png/,
+  'Multi-Pokémon exports must use a distinct team-battle filename containing both team sizes.'
 );
 assert.match(
   battleExport,

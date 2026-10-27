@@ -185,6 +185,7 @@ const Battle = () => {
   const timelineNormal = useRef<HTMLDivElement>();
   const timelineNormalContainer = useRef<HTMLDivElement>();
   const playLine = useRef<HTMLDivElement>();
+  const timelineFocusRef = useRef<HTMLDivElement>(null);
 
   const levelCurrRef = useRef<HTMLInputElement>(null);
   const atkIVCurrRef = useRef<HTMLInputElement>(null);
@@ -223,6 +224,15 @@ const Battle = () => {
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
   const [isFound, setIsFound] = useState(true);
+
+  const focusBattleTimeline = useCallback(() => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        timelineFocusRef.current?.focus({ preventScroll: true });
+        timelineFocusRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }, []);
 
   const createBattleRequest = (pokemon: IPokemonBattle): PvpBattlePokemonRequest => {
     const pokemonData = pokemon.pokemonData;
@@ -307,6 +317,7 @@ const Battle = () => {
       setPokemonObjBench(opponentTeam.slice(1));
       setPokemonCurrBenchExpanded(playerBenchExpanded);
       setPokemonObjBenchExpanded(opponentBenchExpanded);
+      focusBattleTimeline();
     } catch (error) {
       const axiosError = error as AxiosError<{ error?: string }>;
       showSnackbar(axiosError.response?.data?.error ?? axiosError.message, 'error');
@@ -323,6 +334,13 @@ const Battle = () => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
   };
 
+  const getBattleExportImageUrls = (pokemon: IPokemonBattle) => [
+    APIService.getPokemonModel(pokemon.pokemonData?.assetForm, pokemon.pokemonData?.id),
+    APIService.getPokemonSqModel(pokemon.pokemonData?.assetForm, pokemon.pokemonData?.id),
+    APIService.getPokeFullSprite(pokemon.pokemonData?.id, pokemon.pokemonData?.form),
+    APIService.getPokeFullAsset(pokemon.pokemonData?.id),
+  ];
+
   const exportBattle = async () => {
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
       showSnackbar('Battle information is unavailable.', 'error');
@@ -330,25 +348,17 @@ const Battle = () => {
     }
     showSpinner();
     try {
+      const playerTeam = [pokemonCurr, ...pokemonCurrBench];
+      const opponentTeam = [pokemonObj, ...pokemonObjBench];
       await exportBattleReportImage({
         leagueName: getPokemonBattleLeagueName(league),
         turnDurationSeconds: optionsData.combatOptions.turnDurationSeconds || 0.5,
         player: pokemonCurr,
         opponent: pokemonObj,
-        playerTeam: [pokemonCurr, ...pokemonCurrBench],
-        opponentTeam: [pokemonObj, ...pokemonObjBench],
-        playerImageUrls: [
-          APIService.getPokemonModel(pokemonCurr.pokemonData.assetForm, pokemonCurr.pokemonData.id),
-          APIService.getPokemonSqModel(pokemonCurr.pokemonData.assetForm, pokemonCurr.pokemonData.id),
-          APIService.getPokeFullSprite(pokemonCurr.pokemonData.id, pokemonCurr.pokemonData.form),
-          APIService.getPokeFullAsset(pokemonCurr.pokemonData.id),
-        ],
-        opponentImageUrls: [
-          APIService.getPokemonModel(pokemonObj.pokemonData.assetForm, pokemonObj.pokemonData.id),
-          APIService.getPokemonSqModel(pokemonObj.pokemonData.assetForm, pokemonObj.pokemonData.id),
-          APIService.getPokeFullSprite(pokemonObj.pokemonData.id, pokemonObj.pokemonData.form),
-          APIService.getPokeFullAsset(pokemonObj.pokemonData.id),
-        ],
+        playerTeam,
+        opponentTeam,
+        playerTeamImageUrls: playerTeam.map(getBattleExportImageUrls),
+        opponentTeamImageUrls: opponentTeam.map(getBattleExportImageUrls),
       });
       showSnackbar('Battle report exported as PNG.', 'success');
     } catch (error) {
@@ -1688,6 +1698,25 @@ const Battle = () => {
     return { hp: Math.max(0, latest?.hp ?? maxHp), maxHp };
   };
 
+  const isTimelineTeamMemberActive = (isOpponent: boolean, teamIndex: number) =>
+    timelineCursor >= 0 && (isOpponent ? activeTeamIndexes.opponent : activeTeamIndexes.player) === teamIndex;
+
+  const timelineActiveAccordionSx = (isOpponent: boolean, teamIndex: number) => {
+    const active = isTimelineTeamMemberActive(isOpponent, teamIndex);
+    return {
+      transition: 'border-color 160ms ease, box-shadow 160ms ease',
+      ...(active
+        ? {
+            borderColor: 'var(--primary-main)',
+            boxShadow: 'inset 4px 0 0 var(--primary-main), 0 0 0 1px var(--primary-main)',
+            '& .MuiAccordionSummary-root': {
+              backgroundColor: 'action.selected',
+            },
+          }
+        : {}),
+    };
+  };
+
   const renderTeamMemberSummary = (
     pokemon: IPokemonBattle,
     slot: number,
@@ -1696,10 +1725,15 @@ const Battle = () => {
     isExpanded: boolean
   ) => {
     const { hp, maxHp } = getTeamMemberHp(pokemon, slot - 1, isOpponent);
+    const isActive = isTimelineTeamMemberActive(isOpponent, slot - 1);
     const hpRatio = maxHp > 0 ? hp / maxHp : 0;
     const hpColor = hpRatio > 0.5 ? 'tw-bg-success' : hpRatio > 0.25 ? 'tw-bg-yellow-400' : 'tw-bg-error';
     return (
-      <div className="tw-flex tw-min-w-0 tw-flex-1 tw-flex-col tw-overflow-hidden">
+      <div
+        aria-current={isActive ? 'true' : undefined}
+        className="tw-flex tw-min-w-0 tw-flex-1 tw-flex-col tw-overflow-hidden"
+        data-active-battler={isActive ? (isOpponent ? 'opponent' : 'player') : undefined}
+      >
         <div className="tw-flex tw-min-w-0 tw-items-center tw-gap-3">
           {pokemon.pokemonData ? (
             <span className="tw-relative tw-flex tw-h-10 tw-w-10 tw-shrink-0 tw-items-center tw-justify-center">
@@ -1718,7 +1752,12 @@ const Battle = () => {
             </span>
           )}
           <span className="tw-min-w-0 tw-flex-1 tw-overflow-hidden">
-            <b className="tw-block tw-break-words tw-leading-small">
+            <b
+              className={combineClasses(
+                'tw-block tw-leading-small',
+                pokemon.pokemonData ? 'tw-break-words' : 'tw-whitespace-nowrap'
+              )}
+            >
               {pokemon.pokemonData
                 ? splitAndCapitalize(pokemon.pokemonData.name, '-', ' ')
                 : `${sideLabel} Pokémon ${slot}`}
@@ -1747,7 +1786,7 @@ const Battle = () => {
                 style={{ width: `${Math.max(0, Math.min(100, hpRatio * 100))}%` }}
               />
             </div>
-            <span className="tw-shrink-0 tw-text-caption tw-text-[var(--text-secondary)]">
+            <span className="tw-w-16 tw-shrink-0 tw-text-right tw-text-caption tw-tabular-nums tw-text-[var(--text-secondary)]">
               {hp}/{maxHp}
             </span>
           </div>
@@ -1772,6 +1811,7 @@ const Battle = () => {
         items={[
           {
             value: 1,
+            sxHeader: timelineActiveAccordionSx(isOpponent, 0),
             label: renderTeamMemberSummary(pokemon, 1, sideLabel, isOpponent, isExpanded),
             children: renderPokemonInfo(
               isOpponent ? BattleType.Object : BattleType.Current,
@@ -1813,6 +1853,7 @@ const Battle = () => {
             items={[
               {
                 value: index,
+                sxHeader: timelineActiveAccordionSx(isOpponent, index + 1),
                 label: renderTeamMemberSummary(
                   pokemon,
                   index + 2,
@@ -1956,7 +1997,12 @@ const Battle = () => {
           <Fragment>
             {!pokemonCurr.pokemonData && !pokemonObj.pokemonData && <hr className="tw-block !tw-mt-4 lg:tw-hidden" />}
           </Fragment>
-          <div className="lg:tw-w-1/2 tw-mt-0 lg:tw-mt-4">
+          <div
+            ref={timelineFocusRef}
+            aria-label="Battle timeline"
+            className="tw-scroll-mt-20 tw-outline-none lg:tw-w-1/2 tw-mt-0 lg:tw-mt-4"
+            tabIndex={-1}
+          >
             {pokemonCurr.pokemonData &&
               pokemonObj.pokemonData &&
               isNotEmpty(pokemonCurr.timeline) &&
@@ -1979,7 +2025,12 @@ const Battle = () => {
                           [pokemonCurr, ...pokemonCurrBench][activeTeamIndexes.player] ?? pokemonCurr,
                           [pokemonObj, ...pokemonObjBench][activeTeamIndexes.opponent] ?? pokemonObj
                         ),
-                        children: TimelineVertical(pokemonCurr, pokemonObj),
+                        children: TimelineVertical(
+                          pokemonCurr,
+                          pokemonObj,
+                          [pokemonCurr, ...pokemonCurrBench],
+                          [pokemonObj, ...pokemonObjBench]
+                        ),
                       },
                     ]}
                   />
@@ -1994,7 +2045,9 @@ const Battle = () => {
                           timelineNormal as React.LegacyRef<HTMLDivElement>,
                           playLine as React.LegacyRef<HTMLDivElement>,
                           onPlayLineMove,
-                          showTap
+                          showTap,
+                          [pokemonCurr, ...pokemonCurrBench],
+                          [pokemonObj, ...pokemonObjBench]
                         )}
                       </Fragment>
                     ) : (
@@ -2005,7 +2058,9 @@ const Battle = () => {
                           timelineFit as React.LegacyRef<HTMLDivElement>,
                           playLine as React.LegacyRef<HTMLDivElement>,
                           onPlayLineFitMove,
-                          showTap
+                          showTap,
+                          [pokemonCurr, ...pokemonCurrBench],
+                          [pokemonObj, ...pokemonObjBench]
                         )}
                       </Fragment>
                     )}
@@ -2099,7 +2154,10 @@ const Battle = () => {
                         color="error"
                         startIcon={<RestartAltIcon />}
                         label="Reset Timeline"
-                        onClick={() => resetTimeline()}
+                        onClick={() => {
+                          resetTimeline();
+                          focusBattleTimeline();
+                        }}
                         disabled={playState}
                       />
                     </div>
@@ -2112,24 +2170,26 @@ const Battle = () => {
             {renderBenchTeam(true)}
           </div>
         </div>
-        {(pokemonCurrBench.length > 0 || pokemonObjBench.length > 0) && (
-          <div className="tw-flex tw-justify-center">
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={randomSwitch}
-                  onChange={(_, checked) => {
-                    setOptions({ ...options, randomSwitch: checked });
-                    clearBattleResult();
-                  }}
-                />
-              }
-              label="Random Switch"
-            />
-          </div>
-        )}
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
-          <div className="tw-flex tw-flex-wrap tw-justify-center tw-gap-2 tw-mt-2">
+          <div className="tw-mt-2 tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-2">
+            {(pokemonCurrBench.length > 0 || pokemonObjBench.length > 0) && (
+              <div className="tw-flex tw-h-12.5 tw-items-center tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-px-3">
+                <FormControlLabel
+                  className="!tw-m-0"
+                  control={
+                    <Switch
+                      checked={randomSwitch}
+                      inputProps={{ 'aria-label': 'Random Switch' }}
+                      onChange={(_, checked) => {
+                        setOptions({ ...options, randomSwitch: checked });
+                        clearBattleResult();
+                      }}
+                    />
+                  }
+                  label="Random Switch"
+                />
+              </div>
+            )}
             {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
               <>
                 <ButtonMui
@@ -2144,7 +2204,10 @@ const Battle = () => {
                   variant="outlined"
                   startIcon={<DeleteSweepIcon />}
                   label="Clear Battle"
-                  onClick={clearBattleResult}
+                  onClick={() => {
+                    clearBattleResult();
+                    focusBattleTimeline();
+                  }}
                 />
                 <ButtonMui
                   className="tw-h-12.5"

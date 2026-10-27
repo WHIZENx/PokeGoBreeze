@@ -11,17 +11,19 @@ interface BattleExportOptions {
   opponent: IPokemonBattle;
   playerTeam?: IPokemonBattle[];
   opponentTeam?: IPokemonBattle[];
-  playerImageUrls?: string[];
-  opponentImageUrls?: string[];
+  playerTeamImageUrls?: string[][];
+  opponentTeamImageUrls?: string[][];
 }
 
 interface BattleEventRow {
   turn: number;
   timeSeconds: number;
   playerAction: string;
+  playerPokemon: string;
   playerMoveType?: string;
   playerState: string;
   opponentAction: string;
+  opponentPokemon: string;
   opponentMoveType?: string;
   opponentState: string;
 }
@@ -34,6 +36,7 @@ interface PokemonInfoLine {
 
 const canvasWidth = 1600;
 const canvasPadding = 64;
+const pokemonCardHeight = 330;
 const colors = {
   background: '#0f172a',
   surface: '#172033',
@@ -86,15 +89,20 @@ const getActionText = (entry: ITimeline | undefined) => {
   const move = entry.move?.name ? formatName(entry.move.name) : '';
   const buff = getBuffText(entry);
   const detail = [move, buff].filter(Boolean).join(' · ');
+  const switchAction =
+    entry.switchedFromIndex !== undefined && entry.type !== AttackType.Switch
+      ? `Switch ${formatName(entry.switchedFromPokemonName)} → ${formatName(entry.pokemonName)}`
+      : '';
+  const switchPrefix = switchAction ? `${switchAction} · ` : '';
   switch (entry.type) {
     case AttackType.Fast:
-      return `Fast: ${detail || 'Attack'}`;
+      return `${switchPrefix}Fast: ${detail || 'Attack'}`;
     case AttackType.Prepare:
-      return `Prepare charged move${detail ? `: ${detail}` : ''}`;
+      return `${switchPrefix}Prepare charged move${detail ? `: ${detail}` : ''}`;
     case AttackType.Charge:
-      return `Charged: ${detail || 'Attack'}`;
+      return `${switchPrefix}Charged: ${detail || 'Attack'}`;
     case AttackType.Block:
-      return 'Shield';
+      return `${switchPrefix}Shield`;
     case AttackType.Switch:
       return `${entry.faintedPokemonName ? `${formatName(entry.faintedPokemonName)} fainted · ` : ''}Switch to ${formatName(entry.pokemonName)}`;
     case AttackType.Dead:
@@ -104,7 +112,7 @@ const getActionText = (entry: ITimeline | undefined) => {
     case AttackType.Timeout:
       return `Time limit: ${entry.outcome?.toUpperCase() ?? 'TIE'}`;
     default:
-      return entry.isTap ? 'Tap' : '—';
+      return switchAction || (entry.isTap ? 'Tap' : '—');
   }
 };
 
@@ -119,13 +127,16 @@ const isReportableEvent = (entry: ITimeline | undefined) =>
         entry.type === AttackType.Dead ||
         entry.type === AttackType.Win ||
         entry.type === AttackType.Timeout ||
+        entry.switchedFromIndex !== undefined ||
         entry.buff?.length)
   );
 
 export const createBattleEventRows = (
   playerTimeline: ITimeline[],
   opponentTimeline: ITimeline[],
-  turnDurationSeconds: number
+  turnDurationSeconds: number,
+  playerTeam: IPokemonBattle[] = [],
+  opponentTeam: IPokemonBattle[] = []
 ) => {
   const rows: BattleEventRow[] = [];
   const length = Math.max(playerTimeline.length, opponentTimeline.length);
@@ -140,9 +151,11 @@ export const createBattleEventRows = (
       turn,
       timeSeconds: turn * turnDurationSeconds,
       playerAction: getActionText(player),
+      playerPokemon: formatName(playerTeam[player?.activeIndex ?? 0]?.pokemonData?.name),
       playerMoveType: player?.move?.type,
       playerState: player ? `HP ${Math.max(0, player.hp)} · E ${player.energy} · S ${player.block}` : '—',
       opponentAction: getActionText(opponent),
+      opponentPokemon: formatName(opponentTeam[opponent?.activeIndex ?? 0]?.pokemonData?.name),
       opponentMoveType: opponent?.move?.type,
       opponentState: opponent ? `HP ${Math.max(0, opponent.hp)} · E ${opponent.energy} · S ${opponent.block}` : '—',
     });
@@ -355,7 +368,7 @@ const drawPokemonCard = (
   context: CanvasRenderingContext2D,
   pokemon: IPokemonBattle,
   image: HTMLImageElement | undefined,
-  outcome: string,
+  battleState: string,
   x: number,
   y: number,
   width: number,
@@ -364,9 +377,9 @@ const drawPokemonCard = (
   fontFamily: string,
   typeIcons: Map<string, HTMLImageElement>,
   statusIcons: Map<PokemonType, HTMLImageElement>,
-  team: IPokemonBattle[] = [pokemon]
+  slot: number
 ) => {
-  const height = 330;
+  const height = pokemonCardHeight;
   fillRoundedRect(context, x, y, width, height, colors.surface);
   context.strokeStyle = accent;
   context.lineWidth = 3;
@@ -380,8 +393,8 @@ const drawPokemonCard = (
   if (statusIcon) {
     context.drawImage(statusIcon, imageX + 108, y + 160, 52, 52);
   }
-  drawText(context, outcome, imageX + 80, y + 250, {
-    color: outcome === 'WIN' ? colors.result : outcome === 'LOSE' ? colors.danger : colors.muted,
+  drawText(context, battleState, imageX + 80, y + 250, {
+    color: battleState === 'FAINTED' ? colors.danger : colors.result,
     font: `700 28px ${fontFamily}`,
     align: 'center',
   });
@@ -413,13 +426,20 @@ const drawPokemonCard = (
       });
     }
   });
-  drawText(
-    context,
-    `Team: ${team.map((member) => formatName(member.pokemonData?.name)).join(' · ')}`,
-    x + 24,
-    y + 310,
-    { color: colors.muted, font: `500 16px ${fontFamily}`, maxWidth: width - 48 }
-  );
+  drawText(context, `Team slot ${slot}${slot === 1 ? ' · Lead' : ''}`, x + 24, y + 310, {
+    color: colors.muted,
+    font: `500 16px ${fontFamily}`,
+    maxWidth: width - 48,
+  });
+};
+
+const getTeamMemberFinalHp = (timeline: ITimeline[], pokemon: IPokemonBattle, teamIndex: number) => {
+  const maxHp = getBattleHp(pokemon.pokemonData?.currentStats?.stats?.statSTA);
+  if (timeline.some((entry) => entry.faintedIndex === teamIndex)) {
+    return { hp: 0, maxHp };
+  }
+  const latest = timeline.findLast((entry) => (entry.activeIndex ?? 0) === teamIndex);
+  return { hp: Math.max(0, latest?.hp ?? maxHp), maxHp };
 };
 
 const timelineColor = (entry: ITimeline | undefined) => {
@@ -467,6 +487,98 @@ const drawTimelineLane = (
   context.stroke();
 };
 
+const drawTeamTimelinePokemon = (
+  context: CanvasRenderingContext2D,
+  image: HTMLImageElement | undefined,
+  teamIndex: number,
+  centerX: number,
+  centerY: number,
+  fainted: boolean,
+  fontFamily: string
+) => {
+  context.fillStyle = colors.surface;
+  context.beginPath();
+  context.arc(centerX, centerY, 19, 0, Math.PI * 2);
+  context.fill();
+  if (image) {
+    drawContainedImage(context, image, centerX - 16, centerY - 16, 32, 32);
+  } else {
+    drawText(context, String(teamIndex + 1), centerX, centerY + 6, {
+      color: colors.text,
+      font: `700 16px ${fontFamily}`,
+      align: 'center',
+    });
+  }
+  if (fainted) {
+    context.strokeStyle = colors.danger;
+    context.lineCap = 'round';
+    context.lineWidth = 4;
+    context.beginPath();
+    context.moveTo(centerX - 10, centerY - 10);
+    context.lineTo(centerX + 10, centerY + 10);
+    context.moveTo(centerX + 10, centerY - 10);
+    context.lineTo(centerX - 10, centerY + 10);
+    context.stroke();
+  }
+};
+
+const drawTeamEventLane = (
+  context: CanvasRenderingContext2D,
+  timeline: ITimeline[],
+  teamImages: Array<HTMLImageElement | undefined>,
+  x: number,
+  y: number,
+  width: number,
+  maxTurn: number,
+  accent: string,
+  fontFamily: string
+) => {
+  fillRoundedRect(context, x, y, width, 46, colors.surfaceAlt, 8);
+  timeline.forEach((entry, index) => {
+    const switched = entry.type === AttackType.Switch || entry.switchedFromIndex !== undefined;
+    const fainted = entry.faintedIndex !== undefined || entry.type === AttackType.Dead;
+    if (!switched && !fainted) {
+      return;
+    }
+    const previousActiveIndex =
+      timeline.slice(0, index).findLast((candidate) => candidate.activeIndex !== undefined)?.activeIndex ?? 0;
+    const sourceIndex = entry.faintedIndex ?? entry.switchedFromIndex ?? previousActiveIndex;
+    const targetIndex = entry.activeIndex ?? sourceIndex;
+    const rawCenterX = x + ((entry.timer ?? index) / maxTurn) * width;
+    const centerX = Math.max(x + 46, Math.min(x + width - 46, rawCenterX));
+    const centerY = y + 23;
+    context.strokeStyle = fainted ? colors.danger : accent;
+    context.lineWidth = 2;
+    context.beginPath();
+    context.moveTo(centerX, y + 2);
+    context.lineTo(centerX, y + 44);
+    context.stroke();
+    if (switched && targetIndex !== sourceIndex) {
+      drawTeamTimelinePokemon(
+        context,
+        teamImages[sourceIndex],
+        sourceIndex,
+        centerX - 24,
+        centerY,
+        fainted,
+        fontFamily
+      );
+      drawText(context, '→', centerX, centerY + 6, {
+        color: fainted ? colors.danger : accent,
+        font: `700 18px ${fontFamily}`,
+        align: 'center',
+      });
+      drawTeamTimelinePokemon(context, teamImages[targetIndex], targetIndex, centerX + 24, centerY, false, fontFamily);
+    } else {
+      drawTeamTimelinePokemon(context, teamImages[sourceIndex], sourceIndex, centerX, centerY, true, fontFamily);
+    }
+  });
+  context.strokeStyle = accent;
+  context.lineWidth = 2;
+  roundedRect(context, x, y, width, 46, 8);
+  context.stroke();
+};
+
 const downloadCanvas = (canvas: HTMLCanvasElement, filename: string) =>
   new Promise<void>((resolve, reject) => {
     canvas.toBlob((blob) => {
@@ -491,19 +603,31 @@ export const exportBattleReportImage = async ({
   opponent,
   playerTeam = [player],
   opponentTeam = [opponent],
-  playerImageUrls,
-  opponentImageUrls,
+  playerTeamImageUrls,
+  opponentTeamImageUrls,
 }: BattleExportOptions) => {
   const safeTurnDuration = turnDurationSeconds > 0 ? turnDurationSeconds : 0.5;
-  const events = createBattleEventRows(player.timeline, opponent.timeline, safeTurnDuration);
+  const events = createBattleEventRows(player.timeline, opponent.timeline, safeTurnDuration, playerTeam, opponentTeam);
   const maxTurn = Math.max(
     1,
     ...player.timeline.map((entry) => entry.timer),
     ...opponent.timeline.map((entry) => entry.timer)
   );
   const eventRowHeight = 62;
-  const headerHeight = 930;
-  const canvasHeight = headerHeight + Math.max(1, events.length) * eventRowHeight + canvasPadding;
+  const cardStartY = 190;
+  const cardRowGap = 20;
+  const teamRows = Math.max(1, playerTeam.length, opponentTeam.length);
+  const teamSectionHeight = teamRows * pokemonCardHeight + (teamRows - 1) * cardRowGap;
+  const timelineTitleY = cardStartY + teamSectionHeight + 58;
+  const playerTimelineY = timelineTitleY + 20;
+  const playerTeamEventY = timelineTitleY + 70;
+  const opponentTimelineY = timelineTitleY + 128;
+  const opponentTeamEventY = timelineTitleY + 178;
+  const legendY = timelineTitleY + 244;
+  const eventsTitleY = timelineTitleY + 328;
+  const eventsHeaderY = eventsTitleY + 24;
+  const eventRowsStartY = eventsHeaderY + 54;
+  const canvasHeight = eventRowsStartY + Math.max(1, events.length) * eventRowHeight + canvasPadding;
   const canvas = document.createElement('canvas');
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;
@@ -517,16 +641,12 @@ export const exportBattleReportImage = async ({
   context.fillRect(0, 0, canvasWidth, canvasHeight);
   context.font = `400 20px ${fontFamily}`;
 
-  const [playerImage, opponentImage, typeIcons, statusIcons] = await Promise.all([
-    loadImage(playerImageUrls),
-    loadImage(opponentImageUrls),
+  const [playerImages, opponentImages, typeIcons, statusIcons] = await Promise.all([
+    Promise.all(playerTeam.map((_, index) => loadImage(playerTeamImageUrls?.[index]))),
+    Promise.all(opponentTeam.map((_, index) => loadImage(opponentTeamImageUrls?.[index]))),
     loadMoveTypeIcons([
-      player.fMove?.type,
-      player.cMovePri?.type,
-      player.cMoveSec?.type,
-      opponent.fMove?.type,
-      opponent.cMovePri?.type,
-      opponent.cMoveSec?.type,
+      ...playerTeam.flatMap((member) => [member.fMove?.type, member.cMovePri?.type, member.cMoveSec?.type]),
+      ...opponentTeam.flatMap((member) => [member.fMove?.type, member.cMovePri?.type, member.cMoveSec?.type]),
       ...events.flatMap((event) => [event.playerMoveType, event.opponentMoveType]),
     ]),
     loadPokemonStatusIcons(),
@@ -554,39 +674,54 @@ export const exportBattleReportImage = async ({
 
   const cardGap = 28;
   const cardWidth = (canvasWidth - canvasPadding * 2 - cardGap) / 2;
-  drawPokemonCard(
-    context,
-    player,
-    playerImage,
-    getOutcome(player.timeline),
-    canvasPadding,
-    154,
-    cardWidth,
-    colors.player,
-    'left',
-    fontFamily,
-    typeIcons,
-    statusIcons,
-    playerTeam
-  );
-  drawPokemonCard(
-    context,
-    opponent,
-    opponentImage,
-    getOutcome(opponent.timeline),
-    canvasPadding + cardWidth + cardGap,
-    154,
-    cardWidth,
-    colors.opponent,
-    'right',
-    fontFamily,
-    typeIcons,
-    statusIcons,
-    opponentTeam
-  );
+  drawText(context, `Player team · ${getOutcome(player.timeline)}`, canvasPadding, 166, {
+    color: colors.player,
+    font: `700 24px ${fontFamily}`,
+  });
+  drawText(context, `Opponent team · ${getOutcome(opponent.timeline)}`, canvasWidth - canvasPadding, 166, {
+    color: colors.opponent,
+    font: `700 24px ${fontFamily}`,
+    align: 'right',
+  });
+  playerTeam.forEach((member, index) => {
+    const { hp, maxHp } = getTeamMemberFinalHp(player.timeline, member, index);
+    drawPokemonCard(
+      context,
+      member,
+      playerImages[index],
+      hp <= 0 ? 'FAINTED' : `HP ${hp}/${maxHp}`,
+      canvasPadding,
+      cardStartY + index * (pokemonCardHeight + cardRowGap),
+      cardWidth,
+      colors.player,
+      'left',
+      fontFamily,
+      typeIcons,
+      statusIcons,
+      index + 1
+    );
+  });
+  opponentTeam.forEach((member, index) => {
+    const { hp, maxHp } = getTeamMemberFinalHp(opponent.timeline, member, index);
+    drawPokemonCard(
+      context,
+      member,
+      opponentImages[index],
+      hp <= 0 ? 'FAINTED' : `HP ${hp}/${maxHp}`,
+      canvasPadding + cardWidth + cardGap,
+      cardStartY + index * (pokemonCardHeight + cardRowGap),
+      cardWidth,
+      colors.opponent,
+      'right',
+      fontFamily,
+      typeIcons,
+      statusIcons,
+      index + 1
+    );
+  });
 
-  drawText(context, 'Battle timeline', canvasPadding, 540, { font: `700 28px ${fontFamily}` });
-  drawText(context, formatName(player.pokemonData?.name), canvasPadding, 584, {
+  drawText(context, 'Battle timeline', canvasPadding, timelineTitleY, { font: `700 28px ${fontFamily}` });
+  drawText(context, 'Player actions', canvasPadding, playerTimelineY + 30, {
     color: colors.player,
     font: `600 18px ${fontFamily}`,
   });
@@ -594,12 +729,27 @@ export const exportBattleReportImage = async ({
     context,
     player.timeline,
     canvasPadding + 190,
-    554,
+    playerTimelineY,
     canvasWidth - canvasPadding * 2 - 190,
     maxTurn,
     colors.player
   );
-  drawText(context, formatName(opponent.pokemonData?.name), canvasPadding, 646, {
+  drawText(context, 'Player switch / faint', canvasPadding, playerTeamEventY + 29, {
+    color: colors.player,
+    font: `600 16px ${fontFamily}`,
+  });
+  drawTeamEventLane(
+    context,
+    player.timeline,
+    playerImages,
+    canvasPadding + 190,
+    playerTeamEventY,
+    canvasWidth - canvasPadding * 2 - 190,
+    maxTurn,
+    colors.player,
+    fontFamily
+  );
+  drawText(context, 'Opponent actions', canvasPadding, opponentTimelineY + 30, {
     color: colors.opponent,
     font: `600 18px ${fontFamily}`,
   });
@@ -607,10 +757,25 @@ export const exportBattleReportImage = async ({
     context,
     opponent.timeline,
     canvasPadding + 190,
-    616,
+    opponentTimelineY,
     canvasWidth - canvasPadding * 2 - 190,
     maxTurn,
     colors.opponent
+  );
+  drawText(context, 'Opponent switch / faint', canvasPadding, opponentTeamEventY + 29, {
+    color: colors.opponent,
+    font: `600 16px ${fontFamily}`,
+  });
+  drawTeamEventLane(
+    context,
+    opponent.timeline,
+    opponentImages,
+    canvasPadding + 190,
+    opponentTeamEventY,
+    canvasWidth - canvasPadding * 2 - 190,
+    maxTurn,
+    colors.opponent,
+    fontFamily
   );
 
   const legend = [
@@ -619,16 +784,17 @@ export const exportBattleReportImage = async ({
     ['Shield', colors.shield],
     ['Result', colors.result],
     ['Switch', colors.player],
+    ['Faint', colors.danger],
   ];
   legend.forEach(([label, color], index) => {
     const x = canvasPadding + index * 170;
     context.fillStyle = color;
-    context.fillRect(x, 686, 28, 12);
-    drawText(context, label, x + 38, 700, { color: colors.muted, font: `400 17px ${fontFamily}` });
+    context.fillRect(x, legendY, 28, 12);
+    drawText(context, label, x + 38, legendY + 14, { color: colors.muted, font: `400 17px ${fontFamily}` });
   });
 
-  drawText(context, 'Battle events', canvasPadding, 770, { font: `700 28px ${fontFamily}` });
-  fillRoundedRect(context, canvasPadding, 794, canvasWidth - canvasPadding * 2, 54, colors.surfaceAlt, 8);
+  drawText(context, 'Battle events', canvasPadding, eventsTitleY, { font: `700 28px ${fontFamily}` });
+  fillRoundedRect(context, canvasPadding, eventsHeaderY, canvasWidth - canvasPadding * 2, 54, colors.surfaceAlt, 8);
   const columns = [
     canvasPadding + 20,
     canvasPadding + 145,
@@ -636,16 +802,15 @@ export const exportBattleReportImage = async ({
     canvasPadding + 860,
     canvasPadding + 1285,
   ];
-  ['Time', formatName(player.pokemonData?.name), 'State', formatName(opponent.pokemonData?.name), 'State'].forEach(
-    (label, index) =>
-      drawText(context, label, columns[index], 828, {
-        color: index === 1 ? colors.player : index === 3 ? colors.opponent : colors.text,
-        font: `700 18px ${fontFamily}`,
-      })
+  ['Time', 'Player action', 'State', 'Opponent action', 'State'].forEach((label, index) =>
+    drawText(context, label, columns[index], eventsHeaderY + 34, {
+      color: index === 1 ? colors.player : index === 3 ? colors.opponent : colors.text,
+      font: `700 18px ${fontFamily}`,
+    })
   );
 
   events.forEach((event, index) => {
-    const y = 848 + index * eventRowHeight;
+    const y = eventRowsStartY + index * eventRowHeight;
     if (index % 2 === 0) {
       context.fillStyle = colors.surface;
       context.fillRect(canvasPadding, y, canvasWidth - canvasPadding * 2, eventRowHeight);
@@ -660,7 +825,7 @@ export const exportBattleReportImage = async ({
       font: `500 17px ${fontFamily}`,
       maxWidth: 405 - (hasPlayerMoveIcon ? 30 : 0),
     });
-    drawText(context, `Turn ${event.turn}`, columns[1], y + 49, {
+    drawText(context, `${event.playerPokemon} · Turn ${event.turn}`, columns[1], y + 49, {
       color: colors.muted,
       font: `400 14px ${fontFamily}`,
     });
@@ -675,7 +840,7 @@ export const exportBattleReportImage = async ({
       font: `500 17px ${fontFamily}`,
       maxWidth: 405 - (hasOpponentMoveIcon ? 30 : 0),
     });
-    drawText(context, `Turn ${event.turn}`, columns[3], y + 49, {
+    drawText(context, `${event.opponentPokemon} · Turn ${event.turn}`, columns[3], y + 49, {
       color: colors.muted,
       font: `400 14px ${fontFamily}`,
     });
@@ -688,5 +853,9 @@ export const exportBattleReportImage = async ({
 
   const playerName = formatName(player.pokemonData?.name).replaceAll(' ', '-').toLowerCase();
   const opponentName = formatName(opponent.pokemonData?.name).replaceAll(' ', '-').toLowerCase();
-  await downloadCanvas(canvas, `pokego-battle-${playerName}-vs-${opponentName}.png`);
+  const filename =
+    playerTeam.length > 1 || opponentTeam.length > 1
+      ? `pokego-team-battle-${playerTeam.length}v${opponentTeam.length}-${playerName}-vs-${opponentName}.png`
+      : `pokego-battle-${playerName}-vs-${opponentName}.png`;
+  await downloadCanvas(canvas, filename);
 };
