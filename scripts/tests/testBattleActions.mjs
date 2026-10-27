@@ -36,6 +36,11 @@ assert.match(
 );
 assert.match(
   battlePage,
+  /useRef<PokemonStatRefs\[\]>\(\[\]\)[\s\S]*benchRefs\[benchIndex\] \?\?= createPokemonStatRefs\(\)/,
+  'Dynamic team members must receive stable form refs without a fixed bench-slot array.'
+);
+assert.match(
+  battlePage,
   /setPokemonCurrBench\(playerTeam\.slice\(1\)\)[\s\S]*setPokemonObjBench\(opponentTeam\.slice\(1\)\)/,
   'Simulation must preserve unequal player and opponent bench selections.'
 );
@@ -78,6 +83,11 @@ assert.match(
   battlePage,
   /pokemon\.pokemonData \? 'tw-break-words' : 'tw-whitespace-nowrap'/,
   'Empty team-slot labels must keep their number on the same line.'
+);
+assert.match(
+  battlePage,
+  /const maxPvpTeamSize = 3[\s\S]*bench\.length < maxPvpTeamSize - 1[\s\S]*label="Add Pokémon"/,
+  'Dynamic teams must remain capped at the real three-Pokémon PvP party size.'
 );
 assert.match(
   battleSelect,
@@ -126,9 +136,52 @@ assert.match(
 );
 assert.match(
   battlePage,
-  /tw-h-12\.5[\s\S]*label="Random Switch"[\s\S]*label="Battle Simulator"/,
-  'Random Switch must stay grouped with the battle simulation actions instead of timeline playback controls.'
+  /renderStrategy\('Player Strategy', 'playerStrategy',[\s\S]*renderStrategy\('Opponent Strategy', 'opponentStrategy',[\s\S]*label="Battle Simulator"/,
+  'Both strategy editors must stay grouped with the battle simulation actions instead of timeline playback controls.'
 );
+assert.match(
+  battlePage,
+  /inputLabel="Shield"[\s\S]*inputLabel="Charged Attack"[\s\S]*inputLabel="Voluntary Switch"[\s\S]*inputLabel="Forced Switch"[\s\S]*label="Add Action"/,
+  'The simulator must expose shield, charged, voluntary/forced switch, and manual action strategies.'
+);
+assert.match(
+  battlePage,
+  /const teamOrderOptions = \(teamSize:[\s\S]*const canSwitch = teamSize > 1[\s\S]*canSwitch && strategy\.forcedSwitch === 'ordered'[\s\S]*menuItems=\{orderOptions\}/,
+  'Team Order must derive its permutations from the current team size and stay hidden for a one-Pokémon team.'
+);
+assert.match(
+  battlePage,
+  /strategyForTeam\(playerStrategy, playerTeam\.length\)[\s\S]*strategyForTeam\(opponentStrategy, opponentTeam\.length\)/,
+  'Battle requests must remove stale switch actions and indexes when a team becomes smaller.'
+);
+assert.match(
+  battlePage,
+  /<DismissibleAlert[\s\S]*resetKey=\{selectedLeagueId\}[\s\S]*aria-label="Battle rule details"[\s\S]*<SpeedIcon[\s\S]*<GroupsIcon[\s\S]*<ContentCopyIcon[\s\S]*<AutoAwesomeIcon[\s\S]*<ScheduleIcon[\s\S]*<CategoryIcon[\s\S]*renderRulePokemonList\(ruleConditions\?\.whiteList \?\? \[\]\)[\s\S]*renderRulePokemonList\(ruleConditions\?\.banned \?\? \[\]\)/,
+  'Every selected Battle rule must expose dismissible details for its supported restrictions.'
+);
+assert.match(
+  battlePage,
+  /const renderRulePokemonList[\s\S]*<PokemonTableIcon[\s\S]*rulePokemonName/,
+  'Allowed and banned Pokémon must render an icon before each Pokémon name.'
+);
+assert.match(
+  battlePage,
+  /aria-label="Allowed Pokémon"[\s\S]*renderRulePokemonList\(ruleConditions\?\.whiteList \?\? \[\]\)[\s\S]*aria-label="Banned Pokémon"[\s\S]*renderRulePokemonList\(ruleConditions\?\.banned \?\? \[\]\)/,
+  'Allowed and banned status icons must stay aligned with their wrapping Pokémon lists.'
+);
+assert.match(
+  battlePage,
+  /label="Farm until energy"[\s\S]*farmEnergy:[\s\S]*Move 1 · 25%[\s\S]*Move 2 · 25%/,
+  'Farm thresholds and undercharge strength must remain configurable.'
+);
+assert.match(
+  battlePage,
+  /leagueId: selectedLeagueId,[\s\S]*playerStrategy,[\s\S]*opponentStrategy,/,
+  'Battle requests must include league identity and both server-side strategy definitions.'
+);
+for (const leagueId of ['DEFAULT_LITTLE', 'DEFAULT_GREAT', 'DEFAULT_ULTRA', 'DEFAULT_MASTER']) {
+  assert.match(battlePage, new RegExp(leagueId), `The battle page must map the ${leagueId} standard league.`);
+}
 assert.match(
   timeline,
   /data-timeline-lane="switch"[\s\S]*<TimelineTeamEvent/,

@@ -10,6 +10,7 @@ import {
   getKeyWithData,
   getMoveType,
   getStatProd,
+  getTime,
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
@@ -19,7 +20,7 @@ import Timeline from './Timeline/Timeline';
 import TimelineFit from './Timeline/TimelineFit';
 import TimelineVertical from './Timeline/TimelineVertical';
 
-import { Checkbox, FormControlLabel, IconButton, Radio, RadioGroup, Slider, Switch } from '@mui/material';
+import { Checkbox, FormControlLabel, IconButton, Radio, RadioGroup, Slider } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -32,6 +33,15 @@ import PauseIcon from '@mui/icons-material/Pause';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import SpeedIcon from '@mui/icons-material/Speed';
+import GroupsIcon from '@mui/icons-material/Groups';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import CategoryIcon from '@mui/icons-material/Category';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import BlockIcon from '@mui/icons-material/Block';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeDownIcon from '@mui/icons-material/VolumeDown';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -56,7 +66,7 @@ import {
   IPokemonBattle,
   ChargeType,
 } from '../models/battle.model';
-import type { PvpBattlePokemonRequest } from '../../../services/models/tools-api.model';
+import type { PvpBattlePokemonRequest, PvpBattleStrategyRequest } from '../../../services/models/tools-api.model';
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
@@ -78,6 +88,7 @@ import { TimelineEvent } from '../../../utils/models/overrides/dom.model';
 import { LinkToTop, useNavigateToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
+import type { ILeague } from '../../../core/models/league.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
@@ -112,6 +123,8 @@ import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import { exportBattleReportImage } from './utils/battle-export';
 import BattlePokemonImage from './BattlePokemonImage';
+import DismissibleAlert from '../../../components/Commons/Alerts/DismissibleAlert';
+import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -119,7 +132,8 @@ interface OptionsBattle {
   duration: number;
   league: number;
   volume: number;
-  randomSwitch: boolean;
+  playerStrategy: PvpBattleStrategyRequest;
+  opponentStrategy: PvpBattleStrategyRequest;
 }
 
 interface IBattleState {
@@ -140,6 +154,48 @@ const audioContextWindow = window as AudioContextWindow;
 const shouldUseHTMLAudioPlayback =
   isIOSAudioDevice || !(audioContextWindow.AudioContext ?? audioContextWindow.webkitAudioContext);
 const htmlAudioPoolSize = 3;
+const maxPvpTeamSize = 3;
+const teamOrderOptions = (teamSize: number) => {
+  const indexes = Array.from({ length: teamSize }, (_, index) => index);
+  const permutations = (values: number[]): number[][] =>
+    values.length <= 1
+      ? [values]
+      : values.flatMap((value, index) =>
+          permutations(values.filter((_, itemIndex) => itemIndex !== index)).map((rest) => [value, ...rest])
+        );
+  return permutations(indexes).map((order) => ({
+    value: order.join('-'),
+    label: order.map((index) => index + 1).join(' → '),
+  }));
+};
+const strategyForTeam = (strategy: PvpBattleStrategyRequest, teamSize: number): PvpBattleStrategyRequest => ({
+  ...strategy,
+  ...(teamSize <= 1
+    ? {
+        voluntarySwitch: 'none',
+        forcedSwitch: 'first',
+        switchOrder: undefined,
+        actions: strategy.actions?.filter((action) => action.type !== 'switch'),
+      }
+    : {
+        switchOrder: strategy.switchOrder?.filter((index) => index < teamSize),
+      }),
+});
+const defaultLeagueId = (cp: number) =>
+  cp === BattleLeagueCPType.Little
+    ? 'DEFAULT_LITTLE'
+    : cp === BattleLeagueCPType.Great
+      ? 'DEFAULT_GREAT'
+      : cp === BattleLeagueCPType.Ultra
+        ? 'DEFAULT_ULTRA'
+        : 'DEFAULT_MASTER';
+const createPokemonStatRefs = () => ({
+  level: React.createRef<HTMLInputElement>(),
+  atk: React.createRef<HTMLInputElement>(),
+  def: React.createRef<HTMLInputElement>(),
+  hp: React.createRef<HTMLInputElement>(),
+});
+type PokemonStatRefs = ReturnType<typeof createPokemonStatRefs>;
 
 class BattleState implements IBattleState {
   pokemonCurr = new PokemonBattleData();
@@ -171,15 +227,30 @@ const Battle = () => {
   const { showSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
   const [data, setData] = useState<IBattlePokemonData[]>([]);
+  const [leagueRules, setLeagueRules] = useState<ILeague[]>([]);
+  const [selectedLeagueId, setSelectedLeagueId] = useState(() =>
+    defaultLeagueId(toNumber(params.cp, BattleLeagueCPType.Little))
+  );
   const [options, setOptions] = useState<OptionsBattle>({
     showTap: false,
     timelineType: TimelineType.Normal,
     duration: 1,
     league: toNumber(params.cp, BattleLeagueCPType.Little),
     volume: 0,
-    randomSwitch: false,
+    playerStrategy: {
+      shield: 'always',
+      charged: 'selected',
+      voluntarySwitch: 'none',
+      forcedSwitch: 'first',
+    },
+    opponentStrategy: {
+      shield: 'always',
+      charged: 'selected',
+      voluntarySwitch: 'none',
+      forcedSwitch: 'first',
+    },
   });
-  const { showTap, timelineType, duration, league, volume, randomSwitch } = options;
+  const { showTap, timelineType, duration, league, volume, playerStrategy, opponentStrategy } = options;
 
   const timelineFit = useRef<HTMLDivElement>();
   const timelineNormal = useRef<HTMLDivElement>();
@@ -195,22 +266,8 @@ const Battle = () => {
   const atkIVObjRef = useRef<HTMLInputElement>(null);
   const defIVObjRef = useRef<HTMLInputElement>(null);
   const hpIVObjRef = useRef<HTMLInputElement>(null);
-  const pokemonCurrBenchStatRefs = useRef(
-    Array.from({ length: 2 }, () => ({
-      level: React.createRef<HTMLInputElement>(),
-      atk: React.createRef<HTMLInputElement>(),
-      def: React.createRef<HTMLInputElement>(),
-      hp: React.createRef<HTMLInputElement>(),
-    }))
-  ).current;
-  const pokemonObjBenchStatRefs = useRef(
-    Array.from({ length: 2 }, () => ({
-      level: React.createRef<HTMLInputElement>(),
-      atk: React.createRef<HTMLInputElement>(),
-      def: React.createRef<HTMLInputElement>(),
-      hp: React.createRef<HTMLInputElement>(),
-    }))
-  ).current;
+  const pokemonCurrBenchStatRefs = useRef<PokemonStatRefs[]>([]).current;
+  const pokemonObjBenchStatRefs = useRef<PokemonStatRefs[]>([]).current;
 
   const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
@@ -225,6 +282,31 @@ const Battle = () => {
 
   const [isFound, setIsFound] = useState(true);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    APIService.getFetchUrl<{
+      data: {
+        data: ILeague[];
+        schedules: Array<{ windows: Array<{ start: number; end: number; leagueIds: string[] }> }>;
+      };
+    }>(APIService.getBattleLeagues(), { signal: controller.signal })
+      .then(({ data: response }) => {
+        const now = Date.now();
+        const activeIds = new Set(
+          response.data.schedules.flatMap((season) =>
+            season.windows.flatMap((window) => (window.start <= now && now < window.end ? window.leagueIds : []))
+          )
+        );
+        setLeagueRules(response.data.data.filter((item) => item.id && activeIds.has(item.id)));
+      })
+      .catch((error: unknown) => {
+        if (!APIService.isCancel(error)) {
+          showSnackbar('Unable to load current cup rules.', 'error');
+        }
+      });
+    return () => controller.abort();
+  }, [showSnackbar]);
+
   const focusBattleTimeline = useCallback(() => {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -238,6 +320,11 @@ const Battle = () => {
     const pokemonData = pokemon.pokemonData;
     const currentStats = pokemonData?.currentStats;
     return {
+      id: pokemonData?.id,
+      pokemonId: pokemonData?.pokemon?.pokemonId?.toString(),
+      form: pokemonData?.form,
+      cp: currentStats?.CP,
+      caughtAt: pokemon.caughtAt,
       name: pokemonData?.name,
       stats: {
         atk: toNumber(pokemonData?.stats?.atk),
@@ -298,7 +385,9 @@ const Battle = () => {
           defaultPlusSize: defaultPlusSize(),
           defaultAmount: defaultAmount(),
           minLevel: minLevel(),
-          randomSwitch,
+          leagueId: selectedLeagueId,
+          playerStrategy: strategyForTeam(playerStrategy, playerTeam.length),
+          opponentStrategy: strategyForTeam(opponentStrategy, opponentTeam.length),
         },
       });
       setPokemonCurr(
@@ -1188,7 +1277,10 @@ const Battle = () => {
 
   const getPokemonStatRefs = (type: BattleType, teamIndex: number) => {
     if (teamIndex > 0) {
-      return (type === BattleType.Current ? pokemonCurrBenchStatRefs : pokemonObjBenchStatRefs)[teamIndex - 1];
+      const benchRefs = type === BattleType.Current ? pokemonCurrBenchStatRefs : pokemonObjBenchStatRefs;
+      const benchIndex = teamIndex - 1;
+      benchRefs[benchIndex] ??= createPokemonStatRefs();
+      return benchRefs[benchIndex];
     }
     return type === BattleType.Current
       ? { level: levelCurrRef, atk: atkIVCurrRef, def: defIVCurrRef, hp: hpIVCurrRef }
@@ -1598,6 +1690,28 @@ const Battle = () => {
                 value,
               }))}
             />
+            {leagueRules.find((item) => item.id === selectedLeagueId)?.conditions.timestamp && (
+              <InputMui
+                labelPrepend="Caught at"
+                type="datetime-local"
+                required
+                value={
+                  pokemon.caughtAt
+                    ? new Date(pokemon.caughtAt - new Date().getTimezoneOffset() * 60_000).toISOString().slice(0, 16)
+                    : ''
+                }
+                onChange={(value) => {
+                  const caughtAt = Date.parse(value);
+                  setPokemon(
+                    PokemonBattle.create({
+                      ...pokemon,
+                      timeline: [],
+                      caughtAt: Number.isFinite(caughtAt) ? caughtAt : undefined,
+                    })
+                  );
+                }}
+              />
+            )}
             {(!pokemon.disableCMovePri || !pokemon.disableCMoveSec) && (pokemon.cMovePri || pokemon.cMoveSec) && (
               <InputMui
                 labelPrepend="Charge Slot"
@@ -1836,6 +1950,7 @@ const Battle = () => {
     const setBench = isOpponent ? setPokemonObjBench : setPokemonCurrBench;
     const benchExpanded = isOpponent ? pokemonObjBenchExpanded : pokemonCurrBenchExpanded;
     const setBenchExpanded = isOpponent ? setPokemonObjBenchExpanded : setPokemonCurrBenchExpanded;
+    const benchStatRefs = isOpponent ? pokemonObjBenchStatRefs : pokemonCurrBenchStatRefs;
     const sideLabel = isOpponent ? 'Opponent' : 'Player';
     const updateMember = (index: number, value: React.SetStateAction<IPokemonBattle>) => {
       setBench((current) =>
@@ -1890,6 +2005,7 @@ const Battle = () => {
                       label="Remove Pokémon"
                       onClick={() => {
                         stopPokemonAudio(pokemon);
+                        benchStatRefs.splice(index, 1);
                         setBench((current) => current.filter((_, memberIndex) => memberIndex !== index));
                         setBenchExpanded((current) => current.filter((_, memberIndex) => memberIndex !== index));
                         clearBattleResult();
@@ -1901,7 +2017,7 @@ const Battle = () => {
             ]}
           />
         ))}
-        {bench.length < 2 && (
+        {bench.length < maxPvpTeamSize - 1 && (
           <ButtonMui
             fullWidth
             variant="outlined"
@@ -1965,6 +2081,219 @@ const Battle = () => {
     </div>
   );
 
+  const updateStrategy = (side: 'playerStrategy' | 'opponentStrategy', value: Partial<PvpBattleStrategyRequest>) => {
+    setOptions({ ...options, [side]: { ...options[side], ...value } });
+    clearBattleResult();
+  };
+
+  const renderStrategy = (title: string, side: 'playerStrategy' | 'opponentStrategy', teamSize: number) => {
+    const strategy = options[side];
+    const canSwitch = teamSize > 1;
+    const actions = (strategy.actions ?? []).filter((action) => canSwitch || action.type !== 'switch');
+    const orderOptions = teamOrderOptions(teamSize);
+    const defaultOrder = Array.from({ length: teamSize }, (_, index) => index);
+    const selectedOrder =
+      strategy.switchOrder?.length === teamSize && strategy.switchOrder.every((index) => index < teamSize)
+        ? strategy.switchOrder
+        : defaultOrder;
+    return (
+      <div className="tw-flex-1 tw-min-w-[280px] tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-p-3">
+        <b className="tw-block tw-mb-2">{title}</b>
+        <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 tw-gap-2">
+          <SelectMui
+            inputLabel="Shield"
+            value={strategy.shield ?? 'always'}
+            onChangeSelect={(value) => updateStrategy(side, { shield: value })}
+            menuItems={[
+              { value: 'always', label: 'Always' },
+              { value: 'lethal', label: 'Only lethal' },
+              { value: 'never', label: 'Never' },
+            ]}
+          />
+          <SelectMui
+            inputLabel="Charged Attack"
+            value={strategy.charged ?? 'selected'}
+            onChangeSelect={(value) => updateStrategy(side, { charged: value })}
+            menuItems={[
+              { value: 'selected', label: 'Selected move' },
+              { value: 'bait', label: 'Bait' },
+              { value: 'nuke', label: 'Highest damage' },
+              { value: 'farm', label: 'Farm energy' },
+              { value: 'manual', label: 'Action script only' },
+            ]}
+          />
+          {strategy.charged === 'farm' && (
+            <InputMui
+              label="Farm until energy"
+              type="number"
+              value={strategy.farmEnergy ?? 100}
+              inputProps={{ min: 0, max: 100 }}
+              onChange={(value) =>
+                updateStrategy(side, { farmEnergy: Math.min(100, Math.max(0, toNumber(value, 100))) })
+              }
+            />
+          )}
+          {canSwitch && (
+            <>
+              <SelectMui
+                inputLabel="Voluntary Switch"
+                value={strategy.voluntarySwitch ?? 'none'}
+                onChangeSelect={(value) => updateStrategy(side, { voluntarySwitch: value })}
+                menuItems={[
+                  { value: 'none', label: 'None' },
+                  { value: 'safe', label: 'Safe switch' },
+                  { value: 'random', label: 'Random' },
+                ]}
+              />
+              <SelectMui
+                inputLabel="Forced Switch"
+                value={strategy.forcedSwitch ?? 'first'}
+                onChangeSelect={(value) => updateStrategy(side, { forcedSwitch: value })}
+                menuItems={[
+                  { value: 'first', label: 'First available' },
+                  { value: 'best_matchup', label: 'Best matchup' },
+                  { value: 'highest_hp', label: 'Highest HP' },
+                  { value: 'highest_energy', label: 'Highest energy' },
+                  { value: 'random', label: 'Random' },
+                  { value: 'ordered', label: 'Team order' },
+                ]}
+              />
+            </>
+          )}
+          {canSwitch && strategy.forcedSwitch === 'ordered' && (
+            <SelectMui
+              inputLabel="Team order"
+              value={selectedOrder.join('-')}
+              onChangeSelect={(value) => updateStrategy(side, { switchOrder: value.split('-').map(Number) })}
+              menuItems={orderOptions}
+            />
+          )}
+        </div>
+        {actions.map((action, index) => (
+          <div className="tw-mt-2 tw-flex tw-flex-wrap tw-items-center tw-gap-2" key={`${side}-action-${index}`}>
+            <InputMui
+              className="tw-max-w-24"
+              label="Turn"
+              type="number"
+              value={action.turn}
+              inputProps={{ min: 1, max: 540 }}
+              onChange={(value) => {
+                const next = [...actions];
+                next[index] = { ...action, turn: Math.max(1, toNumber(value, 1)) };
+                updateStrategy(side, { actions: next });
+              }}
+            />
+            <SelectMui
+              inputLabel="Action"
+              value={action.type}
+              onChangeSelect={(value) => {
+                const next = [...actions];
+                next[index] = { turn: action.turn, type: value };
+                updateStrategy(side, { actions: next });
+              }}
+              menuItems={[
+                { value: 'charged', label: 'Charged Attack' },
+                ...(canSwitch ? [{ value: 'switch', label: 'Switch' }] : []),
+                { value: 'shield', label: 'Shield decision' },
+              ]}
+            />
+            {action.type === 'charged' && (
+              <SelectMui
+                inputLabel="Move / power"
+                value={`${action.moveSlot ?? 1}:${action.undercharge ?? 1}`}
+                onChangeSelect={(value) => {
+                  const [moveSlot, undercharge] = value.split(':').map(Number);
+                  const next = [...actions];
+                  next[index] = { ...action, moveSlot: moveSlot as 1 | 2, undercharge };
+                  updateStrategy(side, { actions: next });
+                }}
+                menuItems={[
+                  { value: '1:1', label: 'Move 1 · 100%' },
+                  { value: '1:0.75', label: 'Move 1 · 75%' },
+                  { value: '1:0.5', label: 'Move 1 · 50%' },
+                  { value: '1:0.25', label: 'Move 1 · 25%' },
+                  { value: '2:1', label: 'Move 2 · 100%' },
+                  { value: '2:0.75', label: 'Move 2 · 75%' },
+                  { value: '2:0.5', label: 'Move 2 · 50%' },
+                  { value: '2:0.25', label: 'Move 2 · 25%' },
+                ]}
+              />
+            )}
+            {action.type === 'switch' && (
+              <SelectMui
+                inputLabel="Switch to"
+                value={action.targetIndex ?? 1}
+                onChangeSelect={(value) => {
+                  const next = [...actions];
+                  next[index] = { ...action, targetIndex: value };
+                  updateStrategy(side, { actions: next });
+                }}
+                menuItems={Array.from({ length: teamSize }, (_, value) => ({
+                  value,
+                  label: `Pokémon ${value + 1}`,
+                }))}
+              />
+            )}
+            {action.type === 'shield' && (
+              <SelectMui
+                inputLabel="Decision"
+                value={action.shield === false ? 'no' : 'yes'}
+                onChangeSelect={(value) => {
+                  const next = [...actions];
+                  next[index] = { ...action, shield: value === 'yes' };
+                  updateStrategy(side, { actions: next });
+                }}
+                menuItems={[
+                  { value: 'yes', label: 'Use Shield' },
+                  { value: 'no', label: 'Do not Shield' },
+                ]}
+              />
+            )}
+            <ButtonMui
+              color="error"
+              variant="outlined"
+              label="Remove"
+              onClick={() => updateStrategy(side, { actions: actions.filter((_, item) => item !== index) })}
+            />
+          </div>
+        ))}
+        <ButtonMui
+          className="!tw-mt-2"
+          variant="outlined"
+          label="Add Action"
+          onClick={() => updateStrategy(side, { actions: [...actions, { turn: 1, type: 'charged', moveSlot: 1 }] })}
+        />
+      </div>
+    );
+  };
+
+  const selectedBattleRule = leagueRules.find((item) => item.id === selectedLeagueId);
+  const ruleConditions = selectedBattleRule?.conditions;
+  const rulePokemonName = (name: string | undefined, id: number | undefined, form: string | undefined) =>
+    `${name ? splitAndCapitalize(name.toLowerCase(), '_', ' ') : `#${id ?? '?'}`}${
+      form && form.toLowerCase() !== 'normal' ? ` (${splitAndCapitalize(form.toLowerCase(), '_', ' ')})` : ''
+    }`;
+  const standardMaxCp = league === BattleLeagueCPType.InsMaster ? undefined : league;
+  const renderRulePokemonList = (items: ILeague['conditions']['whiteList']) => (
+    <div className="tw-flex tw-min-w-0 tw-flex-1 tw-flex-wrap tw-gap-1.5">
+      {items.map((item, index) => (
+        <span
+          className="tw-inline-flex tw-items-center tw-gap-1 tw-rounded tw-bg-[var(--background)] tw-px-1.5 tw-py-0.5"
+          key={`${item.id}-${item.form}-${index}`}
+        >
+          <PokemonTableIcon
+            num={item.id ?? 0}
+            name={item.name}
+            form={item.form}
+            pokemonType={item.pokemonType}
+            size={28}
+          />
+          <span>{rulePokemonName(item.name, item.id, item.form)}</span>
+        </span>
+      ))}
+    </div>
+  );
+
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-container tw-mt-4 battle-body-container">
@@ -1974,6 +2303,8 @@ const Battle = () => {
           onChangeSelect={(value) => {
             navigateToTop(`/pvp/battle/${value}`);
             setOptions({ ...options, league: value });
+            setSelectedLeagueId(defaultLeagueId(value));
+            clearBattleResult();
           }}
           menuItems={[
             {
@@ -1994,6 +2325,117 @@ const Battle = () => {
             },
           ]}
         />
+        <SelectMui
+          fullWidth
+          formClassName="!tw-mt-2"
+          inputLabel="Battle rules"
+          value={selectedLeagueId}
+          onChangeSelect={(value) => {
+            setSelectedLeagueId(value);
+            clearBattleResult();
+          }}
+          menuItems={[
+            {
+              value: defaultLeagueId(league),
+              label: `${getPokemonBattleLeagueName(league)} · Standard`,
+            },
+            ...leagueRules
+              .filter(
+                (item) =>
+                  item.conditions.maxCp === league ||
+                  (league === BattleLeagueCPType.InsMaster && toNumber(item.conditions.maxCp) >= 6_000)
+              )
+              .filter((item) => item.id !== defaultLeagueId(league))
+              .map((item) => ({ value: item.id ?? '', label: item.title })),
+          ]}
+        />
+        <DismissibleAlert
+          resetKey={selectedLeagueId}
+          severity="info"
+          className="!tw-mt-2 tw-items-start"
+          aria-label="Battle rule details"
+        >
+          <div className="tw-w-full tw-min-w-0">
+            <b className="tw-block">
+              {selectedBattleRule?.title ?? `${getPokemonBattleLeagueName(league)} · Standard`}
+            </b>
+            <div className="tw-mt-1 tw-flex tw-flex-wrap tw-gap-x-4 tw-gap-y-1">
+              <span className="tw-inline-flex tw-items-center tw-gap-1" title="CP limit" aria-label="CP limit">
+                <SpeedIcon fontSize="small" /> {ruleConditions?.maxCp ?? standardMaxCp ?? 'None'} CP
+              </span>
+              <span className="tw-inline-flex tw-items-center tw-gap-1" title="Team size" aria-label="Team size">
+                <GroupsIcon fontSize="small" /> ≤ {selectedBattleRule?.pokemonCount || maxPvpTeamSize}
+              </span>
+              {ruleConditions?.maxLevel !== undefined && (
+                <span className="tw-inline-flex tw-items-center tw-gap-1" title="Level limit" aria-label="Level limit">
+                  <TrendingUpIcon fontSize="small" /> Lv. {ruleConditions.maxLevel}
+                </span>
+              )}
+              <span
+                className="tw-inline-flex tw-items-center tw-gap-1"
+                title="Duplicate species not allowed"
+                aria-label="Duplicate species not allowed"
+              >
+                <ContentCopyIcon fontSize="small" />
+                <BlockIcon fontSize="small" color="error" />
+              </span>
+              <span
+                className="tw-inline-flex tw-items-center tw-gap-1"
+                title="Mega Evolution"
+                aria-label={`Mega Evolution ${selectedBattleRule?.allowEvolutions ? 'allowed' : 'not allowed'}`}
+              >
+                <AutoAwesomeIcon fontSize="small" />
+                {selectedBattleRule?.allowEvolutions ? (
+                  <CheckCircleIcon fontSize="small" color="success" />
+                ) : (
+                  <BlockIcon fontSize="small" color="error" />
+                )}
+              </span>
+            </div>
+            {ruleConditions?.timestamp && (
+              <div className="tw-mt-1 tw-flex tw-items-center tw-gap-1" title="Eligible catch time">
+                <ScheduleIcon fontSize="small" />
+                <span>
+                  {getTime(ruleConditions.timestamp.start)} – {getTime(ruleConditions.timestamp.end)}
+                </span>
+              </div>
+            )}
+            {isNotEmpty(ruleConditions?.uniqueType) && (
+              <div className="tw-mt-1 tw-flex tw-items-center tw-gap-1" title="Allowed types">
+                <CategoryIcon fontSize="small" />
+                <span>
+                  {ruleConditions?.uniqueType
+                    .map((type) => splitAndCapitalize(type.toLowerCase(), '_', ' '))
+                    .join(', ')}
+                </span>
+              </div>
+            )}
+            {isNotEmpty(ruleConditions?.whiteList) && (
+              <div className="tw-mt-2 tw-flex tw-max-h-32 tw-items-start tw-gap-2 tw-overflow-auto">
+                <span
+                  className="tw-mt-1 tw-inline-flex tw-shrink-0 tw-items-center"
+                  title="Allowed Pokémon"
+                  aria-label="Allowed Pokémon"
+                >
+                  <CheckCircleIcon fontSize="small" color="success" />
+                </span>
+                {renderRulePokemonList(ruleConditions?.whiteList ?? [])}
+              </div>
+            )}
+            {isNotEmpty(ruleConditions?.banned) && (
+              <div className="tw-mt-2 tw-flex tw-max-h-32 tw-items-start tw-gap-2 tw-overflow-auto">
+                <span
+                  className="tw-mt-1 tw-inline-flex tw-shrink-0 tw-items-center"
+                  title="Banned Pokémon"
+                  aria-label="Banned Pokémon"
+                >
+                  <BlockIcon fontSize="small" color="error" />
+                </span>
+                {renderRulePokemonList(ruleConditions?.banned ?? [])}
+              </div>
+            )}
+          </div>
+        </DismissibleAlert>
         <div className="row tw-mt-4 !tw-m-0">
           <div className="lg:tw-w-1/4 !tw-my-3">
             {renderLeadTeamMember(false)}
@@ -2177,24 +2619,10 @@ const Battle = () => {
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
           <div className="tw-mt-2 tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-2">
-            {(pokemonCurrBench.length > 0 || pokemonObjBench.length > 0) && (
-              <div className="tw-flex tw-h-12.5 tw-items-center tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-px-3">
-                <FormControlLabel
-                  className="!tw-m-0"
-                  control={
-                    <Switch
-                      checked={randomSwitch}
-                      inputProps={{ 'aria-label': 'Random Switch' }}
-                      onChange={(_, checked) => {
-                        setOptions({ ...options, randomSwitch: checked });
-                        clearBattleResult();
-                      }}
-                    />
-                  }
-                  label="Random Switch"
-                />
-              </div>
-            )}
+            <div className="tw-flex tw-w-full tw-flex-wrap tw-gap-2">
+              {renderStrategy('Player Strategy', 'playerStrategy', 1 + pokemonCurrBench.length)}
+              {renderStrategy('Opponent Strategy', 'opponentStrategy', 1 + pokemonObjBench.length)}
+            </div>
             {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
               <>
                 <ButtonMui

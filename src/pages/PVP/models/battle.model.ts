@@ -99,6 +99,7 @@ export interface IPokemonBattle {
   energy: number;
   block: number;
   chargeSlot: ChargeType;
+  caughtAt?: number;
   audio?: MoveAudio;
 }
 
@@ -114,6 +115,7 @@ export class PokemonBattle implements IPokemonBattle {
   energy = 0;
   block = defaultBlock();
   chargeSlot = ChargeType.Primary;
+  caughtAt?: number;
   audio?: MoveAudio;
 
   static create(value: IPokemonBattle) {
@@ -147,6 +149,7 @@ export interface ITimeline extends TimelineConfig {
   switchedFromPokemonName?: string;
   switchedFromIndex?: number;
   switchTurnCost?: 0 | 1;
+  battleForm?: 'shield' | 'blade';
 }
 
 export interface IPokemonTeamData {

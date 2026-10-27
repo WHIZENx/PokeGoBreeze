@@ -279,6 +279,11 @@ export interface DamageSimulatorApiResponse {
 }
 
 export interface PvpBattlePokemonRequest {
+  id?: number;
+  pokemonId?: string;
+  form?: string;
+  cp?: number;
+  caughtAt?: number;
   name?: string;
   stats: { atk: number; def: number; sta: number };
   current: {
@@ -298,6 +303,26 @@ export interface PvpBattlePokemonRequest {
   disableSecondary: boolean;
 }
 
+export interface PvpBattleActionRequest {
+  turn: number;
+  type: 'charged' | 'switch' | 'shield';
+  moveSlot?: 1 | 2;
+  targetIndex?: number;
+  shield?: boolean;
+  undercharge?: number;
+}
+
+export interface PvpBattleStrategyRequest {
+  shield?: 'always' | 'lethal' | 'never';
+  charged?: 'selected' | 'bait' | 'nuke' | 'farm' | 'manual';
+  farmEnergy?: number;
+  voluntarySwitch?: 'none' | 'random' | 'safe';
+  forcedSwitch?: 'first' | 'best_matchup' | 'highest_hp' | 'highest_energy' | 'random' | 'ordered';
+  switchOrder?: number[];
+  undercharge?: number;
+  actions?: PvpBattleActionRequest[];
+}
+
 export interface PvpBattleSimulatorRequest {
   pokemon: PvpBattlePokemonRequest;
   opponent: PvpBattlePokemonRequest;
@@ -311,6 +336,9 @@ export interface PvpBattleSimulatorRequest {
     minLevel: number;
     randomSwitch?: boolean;
     randomSeed?: number;
+    leagueId?: string;
+    playerStrategy?: PvpBattleStrategyRequest;
+    opponentStrategy?: PvpBattleStrategyRequest;
   };
 }
 
