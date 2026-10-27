@@ -1704,16 +1704,21 @@ const Battle = () => {
   const timelineActiveAccordionSx = (isOpponent: boolean, teamIndex: number) => {
     const active = isTimelineTeamMemberActive(isOpponent, teamIndex);
     return {
-      transition: 'border-color 160ms ease, box-shadow 160ms ease',
-      ...(active
-        ? {
-            borderColor: 'var(--primary-main)',
-            boxShadow: 'inset 4px 0 0 var(--primary-main), 0 0 0 1px var(--primary-main)',
-            '& .MuiAccordionSummary-root': {
-              backgroundColor: 'action.selected',
-            },
-          }
-        : {}),
+      borderColor: active ? 'var(--primary-main)' : 'divider',
+      boxShadow: active
+        ? 'inset 4px 0 0 0 var(--primary-main), 0 0 0 1px var(--primary-main)'
+        : 'inset 0 0 0 0 transparent, 0 0 0 1px transparent',
+      transition: 'border-color 280ms ease-out, box-shadow 280ms ease-out',
+      '& .MuiAccordionSummary-root': {
+        ...(active ? { backgroundColor: 'action.selected' } : {}),
+        transition: 'background-color 280ms ease-out',
+      },
+      '@media (prefers-reduced-motion: reduce)': {
+        transition: 'none',
+        '& .MuiAccordionSummary-root': {
+          transition: 'none',
+        },
+      },
     };
   };
 

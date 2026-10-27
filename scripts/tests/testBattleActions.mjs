@@ -61,8 +61,13 @@ assert.match(
 );
 assert.match(
   battlePage,
-  /timelineActiveAccordionSx[\s\S]*borderColor: 'var\(--primary-main\)'[\s\S]*MuiAccordionSummary-root[\s\S]*backgroundColor: 'action.selected'/,
+  /timelineActiveAccordionSx[\s\S]*borderColor: active[\s\S]*var\(--primary-main\)[\s\S]*MuiAccordionSummary-root[\s\S]*backgroundColor: 'action.selected'/,
   'The active battle accordion must receive a theme-aware highlighted border and summary background.'
+);
+assert.match(
+  battlePage,
+  /borderColor: active[\s\S]*boxShadow: active[\s\S]*280ms ease-out[\s\S]*background-color 280ms ease-out[\s\S]*prefers-reduced-motion: reduce/,
+  'Active Pokémon highlights must cross-fade smoothly between accordions while respecting reduced motion.'
 );
 assert.match(
   battlePage,
@@ -124,12 +129,12 @@ assert.match(
   /tw-h-12\.5[\s\S]*label="Random Switch"[\s\S]*label="Battle Simulator"/,
   'Random Switch must stay grouped with the battle simulation actions instead of timeline playback controls.'
 );
+assert.match(
+  timeline,
+  /data-timeline-lane="switch"[\s\S]*<TimelineTeamEvent/,
+  'Team Switch and Faint events must render in a dedicated timeline lane.'
+);
 for (const content of [timeline, timelineFit]) {
-  assert.match(
-    content,
-    /data-timeline-lane="switch"[\s\S]*<TimelineTeamEvent/,
-    'Team Switch and Faint events must render in a dedicated timeline lane.'
-  );
   assert.match(
     content,
     /value\.type === AttackType\.Switch[\s\S]*className="wait-attack"/,
@@ -196,6 +201,11 @@ assert.match(
   timelineFit,
   /value\.switchedFromIndex !== undefined[\s\S]*<TimelineTeamEvent/,
   'Fit Timeline must render zero-turn switches without replacing the incoming Pokémon action.'
+);
+assert.match(
+  timelineFit,
+  /data-timeline-event-lane=\{eventType\}[\s\S]*eventType=\{eventType\}[\s\S]*renderTeamEventLane\('faint'\)[\s\S]*renderTeamEventLane\('switch'\)/,
+  'Fit Timeline must separate Faint and Switch markers so simultaneous team events cannot overlap.'
 );
 assert.match(battleExport, /export const createBattleEventRows/, 'The export must build a chronological event log.');
 for (const content of ['Battle timeline', 'Battle events', 'CP ', 'Level ', 'IV ', 'ATK ', 'DEF ', 'HP ']) {

@@ -35,6 +35,39 @@ const TimelineFit = (
 
   const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle, team: IPokemonBattle[]) => {
     const positions = calculateWidthBasedPositions(poke.timeline);
+    const hasSwitchEvents = poke.timeline.some(
+      (value) => value.type === AttackType.Switch || value.switchedFromIndex !== undefined
+    );
+    const hasFaintEvents = poke.timeline.some(
+      (value) => value.type === AttackType.Dead || value.faintedIndex !== undefined
+    );
+    const renderTeamEventLane = (eventType: 'switch' | 'faint') => (
+      <div className="tw-relative timeline-fit-container tw-h-7" data-timeline-event-lane={eventType}>
+        {poke.timeline.map((value, index) => {
+          const isVisible =
+            eventType === 'switch'
+              ? value.type === AttackType.Switch || value.switchedFromIndex !== undefined
+              : value.type === AttackType.Dead || value.faintedIndex !== undefined;
+          return (
+            isVisible && (
+              <div
+                className="!tw-flex tw-items-center tw-justify-center"
+                key={index}
+                style={{ left: positions[index], transform: 'translate(-50%, -50%)' }}
+              >
+                <TimelineTeamEvent
+                  entry={value}
+                  eventType={eventType}
+                  index={index}
+                  team={team}
+                  timeline={poke.timeline}
+                />
+              </div>
+            )
+          );
+        })}
+      </div>
+    );
     return (
       <Fragment>
         <div className="tw-mt-2">
@@ -88,22 +121,9 @@ const TimelineFit = (
                   )
               )}
           </div>
-          <div className="tw-relative timeline-fit-container tw-h-8" data-timeline-lane="switch">
-            {poke.timeline.map(
-              (value, index) =>
-                (value.type === AttackType.Switch ||
-                  value.type === AttackType.Dead ||
-                  value.switchedFromIndex !== undefined ||
-                  value.faintedIndex !== undefined) && (
-                  <div
-                    className="!tw-flex tw-items-center tw-justify-center"
-                    key={index}
-                    style={{ left: positions[index], transform: 'translate(-50%, -50%)' }}
-                  >
-                    <TimelineTeamEvent entry={value} index={index} team={team} timeline={poke.timeline} />
-                  </div>
-                )
-            )}
+          <div data-timeline-lane="switch">
+            {hasFaintEvents && renderTeamEventLane('faint')}
+            {hasSwitchEvents && renderTeamEventLane('switch')}
           </div>
         </div>
         <div className="tw-relative timeline-fit-container tw-h-7.5">

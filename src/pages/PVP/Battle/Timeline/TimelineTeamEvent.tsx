@@ -8,6 +8,7 @@ import { AttackType } from '../enums/attack-type.enum';
 
 interface TimelineTeamEventProps {
   entry: ITimeline;
+  eventType?: 'switch' | 'faint';
   index: number;
   team: IPokemonBattle[];
   timeline: ITimeline[];
@@ -21,9 +22,11 @@ const formatName = (value: string) =>
     .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1).toLowerCase()}`)
     .join(' ');
 
-const TimelineTeamEvent = ({ entry, index, team, timeline }: TimelineTeamEventProps) => {
-  const isSwitch = entry.type === AttackType.Switch || entry.switchedFromIndex !== undefined;
-  const isFaint = entry.faintedIndex !== undefined || entry.type === AttackType.Dead;
+const TimelineTeamEvent = ({ entry, eventType, index, team, timeline }: TimelineTeamEventProps) => {
+  const hasSwitch = entry.type === AttackType.Switch || entry.switchedFromIndex !== undefined;
+  const hasFaint = entry.faintedIndex !== undefined || entry.type === AttackType.Dead;
+  const isSwitch = eventType ? eventType === 'switch' && hasSwitch : hasSwitch;
+  const isFaint = eventType ? eventType === 'faint' && hasFaint : hasFaint;
   if (!isSwitch && !isFaint) {
     return null;
   }
