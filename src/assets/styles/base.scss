@@ -20,35 +20,69 @@ ol, ul {
 }
 
 p {
+  font-size: var(--typography-body1-font-size);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--typography-body1-line-height);
+  letter-spacing: var(--typography-body1-letter-spacing);
+
   @apply tw-mb-4 tw-mt-0;
 }
 
 .h1, h1 {
-  @apply tw-text-[calc(1.375rem+1.5vw)] xl:tw-text-[2.5rem];
+  font-size: var(--typography-h1-font-size);
+  line-height: var(--typography-h1-line-height);
+  letter-spacing: var(--typography-h1-letter-spacing);
 }
 
 .h2, h2 {
-  @apply tw-text-[calc(1.325rem+.9vw)] xl:tw-text-[2rem];
+  font-size: var(--typography-h2-font-size);
+  line-height: var(--typography-h2-line-height);
+  letter-spacing: var(--typography-h2-letter-spacing);
 }
 
 .h3, h3 {
-  @apply tw-text-[calc(1.3rem+.6vw)] xl:tw-text-[1.75rem];
+  font-size: var(--typography-h3-font-size);
+  line-height: var(--typography-h3-line-height);
+  letter-spacing: var(--typography-h3-letter-spacing);
 }
 
 .h4, h4 {
-  @apply tw-text-[calc(1.275rem+.3vw)] xl:tw-text-2xl;
+  font-size: var(--typography-h4-font-size);
+  line-height: var(--typography-h4-line-height);
+  letter-spacing: var(--typography-h4-letter-spacing);
 }
 
 .h5, h5 {
-  @apply tw-text-xl;
+  font-size: var(--typography-h5-font-size);
+  line-height: var(--typography-h5-line-height);
+  letter-spacing: var(--typography-h5-letter-spacing);
 }
 
 .h6, h6 {
-  @apply tw-text-base;
+  font-size: var(--typography-h6-font-size);
+  line-height: var(--typography-h6-line-height);
+  letter-spacing: var(--typography-h6-letter-spacing);
 }
 
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
-  @apply tw-font-medium tw-leading-small tw-mb-2 tw-mt-0 tw-text-default;
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-medium);
+
+  @apply tw-mb-2 tw-mt-0 tw-text-default;
+}
+
+b,
+strong {
+  font-family: inherit;
+  font-weight: var(--font-weight-bold);
+}
+
+small {
+  font-family: var(--font-family-sans);
+  font-size: var(--typography-caption-font-size);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--typography-caption-line-height);
+  letter-spacing: var(--typography-caption-letter-spacing);
 }
 
 a {
@@ -56,6 +90,12 @@ a {
 }
 
 label {
+  font-family: var(--font-family-sans);
+  font-size: var(--typography-body1-font-size);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--typography-body1-line-height);
+  letter-spacing: var(--typography-body1-letter-spacing);
+
   @apply tw-inline-block
 }
 

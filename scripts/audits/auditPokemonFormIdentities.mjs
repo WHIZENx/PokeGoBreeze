@@ -96,6 +96,37 @@ assert.equal(
   'PokéAPI/GO form aliases must collapse to Raticate and Marowak Alola Totem plus both Mimikyu Totem states'
 );
 
+const marowakRegionalAndTotemFixture = [
+  [
+    {
+      defaultId: 105,
+      form: { name: 'marowak-alola', formName: 'alola', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 105,
+      form: { name: 'marowak-totem', formName: 'totem', pokemonType: 0 },
+    },
+  ],
+  [
+    {
+      defaultId: 105,
+      form: { name: 'marowak-alola-totem', formName: 'alola-totem', pokemonType: 0 },
+    },
+  ],
+];
+assert.equal(
+  deduplicatePokemonFormSelections(marowakRegionalAndTotemFixture).flat().length,
+  2,
+  'Marowak Alola must remain distinct while Totem and Alola Totem aliases collapse together'
+);
+assert.notEqual(
+  normalizePokemonFormIdentity(105, 'alola'),
+  normalizePokemonFormIdentity(105, 'totem'),
+  'Marowak Alola and Alola Totem must retain distinct canonical identities'
+);
+
 const darmanitanGalarSelectionFixture = [
   [
     {

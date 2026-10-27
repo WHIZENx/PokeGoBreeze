@@ -89,7 +89,6 @@
   @apply tw-min-w-0;
 }
 
-
 .ranking-link-group button {
   border-radius: 0 !important;
   box-shadow: none !important;
@@ -143,7 +142,7 @@
 }
 
 .battle-bar {
-  @apply tw-h-[150px] tw-py-2.5 tw-px-0;
+  @apply tw-min-h-[150px] tw-py-2.5 tw-px-0;
 }
 
 .battle-bar .battle-bar-container {
@@ -203,7 +202,6 @@
   @apply tw-h-20 tw-min-w-5 tw-w-max;
 }
 
-
 .block-attack-container {
   @apply tw-w-11;
 }
@@ -230,7 +228,7 @@
 }
 
 .fit-timeline {
-  @apply tw-h-[150px] tw-py-2.5 tw-px-0;
+  @apply tw-min-h-[150px] tw-py-2.5 tw-px-0;
 }
 
 .fit-timeline .timeline-fit-container > div {

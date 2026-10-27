@@ -820,6 +820,11 @@ const Pokemon = (props: IPokemonPage) => {
   const isMainImageReady = Boolean(
     currentPokemonId && searchingMainForm?.form && searchingMainForm.defaultId === currentPokemonId
   );
+  const requestedMainImageForm = searchParams.get(Params.Form)?.trim();
+  const hasRequestedMainImageForm = Boolean(
+    requestedMainImageForm && !isEqual(requestedMainImageForm, 'normal', EqualMode.IgnoreCaseSensitive)
+  );
+  const isRequestedMainImageFormPending = hasRequestedMainImageForm && !isMainImageReady;
   const hybridImage = APIService.getPokeFullSprite(
     currentPokemonId,
     convertPokemonImageName(
@@ -828,19 +833,23 @@ const Pokemon = (props: IPokemonPage) => {
         : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
     )
   );
-  const mainImageCandidates = isMainImageReady
-    ? [
-        getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites),
-        APIService.getPokeOfficialArtwork(currentPokemonId),
-        hybridImage,
-        APIService.getPokeFullAsset(currentPokemonId),
-      ]
-    : [];
+  const preferredMainImage = isMainImageReady
+    ? getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites)
+    : undefined;
+  const officialMainImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
+  const isCanonicalDefaultMainForm = Boolean(isMainImageReady && searchingMainForm?.form?.id === currentPokemonId);
+  const cacheableOfficialMainImage =
+    (!isMainImageReady && !hasRequestedMainImageForm) || isCanonicalDefaultMainForm ? officialMainImage : undefined;
+  const mainImageCandidates =
+    currentPokemonId && !isRequestedMainImageFormPending
+      ? [preferredMainImage, officialMainImage, hybridImage, APIService.getPokeFullAsset(currentPokemonId)]
+      : [];
   const { displayedUrl: mainImage, isLoading: isMainImageLoading } = usePreloadedImage(
     mainImageCandidates,
-    APIService.getPokeSprite()
+    APIService.getPokeSprite(),
+    [preferredMainImage, cacheableOfficialMainImage, hybridImage]
   );
-  const showMainImageSkeleton = !isMainImageReady || isMainImageLoading;
+  const showMainImageSkeleton = !currentPokemonId || isRequestedMainImageFormPending || isMainImageLoading;
   const profileModifier =
     searchingMainForm?.form?.pokemonType === PokemonType.Shadow
       ? 'shadow'
@@ -896,6 +905,7 @@ const Pokemon = (props: IPokemonPage) => {
                 variant="rounded"
                 animation="wave"
                 className="!tw-h-[205px] !tw-w-[205px]"
+                data-skeleton-surface="pokemon-image"
                 data-testid="pokemon-profile-image-skeleton"
               />
             ) : (
