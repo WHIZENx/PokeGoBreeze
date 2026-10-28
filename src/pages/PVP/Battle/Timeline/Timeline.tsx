@@ -6,7 +6,9 @@ import { getKeyWithData } from '../../../../utils/utils';
 import { IPokemonBattle } from '../../models/battle.model';
 import { AttackType } from '../enums/attack-type.enum';
 import HexagonIcon from '@mui/icons-material/Hexagon';
+import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
 import TimelineTeamEvent from './TimelineTeamEvent';
+import { getTimelineTapPauseGroups, getTimelineTapPauseWidth } from './timeline-tap-pause';
 
 const Timeline = (
   pokemonCurr: IPokemonBattle,
@@ -51,51 +53,71 @@ const Timeline = (
     });
     const teamEventRowCount = Math.max(1, lastPositionByRow.length);
     const teamEventRowHeight = 28;
+    const tapPauseGroups = getTimelineTapPauseGroups(poke.timeline, pokeObj.timeline);
+    const tapPauseGroupByStart = new Map(tapPauseGroups.map((group) => [group.start, group]));
     return (
       <Fragment>
-        <div className="tw-mt-2 tw-h-3">
+        <div className="tw-mt-2 tw-h-4">
           <div className="tw-flex tw-gap-x-3 tw-w-max">
-            {poke.timeline.map((value, index) => (
-              <span className="tw-relative tw-shrink-0" key={index} style={{ width: value.size }}>
-                {value.isTap && showTap && (
-                  <div
-                    style={{
-                      borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
-                    }}
-                    className="charge-attack opacity-50"
-                  />
-                )}
-                {!value.isTap && (
-                  <Fragment>
-                    {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
-                      <div className="tw-absolute icon-buff-timeline">
-                        {value.buff?.map((b, i) => (
-                          <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
-                            {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <Fragment>
-                        {pokeObj.timeline.at(index) &&
-                        pokeObj.timeline.at(index)?.type === AttackType.Charge &&
-                        isNotEmpty(value.buff) ? (
-                          <div className="tw-absolute icon-buff-timeline">
-                            {value.buff?.map((b, i) => (
-                              <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
-                                {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          showTap && <div className="wait-attack" />
-                        )}
-                      </Fragment>
-                    )}
-                  </Fragment>
-                )}
-              </span>
-            ))}
+            {poke.timeline.map((value, index) => {
+              const tapPauseGroup = tapPauseGroupByStart.get(index);
+              return (
+                <span
+                  className="tw-relative tw-flex tw-shrink-0 tw-items-center"
+                  key={index}
+                  style={{ width: value.size }}
+                >
+                  {showTap && tapPauseGroup && (
+                    <span
+                      aria-label="Charged Attack pauses Fast Attack taps"
+                      className="tw-pointer-events-none tw-absolute tw-left-0 tw-top-1/2 tw-z-10 tw-flex tw-h-1.5 -tw-translate-y-1/2 tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--text-secondary)] tw-opacity-80"
+                      data-timeline-tap-pause="charged-attack"
+                      style={{ width: getTimelineTapPauseWidth(poke.timeline, tapPauseGroup, timelineGap) }}
+                      title="Charged Attack pause"
+                    >
+                      <PauseRoundedIcon className="!tw-h-3 !tw-w-3 tw-rounded-full tw-bg-[var(--custom-table-background)] !tw-text-[var(--text-primary)]" />
+                    </span>
+                  )}
+                  {value.isTap && showTap && (
+                    <div
+                      style={{
+                        borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
+                      }}
+                      className="charge-attack opacity-50"
+                    />
+                  )}
+                  {!value.isTap && (
+                    <Fragment>
+                      {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
+                        <div className="tw-absolute icon-buff-timeline">
+                          {value.buff?.map((b, i) => (
+                            <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
+                              {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <Fragment>
+                          {pokeObj.timeline.at(index) &&
+                          pokeObj.timeline.at(index)?.type === AttackType.Charge &&
+                          isNotEmpty(value.buff) ? (
+                            <div className="tw-absolute icon-buff-timeline">
+                              {value.buff?.map((b, i) => (
+                                <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
+                                  {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            showTap && <div className="wait-attack" />
+                          )}
+                        </Fragment>
+                      )}
+                    </Fragment>
+                  )}
+                </span>
+              );
+            })}
           </div>
         </div>
         <div data-timeline-lane="switch" style={{ height: teamEventRowCount * teamEventRowHeight }}>

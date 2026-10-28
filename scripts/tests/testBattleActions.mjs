@@ -14,6 +14,7 @@ const [
   timelineTeamEvent,
   pvpStyles,
   accordionMui,
+  timelineTapPause,
 ] = await Promise.all([
   readFile(new URL('../../src/pages/PVP/Battle/Battle.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/utils/battle-export.ts', import.meta.url), 'utf8'),
@@ -25,6 +26,7 @@ const [
   readFile(new URL('../../src/pages/PVP/Battle/Timeline/TimelineTeamEvent.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/PVP.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Accordions/AccordionMui.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Battle/Timeline/timeline-tap-pause.ts', import.meta.url), 'utf8'),
 ]);
 const battleModel = await readFile(new URL('../../src/pages/PVP/models/battle.model.ts', import.meta.url), 'utf8');
 
@@ -181,7 +183,7 @@ assert.match(
 );
 assert.match(
   battlePage,
-  /const renderTeam = \(isOpponent: boolean\)[\s\S]*<AccordionMui[\s\S]*defaultValue=\{0\}[\s\S]*expandedSlot === index \+ 1[\s\S]*\.\.\.bench\.map/,
+  /const renderTeam = \(isOpponent: boolean\)[\s\S]*<AccordionMui[\s\S]*defaultValue=\{decodedSeed \? undefined : 0\}[\s\S]*expandedSlot === index \+ 1[\s\S]*\.\.\.bench\.map/,
   'Each side must group its lead and bench into one exclusive accordion so only one Pokémon editor is expanded at a time.'
 );
 assert.match(
@@ -282,6 +284,18 @@ for (const content of [timeline, timelineFit]) {
     content,
     /value\.type === AttackType\.Switch[\s\S]*className="wait-attack"/,
     'The move-marker lane must retain an empty timing anchor for Switch events.'
+  );
+}
+assert.match(
+  timelineTapPause,
+  /AttackType\.Spin[\s\S]*AttackType\.Prepare[\s\S]*AttackType\.Charge[\s\S]*AttackType\.Block[\s\S]*AttackType\.New[\s\S]*!entry\.isTap/,
+  'Tap pause groups must cover the complete Charged Attack sequence without hiding a real Fast Attack tap.'
+);
+for (const content of [timeline, timelineFit]) {
+  assert.match(
+    content,
+    /getTimelineTapPauseGroups[\s\S]*data-timeline-tap-pause="charged-attack"[\s\S]*Charged Attack pause/,
+    'Normal and Fit timelines must explain Charged Attack gaps in the Tap lane.'
   );
 }
 assert.match(

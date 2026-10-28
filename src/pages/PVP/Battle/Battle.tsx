@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import '../PVP.scss';
 
-import SelectPoke, { type SelectPokeHandle } from './Select';
+import SelectPoke, { createMoveAudio, type SelectPokeHandle } from './Select';
 import APIService from '../../../services/api.service';
 import {
   convertNameRankingToOri,
@@ -37,6 +37,7 @@ import SpeedIcon from '@mui/icons-material/Speed';
 import GroupsIcon from '@mui/icons-material/Groups';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ShareIcon from '@mui/icons-material/Share';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import CategoryIcon from '@mui/icons-material/Category';
@@ -52,14 +53,14 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import CasinoIcon from '@mui/icons-material/Casino';
 import { BattlePokemonData, IBattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
-import { ICombat } from '../../../core/models/combat.model';
+import { Combat, ICombat } from '../../../core/models/combat.model';
 import {
   IPokemonBattleData,
   ITimeline,
@@ -71,7 +72,7 @@ import {
 import type { PvpBattlePokemonRequest, PvpBattleStrategyRequest } from '../../../services/models/tools-api.model';
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
-import { PokemonType, TypeAction } from '../../../enums/type.enum';
+import { PokemonType, TypeAction, TypeMove } from '../../../enums/type.enum';
 import {
   combineClasses,
   DynamicObj,
@@ -128,6 +129,7 @@ import { exportBattleReportImage } from './utils/battle-export';
 import BattlePokemonImage from './BattlePokemonImage';
 import DismissibleAlert from '../../../components/Commons/Alerts/DismissibleAlert';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
+import { BattleSeedPokemon, BattleSeedState, decodeBattleSeed, encodeBattleSeed } from './utils/battle-seed';
 
 const DialogMui = React.lazy(() => import('../../../components/Commons/Dialogs/Dialogs'));
 
@@ -220,6 +222,36 @@ const stopPokemonAudio = (pokemon: IPokemonBattle) => {
   stopAudio(pokemon.audio?.cMoveSec);
 };
 
+const toSeedPokemon = (pokemon: IPokemonBattle): BattleSeedPokemon | undefined => {
+  const pokemonData = pokemon.pokemonData;
+  const currentStats = pokemonData?.currentStats;
+  if (!pokemonData?.speciesId || !pokemonData.id || !pokemon.fMove || !currentStats?.level || !currentStats.IV) {
+    return undefined;
+  }
+  return {
+    speciesId: pokemonData.speciesId,
+    id: pokemonData.id,
+    form: pokemonData.form ?? '',
+    pokemonType: pokemon.pokemonType,
+    fastMoveId: pokemon.fMove.id,
+    primaryMoveId: pokemon.cMovePri?.id ?? 0,
+    secondaryMoveId: pokemon.cMoveSec?.id ?? 0,
+    level: currentStats.level,
+    atkIv: currentStats.IV.atkIV,
+    defIv: currentStats.IV.defIV,
+    staIv: currentStats.IV.staIV,
+    energy: pokemon.energy,
+    block: pokemon.block,
+    chargeSlot: pokemon.chargeSlot,
+    disablePrimary: pokemon.disableCMovePri,
+    disableSecondary: pokemon.disableCMoveSec,
+    startingHp: pokemon.startingHp,
+    attackStage: toNumber(pokemon.attackStage),
+    defenseStage: toNumber(pokemon.defenseStage),
+    caughtAt: pokemon.caughtAt,
+  };
+};
+
 const Battle = () => {
   const { pokemonsData, combatsData, assetsData, optionsData } = useDataStore();
   const { findPokemonByPvpokeSpeciesId, findPokemonBySlug } = usePokemon();
@@ -227,29 +259,36 @@ const Battle = () => {
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
   const { isMobile } = useDevice();
   const params = useParams();
+  const [searchParams] = useSearchParams();
   const navigateToTop = useNavigateToTop();
 
   const { showSnackbar } = useSnackbar();
+  const requestedSeed = searchParams.get('seed') ?? '';
+  const decodedSeed = React.useMemo(
+    () => (requestedSeed ? decodeBattleSeed(requestedSeed) : undefined),
+    [requestedSeed]
+  );
+  const requestedLeague = decodedSeed?.league ?? toNumber(params.cp, BattleLeagueCPType.Little);
   const [openBattle, setOpenBattle] = useState(false);
   const [strategyDialog, setStrategyDialog] = useState<'playerStrategy' | 'opponentStrategy'>();
   const [data, setData] = useState<IBattlePokemonData[]>([]);
   const [leagueRules, setLeagueRules] = useState<ILeague[]>([]);
-  const [selectedLeagueId, setSelectedLeagueId] = useState(() =>
-    defaultLeagueId(toNumber(params.cp, BattleLeagueCPType.Little))
+  const [selectedLeagueId, setSelectedLeagueId] = useState(
+    () => decodedSeed?.leagueId ?? defaultLeagueId(requestedLeague)
   );
   const [options, setOptions] = useState<OptionsBattle>({
     showTap: false,
     timelineType: TimelineType.Normal,
     duration: 1,
-    league: toNumber(params.cp, BattleLeagueCPType.Little),
+    league: requestedLeague,
     volume: 0,
-    playerStrategy: {
+    playerStrategy: decodedSeed?.playerStrategy ?? {
       shield: 'always',
       charged: 'selected',
       voluntarySwitch: 'none',
       forcedSwitch: 'first',
     },
-    opponentStrategy: {
+    opponentStrategy: decodedSeed?.opponentStrategy ?? {
       shield: 'always',
       charged: 'selected',
       voluntarySwitch: 'none',
@@ -287,6 +326,8 @@ const Battle = () => {
   const [activeTeamIndexes, setActiveTeamIndexes] = useState({ player: 0, opponent: 0 });
   const [timelineCursor, setTimelineCursor] = useState(-1);
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
+  const restoredSeedRef = useRef('');
+  const invalidSeedRef = useRef('');
 
   const [isFound, setIsFound] = useState(true);
 
@@ -372,6 +413,149 @@ const Battle = () => {
     !!pokemon.fMove &&
     (pokemon.disableCMoveSec || !!pokemon.cMoveSec) &&
     (pokemon.disableCMovePri || !!pokemon.cMovePri);
+
+  const buildBattleSeed = useCallback((): BattleSeedState | undefined => {
+    const playerTeam = [pokemonCurr, ...pokemonCurrBench].map(toSeedPokemon);
+    const opponentTeam = [pokemonObj, ...pokemonObjBench].map(toSeedPokemon);
+    if (playerTeam.some((pokemon) => !pokemon) || opponentTeam.some((pokemon) => !pokemon)) {
+      return undefined;
+    }
+    return {
+      league,
+      leagueId: selectedLeagueId,
+      playerTeam: playerTeam as BattleSeedPokemon[],
+      opponentTeam: opponentTeam as BattleSeedPokemon[],
+      playerStrategy: strategyForTeam(playerStrategy, playerTeam.length),
+      opponentStrategy: strategyForTeam(opponentStrategy, opponentTeam.length),
+    };
+  }, [
+    league,
+    opponentStrategy,
+    playerStrategy,
+    pokemonCurr,
+    pokemonCurrBench,
+    pokemonObj,
+    pokemonObjBench,
+    selectedLeagueId,
+  ]);
+
+  const putSeedInAddress = useCallback((state: BattleSeedState) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('seed', encodeBattleSeed(state));
+    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+    return url.toString();
+  }, []);
+
+  const shareBattle = async () => {
+    const state = buildBattleSeed();
+    if (!state) {
+      showSnackbar('Select every Pokémon and move before sharing this battle.', 'warning');
+      return;
+    }
+    try {
+      const url = putSeedInAddress(state);
+      if (isMobile && navigator.share) {
+        await navigator.share({
+          title: 'PokéGO Breeze PvP Battle',
+          text: 'Open this shared Pokémon GO PvP battle setup.',
+          url,
+        });
+        showSnackbar('Battle link shared.', 'success');
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      showSnackbar('Battle link copied. It includes both teams, options, and strategies.', 'success');
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
+      showSnackbar('Unable to copy the battle link. Copy the URL from the address bar instead.', 'warning');
+    }
+  };
+
+  const hydrateSeedPokemon = useCallback(
+    (seedPokemon: BattleSeedPokemon): IPokemonBattle | undefined => {
+      const pokemon = data.find(
+        (candidate) =>
+          candidate.speciesId === seedPokemon.speciesId &&
+          candidate.id === seedPokemon.id &&
+          (candidate.form ?? '') === seedPokemon.form &&
+          candidate.pokemonType === seedPokemon.pokemonType
+      );
+      if (!pokemon?.pokemon) {
+        return undefined;
+      }
+      const findMove = (id: number, typeMove: TypeMove) => {
+        if (!id) {
+          return undefined;
+        }
+        const move = combatsData.find((candidate) => candidate.id === id && candidate.typeMove === typeMove);
+        return move ? Combat.create({ ...move, moveType: getMoveType(pokemon.pokemon, move.name) }) : undefined;
+      };
+      const fMove = findMove(seedPokemon.fastMoveId, TypeMove.Fast);
+      const cMovePri = findMove(seedPokemon.primaryMoveId, TypeMove.Charged);
+      const cMoveSec = findMove(seedPokemon.secondaryMoveId, TypeMove.Charged);
+      if (!fMove || (!seedPokemon.disablePrimary && !cMovePri) || (!seedPokemon.disableSecondary && !cMoveSec)) {
+        return undefined;
+      }
+      const stats = calculateStatsByTag(pokemon.pokemon, pokemon.pokemon.baseStats, pokemon.pokemon.slug);
+      const cp = calculateCP(
+        stats.atk + seedPokemon.atkIv,
+        stats.def + seedPokemon.defIv,
+        stats.sta + seedPokemon.staIv,
+        seedPokemon.level
+      );
+      const currentStats = getBaseStatsByIVandLevel(
+        stats.atk,
+        stats.def,
+        stats.sta,
+        cp,
+        pokemon.id,
+        seedPokemon.level,
+        seedPokemon.atkIv,
+        seedPokemon.defIv,
+        seedPokemon.staIv
+      );
+      return PokemonBattle.create({
+        pokemonData: PokemonBattleData.create({
+          ...pokemon,
+          hp: getBattleHp(currentStats.stats?.statSTA),
+          pokemonType: seedPokemon.pokemonType as PokemonType,
+          fMove,
+          cMove: cMovePri,
+          cMoveSec,
+          energy: seedPokemon.energy,
+          block: seedPokemon.block,
+          turn: 0,
+          currentStats,
+          bestStats: currentStats,
+          disableCMovePri: seedPokemon.disablePrimary,
+          disableCMoveSec: seedPokemon.disableSecondary,
+          stats,
+        }),
+        fMove,
+        cMovePri,
+        cMoveSec,
+        disableCMovePri: seedPokemon.disablePrimary,
+        disableCMoveSec: seedPokemon.disableSecondary,
+        pokemonType: seedPokemon.pokemonType as PokemonType,
+        timeline: [],
+        energy: seedPokemon.energy,
+        block: seedPokemon.block,
+        startingHp: seedPokemon.startingHp,
+        attackStage: seedPokemon.attackStage,
+        defenseStage: seedPokemon.defenseStage,
+        chargeSlot: seedPokemon.chargeSlot as ChargeType,
+        caughtAt: seedPokemon.caughtAt,
+        audio: {
+          fMove: createMoveAudio(fMove.sound),
+          cMovePri: createMoveAudio(cMovePri?.sound),
+          cMoveSec: createMoveAudio(cMoveSec?.sound),
+        },
+      });
+    },
+    [combatsData, data]
+  );
 
   const battleAnimation = async () => {
     const playerTeam = [pokemonCurr, ...pokemonCurrBench];
@@ -597,6 +781,59 @@ const Battle = () => {
       hideSpinner();
     };
   }, [assetsData, combatsData, fetchPokemonBattle, league, pokemonsData]);
+
+  useEffect(() => {
+    if (requestedSeed && !decodedSeed && invalidSeedRef.current !== requestedSeed) {
+      invalidSeedRef.current = requestedSeed;
+      showSnackbar('This battle seed is invalid or incomplete. The default simulator was loaded instead.', 'warning');
+    }
+  }, [decodedSeed, requestedSeed, showSnackbar]);
+
+  useEffect(() => {
+    if (!decodedSeed || !requestedSeed || !isNotEmpty(data) || restoredSeedRef.current === requestedSeed) {
+      return;
+    }
+    restoredSeedRef.current = requestedSeed;
+    const playerTeam = decodedSeed.playerTeam.map(hydrateSeedPokemon);
+    const opponentTeam = decodedSeed.opponentTeam.map(hydrateSeedPokemon);
+    if (playerTeam.some((pokemon) => !pokemon) || opponentTeam.some((pokemon) => !pokemon)) {
+      showSnackbar(
+        'This shared battle references a Pokémon or move that is unavailable in the current battle data.',
+        'warning'
+      );
+      return;
+    }
+    const restoredPlayer = playerTeam as IPokemonBattle[];
+    const restoredOpponent = opponentTeam as IPokemonBattle[];
+    setPokemonCurr(restoredPlayer[0]);
+    setPokemonCurrBench(restoredPlayer.slice(1));
+    setPokemonObj(restoredOpponent[0]);
+    setPokemonObjBench(restoredOpponent.slice(1));
+    setOptions((current) => ({
+      ...current,
+      league: decodedSeed.league,
+      playerStrategy: decodedSeed.playerStrategy,
+      opponentStrategy: decodedSeed.opponentStrategy,
+    }));
+    setSelectedLeagueId(decodedSeed.leagueId);
+    setLeadExpanded({ player: false, opponent: false });
+    setPokemonCurrBenchExpanded(restoredPlayer.slice(1).map(() => false));
+    setPokemonObjBenchExpanded(restoredOpponent.slice(1).map(() => false));
+    setPlayTimeline(new BattleState());
+    setActiveTeamIndexes({ player: 0, opponent: 0 });
+    setTimelineCursor(-1);
+    showSnackbar('Shared battle loaded with both teams, options, and strategies.', 'success');
+  }, [data, decodedSeed, hydrateSeedPokemon, requestedSeed, showSnackbar]);
+
+  useEffect(() => {
+    if (requestedSeed && decodedSeed && restoredSeedRef.current !== requestedSeed) {
+      return;
+    }
+    const state = buildBattleSeed();
+    if (state) {
+      putSeedInAddress(state);
+    }
+  }, [buildBattleSeed, decodedSeed, putSeedInAddress, requestedSeed]);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -2073,7 +2310,7 @@ const Battle = () => {
     return (
       <div aria-label={`${sideLabel} team`}>
         <AccordionMui
-          defaultValue={0}
+          defaultValue={decodedSeed ? undefined : 0}
           resetItemOnChange={isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)}
           onChange={(value) => {
             const expandedSlot = typeof value === 'number' ? value : undefined;
@@ -2479,6 +2716,17 @@ const Battle = () => {
                 onClick={() => void battleAnimation()}
               />
             )}
+            <ButtonMui
+              className="tw-h-12.5"
+              variant="outlined"
+              startIcon={<ShareIcon />}
+              label="Share Battle"
+              disabled={
+                ![pokemonCurr, ...pokemonCurrBench].every(isBattlePokemonReady) ||
+                ![pokemonObj, ...pokemonObjBench].every(isBattlePokemonReady)
+              }
+              onClick={() => void shareBattle()}
+            />
           </div>
         </div>
       </div>
