@@ -25,7 +25,7 @@ export interface SelectPokeHandle {
   selectRandomPokemon: () => void;
 }
 
-const createMoveAudio = (sound: string | undefined) => {
+export const createMoveAudio = (sound: string | undefined) => {
   const audio = new Audio(APIService.getSoundMove(sound));
   audio.preload = 'none';
   return audio;
