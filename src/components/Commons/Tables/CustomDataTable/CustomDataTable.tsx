@@ -10,6 +10,7 @@ import CustomInput from '../../Inputs/CustomInput';
 import { StyleSheetConfig } from '../../../../utils/configs/style-sheet.config';
 import { IncludeMode } from '../../../../utils/enums/string.enum';
 import DialogMui from '../../Dialogs/Dialogs';
+import CustomDataTablePagination from './CustomDataTablePagination';
 
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,7 +59,10 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
       return {
         tableWrapper: {
           style: {
-            display: props.isXFixed ? 'block' : 'table',
+            display: 'block',
+            width: '100%',
+            minWidth: 0,
+            maxWidth: '100%',
           },
         },
         subHeader: {
@@ -77,7 +81,10 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
         ...data.tableWrapper,
         style: {
           ...data.tableWrapper?.style,
-          display: props.isXFixed ? 'block' : 'table',
+          display: 'block',
+          width: '100%',
+          minWidth: 0,
+          maxWidth: '100%',
         },
       },
       subHeader: {
@@ -100,28 +107,33 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
           !isIncludeList(StyleSheetConfig.NotAllowProps, prop, IncludeMode.IncludeIgnoreCaseSensitive)
         }
       >
-        <DataTable
-          {...props}
-          subHeader={
-            props.isShowSearch && (
-              <CustomInput
-                menuItems={props.menuItems}
-                isAutoSearch={props.isAutoSearch}
-                setSearchData={() => setSearchData(true)}
-                inputPlaceholder={props.inputPlaceholder}
-                defaultValue={searchTerm}
-                setSearchTerm={(value) => {
-                  setSearchTerm(value);
-                }}
-                onOptionsClick={handleShowOption}
-                optionsIcon={props.isShowModalOptions ? <SettingsIcon className="tw-text-xl" /> : undefined}
-              />
-            )
-          }
-          columns={(props.customColumns ? convertColumnDataType(props.customColumns) : props.columns) || []}
-          customStyles={getCustomThemeDataTable(setCustomStyle())}
-          data={props.paginationServer ? props.data || [] : pokemonListFilter}
-        />
+        <div className="rdt-v7-compat">
+          <DataTable
+            {...props}
+            headerSeparator={props.headerSeparator ?? false}
+            paginationComponent={props.paginationComponent ?? CustomDataTablePagination}
+            progressSkeleton={props.progressSkeleton ?? false}
+            subHeader={
+              props.isShowSearch && (
+                <CustomInput
+                  menuItems={props.menuItems}
+                  isAutoSearch={props.isAutoSearch}
+                  setSearchData={() => setSearchData(true)}
+                  inputPlaceholder={props.inputPlaceholder}
+                  defaultValue={searchTerm}
+                  setSearchTerm={(value) => {
+                    setSearchTerm(value);
+                  }}
+                  onOptionsClick={handleShowOption}
+                  optionsIcon={props.isShowModalOptions ? <SettingsIcon className="tw-text-xl" /> : undefined}
+                />
+              )
+            }
+            columns={(props.customColumns ? convertColumnDataType(props.customColumns) : props.columns) || []}
+            customStyles={getCustomThemeDataTable(setCustomStyle())}
+            data={props.paginationServer ? props.data || [] : pokemonListFilter}
+          />
+        </div>
       </StyleSheetManager>
 
       {props.isShowModalOptions && (

@@ -3,8 +3,6 @@ import { getKeyWithData, splitAndCapitalize } from '../../../../utils/utils';
 
 import './MoveTable.scss';
 
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { ICombat } from '../../../../core/models/combat.model';
 import { IPokemonQueryMove, IPokemonQueryRankMove } from '../../../../utils/models/pokemon-top-move.model';
@@ -24,6 +22,7 @@ import {
   getMaxMoveVariantLabel,
 } from '../../../../utils/max-move';
 import useDataStore from '../../../../composables/useDataStore';
+import DataTableSortIcon from '../DataTableSortIcon';
 
 const formatMinuteOfDay = (minute: number) =>
   `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
@@ -143,11 +142,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 Fast
                 {!disableSortFM && (
                   <span className={stateSorted[tableType].sortBy === TypeSorted.Fast ? 'opacity-100' : 'opacity-30'}>
-                    {stateSorted[tableType].fast ? (
-                      <ArrowDropDownIcon fontSize="small" />
-                    ) : (
-                      <ArrowDropUpIcon fontSize="small" />
-                    )}
+                    <DataTableSortIcon direction={stateSorted[tableType].fast ? 'desc' : 'asc'} />
                   </span>
                 )}
               </th>
@@ -158,11 +153,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 Charged
                 {!disableSortCM && (
                   <span className={stateSorted[tableType].sortBy === TypeSorted.Charge ? 'opacity-100' : 'opacity-30'}>
-                    {stateSorted[tableType].charged ? (
-                      <ArrowDropDownIcon fontSize="small" />
-                    ) : (
-                      <ArrowDropUpIcon fontSize="small" />
-                    )}
+                    <DataTableSortIcon direction={stateSorted[tableType].charged ? 'desc' : 'asc'} />
                   </span>
                 )}
               </th>
@@ -172,11 +163,7 @@ const TableMove = (props: ITableMoveComponent) => {
               >
                 %
                 <span className={stateSorted[tableType].sortBy === TypeSorted.Effective ? 'opacity-100' : 'opacity-30'}>
-                  {stateSorted[tableType].effective ? (
-                    <ArrowDropDownIcon fontSize="small" />
-                  ) : (
-                    <ArrowDropUpIcon fontSize="small" />
-                  )}
+                  <DataTableSortIcon direction={stateSorted[tableType].effective ? 'desc' : 'asc'} />
                 </span>
               </th>
             </tr>

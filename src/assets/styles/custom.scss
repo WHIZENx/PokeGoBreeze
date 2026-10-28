@@ -276,6 +276,58 @@ a.pokemon-link:hover {
 }
 
 // Table text colors
+.rdt-v7-compat {
+  @apply tw-w-full tw-min-w-0 tw-max-w-full;
+
+  contain: inline-size;
+
+  // react-data-table-component v8 uses min-width: fit-content on its new
+  // wrappers. Keep the v7 containment contract so tables cannot overlap
+  // adjacent grid/flex columns while their inner table can still scroll.
+  > div,
+  .rdt_responsiveWrapper {
+    @apply tw-w-full tw-min-w-0 tw-max-w-full;
+  }
+
+  > div {
+    --rdt-color-bg: var(--table-primary) !important;
+    --rdt-color-header-bg: var(--table-primary) !important;
+    --rdt-color-divider: var(--background-table-divided) !important;
+    --rdt-color-striped: var(--background-table-strip) !important;
+    --rdt-color-highlight: var(--background-table-hover) !important;
+    --rdt-color-text-primary: var(--text-primary) !important;
+    --rdt-color-text-secondary: var(--text-secondary) !important;
+    --rdt-color-text-disabled: var(--text-disabled) !important;
+    --rdt-color-btn: var(--text-primary) !important;
+    --rdt-color-btn-disabled: var(--text-disabled) !important;
+    --rdt-color-btn-hover: var(--background-table-hover) !important;
+    --rdt-color-btn-focus: var(--primary-main) !important;
+  }
+
+  .rdt_wrapper,
+  .rdt_Table {
+    @apply tw-w-full tw-min-w-fit tw-max-w-none;
+  }
+
+  // v8 nests a new header element inside the custom-style wrapper. Restore
+  // the v7 title surface instead of allowing the library's white default.
+  .rdt_header {
+    color: var(--text-primary);
+    background-color: var(--custom-default);
+  }
+}
+
+.rdt-mui-pagination {
+  .MuiTablePagination-toolbar {
+    @apply tw-min-h-[52px] tw-px-2;
+  }
+
+  .MuiTablePagination-selectLabel,
+  .MuiTablePagination-displayedRows {
+    @apply tw-m-0;
+  }
+}
+
 .rdt_Table {
   --rdt-color-bg: var(--table-primary);
   --rdt-color-divider: var(--background-table-divided);

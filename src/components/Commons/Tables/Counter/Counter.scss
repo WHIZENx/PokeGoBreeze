@@ -7,6 +7,16 @@
   --rdt-col-sep-color: var(--custom-table-background-sub-head-border);
   --rdt-color-striped: transparent;
 
+  .rdt_TableCol,
+  .rdt_TableCell {
+    @apply tw-justify-center tw-text-center;
+  }
+
+  .rdt_TableCol_Sortable,
+  .rdt_TableCell > * {
+    @apply tw-justify-center tw-text-center;
+  }
+
   .rdt_TableCell:first-of-type {
     @apply tw-text-xs;
   }
