@@ -8,7 +8,6 @@ import { AttackType } from '../enums/attack-type.enum';
 
 interface TimelineTeamEventProps {
   entry: ITimeline;
-  eventType?: 'switch' | 'faint';
   index: number;
   team: IPokemonBattle[];
   timeline: ITimeline[];
@@ -22,11 +21,11 @@ const formatName = (value: string) =>
     .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1).toLowerCase()}`)
     .join(' ');
 
-const TimelineTeamEvent = ({ entry, eventType, index, team, timeline }: TimelineTeamEventProps) => {
+const TimelineTeamEvent = ({ entry, index, team, timeline }: TimelineTeamEventProps) => {
   const hasSwitch = entry.type === AttackType.Switch || entry.switchedFromIndex !== undefined;
   const hasFaint = entry.faintedIndex !== undefined || entry.type === AttackType.Dead;
-  const isSwitch = eventType ? eventType === 'switch' && hasSwitch : hasSwitch;
-  const isFaint = eventType ? eventType === 'faint' && hasFaint : hasFaint;
+  const isSwitch = hasSwitch;
+  const isFaint = hasFaint;
   if (!isSwitch && !isFaint) {
     return null;
   }
@@ -74,7 +73,7 @@ const TimelineTeamEvent = ({ entry, eventType, index, team, timeline }: Timeline
   return (
     <span
       aria-label={label}
-      className="tw-inline-flex tw-items-center tw-gap-0.5 tw-rounded tw-bg-[var(--background-table-hover)] tw-px-1"
+      className="tw-relative tw-z-20 tw-inline-flex tw-items-center tw-gap-0.5 tw-rounded tw-bg-[var(--background-table-hover)] tw-px-1"
       data-timeline-event={isSwitch ? 'switch' : 'faint'}
       role="img"
     >

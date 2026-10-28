@@ -106,10 +106,20 @@ const TimelineVertical = (
     </span>
   );
 
-  const renderTimeline = (pokeCurr: IPokemonBattle, pokeObj: IPokemonBattle, team: IPokemonBattle[], end = false) => (
-    <Fragment>
-      {pokeCurr.timeline.map((value, index) => (
-        <div className={turnRowClasses(end)} data-timeline-turn={value.timer} key={index}>
+  const renderTimelineEntry = (
+    value: ITimeline | undefined,
+    index: number,
+    pokeCurr: IPokemonBattle,
+    pokeObj: IPokemonBattle,
+    team: IPokemonBattle[],
+    end = false
+  ) => (
+    <div
+      className={combineClasses(turnRowClasses(end), 'tw-min-w-0')}
+      data-timeline-turn={value?.timer ?? pokeObj.timeline.at(index)?.timer}
+    >
+      {value && (
+        <Fragment>
           {value.type === AttackType.Block && (
             <div className="tw-flex tw-items-center tw-gap-1.5">
               {renderPokemonIcon(timelinePokemon(value, team))}
@@ -253,23 +263,23 @@ const TimelineVertical = (
               )}
             </Fragment>
           )}
-        </div>
-      ))}
-    </Fragment>
+        </Fragment>
+      )}
+    </div>
   );
+
+  const timelineLength = Math.max(pokemonCurr.timeline.length, pokemonObj.timeline.length);
 
   return (
     <Fragment>
       {!isHide && (
-        <div className="tw-flex timeline-vertical battle-container">
-          <div className="tw-w-1/2">
-            <div className="tw-flex tw-flex-col">{renderTimeline(pokemonCurr, pokemonObj, playerTeam)}</div>
-          </div>
-          <div className="tw-w-1/2">
-            <div className="tw-flex tw-flex-col tw-items-end">
-              {renderTimeline(pokemonObj, pokemonCurr, opponentTeam, true)}
-            </div>
-          </div>
+        <div className="tw-grid tw-grid-cols-2 timeline-vertical battle-container">
+          {Array.from({ length: timelineLength }, (_, index) => (
+            <Fragment key={index}>
+              {renderTimelineEntry(pokemonCurr.timeline.at(index), index, pokemonCurr, pokemonObj, playerTeam)}
+              {renderTimelineEntry(pokemonObj.timeline.at(index), index, pokemonObj, pokemonCurr, opponentTeam, true)}
+            </Fragment>
+          ))}
         </div>
       )}
     </Fragment>

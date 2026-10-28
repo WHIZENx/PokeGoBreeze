@@ -98,6 +98,9 @@ export interface IPokemonBattle {
   timeline: ITimeline[];
   energy: number;
   block: number;
+  startingHp?: number;
+  attackStage?: number;
+  defenseStage?: number;
   chargeSlot: ChargeType;
   caughtAt?: number;
   audio?: MoveAudio;
@@ -114,6 +117,9 @@ export class PokemonBattle implements IPokemonBattle {
   timeline: ITimeline[] = [];
   energy = 0;
   block = defaultBlock();
+  startingHp?: number;
+  attackStage?: number = 0;
+  defenseStage?: number = 0;
   chargeSlot = ChargeType.Primary;
   caughtAt?: number;
   audio?: MoveAudio;

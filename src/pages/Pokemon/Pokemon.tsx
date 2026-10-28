@@ -98,6 +98,8 @@ interface ReleasedAlertSnapshot {
   releasedGO: boolean;
 }
 
+const pokemonNavigationRequestDelayMs = 100;
+
 class TypeCost implements ITypeCost {
   purified = new PokemonTypeCost();
   thirdMove = new PokemonTypeCost();
@@ -148,6 +150,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [data, setData] = useState<IPokemonSpecie>();
   const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
   const navigationIdRef = useRef(0);
+  const pokemonRequestIdRef = useRef(0);
 
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
@@ -485,13 +488,26 @@ const Pokemon = (props: IPokemonPage) => {
 
   const queryPokemon = useCallback(
     (id: number) => {
+      const requestId = ++pokemonRequestIdRef.current;
+      const isDetailsRoute = Boolean(params.id);
+      const requestedPathname = location.pathname;
       APIService.cancel(axiosSource.current);
-      axiosSource.current = APIService.reNewCancelToken();
-      const cancelToken = axiosSource.current.token;
+      setIsFound(true);
 
-      APIService.getPokemonBundle(id, { cancelToken })
-        .then((res) => {
-          if (res.data.data) {
+      let requestSource: ReturnType<typeof APIService.reNewCancelToken> | undefined;
+      const requestTimer = window.setTimeout(() => {
+        if (requestId !== pokemonRequestIdRef.current) {
+          return;
+        }
+
+        requestSource = APIService.reNewCancelToken();
+        axiosSource.current = requestSource;
+
+        APIService.getPokemonBundle(id, { cancelToken: requestSource.token })
+          .then((res) => {
+            if (requestId !== pokemonRequestIdRef.current || !res.data.data) {
+              return;
+            }
             const result = PokemonSpecie.create(res.data.data.species);
             fetchMap(
               result,
@@ -503,31 +519,41 @@ const Pokemon = (props: IPokemonPage) => {
               res.data.data.pokemonGo?.evolutionChains,
               res.data.data.pokemonGo?.fusionOptions
             );
-          }
-        })
-        .catch((error: unknown) => {
-          if (APIService.isCancel(error)) {
-            return;
-          }
-          const status = (error as { response?: { status?: number } }).response?.status;
-          const notFound = status === 404;
-          showSnackbar(
-            notFound
-              ? `Pokémon ID or name: ${id} not found!`
-              : `Unable to display Pokémon data for ID: ${id}. Please try again.`,
-            'error'
-          );
-          if (params.id) {
-            setIsFound(false);
-          } else {
-            navigateToTop('/error', {
-              replace: true,
-              state: { url: location.pathname, id },
-            });
-          }
-        });
+          })
+          .catch((error: unknown) => {
+            if (APIService.isCancel(error) || requestId !== pokemonRequestIdRef.current) {
+              return;
+            }
+            const status = (error as { response?: { status?: number } }).response?.status;
+            const notFound = status === 404;
+            showSnackbar(
+              notFound
+                ? `Pokémon ID or name: ${id} not found!`
+                : `Unable to display Pokémon data for ID: ${id}. Please try again.`,
+              'error'
+            );
+            if (notFound && isDetailsRoute) {
+              setIsFound(false);
+            } else if (notFound) {
+              navigateToTop('/error', {
+                replace: true,
+                state: { url: requestedPathname, id },
+              });
+            }
+          });
+      }, pokemonNavigationRequestDelayMs);
+
+      return () => {
+        window.clearTimeout(requestTimer);
+        if (pokemonRequestIdRef.current === requestId) {
+          pokemonRequestIdRef.current += 1;
+        }
+        if (requestSource) {
+          APIService.cancel(requestSource);
+        }
+      };
     },
-    [fetchMap]
+    [fetchMap, location.pathname, navigateToTop, params.id, showSnackbar]
   );
 
   const clearData = (isForceClear = false) => {
@@ -595,13 +621,13 @@ const Pokemon = (props: IPokemonPage) => {
         }
       }
       const dataId = toNumber(data?.id);
-      if (id > 0 && dataId !== id) {
-        clearData(true);
-        queryPokemon(id);
+      if (id > 0) {
+        setIsFound(true);
+        if (dataId !== id) {
+          clearData(true);
+          return queryPokemon(id);
+        }
       }
-      return () => {
-        APIService.cancel(axiosSource.current);
-      };
     }
   }, [params.id, props.searchOption?.id, getFilteredPokemons, data?.id, queryPokemon]);
 

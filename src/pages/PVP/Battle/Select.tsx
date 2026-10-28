@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import APIService from '../../../services/api.service';
 
 import { getKeyWithData, getMoveType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
@@ -20,8 +20,10 @@ import StatsCalculationService from '../../../services/stats-calculation.service
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { includeGameMasterSpecialMoves } from '../pvp-move-options';
-import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
-import CasinoIcon from '@mui/icons-material/Casino';
+
+export interface SelectPokeHandle {
+  selectRandomPokemon: () => void;
+}
 
 const createMoveAudio = (sound: string | undefined) => {
   const audio = new Audio(APIService.getSoundMove(sound));
@@ -29,7 +31,7 @@ const createMoveAudio = (sound: string | undefined) => {
   return audio;
 };
 
-const SelectPoke = (props: ISelectPokeComponent) => {
+const SelectPoke = React.forwardRef<SelectPokeHandle, ISelectPokeComponent>((props, ref) => {
   const { findMoveByName } = useCombats();
   const { showSpinner, hideSpinner } = useSpinner();
   const { showSnackbar } = useSnackbar();
@@ -134,6 +136,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           cMoveSec: cMoveSecCombat,
           disableCMovePri,
           disableCMoveSec,
+          startingHp: undefined,
+          attackStage: 0,
+          defenseStage: 0,
           chargeSlot: cMovePriCombat ? ChargeType.Primary : cMoveSecCombat ? ChargeType.Secondary : ChargeType.None,
           audio: {
             fMove: createMoveAudio(fMoveCombat?.sound),
@@ -165,6 +170,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     showSpinner();
     void selectPokemon(value);
   };
+
+  useImperativeHandle(ref, () => ({ selectRandomPokemon }));
 
   const selectFMove = (value: ICombat | undefined) => {
     props.clearData(false);
@@ -234,18 +241,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   return (
     <Fragment>
-      <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
-        <h5>Pokémon</h5>
-        <ButtonMui
-          className="!tw-min-w-0 !tw-px-2 !tw-py-0.5"
-          size="small"
-          variant="outlined"
-          startIcon={<CasinoIcon fontSize="small" />}
-          label="Random"
-          disabled={!isNotEmpty(props.data)}
-          onClick={selectRandomPokemon}
-        />
-      </div>
+      <h5>Pokémon</h5>
       <SelectCardPokemon
         key={props.league}
         pokemonList={props.data}
@@ -364,6 +360,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       </div>
     </Fragment>
   );
-};
+});
+
+SelectPoke.displayName = 'SelectPoke';
 
 export default SelectPoke;

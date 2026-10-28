@@ -939,9 +939,11 @@ const Evolution = (props: IEvolutionComponent) => {
                       className="img-form-gender-group img-evo-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0"
                     >
                       {value.formVaries ? (
-                        <div className="select-evo" title="Vivillon pattern depends on the Scatterbug encounter">
-                          {renderImageEvo(value, values, evo, index, arrEvoList.length)}
-                        </div>
+                        <Tooltips title="Vivillon pattern depends on the Scatterbug encounter">
+                          <div className="select-evo">
+                            {renderImageEvo(value, values, evo, index, arrEvoList.length)}
+                          </div>
+                        </Tooltips>
                       ) : props.setSearchOption ? (
                         <div
                           className="select-evo"
