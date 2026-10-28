@@ -51,6 +51,9 @@ import usePokemon from '../../../composables/usePokemon';
 import Tooltips from '../../Commons/Tooltips/Tooltips';
 import EvolutionPokemonDisplay from './EvolutionPokemonDisplay';
 
+const EVOLUTION_MIN_HEIGHT = 256;
+const EVOLUTION_SKELETON_STAGES = 3;
+
 interface IPokemonEvo {
   prev?: string;
   name: string;
@@ -271,7 +274,7 @@ const Evolution = (props: IEvolutionComponent) => {
     };
     const measureContent = () => {
       const chain = container.querySelector<HTMLElement>('.evo-chain');
-      if (!chain) {
+      if (!chain || chain.dataset.testid === 'evolution-chain-skeleton') {
         setEvolutionMinHeight(0);
         return;
       }
@@ -658,7 +661,18 @@ const Evolution = (props: IEvolutionComponent) => {
                         : { middle: edgeDetails }
                   }
                   strokeWidth={2}
-                  zIndex={edgeLayer}
+                  divContainerProps={
+                    {
+                      className: 'evolution-connector',
+                      'data-testid': 'evolution-connector',
+                    } as React.HTMLProps<HTMLDivElement>
+                  }
+                  SVGcanvasProps={
+                    {
+                      className: 'evolution-connector-canvas',
+                      'data-testid': 'evolution-connector-canvas',
+                    } as React.SVGAttributes<SVGSVGElement>
+                  }
                   path="grid"
                   gridBreak={isConverging ? '65%' : isBranched ? '35%' : '50%'}
                   startAnchor={{ position: 'right', offset: { x: -8 } }}
@@ -708,8 +722,14 @@ const Evolution = (props: IEvolutionComponent) => {
       return element;
     }
     return (
-      <div className="slide-container !tw-w-3/4 !tw-p-0 !tw-m-auto !tw-h-30">
-        <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
+      <div className="evo-chain tw-inline-flex tw-h-64 tw-items-start" data-testid="evolution-chain-skeleton">
+        {Array.from({ length: EVOLUTION_SKELETON_STAGES }, (_, index) => (
+          <div key={index} className="tw-flex tw-w-24 tw-flex-col tw-items-center">
+            <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
+            <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-mt-1 !tw-w-10" />
+            <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-20" />
+          </div>
+        ))}
       </div>
     );
   };
@@ -926,7 +946,7 @@ const Evolution = (props: IEvolutionComponent) => {
         ref={evolutionContainerRef}
         className="evo-container scroll-evolution"
         data-testid="evolution-container"
-        style={evolutionMinHeight ? { minHeight: `${evolutionMinHeight}px` } : undefined}
+        style={{ minHeight: `${Math.max(EVOLUTION_MIN_HEIGHT, evolutionMinHeight)}px` }}
       >
         {reload(
           <ul className="ul-evo evo-chain tw-inline-flex">

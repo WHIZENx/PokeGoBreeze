@@ -14,8 +14,6 @@ import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName }
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { Params } from '../../../utils/constants';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -38,6 +36,7 @@ import BodyPVP from '../components/BodyPVP';
 import MoveSet from '../components/MoveSet';
 import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
+import DataTableSortIcon from '../../../components/Commons/Tables/DataTableSortIcon';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
@@ -365,7 +364,7 @@ const RankingPVP = (props: IStyleSheetData) => {
                   )}
                 >
                   Score
-                  {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                  <DataTableSortIcon direction={sorted === SortDirectionType.DESC ? 'desc' : 'asc'} />
                 </span>
               </div>
             </div>

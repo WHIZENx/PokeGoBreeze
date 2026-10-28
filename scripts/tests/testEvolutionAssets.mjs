@@ -33,6 +33,10 @@ assert.match(fusion, /data-fusion-target-pokemon-type=\{option\.targetPokemonTyp
 assert.match(evolutionStyles, /\.evolution-form-badge > \.MuiBadge-badge/);
 assert.match(evolutionStyles, /text-overflow: ellipsis/);
 assert.match(evolutionStyles, /white-space: nowrap/);
+assert.match(evolutionStyles, /\.evolution-connector\s*\{[\s\S]*z-index: auto !important;/);
+assert.match(evolutionStyles, /\.evolution-connector-canvas\s*\{[\s\S]*z-index: 0;/);
+assert.match(evolutionStyles, /\.evolution-connector > div\s*\{[\s\S]*z-index: 1;/);
+assert.match(evolutionStyles, /\.evo-arrow-details\s*\{[\s\S]*z-index: 1;/);
 assert.doesNotMatch(display, /getPokeSprite\(id\)/, 'Evolution must not fall back to a different default form by ID');
 assert.match(specialForm, /findAnimationForm\(id, formName, pokemonType\)/);
 assert.match(specialForm, /findExactAssetForm\(id, formName\)/);

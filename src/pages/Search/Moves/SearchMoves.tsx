@@ -22,7 +22,9 @@ import APIService from '../../../services/api.service';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 import { formatMaxMoveLevelSummary, getMaxMoveVariantLabel } from '../../../utils/max-move';
 
-const columns = createDataRows<TableColumnModify<ICombat>>(
+type MoveTableRow = ICombat & { tableKey: string };
+
+const columns = createDataRows<TableColumnModify<MoveTableRow>>(
   {
     id: ColumnType.Id,
     name: 'id',
@@ -65,7 +67,7 @@ const columns = createDataRows<TableColumnModify<ICombat>>(
   }
 );
 
-const maxColumns = createDataRows<TableColumnModify<ICombat>>(
+const maxColumns = createDataRows<TableColumnModify<MoveTableRow>>(
   ...columns.slice(0, 3),
   {
     id: 'maxMoveVariant',
@@ -83,7 +85,6 @@ const maxColumns = createDataRows<TableColumnModify<ICombat>>(
 );
 
 type MoveSortField = 'track' | 'type' | 'name' | 'power' | 'dps';
-type MoveTableRow = ICombat & { tableKey: string };
 
 const getMoveSortField = (columnId: string | number | undefined): MoveSortField => {
   switch (toNumber(columnId)) {

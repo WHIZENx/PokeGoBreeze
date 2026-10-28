@@ -667,9 +667,6 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
       style: {
         color: 'var(--text-primary)',
         backgroundColor: 'var(--table-primary)',
-        '&:not(:last-of-type)': {
-          borderBottomColor: 'var(--background-table-divided)',
-        },
       },
       stripedStyle: {
         color: 'var(--text-primary)',
@@ -699,16 +696,6 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
       pageButtonsStyle: {
         color: 'var(--text-primary)',
         fill: 'var(--text-primary)',
-        '&:disabled': {
-          color: 'var(--text-disabled)',
-          fill: 'var(--text-disabled)',
-        },
-        '&:hover:not(:disabled)': {
-          backgroundColor: 'var(--background-table-hover)',
-        },
-        '&:focus': {
-          outline: '1px solid var(--primary-main)',
-        },
       },
     },
     noData: {

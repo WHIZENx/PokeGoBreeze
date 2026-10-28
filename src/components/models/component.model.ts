@@ -209,6 +209,7 @@ export interface IStatsComponent {
   id?: number;
   form?: string;
   isDisabled?: boolean;
+  isLoading?: boolean;
 }
 
 export interface IGenderComponent {
