@@ -62,7 +62,6 @@
 
 // Button styling using CSS variables
 .types-select-btn {
-
   button.btn-select-type {
     @include theme-border(1px, top, var(--custom-btn-type-border));
     @include theme-border(1px, bottom, var(--custom-btn-type-border));
@@ -277,6 +276,33 @@ a.pokemon-link:hover {
 }
 
 // Table text colors
+.rdt_Table {
+  --rdt-color-bg: var(--table-primary);
+  --rdt-color-divider: var(--background-table-divided);
+  --rdt-color-highlight: var(--background-table-hover);
+  --rdt-color-text-primary: var(--text-primary);
+  --rdt-color-text-disabled: var(--text-disabled);
+  --rdt-color-btn: var(--text-primary);
+  --rdt-color-btn-disabled: var(--text-disabled);
+  --rdt-color-btn-hover: var(--background-table-hover);
+  --rdt-color-btn-focus: var(--primary-main);
+}
+
+.rdt_paginationButton {
+  &:disabled {
+    color: var(--text-disabled);
+    fill: var(--text-disabled);
+  }
+
+  &:hover:not(:disabled) {
+    background-color: var(--background-table-hover);
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--primary-main);
+  }
+}
+
 .table-movesets tbody tr td,
 .table-moves tbody tr td {
   @include theme-text(var(--custom-table-background-sub-head-text));

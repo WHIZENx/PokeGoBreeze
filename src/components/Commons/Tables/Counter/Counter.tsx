@@ -92,21 +92,10 @@ const customStyles: TableStyles = {
       borderBottomWidth: 1,
       borderBottomStyle: 'solid',
       borderBottomColor: 'var(--custom-table-background-sub-head-border)',
-      '&:not(:last-of-type)': {
-        borderRightWidth: 1,
-        borderRightStyle: 'solid',
-        borderRightColor: 'var(--custom-table-background-sub-head-border)',
-      },
     },
   },
   cells: {
     style: {
-      '&:not(:last-of-type)': {
-        borderRightWidth: 1,
-        borderRightStyle: 'solid',
-        borderRightColor: 'var(--custom-table-background-sub-head-border)',
-        color: 'var(--text-primary)',
-      },
       borderBottomWidth: 1,
       borderBottomStyle: 'solid',
       borderBottomColor: 'var(--custom-table-background-sub-head-border)',
@@ -114,23 +103,12 @@ const customStyles: TableStyles = {
       textAlign: 'center',
       padding: '0.25rem 0.5rem',
       fontWeight: 'normal',
-      '&:first-of-type': {
-        fontSize: '0.75rem',
-      },
-      '&:last-of-type': {
-        fontWeight: 'bold',
-        color: 'var(--custom-table-background-sub-head-text)',
-        fontSize: '1rem',
-      },
     },
   },
   rows: {
     style: {
       color: 'var(--text-primary)',
       backgroundColor: 'transparent',
-      '&:not(:last-of-type)': {
-        borderBottomColor: 'var(--background-table-divided)',
-      },
     },
     stripedStyle: {
       color: 'var(--text-primary)',
@@ -501,6 +479,8 @@ const Counter = (props: ICounterComponent) => {
           className="table-counter-container"
           keyField="tableKey"
           customColumns={columns}
+          columnSeparator="full"
+          headerSeparator="full"
           defaultSortFieldId={ColumnType.Percent}
           defaultSortAsc={false}
           isShowSearch

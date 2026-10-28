@@ -1,5 +1,21 @@
 .table-counter-container {
   @apply tw-h-[600px];
+
+  --rdt-color-bg: transparent;
+  --rdt-color-header-bg: var(--table-info);
+  --rdt-color-divider: var(--custom-table-background-sub-head-border);
+  --rdt-col-sep-color: var(--custom-table-background-sub-head-border);
+  --rdt-color-striped: transparent;
+
+  .rdt_TableCell:first-of-type {
+    @apply tw-text-xs;
+  }
+
+  .rdt_TableCell:last-of-type {
+    color: var(--custom-table-background-sub-head-text);
+
+    @apply tw-text-base tw-font-bold;
+  }
 }
 
 .table-counter {

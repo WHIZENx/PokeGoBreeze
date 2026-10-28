@@ -220,7 +220,6 @@ const Timeline = (
               className="tw-relative tw-pb-10"
               ref={timeline}
               onMouseMove={move.bind(this)}
-              onMouseOver={move.bind(this)}
               onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
             >
               {renderTimeline(pokemonCurr, pokemonObj, pokemonCurrTeam, true)}

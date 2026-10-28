@@ -265,7 +265,7 @@
 .play-line {
   transform: translateY(-50%);
 
-  @apply tw-w-px tw-h-full tw-absolute tw-top-1/2;
+  @apply tw-w-px tw-h-full tw-absolute tw-top-1/2 tw-will-change-transform;
 }
 
 .battle-logo {

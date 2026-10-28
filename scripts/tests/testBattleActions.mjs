@@ -123,8 +123,8 @@ assert.match(
 );
 assert.match(
   battlePage,
-  /const renderHeaderActions[\s\S]*tw-w-16 tw-shrink-0[\s\S]*title="Random Pokémon"[\s\S]*selectRefs\[teamIndex\]\?\.selectRandomPokemon\(\)[\s\S]*title="Remove Pokémon"[\s\S]*removeBenchMember/,
-  'Random and bench Remove actions must be available directly from each Pokémon accordion header.'
+  /const clearLeadMember[\s\S]*setTimelineCursor\(-1\)[\s\S]*clearDataPokemonObj\(false\)[\s\S]*clearDataPokemonCurr\(false\)[\s\S]*title="Clear Pokémon"[\s\S]*aria-label=\{`Clear \$\{sideLabel\} Pokémon \$\{teamIndex \+ 1\}`\}[\s\S]*clearLeadMember\(\)[\s\S]*title="Remove Pokémon"[\s\S]*removeBenchMember/,
+  'Lead Clear and bench Remove actions must be available directly from each Pokémon accordion header.'
 );
 assert.match(
   battlePage,
@@ -275,6 +275,38 @@ assert.match(
   battlePage,
   /timelineType === TimelineType\.Fit \? 'tw-mt-4' : ''[\s\S]*label="Show Tap Move"/,
   'Fit Timeline controls must retain clear spacing below the timeline visualization.'
+);
+assert.match(
+  battlePage,
+  /const updateCurrentTimelineState = \(\) => \{[\s\S]*setTimelineCursor\(index\)[\s\S]*setActiveTeamIndexes[\s\S]*setPlayTimeline[\s\S]*startTransition\(updateCurrentTimelineState\)/,
+  'Timeline playback UI updates must remain non-blocking so the play line can animate smoothly.'
+);
+assert.match(
+  battlePage,
+  /scheduleTimelineScrub\(elem, x, arrBound\.current\)[\s\S]*scheduleTimelineScrub\(elem, x, arrStore\.current\)[\s\S]*const updateTimeline = \(index: number, sound = false, immediate = false\)[\s\S]*if \(immediate\)[\s\S]*updateCurrentTimelineState\(\)[\s\S]*startTransition\(updateCurrentTimelineState\)/,
+  'Mouse and touch scrubbing must update HP immediately while animated playback keeps non-blocking transitions.'
+);
+assert.match(
+  battlePage,
+  /const scheduleTimelineScrub[\s\S]*requestAnimationFrame\(\(timestamp\)[\s\S]*pending\.elem\.style\.transform[\s\S]*timestamp - lastTimelineScrubStateAt\.current >= 64[\s\S]*checkOverlap\(pending\.offsets, pending\.position\)[\s\S]*setTimeout[\s\S]*checkOverlap\(latest\.offsets, latest\.position, false, true\)[\s\S]*80/,
+  'Timeline scrubbing must keep the play line at animation-frame speed while throttling full battle-state renders and settling on the exact final state.'
+);
+for (const timelineSource of [timeline, timelineFit]) {
+  assert.doesNotMatch(
+    timelineSource,
+    /onMouseOver=/,
+    'Timeline scrubbing must not duplicate bubbling mouse-move work with mouseover handlers.'
+  );
+}
+assert.match(
+  pvpStyles,
+  /\.play-line \{[\s\S]*tw-will-change-transform/,
+  'The timeline play line must keep its transform on a compositor-friendly layer.'
+);
+assert.match(
+  battlePage,
+  /const timelineVerticalContent = useMemo\([\s\S]*TimelineVertical[\s\S]*children: timelineVerticalContent/,
+  'Timeline playback must reuse the unchanged Vertical Timeline instead of rebuilding every event row per marker.'
 );
 for (const leagueId of ['DEFAULT_LITTLE', 'DEFAULT_GREAT', 'DEFAULT_ULTRA', 'DEFAULT_MASTER']) {
   assert.match(battlePage, new RegExp(leagueId), `The battle page must map the ${leagueId} standard league.`);

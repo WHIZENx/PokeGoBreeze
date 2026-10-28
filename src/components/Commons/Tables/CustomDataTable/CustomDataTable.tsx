@@ -102,8 +102,7 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
       >
         <DataTable
           {...props}
-          subHeader={props.isShowSearch}
-          subHeaderComponent={
+          subHeader={
             props.isShowSearch && (
               <CustomInput
                 menuItems={props.menuItems}
