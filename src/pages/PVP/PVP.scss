@@ -150,7 +150,7 @@
 }
 
 .battle-bar .battle-bar-container,
-.fit-timeline .tw-relative {
+.fit-timeline > .tw-relative {
   @apply tw-w-[calc(100%-20px)];
 }
 
