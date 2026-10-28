@@ -290,6 +290,8 @@ export interface PvpBattlePokemonRequest {
     level: number;
     iv: { atk: number; def: number; sta: number };
     hp: number;
+    startingHp?: number;
+    statStages?: { atk: number; def: number };
   };
   types: string[];
   pokemonType: number;

@@ -43,6 +43,30 @@ const AccordionSummary = styled((props: IAccordionSummaryProps) => {
   }),
 }));
 
+const AccordionHeaderActions = styled('div')(({ theme }) => ({
+  alignItems: 'center',
+  backgroundColor: 'rgba(0, 0, 0, .03)',
+  display: 'flex',
+  flexShrink: 0,
+  gap: theme.spacing(0.5),
+  paddingRight: theme.spacing(1),
+  transition: theme.transitions.create('background-color'),
+  ...theme.applyStyles('dark', {
+    backgroundColor: 'rgba(255, 255, 255, .05)',
+  }),
+}));
+
+const AccordionHeader = ({
+  headerActions,
+  children,
+  ...summaryProps
+}: IAccordionSummaryProps & { headerActions: React.ReactNode }) => (
+  <div className="tw-flex tw-items-stretch">
+    <AccordionSummary {...summaryProps}>{children}</AccordionSummary>
+    <AccordionHeaderActions className="accordion-header-actions">{headerActions}</AccordionHeaderActions>
+  </div>
+);
+
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
   borderTop: '1px solid rgba(0, 0, 0, .125)',
@@ -231,15 +255,27 @@ const AccordionMui = <T,>(props: AccordionMuiComponent<T>) => {
             ...(item.sxHeader ? item.sxHeader : {}),
           }}
         >
-          <AccordionSummary
-            sx={item.sxSummary}
-            aria-controls={`panel-bh-content-${index}`}
-            id={`panel-bh-header-${index}`}
-            hideIcon={item.hideIcon}
-          >
-            {item.label}
-          </AccordionSummary>
-          {storeAccordions[index] && (
+          {item.headerActions ? (
+            <AccordionHeader
+              sx={{ minWidth: 0, flex: 1, ...(item.sxSummary ?? {}) }}
+              aria-controls={`panel-bh-content-${index}`}
+              id={`panel-bh-header-${index}`}
+              hideIcon={item.hideIcon}
+              headerActions={item.headerActions}
+            >
+              {item.label}
+            </AccordionHeader>
+          ) : (
+            <AccordionSummary
+              sx={item.sxSummary}
+              aria-controls={`panel-bh-content-${index}`}
+              id={`panel-bh-header-${index}`}
+              hideIcon={item.hideIcon}
+            >
+              {item.label}
+            </AccordionSummary>
+          )}
+          {(item.keepMounted || storeAccordions[index]) && (
             <MemoizedAccordionContent
               item={item}
               isShowAction={props.isShowAction}

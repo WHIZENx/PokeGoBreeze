@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import '../PVP.scss';
 
-import SelectPoke from './Select';
+import SelectPoke, { type SelectPokeHandle } from './Select';
 import APIService from '../../../services/api.service';
 import {
   convertNameRankingToOri,
@@ -57,6 +57,7 @@ import { useParams } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import CasinoIcon from '@mui/icons-material/Casino';
 import { BattlePokemonData, IBattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
 import { ICombat } from '../../../core/models/combat.model';
 import {
@@ -273,6 +274,8 @@ const Battle = () => {
   const hpIVObjRef = useRef<HTMLInputElement>(null);
   const pokemonCurrBenchStatRefs = useRef<PokemonStatRefs[]>([]).current;
   const pokemonObjBenchStatRefs = useRef<PokemonStatRefs[]>([]).current;
+  const pokemonCurrSelectRefs = useRef<Array<SelectPokeHandle | null>>([]).current;
+  const pokemonObjSelectRefs = useRef<Array<SelectPokeHandle | null>>([]).current;
 
   const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
@@ -324,6 +327,7 @@ const Battle = () => {
   const createBattleRequest = (pokemon: IPokemonBattle): PvpBattlePokemonRequest => {
     const pokemonData = pokemon.pokemonData;
     const currentStats = pokemonData?.currentStats;
+    const maxHp = getBattleHp(currentStats?.stats?.statSTA);
     return {
       id: pokemonData?.id,
       pokemonId: pokemonData?.pokemon?.pokemonId?.toString(),
@@ -343,7 +347,12 @@ const Battle = () => {
           def: toNumber(currentStats?.IV?.defIV),
           sta: toNumber(currentStats?.IV?.staIV),
         },
-        hp: getBattleHp(currentStats?.stats?.statSTA),
+        hp: maxHp,
+        startingHp: Math.max(1, Math.min(maxHp, pokemon.startingHp ?? maxHp)),
+        statStages: {
+          atk: toNumber(pokemon.attackStage),
+          def: toNumber(pokemon.defenseStage),
+        },
       },
       types: pokemonData?.pokemon?.types ?? [],
       pokemonType: pokemon.pokemonType,
@@ -409,8 +418,9 @@ const Battle = () => {
       );
       setPokemonCurrBench(playerTeam.slice(1));
       setPokemonObjBench(opponentTeam.slice(1));
-      setPokemonCurrBenchExpanded(playerBenchExpanded);
-      setPokemonObjBenchExpanded(opponentBenchExpanded);
+      setLeadExpanded({ player: false, opponent: false });
+      setPokemonCurrBenchExpanded(playerBenchExpanded.map(() => false));
+      setPokemonObjBenchExpanded(opponentBenchExpanded.map(() => false));
       const warningMessages = [...new Set((response.data.meta.warnings ?? []).map((warning) => warning.message))];
       if (warningMessages.length) {
         showSnackbar(warningMessages.join(' '), 'warning');
@@ -1256,6 +1266,7 @@ const Battle = () => {
           checkOverlap(arrStore.current, transform);
         }
       }
+      focusBattleTimeline();
     }, 100);
   };
 
@@ -1640,9 +1651,21 @@ const Battle = () => {
       teamIndex === 0
         ? toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy, pokemon.energy)
         : pokemon.energy;
+    const maxHp = getBattleHp(pokemon.pokemonData?.currentStats?.stats?.statSTA);
+    const startingHp = Math.max(1, Math.min(maxHp, pokemon.startingHp ?? maxHp));
+    const minimumStatStage = optionsData.combatOptions.minimumStatStage ?? -4;
+    const maximumStatStage = optionsData.combatOptions.maximumStatStage ?? 4;
+    const statStageOptions = Array.from(
+      { length: maximumStatStage - minimumStatStage + 1 },
+      (_, index) => minimumStatStage + index
+    ).map((value) => ({ label: value > 0 ? `+${value}` : `${value}`, value }));
     return (
       <Fragment>
         <SelectPoke
+          ref={(instance) => {
+            const selectRefs = type === BattleType.Current ? pokemonCurrSelectRefs : pokemonObjSelectRefs;
+            selectRefs[teamIndex] = instance;
+          }}
           data={data}
           league={league}
           pokemonBattle={pokemon}
@@ -1651,40 +1674,84 @@ const Battle = () => {
         />
         {pokemon.pokemonData && (
           <Fragment>
-            <InputMui
-              labelPrepend="Energy"
-              defaultValue={pokemon.energy}
-              inputProps={{
-                type: 'number',
-                min: 0,
-                max: combatMaxEnergy(),
-                step: 1,
-                required: true,
-              }}
-              id={`energy${type}-${teamIndex}`}
-              fullWidth
-              onChange={(value) => {
-                const energy = toNumber(value);
-                if (teamIndex === 0 && type === BattleType.Current) {
-                  setPlayTimeline({
-                    ...playTimeline,
-                    pokemonCurr: PokemonBattleData.create({
-                      ...playTimeline.pokemonCurr,
-                      energy,
-                    }),
-                  });
-                } else if (teamIndex === 0 && type === BattleType.Object) {
-                  setPlayTimeline({
-                    ...playTimeline,
-                    pokemonObj: PokemonBattleData.create({
-                      ...playTimeline.pokemonObj,
-                      energy,
-                    }),
-                  });
+            <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2">
+              <InputMui
+                labelPrepend="Energy"
+                defaultValue={pokemon.energy}
+                inputProps={{
+                  type: 'number',
+                  min: 0,
+                  max: combatMaxEnergy(),
+                  step: 1,
+                  required: true,
+                }}
+                id={`energy${type}-${teamIndex}`}
+                fullWidth
+                onChange={(value) => {
+                  const energy = toNumber(value);
+                  if (teamIndex === 0 && type === BattleType.Current) {
+                    setPlayTimeline({
+                      ...playTimeline,
+                      pokemonCurr: PokemonBattleData.create({
+                        ...playTimeline.pokemonCurr,
+                        energy,
+                      }),
+                    });
+                  } else if (teamIndex === 0 && type === BattleType.Object) {
+                    setPlayTimeline({
+                      ...playTimeline,
+                      pokemonObj: PokemonBattleData.create({
+                        ...playTimeline.pokemonObj,
+                        energy,
+                      }),
+                    });
+                  }
+                  setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy }));
+                }}
+              />
+              <InputMui
+                labelPrepend="Starting HP"
+                value={startingHp}
+                inputProps={{ type: 'number', min: 1, max: maxHp, step: 1, required: true }}
+                id={`starting-hp-${type}-${teamIndex}`}
+                fullWidth
+                onChange={(value) =>
+                  setPokemon(
+                    PokemonBattle.create({
+                      ...pokemon,
+                      timeline: [],
+                      startingHp: Math.max(1, Math.min(maxHp, toNumber(value, maxHp))),
+                    })
+                  )
                 }
-                setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy }));
-              }}
-            />
+              />
+              {teamIndex === 0 && (
+                <>
+                  <InputMui
+                    labelPrepend="Attack Stage"
+                    value={toNumber(pokemon.attackStage)}
+                    id={`attack-stage-${type}`}
+                    fullWidth
+                    select
+                    menuItems={statStageOptions}
+                    onChange={(value) =>
+                      setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], attackStage: toNumber(value) }))
+                    }
+                  />
+                  <InputMui
+                    labelPrepend="Defense Stage"
+                    value={toNumber(pokemon.defenseStage)}
+                    id={`defense-stage-${type}`}
+                    fullWidth
+                    select
+                    menuItems={statStageOptions}
+                    onChange={(value) =>
+                      setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], defenseStage: toNumber(value) }))
+                    }
+                  />
+                </>
+              )}
+            </div>
             <InputMui
               labelPrepend="Block"
               value={pokemon.block}
@@ -1813,12 +1880,13 @@ const Battle = () => {
 
   const getTeamMemberHp = (pokemon: IPokemonBattle, teamIndex: number, isOpponent: boolean) => {
     const maxHp = getBattleHp(pokemon.pokemonData?.currentStats?.stats?.statSTA);
+    const configuredHp = maxHp > 0 ? Math.max(1, Math.min(maxHp, pokemon.startingHp ?? maxHp)) : 0;
     const timeline = (isOpponent ? pokemonObj.timeline : pokemonCurr.timeline).slice(0, timelineCursor + 1);
     if (timeline.some((entry) => entry.faintedIndex === teamIndex)) {
       return { hp: 0, maxHp };
     }
     const latest = timeline.findLast((entry) => (entry.activeIndex ?? 0) === teamIndex);
-    return { hp: Math.max(0, latest?.hp ?? maxHp), maxHp };
+    return { hp: Math.max(0, latest?.hp ?? configuredHp), maxHp };
   };
 
   const isTimelineTeamMemberActive = (isOpponent: boolean, teamIndex: number) =>
@@ -1836,13 +1904,31 @@ const Battle = () => {
         ...(active ? { backgroundColor: 'action.selected' } : {}),
         transition: 'background-color 280ms ease-out',
       },
+      '& .accordion-header-actions': {
+        ...(active ? { backgroundColor: 'action.selected' } : {}),
+        transition: 'background-color 280ms ease-out',
+      },
       '@media (prefers-reduced-motion: reduce)': {
         transition: 'none',
         '& .MuiAccordionSummary-root': {
           transition: 'none',
         },
+        '& .accordion-header-actions': {
+          transition: 'none',
+        },
       },
     };
+  };
+
+  const teamAccordionSummarySx = {
+    '& .MuiAccordionSummary-expandIconWrapper': {
+      order: -1,
+      marginLeft: 0,
+      marginRight: 1,
+    },
+    '& .MuiAccordionSummary-content': {
+      marginLeft: 0,
+    },
   };
 
   const renderTeamMemberSummary = (
@@ -1923,43 +2009,14 @@ const Battle = () => {
     );
   };
 
-  const renderLeadTeamMember = (isOpponent: boolean) => {
-    const pokemon = isOpponent ? pokemonObj : pokemonCurr;
-    const sideLabel = isOpponent ? 'Opponent' : 'Player';
-    const isExpanded = isOpponent ? leadExpanded.opponent : leadExpanded.player;
-    return (
-      <AccordionMui
-        defaultValue={1}
-        onChange={(value) =>
-          setLeadExpanded((current) => ({
-            ...current,
-            [isOpponent ? 'opponent' : 'player']: value === 1,
-          }))
-        }
-        items={[
-          {
-            value: 1,
-            sxHeader: timelineActiveAccordionSx(isOpponent, 0),
-            label: renderTeamMemberSummary(pokemon, 1, sideLabel, isOpponent, isExpanded),
-            children: renderPokemonInfo(
-              isOpponent ? BattleType.Object : BattleType.Current,
-              pokemon,
-              isOpponent ? setPokemonObj : setPokemonCurr,
-              isOpponent ? clearDataPokemonObj : clearDataPokemonCurr,
-              0
-            ),
-          },
-        ]}
-      />
-    );
-  };
-
-  const renderBenchTeam = (isOpponent: boolean) => {
+  const renderTeam = (isOpponent: boolean) => {
+    const lead = isOpponent ? pokemonObj : pokemonCurr;
     const bench = isOpponent ? pokemonObjBench : pokemonCurrBench;
     const setBench = isOpponent ? setPokemonObjBench : setPokemonCurrBench;
     const benchExpanded = isOpponent ? pokemonObjBenchExpanded : pokemonCurrBenchExpanded;
     const setBenchExpanded = isOpponent ? setPokemonObjBenchExpanded : setPokemonCurrBenchExpanded;
     const benchStatRefs = isOpponent ? pokemonObjBenchStatRefs : pokemonCurrBenchStatRefs;
+    const selectRefs = isOpponent ? pokemonObjSelectRefs : pokemonCurrSelectRefs;
     const sideLabel = isOpponent ? 'Opponent' : 'Player';
     const updateMember = (index: number, value: React.SetStateAction<IPokemonBattle>) => {
       setBench((current) =>
@@ -1969,81 +2026,123 @@ const Battle = () => {
       );
       clearBattleResult();
     };
-    return (
-      <div className="tw-mt-3 tw-space-y-2">
-        {bench.map((pokemon, index) => (
-          <AccordionMui
-            key={`${sideLabel}-${index}`}
-            onChange={(value) =>
-              setBenchExpanded((current) =>
-                current.map((expanded, memberIndex) => (memberIndex === index ? value !== undefined : expanded))
-              )
-            }
-            items={[
-              {
-                value: index,
-                sxHeader: timelineActiveAccordionSx(isOpponent, index + 1),
-                label: renderTeamMemberSummary(
-                  pokemon,
-                  index + 2,
-                  sideLabel,
-                  isOpponent,
-                  benchExpanded[index] ?? false
-                ),
-                children: (
-                  <>
-                    {renderPokemonInfo(
-                      isOpponent ? BattleType.Object : BattleType.Current,
-                      pokemon,
-                      (value) => updateMember(index, value),
-                      (removeMove) =>
-                        updateMember(
-                          index,
-                          removeMove
-                            ? PokemonBattle.create({ ...pokemon, cMoveSec: undefined, timeline: [] })
-                            : new PokemonBattle()
-                        ),
-                      index + 1
-                    )}
-                    <ButtonMui
-                      className="!tw-mt-5"
-                      fullWidth
-                      color="error"
-                      variant="outlined"
-                      startIcon={<RemoveCircleIcon />}
-                      label="Remove Pokémon"
-                      onClick={() => {
-                        stopPokemonAudio(pokemon);
-                        benchStatRefs.splice(index, 1);
-                        setBench((current) => current.filter((_, memberIndex) => memberIndex !== index));
-                        setBenchExpanded((current) => current.filter((_, memberIndex) => memberIndex !== index));
-                        clearBattleResult();
-                      }}
-                    />
-                  </>
-                ),
-              },
-            ]}
-          />
-        ))}
-        {bench.length < maxPvpTeamSize - 1 && (
-          <ButtonMui
-            fullWidth
-            variant="outlined"
-            startIcon={<AddCircleIcon />}
-            label="Add Pokémon"
-            onClick={() => {
-              setBench((current) => [
-                ...current,
-                PokemonBattle.create({
-                  ...new PokemonBattle(),
-                  block: isOpponent ? pokemonObj.block : pokemonCurr.block,
-                }),
-              ]);
-              setBenchExpanded((current) => [...current, false]);
+    const removeBenchMember = (index: number, pokemon: IPokemonBattle) => {
+      stopPokemonAudio(pokemon);
+      benchStatRefs.splice(index, 1);
+      selectRefs.splice(index + 1, 1);
+      setBench((current) => current.filter((_, memberIndex) => memberIndex !== index));
+      setBenchExpanded((current) => current.filter((_, memberIndex) => memberIndex !== index));
+      clearBattleResult();
+    };
+    const stopHeaderAction = (event: React.SyntheticEvent) => event.stopPropagation();
+    const renderHeaderActions = (teamIndex: number, pokemon: IPokemonBattle, benchIndex?: number) => (
+      <span className="tw-flex tw-w-16 tw-shrink-0 tw-items-center tw-justify-end tw-gap-1">
+        <Tooltips title="Random Pokémon">
+          <IconButton
+            aria-label={`Random ${sideLabel} Pokémon ${teamIndex + 1}`}
+            disabled={!isNotEmpty(data)}
+            size="small"
+            onMouseDown={stopHeaderAction}
+            onClick={(event) => {
+              stopHeaderAction(event);
+              selectRefs[teamIndex]?.selectRandomPokemon();
             }}
-          />
+          >
+            <CasinoIcon fontSize="small" />
+          </IconButton>
+        </Tooltips>
+        {benchIndex !== undefined && (
+          <Tooltips title="Remove Pokémon">
+            <IconButton
+              aria-label={`Remove ${sideLabel} Pokémon ${teamIndex + 1}`}
+              color="error"
+              size="small"
+              onMouseDown={stopHeaderAction}
+              onClick={(event) => {
+                stopHeaderAction(event);
+                removeBenchMember(benchIndex, pokemon);
+              }}
+            >
+              <RemoveCircleIcon fontSize="small" />
+            </IconButton>
+          </Tooltips>
         )}
+      </span>
+    );
+    const leadExpandedForSide = isOpponent ? leadExpanded.opponent : leadExpanded.player;
+    return (
+      <div aria-label={`${sideLabel} team`}>
+        <AccordionMui
+          defaultValue={0}
+          resetItemOnChange={isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline)}
+          onChange={(value) => {
+            const expandedSlot = typeof value === 'number' ? value : undefined;
+            setLeadExpanded((current) => ({
+              ...current,
+              [isOpponent ? 'opponent' : 'player']: expandedSlot === 0,
+            }));
+            setBenchExpanded(bench.map((_, index) => expandedSlot === index + 1));
+          }}
+          items={[
+            {
+              value: 0,
+              keepMounted: true,
+              sxHeader: timelineActiveAccordionSx(isOpponent, 0),
+              sxSummary: teamAccordionSummarySx,
+              label: renderTeamMemberSummary(lead, 1, sideLabel, isOpponent, leadExpandedForSide),
+              headerActions: renderHeaderActions(0, lead),
+              children: renderPokemonInfo(
+                isOpponent ? BattleType.Object : BattleType.Current,
+                lead,
+                isOpponent ? setPokemonObj : setPokemonCurr,
+                isOpponent ? clearDataPokemonObj : clearDataPokemonCurr,
+                0
+              ),
+            },
+            ...bench.map((pokemon, index) => ({
+              value: index + 1,
+              keepMounted: true,
+              sxHeader: timelineActiveAccordionSx(isOpponent, index + 1),
+              sxSummary: teamAccordionSummarySx,
+              label: renderTeamMemberSummary(pokemon, index + 2, sideLabel, isOpponent, benchExpanded[index] ?? false),
+              headerActions: renderHeaderActions(index + 1, pokemon, index),
+              children: renderPokemonInfo(
+                isOpponent ? BattleType.Object : BattleType.Current,
+                pokemon,
+                (value) => updateMember(index, value),
+                (removeMove) =>
+                  updateMember(
+                    index,
+                    removeMove
+                      ? PokemonBattle.create({ ...pokemon, cMoveSec: undefined, timeline: [] })
+                      : new PokemonBattle()
+                  ),
+                index + 1
+              ),
+            })),
+          ]}
+        />
+        <div className="tw-mt-3">
+          {bench.length < maxPvpTeamSize - 1 && (
+            <ButtonMui
+              fullWidth
+              variant="outlined"
+              startIcon={<AddCircleIcon />}
+              label="Add Pokémon"
+              onClick={() => {
+                setBench((current) => [
+                  ...current,
+                  PokemonBattle.create({
+                    ...new PokemonBattle(),
+                    block: isOpponent ? pokemonObj.block : pokemonCurr.block,
+                  }),
+                ]);
+                setBenchExpanded((current) => [...current, false]);
+                clearBattleResult();
+              }}
+            />
+          )}
+        </div>
       </div>
     );
   };
@@ -2331,6 +2430,60 @@ const Battle = () => {
     />
   );
 
+  const renderBattleControls = () =>
+    pokemonCurr.pokemonData && pokemonObj.pokemonData ? (
+      <div aria-label="Simulation controls" className="tw-order-3 tw-mt-2 md:tw-col-span-2">
+        <div className="tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-p-3">
+          <div className="tw-grid tw-w-full tw-grid-cols-1 tw-gap-2 sm:tw-grid-cols-2">
+            {renderStrategyButton('Player Strategy', 'playerStrategy', 1 + pokemonCurrBench.length)}
+            {renderStrategyButton('Opponent Strategy', 'opponentStrategy', 1 + pokemonObjBench.length)}
+          </div>
+          <div className="tw-mt-3 tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-2">
+            {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
+              <>
+                <ButtonMui
+                  className="tw-h-12.5"
+                  startIcon={<RestartAltIcon />}
+                  label="Reset Battle"
+                  onClick={() => void battleAnimation()}
+                />
+                <ButtonMui
+                  className="tw-h-12.5"
+                  color="error"
+                  variant="outlined"
+                  startIcon={<DeleteSweepIcon />}
+                  label="Clear Battle"
+                  onClick={() => {
+                    clearBattleResult();
+                    focusBattleTimeline();
+                  }}
+                />
+                <ButtonMui
+                  className="tw-h-12.5"
+                  color="success"
+                  startIcon={<FileDownloadIcon />}
+                  label="Export Battle"
+                  onClick={() => void exportBattle()}
+                />
+              </>
+            ) : (
+              <ButtonMui
+                className="tw-h-12.5"
+                startIcon={
+                  <span className="tw-relative">
+                    <img height={36} alt="ATK Left" src={ATK_LOGO} />
+                    <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
+                  </span>
+                }
+                label="Battle Simulator"
+                onClick={() => void battleAnimation()}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    ) : null;
+
   const selectedBattleRule = leagueRules.find((item) => item.id === selectedLeagueId);
   const ruleConditions = selectedBattleRule?.conditions;
   const rulePokemonName = (name: string | undefined, id: number | undefined, form: string | undefined) =>
@@ -2361,58 +2514,60 @@ const Battle = () => {
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-container tw-mt-4 battle-body-container">
-        <SelectMui
-          fullWidth
-          value={league}
-          onChangeSelect={(value) => {
-            navigateToTop(`/pvp/battle/${value}`);
-            setOptions({ ...options, league: value });
-            setSelectedLeagueId(defaultLeagueId(value));
-            clearBattleResult();
-          }}
-          menuItems={[
-            {
-              value: BattleLeagueCPType.Little,
-              label: getPokemonBattleLeagueName(BattleLeagueCPType.Little),
-            },
-            {
-              value: BattleLeagueCPType.Great,
-              label: getPokemonBattleLeagueName(BattleLeagueCPType.Great),
-            },
-            {
-              value: BattleLeagueCPType.Ultra,
-              label: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra),
-            },
-            {
-              value: BattleLeagueCPType.InsMaster,
-              label: getPokemonBattleLeagueName(BattleLeagueCPType.InsMaster),
-            },
-          ]}
-        />
-        <SelectMui
-          fullWidth
-          formClassName="!tw-mt-2"
-          inputLabel="Battle rules"
-          value={selectedLeagueId}
-          onChangeSelect={(value) => {
-            setSelectedLeagueId(value);
-            clearBattleResult();
-          }}
-          menuItems={[
-            {
-              value: defaultLeagueId(league),
-              label: `${getPokemonBattleLeagueName(league)} · Standard`,
-            },
-            ...leagueRules
-              .filter(
-                (item) =>
-                  item.conditions.maxCp === league ||
-                  (league === BattleLeagueCPType.InsMaster && toNumber(item.conditions.maxCp) >= 6_000)
-              )
-              .filter((item) => item.id !== defaultLeagueId(league))
-              .map((item) => ({ value: item.id ?? '', label: item.title })),
-          ]}
-        />
+        <div className="tw-grid tw-grid-cols-1 tw-gap-2 md:tw-grid-cols-2">
+          <SelectMui
+            fullWidth
+            inputLabel="League"
+            value={league}
+            onChangeSelect={(value) => {
+              navigateToTop(`/pvp/battle/${value}`);
+              setOptions({ ...options, league: value });
+              setSelectedLeagueId(defaultLeagueId(value));
+              clearBattleResult();
+            }}
+            menuItems={[
+              {
+                value: BattleLeagueCPType.Little,
+                label: getPokemonBattleLeagueName(BattleLeagueCPType.Little),
+              },
+              {
+                value: BattleLeagueCPType.Great,
+                label: getPokemonBattleLeagueName(BattleLeagueCPType.Great),
+              },
+              {
+                value: BattleLeagueCPType.Ultra,
+                label: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra),
+              },
+              {
+                value: BattleLeagueCPType.InsMaster,
+                label: getPokemonBattleLeagueName(BattleLeagueCPType.InsMaster),
+              },
+            ]}
+          />
+          <SelectMui
+            fullWidth
+            inputLabel="Battle rules"
+            value={selectedLeagueId}
+            onChangeSelect={(value) => {
+              setSelectedLeagueId(value);
+              clearBattleResult();
+            }}
+            menuItems={[
+              {
+                value: defaultLeagueId(league),
+                label: `${getPokemonBattleLeagueName(league)} · Standard`,
+              },
+              ...leagueRules
+                .filter(
+                  (item) =>
+                    item.conditions.maxCp === league ||
+                    (league === BattleLeagueCPType.InsMaster && toNumber(item.conditions.maxCp) >= 6_000)
+                )
+                .filter((item) => item.id !== defaultLeagueId(league))
+                .map((item) => ({ value: item.id ?? '', label: item.title })),
+            ]}
+          />
+        </div>
         <DismissibleAlert
           resetKey={selectedLeagueId}
           severity="info"
@@ -2509,18 +2664,15 @@ const Battle = () => {
             )}
           </div>
         </DismissibleAlert>
-        <div className="row tw-mt-4 !tw-m-0 md:!tw-grid md:tw-grid-cols-2 2xl:tw-grid-cols-4">
-          <div className="tw-order-1 !tw-my-3 2xl:tw-col-span-1">
-            {renderLeadTeamMember(false)}
-            {renderBenchTeam(false)}
-          </div>
+        <div className="row tw-mt-4 !tw-m-0 md:!tw-grid md:tw-grid-cols-2">
+          <div className="tw-order-1 !tw-my-3">{renderTeam(false)}</div>
           <Fragment>
             {!pokemonCurr.pokemonData && !pokemonObj.pokemonData && <hr className="tw-block !tw-mt-4 md:tw-hidden" />}
           </Fragment>
           <div
             ref={timelineFocusRef}
             aria-label="Battle timeline"
-            className="tw-order-3 tw-scroll-mt-20 tw-outline-none md:tw-col-span-2 2xl:tw-order-2 2xl:tw-mt-4 2xl:tw-col-span-2"
+            className="tw-order-4 tw-mt-4 tw-scroll-mt-20 tw-outline-none md:tw-col-span-2"
             tabIndex={-1}
           >
             {pokemonCurr.pokemonData &&
@@ -2663,7 +2815,7 @@ const Battle = () => {
                         </span>
                       </div>
                     </div>
-                    <div className="tw-mt-3 tw-flex tw-justify-center tw-gap-x-2 lg:tw-mt-0">
+                    <div className="tw-mt-4 tw-flex tw-flex-wrap tw-justify-center tw-gap-2 tw-pb-2">
                       <ButtonMui
                         startIcon={playState ? <PauseIcon /> : <PlayArrowIcon />}
                         label={playState ? 'Stop' : 'Play'}
@@ -2685,59 +2837,9 @@ const Battle = () => {
                 </Fragment>
               )}
           </div>
-          <div className="tw-order-2 !tw-my-3 2xl:tw-order-3 2xl:tw-col-span-1">
-            {renderLeadTeamMember(true)}
-            {renderBenchTeam(true)}
-          </div>
+          <div className="tw-order-2 !tw-my-3">{renderTeam(true)}</div>
+          {renderBattleControls()}
         </div>
-        {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
-          <div className="tw-mt-2 tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-2">
-            <div className="tw-grid tw-w-full tw-grid-cols-1 tw-gap-2 sm:tw-grid-cols-2">
-              {renderStrategyButton('Player Strategy', 'playerStrategy', 1 + pokemonCurrBench.length)}
-              {renderStrategyButton('Opponent Strategy', 'opponentStrategy', 1 + pokemonObjBench.length)}
-            </div>
-            {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
-              <>
-                <ButtonMui
-                  className="tw-h-12.5"
-                  startIcon={<RestartAltIcon />}
-                  label="Reset Battle"
-                  onClick={() => void battleAnimation()}
-                />
-                <ButtonMui
-                  className="tw-h-12.5"
-                  color="error"
-                  variant="outlined"
-                  startIcon={<DeleteSweepIcon />}
-                  label="Clear Battle"
-                  onClick={() => {
-                    clearBattleResult();
-                    focusBattleTimeline();
-                  }}
-                />
-                <ButtonMui
-                  className="tw-h-12.5"
-                  color="success"
-                  startIcon={<FileDownloadIcon />}
-                  label="Export Battle"
-                  onClick={() => void exportBattle()}
-                />
-              </>
-            ) : (
-              <ButtonMui
-                className="tw-h-12.5"
-                startIcon={
-                  <span className="tw-relative">
-                    <img height={36} alt="ATK Left" src={ATK_LOGO} />
-                    <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
-                  </span>
-                }
-                label="Battle Simulator"
-                onClick={() => void battleAnimation()}
-              />
-            )}
-          </div>
-        )}
         {strategyDialog && (
           <React.Suspense fallback={null}>
             <DialogMui
