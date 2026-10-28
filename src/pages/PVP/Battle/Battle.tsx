@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../PVP.scss';
 
 import SelectPoke, { createMoveAudio, type SelectPokeHandle } from './Select';
@@ -1038,6 +1038,12 @@ const Battle = ({ replayMode = false }: BattleProps) => {
       if (timelinePlay.current) {
         cancelAnimationFrame(timelinePlay.current);
       }
+      if (timelineScrubFrame.current !== null) {
+        cancelAnimationFrame(timelineScrubFrame.current);
+      }
+      if (timelineScrubSettleTimer.current) {
+        clearTimeout(timelineScrubSettleTimer.current);
+      }
       stopPokemonAudio(pokemonStateRef.current.curr);
       stopPokemonAudio(pokemonStateRef.current.obj);
     };
@@ -1078,6 +1084,15 @@ const Battle = ({ replayMode = false }: BattleProps) => {
   };
 
   const timelinePlay = useRef<number | null>(null);
+  const timelineScrubFrame = useRef<number | null>(null);
+  const pendingTimelineScrub = useRef<{
+    elem: HTMLDivElement;
+    offsets: number[];
+    position: number;
+  }>();
+  const latestTimelineScrubState = useRef<{ offsets: number[]; position: number }>();
+  const timelineScrubSettleTimer = useRef<ReturnType<typeof setTimeout>>();
+  const lastTimelineScrubStateAt = useRef(0);
   const start = useRef(0);
   const [playState, setPlayState] = useState(false);
   const scrollWidth = useRef(0);
@@ -1293,14 +1308,59 @@ const Battle = ({ replayMode = false }: BattleProps) => {
   const getTranslation = (elem: HTMLElement | null | undefined) =>
     elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
 
+  const cancelTimelineScrub = () => {
+    if (timelineScrubFrame.current !== null) {
+      cancelAnimationFrame(timelineScrubFrame.current);
+      timelineScrubFrame.current = null;
+    }
+    if (timelineScrubSettleTimer.current) {
+      clearTimeout(timelineScrubSettleTimer.current);
+      timelineScrubSettleTimer.current = undefined;
+    }
+    pendingTimelineScrub.current = undefined;
+    latestTimelineScrubState.current = undefined;
+    lastTimelineScrubStateAt.current = 0;
+  };
+
+  const scheduleTimelineScrub = (elem: HTMLDivElement, position: number, offsets: number[]) => {
+    pendingTimelineScrub.current = { elem, offsets, position };
+    if (timelineScrubFrame.current !== null) {
+      return;
+    }
+    timelineScrubFrame.current = requestAnimationFrame((timestamp) => {
+      timelineScrubFrame.current = null;
+      const pending = pendingTimelineScrub.current;
+      pendingTimelineScrub.current = undefined;
+      if (!pending) {
+        return;
+      }
+      pending.elem.style.transform = `translate(${pending.position}px, -50%)`;
+      latestTimelineScrubState.current = { offsets: pending.offsets, position: pending.position };
+      if (timestamp - lastTimelineScrubStateAt.current >= 64) {
+        lastTimelineScrubStateAt.current = timestamp;
+        checkOverlap(pending.offsets, pending.position);
+      }
+      if (timelineScrubSettleTimer.current) {
+        clearTimeout(timelineScrubSettleTimer.current);
+      }
+      timelineScrubSettleTimer.current = setTimeout(() => {
+        const latest = latestTimelineScrubState.current;
+        if (latest) {
+          checkOverlap(latest.offsets, latest.position, false, true);
+        }
+        timelineScrubSettleTimer.current = undefined;
+      }, 80);
+    });
+  };
+
   const onPlayLineMove = (e: TimelineEvent<HTMLDivElement>) => {
-    stopTimeline();
+    if (timelinePlay.current !== null) {
+      stopTimeline();
+    }
     const elem = playLine.current;
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
-    if (elem && x <= toNumber(timelineNormal.current?.clientWidth) - 2) {
-      elem.style.transform = `translate(${x}px, -50%)`;
-    }
+    const maxPosition = Math.max(0, toNumber(timelineNormal.current?.clientWidth) - 2);
+    const x = Math.min(maxPosition, Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left));
     if (
       !isNotEmpty(arrBound.current) &&
       isNotEmpty(pokemonCurr.timeline) &&
@@ -1310,17 +1370,19 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         pushOffsetById(arrBound.current, i);
       }
     }
-    checkOverlap(arrBound.current, x);
+    if (elem) {
+      scheduleTimelineScrub(elem, x, arrBound.current);
+    }
   };
 
   const onPlayLineFitMove = (e: TimelineEvent<HTMLDivElement>) => {
-    stopTimeline();
+    if (timelinePlay.current !== null) {
+      stopTimeline();
+    }
     const elem = playLine.current;
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
-    if (elem && x <= toNumber(timelineFit.current?.clientWidth)) {
-      elem.style.transform = `translate(${x}px, -50%)`;
-    }
+    const maxPosition = toNumber(timelineFit.current?.clientWidth);
+    const x = Math.min(maxPosition, Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left));
     if (
       (xFit.current !== e.currentTarget.clientWidth || !isNotEmpty(arrStore.current)) &&
       isNotEmpty(pokemonCurr.timeline)
@@ -1331,10 +1393,13 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         pushOffsetById(arrStore.current, i);
       }
     }
-    checkOverlap(arrStore.current, x);
+    if (elem) {
+      scheduleTimelineScrub(elem, x, arrStore.current);
+    }
   };
 
   const playingTimeline = async () => {
+    cancelTimelineScrub();
     if (preparingMoveAudio.current) {
       return;
     }
@@ -1447,6 +1512,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
   };
 
   const resetTimeline = () => {
+    cancelTimelineScrub();
     stopTimeline();
     lastTimelineIndex.current = -1;
     setTimelineCursor(-1);
@@ -1472,11 +1538,11 @@ const Battle = ({ replayMode = false }: BattleProps) => {
     });
   };
 
-  const checkOverlap = (offsets: number[], pos = 0, sound = false) => {
+  const checkOverlap = (offsets: number[], pos = 0, sound = false, immediate = false) => {
     const crossedMarkerCount = overlappingPosFromOffsets(offsets, pos);
     const eventIndex = crossedMarkerCount - 1;
     if (eventIndex >= -1 && eventIndex < offsets.length) {
-      updateTimeline(eventIndex, sound);
+      updateTimeline(eventIndex, sound, immediate);
     }
   };
 
@@ -1525,25 +1591,32 @@ const Battle = ({ replayMode = false }: BattleProps) => {
     }
   };
 
-  const updateTimeline = (index: number, sound = false) => {
+  const updateTimeline = (index: number, sound = false, immediate = false) => {
     if (index < 0) {
-      if (index === lastTimelineIndex.current) {
+      if (index === lastTimelineIndex.current && !immediate) {
         return;
       }
       lastTimelineIndex.current = -1;
       lastSoundIndex.current = -1;
-      setTimelineCursor(-1);
-      setActiveTeamIndexes({ player: 0, opponent: 0 });
-      setPlayTimeline({
-        pokemonCurr: PokemonBattleData.setValue(
-          pokemonCurr.energy,
-          getBattleHp(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA)
-        ),
-        pokemonObj: PokemonBattleData.setValue(
-          pokemonObj.energy,
-          getBattleHp(pokemonObj.pokemonData?.currentStats?.stats?.statSTA)
-        ),
-      });
+      const updateInitialTimelineState = () => {
+        setTimelineCursor(-1);
+        setActiveTeamIndexes({ player: 0, opponent: 0 });
+        setPlayTimeline({
+          pokemonCurr: PokemonBattleData.setValue(
+            pokemonCurr.energy,
+            getBattleHp(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA)
+          ),
+          pokemonObj: PokemonBattleData.setValue(
+            pokemonObj.energy,
+            getBattleHp(pokemonObj.pokemonData?.currentStats?.stats?.statSTA)
+          ),
+        });
+      };
+      if (immediate) {
+        updateInitialTimelineState();
+      } else {
+        startTransition(updateInitialTimelineState);
+      }
       return;
     }
     const pokeCurrData = pokemonCurr.timeline.at(index);
@@ -1557,16 +1630,27 @@ const Battle = ({ replayMode = false }: BattleProps) => {
       playMoveAudio(playerTeam[playerIndex] ?? pokemonCurr, pokeCurrData);
       playMoveAudio(opponentTeam[opponentIndex] ?? pokemonObj, pokeObjData);
     }
-    if (index === lastTimelineIndex.current) {
+    if (index === lastTimelineIndex.current && !immediate) {
       return;
     }
     lastTimelineIndex.current = index;
-    setTimelineCursor(index);
-    setActiveTeamIndexes({ player: playerIndex, opponent: opponentIndex });
-    setPlayTimeline({
-      pokemonCurr: PokemonBattleData.setValue(pokeCurrData?.energy, pokeCurrData?.hp),
-      pokemonObj: PokemonBattleData.setValue(pokeObjData?.energy, pokeObjData?.hp),
-    });
+    const updateCurrentTimelineState = () => {
+      setTimelineCursor(index);
+      setActiveTeamIndexes((current) =>
+        current.player === playerIndex && current.opponent === opponentIndex
+          ? current
+          : { player: playerIndex, opponent: opponentIndex }
+      );
+      setPlayTimeline({
+        pokemonCurr: PokemonBattleData.setValue(pokeCurrData?.energy, pokeCurrData?.hp),
+        pokemonObj: PokemonBattleData.setValue(pokeObjData?.energy, pokeObjData?.hp),
+      });
+    };
+    if (immediate) {
+      updateCurrentTimelineState();
+    } else {
+      startTransition(updateCurrentTimelineState);
+    }
   };
 
   const onScrollTimeline = (e: React.SyntheticEvent<HTMLDivElement>) => {
@@ -1599,7 +1683,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         }
         if (elem) {
           elem.style.transform = `translate(${transform}px, -50%)`;
-          checkOverlap(arrBound.current, transform);
+          checkOverlap(arrBound.current, transform, false, true);
         }
         timelineNormalContainer.current?.scrollTo({
           left: Math.min(transform, transform - timelineNormalContainer.current?.clientWidth / 2),
@@ -1612,7 +1696,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         }
         if (elem) {
           elem.style.transform = `translate(${transform}px, -50%)`;
-          checkOverlap(arrStore.current, transform);
+          checkOverlap(arrStore.current, transform, false, true);
         }
       }
       focusBattleTimeline();
@@ -1646,7 +1730,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         if (playLine.current) {
           playLine.current.style.transform = `translate(${position}px, -50%)`;
         }
-        checkOverlap(offsets, position);
+        checkOverlap(offsets, position, false, true);
         if (isNormal) {
           timelineNormalContainer.current?.scrollTo({
             left: Math.max(0, position - toNumber(timelineNormalContainer.current?.clientWidth) / 2),
@@ -2425,6 +2509,18 @@ const Battle = ({ replayMode = false }: BattleProps) => {
       setBenchExpanded((current) => current.filter((_, memberIndex) => memberIndex !== index));
       clearBattleResult();
     };
+    const clearLeadMember = () => {
+      stopTimeline();
+      arrBound.current = [];
+      arrStore.current = [];
+      setTimelineCursor(-1);
+      setActiveTeamIndexes({ player: 0, opponent: 0 });
+      if (isOpponent) {
+        clearDataPokemonObj(false);
+      } else {
+        clearDataPokemonCurr(false);
+      }
+    };
     const stopHeaderAction = (event: React.SyntheticEvent) => event.stopPropagation();
     const renderHeaderActions = (teamIndex: number, pokemon: IPokemonBattle, benchIndex?: number) => (
       <span className="tw-flex tw-w-16 tw-shrink-0 tw-items-center tw-justify-end tw-gap-1">
@@ -2442,7 +2538,23 @@ const Battle = ({ replayMode = false }: BattleProps) => {
             <CasinoIcon fontSize="small" />
           </IconButton>
         </Tooltips>
-        {benchIndex !== undefined && (
+        {benchIndex === undefined ? (
+          <Tooltips title="Clear Pokémon">
+            <IconButton
+              aria-label={`Clear ${sideLabel} Pokémon ${teamIndex + 1}`}
+              color="error"
+              disabled={!pokemon.pokemonData}
+              size="small"
+              onMouseDown={stopHeaderAction}
+              onClick={(event) => {
+                stopHeaderAction(event);
+                clearLeadMember();
+              }}
+            >
+              <RemoveCircleIcon fontSize="small" />
+            </IconButton>
+          </Tooltips>
+        ) : (
           <Tooltips title="Remove Pokémon">
             <IconButton
               aria-label={`Remove ${sideLabel} Pokémon ${teamIndex + 1}`}
@@ -2978,6 +3090,11 @@ const Battle = ({ replayMode = false }: BattleProps) => {
       ))}
     </div>
   );
+  const timelineVerticalContent = useMemo(
+    () =>
+      TimelineVertical(pokemonCurr, pokemonObj, [pokemonCurr, ...pokemonCurrBench], [pokemonObj, ...pokemonObjBench]),
+    [pokemonCurr, pokemonCurrBench, pokemonObj, pokemonObjBench]
+  );
 
   return (
     <Error
@@ -3188,12 +3305,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
                           [pokemonCurr, ...pokemonCurrBench][activeTeamIndexes.player] ?? pokemonCurr,
                           [pokemonObj, ...pokemonObjBench][activeTeamIndexes.opponent] ?? pokemonObj
                         ),
-                        children: TimelineVertical(
-                          pokemonCurr,
-                          pokemonObj,
-                          [pokemonCurr, ...pokemonCurrBench],
-                          [pokemonObj, ...pokemonObjBench]
-                        ),
+                        children: timelineVerticalContent,
                       },
                     ]}
                   />

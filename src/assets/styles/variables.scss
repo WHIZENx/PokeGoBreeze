@@ -230,6 +230,8 @@ $dark-link: #6ea8fe;
   --loading-custom-bg: #{$white-smoke};
   --loading-spinner-bg-start: #{$v464646b3};
   --loading-spinner-bg-end: #{$v46464666};
+  --skeleton-page-background: rgb(0 0 0 / 10%);
+  --skeleton-page-wave-opacity: 0.7;
 
   // Data table
   --table-highlight-row: #{$e3f2fd};
@@ -349,6 +351,8 @@ $dark-link: #6ea8fe;
   --loading-custom-bg: #{$v1e1e1e};
   --loading-spinner-bg-start: #{$v303030b3};
   --loading-spinner-bg-end: #{$v30303066};
+  --skeleton-page-background: var(--custom-default);
+  --skeleton-page-wave-opacity: 0.35;
 
   // Data table
   --table-highlight-row: #{$v1a3f5f};

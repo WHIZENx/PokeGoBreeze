@@ -18,8 +18,6 @@ import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
@@ -43,6 +41,7 @@ import { ScoreType } from '../../../utils/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import DataTableSortIcon from '../../../components/Commons/Tables/DataTableSortIcon';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
@@ -475,7 +474,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                   )}
                 >
                   Team Score
-                  {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                  <DataTableSortIcon direction={sorted === SortDirectionType.DESC ? 'desc' : 'asc'} />
                 </span>
               </div>
               <div
@@ -494,7 +493,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                   )}
                 >
                   Individual Score
-                  {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                  <DataTableSortIcon direction={sorted === SortDirectionType.DESC ? 'desc' : 'asc'} />
                 </span>
               </div>
               <div
@@ -513,7 +512,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                   )}
                 >
                   Usage
-                  {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                  <DataTableSortIcon direction={sorted === SortDirectionType.DESC ? 'desc' : 'asc'} />
                 </span>
               </div>
             </div>
@@ -626,7 +625,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                   )}
                 >
                   Team Score
-                  {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                  <DataTableSortIcon direction={sortedTeam === SortDirectionType.DESC ? 'desc' : 'asc'} />
                 </span>
               </div>
               <div
@@ -647,7 +646,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                   )}
                 >
                   Usage
-                  {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                  <DataTableSortIcon direction={sortedTeam === SortDirectionType.DESC ? 'desc' : 'asc'} />
                 </span>
               </div>
             </div>

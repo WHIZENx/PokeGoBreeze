@@ -13,6 +13,7 @@ import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
 import useAssets from '../../../composables/useAssets';
 import { sortAnimationSources } from '../../../utils/pokemon-animation-assets';
+import { useImageSourceSequence } from '../../../utils/hooks/useImageSourceSequence';
 
 interface SpecialFormPokemonImageProps {
   id: number;
@@ -32,11 +33,7 @@ const SpecialFormPokemonImage = ({ id, form }: SpecialFormPokemonImageProps) => 
     }
     return [...new Set(sources)];
   }, [animation, staticAsset]);
-  const [sourceIndex, setSourceIndex] = useState(0);
-
-  useEffect(() => setSourceIndex(0), [imageSources]);
-
-  const activeSource = imageSources[sourceIndex] ?? APIService.getPokeSprite();
+  const { source: activeSource, advanceSource } = useImageSourceSequence([...imageSources, APIService.getPokeSprite()]);
   return (
     <img
       key={`${id}-${formName}-${activeSource}`}
@@ -49,11 +46,7 @@ const SpecialFormPokemonImage = ({ id, form }: SpecialFormPokemonImageProps) => 
       loading="lazy"
       decoding="async"
       referrerPolicy="no-referrer"
-      onError={() => {
-        if (sourceIndex < imageSources.length) {
-          setSourceIndex((current) => current + 1);
-        }
-      }}
+      onError={advanceSource}
     />
   );
 };

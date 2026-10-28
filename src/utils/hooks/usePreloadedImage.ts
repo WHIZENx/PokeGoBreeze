@@ -26,6 +26,26 @@ const uniqueUrls = (candidates: Array<string | null | undefined>) => [
   ...new Set(candidates.filter((candidate): candidate is string => Boolean(candidate))),
 ];
 
+export const preloadFirstAvailableImage = async (candidates: Array<string | null | undefined>) => {
+  for (const url of uniqueUrls(candidates)) {
+    if (isImagePreloaded(url)) {
+      return url;
+    }
+
+    const loaded = await new Promise<boolean>((resolve) => {
+      const image = new Image();
+      image.onload = () => resolve(true);
+      image.onerror = () => resolve(false);
+      image.src = url;
+    });
+    if (loaded) {
+      markImageAsPreloaded(url);
+      return url;
+    }
+  }
+  return undefined;
+};
+
 export const usePreloadedImage = (
   candidates: Array<string | null | undefined>,
   fallback: string,

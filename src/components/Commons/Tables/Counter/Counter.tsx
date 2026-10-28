@@ -92,45 +92,24 @@ const customStyles: TableStyles = {
       borderBottomWidth: 1,
       borderBottomStyle: 'solid',
       borderBottomColor: 'var(--custom-table-background-sub-head-border)',
-      '&:not(:last-of-type)': {
-        borderRightWidth: 1,
-        borderRightStyle: 'solid',
-        borderRightColor: 'var(--custom-table-background-sub-head-border)',
-      },
     },
   },
   cells: {
     style: {
-      '&:not(:last-of-type)': {
-        borderRightWidth: 1,
-        borderRightStyle: 'solid',
-        borderRightColor: 'var(--custom-table-background-sub-head-border)',
-        color: 'var(--text-primary)',
-      },
       borderBottomWidth: 1,
       borderBottomStyle: 'solid',
       borderBottomColor: 'var(--custom-table-background-sub-head-border)',
       justifyContent: 'center',
       textAlign: 'center',
-      padding: '0.25rem 0.5rem',
+      padding: '0.5rem',
       fontWeight: 'normal',
-      '&:first-of-type': {
-        fontSize: '0.75rem',
-      },
-      '&:last-of-type': {
-        fontWeight: 'bold',
-        color: 'var(--custom-table-background-sub-head-text)',
-        fontSize: '1rem',
-      },
     },
   },
   rows: {
     style: {
       color: 'var(--text-primary)',
       backgroundColor: 'transparent',
-      '&:not(:last-of-type)': {
-        borderBottomColor: 'var(--background-table-divided)',
-      },
+      minHeight: '6rem',
     },
     stripedStyle: {
       color: 'var(--text-primary)',
@@ -355,7 +334,7 @@ const Counter = (props: ICounterComponent) => {
       name: '%',
       selector: (row) => (
         <div className="tw-flex tw-flex-col tw-items-center tw-leading-tight">
-          <span>
+          <span className="tw-font-bold">
             {toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 }))}
           </span>
           <span className="tw-text-xs tw-font-normal tw-text-[var(--text-secondary)]">
@@ -501,6 +480,8 @@ const Counter = (props: ICounterComponent) => {
           className="table-counter-container"
           keyField="tableKey"
           customColumns={columns}
+          columnSeparator="full"
+          headerSeparator="full"
           defaultSortFieldId={ColumnType.Percent}
           defaultSortAsc={false}
           isShowSearch

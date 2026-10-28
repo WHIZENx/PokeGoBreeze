@@ -411,7 +411,7 @@ const drawPokemonCard = (
   width: number,
   accent: string,
   align: 'left' | 'right',
-  fontFamily: string,
+  fontStack: string,
   typeIcons: Map<string, HTMLImageElement>,
   statusIcons: Map<PokemonType, HTMLImageElement>,
   slot: number
@@ -432,40 +432,40 @@ const drawPokemonCard = (
   }
   drawText(context, battleState, imageX + 80, y + 250, {
     color: battleState === 'FAINTED' ? colors.danger : colors.result,
-    font: `700 28px ${fontFamily}`,
+    font: `700 28px ${fontStack}`,
     align: 'center',
   });
   drawText(context, formatName(pokemon.pokemonData?.name), textX, y + 48, {
     color: accent,
-    font: `700 30px ${fontFamily}`,
+    font: `700 30px ${fontStack}`,
     maxWidth: textWidth,
   });
   pokemonInfoLines(pokemon).forEach((line, index) => {
     const lineY = y + 86 + index * 34;
     const hasIcon = drawMoveTypeIcon(context, typeIcons, line.moveType, textX, lineY - 21, 24);
     const lineTextX = textX + (hasIcon ? 34 : 0);
-    const lineFont = `${index === 0 ? 600 : 400} 19px ${fontFamily}`;
+    const lineFont = `${index === 0 ? 600 : 400} 19px ${fontStack}`;
     drawText(context, line.text, lineTextX, lineY, {
       color: index === 0 ? colors.text : colors.muted,
       font: lineFont,
       maxWidth: textWidth - (hasIcon ? 34 : 0),
     });
     if (line.scoreBadge) {
-      context.font = `700 15px ${fontFamily}`;
+      context.font = `700 15px ${fontStack}`;
       const badgeWidth = Math.max(38, context.measureText(line.scoreBadge).width + 18);
       context.font = lineFont;
       const badgeX = Math.min(lineTextX + context.measureText(line.text).width + 10, textX + textWidth - badgeWidth);
       fillRoundedRect(context, badgeX, lineY - 22, badgeWidth, 26, '#f8d030', 13);
       drawText(context, line.scoreBadge, badgeX + badgeWidth / 2, lineY - 4, {
         color: '#332b00',
-        font: `700 15px ${fontFamily}`,
+        font: `700 15px ${fontStack}`,
         align: 'center',
       });
     }
   });
   drawText(context, `Team slot ${slot}${slot === 1 ? ' · Lead' : ''}`, x + 24, y + 310, {
     color: colors.muted,
-    font: `500 16px ${fontFamily}`,
+    font: `500 16px ${fontStack}`,
     maxWidth: width - 48,
   });
 };
@@ -531,7 +531,7 @@ const drawTeamTimelinePokemon = (
   centerX: number,
   centerY: number,
   fainted: boolean,
-  fontFamily: string
+  fontStack: string
 ) => {
   context.fillStyle = colors.surface;
   context.beginPath();
@@ -542,7 +542,7 @@ const drawTeamTimelinePokemon = (
   } else {
     drawText(context, String(teamIndex + 1), centerX, centerY + 6, {
       color: colors.text,
-      font: `700 16px ${fontFamily}`,
+      font: `700 16px ${fontStack}`,
       align: 'center',
     });
   }
@@ -600,11 +600,11 @@ const drawBattleEventPokemon = (
   x: number,
   y: number,
   maxWidth: number,
-  fontFamily: string
+  fontStack: string
 ) => {
   const iconSize = 24;
   const gap = 6;
-  const font = `400 14px ${fontFamily}`;
+  const font = `400 14px ${fontStack}`;
   context.font = font;
 
   if (switchedFromIndex !== undefined && switchedFromPokemon) {
@@ -645,7 +645,7 @@ const drawTeamEventLane = (
   width: number,
   maxTurn: number,
   accent: string,
-  fontFamily: string
+  fontStack: string
 ) => {
   fillRoundedRect(context, x, y, width, 46, colors.surfaceAlt, 8);
   timeline.forEach((entry, index) => {
@@ -668,23 +668,15 @@ const drawTeamEventLane = (
     context.lineTo(centerX, y + 44);
     context.stroke();
     if (switched && targetIndex !== sourceIndex) {
-      drawTeamTimelinePokemon(
-        context,
-        teamImages[sourceIndex],
-        sourceIndex,
-        centerX - 24,
-        centerY,
-        fainted,
-        fontFamily
-      );
+      drawTeamTimelinePokemon(context, teamImages[sourceIndex], sourceIndex, centerX - 24, centerY, fainted, fontStack);
       drawText(context, '→', centerX, centerY + 6, {
         color: fainted ? colors.danger : accent,
-        font: `700 18px ${fontFamily}`,
+        font: `700 18px ${fontStack}`,
         align: 'center',
       });
-      drawTeamTimelinePokemon(context, teamImages[targetIndex], targetIndex, centerX + 24, centerY, false, fontFamily);
+      drawTeamTimelinePokemon(context, teamImages[targetIndex], targetIndex, centerX + 24, centerY, false, fontStack);
     } else {
-      drawTeamTimelinePokemon(context, teamImages[sourceIndex], sourceIndex, centerX, centerY, true, fontFamily);
+      drawTeamTimelinePokemon(context, teamImages[sourceIndex], sourceIndex, centerX, centerY, true, fontStack);
     }
   });
   context.strokeStyle = accent;

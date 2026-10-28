@@ -545,6 +545,7 @@ export interface IStatBarComponent extends LinearProgressProps {
   form?: string;
   statType: TypeAction;
   isDisabled?: boolean;
+  isLoading?: boolean;
   pokemonType?: PokemonType;
 }
 
