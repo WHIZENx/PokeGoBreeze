@@ -89,7 +89,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       <div className="tw-flex tw-min-h-[206px] tw-flex-wrap" data-testid="pokemon-assets-content">
         {!props.isLoadedForms ? (
-          <div className="group-model tw-h-[206px] tw-w-[234px]">
+          <div className="group-model tw-h-[206px] tw-w-[234px] tw-max-w-full">
             <Skeleton
               data-testid="pokemon-assets-skeleton"
               data-skeleton-surface="page"

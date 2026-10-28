@@ -33,7 +33,7 @@ assert.doesNotMatch(
 assert.match(assets, /className="tw-flex tw-min-h-\[206px\] tw-flex-wrap" data-testid="pokemon-assets-content"/);
 assert.match(assets, /data-testid="pokemon-assets-skeleton"/);
 assert.match(assets, /variant="rounded"/);
-assert.match(assets, /className="group-model tw-h-\[206px\] tw-w-\[234px\]"/);
+assert.match(assets, /className="group-model tw-h-\[206px\] tw-w-\[234px\] tw-max-w-full"/);
 assert.match(assets, /className="!tw-h-full !tw-w-full"/);
 assert.doesNotMatch(assets, /assetSkeletonGroups/);
 assert.doesNotMatch(assets, /PokemonAssetModelSkeleton/);
