@@ -7,11 +7,18 @@ import {
 } from '../../src/components/Info/Assets/pokemon-sound.utils.ts';
 import { findPokemonStatsForm } from '../../src/utils/pokemon-form-identity.ts';
 
-const [pokemons, assets, pokemonPage] = await Promise.all([
+const [pokemons, assets, pokemonPage, linkToTop] = await Promise.all([
   readFile(new URL('../../../api/data/pokemons.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../../../api/data/assets.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Link/LinkToTop.tsx', import.meta.url), 'utf8'),
 ]);
+
+assert.match(
+  linkToTop,
+  /const navigateAndReset = useCallback\([\s\S]*?\[navigate\][\s\S]*?\);/,
+  'Navigation helpers used by the debounced Pokémon request must keep a stable callback identity.'
+);
 
 assert.match(
   pokemonPage,

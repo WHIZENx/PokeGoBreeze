@@ -32,6 +32,11 @@ const hasVercelImmutableCache = (config) => {
   );
 };
 
+const hasVercelPvpDetailFallback = (config) =>
+  config.rewrites?.some(
+    (rewrite) => rewrite.source === '/pvp/:cp/:serie/:pokemon' && rewrite.destination === '/'
+  );
+
 const checks = [
   ['inline shell styles', indexHtml.includes('id="pre-hydration-shell-styles"')],
   ['themed loading shell', indexHtml.includes('id="seo-content" aria-busy="true"')],
@@ -108,6 +113,8 @@ const checks = [
   ],
   ['Vercel production asset cache', hasVercelImmutableCache(vercelConfig)],
   ['Vercel preview asset cache', hasVercelImmutableCache(vercelPreviewConfig)],
+  ['Vercel production PvP detail fallback', hasVercelPvpDetailFallback(vercelConfig)],
+  ['Vercel preview PvP detail fallback', hasVercelPvpDetailFallback(vercelPreviewConfig)],
   [
     'Firebase asset cache',
     firebaseConfig.hosting.every((target) =>
