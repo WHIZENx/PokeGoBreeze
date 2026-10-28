@@ -1,11 +1,12 @@
 import { Badge } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/api.service';
 import useAssets from '../../../composables/useAssets';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import PokemonTableIcon, { resolveExactPokemonIconIndex } from '../../Sprites/PokemonTableIcon/PokemonTableIcon';
 import { sortAnimationSources } from '../../../utils/pokemon-animation-assets';
+import { useImageSourceSequence } from '../../../utils/hooks/useImageSourceSequence';
 
 interface EvolutionPokemonDisplayProps {
   id: number;
@@ -33,7 +34,7 @@ const EvolutionPokemonDisplay = ({
   const staticAsset = findExactAssetForm(id, form);
   const imageSources = useMemo(() => {
     if (formVaries) {
-      return [APIService.getPokeSprite()];
+      return [];
     }
     const sources = sortAnimationSources(animation?.sources ?? []).map((source) => source.url);
     if (staticAsset) {
@@ -41,12 +42,8 @@ const EvolutionPokemonDisplay = ({
     }
     return [...new Set(sources)];
   }, [animation, formVaries, staticAsset]);
-  const [sourceIndex, setSourceIndex] = useState(0);
   const exactMiniIcon = resolveExactPokemonIconIndex({ num: id, name, sprite, form, pokemonType });
-
-  useEffect(() => setSourceIndex(0), [imageSources]);
-
-  const activeSource = imageSources[sourceIndex];
+  const { source: activeSource, advanceSource } = useImageSourceSequence(imageSources);
   const imageContent = activeSource ? (
     <img
       key={`${id}-${form}-${sprite}-${activeSource}`}
@@ -58,7 +55,7 @@ const EvolutionPokemonDisplay = ({
       loading="lazy"
       decoding="async"
       referrerPolicy="no-referrer"
-      onError={() => setSourceIndex((current) => current + 1)}
+      onError={advanceSource}
     />
   ) : exactMiniIcon !== undefined ? (
     <PokemonTableIcon

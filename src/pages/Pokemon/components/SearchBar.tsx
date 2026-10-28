@@ -1,12 +1,11 @@
 import React from 'react';
-import APIService from '../../../services/api.service';
 import { splitAndCapitalize } from '../../../utils/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ISearchBarComponent } from '../../models/page.model';
 import { combineClasses } from '../../../utils/extension';
-import { markImageAsPreloaded } from '../../../utils/hooks/usePreloadedImage';
+import PokemonNavigationImage from './PokemonNavigationImage';
 
 const SearchBar = (props: ISearchBarComponent) => {
   return (
@@ -33,15 +32,9 @@ const SearchBar = (props: ISearchBarComponent) => {
               </b>
             </div>
             <div className="tw-h-full tw-cursor-pointer tw-w-15">
-              <img
+              <PokemonNavigationImage
+                id={props.data.prev.id}
                 className="pokemon-navigate-sprite tw-py-1.25 tw-pr-1.25"
-                alt="Image Pokemon"
-                src={APIService.getPokeOfficialArtwork(props.data.prev.id)}
-                onLoad={(event) => markImageAsPreloaded(event.currentTarget.currentSrc || event.currentTarget.src)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullSprite(props.data?.prev?.id);
-                }}
               />
             </div>
             <div className="tw-w-full tw-cursor-pointer tw-text-left tw-overflow-hidden">
@@ -76,15 +69,9 @@ const SearchBar = (props: ISearchBarComponent) => {
               <div className="text-navigate">{splitAndCapitalize(props.data.next.name, '-', ' ')}</div>
             </div>
             <div className="tw-h-full tw-cursor-pointer tw-w-15">
-              <img
+              <PokemonNavigationImage
+                id={props.data.next.id}
                 className="pokemon-navigate-sprite tw-py-1.25 tw-pl-1.25"
-                alt="Image Pokemon"
-                src={APIService.getPokeOfficialArtwork(props.data.next.id)}
-                onLoad={(event) => markImageAsPreloaded(event.currentTarget.currentSrc || event.currentTarget.src)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullSprite(props.data?.next?.id);
-                }}
               />
             </div>
             <div className="tw-cursor-pointer">

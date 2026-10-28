@@ -49,7 +49,28 @@
   white-space: nowrap;
 }
 
+.evolution-connector {
+  // react-xarrows sets an inline z-index on every connector. Keeping the
+  // container in the shared stacking context lets every condition card sit
+  // above every branch line, instead of only above its own line.
+  z-index: auto !important;
+}
+
+.evolution-connector-canvas {
+  z-index: 0;
+}
+
+// react-xarrows applies transform to its generated label wrapper, which makes
+// that wrapper a stacking context. Raise the wrapper itself above every SVG
+// canvas; raising only the card inside it cannot escape that stacking context.
+.evolution-connector > div {
+  z-index: 1;
+}
+
 .evo-arrow-details {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
   transform: translateY(calc(50% + 0.75rem));
   box-sizing: border-box;
   display: flex;

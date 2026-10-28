@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import TypeEffectiveComponent from '../Effective/TypeEffective';
 import TypeInfo from '../Sprites/Type/Type';
 
@@ -11,16 +11,18 @@ import useSearch from '../../composables/useSearch';
 import Effective from '../Effective/Effective';
 import Weather from '../Sprites/Weather';
 
-const Info = () => {
+const Info = ({ isLoading = false }: { isLoading?: boolean }) => {
   const { searchingMainForm } = useSearch();
-
-  const [types, setTypes] = useState<string[]>([]);
+  const requestedTypes = searchingMainForm?.form?.types ?? [];
+  const lastLoadedTypes = useRef(requestedTypes);
 
   useEffect(() => {
-    if (searchingMainForm?.form?.types && isNotEmpty(searchingMainForm?.form?.types)) {
-      setTypes(searchingMainForm?.form?.types);
+    if (!isLoading && isNotEmpty(requestedTypes)) {
+      lastLoadedTypes.current = requestedTypes;
     }
-  }, [searchingMainForm?.form?.types]);
+  }, [isLoading, requestedTypes]);
+
+  const types = isLoading ? lastLoadedTypes.current : requestedTypes;
 
   const getWeatherEffective = (types: string[] | undefined) => {
     const data: string[] = [];
@@ -49,18 +51,27 @@ const Info = () => {
   };
 
   return (
-    <div className="tw-mb-3">
+    <div
+      className="tw-mb-3"
+      data-testid="pokemon-information"
+      data-information-types={types.join(',')}
+      aria-busy={isLoading}
+    >
       <h4 className="tw-mt-2 info-title">
         <b>Information</b>
       </h4>
-      <h5 className="tw-mt-2">
-        <li>Pokémon Type</li>
-      </h5>
-      <TypeInfo arr={types} className="tw-ml-3" isShow />
-      <Effective title="Weather Boosts">
-        <Weather arr={getWeatherEffective(types)} className="tw-ml-3" />
-      </Effective>
-      <TypeEffectiveComponent typeEffective={getTypeEffectiveChart(types)} />
+      <div
+        className={`tw-transition-opacity tw-duration-200 ${isLoading ? 'tw-pointer-events-none tw-opacity-60' : ''}`}
+      >
+        <h5 className="tw-mt-2">
+          <li>Pokémon Type</li>
+        </h5>
+        <TypeInfo arr={types} className="tw-ml-3" isShow />
+        <Effective title="Weather Boosts">
+          <Weather arr={getWeatherEffective(types)} className="tw-ml-3" />
+        </Effective>
+        <TypeEffectiveComponent typeEffective={getTypeEffectiveChart(types)} />
+      </div>
     </div>
   );
 };

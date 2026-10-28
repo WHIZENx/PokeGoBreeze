@@ -277,7 +277,6 @@ const TimelineFit = (
             className="tw-relative tw-h-full"
             ref={timeline}
             onMouseMove={move.bind(this)}
-            onMouseOver={move.bind(this)}
             onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
           >
             {renderTimelineFit(pokemonCurr, pokemonObj, pokemonCurrTeam)}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import { IStatBarComponent } from '../models/component.model';
@@ -10,7 +10,6 @@ import { isStatsRankingNavigationDisabled } from './stat-bar-navigation';
 
 const StatBar = (props: IStatBarComponent) => {
   const navigateToTop = useNavigateToTop();
-  const [progress, setProgress] = useState(0);
 
   const {
     variant = 'determinate',
@@ -24,15 +23,13 @@ const StatBar = (props: IStatBarComponent) => {
     form,
     pokemonType,
     isDisabled,
+    isLoading,
     statsPercent,
     ...progressProps
   } = props;
 
-  useEffect(() => {
-    setProgress(statsPercent);
-  }, [statsPercent]);
-
-  const isNavigationDisabled = isStatsRankingNavigationDisabled(isDisabled, rank, Boolean(pokemonStatsRank));
+  const isNavigationDisabled =
+    isLoading || isStatsRankingNavigationDisabled(isDisabled, rank, Boolean(pokemonStatsRank));
 
   return (
     <Box
@@ -40,6 +37,7 @@ const StatBar = (props: IStatBarComponent) => {
       className={combineClasses('tw-w-full tw-relative progress', !isNavigationDisabled && 'progress-hover')}
       data-stat-tag={tag}
       data-stat-value={currentStats}
+      data-stat-loading={isLoading || undefined}
       data-testid="pokemon-stat-bar"
       onClick={
         isNavigationDisabled
@@ -64,7 +62,7 @@ const StatBar = (props: IStatBarComponent) => {
           </span>
         </div>
       )}
-      <LinearProgress className="!tw-h-7.5 tw-rounded-md" variant={variant} value={progress} {...progressProps} />
+      <LinearProgress className="!tw-h-7.5 tw-rounded-md" variant={variant} value={statsPercent} {...progressProps} />
     </Box>
   );
 };
