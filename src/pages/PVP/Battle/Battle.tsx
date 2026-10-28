@@ -45,6 +45,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeDownIcon from '@mui/icons-material/VolumeDown';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import TuneIcon from '@mui/icons-material/Tune';
 
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
@@ -91,6 +92,7 @@ import { HexagonStats } from '../../../core/models/stats.model';
 import type { ILeague } from '../../../core/models/league.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import Error from '../../Error/Error';
+import Tooltips from '../../../components/Commons/Tooltips/Tooltips';
 import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
@@ -125,6 +127,8 @@ import { exportBattleReportImage } from './utils/battle-export';
 import BattlePokemonImage from './BattlePokemonImage';
 import DismissibleAlert from '../../../components/Commons/Alerts/DismissibleAlert';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
+
+const DialogMui = React.lazy(() => import('../../../components/Commons/Dialogs/Dialogs'));
 
 interface OptionsBattle {
   showTap: boolean;
@@ -226,6 +230,7 @@ const Battle = () => {
 
   const { showSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
+  const [strategyDialog, setStrategyDialog] = useState<'playerStrategy' | 'opponentStrategy'>();
   const [data, setData] = useState<IBattlePokemonData[]>([]);
   const [leagueRules, setLeagueRules] = useState<ILeague[]>([]);
   const [selectedLeagueId, setSelectedLeagueId] = useState(() =>
@@ -2090,7 +2095,7 @@ const Battle = () => {
     clearBattleResult();
   };
 
-  const renderStrategy = (title: string, side: 'playerStrategy' | 'opponentStrategy', teamSize: number) => {
+  const renderStrategy = (side: 'playerStrategy' | 'opponentStrategy', teamSize: number) => {
     const strategy = options[side];
     const canSwitch = teamSize > 1;
     const actions = (strategy.actions ?? []).filter((action) => canSwitch || action.type !== 'switch');
@@ -2101,8 +2106,7 @@ const Battle = () => {
         ? strategy.switchOrder
         : defaultOrder;
     return (
-      <div className="tw-flex-1 tw-min-w-[280px] tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-p-3">
-        <b className="tw-block tw-mb-2">{title}</b>
+      <div className="tw-w-full">
         <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 tw-gap-2">
           <SelectMui
             inputLabel="Shield"
@@ -2271,6 +2275,62 @@ const Battle = () => {
     );
   };
 
+  const strategySummary = (side: 'playerStrategy' | 'opponentStrategy', teamSize: number) => {
+    const strategy = options[side];
+    const shieldLabels: Record<string, string> = {
+      always: 'Shield always',
+      lethal: 'Shield lethal attacks',
+      never: 'No shields',
+    };
+    const chargedLabels: Record<string, string> = {
+      selected: 'Selected Charged Move',
+      bait: 'Bait',
+      nuke: 'Highest damage',
+      farm: `Farm to ${strategy.farmEnergy ?? 100} energy`,
+      manual: 'Action script only',
+    };
+    const forcedSwitchLabels: Record<string, string> = {
+      first: 'First available',
+      best_matchup: 'Best matchup',
+      highest_hp: 'Highest HP',
+      highest_energy: 'Highest energy',
+      random: 'Random',
+      ordered: 'Team order',
+    };
+    const summary = [shieldLabels[strategy.shield ?? 'always'], chargedLabels[strategy.charged ?? 'selected']];
+    if (teamSize > 1) {
+      const voluntarySwitch = strategy.voluntarySwitch ?? 'none';
+      if (voluntarySwitch !== 'none') {
+        summary.push(`Switch: ${voluntarySwitch === 'safe' ? 'Safe switch' : 'Random'}`);
+      }
+      summary.push(`After faint: ${forcedSwitchLabels[strategy.forcedSwitch ?? 'first']}`);
+    }
+    const actionCount = (strategy.actions ?? []).filter((action) => teamSize > 1 || action.type !== 'switch').length;
+    if (actionCount) {
+      summary.push(`${actionCount} scripted action${actionCount === 1 ? '' : 's'}`);
+    }
+    return summary.join(' · ');
+  };
+
+  const renderStrategyButton = (title: string, side: 'playerStrategy' | 'opponentStrategy', teamSize: number) => (
+    <ButtonMui
+      aria-haspopup="dialog"
+      className="!tw-min-h-16 !tw-w-full !tw-justify-start !tw-px-3 !tw-py-2 !tw-text-left"
+      color={side === 'playerStrategy' ? 'primary' : 'secondary'}
+      startIcon={<TuneIcon />}
+      variant="outlined"
+      label={
+        <span className="tw-flex tw-min-w-0 tw-flex-col tw-items-start">
+          <b>{title}</b>
+          <span className="tw-whitespace-normal tw-text-xs tw-font-normal tw-leading-snug tw-opacity-80">
+            {strategySummary(side, teamSize)}
+          </span>
+        </span>
+      }
+      onClick={() => setStrategyDialog(side)}
+    />
+  );
+
   const selectedBattleRule = leagueRules.find((item) => item.id === selectedLeagueId);
   const ruleConditions = selectedBattleRule?.conditions;
   const rulePokemonName = (name: string | undefined, id: number | undefined, form: string | undefined) =>
@@ -2364,94 +2424,103 @@ const Battle = () => {
               {selectedBattleRule?.title ?? `${getPokemonBattleLeagueName(league)} · Standard`}
             </b>
             <div className="tw-mt-1 tw-flex tw-flex-wrap tw-gap-x-4 tw-gap-y-1">
-              <span className="tw-inline-flex tw-items-center tw-gap-1" title="CP limit" aria-label="CP limit">
-                <SpeedIcon fontSize="small" /> {ruleConditions?.maxCp ?? standardMaxCp ?? 'None'} CP
-              </span>
-              <span className="tw-inline-flex tw-items-center tw-gap-1" title="Team size" aria-label="Team size">
-                <GroupsIcon fontSize="small" /> ≤ {selectedBattleRule?.pokemonCount || maxPvpTeamSize}
-              </span>
-              {ruleConditions?.maxLevel !== undefined && (
-                <span className="tw-inline-flex tw-items-center tw-gap-1" title="Level limit" aria-label="Level limit">
-                  <TrendingUpIcon fontSize="small" /> Lv. {ruleConditions.maxLevel}
+              <Tooltips title="CP limit">
+                <span className="tw-inline-flex tw-items-center tw-gap-1" aria-label="CP limit">
+                  <SpeedIcon fontSize="small" /> {ruleConditions?.maxCp ?? standardMaxCp ?? 'None'} CP
                 </span>
+              </Tooltips>
+              <Tooltips title="Team size">
+                <span className="tw-inline-flex tw-items-center tw-gap-1" aria-label="Team size">
+                  <GroupsIcon fontSize="small" /> ≤ {selectedBattleRule?.pokemonCount || maxPvpTeamSize}
+                </span>
+              </Tooltips>
+              {ruleConditions?.maxLevel !== undefined && (
+                <Tooltips title="Level limit">
+                  <span className="tw-inline-flex tw-items-center tw-gap-1" aria-label="Level limit">
+                    <TrendingUpIcon fontSize="small" /> Lv. {ruleConditions.maxLevel}
+                  </span>
+                </Tooltips>
               )}
-              <span
-                className="tw-inline-flex tw-items-center tw-gap-1"
-                title="Duplicate species not allowed"
-                aria-label="Duplicate species not allowed"
-              >
-                <ContentCopyIcon fontSize="small" />
-                <BlockIcon fontSize="small" color="error" />
-              </span>
-              <span
-                className="tw-inline-flex tw-items-center tw-gap-1"
-                title="Mega Evolution"
-                aria-label={`Mega Evolution ${selectedBattleRule?.allowEvolutions ? 'allowed' : 'not allowed'}`}
-              >
-                <AutoAwesomeIcon fontSize="small" />
-                {selectedBattleRule?.allowEvolutions ? (
-                  <CheckCircleIcon fontSize="small" color="success" />
-                ) : (
+              <Tooltips title="Duplicate species not allowed">
+                <span className="tw-inline-flex tw-items-center tw-gap-1" aria-label="Duplicate species not allowed">
+                  <ContentCopyIcon fontSize="small" />
                   <BlockIcon fontSize="small" color="error" />
-                )}
-              </span>
+                </span>
+              </Tooltips>
+              <Tooltips title="Mega Evolution">
+                <span
+                  className="tw-inline-flex tw-items-center tw-gap-1"
+                  aria-label={`Mega Evolution ${selectedBattleRule?.allowEvolutions ? 'allowed' : 'not allowed'}`}
+                >
+                  <AutoAwesomeIcon fontSize="small" />
+                  {selectedBattleRule?.allowEvolutions ? (
+                    <CheckCircleIcon fontSize="small" color="success" />
+                  ) : (
+                    <BlockIcon fontSize="small" color="error" />
+                  )}
+                </span>
+              </Tooltips>
             </div>
             {ruleConditions?.timestamp && (
-              <div className="tw-mt-1 tw-flex tw-items-center tw-gap-1" title="Eligible catch time">
-                <ScheduleIcon fontSize="small" />
-                <span>
-                  {getTime(ruleConditions.timestamp.start)} – {getTime(ruleConditions.timestamp.end)}
-                </span>
+              <div className="tw-mt-1">
+                <Tooltips title="Eligible catch time">
+                  <span className="tw-flex tw-items-center tw-gap-1">
+                    <ScheduleIcon fontSize="small" />
+                    <span>
+                      {getTime(ruleConditions.timestamp.start)} – {getTime(ruleConditions.timestamp.end)}
+                    </span>
+                  </span>
+                </Tooltips>
               </div>
             )}
             {isNotEmpty(ruleConditions?.uniqueType) && (
-              <div className="tw-mt-1 tw-flex tw-items-center tw-gap-1" title="Allowed types">
-                <CategoryIcon fontSize="small" />
-                <span>
-                  {ruleConditions?.uniqueType
-                    .map((type) => splitAndCapitalize(type.toLowerCase(), '_', ' '))
-                    .join(', ')}
-                </span>
+              <div className="tw-mt-1">
+                <Tooltips title="Allowed types">
+                  <span className="tw-flex tw-items-center tw-gap-1">
+                    <CategoryIcon fontSize="small" />
+                    <span>
+                      {ruleConditions?.uniqueType
+                        .map((type) => splitAndCapitalize(type.toLowerCase(), '_', ' '))
+                        .join(', ')}
+                    </span>
+                  </span>
+                </Tooltips>
               </div>
             )}
             {isNotEmpty(ruleConditions?.whiteList) && (
               <div className="tw-mt-2 tw-flex tw-max-h-32 tw-items-start tw-gap-2 tw-overflow-auto">
-                <span
-                  className="tw-mt-1 tw-inline-flex tw-shrink-0 tw-items-center"
-                  title="Allowed Pokémon"
-                  aria-label="Allowed Pokémon"
-                >
-                  <CheckCircleIcon fontSize="small" color="success" />
-                </span>
+                <Tooltips title="Allowed Pokémon">
+                  <span className="tw-mt-1 tw-inline-flex tw-shrink-0 tw-items-center" aria-label="Allowed Pokémon">
+                    <CheckCircleIcon fontSize="small" color="success" />
+                  </span>
+                </Tooltips>
                 {renderRulePokemonList(ruleConditions?.whiteList ?? [])}
               </div>
             )}
             {isNotEmpty(ruleConditions?.banned) && (
               <div className="tw-mt-2 tw-flex tw-max-h-32 tw-items-start tw-gap-2 tw-overflow-auto">
-                <span
-                  className="tw-mt-1 tw-inline-flex tw-shrink-0 tw-items-center"
-                  title="Banned Pokémon"
-                  aria-label="Banned Pokémon"
-                >
-                  <BlockIcon fontSize="small" color="error" />
-                </span>
+                <Tooltips title="Banned Pokémon">
+                  <span className="tw-mt-1 tw-inline-flex tw-shrink-0 tw-items-center" aria-label="Banned Pokémon">
+                    <BlockIcon fontSize="small" color="error" />
+                  </span>
+                </Tooltips>
                 {renderRulePokemonList(ruleConditions?.banned ?? [])}
               </div>
             )}
           </div>
         </DismissibleAlert>
-        <div className="row tw-mt-4 !tw-m-0">
-          <div className="lg:tw-w-1/4 !tw-my-3">
+        <div className="row tw-mt-4 !tw-m-0 md:!tw-grid md:tw-grid-cols-2 2xl:tw-grid-cols-4">
+          <div className="tw-order-1 !tw-my-3 2xl:tw-col-span-1">
             {renderLeadTeamMember(false)}
             {renderBenchTeam(false)}
           </div>
           <Fragment>
-            {!pokemonCurr.pokemonData && !pokemonObj.pokemonData && <hr className="tw-block !tw-mt-4 lg:tw-hidden" />}
+            {!pokemonCurr.pokemonData && !pokemonObj.pokemonData && <hr className="tw-block !tw-mt-4 md:tw-hidden" />}
           </Fragment>
           <div
             ref={timelineFocusRef}
             aria-label="Battle timeline"
-            className="tw-scroll-mt-20 tw-outline-none lg:tw-w-1/2 tw-mt-0 lg:tw-mt-4"
+            className="tw-order-3 tw-scroll-mt-20 tw-outline-none md:tw-col-span-2 2xl:tw-order-2 2xl:tw-mt-4 2xl:tw-col-span-2"
             tabIndex={-1}
           >
             {pokemonCurr.pokemonData &&
@@ -2616,16 +2685,16 @@ const Battle = () => {
                 </Fragment>
               )}
           </div>
-          <div className="lg:tw-w-1/4 !tw-my-3">
+          <div className="tw-order-2 !tw-my-3 2xl:tw-order-3 2xl:tw-col-span-1">
             {renderLeadTeamMember(true)}
             {renderBenchTeam(true)}
           </div>
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
           <div className="tw-mt-2 tw-flex tw-flex-wrap tw-items-center tw-justify-center tw-gap-2">
-            <div className="tw-flex tw-w-full tw-flex-wrap tw-gap-2">
-              {renderStrategy('Player Strategy', 'playerStrategy', 1 + pokemonCurrBench.length)}
-              {renderStrategy('Opponent Strategy', 'opponentStrategy', 1 + pokemonObjBench.length)}
+            <div className="tw-grid tw-w-full tw-grid-cols-1 tw-gap-2 sm:tw-grid-cols-2">
+              {renderStrategyButton('Player Strategy', 'playerStrategy', 1 + pokemonCurrBench.length)}
+              {renderStrategyButton('Opponent Strategy', 'opponentStrategy', 1 + pokemonObjBench.length)}
             </div>
             {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
               <>
@@ -2668,6 +2737,26 @@ const Battle = () => {
               />
             )}
           </div>
+        )}
+        {strategyDialog && (
+          <React.Suspense fallback={null}>
+            <DialogMui
+              open={strategyDialog !== undefined}
+              width="md"
+              title={
+                <span className="tw-flex tw-items-center tw-gap-2">
+                  <TuneIcon color={strategyDialog === 'opponentStrategy' ? 'secondary' : 'primary'} />
+                  {strategyDialog === 'opponentStrategy' ? 'Opponent Strategy' : 'Player Strategy'}
+                </span>
+              }
+              content={renderStrategy(
+                strategyDialog,
+                strategyDialog === 'playerStrategy' ? 1 + pokemonCurrBench.length : 1 + pokemonObjBench.length
+              )}
+              actions={[{ label: 'Done', isClose: true }]}
+              onClose={() => setStrategyDialog(undefined)}
+            />
+          </React.Suspense>
         )}
       </div>
     </Error>

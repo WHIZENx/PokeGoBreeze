@@ -131,6 +131,11 @@ assert.match(
 );
 assert.match(
   battlePage,
+  /md:!tw-grid md:tw-grid-cols-2 2xl:tw-grid-cols-4[\s\S]*tw-order-1[\s\S]*md:tw-col-span-2 2xl:tw-order-2[\s\S]*tw-order-2[\s\S]*2xl:tw-order-3/,
+  'Tablet-width battle layouts must place both teams side by side and give the timeline a full row until the four-column desktop breakpoint.'
+);
+assert.match(
+  battlePage,
   /focusBattleTimeline[\s\S]*focus\(\{ preventScroll: true \}\)[\s\S]*scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/,
   'Battle actions must smoothly align the timeline anchor to the top and move keyboard focus to it.'
 );
@@ -141,8 +146,18 @@ assert.match(
 );
 assert.match(
   battlePage,
-  /renderStrategy\('Player Strategy', 'playerStrategy',[\s\S]*renderStrategy\('Opponent Strategy', 'opponentStrategy',[\s\S]*label="Battle Simulator"/,
-  'Both strategy editors must stay grouped with the battle simulation actions instead of timeline playback controls.'
+  /renderStrategyButton\('Player Strategy', 'playerStrategy',[\s\S]*renderStrategyButton\('Opponent Strategy', 'opponentStrategy',[\s\S]*label="Battle Simulator"/,
+  'Compact strategy buttons must stay grouped with the battle simulation actions instead of timeline playback controls.'
+);
+assert.match(
+  battlePage,
+  /const strategySummary[\s\S]*Shield always[\s\S]*After faint:[\s\S]*scripted action[\s\S]*aria-haspopup="dialog"/,
+  'Each strategy button must summarize the active decisions before opening its editor.'
+);
+assert.match(
+  battlePage,
+  /<DialogMui[\s\S]*open=\{strategyDialog !== undefined\}[\s\S]*width="md"[\s\S]*renderStrategy\([\s\S]*actions=\{\[\{ label: 'Done', isClose: true \}\]\}/,
+  'Strategy options must open in one responsive dialog and retain the existing editor controls.'
 );
 assert.match(
   battlePage,
