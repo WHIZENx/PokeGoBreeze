@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/pvp/:cp/:serie/:pokemon",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ],
   "headers": [

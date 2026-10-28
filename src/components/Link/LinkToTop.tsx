@@ -1,18 +1,21 @@
-import React, { MouseEventHandler } from 'react';
+import React, { MouseEventHandler, useCallback } from 'react';
 import { Link, To, useNavigate } from 'react-router-dom';
 import { LinkToTopProps, NavigateToTopProps } from '../../utils/models/hook.model';
 import { toNumber } from '../../utils/extension';
 
 export const useNavigateToTop = () => {
   const navigate = useNavigate();
-  const navigateAndReset = (to: To, options?: NavigateToTopProps) => {
-    navigate(to, { ...options });
-    window.scrollTo({
-      top: toNumber(options?.top),
-      left: toNumber(options?.left),
-      behavior: options?.behavior || 'instant',
-    });
-  };
+  const navigateAndReset = useCallback(
+    (to: To, options?: NavigateToTopProps) => {
+      navigate(to, { ...options });
+      window.scrollTo({
+        top: toNumber(options?.top),
+        left: toNumber(options?.left),
+        behavior: options?.behavior || 'instant',
+      });
+    },
+    [navigate]
+  );
   return navigateAndReset;
 };
 
