@@ -101,7 +101,7 @@ const customStyles: TableStyles = {
       borderBottomColor: 'var(--custom-table-background-sub-head-border)',
       justifyContent: 'center',
       textAlign: 'center',
-      padding: '0.25rem 0.5rem',
+      padding: '0.5rem',
       fontWeight: 'normal',
     },
   },
@@ -109,6 +109,7 @@ const customStyles: TableStyles = {
     style: {
       color: 'var(--text-primary)',
       backgroundColor: 'transparent',
+      minHeight: '6rem',
     },
     stripedStyle: {
       color: 'var(--text-primary)',
@@ -333,7 +334,7 @@ const Counter = (props: ICounterComponent) => {
       name: '%',
       selector: (row) => (
         <div className="tw-flex tw-flex-col tw-items-center tw-leading-tight">
-          <span>
+          <span className="tw-font-bold">
             {toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 }))}
           </span>
           <span className="tw-text-xs tw-font-normal tw-text-[var(--text-secondary)]">

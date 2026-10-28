@@ -15,6 +15,7 @@ const pagination = await readFile(
 );
 const styles = await readFile(join(sourceRoot, 'assets/styles/custom.scss'), 'utf8');
 const counterStyles = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.scss'), 'utf8');
+const counter = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.tsx'), 'utf8');
 const sharedSortIcon = await readFile(join(sourceRoot, 'components/Commons/Tables/DataTableSortIcon.tsx'), 'utf8');
 const customSortableTables = await Promise.all(
   ['components/Commons/Tables/Move/MoveTable.tsx', 'pages/PVP/Ranking/PVP.tsx', 'pages/PVP/Teams/PVP.tsx'].map((path) =>
@@ -83,6 +84,11 @@ assert.match(
   counterStyles,
   /\.rdt_TableCol,\s*\.rdt_TableCell\s*\{[\s\S]*?tw-justify-center[\s\S]*?tw-text-center/,
   'Counter headers and cells must retain their centered v7 alignment under the v8 class architecture.'
+);
+assert.match(
+  counter,
+  /<span className="tw-font-bold">\s*\{toFloatWithPadding\(row\.ratio/,
+  'The primary percentage value in Best Pokémon Counter must use the design-system bold weight.'
 );
 assert.match(
   sharedSortIcon,

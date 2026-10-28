@@ -3,17 +3,27 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [pokemonPage, formSelect, searchBar, searchBarMain, imagePreloader, theme, pokemonTable, statsTable] =
-  await Promise.all([
-    readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Find/FormSelect.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/pages/Pokemon/components/SearchBar.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/pages/Pokemon/components/SearchBarMain.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/utils/hooks/usePreloadedImage.ts', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Commons/Tables/Stats/StatsTable.tsx', import.meta.url), 'utf8'),
-  ]);
+const [
+  pokemonPage,
+  formSelect,
+  searchBar,
+  searchBarMain,
+  navigationImage,
+  imagePreloader,
+  theme,
+  pokemonTable,
+  statsTable,
+] = await Promise.all([
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Find/FormSelect.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/components/SearchBar.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/components/SearchBarMain.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/components/PokemonNavigationImage.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/utils/hooks/usePreloadedImage.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Tables/Stats/StatsTable.tsx', import.meta.url), 'utf8'),
+]);
 
 assert.match(
   pokemonPage,
@@ -53,15 +63,20 @@ assert.match(
 for (const navigation of [searchBar, searchBarMain]) {
   assert.match(
     navigation,
-    /onLoad=\{\(event\) => markImageAsPreloaded\(event\.currentTarget\.currentSrc \|\| event\.currentTarget\.src\)\}/,
-    'Pokémon detail navigation images must register successful loads in the shared cache.'
-  );
-  assert.match(
-    navigation,
-    /src=\{APIService\.getPokeOfficialArtwork\(/,
-    'Pokémon navigation must preload the same official artwork family used by the main image.'
+    /<PokemonNavigationImage/,
+    'Pokémon detail navigation must use the identity-safe shared image component.'
   );
 }
+assert.match(
+  navigationImage,
+  /onLoad=\{\(event\) => markImageAsPreloaded\(event\.currentTarget\.currentSrc \|\| event\.currentTarget\.src\)\}/,
+  'Pokémon detail navigation images must register successful loads in the shared cache.'
+);
+assert.match(
+  navigationImage,
+  /APIService\.getPokeOfficialArtwork\(id\)/,
+  'Pokémon navigation must preload the same official artwork family used by the main image.'
+);
 assert.match(
   imagePreloader,
   /const cachedCandidate = cacheCandidateUrls\.find\(isImagePreloaded\)/,

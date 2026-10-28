@@ -28,6 +28,7 @@ const viewportHeight = Math.max(568, Number.parseInt(args.get('viewport-height')
 const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
 const auditEvolutionTooltip = args.get('audit-evolution-tooltip') === 'true';
 const auditEvolutionOverlap = args.get('audit-evolution-overlap') !== 'false';
+const navigationOnly = args.get('navigation-only') === 'true';
 const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
 const formSwitchCycles = Math.max(1, Number.parseInt(args.get('form-switch-cycles') ?? '1', 10));
 const outputPath = resolve(workspaceRoot, args.get('output') ?? 'artifacts/pokemon-details-audit.json');
@@ -127,10 +128,21 @@ const requestedIds = new Set(
     .map((value) => Number.parseInt(value, 10))
     .filter((value) => Number.isInteger(value) && value >= fromId && value <= toId)
 );
+const requestedSequence = (args.get('id-sequence') ?? '')
+  .split(',')
+  .map((value) => Number.parseInt(value, 10))
+  .filter((value) => Number.isInteger(value) && value >= fromId && value <= toId);
+const requestedSequenceIds = new Set(requestedSequence);
 const rowsById = new Map();
 for (const pokemon of pokemons) {
   const id = Number(pokemon.num);
-  if (id < fromId || id > toId || (requestedIds.size && !requestedIds.has(id))) continue;
+  if (
+    id < fromId ||
+    id > toId ||
+    (requestedIds.size && !requestedIds.has(id)) ||
+    (requestedSequenceIds.size && !requestedSequenceIds.has(id))
+  )
+    continue;
   const rows = rowsById.get(id) ?? [];
   rows.push(pokemon);
   rowsById.set(id, rows);
@@ -496,12 +508,21 @@ const readPage = () =>
     const fusionOrigins = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-origin"]')] : [];
     const fusionTargets = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-target"]')] : [];
     const profileImage = document.querySelector('[data-testid="pokemon-profile-image"]');
+    const formVarietiesContent = document.querySelector('[data-testid="form-varieties-content"]');
+    const genderRatioContent = document.querySelector('[data-testid="gender-ratio-content"]');
+    const statsRanking = document.querySelector('[data-testid="pokemon-stats-ranking"]');
+    const informationSection = document.querySelector('[data-testid="pokemon-information"]');
+    const statsBars = [...document.querySelectorAll('[data-testid="pokemon-stat-bar"]')];
     const stats = Object.fromEntries(
-      [...document.querySelectorAll('[data-testid="pokemon-stat-bar"]')].map((stat) => [
+      statsBars.map((stat) => [
         stat.dataset.statTag ?? '',
         Number(stat.dataset.statValue),
       ])
     );
+    const statsLoading = statsRanking?.getAttribute('aria-busy') === 'true';
+    const statsLoadingBars = statsBars.filter((stat) => stat.dataset.statLoading === 'true').length;
+    const informationLoading = informationSection?.getAttribute('aria-busy') === 'true';
+    const informationLoadingLabel = informationSection?.textContent?.includes('Loading information…') ?? false;
     const evolutionEdges = [...document.querySelectorAll('[data-testid="evolution-edge"]')].map((edge) => {
       const edgeBounds = bounds(edge);
       let lineOverlapsCard = false;
@@ -514,7 +535,8 @@ const readPage = () =>
           const stack = document.elementsFromPoint(x, y);
           const cardIndex = stack.findIndex((element) => element === edge || edge.contains(element));
           const arrowIndex = stack.findIndex(
-            (element) => element.matches?.('path[fill="transparent"][stroke]') && !edge.contains(element)
+            (element) =>
+              element.closest?.('[data-testid="evolution-connector-canvas"]') && !edge.contains(element)
           );
           if (cardIndex >= 0 && arrowIndex >= 0 && arrowIndex < cardIndex) {
             lineOverlapsCard = true;
@@ -535,6 +557,15 @@ const readPage = () =>
             ? 'FEMALE'
             : '',
         lineOverlapsCard,
+        labelLayer: Number.parseInt(getComputedStyle(edge.parentElement).zIndex, 10),
+        canvasLayer: Number.parseInt(
+          getComputedStyle(
+            edge.closest('[data-testid="evolution-connector"]')?.querySelector(
+              '[data-testid="evolution-connector-canvas"]'
+            )
+          ).zIndex,
+          10
+        ),
         bounds: edgeBounds,
       };
     });
@@ -561,6 +592,18 @@ const readPage = () =>
           }
         : null,
       stats,
+      statsLoading,
+      statsBars: statsBars.length,
+      statsLoadingBars,
+      informationLoading,
+      informationLoadingLabel,
+      informationTypes: informationSection?.dataset.informationTypes ?? '',
+      detailLayout: {
+        formVarieties: formVarietiesContent ? bounds(formVarietiesContent) : null,
+        genderRatio: genderRatioContent ? bounds(genderRatioContent) : null,
+        statsRanking: statsRanking ? bounds(statsRanking) : null,
+        information: informationSection ? bounds(informationSection) : null,
+      },
       bodyWeight: infoTable?.dataset.bodyWeight ?? '',
       bodyHeight: infoTable?.dataset.bodyHeight ?? '',
       title: document.title,
@@ -1026,6 +1069,13 @@ const validateExpectedRow = (issues, id, row, button, page) => {
     if (edge.lineOverlapsCard) {
       addIssue(issues, id, 'evolution_line_overlaps_detail_card', { ...context, edge });
     }
+    if (
+      !Number.isFinite(edge.labelLayer) ||
+      !Number.isFinite(edge.canvasLayer) ||
+      edge.labelLayer <= edge.canvasLayer
+    ) {
+      addIssue(issues, id, 'evolution_detail_layer_not_above_connector', { ...context, edge });
+    }
     const sourceGenderRequirement = normalize(edge.sourceGenderRequirement);
     if (['MALE', 'FEMALE'].includes(sourceGenderRequirement) && edge.genderRequirement !== sourceGenderRequirement) {
       addIssue(issues, id, 'evolution_gender_requirement_mismatch', {
@@ -1210,13 +1260,14 @@ const main = async () => {
 
   let isInitial = true;
   let previousPage;
-  const idsToAudit = (
-    requestedIds.size
-      ? [...requestedIds]
-      : multipleFormsOnly
-        ? [...rowsById.entries()].filter(([, rows]) => rows.length > 1).map(([id]) => id)
-        : [...Array(toId - fromId + 1)].map((_, index) => fromId + index)
-  ).sort((a, b) => a - b);
+  const idsToAudit = requestedSequence.length
+    ? requestedSequence
+    : (requestedIds.size
+        ? [...requestedIds]
+        : multipleFormsOnly
+          ? [...rowsById.entries()].filter(([, rows]) => rows.length > 1).map(([id]) => id)
+          : [...Array(toId - fromId + 1)].map((_, index) => fromId + index)
+      ).sort((a, b) => a - b);
   for (const id of idsToAudit) {
     browser.currentId = id;
     const rows = preferredGoRows(id, rowsById.get(id) ?? []);
@@ -1246,6 +1297,7 @@ const main = async () => {
             actual: { weight: loadingPage.bodyWeight, height: loadingPage.bodyHeight },
           });
         }
+        const loadingLayout = loadingPage.detailLayout;
         page = await waitFor(
           readPage,
           (value) =>
@@ -1257,6 +1309,83 @@ const main = async () => {
             value.title.includes(`#${id}`),
           `Pokémon #${id}`
         );
+        for (const section of ['formVarieties', 'genderRatio', 'statsRanking']) {
+          const loadingBounds = loadingLayout?.[section];
+          const loadedBounds = page.detailLayout?.[section];
+          if (loadingBounds && loadedBounds && Math.abs(loadingBounds.height - loadedBounds.height) > 0.1) {
+            addIssue(issues, id, 'pokemon_detail_loading_height_shift', {
+              section,
+              loadingHeight: loadingBounds.height,
+              loadedHeight: loadedBounds.height,
+              delta: loadedBounds.height - loadingBounds.height,
+            });
+          }
+        }
+        if (
+          !loadingPage.statsLoading ||
+          loadingPage.statsBars !== 4 ||
+          loadingPage.statsLoadingBars !== 4 ||
+          Object.keys(loadingPage.stats).length !== 4 ||
+          JSON.stringify(loadingPage.stats) !== JSON.stringify(previousPage.stats)
+        ) {
+          addIssue(issues, id, 'pokemon_stats_loading_state_invalid', {
+            statsLoading: loadingPage.statsLoading,
+            statsBars: loadingPage.statsBars,
+            statsLoadingBars: loadingPage.statsLoadingBars,
+            expectedRetainedStats: previousPage.stats,
+            actualRetainedStats: loadingPage.stats,
+          });
+        }
+        if (
+          !loadingPage.informationLoading ||
+          !loadingPage.informationLoadingLabel ||
+          loadingPage.informationTypes !== previousPage.informationTypes
+        ) {
+          addIssue(issues, id, 'pokemon_information_loading_state_invalid', {
+            informationLoading: loadingPage.informationLoading,
+            informationLoadingLabel: loadingPage.informationLoadingLabel,
+            expectedRetainedTypes: previousPage.informationTypes,
+            actualRetainedTypes: loadingPage.informationTypes,
+          });
+        }
+        if (page.informationLoading || page.informationLoadingLabel) {
+          addIssue(issues, id, 'pokemon_information_loaded_state_invalid', {
+            informationLoading: page.informationLoading,
+            informationLoadingLabel: page.informationLoadingLabel,
+          });
+        }
+        if (
+          page.statsLoading ||
+          page.statsBars !== 4 ||
+          page.statsLoadingBars !== 0 ||
+          Object.keys(page.stats).length !== 4
+        ) {
+          addIssue(issues, id, 'pokemon_stats_loaded_state_invalid', {
+            statsLoading: page.statsLoading,
+            statsBars: page.statsBars,
+            statsLoadingBars: page.statsLoadingBars,
+            stats: page.stats,
+          });
+        }
+        const loadingStatsGap =
+          loadingLayout?.statsRanking && loadingLayout?.genderRatio
+            ? loadingLayout.statsRanking.top - loadingLayout.genderRatio.bottom
+            : undefined;
+        const loadedStatsGap =
+          page.detailLayout?.statsRanking && page.detailLayout?.genderRatio
+            ? page.detailLayout.statsRanking.top - page.detailLayout.genderRatio.bottom
+            : undefined;
+        if (
+          Number.isFinite(loadingStatsGap) &&
+          Number.isFinite(loadedStatsGap) &&
+          Math.abs(loadingStatsGap - loadedStatsGap) > 0.1
+        ) {
+          addIssue(issues, id, 'pokemon_stats_ranking_loading_shift', {
+            loadingGap: loadingStatsGap,
+            loadedGap: loadedStatsGap,
+            delta: loadedStatsGap - loadingStatsGap,
+          });
+        }
         delayPokemonRequests = false;
         await client.send('Fetch.disable', {}, browser.sessionId);
       } else {
@@ -1279,6 +1408,10 @@ const main = async () => {
 
       if (!page.title.includes(`#${id}`)) addIssue(issues, id, 'title_id_mismatch', { actual: page.title });
       if (/\b(undefined|NaN)\b/.test(page.bodyText)) addIssue(issues, id, 'invalid_text_rendered');
+      if (navigationOnly) {
+        previousPage = page;
+        continue;
+      }
 
       if (auditEvolutionTooltip && page.evolutionInfoButton) {
         await evaluate(`document.querySelector('[data-testid="evolution-info-button"]').click()`);
@@ -1575,6 +1708,7 @@ const main = async () => {
     viewport: { width: viewportWidth, height: viewportHeight },
     range: { from: fromId, to: toId, latestPokemonGoId: lastPokemonId },
     multipleFormsOnly,
+    navigationOnly,
     summary: {
       expectedIds: idsToAudit.length,
       auditedIds,

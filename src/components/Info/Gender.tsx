@@ -2,8 +2,27 @@ import React from 'react';
 import APIService from '../../services/api.service';
 import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
-import { getKeyWithData, setNextPokemonImageFallback } from '../../utils/utils';
+import { getKeyWithData } from '../../utils/utils';
 import PokemonIconType from '../Sprites/PokemonIconType/PokemonIconType';
+import { Skeleton } from '@mui/material';
+import { useImageSourceSequence } from '../../utils/hooks/useImageSourceSequence';
+
+export const GenderSkeleton = () => (
+  <div className="tw-mt-3 tw-mr-3 tw-flex-none" data-testid="gender-ratio-skeleton">
+    <div className="tw-flex tw-items-center tw-gap-x-3">
+      <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={40} height={40} />
+      <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-32" />
+    </div>
+    <div className="tw-mt-2 tw-flex tw-ml-4 tw-gap-x-3">
+      {Array.from({ length: 2 }, (_, index) => (
+        <div key={index} className="img-form-gender-group !tw-mr-0 tw-flex tw-flex-col tw-items-center">
+          <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
+          <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-14" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 const Gender = (props: IGenderComponent) => {
   const defaultSpriteCandidates =
@@ -42,11 +61,12 @@ const Gender = (props: IGenderComponent) => {
           props.fallbackSprite?.frontShiny,
           APIService.getPokeSprite(),
         ];
-  const defaultSprite = defaultSpriteCandidates.find(Boolean) ?? APIService.getPokeSprite();
-  const shinySprite = shinySpriteCandidates.find(Boolean) ?? APIService.getPokeSprite();
+  const { source: defaultSprite, advanceSource: advanceDefaultSprite } =
+    useImageSourceSequence(defaultSpriteCandidates);
+  const { source: shinySprite, advanceSource: advanceShinySprite } = useImageSourceSequence(shinySpriteCandidates);
 
   return (
-    <div className="tw-mt-3 tw-mr-3">
+    <div className="tw-mt-3 tw-mr-3 tw-flex-none">
       <div className="tw-flex tw-items-center tw-gap-x-3">
         <img
           className="img-gender"
@@ -55,7 +75,7 @@ const Gender = (props: IGenderComponent) => {
           alt="Image Pokémon Sex"
           src={APIService.getGenderSprite(getKeyWithData(TypeSex, props.sex))}
         />
-        <h6 className="ratio-gender !tw-m-0">
+        <h6 className="ratio-gender !tw-m-0 tw-whitespace-nowrap">
           {`${getKeyWithData(TypeSex, props.sex)} ${
             props.ratio ? `ratio: ${props.sex === TypeSex.Male ? props.ratio.M * 100 : props.ratio.F * 100}%` : ''
           }`}
@@ -70,9 +90,7 @@ const Gender = (props: IGenderComponent) => {
               width={96}
               height={96}
               alt="Pokémon Image"
-              onError={(e) => {
-                setNextPokemonImageFallback(e.currentTarget, defaultSpriteCandidates);
-              }}
+              onError={advanceDefaultSprite}
               src={defaultSprite}
             />
             <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />
@@ -87,9 +105,7 @@ const Gender = (props: IGenderComponent) => {
               width={96}
               height={96}
               alt="Pokémon Image"
-              onError={(e) => {
-                setNextPokemonImageFallback(e.currentTarget, shinySpriteCandidates);
-              }}
+              onError={advanceShinySprite}
               src={shinySprite}
             />
             <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />

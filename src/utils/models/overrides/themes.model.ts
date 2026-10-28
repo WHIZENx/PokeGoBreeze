@@ -23,6 +23,12 @@ export const getDesignThemes = (mode: TypeTheme) =>
             '&[data-skeleton-surface="pokemon-image"]': {
               backgroundColor: 'transparent',
             },
+            '&[data-skeleton-surface="page"]': {
+              backgroundColor: 'var(--skeleton-page-background)',
+              '&::after': {
+                opacity: 'var(--skeleton-page-wave-opacity)',
+              },
+            },
           },
         },
       },
