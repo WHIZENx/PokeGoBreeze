@@ -486,6 +486,8 @@ export interface TabPanelComponent {
 
 export interface IIDefaultOptionAccordion<T> extends IDefaultOption<T> {
   renderChildren?: () => React.ReactNode;
+  headerActions?: React.ReactNode;
+  keepMounted?: boolean;
   hideIcon?: boolean;
   footer?: React.ReactNode;
   bgHeadColor?: string;

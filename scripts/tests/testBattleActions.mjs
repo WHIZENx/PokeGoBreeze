@@ -12,6 +12,8 @@ const [
   timelineFit,
   timelineVertical,
   timelineTeamEvent,
+  pvpStyles,
+  accordionMui,
 ] = await Promise.all([
   readFile(new URL('../../src/pages/PVP/Battle/Battle.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/utils/battle-export.ts', import.meta.url), 'utf8'),
@@ -21,6 +23,8 @@ const [
   readFile(new URL('../../src/pages/PVP/Battle/Timeline/TimelineFit.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/Timeline/TimelineVertical.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Battle/Timeline/TimelineTeamEvent.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/PVP.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Accordions/AccordionMui.tsx', import.meta.url), 'utf8'),
 ]);
 const battleModel = await readFile(new URL('../../src/pages/PVP/models/battle.model.ts', import.meta.url), 'utf8');
 
@@ -33,6 +37,11 @@ assert.match(
   battlePage,
   /team: playerTeam\.map\(createBattleRequest\)[\s\S]*opponentTeam: opponentTeam\.map\(createBattleRequest\)/,
   'The simulator must submit each side with its independently selected team size.'
+);
+assert.match(
+  battlePage,
+  /const maxHp = getBattleHp\(currentStats\?\.stats\?\.statSTA\)[\s\S]*startingHp: Math\.max\(1, Math\.min\(maxHp, pokemon\.startingHp \?\? maxHp\)\)[\s\S]*statStages:[\s\S]*atk: toNumber\(pokemon\.attackStage\)[\s\S]*def: toNumber\(pokemon\.defenseStage\)/,
+  'Battle requests must send maximum HP separately from Starting HP and initial stat stages.'
 );
 assert.match(
   battlePage,
@@ -61,6 +70,16 @@ assert.match(
 );
 assert.match(
   battlePage,
+  /labelPrepend="Starting HP"[\s\S]*max: maxHp[\s\S]*teamIndex === 0[\s\S]*labelPrepend="Attack Stage"[\s\S]*labelPrepend="Defense Stage"/,
+  'Every Pokémon must expose Starting HP while only the initial active matchup exposes starting stat stages.'
+);
+assert.match(
+  battlePage,
+  /const configuredHp = maxHp > 0[\s\S]*pokemon\.startingHp \?\? maxHp[\s\S]*latest\?\.hp \?\? configuredHp/,
+  'Collapsed HP bars must preview configured Starting HP before timeline playback.'
+);
+assert.match(
+  battlePage,
   /isTimelineTeamMemberActive[\s\S]*timelineCursor >= 0[\s\S]*activeTeamIndexes\.opponent[\s\S]*activeTeamIndexes\.player/,
   'Timeline playback must derive the active accordion independently for both battle sides.'
 );
@@ -81,6 +100,11 @@ assert.match(
 );
 assert.match(
   battlePage,
+  /const teamAccordionSummarySx[\s\S]*MuiAccordionSummary-expandIconWrapper[\s\S]*order: -1[\s\S]*marginRight: 1[\s\S]*sxSummary: teamAccordionSummarySx[\s\S]*sxSummary: teamAccordionSummarySx/,
+  'Every team accordion must place its expand arrow before the Pokémon slot number.'
+);
+assert.match(
+  battlePage,
   /pokemon\.pokemonData \? 'tw-break-words' : 'tw-whitespace-nowrap'/,
   'Empty team-slot labels must keep their number on the same line.'
 );
@@ -89,10 +113,31 @@ assert.match(
   /const maxPvpTeamSize = 3[\s\S]*bench\.length < maxPvpTeamSize - 1[\s\S]*label="Add Pokémon"/,
   'Dynamic teams must remain capped at the real three-Pokémon PvP party size.'
 );
+assert.doesNotMatch(battleSelect, /label="Random"/, 'Random must not remain inside the expanded Pokémon editor.');
 assert.match(
   battleSelect,
-  /label="Random"[\s\S]*onClick=\{selectRandomPokemon\}/,
-  'Each Pokémon selector must expose the Random action beside its label.'
+  /useImperativeHandle\(ref, \(\) => \(\{ selectRandomPokemon \}\)\)/,
+  'The Pokémon selector must expose Random to its accordion header.'
+);
+assert.match(
+  battlePage,
+  /const renderHeaderActions[\s\S]*tw-w-16 tw-shrink-0[\s\S]*title="Random Pokémon"[\s\S]*selectRefs\[teamIndex\]\?\.selectRandomPokemon\(\)[\s\S]*title="Remove Pokémon"[\s\S]*removeBenchMember/,
+  'Random and bench Remove actions must be available directly from each Pokémon accordion header.'
+);
+assert.match(
+  battlePage,
+  /renderHeaderActions[\s\S]*tw-w-16 tw-shrink-0/,
+  'Every Pokémon header must reserve the same action width so collapsed HP bars remain aligned.'
+);
+assert.match(
+  battlePage,
+  /keepMounted: true[\s\S]*headerActions: renderHeaderActions\(0, lead\)[\s\S]*keepMounted: true[\s\S]*headerActions: renderHeaderActions\(index \+ 1, pokemon, index\)/,
+  'Team editors must keep their selectors mounted so header Random works while an accordion is collapsed.'
+);
+assert.match(
+  accordionMui,
+  /const AccordionHeader[\s\S]*<AccordionSummary[\s\S]*AccordionHeaderActions[\s\S]*item\.headerActions[\s\S]*item\.keepMounted \|\| storeAccordions\[index\]/,
+  'Accordion header actions must remain outside the summary button and support opt-in mounted content.'
 );
 assert.match(
   battleSelect,
@@ -126,18 +171,58 @@ assert.match(
 );
 assert.match(
   battlePage,
+  /inputLabel="Speed"[\s\S]*tw-mt-4 tw-flex tw-flex-wrap tw-justify-center tw-gap-2 tw-pb-2[\s\S]*label=\{playState \? 'Stop' : 'Play'\}/,
+  'Timeline playback buttons must keep consistent spacing below wrapped controls at every breakpoint.'
+);
+assert.match(
+  battlePage,
+  /md:!tw-grid md:tw-grid-cols-2[\s\S]*tw-order-1[\s\S]*tw-order-4[\s\S]*md:tw-col-span-2[\s\S]*tw-order-2[\s\S]*renderBattleControls\(\)/,
+  'Battle layouts must keep both team builders side by side and give controls and results their own full-width rows.'
+);
+assert.match(
+  battlePage,
+  /const renderTeam = \(isOpponent: boolean\)[\s\S]*<AccordionMui[\s\S]*defaultValue=\{0\}[\s\S]*expandedSlot === index \+ 1[\s\S]*\.\.\.bench\.map/,
+  'Each side must group its lead and bench into one exclusive accordion so only one Pokémon editor is expanded at a time.'
+);
+assert.match(
+  battlePage,
+  /setLeadExpanded\(\{ player: false, opponent: false \}\)[\s\S]*setPokemonCurrBenchExpanded\(playerBenchExpanded\.map\(\(\) => false\)\)[\s\S]*resetItemOnChange=\{isNotEmpty\(pokemonCurr\.timeline\)/,
+  'A completed simulation must collapse team editors so the user lands on compact team summaries and the battle result.'
+);
+assert.match(
+  battlePage,
+  /aria-label="Simulation controls"[\s\S]*renderStrategyButton\('Player Strategy'[\s\S]*renderStrategyButton\('Opponent Strategy'[\s\S]*label="Battle Simulator"/,
+  'Strategy and simulation actions must form a dedicated control row before the battle result.'
+);
+assert.match(
+  battlePage,
   /focusBattleTimeline[\s\S]*focus\(\{ preventScroll: true \}\)[\s\S]*scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/,
   'Battle actions must smoothly align the timeline anchor to the top and move keyboard focus to it.'
 );
 assert.match(
   battlePage,
-  /setPokemonObjBenchExpanded\(opponentBenchExpanded\);[\s\S]*focusBattleTimeline\(\);/,
+  /const onChangeTimeline[\s\S]*setOptions\(\{ \.\.\.options, timelineType: type \}\)[\s\S]*setTimeout[\s\S]*focusBattleTimeline\(\);[\s\S]*}, 100\)/,
+  'Switching between Fit and Normal Timeline must focus the newly rendered timeline automatically.'
+);
+assert.match(
+  battlePage,
+  /setPokemonObjBenchExpanded\(opponentBenchExpanded\.map\(\(\) => false\)\);[\s\S]*focusBattleTimeline\(\);/,
   'Battle Simulator and Reset Battle must focus the rendered timeline after a successful simulation.'
 );
 assert.match(
   battlePage,
-  /renderStrategy\('Player Strategy', 'playerStrategy',[\s\S]*renderStrategy\('Opponent Strategy', 'opponentStrategy',[\s\S]*label="Battle Simulator"/,
-  'Both strategy editors must stay grouped with the battle simulation actions instead of timeline playback controls.'
+  /renderStrategyButton\('Player Strategy', 'playerStrategy',[\s\S]*renderStrategyButton\('Opponent Strategy', 'opponentStrategy',[\s\S]*label="Battle Simulator"/,
+  'Compact strategy buttons must stay grouped with the battle simulation actions instead of timeline playback controls.'
+);
+assert.match(
+  battlePage,
+  /const strategySummary[\s\S]*Shield always[\s\S]*After faint:[\s\S]*scripted action[\s\S]*aria-haspopup="dialog"/,
+  'Each strategy button must summarize the active decisions before opening its editor.'
+);
+assert.match(
+  battlePage,
+  /<DialogMui[\s\S]*open=\{strategyDialog !== undefined\}[\s\S]*width="md"[\s\S]*renderStrategy\([\s\S]*actions=\{\[\{ label: 'Done', isClose: true \}\]\}/,
+  'Strategy options must open in one responsive dialog and retain the existing editor controls.'
 );
 assert.match(
   battlePage,
@@ -178,6 +263,11 @@ assert.match(
   battlePage,
   /leagueId: selectedLeagueId,[\s\S]*playerStrategy,[\s\S]*opponentStrategy,/,
   'Battle requests must include league identity and both server-side strategy definitions.'
+);
+assert.match(
+  battlePage,
+  /response\.data\.meta\.warnings[\s\S]*warning\.message[\s\S]*showSnackbar\(warningMessages\.join\(' '\), 'warning'\)/,
+  'Unavailable simulator selections must complete the battle and surface API reasons as warning snackbars.'
 );
 for (const leagueId of ['DEFAULT_LITTLE', 'DEFAULT_GREAT', 'DEFAULT_ULTRA', 'DEFAULT_MASTER']) {
   assert.match(battlePage, new RegExp(leagueId), `The battle page must map the ${leagueId} standard league.`);
@@ -227,6 +317,11 @@ assert.match(
 );
 assert.match(
   timelineVertical,
+  /timelineLength = Math\.max\([\s\S]*tw-grid tw-grid-cols-2[\s\S]*Array\.from\(\{ length: timelineLength \}[\s\S]*renderTimelineEntry\([\s\S]*pokemonCurr\.timeline\.at\(index\)[\s\S]*renderTimelineEntry\([\s\S]*pokemonObj\.timeline\.at\(index\)/,
+  'Both sides of each vertical timeline turn must share one CSS grid row so variable badge heights cannot offset later dividers.'
+);
+assert.match(
+  timelineVertical,
   /AttackType\.Block[\s\S]*renderPokemonIcon[\s\S]*AttackType\.Fast[\s\S]*renderActionLabel[\s\S]*AttackType\.Charge[\s\S]*renderActionLabel/,
   'Shield, Fast Attack, and Charged Attack badges must identify their active Pokémon.'
 );
@@ -257,13 +352,43 @@ assert.match(
 );
 assert.match(
   timelineFit,
-  /data-timeline-event-lane=\{eventType\}[\s\S]*eventType=\{eventType\}[\s\S]*renderTeamEventLane\('faint'\)[\s\S]*renderTeamEventLane\('switch'\)/,
-  'Fit Timeline must separate Faint and Switch markers so simultaneous team events cannot overlap.'
+  /const teamEvents = poke\.timeline\.reduce[\s\S]*event\.turn === turn[\s\S]*faintedIndex: faintEntry\?\.faintedIndex \?\? faintEntry\?\.activeIndex[\s\S]*data-timeline-event-lane="switch"[\s\S]*renderTeamEventLane\(\)/,
+  'Fit Timeline must merge same-turn Faint and Switch markers into one shared team-event lane.'
+);
+assert.match(
+  timelineFit,
+  /minimumTeamEventGapPercent = 12[\s\S]*lastPositionByRow\.findIndex[\s\S]*teamEventRowCount[\s\S]*tw-z-30[\s\S]*data-timeline-event-divider=\{entry\.type === AttackType\.Switch \? 'switch' : 'faint'\}[\s\S]*!tw-z-40[\s\S]*data-timeline-event-row=\{row\}[\s\S]*<TimelineTeamEvent/,
+  'Every Fit Timeline switch or faint must draw a turn-aligned divider behind its Pokémon event badge.'
+);
+assert.match(
+  timeline,
+  /minimumTeamEventGap = 96[\s\S]*timelineGap = 12[\s\S]*lastPositionByRow\.findIndex[\s\S]*teamEventRowByIndex\.set\(index, row\)[\s\S]*data-timeline-event-divider=\{teamEventType\}[\s\S]*data-timeline-event-row=\{row\}[\s\S]*<TimelineTeamEvent/,
+  'Normal Timeline must stack nearby switch and faint badges while keeping dividers aligned with their move boxes.'
+);
+assert.match(
+  timelineTeamEvent,
+  /tw-relative tw-z-20 tw-inline-flex/,
+  'Timeline Pokémon event badges must remain above shared turn dividers.'
+);
+assert.match(
+  pvpStyles,
+  /\.fit-timeline > \.tw-relative/,
+  'Fit Timeline width must apply only to its root container so team-event icon backgrounds remain content-sized.'
+);
+assert.doesNotMatch(
+  pvpStyles,
+  /\.fit-timeline \.tw-relative/,
+  'Fit Timeline must not stretch nested relative Pokémon icon containers to the timeline width.'
 );
 assert.match(battleExport, /export const createBattleEventRows/, 'The export must build a chronological event log.');
 for (const content of ['Battle timeline', 'Battle events', 'CP ', 'Level ', 'IV ', 'ATK ', 'DEF ', 'HP ']) {
   assert.ok(battleExport.includes(content), `The battle export must include ${content.trim()}.`);
 }
+assert.match(
+  battleExport,
+  /Start HP \$\{startingHp\}\/\$\{maxHp\}[\s\S]*ATK \$\{formatStage\(attackStage\)\}[\s\S]*DEF \$\{formatStage\(defenseStage\)\}/,
+  'The battle export must preserve starting HP and stat stages for reproducible simulations.'
+);
 assert.match(battleExport, /getLocalTypeIcon/, 'The battle export must use the shared move type icon assets.');
 assert.match(battleModel, /score\?: number;/, 'The selected PvPoke score must remain typed in the battle model.');
 assert.match(
@@ -311,6 +436,21 @@ assert.match(
   battleExport,
   /playerPokemon:[\s\S]*activeIndex[\s\S]*opponentPokemon:[\s\S]*activeIndex/,
   'Multi-Pokémon battle events must identify the active Pokémon on each side.'
+);
+assert.match(
+  battleExport,
+  /drawBattleEventPokemonIcon[\s\S]*drawContainedImage[\s\S]*if \(fainted\)[\s\S]*colors\.danger[\s\S]*drawBattleEventPokemon/,
+  'Vertical exported battle events must draw Pokémon icons and overlay a close mark when a Pokémon faints.'
+);
+assert.match(
+  battleExport,
+  /playerSwitchedFromIndex[\s\S]*playerImages[\s\S]*event\.playerPokemonIndex[\s\S]*opponentImages[\s\S]*event\.opponentPokemonIndex/,
+  'Vertical exported switch and attack events must resolve the correct team image for both sides.'
+);
+assert.match(
+  battleExport,
+  /player\?\.type === AttackType\.Dead[\s\S]*player\.faintedIndex[\s\S]*player\?\.activeIndex[\s\S]*opponent\?\.type === AttackType\.Dead/,
+  'A faint-and-switch row must keep the fainted Pokémon as the source and the new active Pokémon as the target.'
 );
 assert.match(
   battleExport,

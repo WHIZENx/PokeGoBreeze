@@ -20,11 +20,12 @@ const CustomTooltip = styled(
 const Tooltips = (props: ITooltip) => {
   const [isPinnedOpen, setIsPinnedOpen] = useState(false);
   const [isTransientOpen, setIsTransientOpen] = useState(false);
+  const openOnClick = props.openOnClick ?? true;
 
-  if (props.openOnClick) {
-    const { children, onClose, onOpen, open, openOnClick, ...tooltipProps } = props;
+  if (openOnClick) {
+    const { children, onClose, onOpen, open, openOnClick: _openOnClick, ...tooltipProps } = props;
     const isOpen = open ?? (isPinnedOpen || isTransientOpen);
-    void openOnClick;
+    void _openOnClick;
     const close = (event: MouseEvent | TouchEvent | React.SyntheticEvent) => {
       setIsPinnedOpen(false);
       setIsTransientOpen(false);

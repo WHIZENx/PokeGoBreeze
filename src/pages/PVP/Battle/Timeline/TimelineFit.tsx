@@ -35,37 +35,82 @@ const TimelineFit = (
 
   const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle, team: IPokemonBattle[]) => {
     const positions = calculateWidthBasedPositions(poke.timeline);
-    const hasSwitchEvents = poke.timeline.some(
-      (value) => value.type === AttackType.Switch || value.switchedFromIndex !== undefined
+    const isSwitchEvent = (value: ITimeline) =>
+      value.type === AttackType.Switch || value.switchedFromIndex !== undefined;
+    const isFaintEvent = (value: ITimeline) => value.type === AttackType.Dead || value.faintedIndex !== undefined;
+    const teamEvents = poke.timeline.reduce<Array<{ entry: ITimeline; index: number; left: string; turn: number }>>(
+      (events, value, index) => {
+        const hasSwitch = isSwitchEvent(value);
+        const hasFaint = isFaintEvent(value);
+        if (!hasSwitch && !hasFaint) {
+          return events;
+        }
+        const turn = value.timer ?? index;
+        const existing = events.find((event) => event.turn === turn);
+        if (!existing) {
+          events.push({ entry: value, index, left: positions[index], turn });
+          return events;
+        }
+        const switchEntry = hasSwitch ? value : isSwitchEvent(existing.entry) ? existing.entry : undefined;
+        const faintEntry = hasFaint ? value : isFaintEvent(existing.entry) ? existing.entry : undefined;
+        existing.entry = {
+          ...existing.entry,
+          ...switchEntry,
+          faintedIndex: faintEntry?.faintedIndex ?? faintEntry?.activeIndex,
+          faintedPokemonName: faintEntry?.faintedPokemonName,
+        };
+        if (hasSwitch) {
+          existing.index = index;
+          existing.left = positions[index];
+        }
+        return events;
+      },
+      []
     );
-    const hasFaintEvents = poke.timeline.some(
-      (value) => value.type === AttackType.Dead || value.faintedIndex !== undefined
-    );
-    const renderTeamEventLane = (eventType: 'switch' | 'faint') => (
-      <div className="tw-relative timeline-fit-container tw-h-7" data-timeline-event-lane={eventType}>
-        {poke.timeline.map((value, index) => {
-          const isVisible =
-            eventType === 'switch'
-              ? value.type === AttackType.Switch || value.switchedFromIndex !== undefined
-              : value.type === AttackType.Dead || value.faintedIndex !== undefined;
-          return (
-            isVisible && (
-              <div
-                className="!tw-flex tw-items-center tw-justify-center"
-                key={index}
-                style={{ left: positions[index], transform: 'translate(-50%, -50%)' }}
-              >
-                <TimelineTeamEvent
-                  entry={value}
-                  eventType={eventType}
-                  index={index}
-                  team={team}
-                  timeline={poke.timeline}
-                />
-              </div>
-            )
-          );
-        })}
+    const minimumTeamEventGapPercent = 12;
+    const lastPositionByRow: number[] = [];
+    const positionedTeamEvents = teamEvents.map((event) => {
+      const position = Number.parseFloat(event.left);
+      let row = lastPositionByRow.findIndex((lastPosition) => position - lastPosition >= minimumTeamEventGapPercent);
+      if (row < 0) {
+        row = lastPositionByRow.length;
+      }
+      lastPositionByRow[row] = position;
+      return { ...event, row };
+    });
+    const teamEventRowCount = Math.max(1, lastPositionByRow.length);
+    const teamEventRowHeight = 28;
+    const renderTeamEventLane = () => (
+      <div
+        className="tw-relative timeline-fit-container"
+        data-timeline-event-lane="switch"
+        style={{ height: teamEventRowCount * teamEventRowHeight }}
+      >
+        {positionedTeamEvents.map(({ entry, index, left, row, turn }) => (
+          <Fragment key={`${turn}-${index}`}>
+            <span
+              aria-hidden="true"
+              className="tw-pointer-events-none tw-absolute tw-z-30 tw-w-px -tw-translate-x-1/2 tw-bg-[var(--text-secondary)] tw-opacity-80"
+              data-timeline-event-divider={entry.type === AttackType.Switch ? 'switch' : 'faint'}
+              style={{
+                left,
+                top: row * teamEventRowHeight + teamEventRowHeight / 2,
+                height: (teamEventRowCount - row) * teamEventRowHeight + 30,
+              }}
+            />
+            <div
+              className="!tw-z-40 !tw-flex tw-items-center tw-justify-center"
+              data-timeline-event-row={row}
+              style={{
+                left,
+                top: row * teamEventRowHeight + teamEventRowHeight / 2,
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <TimelineTeamEvent entry={entry} index={index} team={team} timeline={poke.timeline} />
+            </div>
+          </Fragment>
+        ))}
       </div>
     );
     return (
@@ -121,10 +166,7 @@ const TimelineFit = (
                   )
               )}
           </div>
-          <div data-timeline-lane="switch">
-            {hasFaintEvents && renderTeamEventLane('faint')}
-            {hasSwitchEvents && renderTeamEventLane('switch')}
-          </div>
+          {positionedTeamEvents.length > 0 && <div data-timeline-lane="switch">{renderTeamEventLane()}</div>}
         </div>
         <div className="tw-relative timeline-fit-container tw-h-7.5">
           {poke.timeline.map((value, index) => (

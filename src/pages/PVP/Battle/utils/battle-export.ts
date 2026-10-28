@@ -20,10 +20,18 @@ interface BattleEventRow {
   timeSeconds: number;
   playerAction: string;
   playerPokemon: string;
+  playerPokemonIndex: number;
+  playerSwitchedFromPokemon?: string;
+  playerSwitchedFromIndex?: number;
+  playerFainted: boolean;
   playerMoveType?: string;
   playerState: string;
   opponentAction: string;
   opponentPokemon: string;
+  opponentPokemonIndex: number;
+  opponentSwitchedFromPokemon?: string;
+  opponentSwitchedFromIndex?: number;
+  opponentFainted: boolean;
   opponentMoveType?: string;
   opponentState: string;
 }
@@ -147,15 +155,37 @@ export const createBattleEventRows = (
       continue;
     }
     const turn = Math.max(player?.timer ?? index, opponent?.timer ?? index);
+    const playerPokemonIndex =
+      player?.type === AttackType.Dead
+        ? (player.faintedIndex ?? player.activeIndex ?? 0)
+        : (player?.activeIndex ?? player?.faintedIndex ?? 0);
+    const opponentPokemonIndex =
+      opponent?.type === AttackType.Dead
+        ? (opponent.faintedIndex ?? opponent.activeIndex ?? 0)
+        : (opponent?.activeIndex ?? opponent?.faintedIndex ?? 0);
     rows.push({
       turn,
       timeSeconds: turn * turnDurationSeconds,
       playerAction: getActionText(player),
-      playerPokemon: formatName(playerTeam[player?.activeIndex ?? 0]?.pokemonData?.name),
+      playerPokemon: formatName(playerTeam[playerPokemonIndex]?.pokemonData?.name),
+      playerPokemonIndex,
+      playerSwitchedFromPokemon:
+        player?.switchedFromIndex === undefined
+          ? undefined
+          : formatName(playerTeam[player.switchedFromIndex]?.pokemonData?.name),
+      playerSwitchedFromIndex: player?.switchedFromIndex,
+      playerFainted: player?.faintedIndex !== undefined || player?.type === AttackType.Dead,
       playerMoveType: player?.move?.type,
       playerState: player ? `HP ${Math.max(0, player.hp)} · E ${player.energy} · S ${player.block}` : '—',
       opponentAction: getActionText(opponent),
-      opponentPokemon: formatName(opponentTeam[opponent?.activeIndex ?? 0]?.pokemonData?.name),
+      opponentPokemon: formatName(opponentTeam[opponentPokemonIndex]?.pokemonData?.name),
+      opponentPokemonIndex,
+      opponentSwitchedFromPokemon:
+        opponent?.switchedFromIndex === undefined
+          ? undefined
+          : formatName(opponentTeam[opponent.switchedFromIndex]?.pokemonData?.name),
+      opponentSwitchedFromIndex: opponent?.switchedFromIndex,
+      opponentFainted: opponent?.faintedIndex !== undefined || opponent?.type === AttackType.Dead,
       opponentMoveType: opponent?.move?.type,
       opponentState: opponent ? `HP ${Math.max(0, opponent.hp)} · E ${opponent.energy} · S ${opponent.block}` : '—',
     });
@@ -306,6 +336,11 @@ const pokemonInfoLines = (pokemon: IPokemonBattle) => {
   const identity = [`#${data?.id ?? '—'}`, meaningfulForm ? formatName(meaningfulForm) : undefined, types]
     .filter(Boolean)
     .join(' · ');
+  const maxHp = getBattleHp(calculated?.statSTA);
+  const startingHp = Math.min(maxHp, Math.max(1, pokemon.startingHp ?? maxHp));
+  const attackStage = pokemon.attackStage ?? 0;
+  const defenseStage = pokemon.defenseStage ?? 0;
+  const formatStage = (stage: number) => `${stage > 0 ? '+' : ''}${stage}`;
   const lines: PokemonInfoLine[] = [
     { text: identity, scoreBadge: data?.score && data.score > 0 ? String(data.score) : undefined },
     {
@@ -314,7 +349,9 @@ const pokemonInfoLines = (pokemon: IPokemonBattle) => {
     {
       text: `ATK ${formatNumber(calculated?.statATK, 1)} · DEF ${formatNumber(calculated?.statDEF, 1)} · HP ${formatNumber(getBattleHp(calculated?.statSTA))}`,
     },
-    { text: `Start energy ${pokemon.energy} · Shields ${pokemon.block}` },
+    {
+      text: `Start HP ${startingHp}/${maxHp} · E ${pokemon.energy} · S ${pokemon.block} · ATK ${formatStage(attackStage)} · DEF ${formatStage(defenseStage)}`,
+    },
     ...moves.map((move, index) => ({
       text: `${index === 0 ? 'Fast' : `Charged ${index}`}: ${move.name}`,
       moveType: move.type,
@@ -520,6 +557,83 @@ const drawTeamTimelinePokemon = (
     context.lineTo(centerX - 10, centerY + 10);
     context.stroke();
   }
+};
+
+const drawBattleEventPokemonIcon = (
+  context: CanvasRenderingContext2D,
+  image: HTMLImageElement | undefined,
+  x: number,
+  y: number,
+  fainted: boolean
+) => {
+  const size = 24;
+  if (image) {
+    drawContainedImage(context, image, x, y, size, size);
+  } else {
+    context.fillStyle = colors.surfaceAlt;
+    context.beginPath();
+    context.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
+    context.fill();
+  }
+  if (fainted) {
+    context.strokeStyle = colors.danger;
+    context.lineCap = 'round';
+    context.lineWidth = 3;
+    context.beginPath();
+    context.moveTo(x + 4, y + 4);
+    context.lineTo(x + size - 4, y + size - 4);
+    context.moveTo(x + size - 4, y + 4);
+    context.lineTo(x + 4, y + size - 4);
+    context.stroke();
+  }
+};
+
+const drawBattleEventPokemon = (
+  context: CanvasRenderingContext2D,
+  images: Array<HTMLImageElement | undefined>,
+  pokemon: string,
+  pokemonIndex: number,
+  switchedFromPokemon: string | undefined,
+  switchedFromIndex: number | undefined,
+  fainted: boolean,
+  turn: number,
+  x: number,
+  y: number,
+  maxWidth: number,
+  fontFamily: string
+) => {
+  const iconSize = 24;
+  const gap = 6;
+  const font = `400 14px ${fontFamily}`;
+  context.font = font;
+
+  if (switchedFromIndex !== undefined && switchedFromPokemon) {
+    drawBattleEventPokemonIcon(context, images[switchedFromIndex], x, y - 18, fainted);
+    const sourceTextX = x + iconSize + gap;
+    const sourceWidth = Math.min(112, context.measureText(switchedFromPokemon).width);
+    drawText(context, switchedFromPokemon, sourceTextX, y, {
+      color: colors.muted,
+      font,
+      maxWidth: sourceWidth,
+    });
+    const arrowX = sourceTextX + sourceWidth + 8;
+    drawText(context, '→', arrowX, y, { color: colors.muted, font });
+    const targetIconX = arrowX + 18;
+    drawBattleEventPokemonIcon(context, images[pokemonIndex], targetIconX, y - 18, false);
+    drawText(context, `${pokemon} · T${turn}`, targetIconX + iconSize + gap, y, {
+      color: colors.muted,
+      font,
+      maxWidth: Math.max(40, maxWidth - (targetIconX + iconSize + gap - x)),
+    });
+    return;
+  }
+
+  drawBattleEventPokemonIcon(context, images[pokemonIndex], x, y - 18, fainted);
+  drawText(context, `${pokemon} · Turn ${turn}`, x + iconSize + gap, y, {
+    color: colors.muted,
+    font,
+    maxWidth: maxWidth - iconSize - gap,
+  });
 };
 
 const drawTeamEventLane = (
@@ -825,10 +939,20 @@ export const exportBattleReportImage = async ({
       font: `500 17px ${fontFamily}`,
       maxWidth: 405 - (hasPlayerMoveIcon ? 30 : 0),
     });
-    drawText(context, `${event.playerPokemon} · Turn ${event.turn}`, columns[1], y + 49, {
-      color: colors.muted,
-      font: `400 14px ${fontFamily}`,
-    });
+    drawBattleEventPokemon(
+      context,
+      playerImages,
+      event.playerPokemon,
+      event.playerPokemonIndex,
+      event.playerSwitchedFromPokemon,
+      event.playerSwitchedFromIndex,
+      event.playerFainted,
+      event.turn,
+      columns[1],
+      y + 52,
+      405,
+      fontFamily
+    );
     drawText(context, event.playerState, columns[2], y + 36, {
       color: colors.muted,
       font: `400 15px ${fontFamily}`,
@@ -840,10 +964,20 @@ export const exportBattleReportImage = async ({
       font: `500 17px ${fontFamily}`,
       maxWidth: 405 - (hasOpponentMoveIcon ? 30 : 0),
     });
-    drawText(context, `${event.opponentPokemon} · Turn ${event.turn}`, columns[3], y + 49, {
-      color: colors.muted,
-      font: `400 14px ${fontFamily}`,
-    });
+    drawBattleEventPokemon(
+      context,
+      opponentImages,
+      event.opponentPokemon,
+      event.opponentPokemonIndex,
+      event.opponentSwitchedFromPokemon,
+      event.opponentSwitchedFromIndex,
+      event.opponentFainted,
+      event.turn,
+      columns[3],
+      y + 52,
+      405,
+      fontFamily
+    );
     drawText(context, event.opponentState, columns[4], y + 36, {
       color: colors.muted,
       font: `400 15px ${fontFamily}`,
