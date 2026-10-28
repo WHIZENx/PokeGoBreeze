@@ -11,7 +11,7 @@ import {
 } from '../../../utils/utils';
 
 import './Form.scss';
-import Gender, { GenderSkeleton } from '../Gender';
+import Gender, { GenderSkeleton, getGenderSpriteCandidates } from '../Gender';
 import Stats from '../Stats/Stats';
 import Raid from '../../Raid/Raid';
 import Counter from '../../Commons/Tables/Counter/Counter';
@@ -38,6 +38,7 @@ import Fusion from '../FormChange/Fusion';
 import { PokemonMoves } from '../../../core/models/API/pokemon-bundle.model';
 import { IPokemonQueryRankMove } from '../../../utils/models/pokemon-top-move.model';
 import { IPokemonGenderRatio } from '../../../core/models/pokemon.model';
+import { preloadFirstAvailableImage } from '../../../utils/hooks/usePreloadedImage';
 
 const unavailablePokemonMoves: PokemonMoves = {
   fastMoves: [],
@@ -60,6 +61,7 @@ const normalizePokemonType = (pokemonType: PokemonType | undefined) =>
 
 interface GenderDisplaySnapshot {
   pokemonId: number;
+  formId?: number;
   ratio?: IPokemonGenderRatio;
   primarySprite?: IPokemonSprite;
   fallbackSprite?: IPokemonSprite;
@@ -107,19 +109,20 @@ const FormComponent = (props: IFormInfoComponent) => {
     props.isLoadedForms &&
       props.defaultId &&
       (!params.id || Number(params.id) === props.defaultId) &&
-      searchingMainDetails?.id === props.defaultId &&
+      searchingMainForm?.defaultId === props.defaultId &&
       props.formList.some((forms) => forms.some((form) => form.defaultId === props.defaultId))
   );
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
   const currentGenderRatio =
-    searchingMainDetails?.id === props.defaultId ? searchingMainDetails?.genderRatio : undefined;
+    searchingMainForm?.defaultId === props.defaultId ? searchingMainDetails?.genderRatio : undefined;
   const lastLoadedGender = useRef<GenderDisplaySnapshot>();
 
   useEffect(() => {
     if (isCurrentPokemonLoaded && props.defaultId) {
       lastLoadedGender.current = {
         pokemonId: props.defaultId,
+        formId: searchingMainForm?.form?.id,
         ratio: currentGenderRatio,
         primarySprite: displaySpriteSources.primary,
         fallbackSprite: displaySpriteSources.fallback,
@@ -132,6 +135,56 @@ const FormComponent = (props: IFormInfoComponent) => {
     displaySpriteSources.primary,
     isCurrentPokemonLoaded,
     props.defaultId,
+    searchingMainForm?.form?.id,
+    selectedPokemonType,
+  ]);
+
+  const [searchGenderDisplay, setSearchGenderDisplay] = useState<GenderDisplaySnapshot>();
+
+  useEffect(() => {
+    if (params.id || !isCurrentPokemonLoaded || !props.defaultId) {
+      return;
+    }
+
+    const nextGenderDisplay: GenderDisplaySnapshot = {
+      pokemonId: props.defaultId,
+      formId: searchingMainForm?.form?.id,
+      ratio: currentGenderRatio,
+      primarySprite: displaySpriteSources.primary,
+      fallbackSprite: displaySpriteSources.fallback,
+      pokemonType: selectedPokemonType,
+    };
+    const sexes: TypeSex[] = currentGenderRatio
+      ? [...(currentGenderRatio.M !== 0 ? [TypeSex.Male] : []), ...(currentGenderRatio.F !== 0 ? [TypeSex.Female] : [])]
+      : [];
+    if (!sexes.length) {
+      sexes.push(TypeSex.Genderless);
+    }
+    const candidateGroups = sexes.flatMap((sex) => {
+      const candidates = getGenderSpriteCandidates(
+        nextGenderDisplay.primarySprite,
+        nextGenderDisplay.fallbackSprite,
+        sex
+      );
+      return [candidates.default, candidates.shiny];
+    });
+    let active = true;
+    Promise.all(candidateGroups.map(preloadFirstAvailableImage)).then(() => {
+      if (active) {
+        setSearchGenderDisplay(nextGenderDisplay);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [
+    currentGenderRatio,
+    displaySpriteSources.fallback,
+    displaySpriteSources.primary,
+    isCurrentPokemonLoaded,
+    params.id,
+    props.defaultId,
+    searchingMainForm?.form?.id,
     selectedPokemonType,
   ]);
 
@@ -140,15 +193,21 @@ const FormComponent = (props: IFormInfoComponent) => {
     lastGender && lastGender.pokemonId === props.defaultId && (!params.id || Number(params.id) === lastGender.pokemonId)
       ? lastGender
       : undefined;
-  const genderDisplay: GenderDisplaySnapshot | undefined = isCurrentPokemonLoaded
+  const directGenderDisplay: GenderDisplaySnapshot | undefined = isCurrentPokemonLoaded
     ? {
         pokemonId: props.defaultId ?? 0,
+        formId: searchingMainForm?.form?.id,
         ratio: currentGenderRatio,
         primarySprite: displaySpriteSources.primary,
         fallbackSprite: displaySpriteSources.fallback,
         pokemonType: selectedPokemonType,
       }
     : retainedGender;
+  const genderDisplay = params.id
+    ? directGenderDisplay
+    : searchGenderDisplay?.pokemonId === props.defaultId
+      ? searchGenderDisplay
+      : undefined;
   const genderRatio = genderDisplay?.ratio;
   const genderSkeletonCount = genderRatio ? (genderRatio.M !== 0 && genderRatio.F !== 0 ? 2 : 1) : 1;
   const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12.5 tw-overflow-x-auto';
@@ -322,7 +381,12 @@ const FormComponent = (props: IFormInfoComponent) => {
           }
         />
       </div>
-      <div className="tw-h-[190px]" data-testid="gender-ratio-content" aria-busy={!isCurrentPokemonLoaded}>
+      <div
+        className="tw-h-[190px]"
+        data-testid="gender-ratio-content"
+        data-gender-form-id={genderDisplay?.formId ?? ''}
+        aria-busy={!isCurrentPokemonLoaded}
+      >
         {!genderDisplay ? (
           <div className={genderTrackClass} aria-label="Loading gender ratio">
             {Array.from({ length: genderSkeletonCount }, (_, index) => (

@@ -104,6 +104,11 @@ assert.match(
   'A completed preload must be cached even if navigation has already changed.'
 );
 assert.match(
+  imagePreloader,
+  /export const preloadFirstAvailableImage = async[\s\S]*if \(isImagePreloaded\(url\)\)[\s\S]*markImageAsPreloaded\(url\)/,
+  'Search form switching must preload and cache the next Gender sprite before committing its snapshot.'
+);
+assert.match(
   theme,
   /&\[data-skeleton-surface="pokemon-image"\][\s\S]*backgroundColor: 'transparent'/,
   'The Pokémon image skeleton surface must reveal its containing background.'

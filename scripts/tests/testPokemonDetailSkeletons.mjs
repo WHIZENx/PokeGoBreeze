@@ -59,20 +59,28 @@ assert.ok(
 assert.match(form, /<GenderSkeleton key=\{index\} \/>/);
 assert.match(
   form,
-  /searchingMainDetails\?\.id === props\.defaultId \? searchingMainDetails\?\.genderRatio : undefined/
+  /searchingMainForm\?\.defaultId === props\.defaultId \? searchingMainDetails\?\.genderRatio : undefined/
 );
+assert.match(form, /searchingMainForm\?\.defaultId === props\.defaultId/);
+assert.doesNotMatch(form, /searchingMainDetails\?\.id === props\.defaultId/);
 assert.match(
   form,
   /const genderSkeletonCount = genderRatio \? \(genderRatio\.M !== 0 && genderRatio\.F !== 0 \? 2 : 1\) : 1/
 );
 assert.match(form, /const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12\.5 tw-overflow-x-auto'/);
 assert.match(form, /const lastLoadedGender = useRef<GenderDisplaySnapshot>/);
-assert.match(form, /const genderDisplay: GenderDisplaySnapshot \| undefined = isCurrentPokemonLoaded/);
+assert.match(form, /const \[searchGenderDisplay, setSearchGenderDisplay\] = useState<GenderDisplaySnapshot>/);
+assert.match(form, /Promise\.all\(candidateGroups\.map\(preloadFirstAvailableImage\)\)/);
+assert.match(form, /setSearchGenderDisplay\(nextGenderDisplay\)/);
+assert.match(form, /const directGenderDisplay: GenderDisplaySnapshot \| undefined = isCurrentPokemonLoaded/);
+assert.match(form, /const genderDisplay = params\.id/);
 assert.match(form, /lastGender\.pokemonId === props\.defaultId/);
+assert.match(gender, /export const getGenderSpriteCandidates/);
 assert.match(form, /!genderDisplay \? \(/);
 assert.equal(form.match(/className=\{genderDisplayClass\}/g)?.length, 2);
 assert.match(form, /aria-label=\{!isCurrentPokemonLoaded \? 'Updating gender ratio' : undefined\}/);
 assert.match(form, /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded\}/);
+assert.match(form, /data-gender-form-id=\{genderDisplay\?\.formId \?\? ''\}/);
 assert.match(form, /className="form-container tw-h-\[185px\]"/);
 assert.match(gender, /tw-flex-none" data-testid="gender-ratio-skeleton"/);
 assert.match(gender, /ratio-gender !tw-m-0 tw-whitespace-nowrap/);

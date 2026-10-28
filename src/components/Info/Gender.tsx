@@ -6,6 +6,7 @@ import { getKeyWithData } from '../../utils/utils';
 import PokemonIconType from '../Sprites/PokemonIconType/PokemonIconType';
 import { Skeleton } from '@mui/material';
 import { useImageSourceSequence } from '../../utils/hooks/useImageSourceSequence';
+import { IPokemonSprite } from '../../core/models/API/form.model';
 
 export const GenderSkeleton = () => (
   <div className="tw-mt-3 tw-mr-3 tw-flex-none" data-testid="gender-ratio-skeleton">
@@ -24,43 +25,39 @@ export const GenderSkeleton = () => (
   </div>
 );
 
+export const getGenderSpriteCandidates = (
+  sprite: IPokemonSprite | undefined,
+  fallbackSprite: IPokemonSprite | undefined,
+  sex: TypeSex
+) => ({
+  default:
+    sex === TypeSex.Male
+      ? [
+          sprite?.frontDefault,
+          sprite?.frontFemale,
+          sprite?.frontHome,
+          sprite?.frontArtwork,
+          fallbackSprite?.frontDefault,
+          fallbackSprite?.frontFemale,
+        ]
+      : [
+          sprite?.frontFemale,
+          sprite?.frontDefault,
+          sprite?.frontHome,
+          sprite?.frontArtwork,
+          fallbackSprite?.frontFemale,
+          fallbackSprite?.frontDefault,
+        ],
+  shiny:
+    sex === TypeSex.Male
+      ? [sprite?.frontShiny, sprite?.frontShinyFemale, fallbackSprite?.frontShiny, fallbackSprite?.frontShinyFemale]
+      : [sprite?.frontShinyFemale, sprite?.frontShiny, fallbackSprite?.frontShinyFemale, fallbackSprite?.frontShiny],
+});
+
 const Gender = (props: IGenderComponent) => {
-  const defaultSpriteCandidates =
-    props.sex === TypeSex.Male
-      ? [
-          props.sprite?.frontDefault,
-          props.sprite?.frontFemale,
-          props.sprite?.frontHome,
-          props.sprite?.frontArtwork,
-          props.fallbackSprite?.frontDefault,
-          props.fallbackSprite?.frontFemale,
-          APIService.getPokeSprite(),
-        ]
-      : [
-          props.sprite?.frontFemale,
-          props.sprite?.frontDefault,
-          props.sprite?.frontHome,
-          props.sprite?.frontArtwork,
-          props.fallbackSprite?.frontFemale,
-          props.fallbackSprite?.frontDefault,
-          APIService.getPokeSprite(),
-        ];
-  const shinySpriteCandidates =
-    props.sex === TypeSex.Male
-      ? [
-          props.sprite?.frontShiny,
-          props.sprite?.frontShinyFemale,
-          props.fallbackSprite?.frontShiny,
-          props.fallbackSprite?.frontShinyFemale,
-          APIService.getPokeSprite(),
-        ]
-      : [
-          props.sprite?.frontShinyFemale,
-          props.sprite?.frontShiny,
-          props.fallbackSprite?.frontShinyFemale,
-          props.fallbackSprite?.frontShiny,
-          APIService.getPokeSprite(),
-        ];
+  const spriteCandidates = getGenderSpriteCandidates(props.sprite, props.fallbackSprite, props.sex);
+  const defaultSpriteCandidates = [...spriteCandidates.default, APIService.getPokeSprite()];
+  const shinySpriteCandidates = [...spriteCandidates.shiny, APIService.getPokeSprite()];
   const { source: defaultSprite, advanceSource: advanceDefaultSprite } =
     useImageSourceSequence(defaultSpriteCandidates);
   const { source: shinySprite, advanceSource: advanceShinySprite } = useImageSourceSequence(shinySpriteCandidates);

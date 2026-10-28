@@ -29,6 +29,7 @@ const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
 const auditEvolutionTooltip = args.get('audit-evolution-tooltip') === 'true';
 const auditEvolutionOverlap = args.get('audit-evolution-overlap') !== 'false';
 const navigationOnly = args.get('navigation-only') === 'true';
+const searchPage = args.get('search-page') === 'true';
 const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
 const formSwitchCycles = Math.max(1, Number.parseInt(args.get('form-switch-cycles') ?? '1', 10));
 const outputPath = resolve(workspaceRoot, args.get('output') ?? 'artifacts/pokemon-details-audit.json');
@@ -598,6 +599,7 @@ const readPage = () =>
       informationLoading,
       informationLoadingLabel,
       informationTypes: informationSection?.dataset.informationTypes ?? '',
+      genderFormId: genderRatioContent?.dataset.genderFormId ?? '',
       detailLayout: {
         formVarieties: formVarietiesContent ? bounds(formVarietiesContent) : null,
         genderRatio: genderRatioContent ? bounds(genderRatioContent) : null,
@@ -744,9 +746,31 @@ const validateBodyTransition = (issues, id, context, transitions) => {
 };
 
 const navigate = async (id, isInitial) => {
-  const url = `${baseUrl}/pokemon/${id}`;
+  const url = searchPage ? `${baseUrl}/search-pokemon` : `${baseUrl}/pokemon/${id}`;
   if (isInitial) {
     await client.send('Page.navigate', { url }, browser.sessionId);
+    if (searchPage && id !== 1) {
+      await waitFor(
+        () => evaluate(`Boolean(document.querySelector('input[placeholder="Enter Name or ID"]'))`),
+        Boolean,
+        'Pokémon search input'
+      );
+      await evaluate(`(() => {
+        const input = document.querySelector('input[placeholder="Enter Name or ID"]');
+        const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+        setter.call(input, ${JSON.stringify(String(id))});
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.focus();
+      })()`);
+      await waitFor(
+        () => evaluate(`Boolean(document.getElementById(${JSON.stringify(`pokemon-card-${id}`)}))`),
+        Boolean,
+        `Pokémon #${id} search result`
+      );
+      await evaluate(`document.getElementById(${JSON.stringify(`pokemon-card-${id}`)}).dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )`);
+    }
   } else {
     await evaluate(`(() => {
       history.pushState({}, '', ${JSON.stringify(`/pokemon/${id}`)});
@@ -761,7 +785,8 @@ const navigate = async (id, isInitial) => {
       !page.profileAura?.loading &&
       page.buttons.length > 0 &&
       page.detailFullName &&
-      page.title.includes(`#${id}`),
+      page.genderFormId &&
+      (searchPage || page.title.includes(`#${id}`)),
     `Pokémon #${id}`
   );
 };
@@ -1406,7 +1431,8 @@ const main = async () => {
         });
       };
 
-      if (!page.title.includes(`#${id}`)) addIssue(issues, id, 'title_id_mismatch', { actual: page.title });
+      if (!searchPage && !page.title.includes(`#${id}`))
+        addIssue(issues, id, 'title_id_mismatch', { actual: page.title });
       if (/\b(undefined|NaN)\b/.test(page.bodyText)) addIssue(issues, id, 'invalid_text_rendered');
       if (navigationOnly) {
         previousPage = page;
@@ -1535,6 +1561,7 @@ const main = async () => {
               !value.profileAura?.loading &&
               value.buttons[buttonIndex]?.active &&
               profileMatchesButton(value, buttonIndex) &&
+              String(value.genderFormId) === String(target.formId) &&
               normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
               normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
             `Pokémon #${id} form ${row.fullName}`
@@ -1549,7 +1576,7 @@ const main = async () => {
         }
         page = await waitFor(
           readPage,
-          (value) => profileMatchesButton(value, buttonIndex),
+          (value) => profileMatchesButton(value, buttonIndex) && String(value.genderFormId) === String(target.formId),
           `Pokémon #${id} form image`
         );
         recordProfileSource(page.buttons[buttonIndex], page);
@@ -1588,6 +1615,7 @@ const main = async () => {
               !value.profileAura?.loading &&
               value.buttons[index]?.active &&
               profileMatchesButton(value, index) &&
+              String(value.genderFormId) === String(target.formId) &&
               normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
               normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
             `Pokémon #${id} displayed form ${target.label}`
@@ -1602,7 +1630,7 @@ const main = async () => {
         }
         page = await waitFor(
           readPage,
-          (value) => profileMatchesButton(value, index),
+          (value) => profileMatchesButton(value, index) && String(value.genderFormId) === String(target.formId),
           `Pokémon #${id} displayed form image`
         );
         recordProfileSource(page.buttons[index], page);
@@ -1652,6 +1680,7 @@ const main = async () => {
                   !value.profileAura?.loading &&
                   value.buttons[index]?.active &&
                   profileMatchesButton(value, index) &&
+                  String(value.genderFormId) === String(target.formId) &&
                   normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
                   normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType),
                 `Pokémon #${id} repeated form switch ${cycle}:${target.label}`
@@ -1660,7 +1689,7 @@ const main = async () => {
             }
             page = await waitFor(
               readPage,
-              (value) => profileMatchesButton(value, index),
+              (value) => profileMatchesButton(value, index) && String(value.genderFormId) === String(target.formId),
               `Pokémon #${id} repeated form image`
             );
             validateUniqueMoveRows(
@@ -1709,6 +1738,7 @@ const main = async () => {
     range: { from: fromId, to: toId, latestPokemonGoId: lastPokemonId },
     multipleFormsOnly,
     navigationOnly,
+    searchPage,
     summary: {
       expectedIds: idsToAudit.length,
       auditedIds,
