@@ -3241,7 +3241,12 @@ const Battle = ({ replayMode = false }: BattleProps) => {
                         )}
                       </Fragment>
                     )}
-                    <div className="tw-flex tw-flex-wrap tw-justify-center tw-items-center">
+                    <div
+                      className={combineClasses(
+                        'tw-flex tw-flex-wrap tw-justify-center tw-items-center',
+                        timelineType === TimelineType.Fit ? 'tw-mt-4' : ''
+                      )}
+                    >
                       <FormControlLabel
                         control={
                           <Checkbox

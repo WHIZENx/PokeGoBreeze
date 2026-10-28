@@ -146,7 +146,7 @@
 }
 
 .battle-bar .battle-bar-container {
-  @apply tw-overflow-x-auto;
+  @apply tw-overflow-x-auto tw-overflow-y-hidden;
 }
 
 .battle-bar .battle-bar-container,

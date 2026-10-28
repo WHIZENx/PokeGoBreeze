@@ -271,6 +271,11 @@ assert.match(
   /response\.data\.meta\.warnings[\s\S]*warning\.message[\s\S]*showSnackbar\(warningMessages\.join\(' '\), 'warning'\)/,
   'Unavailable simulator selections must complete the battle and surface API reasons as warning snackbars.'
 );
+assert.match(
+  battlePage,
+  /timelineType === TimelineType\.Fit \? 'tw-mt-4' : ''[\s\S]*label="Show Tap Move"/,
+  'Fit Timeline controls must retain clear spacing below the timeline visualization.'
+);
 for (const leagueId of ['DEFAULT_LITTLE', 'DEFAULT_GREAT', 'DEFAULT_ULTRA', 'DEFAULT_MASTER']) {
   assert.match(battlePage, new RegExp(leagueId), `The battle page must map the ${leagueId} standard league.`);
 }
@@ -278,6 +283,16 @@ assert.match(
   timeline,
   /data-timeline-lane="switch"[\s\S]*<TimelineTeamEvent/,
   'Team Switch and Faint events must render in a dedicated timeline lane.'
+);
+assert.match(
+  timeline,
+  /className="tw-relative tw-pb-10"/,
+  'Normal Timeline must reserve vertical space for overflowing event badges instead of requiring Y scrolling.'
+);
+assert.match(
+  pvpStyles,
+  /\.battle-bar \.battle-bar-container \{[\s\S]*tw-overflow-x-auto tw-overflow-y-hidden/,
+  'Normal Timeline must keep horizontal scrolling without exposing a vertical scrollbar.'
 );
 for (const content of [timeline, timelineFit]) {
   assert.match(

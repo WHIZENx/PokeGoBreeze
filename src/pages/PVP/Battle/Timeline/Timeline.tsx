@@ -217,7 +217,7 @@ const Timeline = (
         <div className="tw-w-full battle-bar tw-flex tw-justify-center">
           <div id="battle-bar-scroll" className="battle-bar-container" ref={elem} onScroll={scroll.bind(this)}>
             <div
-              className="tw-relative"
+              className="tw-relative tw-pb-10"
               ref={timeline}
               onMouseMove={move.bind(this)}
               onMouseOver={move.bind(this)}
