@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useDispatch } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -21,7 +21,7 @@ import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
 import { IFormInfoComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
 import { SearchingActions } from '../../../store/actions';
@@ -37,6 +37,7 @@ import { Skeleton } from '@mui/material';
 import Fusion from '../FormChange/Fusion';
 import { PokemonMoves } from '../../../core/models/API/pokemon-bundle.model';
 import { IPokemonQueryRankMove } from '../../../utils/models/pokemon-top-move.model';
+import { IPokemonGenderRatio } from '../../../core/models/pokemon.model';
 
 const unavailablePokemonMoves: PokemonMoves = {
   fastMoves: [],
@@ -56,6 +57,14 @@ const hasSpriteImage = (sprite: IPokemonSprite | undefined) =>
 
 const normalizePokemonType = (pokemonType: PokemonType | undefined) =>
   pokemonType === undefined || pokemonType === PokemonType.None ? PokemonType.Normal : pokemonType;
+
+interface GenderDisplaySnapshot {
+  pokemonId: number;
+  ratio?: IPokemonGenderRatio;
+  primarySprite?: IPokemonSprite;
+  fallbackSprite?: IPokemonSprite;
+  pokemonType?: PokemonType;
+}
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
@@ -103,9 +112,51 @@ const FormComponent = (props: IFormInfoComponent) => {
   );
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
-  const genderRatio = searchingMainDetails?.id === props.defaultId ? searchingMainDetails?.genderRatio : undefined;
+  const currentGenderRatio =
+    searchingMainDetails?.id === props.defaultId ? searchingMainDetails?.genderRatio : undefined;
+  const lastLoadedGender = useRef<GenderDisplaySnapshot>();
+
+  useEffect(() => {
+    if (isCurrentPokemonLoaded && props.defaultId) {
+      lastLoadedGender.current = {
+        pokemonId: props.defaultId,
+        ratio: currentGenderRatio,
+        primarySprite: displaySpriteSources.primary,
+        fallbackSprite: displaySpriteSources.fallback,
+        pokemonType: selectedPokemonType,
+      };
+    }
+  }, [
+    currentGenderRatio,
+    displaySpriteSources.fallback,
+    displaySpriteSources.primary,
+    isCurrentPokemonLoaded,
+    props.defaultId,
+    selectedPokemonType,
+  ]);
+
+  const lastGender = lastLoadedGender.current;
+  const retainedGender =
+    lastGender && lastGender.pokemonId === props.defaultId && (!params.id || Number(params.id) === lastGender.pokemonId)
+      ? lastGender
+      : undefined;
+  const genderDisplay: GenderDisplaySnapshot | undefined = isCurrentPokemonLoaded
+    ? {
+        pokemonId: props.defaultId ?? 0,
+        ratio: currentGenderRatio,
+        primarySprite: displaySpriteSources.primary,
+        fallbackSprite: displaySpriteSources.fallback,
+        pokemonType: selectedPokemonType,
+      }
+    : retainedGender;
+  const genderRatio = genderDisplay?.ratio;
   const genderSkeletonCount = genderRatio ? (genderRatio.M !== 0 && genderRatio.F !== 0 ? 2 : 1) : 1;
   const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12.5 tw-overflow-x-auto';
+  const genderDisplayClass = combineClasses(
+    genderTrackClass,
+    'tw-transition-opacity tw-duration-200',
+    isCurrentPokemonLoaded ? 'tw-opacity-100' : 'tw-opacity-60'
+  );
   const [moveTabValue, setMoveTabValue] = useState(0);
   const selectedMoveForm = getPokemonFormWithNoneSpecialForm(
     searchingMainForm?.form?.formName,
@@ -271,41 +322,47 @@ const FormComponent = (props: IFormInfoComponent) => {
           }
         />
       </div>
-      <div className="tw-h-[190px]" data-testid="gender-ratio-content">
-        {!isCurrentPokemonLoaded ? (
+      <div className="tw-h-[190px]" data-testid="gender-ratio-content" aria-busy={!isCurrentPokemonLoaded}>
+        {!genderDisplay ? (
           <div className={genderTrackClass} aria-label="Loading gender ratio">
             {Array.from({ length: genderSkeletonCount }, (_, index) => (
               <GenderSkeleton key={index} />
             ))}
           </div>
         ) : genderRatio && (genderRatio.M !== 0 || genderRatio.F !== 0) ? (
-          <div className={genderTrackClass}>
+          <div
+            className={genderDisplayClass}
+            aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
+          >
             {genderRatio.M !== 0 && (
               <Gender
                 ratio={genderRatio}
                 sex={TypeSex.Male}
-                sprite={displaySpriteSources.primary}
-                fallbackSprite={displaySpriteSources.fallback}
-                pokemonType={selectedPokemonType}
+                sprite={genderDisplay.primarySprite}
+                fallbackSprite={genderDisplay.fallbackSprite}
+                pokemonType={genderDisplay.pokemonType}
               />
             )}
             {genderRatio.F !== 0 && (
               <Gender
                 ratio={genderRatio}
                 sex={TypeSex.Female}
-                sprite={displaySpriteSources.primary}
-                fallbackSprite={displaySpriteSources.fallback}
-                pokemonType={selectedPokemonType}
+                sprite={genderDisplay.primarySprite}
+                fallbackSprite={genderDisplay.fallbackSprite}
+                pokemonType={genderDisplay.pokemonType}
               />
             )}
           </div>
         ) : (
-          <div className={genderTrackClass}>
+          <div
+            className={genderDisplayClass}
+            aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
+          >
             <Gender
               sex={TypeSex.Genderless}
-              sprite={displaySpriteSources.primary}
-              fallbackSprite={displaySpriteSources.fallback}
-              pokemonType={selectedPokemonType}
+              sprite={genderDisplay.primarySprite}
+              fallbackSprite={genderDisplay.fallbackSprite}
+              pokemonType={genderDisplay.pokemonType}
             />
           </div>
         )}

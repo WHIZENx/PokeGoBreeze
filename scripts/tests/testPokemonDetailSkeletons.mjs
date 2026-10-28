@@ -56,7 +56,6 @@ assert.ok(
   (assets.match(/data-skeleton-surface="page"/g)?.length ?? 0) >= 3,
   'The standalone Asset and sound placeholders must share the page skeleton surface.'
 );
-assert.match(form, /!isCurrentPokemonLoaded \? \(/);
 assert.match(form, /<GenderSkeleton key=\{index\} \/>/);
 assert.match(
   form,
@@ -67,12 +66,13 @@ assert.match(
   /const genderSkeletonCount = genderRatio \? \(genderRatio\.M !== 0 && genderRatio\.F !== 0 \? 2 : 1\) : 1/
 );
 assert.match(form, /const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12\.5 tw-overflow-x-auto'/);
-assert.equal(
-  form.match(/className=\{genderTrackClass\}/g)?.length,
-  3,
-  'Loading, gendered, and genderless Gender Ratio tracks must share the same height contract.'
-);
-assert.match(form, /className="tw-h-\[190px\]" data-testid="gender-ratio-content"/);
+assert.match(form, /const lastLoadedGender = useRef<GenderDisplaySnapshot>/);
+assert.match(form, /const genderDisplay: GenderDisplaySnapshot \| undefined = isCurrentPokemonLoaded/);
+assert.match(form, /lastGender\.pokemonId === props\.defaultId/);
+assert.match(form, /!genderDisplay \? \(/);
+assert.equal(form.match(/className=\{genderDisplayClass\}/g)?.length, 2);
+assert.match(form, /aria-label=\{!isCurrentPokemonLoaded \? 'Updating gender ratio' : undefined\}/);
+assert.match(form, /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded\}/);
 assert.match(form, /className="form-container tw-h-\[185px\]"/);
 assert.match(gender, /tw-flex-none" data-testid="gender-ratio-skeleton"/);
 assert.match(gender, /ratio-gender !tw-m-0 tw-whitespace-nowrap/);

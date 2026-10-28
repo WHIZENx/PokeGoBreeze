@@ -526,6 +526,11 @@ td,
   @include thin-border(left);
 }
 
+.next-border,
+.prev-border {
+  transition: none;
+}
+
 // Group elements with bottom bs-border
 .ranking-container {
   @include border-with-side(bottom);

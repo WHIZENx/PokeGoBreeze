@@ -13,6 +13,7 @@ const [
   theme,
   pokemonTable,
   statsTable,
+  customStyles,
 ] = await Promise.all([
   readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Find/FormSelect.tsx', import.meta.url), 'utf8'),
@@ -23,6 +24,7 @@ const [
   readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Tables/Stats/StatsTable.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/assets/styles/custom.scss', import.meta.url), 'utf8'),
 ]);
 
 assert.match(
@@ -67,6 +69,15 @@ for (const navigation of [searchBar, searchBarMain]) {
     'Pokémon detail navigation must use the identity-safe shared image component.'
   );
 }
+for (const navigation of [searchBar, searchBarMain]) {
+  assert.match(navigation, /next-border/);
+  assert.match(navigation, /prev-border/);
+}
+assert.match(
+  customStyles,
+  /\.next-border,\s*\.prev-border\s*\{\s*transition: none;/,
+  'The persistent Pokémon navigation divider must not animate its border color.'
+);
 assert.match(
   navigationImage,
   /onLoad=\{\(event\) => markImageAsPreloaded\(event\.currentTarget\.currentSrc \|\| event\.currentTarget\.src\)\}/,
