@@ -346,6 +346,7 @@ export interface PvpBattleSimulatorRequest {
 
 export interface PvpBattleSimulatorWarning {
   code:
+    | 'duplicate_pvp_species'
     | 'unavailable_pvp_pokemon'
     | 'unavailable_pvp_pokemon_type'
     | 'unavailable_pvp_fast_move'

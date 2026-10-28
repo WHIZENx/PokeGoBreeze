@@ -7,6 +7,8 @@ import { combineClasses, isNotEmpty, toNumber } from '../../../../utils/extensio
 import { TypeAction } from '../../../../enums/type.enum';
 import { TimelineElement, TimelineEvent } from '../../../../utils/models/overrides/dom.model';
 import TimelineTeamEvent from './TimelineTeamEvent';
+import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
+import { getTimelineTapPauseGroups, getTimelineTapPauseWidth } from './timeline-tap-pause';
 
 const TimelineFit = (
   pokemonCurr: IPokemonBattle,
@@ -35,6 +37,8 @@ const TimelineFit = (
 
   const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle, team: IPokemonBattle[]) => {
     const positions = calculateWidthBasedPositions(poke.timeline);
+    const totalTimelineWidth = poke.timeline.reduce((sum, entry) => sum + toNumber(entry.size), 0);
+    const tapPauseGroups = getTimelineTapPauseGroups(poke.timeline, pokeObj.timeline);
     const isSwitchEvent = (value: ITimeline) =>
       value.type === AttackType.Switch || value.switchedFromIndex !== undefined;
     const isFaintEvent = (value: ITimeline) => value.type === AttackType.Dead || value.faintedIndex !== undefined;
@@ -149,14 +153,30 @@ const TimelineFit = (
               </Fragment>
             ))}
           </div>
-          <div className="tw-relative timeline-fit-container tw-h-3">
+          <div className="tw-relative timeline-fit-container tw-h-4">
+            {showTap &&
+              tapPauseGroups.map((group) => (
+                <div
+                  key={`${group.start}-${group.end}`}
+                  aria-label="Charged Attack pauses Fast Attack taps"
+                  className="tw-pointer-events-none !tw-absolute tw-top-1/2 tw-z-10 !tw-flex tw-h-1.5 -tw-translate-y-1/2 tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--text-secondary)] tw-opacity-80"
+                  data-timeline-tap-pause="charged-attack"
+                  style={{
+                    left: positions[group.start],
+                    width: `${(getTimelineTapPauseWidth(poke.timeline, group) / totalTimelineWidth) * 100}%`,
+                  }}
+                  title="Charged Attack pause"
+                >
+                  <PauseRoundedIcon className="!tw-h-3 !tw-w-3 tw-rounded-full tw-bg-[var(--custom-table-background)] !tw-text-[var(--text-primary)]" />
+                </div>
+              ))}
             {showTap &&
               poke.timeline.map(
                 (value, index) =>
                   value.isTap && (
                     <div
                       key={index}
-                      className="charge-attack opacity-50"
+                      className="charge-attack tw-z-20 opacity-50"
                       style={{
                         width: value.size,
                         left: positions[index],
