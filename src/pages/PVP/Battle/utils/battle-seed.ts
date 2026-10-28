@@ -32,6 +32,16 @@ export interface BattleSeedState {
   opponentStrategy: PvpBattleStrategyRequest;
 }
 
+export interface BattleTimelineSeedState {
+  battle: BattleSeedState;
+  randomSeed: number;
+  showTap: boolean;
+  timelineType: number;
+  duration: number;
+  volume: number;
+  progress: number;
+}
+
 type CompactPokemon = [
   string,
   number,
@@ -67,6 +77,7 @@ type CompactSeed = [
 
 const seedVersion = 2;
 const supportedSeedVersions = [1, seedVersion];
+const timelineSeedVersion = 1;
 const maxSeedDigits = 16_000;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
@@ -340,6 +351,81 @@ export const decodeBattleSeed = (seed: string): BattleSeedState | undefined => {
       opponentTeam: opponentTeam as BattleSeedPokemon[],
       playerStrategy,
       opponentStrategy,
+    };
+  } catch {
+    return undefined;
+  }
+};
+
+export const encodeBattleTimelineSeed = (state: BattleTimelineSeedState) => {
+  const compact = [
+    timelineSeedVersion,
+    encodeBattleSeed(state.battle),
+    state.randomSeed,
+    state.showTap ? 1 : 0,
+    state.timelineType,
+    state.duration,
+    state.volume,
+    state.progress,
+  ];
+  const payload = encoder.encode(JSON.stringify(compact));
+  const envelope = new Uint8Array(payload.length + 5);
+  envelope[0] = timelineSeedVersion;
+  new DataView(envelope.buffer).setUint32(1, checksum(payload));
+  envelope.set(payload, 5);
+  return bytesToDecimal(envelope);
+};
+
+export const decodeBattleTimelineSeed = (seed: string): BattleTimelineSeedState | undefined => {
+  try {
+    if (!/^\d+$/.test(seed) || seed.length === 0 || seed.length > maxSeedDigits) {
+      return undefined;
+    }
+    const envelope = decimalToBytes(seed);
+    if (envelope.length <= 5 || envelope[0] !== timelineSeedVersion) {
+      return undefined;
+    }
+    const expectedChecksum = new DataView(envelope.buffer, envelope.byteOffset, envelope.byteLength).getUint32(1);
+    const payload = envelope.slice(5);
+    if (checksum(payload) !== expectedChecksum) {
+      return undefined;
+    }
+    const compact: unknown = JSON.parse(decoder.decode(payload));
+    if (!Array.isArray(compact) || compact.length !== 8) {
+      return undefined;
+    }
+    const [version, battleSeed, randomSeed, showTap, timelineType, duration, volume, progress] = compact;
+    if (
+      version !== timelineSeedVersion ||
+      typeof battleSeed !== 'string' ||
+      !Number.isInteger(randomSeed) ||
+      randomSeed < 0 ||
+      randomSeed > 0xffffffff ||
+      (showTap !== 0 && showTap !== 1) ||
+      (timelineType !== 0 && timelineType !== 1) ||
+      !isFiniteNumber(duration) ||
+      ![0.5, 1, 2, 5, 10].includes(duration) ||
+      !isFiniteNumber(volume) ||
+      volume < 0 ||
+      volume > 1 ||
+      !isFiniteNumber(progress) ||
+      progress < 0 ||
+      progress > 1
+    ) {
+      return undefined;
+    }
+    const battle = decodeBattleSeed(battleSeed);
+    if (!battle) {
+      return undefined;
+    }
+    return {
+      battle,
+      randomSeed,
+      showTap: showTap === 1,
+      timelineType,
+      duration,
+      volume,
+      progress,
     };
   } catch {
     return undefined;

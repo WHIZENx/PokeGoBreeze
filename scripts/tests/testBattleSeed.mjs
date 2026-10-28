@@ -2,9 +2,17 @@
 
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { decodeBattleSeed, encodeBattleSeed } from '../../src/pages/PVP/Battle/utils/battle-seed.ts';
+import {
+  decodeBattleSeed,
+  decodeBattleTimelineSeed,
+  encodeBattleSeed,
+  encodeBattleTimelineSeed,
+} from '../../src/pages/PVP/Battle/utils/battle-seed.ts';
 
-const battlePage = await readFile(new URL('../../src/pages/PVP/Battle/Battle.tsx', import.meta.url), 'utf8');
+const [battlePage, appPage] = await Promise.all([
+  readFile(new URL('../../src/pages/PVP/Battle/Battle.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8'),
+]);
 
 const pokemon = (speciesId, id, overrides = {}) => ({
   speciesId,
@@ -76,15 +84,67 @@ assert.equal(
   undefined,
   'Oversized seeds must be rejected before BigInt parsing.'
 );
+
+const timelineState = {
+  battle: state,
+  randomSeed: 4_294_967_295,
+  showTap: true,
+  timelineType: 0,
+  duration: 2,
+  volume: 0.35,
+  progress: 0.625,
+};
+const timelineSeed = encodeBattleTimelineSeed(timelineState);
+assert.match(timelineSeed, /^\d+$/, 'A timeline replay seed must contain decimal digits only.');
+assert.deepEqual(
+  decodeBattleTimelineSeed(timelineSeed),
+  timelineState,
+  'A timeline seed must restore deterministic simulation, playback options, and playhead progress.'
+);
 assert.match(
   battlePage,
   /searchParams\.get\('seed'\)[\s\S]*decodedSeed\.playerTeam\.map\(hydrateSeedPokemon\)[\s\S]*decodedSeed\.opponentTeam\.map\(hydrateSeedPokemon\)/,
   'The battle page must hydrate both shared teams from the seed query.'
 );
+assert.match(
+  battlePage,
+  /restoredSeedRef\.current = ''[\s\S]*replayStartedRef\.current = ''[\s\S]*replayPositionRef\.current = ''[\s\S]*clearData\(\)/,
+  'Reloading battle data must reset seed lifecycle guards so browser Back and Forward can restore the same seed.'
+);
 assert.doesNotMatch(
   battlePage,
   /decodedSeed\.(showTap|timelineType|duration|volume)/,
   'Shared seeds must not restore timeline display, playback speed, or volume options.'
+);
+assert.match(
+  battlePage,
+  /randomSeed,[\s\S]*label="Share Timeline"[\s\S]*shareTimeline\(\)/,
+  'Timeline sharing must preserve the deterministic API seed and expose a dedicated action.'
+);
+assert.match(
+  battlePage,
+  /decodedTimelineSeed\.progress \* width[\s\S]*PvP Battle Replay[\s\S]*Open in Simulator/,
+  'Replay mode must restore the playhead and render a focused media-player page.'
+);
+assert.match(
+  battlePage,
+  /PvP Battle Replay[\s\S]*<DismissibleAlert[\s\S]*aria-label="Battle rule details"/,
+  'Replay mode must retain the formatted battle-rule details without exposing rule selectors.'
+);
+assert.match(
+  battlePage,
+  /renderReplayHpStatus[\s\S]*<LinearProgress[\s\S]*aria-label="Active Pokémon HP"[\s\S]*activeTeamIndexes\.player[\s\S]*activeTeamIndexes\.opponent/,
+  'Replay mode must show synchronized HP bars for both active Pokémon above the timeline.'
+);
+assert.match(
+  battlePage,
+  /selectedLeagueId === defaultLeagueId\(league\)[\s\S]*Standard[\s\S]*replayMode \? '!tw-mt-4 !tw-mb-5' : '!tw-mt-2'/,
+  'Replay headers must format default rule IDs as Standard and separate the rule alert from the player.'
+);
+assert.match(
+  appPage,
+  /path="\/pvp\/battle\/:cp\/replay" element=\{<Battle replayMode \/>\}/,
+  'Timeline replays must have a dedicated direct-navigation route.'
 );
 assert.match(
   battlePage,

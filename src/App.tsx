@@ -258,6 +258,7 @@ function App() {
             <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP styleSheet={styleSheet.current} />} />
             <Route path="/pvp/battle" element={<Battle />} />
             <Route path="/pvp/battle/:cp" element={<Battle />} />
+            <Route path="/pvp/battle/:cp/replay" element={<Battle replayMode />} />
             <Route path="/pvp/:cp/:serie/:pokemon" element={<PokemonPVP styleSheet={styleSheet.current} />} />
             <Route path="/battle-leagues" element={<Leagues />} />
             <Route path="/trainer" element={<TrainerLab />} />
