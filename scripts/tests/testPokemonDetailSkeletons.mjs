@@ -33,7 +33,8 @@ assert.doesNotMatch(
 assert.match(assets, /className="tw-flex tw-min-h-\[206px\] tw-flex-wrap" data-testid="pokemon-assets-content"/);
 assert.match(assets, /data-testid="pokemon-assets-skeleton"/);
 assert.match(assets, /variant="rounded"/);
-assert.match(assets, /className="!tw-h-\[206px\] !tw-w-\[234px\]"/);
+assert.match(assets, /className="group-model tw-h-\[206px\] tw-w-\[234px\]"/);
+assert.match(assets, /className="!tw-h-full !tw-w-full"/);
 assert.doesNotMatch(assets, /assetSkeletonGroups/);
 assert.doesNotMatch(assets, /PokemonAssetModelSkeleton/);
 assert.match(assets, /data-skeleton-surface="page"/);
@@ -93,7 +94,7 @@ assert.doesNotMatch(statBar, /indeterminate/);
 assert.doesNotMatch(statBar, /useEffect|useState/);
 assert.match(form, /<Info isLoading=\{!isCurrentPokemonLoaded\} \/>/);
 assert.match(info, /data-testid="pokemon-information"/);
-assert.match(info, /Loading information…/);
+assert.doesNotMatch(info, /Loading information…/);
 assert.match(info, /const lastLoadedTypes = useRef\(requestedTypes\)/);
 assert.match(info, /const types = isLoading \? lastLoadedTypes\.current : requestedTypes/);
 assert.match(info, /tw-pointer-events-none tw-opacity-60/);

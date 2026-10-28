@@ -57,13 +57,8 @@ const Info = ({ isLoading = false }: { isLoading?: boolean }) => {
       data-information-types={types.join(',')}
       aria-busy={isLoading}
     >
-      <h4 className="tw-mt-2 info-title tw-flex tw-items-center tw-justify-between">
+      <h4 className="tw-mt-2 info-title">
         <b>Information</b>
-        {isLoading && (
-          <span className="tw-text-extra-small tw-font-normal tw-text-gray-500 dark:tw-text-gray-400">
-            Loading information…
-          </span>
-        )}
       </h4>
       <div
         className={`tw-transition-opacity tw-duration-200 ${isLoading ? 'tw-pointer-events-none tw-opacity-60' : ''}`}

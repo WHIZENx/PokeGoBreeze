@@ -1338,7 +1338,7 @@ const main = async () => {
         }
         if (
           !loadingPage.informationLoading ||
-          !loadingPage.informationLoadingLabel ||
+          loadingPage.informationLoadingLabel ||
           loadingPage.informationTypes !== previousPage.informationTypes
         ) {
           addIssue(issues, id, 'pokemon_information_loading_state_invalid', {

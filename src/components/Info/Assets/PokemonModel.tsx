@@ -89,13 +89,15 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       <div className="tw-flex tw-min-h-[206px] tw-flex-wrap" data-testid="pokemon-assets-content">
         {!props.isLoadedForms ? (
-          <Skeleton
-            data-testid="pokemon-assets-skeleton"
-            data-skeleton-surface="page"
-            variant="rounded"
-            animation="wave"
-            className="!tw-h-[206px] !tw-w-[234px]"
-          />
+          <div className="group-model tw-h-[206px] tw-w-[234px]">
+            <Skeleton
+              data-testid="pokemon-assets-skeleton"
+              data-skeleton-surface="page"
+              variant="rounded"
+              animation="wave"
+              className="!tw-h-full !tw-w-full"
+            />
+          </div>
         ) : (
           <Fragment>
             {pokeAssets.map((assets, index) => (
