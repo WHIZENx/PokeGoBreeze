@@ -88,8 +88,18 @@ assert.match(
 );
 assert.match(
   counter,
-  /<span className="tw-font-bold">\s*\{toFloatWithPadding\(row\.ratio/,
+  /<span className="tw-whitespace-nowrap tw-font-bold">\s*\{toFloatWithPadding\(row\.ratio/,
   'The primary percentage value in Best Pokémon Counter must use the design-system bold weight.'
+);
+assert.match(
+  counter,
+  /data-testid="counter-performance"[\s\S]*tw-whitespace-nowrap tw-font-bold[\s\S]*tw-flex-col[\s\S]*sm:tw-flex-row sm:tw-gap-1/,
+  'Counter DPS values must stack their unit on mobile and return to one row at the small breakpoint.'
+);
+assert.match(
+  counterStyles,
+  /@media \(width <= 639px\)[\s\S]*\.rdt_TableCol:last-of-type,[\s\S]*\.rdt_TableCell:last-of-type[\s\S]*tw-px-1/,
+  'The mobile percentage column must reclaim horizontal space from data-table cell padding.'
 );
 assert.match(
   statsRanking,

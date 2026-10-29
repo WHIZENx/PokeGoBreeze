@@ -509,6 +509,11 @@ const readPage = () =>
     const fusionOrigins = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-origin"]')] : [];
     const fusionTargets = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-target"]')] : [];
     const profileImage = document.querySelector('[data-testid="pokemon-profile-image"]');
+    const infoBodyRow = infoTable?.querySelector('tbody tr:last-child');
+    const infoReferenceRow = infoTable?.querySelector('tbody tr:first-child');
+    const bodyMeasurementGroups = infoBodyRow
+      ? [...infoBodyRow.querySelectorAll(':scope > td:last-child > div > div')]
+      : [];
     const formVarietiesContent = document.querySelector('[data-testid="form-varieties-content"]');
     const genderRatioContent = document.querySelector('[data-testid="gender-ratio-content"]');
     const statsRanking = document.querySelector('[data-testid="pokemon-stats-ranking"]');
@@ -608,6 +613,15 @@ const readPage = () =>
       },
       bodyWeight: infoTable?.dataset.bodyWeight ?? '',
       bodyHeight: infoTable?.dataset.bodyHeight ?? '',
+      bodyLayout: infoTable && infoBodyRow && infoReferenceRow && profileImage
+        ? {
+            tableHeight: infoTable.getBoundingClientRect().height,
+            profileHeight: profileImage.getBoundingClientRect().height,
+            bodyRowHeight: infoBodyRow.getBoundingClientRect().height,
+            referenceRowHeight: infoReferenceRow.getBoundingClientRect().height,
+            measurementOverflow: bodyMeasurementGroups.some((item) => item.scrollWidth > item.clientWidth + 1),
+          }
+        : null,
       title: document.title,
       href: location.href,
       bodyText: document.body.innerText,
@@ -1150,6 +1164,17 @@ const validateExpectedRow = (issues, id, row, button, page) => {
   }
 };
 
+const validateDetailHeaderLayout = (issues, id, context, page) => {
+  const layout = page.bodyLayout;
+  if (!layout) return;
+  if (layout.measurementOverflow || layout.bodyRowHeight > layout.referenceRowHeight + 1) {
+    addIssue(issues, id, 'body_measurement_row_wrap', { ...context, layout });
+  }
+  if (layout.tableHeight > layout.profileHeight + 2) {
+    addIssue(issues, id, 'profile_table_height_mismatch', { ...context, layout });
+  }
+};
+
 const validateDisplayedStats = (issues, id, button, page) => {
   const invalid = Object.entries(page.stats ?? {}).filter(([, value]) => !Number.isFinite(value) || value <= 0);
   if (invalid.length || Object.keys(page.stats ?? {}).length !== 4) {
@@ -1582,6 +1607,12 @@ const main = async () => {
         recordProfileSource(page.buttons[buttonIndex], page);
         auditedForms += 1;
         if ([2, 3].includes(normalizePokemonType(target.pokemonType))) auditedModifierFormSprites += 1;
+        validateDetailHeaderLayout(
+          issues,
+          id,
+          { fullName: row.fullName, form: row.form, pokemonType: row.pokemonType },
+          page
+        );
         validateExpectedRow(issues, id, row, page.buttons[buttonIndex], page);
         validateDisplayedStats(issues, id, page.buttons[buttonIndex], page);
         validateEvolutionDetailAlignment(
@@ -1634,6 +1665,12 @@ const main = async () => {
           `Pokémon #${id} displayed form image`
         );
         recordProfileSource(page.buttons[index], page);
+        validateDetailHeaderLayout(
+          issues,
+          id,
+          { form: target.form, pokemonType: target.pokemonType, label: target.label },
+          page
+        );
         validateUniqueMoveRows(
           issues,
           id,

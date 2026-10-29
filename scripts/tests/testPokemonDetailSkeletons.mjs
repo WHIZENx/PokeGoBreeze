@@ -3,17 +3,20 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [evolution, assets, gender, form, stats, statBar, info, theme, variables] = await Promise.all([
-  readFile(new URL('../../src/components/Info/Evolution/Evolution.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Info/Assets/PokemonModel.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Info/Stats/Stats.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Info/Info.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/assets/styles/variables.scss', import.meta.url), 'utf8'),
-]);
+const [evolution, assets, gender, form, stats, statBar, info, pokemonTable, pokemonTableStyles, theme, variables] =
+  await Promise.all([
+    readFile(new URL('../../src/components/Info/Evolution/Evolution.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/Assets/PokemonModel.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/Stats/Stats.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/Info.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.scss', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/assets/styles/variables.scss', import.meta.url), 'utf8'),
+  ]);
 const lightThemeVariables = variables.slice(
   variables.indexOf(':root[data-theme=#{$light-mode}]'),
   variables.indexOf(':root[data-theme=#{$dark-mode}]')
@@ -107,6 +110,22 @@ assert.match(info, /const lastLoadedTypes = useRef\(requestedTypes\)/);
 assert.match(info, /const types = isLoading \? lastLoadedTypes\.current : requestedTypes/);
 assert.match(info, /tw-pointer-events-none tw-opacity-60/);
 assert.doesNotMatch(info, /Skeleton/);
+assert.match(pokemonTable, /new Intl\.NumberFormat\('en-US',[\s\S]*maximumFractionDigits: 2/);
+assert.match(pokemonTable, /tw-grid tw-grid-cols-\[1\.15fr_0\.85fr\]/);
+assert.equal(
+  pokemonTable.match(/tw-min-w-0 tw-tabular-nums/g)?.length,
+  2,
+  'Weight and Height values must use stable tabular numerals without expanding their grid tracks.'
+);
+assert.ok(
+  (pokemonTable.match(/tw-whitespace-nowrap/g)?.length ?? 0) >= 4,
+  'Body measurement labels and values must remain on one row for large form-specific values.'
+);
+assert.match(
+  pokemonTableStyles,
+  /tw-min-w-\[110px\] sm:tw-min-w-\[180px\]/,
+  'Pokémon detail labels must release horizontal space on mobile while retaining the desktop column width.'
+);
 assert.match(
   form,
   /data-skeleton-surface="page"[\s\S]*variant="rectangular"[\s\S]*height=\{142\}[\s\S]*width=\{90\}/,

@@ -2,10 +2,16 @@ import React from 'react';
 import { splitAndCapitalize } from '../../../../utils/utils';
 import { genRoman } from '../../../../utils/compute';
 import { IPokemonTableComponent } from '../../models/component.model';
-import { combineClasses, isNumber, isUndefined, toFloatWithPadding, toNumber } from '../../../../utils/extension';
+import { combineClasses, isNumber, isUndefined, toNumber } from '../../../../utils/extension';
 import { Skeleton } from '@mui/material';
 import './PokemonTable.scss';
 import { formatPokemonDisplayName } from '../../../../utils/pokemon-display-name';
+
+const bodyMeasurementFormatter = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 2,
+});
+
+const formatBodyMeasurement = (value: number, unit: 'kg' | 'm') => `${bodyMeasurementFormatter.format(value)} ${unit}`;
 
 const PokemonTable = (props: IPokemonTableComponent) => {
   const reload = (element: JSX.Element, hasValue = false) => {
@@ -103,27 +109,25 @@ const PokemonTable = (props: IPokemonTableComponent) => {
             <h5 className="tw-flex">Body</h5>
           </td>
           <td colSpan={2} className="!tw-p-0">
-            <div className="tw-flex tw-items-center first-extra-col tw-h-full tw-w-1/2 tw-float-left">
-              <div>
-                <div className="tw-inline-block tw-mr-1">
-                  <h6>Weight:</h6>
-                </div>
-                <div className="tw-inline-block">
+            <div className="tw-grid tw-grid-cols-[1.15fr_0.85fr]">
+              <div className="first-extra-col tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-1 tw-whitespace-nowrap !tw-px-1.5 sm:!tw-px-2.5">
+                <h6>Weight:</h6>
+                <div className="tw-min-w-0 tw-tabular-nums">
                   {reload(
-                    <h6>{!isUndefined(props.weight) && `${toFloatWithPadding(props.weight / 10, 2)} kg`}</h6>,
+                    <h6 className="tw-whitespace-nowrap">
+                      {!isUndefined(props.weight) && formatBodyMeasurement(props.weight / 10, 'kg')}
+                    </h6>,
                     !isUndefined(props.weight)
                   )}
                 </div>
               </div>
-            </div>
-            <div className="tw-flex tw-items-center tw-h-full tw-w-1/2 tw-float-left">
-              <div>
-                <div className="tw-inline-block tw-mr-1">
-                  <h6>Height:</h6>
-                </div>
-                <div className="tw-inline-block">
+              <div className="tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-1 tw-whitespace-nowrap !tw-px-1.5 sm:!tw-px-2.5">
+                <h6>Height:</h6>
+                <div className="tw-min-w-0 tw-tabular-nums">
                   {reload(
-                    <h6>{!isUndefined(props.height) && `${toFloatWithPadding(props.height / 10, 2)} m`}</h6>,
+                    <h6 className="tw-whitespace-nowrap">
+                      {!isUndefined(props.height) && formatBodyMeasurement(props.height / 10, 'm')}
+                    </h6>,
                     !isUndefined(props.height)
                   )}
                 </div>
