@@ -86,6 +86,7 @@ import useSearch from '../../composables/useSearch';
 import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { Skeleton } from '@mui/material';
+import PokemonProfileImageSkeleton from '../../components/Info/PokemonProfileImageSkeleton';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -927,13 +928,7 @@ const Pokemon = (props: IPokemonPage) => {
             data-profile-modifier={profileModifier}
           >
             {showMainImageSkeleton ? (
-              <Skeleton
-                variant="rounded"
-                animation="wave"
-                className="!tw-h-[205px] !tw-w-[205px]"
-                data-skeleton-surface="pokemon-image"
-                data-testid="pokemon-profile-image-skeleton"
-              />
+              <PokemonProfileImageSkeleton />
             ) : (
               <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
             )}
