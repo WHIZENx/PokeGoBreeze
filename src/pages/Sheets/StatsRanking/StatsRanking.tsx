@@ -8,6 +8,7 @@ import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 
 import APIService from '../../../services/api.service';
 import './StatsRanking.scss';
+import '../../../components/Info/PokemonDetailLayout.scss';
 import {
   capitalize,
   convertPokemonImageName,
@@ -26,7 +27,7 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
-import { getValueOrDefault, isEqual, isNullOrUndefined, toNumber } from '../../../utils/extension';
+import { combineClasses, getValueOrDefault, isEqual, isNullOrUndefined, toNumber } from '../../../utils/extension';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import type { PokemonBundleVariety, PokemonMoveRanking } from '../../../core/models/API/pokemon-bundle.model';
@@ -45,6 +46,7 @@ import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import { usePreloadedImage } from '../../../utils/hooks/usePreloadedImage';
 import PokemonProfileImageSkeleton from '../../../components/Info/PokemonProfileImageSkeleton';
 import { normalizePokemonFormIdentity } from '../../../utils/pokemon-form-identity';
+import StableHeightSection from '../../../components/Layout/StableHeightSection';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
@@ -261,6 +263,12 @@ const StatsRanking = () => {
     [selectedPreferredImage, selectedOfficialImage, selectedHybridImage]
   );
   const showSelectedImageSkeleton = !selectedId || loading || !selectedBundle || isSelectedImageLoading;
+  const profileModifier =
+    select?.pokemonType === PokemonType.Shadow
+      ? 'shadow'
+      : select?.pokemonType === PokemonType.Purified
+        ? 'purified'
+        : '';
   const moveRanking =
     select && selectedBundle
       ? selectedBundle.moveRankings.find(
@@ -454,98 +462,121 @@ const StatsRanking = () => {
   );
 
   return (
-    <div className="tw-pb-3 tw-relative poke-container tw-container">
-      <div className="tw-w-full tw-inline-block tw-align-middle tw-my-3">
-        <div className="tw-flex tw-justify-center tw-w-full">
-          <div
-            className="tw-inline-flex tw-items-center tw-justify-center img-desc"
-            aria-busy={showSelectedImageSkeleton}
-            data-testid="stats-ranking-profile-image"
-          >
-            {showSelectedImageSkeleton ? (
-              <PokemonProfileImageSkeleton testId="stats-ranking-profile-image-skeleton" />
-            ) : (
-              <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={selectedImage} />
-            )}
-          </div>
-        </div>
-        <div className="tw-grid tw-grid-cols-1 xl:tw-grid-cols-12 tw-w-full !tw-mt-2">
-          <div className="xl:tw-col-span-5 tw-min-w-0">
-            <PokemonTable
-              id={select?.num}
-              gen={select?.gen}
-              formName={`${select?.name}${isSpecialFormType(select?.pokemonType) ? '-' + getKeyWithData(PokemonType, select?.pokemonType) : ''}`}
-              region={select?.region}
-              version={select?.version}
-              weight={select?.weightKg}
-              height={select?.heightM}
-              className="table-stats-ranking"
-              isLoadedForms={!loading && Boolean(select)}
-            />
-          </div>
-          {select && (
-            <div className="xl:tw-col-span-7 tw-min-w-0">
-              <TableMove
-                moveData={moveRanking?.moves}
-                rankMoveData={moveRanking?.bestMoves}
-                pokemonType={select.pokemonType}
-                isLoading={movesLoading || pokemonBundle?.id !== select.num}
-                maxHeight={400}
-              />
-            </div>
+    <div className="tw-pb-3 tw-relative poke-container tw-container tw-text-default">
+      <section className="pokemon-detail-section pokemon-detail-hero-section tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
+        <div
+          className={combineClasses(
+            'tw-relative tw-isolate tw-inline-flex tw-align-bottom tw-items-center tw-justify-center tw-overflow-visible img-desc pokemon-profile-aura',
+            profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
+          )}
+          aria-busy={showSelectedImageSkeleton}
+          data-testid="stats-ranking-profile-image"
+          data-profile-modifier={profileModifier}
+        >
+          {showSelectedImageSkeleton ? (
+            <PokemonProfileImageSkeleton testId="stats-ranking-profile-image-skeleton" />
+          ) : (
+            <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={selectedImage} />
           )}
         </div>
-      </div>
-      <Stats
-        statATK={select?.atk}
-        statDEF={select?.def}
-        statSTA={select?.sta}
-        statProd={select?.prod}
-        id={select?.num}
-        form={select?.form}
-        isDisabled
-      />
-      <div className="tw-relative">
-        <BackdropMui open={loading && rows.length > 0} isShowOnAbove={false} />
-        <CustomDataTable
-          customColumns={columnPokemon}
-          data={rows}
-          pagination
-          paginationServer
-          paginationTotalRows={totalRows}
-          paginationResetDefaultPage={resetPaginationToggle}
-          paginationDefaultPage={page}
-          paginationPerPage={rowsPerPage}
-          paginationRowsPerPageOptions={[25, 50, 100]}
-          defaultSortFieldId={sortId}
-          defaultSortAsc={sortOrder === 'asc'}
-          sortServer
-          highlightOnHover
-          onRowClicked={setFilterParams}
-          onSort={(column, direction) => {
-            const columnId = toNumber(column.id) as ColumnType;
-            setSortOrder(direction === 'asc' ? 'asc' : 'desc');
-            setPage(1);
-            setResetPaginationToggle((value) => !value);
-            const next = new URLSearchParams(searchParams);
-            next.set(Params.StatsType, getStatsType(columnId).toString());
-            setSearchParams(next);
-          }}
-          onChangePage={setPage}
-          onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
-            setRowsPerPage(currentRowsPerPage);
-            setPage(currentPage);
-          }}
-          conditionalRowStyles={conditionalRowStyles}
-          customDataStyles={getCustomThemeDataTable(customStyles)}
-          progressPending={loading && rows.length === 0}
-          progressComponent={<CircularProgressTable />}
-          isShowSearch
-          inputPlaceholder="Search Pokémon Name, Form or ID"
-          onSearchTermChange={setSearchTerm}
-          debounceTime={300}
-          menuItems={menuItems}
-        />
+        <div className="tw-inline-block tw-align-bottom">
+          <PokemonTable
+            id={select?.num}
+            gen={select?.gen}
+            formName={
+              select
+                ? `${select.name}${isSpecialFormType(select.pokemonType) ? '-' + getKeyWithData(PokemonType, select.pokemonType) : ''}`
+                : undefined
+            }
+            region={select?.region}
+            version={select?.version}
+            weight={select?.weightKg}
+            height={select?.heightM}
+            className="pokemon-detail-table table-stats-ranking"
+            isLoadedForms={!loading && Boolean(select)}
+          />
+        </div>
+      </section>
+      <div className="pokemon-detail-sections tw-grid tw-gap-4 xl:tw-grid-cols-2">
+        <section className="pokemon-detail-section" data-testid="stats-ranking-stats-section">
+          <h4 className="info-title">
+            <b>Pokémon stats</b>
+          </h4>
+          <StableHeightSection isLoading={loading || !select} minHeight={190}>
+            <Stats
+              statATK={select?.atk}
+              statDEF={select?.def}
+              statSTA={select?.sta}
+              statProd={select?.prod}
+              id={select?.num}
+              form={select?.form}
+              isDisabled
+              isLoading={loading || !select}
+            />
+          </StableHeightSection>
+        </section>
+        <section className="pokemon-detail-section" data-testid="stats-ranking-battle-section">
+          <h4 className="info-title">
+            <b>Battle data</b>
+          </h4>
+          <StableHeightSection isLoading={!select || movesLoading} minHeight={220}>
+            <TableMove
+              moveData={moveRanking?.moves}
+              rankMoveData={moveRanking?.bestMoves}
+              pokemonType={select?.pokemonType}
+              compactLayout
+              isLoading={!select || movesLoading || pokemonBundle?.id !== select.num}
+              maxHeight={400}
+            />
+          </StableHeightSection>
+        </section>
+        <section className="pokemon-detail-section xl:tw-col-span-2" data-testid="stats-ranking-table-section">
+          <h4 className="info-title">
+            <b>Stats ranking</b>
+          </h4>
+          <div className="tw-relative">
+            <BackdropMui open={loading && rows.length > 0} isShowOnAbove={false} />
+            <CustomDataTable
+              customColumns={columnPokemon}
+              data={rows}
+              pagination
+              paginationServer
+              paginationTotalRows={totalRows}
+              paginationResetDefaultPage={resetPaginationToggle}
+              paginationDefaultPage={page}
+              paginationPerPage={rowsPerPage}
+              paginationRowsPerPageOptions={[25, 50, 100]}
+              defaultSortFieldId={sortId}
+              defaultSortAsc={sortOrder === 'asc'}
+              sortServer
+              highlightOnHover
+              onRowClicked={setFilterParams}
+              onSort={(column, direction) => {
+                const columnId = toNumber(column.id) as ColumnType;
+                setSortOrder(direction === 'asc' ? 'asc' : 'desc');
+                setPage(1);
+                setResetPaginationToggle((value) => !value);
+                const next = new URLSearchParams(searchParams);
+                next.set(Params.StatsType, getStatsType(columnId).toString());
+                setSearchParams(next);
+              }}
+              onChangePage={setPage}
+              onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
+                setRowsPerPage(currentRowsPerPage);
+                setPage(currentPage);
+              }}
+              conditionalRowStyles={conditionalRowStyles}
+              customDataStyles={getCustomThemeDataTable(customStyles)}
+              progressPending={loading && rows.length === 0}
+              progressComponent={<CircularProgressTable />}
+              isShowSearch
+              inputPlaceholder="Search Pokémon Name, Form or ID"
+              onSearchTermChange={setSearchTerm}
+              debounceTime={300}
+              menuItems={menuItems}
+            />
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -334,6 +334,7 @@ export interface ITableMoveComponent {
   moveData?: PokemonMoves;
   rankMoveData?: IPokemonQueryRankMove;
   pokemonType?: PokemonType;
+  compactLayout?: boolean;
   isLoading?: boolean;
   maxHeight?: number | string;
   tabValue?: number;
