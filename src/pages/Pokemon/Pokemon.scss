@@ -20,6 +20,11 @@ a b.link-title,
   max-width: 500px !important;
 }
 
+.pokemon-detail-table,
+.table-main {
+  @apply tw-h-[217px];
+}
+
 .pokemon-detail-sections,
 .pokemon-detail-overview-grid {
   @apply tw-min-w-0 tw-max-w-full;

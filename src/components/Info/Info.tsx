@@ -8,8 +8,8 @@ import { IncludeMode } from '../../utils/enums/string.enum';
 import { camelCase, getMultiplyTypeEffect } from '../../utils/utils';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
 import useSearch from '../../composables/useSearch';
-import Effective from '../Effective/Effective';
 import Weather from '../Sprites/Weather';
+import Chip from '@mui/material/Chip';
 
 const Info = ({ isLoading = false }: { isLoading?: boolean }) => {
   const { searchingMainForm } = useSearch();
@@ -63,14 +63,25 @@ const Info = ({ isLoading = false }: { isLoading?: boolean }) => {
       <div
         className={`tw-transition-opacity tw-duration-200 ${isLoading ? 'tw-pointer-events-none tw-opacity-60' : ''}`}
       >
-        <h5 className="tw-mt-2">
-          <li>Pokémon Type</li>
-        </h5>
-        <TypeInfo arr={types} className="tw-ml-3" isShow />
-        <Effective title="Weather Boosts">
-          <Weather arr={getWeatherEffective(types)} className="tw-ml-3" />
-        </Effective>
-        <TypeEffectiveComponent typeEffective={getTypeEffectiveChart(types)} />
+        <div className="tw-grid tw-grid-cols-1 tw-gap-4 lg:tw-grid-cols-12 lg:tw-items-start">
+          <div className="tw-flex tw-min-w-0 tw-flex-col tw-gap-2 lg:tw-col-span-3">
+            <div className="tw-min-w-0">
+              <h5 className="!tw-m-0 tw-mb-1.5">
+                <Chip component="span" label="Pokémon Type" size="small" variant="outlined" />
+              </h5>
+              <TypeInfo arr={types} className="!tw-ml-0" isShow />
+            </div>
+            <div className="tw-min-w-0">
+              <h5 className="!tw-m-0 tw-mb-1.5">
+                <Chip component="span" label="Weather Boosts" size="small" variant="outlined" />
+              </h5>
+              <Weather arr={getWeatherEffective(types)} className="!tw-ml-0" />
+            </div>
+          </div>
+          <div className="tw-min-w-0 lg:tw-col-span-9">
+            <TypeEffectiveComponent typeEffective={getTypeEffectiveChart(types)} variant="summary" />
+          </div>
+        </div>
       </div>
     </div>
   );

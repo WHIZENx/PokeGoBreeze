@@ -384,8 +384,8 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   return (
     <div className="pokemon-detail-sections tw-grid tw-gap-4">
-      <div className="pokemon-detail-overview-grid tw-grid tw-gap-4 lg:tw-grid-cols-12">
-        <section className="pokemon-detail-section lg:tw-col-span-5">
+      <div className="pokemon-detail-overview-grid tw-grid tw-grid-cols-1 tw-gap-4 lg:tw-grid-cols-2">
+        <section className="pokemon-detail-section">
           <h4 className="info-title">
             <b>Form varieties</b>
           </h4>
@@ -417,7 +417,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             />
           </div>
         </section>
-        <section className="pokemon-detail-section lg:tw-col-span-7">
+        <section className="pokemon-detail-section">
           <h4 className="info-title">
             <b>Gender ratio</b>
           </h4>
@@ -474,6 +474,9 @@ const FormComponent = (props: IFormInfoComponent) => {
         </section>
       </div>
       <section className="pokemon-detail-section">
+        <h4 className="info-title">
+          <b>Pokémon stats</b>
+        </h4>
         <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={190} testId="pokemon-stats-section">
           <Stats
             pokemonType={searchingMainForm?.form?.pokemonType}
@@ -488,44 +491,51 @@ const FormComponent = (props: IFormInfoComponent) => {
           />
         </StableHeightSection>
       </section>
-      <section className="pokemon-detail-section">
+      <section className="pokemon-detail-section" data-testid="pokemon-information-card">
+        <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={320} testId="pokemon-information-section">
+          <Info isLoading={!isCurrentPokemonLoaded} />
+        </StableHeightSection>
+      </section>
+      <section className="pokemon-detail-section" data-testid="pokemon-battle-card">
+        <h4 className="info-title">
+          <b>Battle data</b>
+        </h4>
         <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={640} testId="pokemon-battle-section">
-          <div className="tw-grid tw-w-full tw-grid-cols-1 md:tw-grid-cols-12">
-            <div className="md:tw-col-span-5 tw-min-w-0 tw-overflow-auto">
-              <Info isLoading={!isCurrentPokemonLoaded} />
-              {!isSpecialFormType(searchingMainForm?.form?.pokemonType) && (
-                <div data-testid="pokemon-raid-section">
-                  <h5>
-                    <li>Raid</li>
-                  </h5>
-                  <Raid
-                    pokemonType={searchingMainForm?.form?.pokemonType}
-                    id={props.defaultId}
-                    statATK={searchingMainDetails?.statsGO?.atk}
-                    statDEF={searchingMainDetails?.statsGO?.def}
-                    isLoadedForms={isCurrentPokemonLoaded}
-                  />
-                </div>
-              )}
-            </div>
-            <div className="md:tw-col-span-7 tw-min-w-0">
-              <TableMove
-                moveData={moveRanking?.moves ?? (isCurrentPokemonLoaded ? unavailablePokemonMoves : undefined)}
-                rankMoveData={moveRanking?.bestMoves ?? (isCurrentPokemonLoaded ? unavailableBestMoves : undefined)}
-                pokemonType={searchingMainDetails?.pokemonType}
-                isLoading={!isCurrentPokemonLoaded}
-                tabValue={moveTabValue}
-                onTabChange={setMoveTabValue}
-              />
-              <Counter
-                pokemonData={searchingMainDetails}
-                pokemonType={selectedPokemonType}
-                isLoading={!isCurrentPokemonLoaded}
-              />
-            </div>
+          <div className="tw-min-w-0 tw-w-full">
+            <TableMove
+              moveData={moveRanking?.moves ?? (isCurrentPokemonLoaded ? unavailablePokemonMoves : undefined)}
+              rankMoveData={moveRanking?.bestMoves ?? (isCurrentPokemonLoaded ? unavailableBestMoves : undefined)}
+              pokemonType={searchingMainDetails?.pokemonType}
+              isLoading={!isCurrentPokemonLoaded}
+              tabValue={moveTabValue}
+              onTabChange={setMoveTabValue}
+            />
+            <Counter
+              pokemonData={searchingMainDetails}
+              pokemonType={selectedPokemonType}
+              isLoading={!isCurrentPokemonLoaded}
+            />
           </div>
         </StableHeightSection>
       </section>
+      {!isSpecialFormType(searchingMainForm?.form?.pokemonType) && (
+        <section className="pokemon-detail-section" data-testid="pokemon-raid-card">
+          <h4 className="info-title">
+            <b>Raid</b>
+          </h4>
+          <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={340} testId="pokemon-raid-section">
+            <div className="tw-mx-auto tw-w-full tw-max-w-4xl">
+              <Raid
+                pokemonType={searchingMainForm?.form?.pokemonType}
+                id={props.defaultId}
+                statATK={searchingMainDetails?.statsGO?.atk}
+                statDEF={searchingMainDetails?.statsGO?.def}
+                isLoadedForms={isCurrentPokemonLoaded}
+              />
+            </div>
+          </StableHeightSection>
+        </section>
+      )}
       <section className="pokemon-detail-section">
         <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={256} testId="pokemon-evolution-stable">
           {renderEvolutionContent()}

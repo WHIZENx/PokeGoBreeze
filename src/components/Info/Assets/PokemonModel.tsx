@@ -12,7 +12,6 @@ import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { combineClasses, isNotEmpty, safeObjectEntries, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
-import { useIcon } from '../../../composables/useIcon';
 import { useSearch } from '../../../composables/useSearch';
 import { Skeleton } from '@mui/material';
 import { useAssets } from '../../../composables/useAssets';
@@ -37,7 +36,6 @@ const PokemonAssetImage = ({ asset, id }: PokemonAssetImageProps) => {
 };
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
-  const { iconData } = useIcon();
   const { findAssetsById } = useAssets();
   const { searchingMainDetails } = useSearch();
 
@@ -78,14 +76,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   return (
     <div className="tw-mt-2 tw-relative">
       <h4 className="title-evo">
-        <b>{`Assets of ${splitAndCapitalize(searchingMainDetails?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
-        <img
-          className="tw-ml-1"
-          width={36}
-          height={36}
-          alt="Pokémon GO Icon"
-          src={APIService.getPokemonGoIcon(iconData)}
-        />
+        <b>Pokémon GO assets</b>
       </h4>
       <div className="tw-flex tw-min-h-[206px] tw-flex-wrap" data-testid="pokemon-assets-content">
         {!props.isLoadedForms ? (
@@ -152,7 +143,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         )}
       </div>
       <h4 className="title-evo">
-        <b>{`Sound of ${splitAndCapitalize(searchingMainDetails?.pokemonId, '_', ' ')}`}</b>
+        <b>Pokémon cry</b>
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (

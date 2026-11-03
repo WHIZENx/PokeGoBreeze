@@ -422,6 +422,7 @@ const readPage = () =>
     const page = document.querySelector('[data-testid="pokemon-details-page"]');
     if (!page) return null;
     const infoTable = document.querySelector('[data-testid="pokemon-info-table"]');
+    const costTable = document.querySelector('[data-testid="pokemon-cost-table"]');
     const buttons = [...document.querySelectorAll('.form-container button[data-form]')].map((button, index) => {
       const icon = button.querySelector('[data-pokemon-icon-index]');
       return {
@@ -627,6 +628,7 @@ const readPage = () =>
       bodyLayout: infoTable && infoBodyRow && infoReferenceRow && profileImage
         ? {
             tableHeight: infoTable.getBoundingClientRect().height,
+            costTableHeight: costTable?.getBoundingClientRect().height ?? null,
             profileHeight: profileImage.getBoundingClientRect().height,
             bodyRowHeight: infoBodyRow.getBoundingClientRect().height,
             referenceRowHeight: infoReferenceRow.getBoundingClientRect().height,
@@ -1183,6 +1185,9 @@ const validateDetailHeaderLayout = (issues, id, context, page) => {
   }
   if (layout.tableHeight > layout.profileHeight + 2) {
     addIssue(issues, id, 'profile_table_height_mismatch', { ...context, layout });
+  }
+  if (layout.costTableHeight === null || Math.abs(layout.tableHeight - layout.costTableHeight) > 1) {
+    addIssue(issues, id, 'pokemon_header_table_height_mismatch', { ...context, layout });
   }
 };
 

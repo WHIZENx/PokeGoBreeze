@@ -12,6 +12,7 @@ const [
   statsStyles,
   statBar,
   info,
+  typeEffective,
   pokemonTable,
   pokemonTableStyles,
   pokemonPage,
@@ -28,6 +29,7 @@ const [
   readFile(new URL('../../src/components/Info/Stats/Stats.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Info.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Effective/TypeEffective.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
@@ -53,6 +55,11 @@ assert.doesNotMatch(
   'Evolution loading must not use a floating rectangular backdrop.'
 );
 assert.match(assets, /className="tw-flex tw-min-h-\[206px\] tw-flex-wrap" data-testid="pokemon-assets-content"/);
+assert.match(assets, /<b>Pokémon GO assets<\/b>/);
+assert.match(assets, /<b>Pokémon cry<\/b>/);
+assert.doesNotMatch(assets, /getPokemonGoIcon/);
+assert.doesNotMatch(assets, /Assets of .* in Pokémon GO/);
+assert.doesNotMatch(assets, /Sound of /);
 assert.match(assets, /data-testid="pokemon-assets-skeleton"/);
 assert.match(assets, /variant="rounded"/);
 assert.match(assets, /className="group-model tw-h-\[206px\] tw-w-\[234px\] tw-max-w-full"/);
@@ -113,6 +120,28 @@ assert.match(form, /data-gender-form-id=\{genderDisplay\?\.formId \?\? ''\}/);
 assert.match(form, /className="form-container tw-flex tw-h-\[190px\] tw-items-center"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Form varieties<\/b>\s*<\/h4>/);
 assert.match(form, /<h4 className="info-title">\s*<b>Gender ratio<\/b>\s*<\/h4>/);
+assert.match(form, /<h4 className="info-title">\s*<b>Pokémon stats<\/b>\s*<\/h4>/);
+assert.match(form, /data-testid="pokemon-information-card"/);
+assert.match(form, /minHeight=\{320\} testId="pokemon-information-section"/);
+assert.match(form, /data-testid="pokemon-battle-card"/);
+assert.match(form, /<h4 className="info-title">\s*<b>Battle data<\/b>\s*<\/h4>/);
+assert.match(form, /data-testid="pokemon-raid-card"/);
+assert.match(form, /<h4 className="info-title">\s*<b>Raid<\/b>\s*<\/h4>/);
+assert.match(form, /minHeight=\{340\} testId="pokemon-raid-section"/);
+assert.match(form, /className="tw-mx-auto tw-w-full tw-max-w-4xl"/);
+assert.doesNotMatch(form, /<li>Raid<\/li>/);
+const statsSectionIndex = form.indexOf('testId="pokemon-stats-section"');
+const informationSectionIndex = form.indexOf('testId="pokemon-information-section"');
+const battleSectionIndex = form.indexOf('testId="pokemon-battle-section"');
+const raidSectionIndex = form.indexOf('testId="pokemon-raid-section"');
+const evolutionSectionIndex = form.indexOf('testId="pokemon-evolution-stable"');
+assert.ok(
+  statsSectionIndex < informationSectionIndex &&
+    informationSectionIndex < battleSectionIndex &&
+    battleSectionIndex < raidSectionIndex &&
+    raidSectionIndex < evolutionSectionIndex,
+  'Pokémon detail sections must prioritize Stats, Information, and Battle data before Raid and Evolution.'
+);
 assert.match(gender, /tw-flex-none" data-testid="gender-ratio-skeleton"/);
 assert.match(gender, /ratio-gender !tw-m-0 tw-whitespace-nowrap/);
 assert.match(form, /className="tw-min-h-selection-button"/);
@@ -143,6 +172,46 @@ assert.doesNotMatch(info, /Loading information…/);
 assert.match(info, /const lastLoadedTypes = useRef\(requestedTypes\)/);
 assert.match(info, /const types = isLoading \? lastLoadedTypes\.current : requestedTypes/);
 assert.match(info, /tw-pointer-events-none tw-opacity-60/);
+assert.match(
+  info,
+  /tw-grid tw-grid-cols-1 tw-gap-4 lg:tw-grid-cols-12 lg:tw-items-start/,
+  'Information content must stack on small screens and use the available width on desktop.'
+);
+assert.match(
+  info,
+  /tw-flex tw-min-w-0 tw-flex-col tw-gap-2 lg:tw-col-span-3[\s\S]*lg:tw-col-span-9/,
+  'Pokémon Type and Weather Boosts must share one vertical column beside Type effectiveness.'
+);
+assert.match(info, /variant="summary"/);
+assert.equal(
+  info.match(/<Chip component="span" label="(?:Pokémon Type|Weather Boosts)" size="small" variant="outlined" \/>/g)
+    ?.length,
+  2,
+  'Information summary labels must use compact outlined MUI chips.'
+);
+assert.doesNotMatch(
+  info,
+  /tw-rounded-xl tw-border tw-border-solid tw-border-gray-500 tw-bg-table-info/,
+  'Information groups must rely on the parent section surface instead of nested bordered cards.'
+);
+assert.match(
+  typeEffective,
+  /sm:tw-grid-cols-2 lg:tw-grid-cols-4/,
+  'Summary effectiveness groups must fill desktop space while remaining responsive.'
+);
+assert.doesNotMatch(typeEffective, /label="Type effectiveness"/);
+assert.match(typeEffective, /size="small"\s+color="error"/);
+assert.match(typeEffective, /size="small"\s+color="success"/);
+assert.equal(
+  typeEffective.match(/isSummary \? '!tw-m-0 tw-mb-1\.5' : 'tw-mt-2'/g)?.length,
+  3,
+  'Effectiveness badges must keep consistent space from their details.'
+);
+assert.doesNotMatch(
+  typeEffective,
+  /tw-rounded-xl tw-border tw-border-solid tw-border-gray-500 tw-bg-table-info/,
+  'Type effectiveness summary groups must not add nested section borders.'
+);
 assert.doesNotMatch(info, /Skeleton/);
 assert.match(pokemonTable, /new Intl\.NumberFormat\('en-US',[\s\S]*maximumFractionDigits: 2/);
 assert.match(pokemonTable, /tw-grid tw-grid-cols-\[1\.15fr_0\.85fr\]/);
@@ -174,14 +243,20 @@ assert.match(lightThemeVariables, /--skeleton-page-background: rgb\(0 0 0 \/ 10%
 assert.match(lightThemeVariables, /--skeleton-page-wave-opacity: 0\.7/);
 assert.match(darkThemeVariables, /--skeleton-page-background: var\(--custom-default\)/);
 assert.match(darkThemeVariables, /--skeleton-page-wave-opacity: 0\.35/);
-assert.match(form, /pokemon-detail-overview-grid/);
+assert.match(
+  form,
+  /pokemon-detail-overview-grid tw-grid tw-grid-cols-1 tw-gap-4 lg:tw-grid-cols-2/,
+  'Form varieties and Gender ratio must share equal-width columns on large screens and stack responsively.'
+);
 assert.ok(
-  (form.match(/className="pokemon-detail-section/g)?.length ?? 0) >= 5,
-  'Forms, Gender, Stats, Battle data, and Evolution must render in separate section cards.'
+  (form.match(/className="pokemon-detail-section/g)?.length ?? 0) >= 7,
+  'Forms, Gender, Stats, Information, Battle data, Raid, and Evolution must render in separate section cards.'
 );
 assert.match(pokemonPage, /pokemon-detail-section pokemon-detail-hero-section/);
+assert.match(pokemonPage, /data-testid="pokemon-cost-table"/);
 assert.match(pokemonPage, /testId="pokemon-assets-stable"/);
 assert.match(pokemonPageStyles, /\.pokemon-detail-section[\s\S]*tw-rounded-2xl[\s\S]*var\(--background-paper\)/);
+assert.match(pokemonPageStyles, /\.pokemon-detail-table,\s*\.table-main\s*\{\s*@apply tw-h-\[217px\]/);
 assert.match(stableHeightSection, /new ResizeObserver\(measure\)/);
 assert.match(stableHeightSection, /if \(isLoading && retainedHeightRef\.current > 0\)/);
 assert.match(stableHeightSection, /tw-transition-\[height\] tw-duration-300 tw-ease-in-out/);

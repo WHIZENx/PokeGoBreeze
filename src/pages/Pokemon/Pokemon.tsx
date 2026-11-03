@@ -948,7 +948,7 @@ const Pokemon = (props: IPokemonPage) => {
             />
           </div>
           <div className="tw-inline-block !tw-p-0 tw-align-bottom">
-            <table className="table-info table-main">
+            <table className="table-info table-main" data-testid="pokemon-cost-table">
               <thead />
               <tbody>
                 <tr className="tw-text-center">
