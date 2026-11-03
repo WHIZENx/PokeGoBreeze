@@ -14,6 +14,8 @@ const [
   pokemonTable,
   statsTable,
   customStyles,
+  profileSkeleton,
+  statsRanking,
 ] = await Promise.all([
   readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Find/FormSelect.tsx', import.meta.url), 'utf8'),
@@ -25,12 +27,19 @@ const [
   readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Tables/Stats/StatsTable.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/assets/styles/custom.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/PokemonProfileImageSkeleton.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Sheets/StatsRanking/StatsRanking.tsx', import.meta.url), 'utf8'),
 ]);
 
 assert.match(
-  pokemonPage,
-  /data-skeleton-surface="pokemon-image"[\s\S]*data-testid="pokemon-profile-image-skeleton"/,
+  profileSkeleton,
+  /data-skeleton-surface="pokemon-image"[\s\S]*data-testid=\{testId\}/,
   'The Pokémon profile image skeleton must use the dedicated image surface.'
+);
+assert.match(
+  pokemonPage,
+  /<PokemonProfileImageSkeleton \/>/,
+  'Pokémon Details must use the shared profile image skeleton.'
 );
 assert.match(
   pokemonPage,
@@ -118,5 +127,29 @@ assert.doesNotMatch(
   /data-skeleton-surface="pokemon-image"/,
   'Table skeletons must retain the default MUI skeleton surface.'
 );
-
+assert.match(
+  statsRanking,
+  /const showSelectedImageSkeleton = !selectedId \|\| loading \|\| !selectedBundle \|\| isSelectedImageLoading;/,
+  'Stats Ranking must keep the profile skeleton visible until the selected bundle and a valid image are ready.'
+);
+assert.match(
+  statsRanking,
+  /<PokemonProfileImageSkeleton testId="stats-ranking-profile-image-skeleton" \/>/,
+  'Stats Ranking must reuse the Pokémon Details profile skeleton.'
+);
+assert.match(
+  statsRanking,
+  /getPreferredPokemonFormSprite\([\s\S]*PokemonSprite\.setDetails\([\s\S]*selectedForm[\s\S]*fallbackForm[\s\S]*sprites[\s\S]*usePreloadedImage\([\s\S]*selectedImageCandidates,[\s\S]*APIService\.getPokeSprite\(\)/,
+  'Stats Ranking must resolve the selected PokeAPI form artwork before generic fallbacks.'
+);
+assert.match(
+  statsRanking,
+  /const selectedImageCandidates =\s*selectedId && selectedBundle[\s\S]*selectedPreferredImage,[\s\S]*selectedOfficialImage,[\s\S]*selectedHybridImage,[\s\S]*APIService\.getPokeFullAsset/,
+  'Stats Ranking must preload real profile candidates before exposing the final fallback.'
+);
+assert.doesNotMatch(
+  statsRanking,
+  /src=\{APIService\.getPokeFullSprite\(\s*select\?\.num/,
+  'Stats Ranking must not render a question-mark profile while the initial selection is unresolved.'
+);
 console.log('Pokémon image skeleton surface regression passed.');

@@ -86,6 +86,8 @@ import useSearch from '../../composables/useSearch';
 import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { Skeleton } from '@mui/material';
+import PokemonProfileImageSkeleton from '../../components/Info/PokemonProfileImageSkeleton';
+import StableHeightSection from '../../components/Layout/StableHeightSection';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -910,7 +912,7 @@ const Pokemon = (props: IPokemonPage) => {
           props.isSearch ? '' : 'tw-container'
         )}
       >
-        <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
+        <section className="pokemon-detail-section pokemon-detail-hero-section tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
           <AlertReleased
             formName={releasedAlert?.formName}
             pokemonType={releasedAlert?.pokemonType}
@@ -927,13 +929,7 @@ const Pokemon = (props: IPokemonPage) => {
             data-profile-modifier={profileModifier}
           >
             {showMainImageSkeleton ? (
-              <Skeleton
-                variant="rounded"
-                animation="wave"
-                className="!tw-h-[205px] !tw-w-[205px]"
-                data-skeleton-surface="pokemon-image"
-                data-testid="pokemon-profile-image-skeleton"
-              />
+              <PokemonProfileImageSkeleton />
             ) : (
               <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
             )}
@@ -952,7 +948,7 @@ const Pokemon = (props: IPokemonPage) => {
             />
           </div>
           <div className="tw-inline-block !tw-p-0 tw-align-bottom">
-            <table className="table-info table-main">
+            <table className="table-info table-main" data-testid="pokemon-cost-table">
               <thead />
               <tbody>
                 <tr className="tw-text-center">
@@ -1024,7 +1020,7 @@ const Pokemon = (props: IPokemonPage) => {
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
         <FormComponent
           formList={formList}
           pokeData={pokeData}
@@ -1037,11 +1033,15 @@ const Pokemon = (props: IPokemonPage) => {
           moveRankings={moveRankings}
           isLoadedForms={progress.isLoadedForms}
         />
-        <PokemonAssetComponent
-          asset={pokemonGoAsset}
-          originSoundCry={originSoundCry}
-          isLoadedForms={progress.isLoadedForms}
-        />
+        <section className="pokemon-detail-section tw-mt-4">
+          <StableHeightSection isLoading={!progress.isLoadedForms} minHeight={240} testId="pokemon-assets-stable">
+            <PokemonAssetComponent
+              asset={pokemonGoAsset}
+              originSoundCry={originSoundCry}
+              isLoadedForms={progress.isLoadedForms}
+            />
+          </StableHeightSection>
+        </section>
       </div>
     </Error>
   );

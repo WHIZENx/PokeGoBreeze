@@ -3,14 +3,38 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [evolution, assets, gender, form, stats, statBar, info, theme, variables] = await Promise.all([
+const [
+  evolution,
+  assets,
+  gender,
+  form,
+  stats,
+  statsStyles,
+  statBar,
+  info,
+  typeEffective,
+  pokemonTable,
+  pokemonTableStyles,
+  pokemonPage,
+  pokemonPageStyles,
+  stableHeightSection,
+  theme,
+  variables,
+] = await Promise.all([
   readFile(new URL('../../src/components/Info/Evolution/Evolution.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Assets/PokemonModel.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Stats/Stats.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Stats/Stats.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Info.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Effective/TypeEffective.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Layout/StableHeightSection.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
   readFile(new URL('../../src/assets/styles/variables.scss', import.meta.url), 'utf8'),
 ]);
@@ -31,6 +55,16 @@ assert.doesNotMatch(
   'Evolution loading must not use a floating rectangular backdrop.'
 );
 assert.match(assets, /className="tw-flex tw-min-h-\[206px\] tw-flex-wrap" data-testid="pokemon-assets-content"/);
+assert.match(assets, /<b>Pokémon GO assets<\/b>/);
+assert.match(assets, /<b>Pokémon cry<\/b>/);
+assert.match(assets, /data-testid="pokemon-cry-sources"/);
+assert.match(assets, /tw-grid tw-grid-cols-1 tw-gap-6 lg:tw-grid-cols-2/);
+assert.match(assets, /label="Pokémon Origin" size="small" variant="outlined"/);
+assert.match(assets, /label="Pokémon GO" size="small" variant="outlined"/);
+assert.doesNotMatch(assets, /tw-list-(?:disc|circle)/);
+assert.doesNotMatch(assets, /getPokemonGoIcon/);
+assert.doesNotMatch(assets, /Assets of .* in Pokémon GO/);
+assert.doesNotMatch(assets, /Sound of /);
 assert.match(assets, /data-testid="pokemon-assets-skeleton"/);
 assert.match(assets, /variant="rounded"/);
 assert.match(assets, /className="group-model tw-h-\[206px\] tw-w-\[234px\] tw-max-w-full"/);
@@ -42,10 +76,17 @@ assert.match(gender, /export const GenderSkeleton/);
 assert.match(gender, /data-testid="gender-ratio-skeleton"/);
 assert.match(gender, /width=\{40\} height=\{40\}/);
 assert.match(gender, /width=\{96\} height=\{96\}/);
+assert.match(gender, /variant="circular" animation="wave" width=\{40\} height=\{40\}/);
+assert.match(gender, /tw-min-w-\[220px\] tw-flex-none/);
+assert.match(gender, /width=\{168\}/);
+assert.match(gender, /tw-w-\[204px\] tw-gap-x-3/);
 assert.match(gender, /img-form-gender-group !tw-mr-0/);
+assert.match(gender, /className="img-gender-group tw-relative"/);
+assert.match(gender, /width=\{32\}[\s\S]*height=\{32\}[\s\S]*!tw-absolute !tw-right-0 !tw-bottom-0/);
+assert.match(gender, /\{\[72, 56\]\.map/);
 assert.equal(
   gender.match(/data-skeleton-surface="page"/g)?.length,
-  4,
+  5,
   'Every Gender Ratio placeholder must use the same surface as Sound Pokémon.'
 );
 assert.ok(
@@ -65,7 +106,7 @@ assert.match(form, /searchingMainForm\?\.defaultId === props\.defaultId/);
 assert.doesNotMatch(form, /searchingMainDetails\?\.id === props\.defaultId/);
 assert.match(
   form,
-  /const genderSkeletonCount = genderRatio \? \(genderRatio\.M !== 0 && genderRatio\.F !== 0 \? 2 : 1\) : 1/
+  /const genderSkeletonCount = genderRatio \? \(genderRatio\.M !== 0 && genderRatio\.F !== 0 \? 2 : 1\) : 2/
 );
 assert.match(form, /const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12\.5 tw-overflow-x-auto'/);
 assert.match(form, /const lastLoadedGender = useRef<GenderDisplaySnapshot>/);
@@ -81,10 +122,34 @@ assert.equal(form.match(/className=\{genderDisplayClass\}/g)?.length, 2);
 assert.match(form, /aria-label=\{!isCurrentPokemonLoaded \? 'Updating gender ratio' : undefined\}/);
 assert.match(form, /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded\}/);
 assert.match(form, /data-gender-form-id=\{genderDisplay\?\.formId \?\? ''\}/);
-assert.match(form, /className="form-container tw-h-\[185px\]"/);
+assert.match(form, /className="form-container tw-flex tw-h-\[190px\] tw-items-center"/);
+assert.match(form, /<h4 className="info-title">\s*<b>Form varieties<\/b>\s*<\/h4>/);
+assert.match(form, /<h4 className="info-title">\s*<b>Gender ratio<\/b>\s*<\/h4>/);
+assert.match(form, /<h4 className="info-title">\s*<b>Pokémon stats<\/b>\s*<\/h4>/);
+assert.match(form, /data-testid="pokemon-information-card"/);
+assert.match(form, /minHeight=\{320\} testId="pokemon-information-section"/);
+assert.match(form, /data-testid="pokemon-battle-card"/);
+assert.match(form, /<h4 className="info-title">\s*<b>Battle data<\/b>\s*<\/h4>/);
+assert.match(form, /data-testid="pokemon-raid-card"/);
+assert.match(form, /<h4 className="info-title">\s*<b>Raid<\/b>\s*<\/h4>/);
+assert.match(form, /minHeight=\{340\} testId="pokemon-raid-section"/);
+assert.match(form, /className="tw-mx-auto tw-w-full tw-max-w-4xl"/);
+assert.doesNotMatch(form, /<li>Raid<\/li>/);
+const statsSectionIndex = form.indexOf('testId="pokemon-stats-section"');
+const informationSectionIndex = form.indexOf('testId="pokemon-information-section"');
+const battleSectionIndex = form.indexOf('testId="pokemon-battle-section"');
+const raidSectionIndex = form.indexOf('testId="pokemon-raid-section"');
+const evolutionSectionIndex = form.indexOf('testId="pokemon-evolution-stable"');
+assert.ok(
+  statsSectionIndex < informationSectionIndex &&
+    informationSectionIndex < battleSectionIndex &&
+    battleSectionIndex < raidSectionIndex &&
+    raidSectionIndex < evolutionSectionIndex,
+  'Pokémon detail sections must prioritize Stats, Information, and Battle data before Raid and Evolution.'
+);
 assert.match(gender, /tw-flex-none" data-testid="gender-ratio-skeleton"/);
 assert.match(gender, /ratio-gender !tw-m-0 tw-whitespace-nowrap/);
-assert.match(form, /className="tw-my-3 tw-min-h-selection-button"/);
+assert.match(form, /className="tw-min-h-selection-button"/);
 assert.match(form, /isLoading=\{!isCurrentPokemonLoaded\}/);
 assert.match(stats, /aria-busy=\{props\.isLoading\}/);
 assert.match(stats, /Loading stats…/);
@@ -96,9 +161,15 @@ assert.match(stats, /const lastLoadedStats = useRef\(computedStats\)/);
 assert.match(stats, /props\.isLoading\s*\? lastLoadedStats\.current\s*: computedStats/);
 assert.doesNotMatch(stats, /useState/);
 assert.match(statBar, /data-stat-loading=\{isLoading \|\| undefined\}/);
+assert.match(statBar, /aria-busy=\{isLoading\}/);
 assert.match(statBar, /variant=\{variant\}/);
 assert.match(statBar, /value=\{statsPercent\}/);
+assert.match(statBar, /className="pokemon-stat-progress"/);
+assert.match(statBar, /data-testid="pokemon-stat-progress"/);
 assert.doesNotMatch(statBar, /indeterminate/);
+assert.match(statsStyles, /pokemon-stat-progress\.MuiLinearProgress-root[\s\S]*tw-h-7\.5 tw-w-full tw-rounded-md/);
+assert.match(statsStyles, /pokemon-stat-progress \.MuiLinearProgress-bar[\s\S]*tw-rounded-md tw-duration-300/);
+assert.match(statsStyles, /progress-loading[\s\S]*MuiLinearProgress-bar[\s\S]*tw-transition-none/);
 assert.doesNotMatch(statBar, /useEffect|useState/);
 assert.match(form, /<Info isLoading=\{!isCurrentPokemonLoaded\} \/>/);
 assert.match(info, /data-testid="pokemon-information"/);
@@ -106,7 +177,63 @@ assert.doesNotMatch(info, /Loading information…/);
 assert.match(info, /const lastLoadedTypes = useRef\(requestedTypes\)/);
 assert.match(info, /const types = isLoading \? lastLoadedTypes\.current : requestedTypes/);
 assert.match(info, /tw-pointer-events-none tw-opacity-60/);
+assert.match(
+  info,
+  /tw-grid tw-grid-cols-1 tw-gap-4 lg:tw-grid-cols-12 lg:tw-items-start/,
+  'Information content must stack on small screens and use the available width on desktop.'
+);
+assert.match(
+  info,
+  /tw-flex tw-min-w-0 tw-flex-col tw-gap-2 lg:tw-col-span-3[\s\S]*lg:tw-col-span-9/,
+  'Pokémon Type and Weather Boosts must share one vertical column beside Type effectiveness.'
+);
+assert.match(info, /variant="summary"/);
+assert.equal(
+  info.match(/<Chip component="span" label="(?:Pokémon Type|Weather Boosts)" size="small" variant="outlined" \/>/g)
+    ?.length,
+  2,
+  'Information summary labels must use compact outlined MUI chips.'
+);
+assert.doesNotMatch(
+  info,
+  /tw-rounded-xl tw-border tw-border-solid tw-border-gray-500 tw-bg-table-info/,
+  'Information groups must rely on the parent section surface instead of nested bordered cards.'
+);
+assert.match(
+  typeEffective,
+  /sm:tw-grid-cols-2 lg:tw-grid-cols-4/,
+  'Summary effectiveness groups must fill desktop space while remaining responsive.'
+);
+assert.doesNotMatch(typeEffective, /label="Type effectiveness"/);
+assert.match(typeEffective, /size="small"\s+color="error"/);
+assert.match(typeEffective, /size="small"\s+color="success"/);
+assert.equal(
+  typeEffective.match(/isSummary \? '!tw-m-0 tw-mb-1\.5' : 'tw-mt-2'/g)?.length,
+  3,
+  'Effectiveness badges must keep consistent space from their details.'
+);
+assert.doesNotMatch(
+  typeEffective,
+  /tw-rounded-xl tw-border tw-border-solid tw-border-gray-500 tw-bg-table-info/,
+  'Type effectiveness summary groups must not add nested section borders.'
+);
 assert.doesNotMatch(info, /Skeleton/);
+assert.match(pokemonTable, /new Intl\.NumberFormat\('en-US',[\s\S]*maximumFractionDigits: 2/);
+assert.match(pokemonTable, /tw-grid tw-grid-cols-\[1\.15fr_0\.85fr\]/);
+assert.equal(
+  pokemonTable.match(/tw-min-w-0 tw-tabular-nums/g)?.length,
+  2,
+  'Weight and Height values must use stable tabular numerals without expanding their grid tracks.'
+);
+assert.ok(
+  (pokemonTable.match(/tw-whitespace-nowrap/g)?.length ?? 0) >= 4,
+  'Body measurement labels and values must remain on one row for large form-specific values.'
+);
+assert.match(
+  pokemonTableStyles,
+  /tw-min-w-\[110px\] sm:tw-min-w-\[180px\]/,
+  'Pokémon detail labels must release horizontal space on mobile while retaining the desktop column width.'
+);
 assert.match(
   form,
   /data-skeleton-surface="page"[\s\S]*variant="rectangular"[\s\S]*height=\{142\}[\s\S]*width=\{90\}/,
@@ -121,5 +248,23 @@ assert.match(lightThemeVariables, /--skeleton-page-background: rgb\(0 0 0 \/ 10%
 assert.match(lightThemeVariables, /--skeleton-page-wave-opacity: 0\.7/);
 assert.match(darkThemeVariables, /--skeleton-page-background: var\(--custom-default\)/);
 assert.match(darkThemeVariables, /--skeleton-page-wave-opacity: 0\.35/);
+assert.match(
+  form,
+  /pokemon-detail-overview-grid tw-grid tw-grid-cols-1 tw-gap-4 lg:tw-grid-cols-2/,
+  'Form varieties and Gender ratio must share equal-width columns on large screens and stack responsively.'
+);
+assert.ok(
+  (form.match(/className="pokemon-detail-section/g)?.length ?? 0) >= 7,
+  'Forms, Gender, Stats, Information, Battle data, Raid, and Evolution must render in separate section cards.'
+);
+assert.match(pokemonPage, /pokemon-detail-section pokemon-detail-hero-section/);
+assert.match(pokemonPage, /data-testid="pokemon-cost-table"/);
+assert.match(pokemonPage, /testId="pokemon-assets-stable"/);
+assert.match(pokemonPageStyles, /\.pokemon-detail-section[\s\S]*tw-rounded-2xl[\s\S]*var\(--background-paper\)/);
+assert.match(pokemonPageStyles, /\.pokemon-detail-table,\s*\.table-main\s*\{\s*@apply tw-h-\[217px\]/);
+assert.match(stableHeightSection, /new ResizeObserver\(measure\)/);
+assert.match(stableHeightSection, /if \(isLoading && retainedHeightRef\.current > 0\)/);
+assert.match(stableHeightSection, /tw-transition-\[height\] tw-duration-300 tw-ease-in-out/);
+assert.match(stableHeightSection, /motion-reduce:tw-transition-none/);
 
 console.log('Pokémon detail skeleton dimensions and page surfaces passed.');

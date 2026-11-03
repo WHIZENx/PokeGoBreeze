@@ -9,16 +9,40 @@ import { useImageSourceSequence } from '../../utils/hooks/useImageSourceSequence
 import { IPokemonSprite } from '../../core/models/API/form.model';
 
 export const GenderSkeleton = () => (
-  <div className="tw-mt-3 tw-mr-3 tw-flex-none" data-testid="gender-ratio-skeleton">
+  <div className="tw-mt-3 tw-mr-3 tw-min-w-[220px] tw-flex-none" data-testid="gender-ratio-skeleton">
     <div className="tw-flex tw-items-center tw-gap-x-3">
-      <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={40} height={40} />
-      <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-32" />
+      <Skeleton data-skeleton-surface="page" variant="circular" animation="wave" width={40} height={40} />
+      <Skeleton
+        data-skeleton-surface="page"
+        variant="text"
+        animation="wave"
+        width={168}
+        height={24}
+        className="!tw-m-0"
+      />
     </div>
-    <div className="tw-mt-2 tw-flex tw-ml-4 tw-gap-x-3">
-      {Array.from({ length: 2 }, (_, index) => (
-        <div key={index} className="img-form-gender-group !tw-mr-0 tw-flex tw-flex-col tw-items-center">
-          <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
-          <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-14" />
+    <div className="tw-mt-2 tw-ml-4 tw-flex tw-w-[204px] tw-gap-x-3">
+      {[72, 56].map((labelWidth, index) => (
+        <div key={index} className="img-form-gender-group !tw-mr-0">
+          <div className="img-gender-group tw-relative">
+            <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
+            <Skeleton
+              data-skeleton-surface="page"
+              variant="circular"
+              animation="wave"
+              width={32}
+              height={32}
+              className="!tw-absolute !tw-right-0 !tw-bottom-0 tw-z-[1]"
+            />
+          </div>
+          <Skeleton
+            data-skeleton-surface="page"
+            variant="text"
+            animation="wave"
+            width={labelWidth}
+            height={20}
+            className="!tw-mx-auto !tw-my-0"
+          />
         </div>
       ))}
     </div>
