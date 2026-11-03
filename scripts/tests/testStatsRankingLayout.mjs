@@ -3,13 +3,15 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [statsRankingSource, pokemonSource, moveTableSource, sharedLayoutStyles, pokemonStyles] = await Promise.all([
-  readFile(new URL('../../src/pages/Sheets/StatsRanking/StatsRanking.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Commons/Tables/Move/MoveTable.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Info/PokemonDetailLayout.scss', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/pages/Pokemon/Pokemon.scss', import.meta.url), 'utf8'),
-]);
+const [statsRankingSource, pokemonSource, moveTableSource, statBarSource, sharedLayoutStyles, pokemonStyles] =
+  await Promise.all([
+    readFile(new URL('../../src/pages/Sheets/StatsRanking/StatsRanking.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Commons/Tables/Move/MoveTable.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/PokemonDetailLayout.scss', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Pokemon/Pokemon.scss', import.meta.url), 'utf8'),
+  ]);
 
 for (const [page, source] of [
   ['Pokémon Details', pokemonSource],
@@ -32,11 +34,7 @@ assert.match(
   /className="pokemon-detail-table table-stats-ranking"/,
   'Stats Ranking Pokémon metadata must use the shared detail table sizing'
 );
-for (const testId of [
-  'stats-ranking-stats-section',
-  'stats-ranking-battle-section',
-  'stats-ranking-table-section',
-]) {
+for (const testId of ['stats-ranking-stats-section', 'stats-ranking-battle-section', 'stats-ranking-table-section']) {
   assert.match(statsRankingSource, new RegExp(`data-testid="${testId}"`), `missing shared section: ${testId}`);
 }
 assert.match(
@@ -55,6 +53,36 @@ assert.match(
   'the ranking table must retain the full desktop content width'
 );
 assert.match(statsRankingSource, /compactLayout/, 'the half-width Battle data card must request compact move layout');
+assert.match(
+  statsRankingSource,
+  /onStatSelect=\{selectStatRanking\}/,
+  'each Stats bar must select its corresponding Stats Ranking table data'
+);
+assert.match(
+  statsRankingSource,
+  /rankingTableRef\.current\?\.scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/,
+  'selecting a Stats bar must scroll the selected ranking into view'
+);
+assert.match(
+  statsRankingSource,
+  /applyPokemonSelectionParams\(next, select\)/,
+  'Stats bar selection must preserve the current Pokémon and form'
+);
+assert.doesNotMatch(
+  statsRankingSource,
+  /<Stats[\s\S]*?isDisabled[\s\S]*?<\/StableHeightSection>/,
+  'Stats Ranking must not disable navigation on its Stats bars'
+);
+assert.match(
+  statBarSource,
+  /onStatSelect\(statType\)/,
+  'Stats bars must delegate in-page ranking selection when provided'
+);
+assert.match(
+  statBarSource,
+  /navigateToTop\([\s\S]*?\/stats-ranking\?/,
+  'Stats bars outside Stats Ranking must retain their existing navigation fallback'
+);
 assert.match(
   moveTableSource,
   /props\.compactLayout \? 'md:tw-col-span-2' : ''/,

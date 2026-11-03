@@ -224,6 +224,8 @@ const StatsRanking = () => {
   const latestRequestRef = useRef(0);
   const locatedRouteRef = useRef('');
   const skipSyncedPageRequestRef = useRef(false);
+  const rankingTableRef = useRef<HTMLElement>(null);
+  const pendingTableScrollRef = useRef(false);
   const { isMatch, releasedGO } = filters;
 
   const paramId = searchParams.get(Params.Id) ?? '';
@@ -407,9 +409,18 @@ const StatsRanking = () => {
     skipStalePageRequest,
   ]);
 
-  const setFilterParams = (row: IPokemonStatsRanking) => {
-    applySelection(row);
-    const next = new URLSearchParams(searchParams);
+  useEffect(() => {
+    if (loading || !select || !pendingTableScrollRef.current) {
+      return;
+    }
+    pendingTableScrollRef.current = false;
+    const frameId = window.requestAnimationFrame(() => {
+      rankingTableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, [loading, select]);
+
+  const applyPokemonSelectionParams = (next: URLSearchParams, row: IPokemonStatsRanking) => {
     next.set(Params.Id, row.num.toString());
     const form = (row.form ?? '').replace(formNormal(), '').toLowerCase().replaceAll('_', '-');
     if (form) {
@@ -423,6 +434,34 @@ const StatsRanking = () => {
     } else {
       next.delete(Params.FormType);
     }
+  };
+
+  const setFilterParams = (row: IPokemonStatsRanking) => {
+    applySelection(row);
+    const next = new URLSearchParams(searchParams);
+    applyPokemonSelectionParams(next, row);
+    setSearchParams(next);
+  };
+
+  const selectStatRanking = (statType: TypeAction) => {
+    if (!select) {
+      return;
+    }
+    const next = new URLSearchParams(searchParams);
+    applyPokemonSelectionParams(next, select);
+    next.set(Params.StatsType, statType.toString());
+    const isCurrentDescendingRanking =
+      getSortId(paramStatsType) === getSortId(statType.toString()) && sortOrder === 'desc';
+    if (isCurrentDescendingRanking && next.toString() === searchParams.toString()) {
+      rankingTableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    pendingTableScrollRef.current = true;
+    locatedRouteRef.current = '';
+    setLoading(true);
+    setSortOrder('desc');
+    setPage(1);
+    setResetPaginationToggle((value) => !value);
     setSearchParams(next);
   };
 
@@ -510,8 +549,8 @@ const StatsRanking = () => {
               statProd={select?.prod}
               id={select?.num}
               form={select?.form}
-              isDisabled
               isLoading={loading || !select}
+              onStatSelect={selectStatRanking}
             />
           </StableHeightSection>
         </section>
@@ -530,7 +569,11 @@ const StatsRanking = () => {
             />
           </StableHeightSection>
         </section>
-        <section className="pokemon-detail-section xl:tw-col-span-2" data-testid="stats-ranking-table-section">
+        <section
+          ref={rankingTableRef}
+          className="pokemon-detail-section xl:tw-col-span-2 tw-scroll-mt-20"
+          data-testid="stats-ranking-table-section"
+        >
           <h4 className="info-title">
             <b>Stats ranking</b>
           </h4>

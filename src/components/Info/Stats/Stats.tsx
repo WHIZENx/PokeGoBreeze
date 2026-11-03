@@ -135,6 +135,7 @@ const Stats = (props: IStatsComponent) => {
         isDisabled={props.isDisabled || isTheoretical}
         isLoading={props.isLoading}
         pokemonType={props.pokemonType}
+        onStatSelect={props.onStatSelect}
       />
       <StatBar
         tag="DEF"
@@ -149,6 +150,7 @@ const Stats = (props: IStatsComponent) => {
         isDisabled={props.isDisabled || isTheoretical}
         isLoading={props.isLoading}
         pokemonType={props.pokemonType}
+        onStatSelect={props.onStatSelect}
       />
       <StatBar
         tag="STA"
@@ -163,6 +165,7 @@ const Stats = (props: IStatsComponent) => {
         isDisabled={props.isDisabled || isTheoretical}
         isLoading={props.isLoading}
         pokemonType={props.pokemonType}
+        onStatSelect={props.onStatSelect}
       />
       <StatBar
         tag="Stat Prod"
@@ -178,6 +181,7 @@ const Stats = (props: IStatsComponent) => {
         isDisabled={props.isDisabled || isTheoretical}
         isLoading={props.isLoading}
         pokemonType={props.pokemonType}
+        onStatSelect={props.onStatSelect}
       />
     </div>
   );

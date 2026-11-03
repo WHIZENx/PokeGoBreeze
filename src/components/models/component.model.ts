@@ -211,6 +211,7 @@ export interface IStatsComponent {
   form?: string;
   isDisabled?: boolean;
   isLoading?: boolean;
+  onStatSelect?: (statType: TypeAction) => void;
 }
 
 export interface IGenderComponent {
