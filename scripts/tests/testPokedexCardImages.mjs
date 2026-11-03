@@ -6,7 +6,7 @@ import {
   buildPokedexCardImageCandidates,
   getPokedexCardRequestedImage,
 } from '../../src/utils/pokedex-card-image.ts';
-import { isGigantamaxPokemonAsset } from '../../src/utils/pokemon-asset-url.ts';
+import { hasPokemon256AssetFallback } from '../../src/utils/pokemon-asset-url.ts';
 
 assert.deepEqual(
   buildPokedexCardImageCandidates('go.png', 'profile.png', 'form.png', 'base.png'),
@@ -14,13 +14,36 @@ assert.deepEqual(
   'a Pokémon GO asset must remain the default Pokédex card image'
 );
 
-assert(isGigantamaxPokemonAsset('/pm25.fGIGANTAMAX.icon'), 'GMAX default assets must be recognized');
-assert(isGigantamaxPokemonAsset('/pm25.fGIGANTAMAX.s.icon'), 'GMAX Shiny assets must be recognized');
-assert(!isGigantamaxPokemonAsset('/pm25.icon'), 'non-GMAX assets must keep their original fallback behavior');
+assert(hasPokemon256AssetFallback('/pm25.fGIGANTAMAX.icon'), 'GMAX default assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm25.fGIGANTAMAX.s.icon'), 'GMAX Shiny assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm150.fMEGA_X.icon'), 'Mega X default assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm150.fMEGA_X.s.icon'), 'Mega X Shiny assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm150.fMEGA_Y.icon'), 'Mega Y default assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm150.fMEGA_Y.s.icon'), 'Mega Y Shiny assets must be recognized');
+assert(!hasPokemon256AssetFallback('/pm25.icon'), 'ordinary assets must keep their original fallback behavior');
 assert.deepEqual(
   buildPokedexCardImageCandidates('normal-path.png', 'gmax-256.png', 'profile.png'),
   ['normal-path.png', 'gmax-256.png', 'profile.png'],
-  'GMAX cards must try the normal path before the 256x256 fallback'
+  'GMAX and Mega cards must try the normal path before the 256x256 fallback'
+);
+
+const mewtwoMegaX = {
+  default: 'pm150.fMEGA_X.icon.png',
+  shiny: 'pm150.fMEGA_X.s.icon.png',
+};
+const mewtwoMegaY = {
+  default: 'pm150.fMEGA_Y.icon.png',
+  shiny: 'pm150.fMEGA_Y.s.icon.png',
+};
+assert.equal(
+  getPokedexCardRequestedImage(mewtwoMegaX, true),
+  mewtwoMegaX.shiny,
+  'Mewtwo Mega X must request its matching Shiny asset'
+);
+assert.equal(
+  getPokedexCardRequestedImage(mewtwoMegaY, false),
+  mewtwoMegaY.default,
+  'Mewtwo Mega Y must restore its matching default asset'
 );
 
 const pikachuGmax = {
@@ -52,7 +75,7 @@ assert.match(
 assert.match(
   cardSource,
   /showShiny \? \(props\.image\.shinyFallbacks \?\? \[\]\) : \[\]/,
-  'Shiny GMAX failures must try the matching Shiny fallback before any default image'
+  'Shiny GMAX and Mega failures must try the matching Shiny fallback before any default image'
 );
 assert.deepEqual(
   buildPokedexCardImageCandidates(undefined, 'profile.png', 'form.png', 'base.png'),

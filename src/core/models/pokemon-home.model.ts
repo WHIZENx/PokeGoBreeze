@@ -4,7 +4,7 @@ import { versionList } from '../../utils/constants';
 import { getValueOrDefault, toNumber } from '../../utils/extension';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import { buildPokedexCardImageCandidates } from '../../utils/pokedex-card-image';
-import { isGigantamaxPokemonAsset } from '../../utils/pokemon-asset-url';
+import { hasPokemon256AssetFallback } from '../../utils/pokemon-asset-url';
 import { convertPokemonImageName, splitAndCapitalize } from '../../utils/utils';
 import { IImage, ImageModel } from './asset.model';
 import { IPokemonData } from './pokemon.model';
@@ -65,7 +65,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.pokemonClass = item.pokemonClass;
     this.releasedGO = item.releasedGO;
     const pokemonGoAsset = assetForm?.default ? APIService.getPokemonModel(assetForm.default) : undefined;
-    const pokemonGoAssetFallback = isGigantamaxPokemonAsset(assetForm?.default)
+    const pokemonGoAssetFallback = hasPokemon256AssetFallback(assetForm?.default)
       ? APIService.getPokemonSqModel(assetForm?.default)
       : undefined;
     const profileImage = APIService.getPokeFullSprite(
@@ -84,7 +84,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
       fallbacks: cardImages.slice(1),
       shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : undefined,
       shinyFallbacks:
-        assetForm?.shiny && isGigantamaxPokemonAsset(assetForm.shiny)
+        assetForm?.shiny && hasPokemon256AssetFallback(assetForm.shiny)
           ? [APIService.getPokemonSqModel(assetForm.shiny)]
           : undefined,
       pokemonType: item.pokemonType,

@@ -1,4 +1,4 @@
-const GIGANTAMAX_ASSET_TOKEN = '.fGIGANTAMAX';
+const POKEMON_256_ASSET_FORM_PREFIXES = ['.fGIGANTAMAX', '.fMEGA'];
 
-export const isGigantamaxPokemonAsset = (asset: string | null | undefined) =>
-  Boolean(asset?.includes(GIGANTAMAX_ASSET_TOKEN));
+export const hasPokemon256AssetFallback = (asset: string | null | undefined) =>
+  Boolean(asset && POKEMON_256_ASSET_FORM_PREFIXES.some((prefix) => asset.includes(prefix)));
