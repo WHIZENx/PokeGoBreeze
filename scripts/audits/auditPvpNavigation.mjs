@@ -91,6 +91,55 @@ try {
   };
   const paths = ['rankings', 'teams', 'battle'];
   const results = [];
+
+  await send('Page.navigate', { url: `${baseUrl}/pvp` }, sessionId);
+  await waitFor(
+    () => evaluate(`document.querySelectorAll('[data-testid="pvp-league-card"][data-pvp-card-series="all"]').length`),
+    (count) => count > 0,
+    'default PvP league cards'
+  );
+  const filterResults = [];
+  for (const filter of [
+    { testId: 'pvp-rank-filter', path: 'rankings' },
+    { testId: 'pvp-team-filter', path: 'teams' },
+  ]) {
+    const defaultState = await evaluate(`(() => {
+      const cards = [...document.querySelectorAll('[data-testid="pvp-league-card"][data-pvp-card-path="${filter.path}"]')];
+      return { count: cards.length, series: [...new Set(cards.map((card) => card.dataset.pvpCardSeries))] };
+    })()`);
+    if (defaultState.series.length !== 1 || defaultState.series[0] !== 'all') {
+      throw new Error(`${filter.path} Default must render only the standard all series`);
+    }
+    await evaluate(`document.querySelector('#${filter.testId}').dispatchEvent(
+      new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 })
+    )`);
+    await waitFor(
+      () =>
+        evaluate(
+          `[...document.querySelectorAll('[role="option"]')].filter((item) => item.getClientRects().length > 0).length`
+        ),
+      (count) => count > 0,
+      `${filter.path} filter options`
+    );
+    await evaluate(`(() => {
+      const option = [...document.querySelectorAll('[role="option"]')]
+        .filter((item) => item.textContent.trim() === 'All' && item.getClientRects().length > 0)
+        .at(-1);
+      if (!option) throw new Error('All option not found');
+      option.click();
+    })()`);
+    const allState = await waitFor(
+      () =>
+        evaluate(`(() => {
+          const cards = [...document.querySelectorAll('[data-testid="pvp-league-card"][data-pvp-card-path="${filter.path}"]')];
+          return { count: cards.length, series: [...new Set(cards.map((card) => card.dataset.pvpCardSeries))] };
+        })()`),
+      (state) => state.count > defaultState.count && state.series.length > 1,
+      `${filter.path} All league cards`
+    );
+    filterResults.push({ path: filter.path, default: defaultState, all: allState });
+  }
+
   for (const path of paths) {
     await send('Page.navigate', { url: `${baseUrl}/pvp` }, sessionId);
     await waitFor(
@@ -113,6 +162,8 @@ try {
     );
     results.push({ path, fromScrollY: before.scrollY, pathname: after.pathname, scrollY: after.scrollY });
   }
+  process.stdout.write(`${JSON.stringify(filterResults, null, 2)}\n`);
+  process.stdout.write(`Validated Default and All card coverage for ${filterResults.length} PvP filters.\n`);
   process.stdout.write(`${JSON.stringify(results, null, 2)}\n`);
   process.stdout.write(`Validated ${results.length} PvP card redirects at scrollY 0.\n`);
 } finally {
