@@ -334,6 +334,7 @@ export interface ITableMoveComponent {
   moveData?: PokemonMoves;
   rankMoveData?: IPokemonQueryRankMove;
   pokemonType?: PokemonType;
+  compactLayout?: boolean;
   isLoading?: boolean;
   maxHeight?: number | string;
   tabValue?: number;
@@ -547,6 +548,7 @@ export interface IStatBarComponent extends LinearProgressProps {
   isDisabled?: boolean;
   isLoading?: boolean;
   pokemonType?: PokemonType;
+  onStatSelect?: (statType: TypeAction) => void;
 }
 
 export interface ITooltip extends TooltipProps {

@@ -369,7 +369,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 <div
                   className={combineClasses(
                     'tw-grid tw-grid-cols-1 tw-items-start tw-w-full tw-bg-table-info',
-                    showMaxMoves ? 'lg:tw-grid-cols-3' : 'lg:tw-grid-cols-2'
+                    props.compactLayout ? 'md:tw-grid-cols-2' : showMaxMoves ? 'lg:tw-grid-cols-3' : 'lg:tw-grid-cols-2'
                   )}
                 >
                   <div className="table-moves-col tw-min-w-0" style={{ maxHeight: props.maxHeight }}>
@@ -408,7 +408,13 @@ const TableMove = (props: ITableMoveComponent) => {
                     </table>
                   </div>
                   {showMaxMoves && moveOrigin && (
-                    <div className="table-moves-col tw-min-w-0" style={{ maxHeight: props.maxHeight }}>
+                    <div
+                      className={combineClasses(
+                        'table-moves-col tw-min-w-0',
+                        props.compactLayout ? 'md:tw-col-span-2' : ''
+                      )}
+                      style={{ maxHeight: props.maxHeight }}
+                    >
                       <table className="table-moves">
                         <colgroup className="main-move" />
                         <thead>

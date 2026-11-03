@@ -13,6 +13,25 @@ const TypeEffectiveComponent = (props: ITypeEffectiveComponent) => {
   const damageDirection = isAttacker ? 'to' : 'from';
   const summaryCardClass = isSummary ? 'tw-min-w-0' : undefined;
   const typeListClass = isSummary ? '!tw-ml-0' : 'tw-ml-3';
+  const summaryGridClass = props.compactLayout
+    ? 'tw-grid tw-grid-cols-1 tw-gap-5 sm:tw-grid-cols-2'
+    : 'tw-grid tw-grid-cols-1 tw-gap-5 sm:tw-grid-cols-2 lg:tw-grid-cols-4';
+  const summaryCounts = props.typeEffective
+    ? [
+        {
+          label: isAttacker ? 'Strong against' : 'Weak to',
+          value: (props.typeEffective.veryWeak?.length ?? 0) + (props.typeEffective.weak?.length ?? 0),
+        },
+        { label: 'Neutral', value: props.typeEffective.neutral?.length ?? 0 },
+        {
+          label: isAttacker ? 'Resisted by' : 'Resists',
+          value:
+            (props.typeEffective.superResist?.length ?? 0) +
+            (props.typeEffective.veryResist?.length ?? 0) +
+            (props.typeEffective.resist?.length ?? 0),
+        },
+      ]
+    : [];
 
   const noneSprit = () => (
     <div className={combineClasses('tw-mt-2 tw-flex', typeListClass)}>
@@ -32,7 +51,17 @@ const TypeEffectiveComponent = (props: ITypeEffectiveComponent) => {
               <li>Pokémon Type Effective</li>
             </h5>
           )}
-          <div className={isSummary ? 'tw-grid tw-grid-cols-1 tw-gap-5 sm:tw-grid-cols-2 lg:tw-grid-cols-4' : ''}>
+          {isSummary && props.showCounts && (
+            <dl className="tw-mb-4 tw-grid tw-grid-cols-3 tw-gap-2" data-testid="type-effect-summary-counts">
+              {summaryCounts.map(({ label, value }) => (
+                <div className="tw-rounded-lg tw-bg-table-primary tw-p-2 tw-text-center" key={label}>
+                  <dd className="!tw-m-0 tw-text-medium tw-font-bold">{value}</dd>
+                  <dt className="tw-text-caption">{label}</dt>
+                </div>
+              ))}
+            </dl>
+          )}
+          <div className={isSummary ? summaryGridClass : ''}>
             {(isNotEmpty(props.typeEffective.veryWeak) || isNotEmpty(props.typeEffective.weak)) && (
               <div className={summaryCardClass}>
                 <h6 className={isSummary ? '!tw-m-0 tw-mb-1.5' : 'tw-mt-2'}>
@@ -42,6 +71,7 @@ const TypeEffectiveComponent = (props: ITypeEffectiveComponent) => {
                       label={isAttacker ? 'Super Effective' : getKeyWithData(EffectiveType, EffectiveType.Weakness)}
                       size="small"
                       color="error"
+                      className="!tw-bg-red-700 !tw-text-white dark:!tw-bg-red-800"
                     />
                   ) : (
                     <span className="type-title weakness-title">

@@ -92,7 +92,7 @@
 }
 
 .sticker-shop-status.is-available {
-  @apply tw-bg-orange-500 tw-text-white;
+  @apply tw-bg-orange-800 tw-text-white;
 }
 
 .sticker-card-body {
@@ -122,13 +122,13 @@
 .sticker-max-badge {
   background: color-mix(in srgb, var(--primary-main) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--primary-main) 45%, transparent);
-  color: var(--primary-main);
+  color: var(--default);
 
   @apply tw-inline-flex tw-items-center tw-gap-1 tw-rounded-full tw-px-2 tw-py-0.5 tw-font-medium;
 }
 
 .sticker-pack-badge {
-  @apply tw-rounded-full tw-border tw-border-orange-500/50 tw-bg-orange-500/15 tw-px-2 tw-py-0.5 tw-font-semibold tw-text-orange-500;
+  @apply tw-rounded-full tw-border tw-border-orange-700 tw-bg-orange-100 tw-px-2 tw-py-0.5 tw-font-semibold tw-text-black dark:tw-border-orange-500 dark:tw-bg-orange-950 dark:tw-text-white;
 }
 
 .sticker-empty {

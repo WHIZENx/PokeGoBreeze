@@ -10,6 +10,7 @@ import { combineClasses } from '../../utils/extension';
 import { PokemonType } from '../../enums/type.enum';
 import { LinkToTop } from '../Link/LinkToTop';
 import { useDevice } from '../../composables/useDevice';
+import { getPokedexCardRequestedImage } from '../../utils/pokedex-card-image';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);
@@ -18,6 +19,8 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const imageRef: React.LegacyRef<HTMLImageElement> = useRef(null);
   const shinyRef: React.LegacyRef<HTMLImageElement> = useRef(null);
   const displayGoStat = (value: number) => (value > 0 ? value : '—');
+  const showShiny = isShiny || props.isDefaultImg;
+  const requestedImage = getPokedexCardRequestedImage(props.image, showShiny);
 
   const onTouchEnd = () => {
     if (!isMobile || props.isDefaultImg) {
@@ -88,14 +91,17 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
             <div className="tw-flex tw-justify-center tw-p-2">
               <span className="tw-w-24">
                 <img
+                  key={requestedImage}
                   ref={imageRef}
                   className="pokemon-sprite-large"
                   alt={`#${props.id} ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}
                   title={`#${props.id} ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}
-                  src={props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default}
+                  src={requestedImage}
                   onError={(e) => {
+                    const shinyFallbacks = showShiny ? (props.image.shinyFallbacks ?? []) : [];
                     if (
                       !setNextPokemonImageFallback(e.currentTarget, [
+                        ...shinyFallbacks,
                         props.image.default,
                         ...(props.image.fallbacks ?? []),
                         APIService.getPokeSprite(),
