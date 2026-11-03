@@ -3,22 +3,26 @@ import { leaguesTeamBattle } from '../../utils/constants';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { getTime } from '../../utils/utils';
-import { isEqual, isNotEmpty } from '../../utils/extension';
+import { isEqual } from '../../utils/extension';
 import useDataStore from '../../composables/useDataStore';
 import useSpinner from '../../composables/useSpinner';
 import useTimestamp from '../../composables/useTimestamp';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
 import ButtonGroupLeague from '../../components/Commons/Buttons/ButtonGroupLeague';
 import { Skeleton } from '@mui/material';
+import '../../components/Info/PokemonDetailLayout.scss';
+
+const defaultSelection = '__default__';
+const allSelection = '__all__';
 
 interface IOptionsHome {
-  rank?: PVPInfo;
-  team?: PVPInfo;
+  rank: string;
+  team: string;
 }
 
 class OptionsHome implements IOptionsHome {
-  rank?: PVPInfo;
-  team?: PVPInfo;
+  rank = defaultSelection;
+  team = defaultSelection;
 
   static create(value: IOptionsHome) {
     const obj = new OptionsHome();
@@ -26,6 +30,26 @@ class OptionsHome implements IOptionsHome {
     return obj;
   }
 }
+
+const getDefaultLeagueGroup = (groups: PVPInfo[]) => groups.find((item) => isEqual(item.id, 'all')) ?? groups.at(0);
+
+const getSelectedLeagueGroups = (groups: PVPInfo[], selection: string) => {
+  if (selection === allSelection) {
+    return groups;
+  }
+  if (selection === defaultSelection) {
+    const defaultGroup = getDefaultLeagueGroup(groups);
+    return defaultGroup ? [defaultGroup] : [];
+  }
+  const selectedGroup = groups.find((item) => isEqual(item.id, selection));
+  return selectedGroup ? [selectedGroup] : [];
+};
+
+const getLeagueMenuItems = (groups: PVPInfo[]) => [
+  { value: defaultSelection, label: 'Default' },
+  { value: allSelection, label: 'All' },
+  ...groups.filter((item) => !isEqual(item.id, 'all')).map((item) => ({ value: item.id, label: item.name })),
+];
 
 const PVPHome = () => {
   useTitle({
@@ -41,23 +65,14 @@ const PVPHome = () => {
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
   const { rank, team } = options;
+  const rankLeagueGroups = getSelectedLeagueGroups(pvpData.rankings, rank);
+  const teamLeagueGroups = getSelectedLeagueGroups(pvpData.trains, team);
 
   useEffect(() => {
     if (spinnerIsLoading) {
       hideSpinner();
     }
   }, [spinnerIsLoading, hideSpinner]);
-
-  useEffect(() => {
-    if (!rank && !team && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
-      setOptions(
-        OptionsHome.create({
-          rank: pvpData.rankings.at(0),
-          team: pvpData.trains.at(0),
-        })
-      );
-    }
-  }, [rank, team, pvpData.rankings, pvpData.trains]);
 
   const renderLoading = () => {
     return (
@@ -74,72 +89,103 @@ const PVPHome = () => {
   };
 
   return (
-    <div className="tw-container tw-mt-2 tw-pb-3">
-      {timestampPVP > 0 && (
-        <h4>
-          <b>Updated: {getTime(timestampPVP, true)}</b>
-        </h4>
-      )}
-      <p className="tw-text-error">
-        <b>
-          {'* Pokémon data source references from '}
-          <a href="https://pvpoke.com/" target="_">
-            Pvpoke
-          </a>
-        </b>
-      </p>
-      <div className="tw-flex tw-items-center tw-justify-between">
-        <h1 className="tw-w-3/4 tw-block">Top Rank Pokémon Leagues</h1>
-        <SelectMui
-          formClassName="tw-w-1/4"
-          value={rank?.id}
-          onChangeSelect={(value) =>
-            setOptions(
-              OptionsHome.create({
-                ...options,
-                rank: pvpData.rankings.find((item) => isEqual(item.id, value)),
-              })
-            )
-          }
-          menuItems={pvpData.rankings.map((value) => ({
-            value: value.id,
-            label: value.name,
-          }))}
-        />
+    <div className="pvp-home-page tw-container tw-mt-4 tw-pb-4">
+      <header className="pokemon-detail-section tw-mb-4 tw-flex tw-flex-wrap tw-items-start tw-justify-between tw-gap-3">
+        <div>
+          <h1 className="tw-m-0">Pokémon GO PvP</h1>
+          <p className="tw-mb-0 tw-mt-2 tw-text-error">
+            <b>
+              {'Pokémon data source references from '}
+              <a href="https://pvpoke.com/" target="_">
+                PvPoke
+              </a>
+            </b>
+          </p>
+        </div>
+        {timestampPVP > 0 && <span className="tw-text-caption">Updated: {getTime(timestampPVP, true)}</span>}
+      </header>
+
+      <div className="tw-grid tw-grid-cols-1 tw-gap-4 xl:tw-grid-cols-2" data-testid="pvp-home-primary-sections">
+        <section className="pokemon-detail-section !tw-overflow-hidden !tw-p-0">
+          <div className="tw-flex tw-flex-col tw-gap-3 tw-border-0 tw-border-b tw-border-solid tw-border-[var(--divider)] tw-p-4 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between sm:tw-p-5">
+            <h2 className="tw-m-0">Top Rank Pokémon Leagues</h2>
+            <SelectMui
+              SelectDisplayProps={{ id: 'pvp-rank-filter' }}
+              formClassName="tw-w-full sm:tw-w-56"
+              value={rank}
+              onChangeSelect={(value) =>
+                setOptions(
+                  OptionsHome.create({
+                    ...options,
+                    rank: value,
+                  })
+                )
+              }
+              menuItems={getLeagueMenuItems(pvpData.rankings)}
+            />
+          </div>
+          <div className="tw-p-2 sm:tw-p-3">
+            <ButtonGroupLeague
+              className="!tw-m-0"
+              leagues={rankLeagueGroups.at(0)?.cp}
+              groups={rankLeagueGroups}
+              isLoaded={rankLeagueGroups.length > 0}
+              loading={renderLoading()}
+              data={rankLeagueGroups.at(0)}
+              path="rankings"
+            />
+          </div>
+        </section>
+
+        <section className="pokemon-detail-section !tw-overflow-hidden !tw-p-0">
+          <div className="tw-flex tw-flex-col tw-gap-3 tw-border-0 tw-border-b tw-border-solid tw-border-[var(--divider)] tw-p-4 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between sm:tw-p-5">
+            <h2 className="tw-m-0">Top Teams Pokémon Leagues</h2>
+            <SelectMui
+              SelectDisplayProps={{ id: 'pvp-team-filter' }}
+              formClassName="tw-w-full sm:tw-w-56"
+              value={team}
+              onChangeSelect={(value) =>
+                setOptions(
+                  OptionsHome.create({
+                    ...options,
+                    team: value,
+                  })
+                )
+              }
+              menuItems={getLeagueMenuItems(pvpData.trains)}
+            />
+          </div>
+          <div className="tw-p-2 sm:tw-p-3">
+            <ButtonGroupLeague
+              className="!tw-m-0"
+              leagues={teamLeagueGroups.at(0)?.cp}
+              groups={teamLeagueGroups}
+              isLoaded={teamLeagueGroups.length > 0}
+              loading={renderLoading()}
+              data={teamLeagueGroups.at(0)}
+              path="teams"
+            />
+          </div>
+        </section>
       </div>
-      <ButtonGroupLeague leagues={rank?.cp} isLoaded={!!rank} loading={renderLoading()} data={rank} path="rankings" />
-      <div className="tw-flex tw-items-center tw-justify-between">
-        <h1 className="tw-w-3/4 tw-block">Top Teams Pokémon Leagues</h1>
-        <SelectMui
-          formClassName="tw-w-1/4"
-          value={team?.id}
-          onChangeSelect={(value) =>
-            setOptions(
-              OptionsHome.create({
-                ...options,
-                team: pvpData.trains.find((item) => isEqual(item.id, value)),
-              })
-            )
-          }
-          menuItems={pvpData.trains.map((value) => ({
-            value: value.id,
-            label: value.name,
-          }))}
-        />
-      </div>
-      <ButtonGroupLeague leagues={team?.cp} isLoaded={!!team} loading={renderLoading()} data={team} path="teams" />
-      <h1 className="tw-flex tw-gap-2 tw-items-end">
-        <span>Battle League Simulator</span>
-        <span className="tw-mb-1 caption !tw-text-error">(Beta Test)</span>
-      </h1>
-      <ButtonGroupLeague
-        leagues={leaguesTeamBattle
-          .filter((value) => value.cp.length > 0)
-          .map((value) => value.cp)
-          .flat()}
-        isLoaded={true}
-        path="battle"
-      />
+
+      <section className="pokemon-detail-section !tw-overflow-hidden !tw-p-0 tw-mt-4">
+        <div className="tw-flex tw-items-end tw-gap-2 tw-border-0 tw-border-b tw-border-solid tw-border-[var(--divider)] tw-p-4 sm:tw-p-5">
+          <h2 className="tw-m-0">Battle League Simulator</h2>
+          <span className="tw-mb-0.5 tw-text-caption !tw-text-error">(Beta Test)</span>
+        </div>
+        <div className="tw-p-2 sm:tw-p-3">
+          <ButtonGroupLeague
+            className="!tw-m-0"
+            leagues={leaguesTeamBattle
+              .filter((value) => value.cp.length > 0)
+              .map((value) => value.cp)
+              .flat()}
+            isLoaded={true}
+            path="battle"
+          />
+        </div>
+      </section>
     </div>
   );
 };
