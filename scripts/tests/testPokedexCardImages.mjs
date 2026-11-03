@@ -20,11 +20,18 @@ assert(hasPokemon256AssetFallback('/pm150.fMEGA_X.icon'), 'Mega X default assets
 assert(hasPokemon256AssetFallback('/pm150.fMEGA_X.s.icon'), 'Mega X Shiny assets must be recognized');
 assert(hasPokemon256AssetFallback('/pm150.fMEGA_Y.icon'), 'Mega Y default assets must be recognized');
 assert(hasPokemon256AssetFallback('/pm150.fMEGA_Y.s.icon'), 'Mega Y Shiny assets must be recognized');
-assert(!hasPokemon256AssetFallback('/pm25.icon'), 'ordinary assets must keep their original fallback behavior');
+assert(hasPokemon256AssetFallback('/pm746.fSCHOOL.icon'), 'form assets must use the 256x256 fallback');
+assert(hasPokemon256AssetFallback('/pm771.icon'), 'ordinary Addressable Assets must use the 256x256 fallback');
+assert(hasPokemon256AssetFallback('/pm802.s.icon'), 'ordinary Shiny assets must use the 256x256 fallback');
+assert(hasPokemon256AssetFallback('/pm905.fTHERIAN.s.icon'), 'form Shiny assets must use the 256x256 fallback');
+assert(
+  !hasPokemon256AssetFallback('pokemon_icon_pm0025_00_pgo_movie2020'),
+  'legacy root assets must keep their original fallback behavior'
+);
 assert.deepEqual(
-  buildPokedexCardImageCandidates('normal-path.png', 'gmax-256.png', 'profile.png'),
-  ['normal-path.png', 'gmax-256.png', 'profile.png'],
-  'GMAX and Mega cards must try the normal path before the 256x256 fallback'
+  buildPokedexCardImageCandidates('normal-path.png', 'pokemon-256.png', 'profile.png'),
+  ['normal-path.png', 'pokemon-256.png', 'profile.png'],
+  'Addressable Asset cards must try the normal path before the 256x256 fallback'
 );
 
 const mewtwoMegaX = {
@@ -75,7 +82,7 @@ assert.match(
 assert.match(
   cardSource,
   /showShiny \? \(props\.image\.shinyFallbacks \?\? \[\]\) : \[\]/,
-  'Shiny GMAX and Mega failures must try the matching Shiny fallback before any default image'
+  'Shiny Addressable Asset failures must try the matching Shiny fallback before any default image'
 );
 assert.deepEqual(
   buildPokedexCardImageCandidates(undefined, 'profile.png', 'form.png', 'base.png'),
