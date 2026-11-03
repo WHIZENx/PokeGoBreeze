@@ -601,6 +601,17 @@ const readPage = () =>
       statsLoading,
       statsBars: statsBars.length,
       statsLoadingBars,
+      statsBarLayout: statsBars.map((stat) => {
+        const progress = stat.querySelector('[data-testid="pokemon-stat-progress"]');
+        const bar = progress?.querySelector('.MuiLinearProgress-bar');
+        return {
+          tag: stat.dataset.statTag ?? '',
+          container: bounds(stat),
+          progress: progress ? bounds(progress) : null,
+          barRadius: bar ? getComputedStyle(bar).borderRadius : '',
+          progressRadius: progress ? getComputedStyle(progress).borderRadius : '',
+        };
+      }),
       informationLoading,
       informationLoadingLabel,
       informationTypes: informationSection?.dataset.informationTypes ?? '',
@@ -1385,6 +1396,30 @@ const main = async () => {
             expectedRetainedStats: previousPage.stats,
             actualRetainedStats: loadingPage.stats,
           });
+        }
+        for (const loadingBar of loadingPage.statsBarLayout) {
+          const loadedBar = page.statsBarLayout.find((bar) => bar.tag === loadingBar.tag);
+          const retainedBar = previousPage.statsBarLayout.find((bar) => bar.tag === loadingBar.tag);
+          for (const [state, candidate] of [
+            ['retained', retainedBar],
+            ['loaded', loadedBar],
+          ]) {
+            if (
+              !loadingBar.progress ||
+              !candidate?.progress ||
+              Math.abs(loadingBar.progress.width - candidate.progress.width) > 0.1 ||
+              Math.abs(loadingBar.progress.height - candidate.progress.height) > 0.1 ||
+              loadingBar.progressRadius !== candidate.progressRadius ||
+              loadingBar.barRadius !== candidate.barRadius
+            ) {
+              addIssue(issues, id, 'pokemon_stats_progress_loading_geometry_mismatch', {
+                tag: loadingBar.tag,
+                state,
+                loading: loadingBar,
+                candidate,
+              });
+            }
+          }
         }
         if (
           !loadingPage.informationLoading ||

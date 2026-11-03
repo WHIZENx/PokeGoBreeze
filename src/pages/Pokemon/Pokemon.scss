@@ -20,6 +20,39 @@ a b.link-title,
   max-width: 500px !important;
 }
 
+.pokemon-detail-sections,
+.pokemon-detail-overview-grid {
+  @apply tw-min-w-0 tw-max-w-full;
+}
+
+.pokemon-detail-section {
+  @apply tw-min-w-0 tw-max-w-full tw-rounded-2xl tw-border tw-border-solid tw-p-4 sm:tw-p-5;
+
+  border-color: var(--divider);
+  background-color: var(--background-paper);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 6%);
+}
+
+.pokemon-detail-section:not(.pokemon-detail-hero-section) {
+  @apply tw-overflow-x-auto;
+
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+
+.pokemon-detail-hero-section {
+  @apply tw-overflow-visible;
+}
+
+@media (width <= 575px) {
+  .pokemon-detail-hero-section {
+    @apply tw-overflow-x-auto tw-overflow-y-visible;
+
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+}
+
 .table-main thead tr th {
   @apply tw-text-[16px] tw-py-[5px] tw-px-2.5 tw-h-[35px];
 }

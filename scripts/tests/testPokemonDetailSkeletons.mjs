@@ -3,20 +3,39 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [evolution, assets, gender, form, stats, statBar, info, pokemonTable, pokemonTableStyles, theme, variables] =
-  await Promise.all([
-    readFile(new URL('../../src/components/Info/Evolution/Evolution.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Info/Assets/PokemonModel.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Info/Stats/Stats.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Info/Info.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.scss', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/assets/styles/variables.scss', import.meta.url), 'utf8'),
-  ]);
+const [
+  evolution,
+  assets,
+  gender,
+  form,
+  stats,
+  statsStyles,
+  statBar,
+  info,
+  pokemonTable,
+  pokemonTableStyles,
+  pokemonPage,
+  pokemonPageStyles,
+  stableHeightSection,
+  theme,
+  variables,
+] = await Promise.all([
+  readFile(new URL('../../src/components/Info/Evolution/Evolution.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Assets/PokemonModel.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Stats/Stats.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Stats/Stats.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Info.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Layout/StableHeightSection.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/assets/styles/variables.scss', import.meta.url), 'utf8'),
+]);
 const lightThemeVariables = variables.slice(
   variables.indexOf(':root[data-theme=#{$light-mode}]'),
   variables.indexOf(':root[data-theme=#{$dark-mode}]')
@@ -45,10 +64,17 @@ assert.match(gender, /export const GenderSkeleton/);
 assert.match(gender, /data-testid="gender-ratio-skeleton"/);
 assert.match(gender, /width=\{40\} height=\{40\}/);
 assert.match(gender, /width=\{96\} height=\{96\}/);
+assert.match(gender, /variant="circular" animation="wave" width=\{40\} height=\{40\}/);
+assert.match(gender, /tw-min-w-\[220px\] tw-flex-none/);
+assert.match(gender, /width=\{168\}/);
+assert.match(gender, /tw-w-\[204px\] tw-gap-x-3/);
 assert.match(gender, /img-form-gender-group !tw-mr-0/);
+assert.match(gender, /className="img-gender-group tw-relative"/);
+assert.match(gender, /width=\{32\}[\s\S]*height=\{32\}[\s\S]*!tw-absolute !tw-right-0 !tw-bottom-0/);
+assert.match(gender, /\{\[72, 56\]\.map/);
 assert.equal(
   gender.match(/data-skeleton-surface="page"/g)?.length,
-  4,
+  5,
   'Every Gender Ratio placeholder must use the same surface as Sound Pokémon.'
 );
 assert.ok(
@@ -68,7 +94,7 @@ assert.match(form, /searchingMainForm\?\.defaultId === props\.defaultId/);
 assert.doesNotMatch(form, /searchingMainDetails\?\.id === props\.defaultId/);
 assert.match(
   form,
-  /const genderSkeletonCount = genderRatio \? \(genderRatio\.M !== 0 && genderRatio\.F !== 0 \? 2 : 1\) : 1/
+  /const genderSkeletonCount = genderRatio \? \(genderRatio\.M !== 0 && genderRatio\.F !== 0 \? 2 : 1\) : 2/
 );
 assert.match(form, /const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12\.5 tw-overflow-x-auto'/);
 assert.match(form, /const lastLoadedGender = useRef<GenderDisplaySnapshot>/);
@@ -84,10 +110,12 @@ assert.equal(form.match(/className=\{genderDisplayClass\}/g)?.length, 2);
 assert.match(form, /aria-label=\{!isCurrentPokemonLoaded \? 'Updating gender ratio' : undefined\}/);
 assert.match(form, /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded\}/);
 assert.match(form, /data-gender-form-id=\{genderDisplay\?\.formId \?\? ''\}/);
-assert.match(form, /className="form-container tw-h-\[185px\]"/);
+assert.match(form, /className="form-container tw-flex tw-h-\[190px\] tw-items-center"/);
+assert.match(form, /<h4 className="info-title">\s*<b>Form varieties<\/b>\s*<\/h4>/);
+assert.match(form, /<h4 className="info-title">\s*<b>Gender ratio<\/b>\s*<\/h4>/);
 assert.match(gender, /tw-flex-none" data-testid="gender-ratio-skeleton"/);
 assert.match(gender, /ratio-gender !tw-m-0 tw-whitespace-nowrap/);
-assert.match(form, /className="tw-my-3 tw-min-h-selection-button"/);
+assert.match(form, /className="tw-min-h-selection-button"/);
 assert.match(form, /isLoading=\{!isCurrentPokemonLoaded\}/);
 assert.match(stats, /aria-busy=\{props\.isLoading\}/);
 assert.match(stats, /Loading stats…/);
@@ -99,9 +127,15 @@ assert.match(stats, /const lastLoadedStats = useRef\(computedStats\)/);
 assert.match(stats, /props\.isLoading\s*\? lastLoadedStats\.current\s*: computedStats/);
 assert.doesNotMatch(stats, /useState/);
 assert.match(statBar, /data-stat-loading=\{isLoading \|\| undefined\}/);
+assert.match(statBar, /aria-busy=\{isLoading\}/);
 assert.match(statBar, /variant=\{variant\}/);
 assert.match(statBar, /value=\{statsPercent\}/);
+assert.match(statBar, /className="pokemon-stat-progress"/);
+assert.match(statBar, /data-testid="pokemon-stat-progress"/);
 assert.doesNotMatch(statBar, /indeterminate/);
+assert.match(statsStyles, /pokemon-stat-progress\.MuiLinearProgress-root[\s\S]*tw-h-7\.5 tw-w-full tw-rounded-md/);
+assert.match(statsStyles, /pokemon-stat-progress \.MuiLinearProgress-bar[\s\S]*tw-rounded-md tw-duration-300/);
+assert.match(statsStyles, /progress-loading[\s\S]*MuiLinearProgress-bar[\s\S]*tw-transition-none/);
 assert.doesNotMatch(statBar, /useEffect|useState/);
 assert.match(form, /<Info isLoading=\{!isCurrentPokemonLoaded\} \/>/);
 assert.match(info, /data-testid="pokemon-information"/);
@@ -140,5 +174,17 @@ assert.match(lightThemeVariables, /--skeleton-page-background: rgb\(0 0 0 \/ 10%
 assert.match(lightThemeVariables, /--skeleton-page-wave-opacity: 0\.7/);
 assert.match(darkThemeVariables, /--skeleton-page-background: var\(--custom-default\)/);
 assert.match(darkThemeVariables, /--skeleton-page-wave-opacity: 0\.35/);
+assert.match(form, /pokemon-detail-overview-grid/);
+assert.ok(
+  (form.match(/className="pokemon-detail-section/g)?.length ?? 0) >= 5,
+  'Forms, Gender, Stats, Battle data, and Evolution must render in separate section cards.'
+);
+assert.match(pokemonPage, /pokemon-detail-section pokemon-detail-hero-section/);
+assert.match(pokemonPage, /testId="pokemon-assets-stable"/);
+assert.match(pokemonPageStyles, /\.pokemon-detail-section[\s\S]*tw-rounded-2xl[\s\S]*var\(--background-paper\)/);
+assert.match(stableHeightSection, /new ResizeObserver\(measure\)/);
+assert.match(stableHeightSection, /if \(isLoading && retainedHeightRef\.current > 0\)/);
+assert.match(stableHeightSection, /tw-transition-\[height\] tw-duration-300 tw-ease-in-out/);
+assert.match(stableHeightSection, /motion-reduce:tw-transition-none/);
 
 console.log('Pokémon detail skeleton dimensions and page surfaces passed.');
