@@ -40,6 +40,16 @@ assert.match(
   /paginationComponent=\{props\.paginationComponent \?\? CustomDataTablePagination\}/,
   'All default data-table pagination controls must use the shared MUI design-system component.'
 );
+assert.match(
+  component,
+  /if \(sortColumns\.length === 0 && lastSortedColumnRef\.current\)[\s\S]*setSortReset[\s\S]*props\.onSort\?\.\(sortedColumn, direction/,
+  'Shared data tables must restore the active column when v8 attempts to clear sorting.'
+);
+assert.match(
+  component,
+  /defaultSortFieldId=\{sortReset\?\.columnId \?\? props\.defaultSortFieldId\}[\s\S]*defaultSortAsc=\{sortReset \? sortReset\.direction === 'asc' : props\.defaultSortAsc\}/,
+  'Shared data tables must cycle directly between ascending and descending sorting.'
+);
 assert.match(pagination, /<TablePagination/, 'Pagination must use MUI instead of the package native select.');
 assert.match(
   pagination,

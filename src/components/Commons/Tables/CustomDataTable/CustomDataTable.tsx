@@ -15,7 +15,13 @@ import CustomDataTablePagination from './CustomDataTablePagination';
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [pokemonListFilter, setPokemonListFilter] = useState<T[]>([]);
+  const [sortReset, setSortReset] = useState<{
+    columnId: string | number | null | undefined;
+    direction: 'asc' | 'desc';
+    version: number;
+  }>();
   const onSearchTermChangeRef = useRef(props.onSearchTermChange);
+  const lastSortedColumnRef = useRef<Parameters<NonNullable<typeof props.onSort>>[0]>();
 
   const [showOption, setShowOption] = useState(false);
 
@@ -51,6 +57,27 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
 
   const handleShowOption = () => {
     setShowOption(true);
+  };
+
+  const handleSort: NonNullable<typeof props.onSort> = (column, direction, sortedRows, sortColumns) => {
+    if (sortColumns.length === 0 && lastSortedColumnRef.current) {
+      const sortedColumn = lastSortedColumnRef.current;
+      setSortReset((current) => ({
+        columnId: sortedColumn.id,
+        direction,
+        version: (current?.version ?? 0) + 1,
+      }));
+      props.onSort?.(sortedColumn, direction, sortedRows, [
+        {
+          column: sortedColumn,
+          sortDirection: direction,
+        },
+      ]);
+      return;
+    }
+
+    lastSortedColumnRef.current = column;
+    props.onSort?.(column, direction, sortedRows, sortColumns);
   };
 
   const setCustomStyle = () => {
@@ -109,8 +136,12 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
       >
         <div className="rdt-v7-compat">
           <DataTable
+            key={sortReset?.version}
             {...props}
+            defaultSortFieldId={sortReset?.columnId ?? props.defaultSortFieldId}
+            defaultSortAsc={sortReset ? sortReset.direction === 'asc' : props.defaultSortAsc}
             headerSeparator={props.headerSeparator ?? false}
+            onSort={handleSort}
             paginationComponent={props.paginationComponent ?? CustomDataTablePagination}
             progressSkeleton={props.progressSkeleton ?? false}
             subHeader={

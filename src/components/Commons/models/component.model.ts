@@ -246,6 +246,7 @@ export interface IButtonGroupLeagueComponent {
   isFullWidth?: boolean;
   loading?: React.ReactNode;
   data?: PVPInfo;
+  groups?: PVPInfo[];
   path?: string;
   onClick?: (value: BattleLeagueCPType) => void;
   value?: BattleLeagueCPType;
