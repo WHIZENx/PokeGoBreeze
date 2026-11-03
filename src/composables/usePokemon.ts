@@ -16,32 +16,7 @@ import useDataStore from './useDataStore';
 import { useCallback, useMemo } from 'react';
 import { buildPokemonSpeciesNavigation, findPokemonSpeciesNavigation } from '../utils/pokemon-navigation';
 import { normalizePokemonFormIdentity, selectPreferredPokemonGoFormIdentity } from '../utils/pokemon-form-identity';
-
-const pvpokeSpeciesAliases: Readonly<Record<string, string>> = {
-  AEGISLASH_SHIELD: 'AEGISLASH',
-  CALYREX_ICE: 'CALYREX_ICE_RIDER',
-  CALYREX_SHADOW: 'CALYREX_SHADOW_RIDER',
-  CLODSIRESB: 'CLODSIRE',
-  DARMANITAN_GALARIAN_STANDARD: 'DARMANITAN_GALARIAN',
-  GOLISOPODSH: 'GOLISOPOD',
-  LANTURNW: 'LANTURN',
-  MEWTWO_ARMORED: 'MEWTWO_ARMOR',
-  TAUROS_AQUA: 'TAUROS_PALDEA_AQUA',
-  TAUROS_BLAZE: 'TAUROS_PALDEA_BLAZE',
-  TAUROS_COMBAT: 'TAUROS_PALDEA_COMBAT',
-  UNOWN: 'A',
-  ZACIAN_CROWNED: 'ZACIAN_CROWNED_SWORD',
-  ZAMAZENTA_CROWNED: 'ZAMAZENTA_CROWNED_SHIELD',
-  ZYGARDE_10: 'ZYGARDE_TEN_PERCENT',
-};
-
-const normalizePvpokeSpeciesId = (speciesId: string) =>
-  speciesId
-    .trim()
-    .replaceAll('-', '_')
-    .toUpperCase()
-    .replace(/_ALOLAN$/, '_ALOLA')
-    .replace(/_PALDEAN$/, '_PALDEA');
+import { getPvpokeSpeciesCandidates, normalizePvpokeSpeciesId } from '../utils/pvpoke-species';
 
 const normalizePokemonForm = (value: string | undefined) =>
   (value ?? '').trim().replaceAll('-', '_').replaceAll(' ', '_').toUpperCase();
@@ -193,13 +168,9 @@ export const usePokemon = () => {
 
   const findPokemonByPvpokeSpeciesId = useCallback(
     (speciesId: string | undefined) => {
-      if (!speciesId) {
-        return undefined;
-      }
-      const findExact = (key: string) =>
-        pokemonByPvpokeSpeciesId.get(pvpokeSpeciesAliases[key] ?? '') ?? pokemonByPvpokeSpeciesId.get(key);
-      const key = normalizePvpokeSpeciesId(speciesId);
-      return findExact(key) ?? findExact(key.replace(/_XS$/, '')) ?? findExact(key.replace(/_SHADOW$/, ''));
+      return getPvpokeSpeciesCandidates(speciesId)
+        .map((candidate) => pokemonByPvpokeSpeciesId.get(candidate))
+        .find((pokemon) => pokemon !== undefined);
     },
     [pokemonByPvpokeSpeciesId]
   );
@@ -213,9 +184,10 @@ export const usePokemon = () => {
       if (!key.endsWith('_SHADOW')) {
         return false;
       }
-      const findExact = (candidate: string) =>
-        pokemonByPvpokeSpeciesId.has(candidate) || pokemonByPvpokeSpeciesId.has(pvpokeSpeciesAliases[candidate] ?? '');
-      return !findExact(key) && findExact(key.replace(/_SHADOW$/, ''));
+      return (
+        !pokemonByPvpokeSpeciesId.has(key) &&
+        getPvpokeSpeciesCandidates(key).some((candidate) => pokemonByPvpokeSpeciesId.has(candidate))
+      );
     },
     [pokemonByPvpokeSpeciesId]
   );
