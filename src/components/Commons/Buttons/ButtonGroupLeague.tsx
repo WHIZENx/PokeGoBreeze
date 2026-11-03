@@ -5,13 +5,16 @@ import ButtonMui from './ButtonMui';
 import { isEqual } from '../../../utils/extension';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
-import { BattleLeagueIconType } from '../../../utils/enums/compute.enum';
+import { BattleLeagueCPType, BattleLeagueIconType } from '../../../utils/enums/compute.enum';
 import apiService from '../../../services/api.service';
 import { EqualMode } from '../../../utils/enums/string.enum';
 import { useNavigateToTop } from '../../Link/LinkToTop';
 
 const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
   const navigateToTop = useNavigateToTop();
+  const leagueGroups = props.groups?.length
+    ? props.groups.map((data) => ({ data, leagues: data.cp }))
+    : [{ data: props.data, leagues: props.leagues }];
 
   const renderLeagueName = (name: string | undefined, cp: number) => {
     if (isEqual(name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
@@ -33,6 +36,11 @@ const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
     return apiService.getAssetPokeGo(logo);
   };
 
+  const renderCpLimit = (cp: BattleLeagueCPType) =>
+    cp === BattleLeagueCPType.Master || cp === BattleLeagueCPType.InsMaster
+      ? 'No CP limit'
+      : `CP ${cp.toLocaleString()} or lower`;
+
   return (
     <div
       style={{ width: props.width, height: props.height }}
@@ -44,40 +52,45 @@ const ButtonGroupLeague = (props: IButtonGroupLeagueComponent) => {
     >
       {props.isLoaded ? (
         <Fragment>
-          {props.leagues?.map((value, index) => (
-            <div key={index}>
-              <ButtonMui
-                key={index}
-                onClick={() =>
-                  props.onClick
-                    ? props.onClick(value)
-                    : navigateToTop(
-                        `/pvp${props.path ? `/${props.path}` : ''}${props.data ? `/${props.data.id}` : ''}/${value}`
-                      )
-                }
-                data-testid="pvp-league-card"
-                data-pvp-card-path={props.path ?? 'home'}
-                active={props.value === value}
-                color="default"
-                className="btn-default !tw-min-h-selection-button"
-                label={
-                  <div className="tw-flex tw-flex-col">
-                    <img
-                      alt="Image League"
-                      title={renderLeagueName(props.data?.name, value)}
-                      width={128}
-                      height={128}
-                      src={renderLeagueLogo(props.data?.logo, value)}
-                    />
-                    <div>
-                      <b>{renderLeagueName(props.data?.name, value)}</b>
-                    </div>
-                    <span className="tw-text-error">CP below {value}</span>
-                  </div>
-                }
-              />
-            </div>
-          ))}
+          {leagueGroups.flatMap(
+            (group) =>
+              group.leagues?.map((value, index) => (
+                <div key={`${group.data?.id ?? 'league'}-${value}-${index}`}>
+                  <ButtonMui
+                    onClick={() =>
+                      props.onClick
+                        ? props.onClick(value)
+                        : navigateToTop(
+                            `/pvp${props.path ? `/${props.path}` : ''}${group.data ? `/${group.data.id}` : ''}/${value}`
+                          )
+                    }
+                    data-testid="pvp-league-card"
+                    data-pvp-card-path={props.path ?? 'home'}
+                    data-pvp-card-series={group.data?.id}
+                    data-pvp-card-cp={value}
+                    active={props.value === value}
+                    color="default"
+                    className="btn-default !tw-min-h-selection-button"
+                    label={
+                      <div className="tw-flex tw-flex-col">
+                        <img
+                          className="tw-mx-auto"
+                          alt="Image League"
+                          title={renderLeagueName(group.data?.name, value)}
+                          width={128}
+                          height={128}
+                          src={renderLeagueLogo(group.data?.logo, value)}
+                        />
+                        <div>
+                          <b>{renderLeagueName(group.data?.name, value)}</b>
+                        </div>
+                        <span className="tw-text-error">{renderCpLimit(value)}</span>
+                      </div>
+                    }
+                  />
+                </div>
+              )) ?? []
+          )}
         </Fragment>
       ) : (
         props.loading
