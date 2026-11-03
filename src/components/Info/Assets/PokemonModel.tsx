@@ -13,7 +13,7 @@ import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { combineClasses, isNotEmpty, safeObjectEntries, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 import { useSearch } from '../../../composables/useSearch';
-import { Skeleton } from '@mui/material';
+import { Chip, Skeleton } from '@mui/material';
 import { useAssets } from '../../../composables/useAssets';
 import { getAvailableOriginSoundCries, getPokemonGoCryFormLabel } from './pokemon-sound.utils';
 import { useImageSourceSequence } from '../../../utils/hooks/useImageSourceSequence';
@@ -145,81 +145,74 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       <h4 className="title-evo">
         <b>Pokémon cry</b>
       </h4>
-      <h6>Pokémon Origin:</h6>
-      {!props.isLoadedForms ? (
-        <div className="slide-container !tw-m-0 !tw-w-full !tw-p-0 tw-h-9">
-          <Skeleton
-            variant="rectangular"
-            animation="wave"
-            data-skeleton-surface="page"
-            className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
-          />
-        </div>
-      ) : (
-        <Fragment>
-          {!isNotEmpty(availableOriginSoundCries) ? (
-            <div className="tw-text-error">&emsp;Sound in Pokémon unavailable.</div>
+      <div className="tw-grid tw-grid-cols-1 tw-gap-6 lg:tw-grid-cols-2" data-testid="pokemon-cry-sources">
+        <section className="tw-min-w-0">
+          <h5 className="!tw-m-0 tw-mb-3 tw-pb-3">
+            <Chip component="span" label="Pokémon Origin" size="small" variant="outlined" />
+          </h5>
+          {!props.isLoadedForms ? (
+            <Skeleton variant="rounded" animation="wave" data-skeleton-surface="page" className="!tw-h-9 !tw-w-full" />
+          ) : !isNotEmpty(availableOriginSoundCries) ? (
+            <div className="tw-text-error">Sound in Pokémon unavailable.</div>
           ) : (
-            <ul className="!tw-m-0">
-              {availableOriginSoundCries.map((value, index) => (
-                <li key={index} className="tw-list-disc">
-                  <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
-                  <ul className="!tw-m-0">
+            <div className="tw-flex tw-min-w-0 tw-flex-col tw-gap-4">
+              {availableOriginSoundCries.map((value) => (
+                <div key={value.form} className="tw-min-w-0">
+                  <div className="tw-mb-2 tw-flex tw-flex-wrap tw-items-baseline tw-gap-2">
+                    <b>Form</b>
+                    <span>{splitAndCapitalize(value.form, '_', ' ')}</span>
+                  </div>
+                  <div className="tw-flex tw-min-w-0 tw-flex-col tw-gap-3">
                     {value.cries &&
-                      safeObjectEntries(value.cries).map(([k, v], i) => (
-                        <Fragment key={i}>
-                          {v && (
-                            <li className="tw-list-circle">
-                              <h6>Type: {capitalize(k)}</h6>
-                              <audio src={v} className="tw-w-full tw-h-8" controls preload="none">
+                      safeObjectEntries(value.cries).map(
+                        ([type, source]) =>
+                          source && (
+                            <div key={`${value.form}-${type}`} className="tw-min-w-0">
+                              <span className="caption tw-mb-1 tw-block">{capitalize(type)}</span>
+                              <audio src={source} className="tw-h-8 tw-w-full" controls preload="none">
                                 <source type="audio/ogg" />
                                 Your browser does not support the audio element.
                               </audio>
-                            </li>
-                          )}
-                        </Fragment>
-                      ))}
-                  </ul>
-                </li>
+                            </div>
+                          )
+                      )}
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
-        </Fragment>
-      )}
-      <h6 className="tw-mt-2">Pokémon GO:</h6>
-      {!props.isLoadedForms ? (
-        <div className="slide-container !tw-m-0 !tw-w-full !tw-p-0 tw-h-9">
-          <Skeleton
-            variant="rectangular"
-            animation="wave"
-            data-skeleton-surface="page"
-            className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0"
-          />
-        </div>
-      ) : (
-        <Fragment>
-          {!isNotEmpty(asset?.sound.cry) ? (
-            <div className="tw-text-error">&emsp;Sound in Pokémon GO unavailable.</div>
+        </section>
+        <section className="tw-min-w-0">
+          <h5 className="!tw-m-0 tw-mb-3 tw-pb-3">
+            <Chip component="span" label="Pokémon GO" size="small" variant="outlined" />
+          </h5>
+          {!props.isLoadedForms ? (
+            <Skeleton variant="rounded" animation="wave" data-skeleton-surface="page" className="!tw-h-9 !tw-w-full" />
+          ) : !isNotEmpty(asset?.sound.cry) ? (
+            <div className="tw-text-error">Sound in Pokémon GO unavailable.</div>
           ) : (
-            <ul className="!tw-m-0">
-              {asset?.sound.cry.map((value, index) => (
-                <li key={index} className="tw-list-disc">
-                  <h6>Form: {getPokemonGoCryFormLabel(value.form, value.path)}</h6>
+            <div className="tw-flex tw-min-w-0 tw-flex-col tw-gap-4">
+              {asset?.sound.cry.map((value) => (
+                <div key={`${value.form}-${value.path}`} className="tw-min-w-0">
+                  <div className="tw-mb-2 tw-flex tw-flex-wrap tw-items-baseline tw-gap-2">
+                    <b>Form</b>
+                    <span>{getPokemonGoCryFormLabel(value.form, value.path)}</span>
+                  </div>
                   <audio
                     src={APIService.getSoundPokemonGO(value.path)}
-                    className="tw-w-full tw-h-8"
+                    className="tw-h-8 tw-w-full"
                     controls
                     preload="none"
                   >
                     <source type="audio/wav" />
                     Your browser does not support the audio element.
                   </audio>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
-        </Fragment>
-      )}
+        </section>
+      </div>
     </div>
   );
 };

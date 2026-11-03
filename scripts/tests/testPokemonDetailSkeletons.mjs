@@ -57,6 +57,11 @@ assert.doesNotMatch(
 assert.match(assets, /className="tw-flex tw-min-h-\[206px\] tw-flex-wrap" data-testid="pokemon-assets-content"/);
 assert.match(assets, /<b>Pokémon GO assets<\/b>/);
 assert.match(assets, /<b>Pokémon cry<\/b>/);
+assert.match(assets, /data-testid="pokemon-cry-sources"/);
+assert.match(assets, /tw-grid tw-grid-cols-1 tw-gap-6 lg:tw-grid-cols-2/);
+assert.match(assets, /label="Pokémon Origin" size="small" variant="outlined"/);
+assert.match(assets, /label="Pokémon GO" size="small" variant="outlined"/);
+assert.doesNotMatch(assets, /tw-list-(?:disc|circle)/);
 assert.doesNotMatch(assets, /getPokemonGoIcon/);
 assert.doesNotMatch(assets, /Assets of .* in Pokémon GO/);
 assert.doesNotMatch(assets, /Sound of /);

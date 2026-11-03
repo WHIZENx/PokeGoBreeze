@@ -66,13 +66,13 @@ const Info = ({ isLoading = false }: { isLoading?: boolean }) => {
         <div className="tw-grid tw-grid-cols-1 tw-gap-4 lg:tw-grid-cols-12 lg:tw-items-start">
           <div className="tw-flex tw-min-w-0 tw-flex-col tw-gap-2 lg:tw-col-span-3">
             <div className="tw-min-w-0">
-              <h5 className="!tw-m-0 tw-mb-1.5">
+              <h5 className="!tw-m-0 tw-mb-1.5 tw-pb-1">
                 <Chip component="span" label="Pokémon Type" size="small" variant="outlined" />
               </h5>
               <TypeInfo arr={types} className="!tw-ml-0" isShow />
             </div>
             <div className="tw-min-w-0">
-              <h5 className="!tw-m-0 tw-mb-1.5">
+              <h5 className="!tw-m-0 tw-mb-1.5 tw-pb-1">
                 <Chip component="span" label="Weather Boosts" size="small" variant="outlined" />
               </h5>
               <Weather arr={getWeatherEffective(types)} className="!tw-ml-0" />
