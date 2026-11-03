@@ -86,6 +86,7 @@
     "test:news-item-assets": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testNewsItemAssets.mjs",
     "test:evolution-assets": "node scripts/tests/testEvolutionAssets.mjs",
     "test:pokemon-detail-skeletons": "node scripts/tests/testPokemonDetailSkeletons.mjs",
+    "test:pokemon-details-v2": "node scripts/tests/testPokemonDetailsV2.mjs",
     "test:form-change": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testFormChangeGroups.mjs",
     "test:pvp-navigation": "node scripts/tests/testPvpNavigation.mjs",
     "test:typography-design-system": "node scripts/tests/testTypographyDesignSystem.mjs",

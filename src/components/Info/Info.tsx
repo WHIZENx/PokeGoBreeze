@@ -11,7 +11,7 @@ import useSearch from '../../composables/useSearch';
 import Effective from '../Effective/Effective';
 import Weather from '../Sprites/Weather';
 
-const Info = ({ isLoading = false }: { isLoading?: boolean }) => {
+const Info = ({ isLoading = false, showPokemonType = true }: { isLoading?: boolean; showPokemonType?: boolean }) => {
   const { searchingMainForm } = useSearch();
   const requestedTypes = searchingMainForm?.form?.types ?? [];
   const lastLoadedTypes = useRef(requestedTypes);
@@ -63,10 +63,14 @@ const Info = ({ isLoading = false }: { isLoading?: boolean }) => {
       <div
         className={`tw-transition-opacity tw-duration-200 ${isLoading ? 'tw-pointer-events-none tw-opacity-60' : ''}`}
       >
-        <h5 className="tw-mt-2">
-          <li>Pokémon Type</li>
-        </h5>
-        <TypeInfo arr={types} className="tw-ml-3" isShow />
+        {showPokemonType && (
+          <>
+            <h5 className="tw-mt-2">
+              <li>Pokémon Type</li>
+            </h5>
+            <TypeInfo arr={types} className="tw-ml-3" isShow />
+          </>
+        )}
         <Effective title="Weather Boosts">
           <Weather arr={getWeatherEffective(types)} className="tw-ml-3" />
         </Effective>

@@ -5,7 +5,7 @@ import { ISelectCardPokemonComponent } from '../models/component.model';
 import InputMuiSearch from '../Inputs/InputMuiSearch';
 import { CircularProgress, MenuList, MenuItem } from '@mui/material';
 import { SelectPosition } from './enums/select-type.enum';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import { getViewportPrefetchThreshold, isNearScrollEnd, shouldPreventScrollChaining } from '../../../utils/scroll';

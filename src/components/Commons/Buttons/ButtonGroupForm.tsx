@@ -45,9 +45,9 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                   )}
                   color="default"
                   label={
-                    <div className="tw-h-full">
+                    <div className="pokemon-form-option-content tw-h-full">
                       <div className="tw-flex tw-w-full tw-justify-center">
-                        <div className="tw-relative tw-flex tw-h-16 tw-w-16 tw-items-center tw-justify-center">
+                        <div className="pokemon-form-option-icon tw-relative tw-flex tw-h-16 tw-w-16 tw-items-center tw-justify-center">
                           <PokemonIconType
                             pokemonType={value.form.pokemonType}
                             size={24}
@@ -61,12 +61,13 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                               form={value.form.formName}
                               baseSpecies={value.defaultName}
                               pokemonType={value.form.pokemonType}
+                              className="pokemon-form-option-sprite"
                               size={64}
                             />
                           </PokemonIconType>
                         </div>
                       </div>
-                      <p>
+                      <p className="pokemon-form-option-label tw-whitespace-normal tw-break-words tw-leading-small">
                         {!value.form.formName
                           ? capitalize(formNormal())
                           : splitAndCapitalize(value.form.formName, '-', ' ')}

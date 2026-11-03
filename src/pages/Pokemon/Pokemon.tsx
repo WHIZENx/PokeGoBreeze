@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Location, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import './Pokemon.scss';
+import '../PokemonV2/PokemonV2.scss';
 
 import {
   Form,
@@ -46,7 +47,7 @@ import {
 } from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
-import PokemonTable from '../../components/Commons/Tables/Pokemon/PokemonTable';
+import PokemonTable, { formatBodyMeasurement } from '../../components/Commons/Tables/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
@@ -85,8 +86,16 @@ import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
 import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
-import { Skeleton } from '@mui/material';
+import { Button, Skeleton } from '@mui/material';
+import ViewModuleRoundedIcon from '@mui/icons-material/ViewModuleRounded';
+import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
+import SportsMmaRoundedIcon from '@mui/icons-material/SportsMmaRounded';
+import AccountTreeRoundedIcon from '@mui/icons-material/AccountTreeRounded';
+import CollectionsRoundedIcon from '@mui/icons-material/CollectionsRounded';
 import PokemonProfileImageSkeleton from '../../components/Info/PokemonProfileImageSkeleton';
+import { formatPokemonDisplayName } from '../../utils/pokemon-display-name';
+import StableHeightSection from '../../components/Layout/StableHeightSection';
+import IconType from '../../components/Sprites/Icon/Type/Type';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -100,6 +109,13 @@ interface ReleasedAlertSnapshot {
 }
 
 const pokemonNavigationRequestDelayMs = 100;
+const pokemonV2Sections = [
+  { target: 'pokemon-v2-forms', label: 'Forms', Icon: ViewModuleRoundedIcon },
+  { target: 'pokemon-v2-stats', label: 'Stats', Icon: BarChartRoundedIcon },
+  { target: 'pokemon-v2-battle', label: 'Battle data', Icon: SportsMmaRoundedIcon },
+  { target: 'pokemon-v2-evolution', label: 'Evolution', Icon: AccountTreeRoundedIcon },
+  { target: 'pokemon-v2-assets', label: 'Assets', Icon: CollectionsRoundedIcon },
+] as const;
 
 class TypeCost implements ITypeCost {
   purified = new PokemonTypeCost();
@@ -125,6 +141,8 @@ const withPokemonGoAssetSprites = (sprites: IPokemonSprite | undefined, asset: P
 };
 
 const Pokemon = (props: IPokemonPage) => {
+  const isV2 = props.layout === 'v2';
+  const pokemonRouteBase = isV2 ? '/pokemon-v2' : '/pokemon';
   const { routerAction } = useRouter();
   const dispatch = useDispatch();
   const { iconData } = useIcon();
@@ -197,14 +215,14 @@ const Pokemon = (props: IPokemonPage) => {
       navigationIdRef.current = target.id;
       setDataStorePokemon(getPokemonNavigation(target.id));
       if (params.id) {
-        navigate(`/pokemon/${target.id}`, { replace });
+        navigate(`${pokemonRouteBase}/${target.id}`, { replace });
       } else if (direction < 0) {
         props.onDecId?.();
       } else {
         props.onIncId?.();
       }
     },
-    [getPokemonIdByParam, getPokemonNavigation, navigate, params.id, props.onDecId, props.onIncId]
+    [getPokemonIdByParam, getPokemonNavigation, navigate, params.id, pokemonRouteBase, props.onDecId, props.onIncId]
   );
 
   const convertPokemonForm = (
@@ -883,12 +901,56 @@ const Pokemon = (props: IPokemonPage) => {
       : searchingMainForm?.form?.pokemonType === PokemonType.Purified
         ? 'purified'
         : '';
+  const profileTypes = searchingMainDetails?.types ?? searchingMainForm?.form?.types ?? [];
+  const profileName = searchingMainDetails?.fullName || formName || dataStorePokemon?.current?.name || 'Pokémon';
+  const normalizeProfileType = (type: string | undefined) =>
+    type
+      ?.replace(/^POKEMON_TYPE_/i, '')
+      .trim()
+      .toLowerCase() || 'normal';
+  const primaryProfileType = normalizeProfileType(profileTypes[0]);
+  const secondaryProfileType = normalizeProfileType(profileTypes[1] ?? profileTypes[0]);
+  const v2HeroStyle = {
+    '--pokemon-v2-primary-type': `var(--pokemon-type-${primaryProfileType}, var(--pokemon-type-normal))`,
+    '--pokemon-v2-secondary-type': `var(--pokemon-type-${secondaryProfileType}, var(--pokemon-type-normal))`,
+  } as React.CSSProperties;
+  const v2Metadata = [
+    { label: 'Generation', value: generation || 'Unknown' },
+    { label: 'Region', value: splitAndCapitalize(region, '-', ' ') || 'Unknown' },
+    { label: 'Version', value: splitAndCapitalize(version, '-', ' ').replace(/GO$/i, 'GO') || 'Unknown' },
+    {
+      label: 'Weight',
+      value: !isUndefined(searchingMainDetails?.weight)
+        ? formatBodyMeasurement(searchingMainDetails.weight / 10, 'kg')
+        : 'Unknown',
+    },
+    {
+      label: 'Height',
+      value: !isUndefined(searchingMainDetails?.height)
+        ? formatBodyMeasurement(searchingMainDetails.height / 10, 'm')
+        : 'Unknown',
+    },
+  ];
+  const scrollToV2Section = (target: string) => {
+    const section = document.getElementById(target);
+    if (!section) {
+      return;
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    section.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+    window.history.replaceState(
+      window.history.state,
+      '',
+      `${window.location.pathname}${window.location.search}#${target}`
+    );
+  };
 
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-w-full row prev-next-block tw-sticky tw-top-14">
         {params.id ? (
-          <SearchBarMain data={dataStorePokemon} onNavigate={navigatePokemon} />
+          <SearchBarMain data={dataStorePokemon} onNavigate={navigatePokemon} basePath={pokemonRouteBase} />
         ) : (
           <SearchBar data={dataStorePokemon} onDecId={() => navigatePokemon(-1)} onIncId={() => navigatePokemon(1)} />
         )}
@@ -908,118 +970,211 @@ const Pokemon = (props: IPokemonPage) => {
         aria-busy={!progress.isLoadedForms}
         className={combineClasses(
           'tw-pb-3 tw-relative poke-container tw-text-default',
+          isV2 ? 'pokemon-details-v2' : '',
           props.isSearch ? '' : 'tw-container'
         )}
       >
-        <div className="tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
+        <div
+          className={combineClasses(
+            'tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3',
+            isV2 ? 'pokemon-v2-hero tw-overflow-hidden tw-rounded-2xl tw-border tw-border-solid' : ''
+          )}
+          data-primary-type={isV2 ? primaryProfileType : undefined}
+          data-secondary-type={isV2 ? secondaryProfileType : undefined}
+          style={isV2 ? v2HeroStyle : undefined}
+        >
           <AlertReleased
             formName={releasedAlert?.formName}
             pokemonType={releasedAlert?.pokemonType}
             icon={iconData}
             releasedGO={releasedAlert?.releasedGO}
           />
-          <div
-            className={combineClasses(
-              'tw-relative tw-isolate tw-inline-flex tw-align-bottom tw-items-center tw-justify-center tw-overflow-visible img-desc pokemon-profile-aura',
-              profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
-            )}
-            aria-busy={showMainImageSkeleton}
-            data-testid="pokemon-profile-image"
-            data-profile-modifier={profileModifier}
-          >
-            {showMainImageSkeleton ? (
-              <PokemonProfileImageSkeleton />
+          {isV2 && (
+            <div className="pokemon-v2-identity tw-flex tw-min-h-18 tw-flex-wrap tw-items-center tw-justify-center tw-gap-x-3 tw-gap-y-2 tw-px-4 tw-py-3 tw-text-center sm:tw-px-6">
+              <span className="pokemon-v2-dex-number tw-rounded-full tw-border tw-border-solid tw-px-2.5 tw-py-0.5 tw-text-caption tw-font-bold">
+                #{dataStorePokemon?.current?.id}
+              </span>
+              <h1 className="tw-m-0 tw-text-[length:var(--typography-h2-font-size)] tw-font-bold tw-leading-[var(--typography-h2-line-height)] tw-tracking-[var(--typography-h2-letter-spacing)]">
+                {formatPokemonDisplayName(profileName)}
+              </h1>
+              <div
+                className="tw-flex tw-basis-full tw-flex-wrap tw-justify-center tw-gap-2 sm:tw-basis-auto"
+                aria-label="Pokémon types"
+              >
+                {profileTypes.map((type) => (
+                  <span
+                    key={type}
+                    className="pokemon-v2-type-chip tw-inline-flex tw-items-center tw-justify-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-px-2.5 tw-py-0.5 tw-text-caption tw-font-bold"
+                    style={
+                      {
+                        '--pokemon-v2-badge-color': `var(--pokemon-type-${normalizeProfileType(type)}, var(--pokemon-type-normal))`,
+                      } as React.CSSProperties
+                    }
+                  >
+                    <IconType type={type} width={18} height={18} alt={`${type} type`} />
+                    {splitAndCapitalize(type, '-', ' ')}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          <div className={isV2 ? 'pokemon-v2-hero-grid tw-grid tw-items-stretch lg:tw-grid-cols-12' : undefined}>
+            <div
+              className={combineClasses(
+                'tw-relative tw-isolate tw-inline-flex tw-align-bottom tw-items-center tw-justify-center tw-overflow-visible img-desc pokemon-profile-aura',
+                isV2 ? 'pokemon-v2-art lg:tw-col-span-3' : '',
+                profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
+              )}
+              aria-busy={showMainImageSkeleton}
+              data-testid="pokemon-profile-image"
+              data-profile-modifier={profileModifier}
+            >
+              {showMainImageSkeleton ? (
+                <PokemonProfileImageSkeleton />
+              ) : (
+                <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
+              )}
+            </div>
+            {isV2 ? (
+              <div
+                className="pokemon-v2-metadata tw-grid tw-auto-rows-fr tw-grid-cols-2 tw-gap-px tw-p-4 lg:tw-col-span-4"
+                data-testid="pokemon-v2-metadata"
+                data-body-weight={searchingMainDetails?.weight ?? ''}
+                data-body-height={searchingMainDetails?.height ?? ''}
+                aria-busy={!progress.isLoadedForms}
+              >
+                {v2Metadata.map(({ label, value }) => (
+                  <div
+                    key={label}
+                    className="pokemon-v2-metadata-item tw-flex tw-min-h-18 tw-min-w-0 tw-flex-col tw-items-center tw-justify-center tw-gap-1 tw-p-3 tw-text-center"
+                  >
+                    <span className="tw-text-caption tw-font-medium tw-text-[var(--text-secondary)]">{label}</span>
+                    {progress.isLoadedForms ? (
+                      <strong className="tw-block tw-w-full tw-truncate tw-tabular-nums" title={value}>
+                        {value}
+                      </strong>
+                    ) : (
+                      <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-2/3" />
+                    )}
+                  </div>
+                ))}
+              </div>
             ) : (
-              <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
+              <div className="tw-inline-block tw-align-bottom">
+                <PokemonTable
+                  className="pokemon-detail-table"
+                  id={dataStorePokemon?.current?.id}
+                  gen={generation}
+                  formName={formName}
+                  region={region}
+                  version={version}
+                  weight={searchingMainDetails?.weight}
+                  height={searchingMainDetails?.height}
+                  isLoadedForms={progress.isLoadedForms}
+                />
+              </div>
             )}
-          </div>
-          <div className="tw-inline-block tw-align-bottom">
-            <PokemonTable
-              className="pokemon-detail-table"
-              id={dataStorePokemon?.current?.id}
-              gen={generation}
-              formName={formName}
-              region={region}
-              version={version}
-              weight={searchingMainDetails?.weight}
-              height={searchingMainDetails?.height}
-              isLoadedForms={progress.isLoadedForms}
-            />
-          </div>
-          <div className="tw-inline-block !tw-p-0 tw-align-bottom">
-            <table className="table-info table-main">
-              <thead />
-              <tbody>
-                <tr className="tw-text-center">
-                  <td className="table-sub-header">Unlock third move</td>
-                  <td className="table-sub-header">Costs</td>
-                </tr>
-                <tr className="info-costs">
-                  <td>
-                    <img alt="Image Cost Info" width={100} src={APIService.getItemSprite('Item_1202')} />
-                  </td>
-                  <td className="!tw-p-0">
-                    <div className="tw-flex tw-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
-                      {reload(
-                        <span>
-                          {!isUndefined(costModifier?.thirdMove.candy)
-                            ? `x${costModifier?.thirdMove.candy}`
-                            : 'Unavailable'}
-                        </span>
-                      )}
-                    </div>
-                    <div className="row-extra tw-flex">
-                      <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
-                        <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+            <div
+              className={combineClasses(
+                'tw-inline-block !tw-p-0 tw-align-bottom',
+                isV2 ? 'pokemon-v2-costs tw-w-full lg:tw-col-span-5' : ''
+              )}
+            >
+              <table className="table-info table-main">
+                <thead />
+                <tbody>
+                  <tr className="tw-text-center">
+                    <td className="table-sub-header">Unlock third move</td>
+                    <td className="table-sub-header">Costs</td>
+                  </tr>
+                  <tr className="info-costs">
+                    <td>
+                      <img alt="Image Cost Info" width={100} src={APIService.getItemSprite('Item_1202')} />
+                    </td>
+                    <td className="!tw-p-0">
+                      <div className="tw-flex tw-items-center row-extra td-costs">
+                        <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
+                        {reload(
+                          <span>
+                            {!isUndefined(costModifier?.thirdMove.candy)
+                              ? `x${costModifier?.thirdMove.candy}`
+                              : 'Unavailable'}
+                          </span>
+                        )}
                       </div>
-                      {reload(
-                        <span>
-                          {!isUndefined(costModifier?.thirdMove.stardust)
-                            ? `x${costModifier?.thirdMove.stardust}`
-                            : 'Unavailable'}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-                <tr className="tw-text-center">
-                  <td className="table-sub-header">Purified</td>
-                  <td className="table-sub-header">Costs</td>
-                </tr>
-                <tr className="info-costs">
-                  <td>
-                    <img alt="Image Cost Info" width={60} height={60} src={APIService.getPokePurified()} />
-                  </td>
-                  <td className="!tw-p-0">
-                    <div className="tw-flex tw-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
-                      {reload(
-                        <span>
-                          {!isUndefined(costModifier?.purified.candy)
-                            ? `x${costModifier?.purified.candy}`
-                            : 'Unavailable'}
-                        </span>
-                      )}
-                    </div>
-                    <div className="row-extra tw-flex">
-                      <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
-                        <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                      <div className="row-extra tw-flex">
+                        <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
+                          <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                        </div>
+                        {reload(
+                          <span>
+                            {!isUndefined(costModifier?.thirdMove.stardust)
+                              ? `x${costModifier?.thirdMove.stardust}`
+                              : 'Unavailable'}
+                          </span>
+                        )}
                       </div>
-                      {reload(
-                        <span>
-                          {!isUndefined(costModifier?.purified.stardust)
-                            ? `x${costModifier?.purified.stardust}`
-                            : 'Unavailable'}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    </td>
+                  </tr>
+                  <tr className="tw-text-center">
+                    <td className="table-sub-header">Purified</td>
+                    <td className="table-sub-header">Costs</td>
+                  </tr>
+                  <tr className="info-costs">
+                    <td>
+                      <img alt="Image Cost Info" width={60} height={60} src={APIService.getPokePurified()} />
+                    </td>
+                    <td className="!tw-p-0">
+                      <div className="tw-flex tw-items-center row-extra td-costs">
+                        <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
+                        {reload(
+                          <span>
+                            {!isUndefined(costModifier?.purified.candy)
+                              ? `x${costModifier?.purified.candy}`
+                              : 'Unavailable'}
+                          </span>
+                        )}
+                      </div>
+                      <div className="row-extra tw-flex">
+                        <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
+                          <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                        </div>
+                        {reload(
+                          <span>
+                            {!isUndefined(costModifier?.purified.stardust)
+                              ? `x${costModifier?.purified.stardust}`
+                              : 'Unavailable'}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+        {isV2 && (
+          <nav
+            className="pokemon-v2-section-nav tw-mb-4 tw-flex tw-w-full tw-gap-2 tw-overflow-x-auto tw-rounded-xl tw-border tw-border-solid tw-p-2"
+            aria-label="Pokémon detail sections"
+          >
+            {pokemonV2Sections.map(({ target, label, Icon }) => (
+              <Button
+                key={target}
+                type="button"
+                variant="outlined"
+                size="small"
+                startIcon={<Icon fontSize="small" aria-hidden="true" />}
+                className="pokemon-v2-section-button !tw-rounded-full !tw-px-3 !tw-py-1.5 !tw-normal-case"
+                aria-controls={target}
+                onClick={() => scrollToV2Section(target)}
+              >
+                {label}
+              </Button>
+            ))}
+          </nav>
+        )}
         <FormComponent
           formList={formList}
           pokeData={pokeData}
@@ -1031,12 +1186,28 @@ const Pokemon = (props: IPokemonPage) => {
           pokemonGoEvolutionChains={pokemonGoEvolutionChains}
           moveRankings={moveRankings}
           isLoadedForms={progress.isLoadedForms}
+          layout={props.layout}
         />
-        <PokemonAssetComponent
-          asset={pokemonGoAsset}
-          originSoundCry={originSoundCry}
-          isLoadedForms={progress.isLoadedForms}
-        />
+        <div
+          id={isV2 ? 'pokemon-v2-assets' : undefined}
+          className={isV2 ? 'pokemon-v2-card tw-mt-4 tw-rounded-2xl tw-border tw-border-solid tw-p-4 sm:tw-p-5' : ''}
+        >
+          {isV2 ? (
+            <StableHeightSection isLoading={!progress.isLoadedForms} minHeight={270} testId="pokemon-v2-assets-stable">
+              <PokemonAssetComponent
+                asset={pokemonGoAsset}
+                originSoundCry={originSoundCry}
+                isLoadedForms={progress.isLoadedForms}
+              />
+            </StableHeightSection>
+          ) : (
+            <PokemonAssetComponent
+              asset={pokemonGoAsset}
+              originSoundCry={originSoundCry}
+              isLoadedForms={progress.isLoadedForms}
+            />
+          )}
+        </div>
       </div>
     </Error>
   );

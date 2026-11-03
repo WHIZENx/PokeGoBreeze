@@ -9,6 +9,8 @@ import { combineClasses } from '../../../utils/extension';
 import PokemonNavigationImage from './PokemonNavigationImage';
 
 const SearchBarMain = (props: ISearchBarMainComponent) => {
+  const basePath = props.basePath ?? '/pokemon';
+
   return (
     <>
       {props.data?.prev && (
@@ -21,7 +23,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
           )}
         >
           <Link
-            to={`/pokemon/${props.data.prev.id}`}
+            to={`${basePath}/${props.data.prev.id}`}
             className="tw-flex tw-justify-start tw-items-center tw-h-full"
             title={`#${props.data.prev.id} ${splitAndCapitalize(props.data.prev.name, '-', ' ')}`}
             onClick={(event) => {
@@ -61,7 +63,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
           )}
         >
           <Link
-            to={`/pokemon/${props.data.next.id}`}
+            to={`${basePath}/${props.data.next.id}`}
             className="tw-flex tw-justify-end tw-items-center tw-h-full"
             title={`#${props.data.next.id} ${splitAndCapitalize(props.data.next.name, '-', ' ')}`}
             onClick={(event) => {

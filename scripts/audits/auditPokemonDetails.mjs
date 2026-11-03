@@ -28,11 +28,16 @@ const viewportHeight = Math.max(568, Number.parseInt(args.get('viewport-height')
 const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
 const auditEvolutionTooltip = args.get('audit-evolution-tooltip') === 'true';
 const auditEvolutionOverlap = args.get('audit-evolution-overlap') !== 'false';
+const auditSectionNavigation = args.get('audit-section-navigation') === 'true';
+const captureLayout = args.get('capture-layout') === 'true';
 const navigationOnly = args.get('navigation-only') === 'true';
 const searchPage = args.get('search-page') === 'true';
+const routePrefix = `/${(args.get('route-prefix') ?? 'pokemon').replace(/^\/+|\/+$/g, '')}`;
 const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
 const formSwitchCycles = Math.max(1, Number.parseInt(args.get('form-switch-cycles') ?? '1', 10));
 const outputPath = resolve(workspaceRoot, args.get('output') ?? 'artifacts/pokemon-details-audit.json');
+const screenshotPath = args.get('screenshot') ? resolve(workspaceRoot, args.get('screenshot')) : undefined;
+const screenshotSection = args.get('screenshot-section');
 const chromePath = args.get('chrome') ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 const normalize = (value) =>
@@ -421,8 +426,14 @@ const readPage = () =>
   evaluate(`(() => {
     const page = document.querySelector('[data-testid="pokemon-details-page"]');
     if (!page) return null;
-    const infoTable = document.querySelector('[data-testid="pokemon-info-table"]');
-    const buttons = [...document.querySelectorAll('.form-container button[data-form]')].map((button, index) => {
+    const infoTable = document.querySelector(
+      '[data-testid="pokemon-info-table"], [data-testid="pokemon-v2-metadata"]'
+    );
+    const stableInformation = document.querySelector('[data-testid="pokemon-v2-information-stable"]');
+    const stableEvolution = document.querySelector('[data-testid="pokemon-v2-evolution-stable"]');
+    const stableAssets = document.querySelector('[data-testid="pokemon-v2-assets-stable"]');
+    const formButtons = [...document.querySelectorAll('.form-container button[data-form]')];
+    const buttons = formButtons.map((button, index) => {
       const icon = button.querySelector('[data-pokemon-icon-index]');
       return {
         index,
@@ -463,6 +474,10 @@ const readPage = () =>
         centerY: rect.top + rect.height / 2,
       };
     };
+    const stableBounds = (element) => ({
+      ...bounds(element),
+      targetHeight: Number(element.dataset.stableHeight),
+    });
     const evolutionNodes = [...document.querySelectorAll('[data-testid="evolution-node"]')].map((node) => ({
       ...(() => {
         const name = node.querySelector('[data-testid="evolution-pokemon-name"]');
@@ -516,8 +531,30 @@ const readPage = () =>
       : [];
     const formVarietiesContent = document.querySelector('[data-testid="form-varieties-content"]');
     const genderRatioContent = document.querySelector('[data-testid="gender-ratio-content"]');
+    const formCardButtons = formButtons.map((button) => {
+      const icon = button.querySelector('[data-pokemon-icon-index]');
+      const modifier = button.querySelector('.shadow-icon, .purified-icon');
+      return {
+        label: button.innerText.trim().replace(/\\s+/g, ' '),
+        bounds: bounds(button),
+        contentClipped:
+          button.scrollHeight > button.clientHeight + 1 || button.scrollWidth > button.clientWidth + 1,
+        iconBounds: icon ? bounds(icon) : null,
+        modifierBounds: modifier ? bounds(modifier) : null,
+      };
+    });
+    const genderModifierIcons = [...document.querySelectorAll(
+      '[data-testid="gender-ratio-content"] .gender-pokemon-modifier-icon'
+    )];
+    const genderPokemonSprites = [...document.querySelectorAll(
+      '[data-testid="gender-ratio-content"] .img-gender-group > img:not(.gender-pokemon-modifier-icon)'
+    )];
+    const assetSubGroups = [...document.querySelectorAll(
+      '[data-testid="pokemon-assets-content"] .sub-group-model'
+    )];
     const statsRanking = document.querySelector('[data-testid="pokemon-stats-ranking"]');
     const informationSection = document.querySelector('[data-testid="pokemon-information"]');
+    const raidSection = document.querySelector('[data-testid="pokemon-raid-section"]');
     const statsBars = [...document.querySelectorAll('[data-testid="pokemon-stat-bar"]')];
     const stats = Object.fromEntries(
       statsBars.map((stat) => [
@@ -577,6 +614,7 @@ const readPage = () =>
     });
     return {
       id: Number(page.dataset.pokemonId),
+      isV2: Boolean(document.querySelector('.pokemon-details-v2')),
       viewportWidth: window.innerWidth,
       busy: page.getAttribute('aria-busy') === 'true',
       selectedName: page.dataset.selectedName ?? '',
@@ -604,13 +642,33 @@ const readPage = () =>
       informationLoading,
       informationLoadingLabel,
       informationTypes: informationSection?.dataset.informationTypes ?? '',
+      raidPresent: Boolean(raidSection),
+      raidBounds: raidSection ? bounds(raidSection) : null,
       genderFormId: genderRatioContent?.dataset.genderFormId ?? '',
       detailLayout: {
         formVarieties: formVarietiesContent ? bounds(formVarietiesContent) : null,
         genderRatio: genderRatioContent ? bounds(genderRatioContent) : null,
         statsRanking: statsRanking ? bounds(statsRanking) : null,
         information: informationSection ? bounds(informationSection) : null,
+        stableInformation: stableInformation ? stableBounds(stableInformation) : null,
+        stableEvolution: stableEvolution ? stableBounds(stableEvolution) : null,
+        stableAssets: stableAssets ? stableBounds(stableAssets) : null,
       },
+      formCardLayout: {
+        buttons: formCardButtons,
+        horizontalOverflow: formVarietiesContent
+          ? formVarietiesContent.scrollWidth > formVarietiesContent.clientWidth + 1
+          : false,
+      },
+      genderAssetLayout: {
+        modifiers: genderModifierIcons.map((image) => ({ ...bounds(image), src: image.currentSrc || image.src })),
+        sprites: genderPokemonSprites.map((image) => ({ ...bounds(image), src: image.currentSrc || image.src })),
+      },
+      pokemonAssetLayout: assetSubGroups.map((group) => ({
+        bounds: bounds(group),
+        cells: [...group.querySelectorAll(':scope > .model')].map(bounds),
+        images: [...group.querySelectorAll('.pokemon-sprite-model')].map(bounds),
+      })),
       bodyWeight: infoTable?.dataset.bodyWeight ?? '',
       bodyHeight: infoTable?.dataset.bodyHeight ?? '',
       bodyLayout: infoTable && infoBodyRow && infoReferenceRow && profileImage
@@ -620,6 +678,11 @@ const readPage = () =>
             bodyRowHeight: infoBodyRow.getBoundingClientRect().height,
             referenceRowHeight: infoReferenceRow.getBoundingClientRect().height,
             measurementOverflow: bodyMeasurementGroups.some((item) => item.scrollWidth > item.clientWidth + 1),
+            measurementGroups: bodyMeasurementGroups.map((item) => ({
+              clientWidth: item.clientWidth,
+              scrollWidth: item.scrollWidth,
+              text: item.textContent?.trim() ?? '',
+            })),
           }
         : null,
       title: document.title,
@@ -724,7 +787,9 @@ const readPage = () =>
 
 const startBodyTransitionCapture = () =>
   evaluate(`(() => {
-    const table = document.querySelector('[data-testid="pokemon-info-table"]');
+    const table = document.querySelector(
+      '[data-testid="pokemon-info-table"], [data-testid="pokemon-v2-metadata"]'
+    );
     window.__pokemonBodyTransitions = [];
     if (!table) return;
     const capture = () => window.__pokemonBodyTransitions.push({
@@ -760,7 +825,7 @@ const validateBodyTransition = (issues, id, context, transitions) => {
 };
 
 const navigate = async (id, isInitial) => {
-  const url = searchPage ? `${baseUrl}/search-pokemon` : `${baseUrl}/pokemon/${id}`;
+  const url = searchPage ? `${baseUrl}/search-pokemon` : `${baseUrl}${routePrefix}/${id}`;
   if (isInitial) {
     await client.send('Page.navigate', { url }, browser.sessionId);
     if (searchPage && id !== 1) {
@@ -787,7 +852,7 @@ const navigate = async (id, isInitial) => {
     }
   } else {
     await evaluate(`(() => {
-      history.pushState({}, '', ${JSON.stringify(`/pokemon/${id}`)});
+      history.pushState({}, '', ${JSON.stringify(`${routePrefix}/${id}`)});
       window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
     })()`);
   }
@@ -806,6 +871,64 @@ const navigate = async (id, isInitial) => {
 };
 
 const addIssue = (issues, id, code, details = {}) => issues.push({ id, code, ...details });
+
+const validateV2SectionNavigation = async (issues, id) => {
+  const expectedPath = searchPage ? '/search-pokemon' : `${routePrefix}/${id}`;
+  for (const target of [
+    'pokemon-v2-forms',
+    'pokemon-v2-stats',
+    'pokemon-v2-battle',
+    'pokemon-v2-evolution',
+    'pokemon-v2-assets',
+  ]) {
+    const result = await evaluate(`(async () => {
+      const button = document.querySelector('[aria-controls="${target}"]');
+      const section = document.getElementById('${target}');
+      if (!button || !section) return { button: Boolean(button), section: Boolean(section) };
+      button.click();
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      const bounds = section.getBoundingClientRect();
+      const genderRatio = document.querySelector('[data-testid="gender-ratio-content"]');
+      return {
+        button: true,
+        section: true,
+        pathname: window.location.pathname,
+        search: window.location.search,
+        hash: window.location.hash,
+        visible: bounds.bottom > 0 && bounds.top < window.innerHeight,
+        genderOverflow: genderRatio ? Math.max(0, genderRatio.scrollWidth - genderRatio.clientWidth) : null,
+        pageOverflow: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
+        sectionOverflow: Math.max(0, section.scrollWidth - section.clientWidth),
+        sectionOverflowMode: getComputedStyle(section).overflowX,
+      };
+    })()`);
+    if (!result.button || !result.section) {
+      addIssue(issues, id, 'pokemon_v2_section_navigation_target_missing', { target, ...result });
+    } else if (result.pathname !== expectedPath || result.hash !== `#${target}` || !result.visible) {
+      addIssue(issues, id, 'pokemon_v2_section_navigation_failed', {
+        target,
+        expectedPath,
+        ...result,
+      });
+    } else if (target === 'pokemon-v2-forms' && result.genderOverflow > 1) {
+      addIssue(issues, id, 'pokemon_v2_gender_ratio_horizontal_overflow', {
+        target,
+        overflow: result.genderOverflow,
+      });
+    } else if (result.pageOverflow > 1) {
+      addIssue(issues, id, 'pokemon_v2_page_horizontal_overflow', {
+        target,
+        overflow: result.pageOverflow,
+      });
+    } else if (result.sectionOverflow > 1 && !['auto', 'scroll'].includes(result.sectionOverflowMode)) {
+      addIssue(issues, id, 'pokemon_v2_section_overflow_not_scrollable', {
+        target,
+        overflow: result.sectionOverflow,
+        overflowMode: result.sectionOverflowMode,
+      });
+    }
+  }
+};
 
 const expectedMoves = (row) => {
   const pokemonType = normalizePokemonType(row.pokemonType);
@@ -831,6 +954,58 @@ const validateUniqueMoveRows = (issues, id, context, page) => {
     if (duplicates.length) {
       addIssue(issues, id, 'duplicate_move_rows', { ...context, moveType, duplicates, actual: moves });
     }
+  }
+};
+
+const validateRenderedV2CardLayout = (issues, id, context, page) => {
+  if (!page.isV2) return;
+  const cards = page.formCardLayout?.buttons ?? [];
+  const widthSpread = cards.length
+    ? Math.max(...cards.map((card) => card.bounds.width)) - Math.min(...cards.map((card) => card.bounds.width))
+    : 0;
+  const heightSpread = cards.length
+    ? Math.max(...cards.map((card) => card.bounds.height)) - Math.min(...cards.map((card) => card.bounds.height))
+    : 0;
+  if (widthSpread > 1 || heightSpread > 1) {
+    addIssue(issues, id, 'pokemon_v2_form_card_size_mismatch', { ...context, cards, widthSpread, heightSpread });
+  }
+  const clippedCards = cards.filter((card) => card.contentClipped);
+  if (clippedCards.length) {
+    addIssue(issues, id, 'pokemon_v2_form_card_content_clipped', { ...context, cards: clippedCards });
+  }
+  const invalidModifiers = (page.genderAssetLayout?.modifiers ?? []).filter(
+    (modifier) => Math.abs(modifier.width - 24) > 1 || Math.abs(modifier.height - 24) > 1
+  );
+  if (invalidModifiers.length) {
+    addIssue(issues, id, 'pokemon_v2_gender_modifier_size_mismatch', {
+      ...context,
+      modifiers: page.genderAssetLayout.modifiers,
+      sprites: page.genderAssetLayout.sprites,
+    });
+  }
+  for (const [groupIndex, group] of (page.pokemonAssetLayout ?? []).entries()) {
+    if (group.cells.length < 2) continue;
+    const cellWidthSpread = Math.max(...group.cells.map((cell) => cell.width)) - Math.min(...group.cells.map((cell) => cell.width));
+    if (cellWidthSpread > 1) {
+      addIssue(issues, id, 'pokemon_v2_asset_cell_size_mismatch', {
+        ...context,
+        groupIndex,
+        cells: group.cells,
+        cellWidthSpread,
+      });
+    }
+  }
+};
+
+const validateRaidVisibility = (issues, id, context, pokemonType, page) => {
+  const expected = ![2, 3].includes(normalizePokemonType(pokemonType));
+  if (page.raidPresent !== expected) {
+    addIssue(issues, id, 'pokemon_raid_visibility_mismatch', {
+      ...context,
+      expected,
+      actual: page.raidPresent,
+      raidBounds: page.raidBounds,
+    });
   }
 };
 
@@ -913,6 +1088,8 @@ const validateModifierFormSprites = (issues, id, context, button, page) => {
 
 const validateExpectedRow = (issues, id, row, button, page) => {
   const context = { fullName: row.fullName, form: row.form, pokemonType: row.pokemonType };
+  validateRenderedV2CardLayout(issues, id, context, page);
+  validateRaidVisibility(issues, id, context, button.pokemonType, page);
   const expectedProfileModifier = button.pokemonType === 2 ? 'shadow' : button.pokemonType === 3 ? 'purified' : '';
   if (
     !page.profileAura ||
@@ -1262,6 +1439,7 @@ const main = async () => {
   let auditedEvolutionDetails = 0;
   let auditedEvolutionTooltips = 0;
   let auditedFormSwitches = 0;
+  const layoutSamples = [];
   let delayPokemonRequests = false;
 
   const chromeRuntime = await startChrome();
@@ -1331,7 +1509,7 @@ const main = async () => {
           browser.sessionId
         );
         await evaluate(`(() => {
-          history.pushState({}, '', ${JSON.stringify(`/pokemon/${id}`)});
+          history.pushState({}, '', ${JSON.stringify(`${routePrefix}/${id}`)});
           window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
         })()`);
         const loadingPage = await waitFor(readPage, (value) => value?.busy, `Pokémon #${id} loading state`);
@@ -1368,6 +1546,22 @@ const main = async () => {
               loadingHeight: loadingBounds.height,
               loadedHeight: loadedBounds.height,
               delta: loadedBounds.height - loadingBounds.height,
+            });
+          }
+        }
+        for (const section of ['stableInformation', 'stableEvolution', 'stableAssets']) {
+          const previousBounds = previousPage.detailLayout?.[section];
+          const loadingBounds = loadingLayout?.[section];
+          if (
+            previousBounds &&
+            loadingBounds &&
+            Math.abs(previousBounds.targetHeight - loadingBounds.targetHeight) > 0.1
+          ) {
+            addIssue(issues, id, 'pokemon_detail_loading_retained_height_shift', {
+              section,
+              previousHeight: previousBounds.targetHeight,
+              loadingHeight: loadingBounds.targetHeight,
+              delta: loadingBounds.targetHeight - previousBounds.targetHeight,
             });
           }
         }
@@ -1459,6 +1653,9 @@ const main = async () => {
       if (!searchPage && !page.title.includes(`#${id}`))
         addIssue(issues, id, 'title_id_mismatch', { actual: page.title });
       if (/\b(undefined|NaN)\b/.test(page.bodyText)) addIssue(issues, id, 'invalid_text_rendered');
+      if (auditSectionNavigation && routePrefix === '/pokemon-v2') {
+        await validateV2SectionNavigation(issues, id);
+      }
       if (navigationOnly) {
         previousPage = page;
         continue;
@@ -1614,6 +1811,16 @@ const main = async () => {
           page
         );
         validateExpectedRow(issues, id, row, page.buttons[buttonIndex], page);
+        if (captureLayout) {
+          layoutSamples.push({
+            id,
+            form: page.selectedForm,
+            pokemonType: page.selectedPokemonType,
+            formCardLayout: page.formCardLayout,
+            genderAssetLayout: page.genderAssetLayout,
+            pokemonAssetLayout: page.pokemonAssetLayout,
+          });
+        }
         validateDisplayedStats(issues, id, page.buttons[buttonIndex], page);
         validateEvolutionDetailAlignment(
           issues,
@@ -1685,6 +1892,29 @@ const main = async () => {
           page.buttons[index],
           page
         );
+        validateRenderedV2CardLayout(
+          issues,
+          id,
+          { form: target.form, pokemonType: target.pokemonType, label: target.label },
+          page
+        );
+        validateRaidVisibility(
+          issues,
+          id,
+          { form: target.form, pokemonType: target.pokemonType, label: target.label },
+          page.buttons[index].pokemonType,
+          page
+        );
+        if (captureLayout) {
+          layoutSamples.push({
+            id,
+            form: page.selectedForm,
+            pokemonType: page.selectedPokemonType,
+            formCardLayout: page.formCardLayout,
+            genderAssetLayout: page.genderAssetLayout,
+            pokemonAssetLayout: page.pokemonAssetLayout,
+          });
+        }
         if ([2, 3].includes(normalizePokemonType(target.pokemonType))) auditedModifierFormSprites += 1;
         if (!page.bodyWeight || !page.bodyHeight) {
           addIssue(issues, id, 'displayed_form_body_value_missing', {
@@ -1791,7 +2021,32 @@ const main = async () => {
     },
     issues,
     browserErrors,
+    ...(captureLayout ? { layoutSamples } : {}),
   };
+  if (screenshotPath) {
+    if (screenshotSection) {
+      await evaluate(`document.querySelector(${JSON.stringify(screenshotSection)})?.scrollIntoView({ block: 'start' })`);
+      await delay(200);
+    }
+    await client.send(
+      'Input.dispatchKeyEvent',
+      { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 },
+      browser.sessionId
+    );
+    await client.send(
+      'Input.dispatchKeyEvent',
+      { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 },
+      browser.sessionId
+    );
+    await delay(100);
+    const screenshot = await client.send(
+      'Page.captureScreenshot',
+      { format: 'png', captureBeyondViewport: false },
+      browser.sessionId
+    );
+    await mkdir(dirname(screenshotPath), { recursive: true });
+    await writeFile(screenshotPath, Buffer.from(screenshot.data, 'base64'));
+  }
   await mkdir(dirname(outputPath), { recursive: true });
   await writeFile(outputPath, `${JSON.stringify(report, null, 2)}\n`);
   process.stdout.write(`Report: ${outputPath}\n`);

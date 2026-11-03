@@ -42,7 +42,7 @@ import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PokemonType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import useAssets from '../../../composables/useAssets';
 import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';

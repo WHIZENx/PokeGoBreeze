@@ -8,7 +8,7 @@ import { TypeAction } from '../../enums/type.enum';
 import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 import InputMuiSearch from '../Commons/Inputs/InputMuiSearch';

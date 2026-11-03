@@ -5,7 +5,7 @@ import { StyleSheetManager } from 'styled-components';
 import { ICustomDataTableProps } from '../../models/component.model';
 import { convertColumnDataType, isIncludeList } from '../../../../utils/extension';
 import { getCustomThemeDataTable } from '../../../../utils/utils';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import CustomInput from '../../Inputs/CustomInput';
 import { StyleSheetConfig } from '../../../../utils/configs/style-sheet.config';
 import { IncludeMode } from '../../../../utils/enums/string.enum';

@@ -14,7 +14,7 @@ export const getProcessedDataSectionsForRoute = (pathname: string): ProcessedDat
   if (pathname === '/news') {
     return ['assets'];
   }
-  if (pathname === '/search-pokemon' || pathname.startsWith('/pokemon/')) {
+  if (pathname === '/search-pokemon' || pathname.startsWith('/pokemon/') || pathname.startsWith('/pokemon-v2/')) {
     return pokemonDetails;
   }
   if (pathname === '/find-cp-iv' || pathname === '/calculate-stats') {

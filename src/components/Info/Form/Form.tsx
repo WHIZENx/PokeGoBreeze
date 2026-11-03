@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useDispatch } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -39,6 +39,7 @@ import { PokemonMoves } from '../../../core/models/API/pokemon-bundle.model';
 import { IPokemonQueryRankMove } from '../../../utils/models/pokemon-top-move.model';
 import { IPokemonGenderRatio } from '../../../core/models/pokemon.model';
 import { preloadFirstAvailableImage } from '../../../utils/hooks/usePreloadedImage';
+import StableHeightSection from '../../Layout/StableHeightSection';
 
 const unavailablePokemonMoves: PokemonMoves = {
   fastMoves: [],
@@ -69,6 +70,7 @@ interface GenderDisplaySnapshot {
 }
 
 const FormComponent = (props: IFormInfoComponent) => {
+  const isV2 = props.layout === 'v2';
   const dispatch = useDispatch();
   const { routerAction } = useRouter();
   const { statsData } = useStats();
@@ -210,7 +212,10 @@ const FormComponent = (props: IFormInfoComponent) => {
       : undefined;
   const genderRatio = genderDisplay?.ratio;
   const genderSkeletonCount = genderRatio ? (genderRatio.M !== 0 && genderRatio.F !== 0 ? 2 : 1) : 1;
-  const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12.5 tw-overflow-x-auto';
+  const genderTrackClass = combineClasses(
+    'tw-flex tw-flex-nowrap',
+    isV2 ? 'tw-w-full tw-justify-evenly tw-gap-x-4 tw-overflow-x-hidden' : 'tw-gap-x-12.5 tw-overflow-x-auto'
+  );
   const genderDisplayClass = combineClasses(
     genderTrackClass,
     'tw-transition-opacity tw-duration-200',
@@ -349,135 +354,8 @@ const FormComponent = (props: IFormInfoComponent) => {
     />
   );
 
-  return (
-    <Fragment>
-      <div className="form-container tw-h-[185px]" data-testid="form-varieties-content">
-        <h4 className="info-title">
-          <b>Form varieties</b>
-        </h4>
-        <ButtonGroupForm
-          className="tw-my-3 tw-min-h-selection-button"
-          isFullWidth
-          isLoaded={isCurrentPokemonLoaded}
-          forms={props.formList}
-          id={searchingMainForm?.form?.id}
-          defaultId={props.defaultId}
-          changeForm={changeForm}
-          loading={
-            <div className="slide-container !tw-p-0">
-              <div className="slide-col !tw-flex !tw-flex-nowrap !tw-m-0 !tw-p-0 tw-gap-x-2">
-                {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((index) => (
-                  <Skeleton
-                    key={index}
-                    data-skeleton-surface="page"
-                    variant="rectangular"
-                    animation="wave"
-                    height={142}
-                    width={90}
-                  />
-                ))}
-              </div>
-            </div>
-          }
-        />
-      </div>
-      <div
-        className="tw-h-[190px]"
-        data-testid="gender-ratio-content"
-        data-gender-form-id={genderDisplay?.formId ?? ''}
-        aria-busy={!isCurrentPokemonLoaded}
-      >
-        {!genderDisplay ? (
-          <div className={genderTrackClass} aria-label="Loading gender ratio">
-            {Array.from({ length: genderSkeletonCount }, (_, index) => (
-              <GenderSkeleton key={index} />
-            ))}
-          </div>
-        ) : genderRatio && (genderRatio.M !== 0 || genderRatio.F !== 0) ? (
-          <div
-            className={genderDisplayClass}
-            aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
-          >
-            {genderRatio.M !== 0 && (
-              <Gender
-                ratio={genderRatio}
-                sex={TypeSex.Male}
-                sprite={genderDisplay.primarySprite}
-                fallbackSprite={genderDisplay.fallbackSprite}
-                pokemonType={genderDisplay.pokemonType}
-              />
-            )}
-            {genderRatio.F !== 0 && (
-              <Gender
-                ratio={genderRatio}
-                sex={TypeSex.Female}
-                sprite={genderDisplay.primarySprite}
-                fallbackSprite={genderDisplay.fallbackSprite}
-                pokemonType={genderDisplay.pokemonType}
-              />
-            )}
-          </div>
-        ) : (
-          <div
-            className={genderDisplayClass}
-            aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
-          >
-            <Gender
-              sex={TypeSex.Genderless}
-              sprite={genderDisplay.primarySprite}
-              fallbackSprite={genderDisplay.fallbackSprite}
-              pokemonType={genderDisplay.pokemonType}
-            />
-          </div>
-        )}
-      </div>
-      <Stats
-        pokemonType={searchingMainForm?.form?.pokemonType}
-        statATK={statsPokemon?.atk}
-        statDEF={statsPokemon?.def}
-        statSTA={statsPokemon?.sta}
-        statProd={statsPokemon?.prod}
-        id={props.defaultId}
-        form={searchingMainDetails?.form}
-        isDisabled={!statsData}
-        isLoading={!isCurrentPokemonLoaded}
-      />
-      <hr className="tw-w-full" />
-      <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-12 tw-w-full">
-        <div className="md:tw-col-span-5 tw-min-w-0 tw-overflow-auto">
-          <Info isLoading={!isCurrentPokemonLoaded} />
-          {!isSpecialFormType(searchingMainForm?.form?.pokemonType) && (
-            <Fragment>
-              <h5>
-                <li>Raid</li>
-              </h5>
-              <Raid
-                pokemonType={searchingMainForm?.form?.pokemonType}
-                id={props.defaultId}
-                statATK={searchingMainDetails?.statsGO?.atk}
-                statDEF={searchingMainDetails?.statsGO?.def}
-                isLoadedForms={isCurrentPokemonLoaded}
-              />
-            </Fragment>
-          )}
-        </div>
-        <div className="md:tw-col-span-7 tw-min-w-0">
-          <TableMove
-            moveData={moveRanking?.moves ?? (isCurrentPokemonLoaded ? unavailablePokemonMoves : undefined)}
-            rankMoveData={moveRanking?.bestMoves ?? (isCurrentPokemonLoaded ? unavailableBestMoves : undefined)}
-            pokemonType={searchingMainDetails?.pokemonType}
-            isLoading={!isCurrentPokemonLoaded}
-            tabValue={moveTabValue}
-            onTabChange={setMoveTabValue}
-          />
-          <Counter
-            pokemonData={searchingMainDetails}
-            pokemonType={selectedPokemonType}
-            isLoading={!isCurrentPokemonLoaded}
-          />
-        </div>
-      </div>
-      <hr className="tw-w-full" />
+  const renderEvolutionContent = () => (
+    <>
       {searchingMainDetails?.pokemonType !== PokemonType.GMax &&
       !isSpecialFormType(searchingMainDetails?.pokemonType) ? (
         <div className="tw-w-full">
@@ -505,7 +383,192 @@ const FormComponent = (props: IFormInfoComponent) => {
           componentName={searchingMainDetails?.pokemonId ?? ''}
         />
       )}
-    </Fragment>
+    </>
+  );
+
+  return (
+    <div className={isV2 ? 'pokemon-v2-sections tw-grid tw-gap-4' : 'tw-contents'}>
+      <div
+        id={isV2 ? 'pokemon-v2-forms' : undefined}
+        className={isV2 ? 'pokemon-v2-overview-grid tw-grid tw-gap-4 lg:tw-grid-cols-12' : 'tw-contents'}
+      >
+        <section
+          className={
+            isV2 ? 'pokemon-v2-card tw-rounded-2xl tw-border tw-border-solid tw-p-4 lg:tw-col-span-5' : 'tw-contents'
+          }
+        >
+          <div
+            className={isV2 ? 'form-container pokemon-v2-form-options tw-h-[185px]' : 'form-container tw-h-[185px]'}
+            data-testid="form-varieties-content"
+          >
+            <h4 className="info-title">
+              <b>Form varieties</b>
+            </h4>
+            <ButtonGroupForm
+              className="tw-my-3 tw-min-h-selection-button"
+              isFullWidth
+              isLoaded={isCurrentPokemonLoaded}
+              forms={props.formList}
+              id={searchingMainForm?.form?.id}
+              defaultId={props.defaultId}
+              changeForm={changeForm}
+              loading={
+                <div className="slide-container !tw-p-0">
+                  <div className="slide-col !tw-flex !tw-flex-nowrap !tw-m-0 !tw-p-0 tw-gap-x-2">
+                    {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((index) => (
+                      <Skeleton
+                        key={index}
+                        className={isV2 ? 'pokemon-v2-form-skeleton' : undefined}
+                        data-skeleton-surface="page"
+                        variant="rectangular"
+                        animation="wave"
+                        height={142}
+                        width={90}
+                      />
+                    ))}
+                  </div>
+                </div>
+              }
+            />
+          </div>
+        </section>
+        <section
+          className={
+            isV2 ? 'pokemon-v2-card tw-rounded-2xl tw-border tw-border-solid tw-p-4 lg:tw-col-span-7' : 'tw-contents'
+          }
+        >
+          <div
+            className={isV2 ? 'tw-h-[190px] lg:tw-h-[160px]' : 'tw-h-[190px]'}
+            data-testid="gender-ratio-content"
+            data-gender-form-id={genderDisplay?.formId ?? ''}
+            aria-busy={!isCurrentPokemonLoaded}
+          >
+            {!genderDisplay ? (
+              <div className={genderTrackClass} aria-label="Loading gender ratio">
+                {Array.from({ length: genderSkeletonCount }, (_, index) => (
+                  <GenderSkeleton key={index} />
+                ))}
+              </div>
+            ) : genderRatio && (genderRatio.M !== 0 || genderRatio.F !== 0) ? (
+              <div
+                className={genderDisplayClass}
+                aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
+              >
+                {genderRatio.M !== 0 && (
+                  <Gender
+                    ratio={genderRatio}
+                    sex={TypeSex.Male}
+                    sprite={genderDisplay.primarySprite}
+                    fallbackSprite={genderDisplay.fallbackSprite}
+                    pokemonType={genderDisplay.pokemonType}
+                  />
+                )}
+                {genderRatio.F !== 0 && (
+                  <Gender
+                    ratio={genderRatio}
+                    sex={TypeSex.Female}
+                    sprite={genderDisplay.primarySprite}
+                    fallbackSprite={genderDisplay.fallbackSprite}
+                    pokemonType={genderDisplay.pokemonType}
+                  />
+                )}
+              </div>
+            ) : (
+              <div
+                className={genderDisplayClass}
+                aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
+              >
+                <Gender
+                  sex={TypeSex.Genderless}
+                  sprite={genderDisplay.primarySprite}
+                  fallbackSprite={genderDisplay.fallbackSprite}
+                  pokemonType={genderDisplay.pokemonType}
+                />
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+      <section
+        id={isV2 ? 'pokemon-v2-stats' : undefined}
+        className={isV2 ? 'pokemon-v2-card tw-rounded-2xl tw-border tw-border-solid tw-p-4 sm:tw-p-5' : 'tw-contents'}
+      >
+        <Stats
+          pokemonType={searchingMainForm?.form?.pokemonType}
+          statATK={statsPokemon?.atk}
+          statDEF={statsPokemon?.def}
+          statSTA={statsPokemon?.sta}
+          statProd={statsPokemon?.prod}
+          id={props.defaultId}
+          form={searchingMainDetails?.form}
+          isDisabled={!statsData}
+          isLoading={!isCurrentPokemonLoaded}
+        />
+      </section>
+      {!isV2 && <hr className="tw-w-full" />}
+      <section
+        id={isV2 ? 'pokemon-v2-battle' : undefined}
+        className={isV2 ? 'pokemon-v2-card tw-rounded-2xl tw-border tw-border-solid tw-p-4 sm:tw-p-5' : 'tw-contents'}
+      >
+        <div className="tw-grid tw-w-full tw-grid-cols-1 md:tw-grid-cols-12">
+          <div className="md:tw-col-span-5 tw-min-w-0 tw-overflow-auto">
+            {isV2 ? (
+              <StableHeightSection
+                isLoading={!isCurrentPokemonLoaded}
+                minHeight={320}
+                testId="pokemon-v2-information-stable"
+              >
+                <Info isLoading={!isCurrentPokemonLoaded} showPokemonType={false} />
+              </StableHeightSection>
+            ) : (
+              <Info isLoading={!isCurrentPokemonLoaded} />
+            )}
+            {!isSpecialFormType(searchingMainForm?.form?.pokemonType) && (
+              <div data-testid="pokemon-raid-section">
+                <h5>
+                  <li>Raid</li>
+                </h5>
+                <Raid
+                  pokemonType={searchingMainForm?.form?.pokemonType}
+                  id={props.defaultId}
+                  statATK={searchingMainDetails?.statsGO?.atk}
+                  statDEF={searchingMainDetails?.statsGO?.def}
+                  isLoadedForms={isCurrentPokemonLoaded}
+                />
+              </div>
+            )}
+          </div>
+          <div className="md:tw-col-span-7 tw-min-w-0">
+            <TableMove
+              moveData={moveRanking?.moves ?? (isCurrentPokemonLoaded ? unavailablePokemonMoves : undefined)}
+              rankMoveData={moveRanking?.bestMoves ?? (isCurrentPokemonLoaded ? unavailableBestMoves : undefined)}
+              pokemonType={searchingMainDetails?.pokemonType}
+              isLoading={!isCurrentPokemonLoaded}
+              tabValue={moveTabValue}
+              onTabChange={setMoveTabValue}
+            />
+            <Counter
+              pokemonData={searchingMainDetails}
+              pokemonType={selectedPokemonType}
+              isLoading={!isCurrentPokemonLoaded}
+            />
+          </div>
+        </div>
+      </section>
+      {!isV2 && <hr className="tw-w-full" />}
+      <section
+        id={isV2 ? 'pokemon-v2-evolution' : undefined}
+        className={isV2 ? 'pokemon-v2-card tw-rounded-2xl tw-border tw-border-solid tw-p-4 sm:tw-p-5' : 'tw-contents'}
+      >
+        {isV2 ? (
+          <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={256} testId="pokemon-v2-evolution-stable">
+            {renderEvolutionContent()}
+          </StableHeightSection>
+        ) : (
+          renderEvolutionContent()
+        )}
+      </section>
+    </div>
   );
 };
 

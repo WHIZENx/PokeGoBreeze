@@ -185,6 +185,7 @@ export interface IFormInfoComponent {
   pokemonGoEvolutionChains?: IEvolutionChain[];
   moveRankings: PokemonMoveRanking[];
   isLoadedForms: boolean;
+  layout?: 'classic' | 'v2';
 }
 
 export interface IFromChangeComponent {

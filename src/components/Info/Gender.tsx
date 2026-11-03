@@ -9,15 +9,29 @@ import { useImageSourceSequence } from '../../utils/hooks/useImageSourceSequence
 import { IPokemonSprite } from '../../core/models/API/form.model';
 
 export const GenderSkeleton = () => (
-  <div className="tw-mt-3 tw-mr-3 tw-flex-none" data-testid="gender-ratio-skeleton">
-    <div className="tw-flex tw-items-center tw-gap-x-3">
-      <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={40} height={40} />
-      <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-32" />
+  <div className="gender-ratio-group tw-mt-3 tw-mr-3 tw-flex-none" data-testid="gender-ratio-skeleton">
+    <div className="gender-ratio-heading tw-flex tw-items-center tw-gap-x-3">
+      <Skeleton
+        className="gender-ratio-icon-skeleton"
+        data-skeleton-surface="page"
+        variant="rounded"
+        animation="wave"
+        width={40}
+        height={40}
+      />
+      <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-24" />
     </div>
-    <div className="tw-mt-2 tw-flex tw-ml-4 tw-gap-x-3">
+    <div className="gender-sprite-row tw-mt-2 tw-ml-4 tw-flex tw-gap-x-3">
       {Array.from({ length: 2 }, (_, index) => (
         <div key={index} className="img-form-gender-group !tw-mr-0 tw-flex tw-flex-col tw-items-center">
-          <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
+          <Skeleton
+            className="gender-ratio-sprite-skeleton"
+            data-skeleton-surface="page"
+            variant="rounded"
+            animation="wave"
+            width={96}
+            height={96}
+          />
           <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-14" />
         </div>
       ))}
@@ -63,8 +77,8 @@ const Gender = (props: IGenderComponent) => {
   const { source: shinySprite, advanceSource: advanceShinySprite } = useImageSourceSequence(shinySpriteCandidates);
 
   return (
-    <div className="tw-mt-3 tw-mr-3 tw-flex-none">
-      <div className="tw-flex tw-items-center tw-gap-x-3">
+    <div className="gender-ratio-group tw-mt-3 tw-mr-3 tw-flex-none">
+      <div className="gender-ratio-heading tw-flex tw-items-center tw-gap-x-3">
         <img
           className="img-gender"
           width={40}
@@ -78,7 +92,7 @@ const Gender = (props: IGenderComponent) => {
           }`}
         </h6>
       </div>
-      <div className="tw-mt-2 tw-flex tw-ml-4 tw-gap-x-3">
+      <div className="gender-sprite-row tw-mt-2 tw-ml-4 tw-flex tw-gap-x-3">
         <div className="img-form-gender-group">
           <div className="img-gender-group tw-relative">
             <img
@@ -90,7 +104,11 @@ const Gender = (props: IGenderComponent) => {
               onError={advanceDefaultSprite}
               src={defaultSprite}
             />
-            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />
+            <PokemonIconType
+              pokemonType={props.pokemonType}
+              size={32}
+              className="gender-pokemon-modifier-icon !tw-right-0 !tw-bottom-0 tw-z-[1]"
+            />
           </div>
           <span className="caption">Default</span>
         </div>
@@ -105,7 +123,11 @@ const Gender = (props: IGenderComponent) => {
               onError={advanceShinySprite}
               src={shinySprite}
             />
-            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />
+            <PokemonIconType
+              pokemonType={props.pokemonType}
+              size={32}
+              className="gender-pokemon-modifier-icon !tw-right-0 !tw-bottom-0 tw-z-[1]"
+            />
           </div>
           <span className="caption">Shiny</span>
         </div>

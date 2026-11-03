@@ -222,6 +222,7 @@ const Search = () => {
           )}
         />
         <Pokemon
+          layout="v2"
           searchOption={searchOption}
           setSearchOption={setSearchOption}
           onIncId={() => modifyId(1)}

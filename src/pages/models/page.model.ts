@@ -36,6 +36,7 @@ export interface ISearchBarComponent {
 export interface ISearchBarMainComponent {
   data: OptionsPokemon | undefined;
   onNavigate?: (direction: -1 | 1) => void;
+  basePath?: string;
 }
 
 export interface IPokemonPage {
@@ -44,6 +45,7 @@ export interface IPokemonPage {
   onIncId?: () => void;
   isSearch?: boolean;
   setSearchOption?: (searchOption: SearchOption) => void;
+  layout?: 'classic' | 'v2';
 }
 
 export interface ISelectPokeComponent {

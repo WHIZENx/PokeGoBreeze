@@ -11,7 +11,8 @@ const bodyMeasurementFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
 });
 
-const formatBodyMeasurement = (value: number, unit: 'kg' | 'm') => `${bodyMeasurementFormatter.format(value)} ${unit}`;
+export const formatBodyMeasurement = (value: number, unit: 'kg' | 'm') =>
+  `${bodyMeasurementFormatter.format(value)} ${unit}`;
 
 const PokemonTable = (props: IPokemonTableComponent) => {
   const reload = (element: JSX.Element, hasValue = false) => {
@@ -109,7 +110,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
             <h5 className="tw-flex">Body</h5>
           </td>
           <td colSpan={2} className="!tw-p-0">
-            <div className="tw-grid tw-grid-cols-[1.15fr_0.85fr]">
+            <div data-testid="pokemon-body-measurements" className="tw-grid tw-grid-cols-[1.15fr_0.85fr]">
               <div className="first-extra-col tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-1 tw-whitespace-nowrap !tw-px-1.5 sm:!tw-px-2.5">
                 <h6>Weight:</h6>
                 <div className="tw-min-w-0 tw-tabular-nums">

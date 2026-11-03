@@ -67,8 +67,8 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   }, [props.asset, searchingMainDetails]);
 
   const renderGender = (asset: string, id: number | undefined, tag: string) => (
-    <div className="tw-flex tw-flex-col tw-w-full tw-justify-center tw-items-center">
-      <div className="!tw-w-20">
+    <div className="tw-flex tw-h-full tw-w-full tw-flex-col tw-items-center tw-justify-center">
+      <div className="tw-flex tw-h-20 tw-w-20 tw-items-center tw-justify-center">
         <PokemonAssetImage asset={asset} id={id} />
       </div>
       <span className="caption">{tag}</span>
@@ -102,18 +102,23 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           <Fragment>
             {pokeAssets.map((assets, index) => (
               <div key={index} className="group-model tw-flex tw-w-fit tw-flex-col tw-items-center">
-                <div className="tw-flex tw-flex-wrap tw-w-full tw-items-center">
+                <div className="asset-form-models tw-flex tw-w-full tw-flex-wrap tw-items-center">
                   {assets.image.map((value, index) => (
                     <div
                       key={index}
                       className={combineClasses(
-                        'tw-inline-block',
+                        'asset-gender-model tw-inline-block',
                         value.gender === GenderType.GenderLess ? 'tw-w-full' : 'tw-w-auto'
                       )}
                     >
-                      <div className="sub-group-model">
+                      <div
+                        className={combineClasses(
+                          'sub-group-model tw-grid tw-items-stretch',
+                          value.shiny ? 'tw-grid-cols-2' : 'tw-grid-cols-1'
+                        )}
+                      >
                         {gender && !gender.genderlessPercent && (
-                          <div className="gender">
+                          <div className="gender tw-col-span-full">
                             {value.gender === GenderType.GenderLess ? (
                               <Fragment>
                                 {gender.malePercent !== 0 && <MaleIcon className="tw-text-accent-blue" />}
@@ -130,11 +135,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                             )}
                           </div>
                         )}
-                        <div className={combineClasses('model text-center', value.shiny ? 'tw-w-1/2' : 'tw-w-full')}>
+                        <div className="model tw-min-w-0 tw-w-full tw-text-center">
                           {renderGender(value.default, value.pokemonId, 'Default')}
                         </div>
                         {value.shiny && (
-                          <div className="model tw-text-center">
+                          <div className="model tw-min-w-0 tw-w-full tw-text-center">
                             {renderGender(value.shiny, value.pokemonId, 'Shiny')}
                           </div>
                         )}

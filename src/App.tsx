@@ -23,6 +23,7 @@ const SearchMove = lazy(() => import('./pages/Search/Moves/SearchMoves'));
 const TypeEffect = lazy(() => import('./pages/TypeEffect/TypeEffect'));
 const Weather = lazy(() => import('./pages/Weather/Weather'));
 const Pokemon = lazy(() => import('./pages/Pokemon/Pokemon'));
+const PokemonV2 = lazy(() => import('./pages/PokemonV2/PokemonV2'));
 const FindTable = lazy(() => import('./pages/Tools/FindTable/FindTable'));
 const CalculateStats = lazy(() => import('./pages/Tools/CalculateStats/CalculateStats'));
 const Damage = lazy(() => import('./pages/Tools/BattleDamage/Damage'));
@@ -52,7 +53,7 @@ import { getDesignThemes } from './utils/models/overrides/themes.model';
 import { TypeTheme } from './enums/type.enum';
 import { LocalStorageConfig } from './store/constants/local-storage';
 import { Action } from 'history';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
 import { getStyleList } from './utils/utils';
@@ -242,6 +243,7 @@ function App() {
             <Route path="/weather-boosts" element={<Weather />} />
             <Route path="/search-pokemon" element={<SearchPokemon />} />
             <Route path="/pokemon/:id" element={<Pokemon />} />
+            <Route path="/pokemon-v2/:id" element={<PokemonV2 />} />
             <Route path="/search-moves" element={<SearchMove />} />
             <Route path="/move/:id" element={<Move />} />
             <Route path="/search-types" element={<SearchTypes styleSheet={styleSheet.current} />} />

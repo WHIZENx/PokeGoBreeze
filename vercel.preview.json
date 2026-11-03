@@ -6,6 +6,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/pokemon-v2/:id",
+      "destination": "/"
+    },
+    {
       "source": "/pvp/:cp/:serie/:pokemon",
       "destination": "/"
     }

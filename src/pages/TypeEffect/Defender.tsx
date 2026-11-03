@@ -4,7 +4,7 @@ import { getMultiplyTypeEffect } from '../../utils/utils';
 import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { DynamicObj, getPropertyName, isEmpty, safeObjectEntries } from '../../utils/extension';
 import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';
-import { camelCase } from 'lodash';
+import camelCase from 'lodash/camelCase';
 import SelectTypeComponent from '../../components/Commons/Selects/SelectType';
 
 const Defender = () => {

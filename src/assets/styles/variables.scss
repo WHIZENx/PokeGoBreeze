@@ -169,6 +169,24 @@ $dark-link: #6ea8fe;
   --secondary-contrast-text: #{$white};
   --border-radius: 4px;
   --spacing-unit: 8px;
+  --pokemon-type-bug: #9cb820;
+  --pokemon-type-dark: #504843;
+  --pokemon-type-dragon: #7038f8;
+  --pokemon-type-electric: #f8d030;
+  --pokemon-type-fairy: #f09ad9;
+  --pokemon-type-fighting: #c03028;
+  --pokemon-type-fire: #f08030;
+  --pokemon-type-flying: #9096f0;
+  --pokemon-type-ghost: #705898;
+  --pokemon-type-grass: #22c02a;
+  --pokemon-type-ground: #e0b668;
+  --pokemon-type-ice: #98d8d8;
+  --pokemon-type-normal: #a8a8a8;
+  --pokemon-type-poison: #a040a0;
+  --pokemon-type-psychic: #f85888;
+  --pokemon-type-rock: #b8a038;
+  --pokemon-type-steel: #6d8f9c;
+  --pokemon-type-water: #6890f0;
 }
 
 :root[data-theme=#{$light-mode}] {

@@ -41,10 +41,18 @@ assert.match(assets, /className="!tw-h-full !tw-w-full"/);
 assert.doesNotMatch(assets, /assetSkeletonGroups/);
 assert.doesNotMatch(assets, /PokemonAssetModelSkeleton/);
 assert.match(assets, /data-skeleton-surface="page"/);
+assert.match(assets, /sub-group-model tw-grid tw-items-stretch/);
+assert.match(assets, /value\.shiny \? 'tw-grid-cols-2' : 'tw-grid-cols-1'/);
+assert.match(assets, /gender tw-col-span-full/);
+assert.equal(
+  assets.match(/model tw-min-w-0 tw-w-full tw-text-center/g)?.length,
+  2,
+  'Default and shiny asset cells must use equal grid columns.'
+);
 assert.match(gender, /export const GenderSkeleton/);
 assert.match(gender, /data-testid="gender-ratio-skeleton"/);
-assert.match(gender, /width=\{40\} height=\{40\}/);
-assert.match(gender, /width=\{96\} height=\{96\}/);
+assert.match(gender, /width=\{40\}[\s\S]*height=\{40\}/);
+assert.match(gender, /width=\{96\}[\s\S]*height=\{96\}/);
 assert.match(gender, /img-form-gender-group !tw-mr-0/);
 assert.equal(
   gender.match(/data-skeleton-surface="page"/g)?.length,
@@ -70,7 +78,8 @@ assert.match(
   form,
   /const genderSkeletonCount = genderRatio \? \(genderRatio\.M !== 0 && genderRatio\.F !== 0 \? 2 : 1\) : 1/
 );
-assert.match(form, /const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12\.5 tw-overflow-x-auto'/);
+assert.match(form, /isV2 \? 'tw-w-full tw-justify-evenly tw-gap-x-4 tw-overflow-x-hidden'/);
+assert.match(form, /'tw-gap-x-12\.5 tw-overflow-x-auto'/);
 assert.match(form, /const lastLoadedGender = useRef<GenderDisplaySnapshot>/);
 assert.match(form, /const \[searchGenderDisplay, setSearchGenderDisplay\] = useState<GenderDisplaySnapshot>/);
 assert.match(form, /Promise\.all\(candidateGroups\.map\(preloadFirstAvailableImage\)\)/);
@@ -84,8 +93,16 @@ assert.equal(form.match(/className=\{genderDisplayClass\}/g)?.length, 2);
 assert.match(form, /aria-label=\{!isCurrentPokemonLoaded \? 'Updating gender ratio' : undefined\}/);
 assert.match(form, /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded\}/);
 assert.match(form, /data-gender-form-id=\{genderDisplay\?\.formId \?\? ''\}/);
-assert.match(form, /className="form-container tw-h-\[185px\]"/);
+assert.match(form, /form-container pokemon-v2-form-options tw-h-\[185px\]/);
+assert.match(form, /: 'form-container tw-h-\[185px\]'/);
 assert.match(gender, /tw-flex-none" data-testid="gender-ratio-skeleton"/);
+assert.match(gender, /className="gender-ratio-icon-skeleton"/);
+assert.match(gender, /className="gender-ratio-sprite-skeleton"/);
+assert.equal(
+  gender.match(/gender-pokemon-modifier-icon/g)?.length,
+  2,
+  'Default and shiny gender sprites must use the same modifier icon size.'
+);
 assert.match(gender, /ratio-gender !tw-m-0 tw-whitespace-nowrap/);
 assert.match(form, /className="tw-my-3 tw-min-h-selection-button"/);
 assert.match(form, /isLoading=\{!isCurrentPokemonLoaded\}/);
@@ -103,6 +120,7 @@ assert.match(statBar, /variant=\{variant\}/);
 assert.match(statBar, /value=\{statsPercent\}/);
 assert.doesNotMatch(statBar, /indeterminate/);
 assert.doesNotMatch(statBar, /useEffect|useState/);
+assert.match(form, /<Info isLoading=\{!isCurrentPokemonLoaded\} showPokemonType=\{false\} \/>/);
 assert.match(form, /<Info isLoading=\{!isCurrentPokemonLoaded\} \/>/);
 assert.match(info, /data-testid="pokemon-information"/);
 assert.doesNotMatch(info, /Loading information…/);
