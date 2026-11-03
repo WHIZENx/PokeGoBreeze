@@ -333,12 +333,16 @@ const Counter = (props: ICounterComponent) => {
       id: ColumnType.Percent,
       name: '%',
       selector: (row) => (
-        <div className="tw-flex tw-flex-col tw-items-center tw-leading-tight">
-          <span className="tw-font-bold">
+        <div
+          className="tw-flex tw-w-full tw-min-w-0 tw-flex-col tw-items-center tw-leading-tight"
+          data-testid="counter-performance"
+        >
+          <span className="tw-whitespace-nowrap tw-font-bold">
             {toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 }))}
           </span>
-          <span className="tw-text-xs tw-font-normal tw-text-[var(--text-secondary)]">
-            {toFloatWithPadding(row.dps, 2)} DPS
+          <span className="tw-flex tw-min-w-0 tw-flex-col tw-items-center tw-whitespace-nowrap tw-text-xs tw-font-normal tw-text-[var(--text-secondary)] sm:tw-flex-row sm:tw-gap-1">
+            <span>{toFloatWithPadding(row.dps, 2)}</span>
+            <span>DPS</span>
           </span>
         </div>
       ),
