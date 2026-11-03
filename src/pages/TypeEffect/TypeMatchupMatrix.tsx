@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import IconType from '../../components/Sprites/Icon/Type/Type';
 import { DynamicObj, combineClasses, safeObjectEntries, toFloat, toNumber } from '../../utils/extension';
 import { capitalize } from '../../utils/utils';
@@ -18,12 +18,67 @@ const TypeMatchupMatrix = () => {
   const typeEffective = getTypeEffective() as unknown as DynamicObj<DynamicObj<number>>;
   const entries = safeObjectEntries<DynamicObj<number>>(typeEffective);
   const types = entries.map(([type]) => type);
+  const multipliers = [
+    ...new Set(entries.flatMap(([, defenses]) => types.map((defenseType) => toNumber(defenses[defenseType], 1)))),
+  ].sort((left, right) => right - left);
+  const [selectedMultipliers, setSelectedMultipliers] = useState<number[]>([]);
+  const hasSelectedMultipliers = selectedMultipliers.length > 0;
+
+  const toggleMultiplier = (multiplier: number) => {
+    setSelectedMultipliers((current) =>
+      current.includes(multiplier) ? current.filter((value) => value !== multiplier) : [...current, multiplier]
+    );
+  };
 
   return (
     <section className="pokemon-detail-section" data-testid="type-matchup-matrix-section">
       <h4 className="info-title">
         <b>Type matchup matrix</b>
       </h4>
+      <div
+        className="tw-mb-3 tw-flex tw-flex-wrap tw-items-center tw-gap-2"
+        role="group"
+        aria-label="Highlight type matchup multipliers"
+      >
+        <span className="tw-text-caption tw-font-medium">Highlight multipliers</span>
+        {multipliers.map((multiplier) => {
+          const selected = selectedMultipliers.includes(multiplier);
+          return (
+            <button
+              className={combineClasses(
+                'tw-inline-flex tw-cursor-pointer tw-items-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-border-gray-300 tw-px-3 tw-py-1 tw-text-caption tw-font-medium tw-transition-all focus-visible:tw-outline-none focus-visible:tw-ring-2 focus-visible:tw-ring-primary',
+                selected
+                  ? combineClasses(multiplierClass(multiplier), 'tw-ring-2 tw-ring-primary tw-shadow-md')
+                  : 'tw-bg-table-primary tw-text-default tw-opacity-70 hover:tw-opacity-100'
+              )}
+              type="button"
+              key={multiplier}
+              aria-pressed={selected}
+              onClick={() => toggleMultiplier(multiplier)}
+            >
+              <span
+                className={combineClasses(
+                  'tw-inline-flex tw-w-3 tw-justify-center tw-font-bold',
+                  selected ? 'tw-opacity-100' : 'tw-opacity-0'
+                )}
+                aria-hidden="true"
+              >
+                ✓
+              </span>
+              {toFloat(multiplier, 3)}×
+            </button>
+          );
+        })}
+        {hasSelectedMultipliers && (
+          <button
+            className="tw-cursor-pointer tw-rounded-full tw-border tw-border-solid tw-border-gray-300 tw-bg-table-primary tw-px-3 tw-py-1 tw-text-caption tw-font-medium focus-visible:tw-outline-none focus-visible:tw-ring-2 focus-visible:tw-ring-primary"
+            type="button"
+            onClick={() => setSelectedMultipliers([])}
+          >
+            Clear
+          </button>
+        )}
+      </div>
       <div className="tw-overflow-x-auto tw-pb-1">
         <table className="tw-min-w-[980px] tw-w-full tw-border-collapse" aria-label="Pokémon GO type matchup matrix">
           <thead>
@@ -50,11 +105,14 @@ const TypeMatchupMatrix = () => {
                 {types.map((defenseType) => {
                   const multiplier = toNumber(defenses[defenseType], 1);
                   const displayMultiplier = toFloat(multiplier, 3);
+                  const selected = selectedMultipliers.includes(multiplier);
                   return (
                     <td
                       className={combineClasses(
-                        'tw-border tw-border-solid tw-border-gray-300 tw-p-2 tw-text-center tw-text-caption tw-font-medium',
-                        multiplierClass(multiplier)
+                        'tw-border tw-border-solid tw-border-gray-300 tw-bg-table-primary tw-p-2 tw-text-center tw-text-caption tw-font-medium tw-transition-colors tw-transition-opacity',
+                        multiplierClass(multiplier),
+                        selected ? 'tw-relative tw-z-[1] tw-ring-2 tw-ring-inset tw-ring-primary' : '',
+                        hasSelectedMultipliers && !selected ? 'tw-opacity-30' : ''
                       )}
                       key={defenseType}
                       title={`${capitalize(attackType)} → ${capitalize(defenseType)}: ${displayMultiplier}×`}

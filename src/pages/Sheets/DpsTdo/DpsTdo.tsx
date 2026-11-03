@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   LevelRating,
   splitAndCapitalize,
+  getWeatherDisplayName,
   capitalize,
   getKeyWithData,
   generateParamForm,
@@ -84,6 +85,32 @@ interface PokemonSheetData {
   ttkAtk?: number;
   ttkDef?: number;
 }
+
+interface SubmittedCalculation {
+  ivAtk: number;
+  ivDef: number;
+  ivHp: number;
+  pokemonLevel: number;
+  pokemonDefObj: number;
+  delayF?: number;
+  delayC?: number;
+  weatherBoosts?: string;
+  isTrainerFriend?: boolean;
+  pokemonFriendLevel?: number;
+}
+
+const createSubmittedCalculation = (filters: OptionFiltersDPS, options: OptionOtherDPS): SubmittedCalculation => ({
+  ivAtk: filters.ivAtk,
+  ivDef: filters.ivDef,
+  ivHp: filters.ivHp,
+  pokemonLevel: filters.pokemonLevel,
+  pokemonDefObj: options.pokemonDefObj,
+  delayF: options.delay?.fTime,
+  delayC: options.delay?.cTime,
+  weatherBoosts: options.weatherBoosts,
+  isTrainerFriend: options.isTrainerFriend,
+  pokemonFriendLevel: options.pokemonFriendLevel,
+});
 
 const nameSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   const a = rowA.pokemon.name.toLowerCase();
@@ -248,7 +275,7 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
   },
   {
     id: ColumnType.Total,
-    name: 'DPS^3*TDO',
+    name: 'DPS³ × TDO',
     selector: (row) => toFloatWithPadding(row.multiDpsTdo, 3),
     sortable: true,
     sortFunction: numSortMulti,
@@ -282,7 +309,7 @@ const defenderColumns = createDataRows<TableColumnModify<PokemonSheetData>>(
   },
   {
     id: ColumnType.TTKAtk,
-    name: 'Win Time',
+    name: 'Time to Win',
     selector: (row) => `${toFloatWithPadding(row.ttkAtk, 2)}s`,
     sortable: true,
     sortFunction: numericSort((row) => row.ttkAtk),
@@ -300,9 +327,9 @@ const defenderColumns = createDataRows<TableColumnModify<PokemonSheetData>>(
 
 const DpsTdo = () => {
   useTitle({
-    title: 'PokéGO Breeze - DPS&TDO Sheets',
+    title: 'Pokémon GO Attacker Analysis - DPS & TDO Rankings | PokéGO Breeze',
     description:
-      'Analyze Pokémon GO DPS (Damage Per Second) and TDO (Total Damage Output) with our comprehensive sheets. Optimize your raid counters and battle teams.',
+      'Analyze and rank Pokémon GO attackers by DPS (Damage Per Second), TDO (Total Damage Output), movesets, and defender matchups.',
     keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
   });
   const { optionsDpsSheet, setDpsSheetOptions } = useOptionStore();
@@ -372,6 +399,7 @@ const DpsTdo = () => {
 
   const [options, setOptions] = useState(() => Object.assign(new OptionOtherDPS(), optionsDpsSheet?.options));
   const { weatherBoosts, isTrainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
+  const [submittedCalculation, setSubmittedCalculation] = useState(() => createSubmittedCalculation(filters, options));
 
   const [isShowSpinner, setIsShowSpinner] = useState(true);
   const [hasDefenderResults, setHasDefenderResults] = useState(false);
@@ -379,16 +407,16 @@ const DpsTdo = () => {
   const hasDefender = Boolean(dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon);
   const tableColumns = hasDefenderResults ? [...columns, ...defenderColumns] : columns;
   const requestScope = [
-    ivAtk,
-    ivDef,
-    ivHp,
-    pokemonLevel,
-    pokemonDefObj,
-    options.delay?.fTime,
-    options.delay?.cTime,
-    weatherBoosts,
-    isTrainerFriend,
-    pokemonFriendLevel,
+    submittedCalculation.ivAtk,
+    submittedCalculation.ivDef,
+    submittedCalculation.ivHp,
+    submittedCalculation.pokemonLevel,
+    submittedCalculation.pokemonDefObj,
+    submittedCalculation.delayF,
+    submittedCalculation.delayC,
+    submittedCalculation.weatherBoosts,
+    submittedCalculation.isTrainerFriend,
+    submittedCalculation.pokemonFriendLevel,
     dataTargetPokemon?.num,
     dataTargetPokemon?.fullName,
     dataTargetPokemon?.pokemonType,
@@ -469,20 +497,20 @@ const DpsTdo = () => {
     setIsShowSpinner(true);
     APIService.getFetchUrl<ProcessedDataPage<PokemonSheetData>>(
       APIService.getDpsTdo({
-        ivAtk,
-        ivDef,
-        ivHp,
-        level: pokemonLevel,
-        pokemonDefObj,
+        ivAtk: submittedCalculation.ivAtk,
+        ivDef: submittedCalculation.ivDef,
+        ivHp: submittedCalculation.ivHp,
+        level: submittedCalculation.pokemonLevel,
+        pokemonDefObj: submittedCalculation.pokemonDefObj,
         damageMultiply: defaultDamageMultiply(),
         damageConst: defaultDamageConst(),
         energyPerHpLost: defaultEnergyPerHpLost(),
         enemyDelay: defaultEnemyAtkDelay(),
-        delayF: options.delay?.fTime,
-        delayC: options.delay?.cTime,
-        weather: weatherBoosts,
-        friend: isTrainerFriend,
-        friendLevel: pokemonFriendLevel,
+        delayF: submittedCalculation.delayF,
+        delayC: submittedCalculation.delayC,
+        weather: submittedCalculation.weatherBoosts,
+        friend: submittedCalculation.isTrainerFriend,
+        friendLevel: submittedCalculation.pokemonFriendLevel,
         targetId: hasDefender ? dataTargetPokemon?.num : undefined,
         targetForm: hasDefender ? dataTargetPokemon?.fullName : undefined,
         targetPokemonType: hasDefender ? dataTargetPokemon?.pokemonType : undefined,
@@ -542,16 +570,16 @@ const DpsTdo = () => {
       });
     return () => controller.abort();
   }, [
-    ivAtk,
-    ivDef,
-    ivHp,
-    pokemonLevel,
-    pokemonDefObj,
-    options.delay?.fTime,
-    options.delay?.cTime,
-    weatherBoosts,
-    isTrainerFriend,
-    pokemonFriendLevel,
+    submittedCalculation.ivAtk,
+    submittedCalculation.ivDef,
+    submittedCalculation.ivHp,
+    submittedCalculation.pokemonLevel,
+    submittedCalculation.pokemonDefObj,
+    submittedCalculation.delayF,
+    submittedCalculation.delayC,
+    submittedCalculation.weatherBoosts,
+    submittedCalculation.isTrainerFriend,
+    submittedCalculation.pokemonFriendLevel,
     dataTargetPokemon,
     fMoveTargetPokemon,
     cMoveTargetPokemon,
@@ -621,363 +649,372 @@ const DpsTdo = () => {
 
   const onCalculateTable = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmittedCalculation(createSubmittedCalculation(filters, options));
     setDefaultPage(1);
     setResetPaginationToggle((value) => !value);
     setRequestVersion((value) => value + 1);
   };
 
   return (
-    <div className="tw-relative">
+    <div className="tw-relative" data-testid="dps-tdo-page">
       <div className="tw-relative tw-text-center tw-w-full">
         {isShowSpinner && !isNotEmpty(dpsTable) && (
           <div className="slide-container !tw-p-0 !tw-w-full !tw-h-full !tw-absolute tw-z-2">
             <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
           </div>
         )}
-        <div className="head-types">Filter Moves By Types</div>
+        <div className="head-types" data-testid="dps-tdo-type-filters">
+          Fast &amp; Charged Move Types (Both Must Match)
+        </div>
         <ToggleType fullWidth value={selectTypes} onSelectType={(type) => addTypeArr(type)} />
         <div className="row tw-w-full !tw-m-0">
-          <div className="2xl:tw-flex-1 !tw-p-0">
+          <div className="2xl:tw-flex-1 !tw-p-0" data-testid="dps-tdo-filters-section">
             <div>
-              <div className="row tw-w-full !tw-m-0">
-                <div className="tw-flex md:tw-w-3/4 !tw-p-0">
-                  <InputMuiSearch
-                    value={searchTerm}
-                    onChange={(value) => setSearchTerm(value)}
-                    placeholder="Enter Name or ID"
-                    labelPrepend="Search name or ID"
-                    isNoWrap
-                  />
-                </div>
-                <div className="tw-flex md:tw-w-1/4 !tw-px-3 !tw-max-h-10">
-                  <FormControlLabel
-                    control={
-                      <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
-                    }
-                    label="Match Pokémon"
-                  />
+              <div>
+                <div className="row tw-w-full !tw-m-0">
+                  <div className="tw-flex md:tw-w-3/4 !tw-p-0">
+                    <InputMuiSearch
+                      value={searchTerm}
+                      onChange={(value) => setSearchTerm(value)}
+                      placeholder="Enter Name or ID"
+                      labelPrepend="Search name or ID"
+                      isNoWrap
+                    />
+                  </div>
+                  <div className="tw-flex md:tw-w-1/4 !tw-px-3 !tw-max-h-10">
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={isMatch}
+                          onChange={(_, check) => setFilters({ ...filters, isMatch: check })}
+                        />
+                      }
+                      label="Exact match"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="input-group">
-              <span className="input-group-text">Filter show</span>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showShadow}
-                    onChange={(_, check) =>
-                      setFilters({
-                        ...filters,
-                        showShadow: check,
-                        enableShadow: check === false ? check : filters.enableShadow,
-                      })
-                    }
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.Shadow)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showPurified}
-                    onChange={(_, check) =>
-                      setFilters({
-                        ...filters,
-                        showPurified: check,
-                        enablePurified: check === false ? check : filters.enablePurified,
-                      })
-                    }
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.Purified)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showMega}
-                    onChange={(_, check) =>
-                      setFilters({
-                        ...filters,
-                        showMega: check,
-                        enableMega: check === false ? check : filters.enableMega,
-                      })
-                    }
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.Mega)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showGMax}
-                    onChange={(_, check) =>
-                      setFilters({
-                        ...filters,
-                        showGMax: check,
-                        enableGMax: check === false ? check : filters.enableGMax,
-                      })
-                    }
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.GMax)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showPrimal}
-                    onChange={(_, check) =>
-                      setFilters({
-                        ...filters,
-                        showPrimal: check,
-                        enablePrimal: check === false ? check : filters.enablePrimal,
-                      })
-                    }
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.Primal)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showLegendary}
-                    onChange={(_, check) =>
-                      setFilters({
-                        ...filters,
-                        showLegendary: check,
-                        enableLegendary: check === false ? check : filters.enableLegendary,
-                      })
-                    }
-                  />
-                }
-                label={getKeyWithData(PokemonClass, PokemonClass.Legendary)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showMythic}
-                    onChange={(_, check) =>
-                      setFilters({
-                        ...filters,
-                        showMythic: check,
-                        enableMythic: check === false ? check : filters.enableMythic,
-                      })
-                    }
-                  />
-                }
-                label={getKeyWithData(PokemonClass, PokemonClass.Mythical)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showUltraBeast}
-                    onChange={(_, check) =>
-                      setFilters({
-                        ...filters,
-                        showUltraBeast: check,
-                        enableUltraBeast: check === false ? check : filters.enableUltraBeast,
-                      })
-                    }
-                  />
-                }
-                label="Ultra Beast"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showSpecialMove}
-                    onChange={(_, check) =>
-                      setFilters({
-                        ...filters,
-                        showSpecialMove: check,
-                        enableSpecial: check === false ? check : filters.enableSpecial,
-                      })
-                    }
-                  />
-                }
-                label="Special Moves"
-              />
-            </div>
-            <div className="input-group">
-              <span className="input-group-text">Filter only by</span>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={enableShadow}
-                    disabled={!showShadow}
-                    onChange={(_, check) => setFilters({ ...filters, enableShadow: check })}
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.Shadow)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={enablePurified}
-                    disabled={!showPurified}
-                    onChange={(_, check) => setFilters({ ...filters, enablePurified: check })}
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.Purified)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={enableMega}
-                    disabled={!showMega}
-                    onChange={(_, check) => setFilters({ ...filters, enableMega: check })}
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.Mega)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={enableGMax}
-                    disabled={!showGMax}
-                    onChange={(_, check) => setFilters({ ...filters, enableGMax: check })}
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.GMax)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={enablePrimal}
-                    disabled={!showPrimal}
-                    onChange={(_, check) => setFilters({ ...filters, enablePrimal: check })}
-                  />
-                }
-                label={getKeyWithData(PokemonType, PokemonType.Primal)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={enableLegendary}
-                    disabled={!showLegendary}
-                    onChange={(_, check) => setFilters({ ...filters, enableLegendary: check })}
-                  />
-                }
-                label={getKeyWithData(PokemonClass, PokemonClass.Legendary)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={enableMythic}
-                    disabled={!showMythic}
-                    onChange={(_, check) => setFilters({ ...filters, enableMythic: check })}
-                  />
-                }
-                label={getKeyWithData(PokemonClass, PokemonClass.Mythical)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={enableUltraBeast}
-                    disabled={!showUltraBeast}
-                    onChange={(_, check) => setFilters({ ...filters, enableUltraBeast: check })}
-                  />
-                }
-                label="Ultra Beast"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={enableSpecial}
-                    disabled={!showSpecialMove}
-                    onChange={(_, check) => setFilters({ ...filters, enableSpecial: check })}
-                  />
-                }
-                label="Special Moves"
-              />
-            </div>
-            <FormControlMui
-              labelPrepend="Filter best move sets"
-              control={
-                <Switch checked={enableBest} onChange={(_, check) => setFilters({ ...filters, enableBest: check })} />
-              }
-              label="Best move set of"
-            >
-              <SelectMui
-                value={bestOf}
-                disabled={!enableBest}
-                onChangeSelect={(value) => setFilters({ ...filters, bestOf: toNumber(value) })}
-                isNoneBorder
-                menuItems={[
-                  { value: BestOptionType.dps, label: 'DPS' },
-                  { value: BestOptionType.tdo, label: 'TDO' },
-                  { value: BestOptionType.multiDpsTdo, label: 'DPS^3*TDO' },
-                ]}
-              />
-              <InputReleased
-                releasedGO={releasedGO}
-                setReleaseGO={(check) => setFilters({ ...filters, releasedGO: check })}
-                isAvailable={releasedGO}
-              />
-            </FormControlMui>
-            <div className="input-group">
-              <div className="row tw-w-full !tw-m-0">
-                <Box className="xl:tw-w-1/3 !tw-p-0">
-                  <SelectPokemon
-                    pokemon={dataTargetPokemon}
-                    isSelected
-                    isFit
-                    setCurrentPokemon={setDataTargetPokemon}
-                    setFMovePokemon={setFMoveTargetPokemon}
-                    setCMovePokemon={setCMoveTargetPokemon}
-                    isDisable={isShowSpinner}
-                    labelPrepend="Defender"
-                    isNoWrap
-                  />
-                </Box>
-                <Box className="xl:tw-w-1/3 !tw-p-0">
-                  <SelectCardMove
-                    isNoWrap
-                    labelPrepend="Fast Move"
-                    pokemon={
-                      new SelectMovePokemonModel(
-                        dataTargetPokemon?.num,
-                        dataTargetPokemon?.form,
-                        dataTargetPokemon?.pokemonType
-                      )
-                    }
-                    move={fMoveTargetPokemon}
-                    setMovePokemon={setFMoveTargetPokemon}
-                    moveType={TypeMove.Fast}
-                    isDisable={isShowSpinner}
-                  />
-                </Box>
-                <Box className="xl:tw-w-1/3 !tw-p-0">
-                  <SelectCardMove
-                    isNoWrap
-                    labelPrepend="Charged Move"
-                    pokemon={
-                      new SelectMovePokemonModel(
-                        dataTargetPokemon?.num,
-                        dataTargetPokemon?.form,
-                        dataTargetPokemon?.pokemonType
-                      )
-                    }
-                    move={cMoveTargetPokemon}
-                    setMovePokemon={setCMoveTargetPokemon}
-                    moveType={TypeMove.Charged}
-                    isDisable={isShowSpinner}
-                  />
-                </Box>
+              <div className="input-group">
+                <span className="input-group-text">Include</span>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={showShadow}
+                      onChange={(_, check) =>
+                        setFilters({
+                          ...filters,
+                          showShadow: check,
+                          enableShadow: check === false ? check : filters.enableShadow,
+                        })
+                      }
+                    />
+                  }
+                  label={getKeyWithData(PokemonType, PokemonType.Shadow)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={showPurified}
+                      onChange={(_, check) =>
+                        setFilters({
+                          ...filters,
+                          showPurified: check,
+                          enablePurified: check === false ? check : filters.enablePurified,
+                        })
+                      }
+                    />
+                  }
+                  label={getKeyWithData(PokemonType, PokemonType.Purified)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={showMega}
+                      onChange={(_, check) =>
+                        setFilters({
+                          ...filters,
+                          showMega: check,
+                          enableMega: check === false ? check : filters.enableMega,
+                        })
+                      }
+                    />
+                  }
+                  label={getKeyWithData(PokemonType, PokemonType.Mega)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={showGMax}
+                      onChange={(_, check) =>
+                        setFilters({
+                          ...filters,
+                          showGMax: check,
+                          enableGMax: check === false ? check : filters.enableGMax,
+                        })
+                      }
+                    />
+                  }
+                  label="Gigantamax"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={showPrimal}
+                      onChange={(_, check) =>
+                        setFilters({
+                          ...filters,
+                          showPrimal: check,
+                          enablePrimal: check === false ? check : filters.enablePrimal,
+                        })
+                      }
+                    />
+                  }
+                  label={getKeyWithData(PokemonType, PokemonType.Primal)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={showLegendary}
+                      onChange={(_, check) =>
+                        setFilters({
+                          ...filters,
+                          showLegendary: check,
+                          enableLegendary: check === false ? check : filters.enableLegendary,
+                        })
+                      }
+                    />
+                  }
+                  label={getKeyWithData(PokemonClass, PokemonClass.Legendary)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={showMythic}
+                      onChange={(_, check) =>
+                        setFilters({
+                          ...filters,
+                          showMythic: check,
+                          enableMythic: check === false ? check : filters.enableMythic,
+                        })
+                      }
+                    />
+                  }
+                  label={getKeyWithData(PokemonClass, PokemonClass.Mythical)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={showUltraBeast}
+                      onChange={(_, check) =>
+                        setFilters({
+                          ...filters,
+                          showUltraBeast: check,
+                          enableUltraBeast: check === false ? check : filters.enableUltraBeast,
+                        })
+                      }
+                    />
+                  }
+                  label="Ultra Beast"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={showSpecialMove}
+                      onChange={(_, check) =>
+                        setFilters({
+                          ...filters,
+                          showSpecialMove: check,
+                          enableSpecial: check === false ? check : filters.enableSpecial,
+                        })
+                      }
+                    />
+                  }
+                  label="Elite, Special & Exclusive Moves"
+                />
               </div>
-              {dataTargetPokemon && !hasDefender && (
-                <div className="tw-w-full tw-px-3 tw-pb-2 tw-text-left tw-text-amber-500">
-                  Select both Defender moves before calculating matchup values.
+              <div className="input-group">
+                <span className="input-group-text">Show only (match any)</span>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={enableShadow}
+                      disabled={!showShadow}
+                      onChange={(_, check) => setFilters({ ...filters, enableShadow: check })}
+                    />
+                  }
+                  label={getKeyWithData(PokemonType, PokemonType.Shadow)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={enablePurified}
+                      disabled={!showPurified}
+                      onChange={(_, check) => setFilters({ ...filters, enablePurified: check })}
+                    />
+                  }
+                  label={getKeyWithData(PokemonType, PokemonType.Purified)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={enableMega}
+                      disabled={!showMega}
+                      onChange={(_, check) => setFilters({ ...filters, enableMega: check })}
+                    />
+                  }
+                  label={getKeyWithData(PokemonType, PokemonType.Mega)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={enableGMax}
+                      disabled={!showGMax}
+                      onChange={(_, check) => setFilters({ ...filters, enableGMax: check })}
+                    />
+                  }
+                  label="Gigantamax"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={enablePrimal}
+                      disabled={!showPrimal}
+                      onChange={(_, check) => setFilters({ ...filters, enablePrimal: check })}
+                    />
+                  }
+                  label={getKeyWithData(PokemonType, PokemonType.Primal)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={enableLegendary}
+                      disabled={!showLegendary}
+                      onChange={(_, check) => setFilters({ ...filters, enableLegendary: check })}
+                    />
+                  }
+                  label={getKeyWithData(PokemonClass, PokemonClass.Legendary)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={enableMythic}
+                      disabled={!showMythic}
+                      onChange={(_, check) => setFilters({ ...filters, enableMythic: check })}
+                    />
+                  }
+                  label={getKeyWithData(PokemonClass, PokemonClass.Mythical)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={enableUltraBeast}
+                      disabled={!showUltraBeast}
+                      onChange={(_, check) => setFilters({ ...filters, enableUltraBeast: check })}
+                    />
+                  }
+                  label="Ultra Beast"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={enableSpecial}
+                      disabled={!showSpecialMove}
+                      onChange={(_, check) => setFilters({ ...filters, enableSpecial: check })}
+                    />
+                  }
+                  label="Elite, Special & Exclusive Moves"
+                />
+              </div>
+              <FormControlMui
+                labelPrepend="Best moveset per Pokémon"
+                control={
+                  <Switch checked={enableBest} onChange={(_, check) => setFilters({ ...filters, enableBest: check })} />
+                }
+                label="Rank by"
+              >
+                <SelectMui
+                  value={bestOf}
+                  disabled={!enableBest}
+                  onChangeSelect={(value) => setFilters({ ...filters, bestOf: toNumber(value) })}
+                  isNoneBorder
+                  menuItems={[
+                    { value: BestOptionType.dps, label: 'DPS' },
+                    { value: BestOptionType.tdo, label: 'TDO' },
+                    { value: BestOptionType.multiDpsTdo, label: 'DPS³ × TDO' },
+                  ]}
+                />
+                <InputReleased
+                  releasedGO={releasedGO}
+                  setReleaseGO={(check) => setFilters({ ...filters, releasedGO: check })}
+                  isAvailable={releasedGO}
+                />
+              </FormControlMui>
+              <div className="input-group">
+                <div className="row tw-w-full !tw-m-0">
+                  <Box className="xl:tw-w-1/3 !tw-p-0">
+                    <SelectPokemon
+                      pokemon={dataTargetPokemon}
+                      isSelected
+                      isFit
+                      setCurrentPokemon={setDataTargetPokemon}
+                      setFMovePokemon={setFMoveTargetPokemon}
+                      setCMovePokemon={setCMoveTargetPokemon}
+                      isDisable={isShowSpinner}
+                      labelPrepend="Defender"
+                      isNoWrap
+                    />
+                  </Box>
+                  <Box className="xl:tw-w-1/3 !tw-p-0">
+                    <SelectCardMove
+                      isNoWrap
+                      labelPrepend="Fast Move"
+                      pokemon={
+                        new SelectMovePokemonModel(
+                          dataTargetPokemon?.num,
+                          dataTargetPokemon?.form,
+                          dataTargetPokemon?.pokemonType
+                        )
+                      }
+                      move={fMoveTargetPokemon}
+                      setMovePokemon={setFMoveTargetPokemon}
+                      moveType={TypeMove.Fast}
+                      isDisable={isShowSpinner}
+                    />
+                  </Box>
+                  <Box className="xl:tw-w-1/3 !tw-p-0">
+                    <SelectCardMove
+                      isNoWrap
+                      labelPrepend="Charged Move"
+                      pokemon={
+                        new SelectMovePokemonModel(
+                          dataTargetPokemon?.num,
+                          dataTargetPokemon?.form,
+                          dataTargetPokemon?.pokemonType
+                        )
+                      }
+                      move={cMoveTargetPokemon}
+                      setMovePokemon={setCMoveTargetPokemon}
+                      moveType={TypeMove.Charged}
+                      isDisable={isShowSpinner}
+                    />
+                  </Box>
                 </div>
-              )}
+                {dataTargetPokemon && !hasDefender && (
+                  <div className="tw-w-full tw-px-3 tw-pb-2 tw-text-left tw-text-amber-500">
+                    Select both Defender moves before calculating matchup values.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          <div className="2xl:tw-flex-1 !tw-p-0">
+          <div className="2xl:tw-flex-1 !tw-p-0" data-testid="dps-tdo-options-section">
             <div className="head-types">Options</div>
             <form className="tw-w-full" onSubmit={onCalculateTable.bind(this)}>
               <FormControlMui
                 control={
                   <Switch
                     checked={enableDelay}
+                    disabled={Boolean(dataTargetPokemon)}
                     onChange={(_, check) => {
                       setFilters({ ...filters, enableDelay: check });
                       setOptions(
@@ -989,11 +1026,11 @@ const DpsTdo = () => {
                     }}
                   />
                 }
-                label="Delay"
+                label="Additional Move Delay"
               >
                 <InputMui
-                  labelPrepend="Fast Move Time"
-                  placeholder="Delay time (sec)"
+                  labelPrepend="Fast Move Delay (s)"
+                  placeholder="Seconds"
                   value={options.delay?.fTime || ''}
                   onChange={(value) =>
                     setOptions(
@@ -1010,13 +1047,13 @@ const DpsTdo = () => {
                     type: 'number',
                     min: 0,
                   }}
-                  disabled={!enableDelay}
+                  disabled={!enableDelay || Boolean(dataTargetPokemon)}
                   required={enableDelay}
                   fullWidth
                 />
                 <InputMui
-                  labelPrepend="Charged Move Time"
-                  placeholder="Delay time (sec)"
+                  labelPrepend="Charged Move Delay (s)"
+                  placeholder="Seconds"
                   value={options.delay?.cTime || ''}
                   onChange={(value) =>
                     setOptions(
@@ -1033,7 +1070,7 @@ const DpsTdo = () => {
                     type: 'number',
                     min: 0,
                   }}
-                  disabled={!enableDelay}
+                  disabled={!enableDelay || Boolean(dataTargetPokemon)}
                   required={enableDelay}
                   fullWidth
                 />
@@ -1091,7 +1128,7 @@ const DpsTdo = () => {
                   fullWidth
                 />
                 <InputMui
-                  labelPrepend="Levels"
+                  labelPrepend="Pokémon Level"
                   value={pokemonLevel}
                   onChange={(value) =>
                     setFilters({
@@ -1109,8 +1146,8 @@ const DpsTdo = () => {
               </FormControlMui>
               <FormControlMui boxClassName="!tw-pr-0">
                 <InputMui
-                  labelPrepend="DEF Target"
-                  placeholder="Defense target"
+                  labelPrepend="Fallback Target Defense"
+                  placeholder="Defense"
                   value={pokemonDefObj.toString()}
                   onChange={(value) =>
                     setOptions(
@@ -1129,9 +1166,10 @@ const DpsTdo = () => {
                   }}
                   fullWidth
                   basis={'min-content'}
+                  disabled={Boolean(dataTargetPokemon)}
                 />
                 <InputMui
-                  labelPrepend="Weather Boosts"
+                  labelPrepend="Weather"
                   value={getValueOrDefault(String, weatherBoosts, 'extreme')}
                   onChange={(value) =>
                     setOptions(
@@ -1143,10 +1181,10 @@ const DpsTdo = () => {
                   }
                   select
                   menuItems={[
-                    { value: 'extreme', label: 'Extreme' },
+                    { value: 'extreme', label: 'Extreme (No Boost)' },
                     ...getWeatherTypes().map((value) => ({
                       value,
-                      label: splitAndCapitalize(value, /(?=[A-Z])/, ' '),
+                      label: value === 'clear' ? 'Sunny / Clear' : getWeatherDisplayName(value),
                     })),
                   ]}
                   sx={{ minWidth: 150 }}
@@ -1170,7 +1208,7 @@ const DpsTdo = () => {
                       }}
                     />
                   }
-                  label="Friendship Level:"
+                  label="Friendship Attack Bonus"
                 >
                   <LevelRating
                     disabled={!isTrainerFriend}
@@ -1195,7 +1233,7 @@ const DpsTdo = () => {
           </div>
         </div>
       </div>
-      <div className="tw-relative">
+      <div className="tw-relative" data-testid="dps-tdo-results-section">
         <BackdropMui open={isShowSpinner && isNotEmpty(dpsTable)} isShowOnAbove={false} />
         <CustomDataTable
           customColumns={tableColumns}
