@@ -9,6 +9,7 @@ export interface IImage {
   default: string;
   fallbacks?: string[];
   shiny: string | undefined;
+  shinyFallbacks?: string[];
   pokemonType?: PokemonType;
 }
 
@@ -32,6 +33,7 @@ export class ImageModel implements IImage {
   default = '';
   fallbacks?: string[];
   shiny = '';
+  shinyFallbacks?: string[];
   pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IImage) {

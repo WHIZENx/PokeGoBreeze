@@ -9,3 +9,6 @@ export const buildPokedexCardImageCandidates = (
     )
   ),
 ];
+
+export const getPokedexCardRequestedImage = (image: { default: string; shiny?: string }, showShiny: boolean) =>
+  showShiny && image.shiny ? image.shiny : image.default;

@@ -4,6 +4,8 @@ import Attacker from './Attacker';
 import Defender from './Defender';
 
 import { useTitle } from '../../utils/hooks/useTitle';
+import '../../components/Info/PokemonDetailLayout.scss';
+import TypeMatchupMatrix from './TypeMatchupMatrix';
 
 const TypeEffect = () => {
   useTitle({
@@ -21,13 +23,12 @@ const TypeEffect = () => {
   });
 
   return (
-    <div className="tw-container tw-mt-2 tw-pb-3">
-      <div className="row">
-        <div className="col">
-          <Attacker />
-        </div>
-        <div className="col">
-          <Defender />
+    <div className="tw-container tw-pb-3 tw-text-default">
+      <div className="pokemon-detail-sections tw-my-3 tw-grid tw-grid-cols-1 tw-gap-4 xl:tw-grid-cols-2">
+        <Attacker />
+        <Defender />
+        <div className="xl:tw-col-span-2">
+          <TypeMatchupMatrix />
         </div>
       </div>
     </div>
