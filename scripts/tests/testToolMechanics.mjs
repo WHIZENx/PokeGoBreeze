@@ -162,7 +162,8 @@ assert.match(pokemonFormSource, /const selectedMoveForm = getPokemonFormWithNone
 assert.match(pokemonFormSource, /isEqual\(item\.form, selectedMoveForm\)/);
 assert.match(pokemonFormSource, /primary: pokeApiSprites \?\? selectedSprites/);
 assert.match(pokemonFormSource, /fallback: pokeApiSprites \? selectedSprites : undefined/);
-assert.match(genderSource, /setNextPokemonImageFallback\(e\.currentTarget, defaultSpriteCandidates\)/);
+assert.match(genderSource, /useImageSourceSequence\(defaultSpriteCandidates\)/);
+assert.match(genderSource, /onError=\{advanceDefaultSprite\}/);
 assert.match(genderSource, /tw-object-contain/);
 assert.match(utilsSource, /replace\(\/_PLUS\$\/, '\+'\)/);
 assert.match(trainerMoveSelectSource, /index === 2 \? 'Mega Attack'/);
@@ -172,7 +173,7 @@ assert.match(selectCardMoveSource, /tw-min-w-0 tw-max-w-full/);
 assert.match(cardMoveSmallSource, /tw-overflow-x-auto/);
 assert.match(
   pokemonFormSource,
-  /moveData=\{moveRanking\?\.moves \?\? \(props\.isLoadedForms \? unavailablePokemonMoves/
+  /moveData=\{moveRanking\?\.moves \?\? \(isCurrentPokemonLoaded \? unavailablePokemonMoves/
 );
 assert.match(pokemonFormSource, /<Counter[\s\S]*pokemonData=\{searchingMainDetails\}/);
 assert.doesNotMatch(pokemonFormSource, /pokemonData=\{moveRanking \?/);

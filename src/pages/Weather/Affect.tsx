@@ -7,6 +7,7 @@ import SelectTypeComponent from '../../components/Commons/Selects/SelectType';
 import { CardType } from '../../enums/type.enum';
 import Effective from '../../components/Effective/Effective';
 import TypeInfo from '../../components/Sprites/Type/Type';
+import QuickWeatherSelect from '../../components/Effective/QuickWeatherSelect';
 
 const Affect = () => {
   const weathersBoost = getWeatherBoost();
@@ -26,26 +27,31 @@ const Affect = () => {
   }, [currentWeather, getWeatherEffective, weathersBoost]);
 
   return (
-    <div className="tw-mt-2">
-      <h5 className="tw-text-center">
+    <section className="pokemon-detail-section !tw-overflow-visible" data-testid="weather-by-condition-section">
+      <h4 className="info-title">
         <b>As Weather</b>
-      </h5>
-      <div className="row">
-        <div className="col tw-flex tw-justify-center">
-          <SelectTypeComponent
-            title="Select Weather"
-            data={weathersBoost}
-            currentType={currentWeather}
-            setCurrentType={setCurrentWeather}
-            filterType={[currentWeather]}
-            cardType={CardType.Weather}
-          />
-        </div>
+      </h4>
+      <div className="tw-flex tw-justify-center">
+        <SelectTypeComponent
+          title="Select Weather"
+          data={weathersBoost}
+          currentType={currentWeather}
+          setCurrentType={setCurrentWeather}
+          filterType={[currentWeather]}
+          cardType={CardType.Weather}
+        />
+      </div>
+      <div className="tw-mx-auto tw-mt-4 tw-max-w-2xl">
+        <QuickWeatherSelect weather={Object.keys(weathersBoost)} value={currentWeather} onChange={setCurrentWeather} />
+      </div>
+      <div className="tw-mt-4 tw-rounded-lg tw-bg-table-primary tw-p-2 tw-text-center">
+        <strong className="tw-block tw-text-medium">{weatherEffective.length}</strong>
+        <span className="tw-text-caption">Boosted types</span>
       </div>
       <Effective title="Types Pokémon for Boosts">
-        <TypeInfo arr={weatherEffective} className="tw-ml-3" isShow />
+        <TypeInfo arr={weatherEffective} className="!tw-ml-0" isShow />
       </Effective>
-    </div>
+    </section>
   );
 };
 

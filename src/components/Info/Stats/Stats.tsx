@@ -119,7 +119,7 @@ const Stats = (props: IStatsComponent) => {
 
   return (
     <div className="tw-mt-2 tw-text-black" data-testid="pokemon-stats-ranking" aria-busy={props.isLoading}>
-      <div className="tw-h-4 tw-text-right tw-text-extra-small tw-text-gray-500 dark:tw-text-gray-400">
+      <div className="tw-h-4 tw-text-right tw-text-extra-small tw-text-gray-700 dark:tw-text-gray-300">
         {props.isLoading ? 'Loading stats…' : isTheoretical ? 'Theoretical Pokémon GO stats' : ''}
       </div>
       <StatBar
@@ -135,6 +135,7 @@ const Stats = (props: IStatsComponent) => {
         isDisabled={props.isDisabled || isTheoretical}
         isLoading={props.isLoading}
         pokemonType={props.pokemonType}
+        onStatSelect={props.onStatSelect}
       />
       <StatBar
         tag="DEF"
@@ -149,6 +150,7 @@ const Stats = (props: IStatsComponent) => {
         isDisabled={props.isDisabled || isTheoretical}
         isLoading={props.isLoading}
         pokemonType={props.pokemonType}
+        onStatSelect={props.onStatSelect}
       />
       <StatBar
         tag="STA"
@@ -163,6 +165,7 @@ const Stats = (props: IStatsComponent) => {
         isDisabled={props.isDisabled || isTheoretical}
         isLoading={props.isLoading}
         pokemonType={props.pokemonType}
+        onStatSelect={props.onStatSelect}
       />
       <StatBar
         tag="Stat Prod"
@@ -178,6 +181,7 @@ const Stats = (props: IStatsComponent) => {
         isDisabled={props.isDisabled || isTheoretical}
         isLoading={props.isLoading}
         pokemonType={props.pokemonType}
+        onStatSelect={props.onStatSelect}
       />
     </div>
   );

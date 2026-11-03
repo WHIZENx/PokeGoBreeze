@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Location, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import './Pokemon.scss';
+import '../../components/Info/PokemonDetailLayout.scss';
 
 import {
   Form,

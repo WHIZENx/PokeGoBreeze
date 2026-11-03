@@ -4,6 +4,8 @@ import Affect from './Affect';
 import Effect from './Effect';
 
 import { useTitle } from '../../utils/hooks/useTitle';
+import '../../components/Info/PokemonDetailLayout.scss';
+import WeatherOverview from './WeatherOverview';
 
 const Weather = () => {
   useTitle({
@@ -14,14 +16,12 @@ const Weather = () => {
   });
 
   return (
-    <div className="tw-container tw-mt-2">
-      <div className="tw-container tw-w-3/4">
+    <div className="tw-container tw-pb-3 tw-text-default">
+      <div className="pokemon-detail-sections tw-my-3 tw-grid tw-grid-cols-1 tw-gap-4 xl:tw-grid-cols-2">
         <Affect />
-      </div>
-      <hr className="tw-my-3" />
-      <div className="tw-container tw-w-3/4">
         <Effect />
       </div>
+      <WeatherOverview />
     </div>
   );
 };

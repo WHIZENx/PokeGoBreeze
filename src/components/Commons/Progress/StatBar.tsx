@@ -25,11 +25,21 @@ const StatBar = (props: IStatBarComponent) => {
     isDisabled,
     isLoading,
     statsPercent,
+    onStatSelect,
     ...progressProps
   } = props;
 
   const isNavigationDisabled =
     isLoading || isStatsRankingNavigationDisabled(isDisabled, rank, Boolean(pokemonStatsRank));
+  const selectStatRanking = () => {
+    if (onStatSelect) {
+      onStatSelect(statType);
+      return;
+    }
+    navigateToTop(
+      `/stats-ranking?${Params.Id}=${id}${generateParamForm(form, pokemonType, '&')}&${Params.StatsType}=${statType}`
+    );
+  };
 
   return (
     <Box
@@ -45,16 +55,19 @@ const StatBar = (props: IStatBarComponent) => {
       data-stat-percent={statsPercent}
       data-stat-loading={isLoading || undefined}
       data-testid="pokemon-stat-bar"
-      onClick={
+      onClick={isNavigationDisabled ? undefined : selectStatRanking}
+      onKeyDown={
         isNavigationDisabled
           ? undefined
-          : () =>
-              navigateToTop(
-                `/stats-ranking?${Params.Id}=${id}${generateParamForm(form, pokemonType, '&')}&${
-                  Params.StatsType
-                }=${statType}`
-              )
+          : (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectStatRanking();
+              }
+            }
       }
+      role={isNavigationDisabled ? undefined : 'button'}
+      tabIndex={isNavigationDisabled ? undefined : 0}
     >
       <div className="tw-absolute box-text stats-text tw-z-2 tw-flex tw-justify-start tw-w-full">
         <span className="tw-text-extra-small">

@@ -6,6 +6,7 @@ import { DynamicObj, getPropertyName, isEmpty, safeObjectEntries } from '../../u
 import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';
 import { camelCase } from 'lodash';
 import SelectTypeComponent from '../../components/Commons/Selects/SelectType';
+import DualTypeQuickSelect, { TypeSlot } from '../../components/Effective/DualTypeQuickSelect';
 
 const Defender = () => {
   const typesEffective = getTypeEffectiveContext();
@@ -13,6 +14,7 @@ const Defender = () => {
 
   const [currentTypePri, setCurrentTypePri] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [currentTypeSec, setCurrentTypeSec] = useState('');
+  const [activeTypeSlot, setActiveTypeSlot] = useState<TypeSlot>('primary');
 
   const getTypeEffective = useCallback(() => {
     const data = new TypeEffectiveChart();
@@ -30,12 +32,12 @@ const Defender = () => {
   }, [currentTypePri, currentTypeSec, getTypeEffective, typesEffective]);
 
   return (
-    <div className="tw-mt-2">
-      <h5 className="tw-text-center">
+    <section className="pokemon-detail-section !tw-overflow-visible" data-testid="type-effect-defender-section">
+      <h4 className="info-title">
         <b>As Defender</b>
-      </h5>
-      <div className="row">
-        <div className="col tw-flex tw-justify-center">
+      </h4>
+      <div className="tw-grid tw-grid-cols-1 tw-gap-3 sm:tw-grid-cols-2">
+        <div className="tw-flex tw-min-w-0 tw-justify-center">
           <SelectTypeComponent
             title="Type 1"
             data={typesEffective}
@@ -44,7 +46,7 @@ const Defender = () => {
             filterType={[currentTypePri, currentTypeSec]}
           />
         </div>
-        <div className="col tw-flex tw-justify-center">
+        <div className="tw-flex tw-min-w-0 tw-justify-center">
           <SelectTypeComponent
             title="Type 2"
             data={typesEffective}
@@ -55,8 +57,22 @@ const Defender = () => {
           />
         </div>
       </div>
-      <TypeEffectiveComponent typeEffective={typeEffective} />
-    </div>
+      <div className="tw-mx-auto tw-max-w-xl">
+        <DualTypeQuickSelect
+          types={Object.keys(typesEffective)}
+          primaryType={currentTypePri}
+          secondaryType={currentTypeSec}
+          activeSlot={activeTypeSlot}
+          onActiveSlotChange={setActiveTypeSlot}
+          onPrimaryTypeChange={setCurrentTypePri}
+          onSecondaryTypeChange={setCurrentTypeSec}
+          ariaLabel="Quick select defender type"
+        />
+      </div>
+      <div className="tw-mt-4">
+        <TypeEffectiveComponent typeEffective={typeEffective} variant="summary" compactLayout showCounts />
+      </div>
+    </section>
   );
 };
 

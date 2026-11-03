@@ -5,6 +5,7 @@ import SelectTypeComponent from '../../components/Commons/Selects/SelectType';
 import { camelCase } from '../../utils/utils';
 import Effective from '../../components/Effective/Effective';
 import Weather from '../../components/Sprites/Weather';
+import DualTypeQuickSelect, { TypeSlot } from '../../components/Effective/DualTypeQuickSelect';
 
 const Effect = () => {
   const weathersBoost = getWeatherBoost();
@@ -12,6 +13,7 @@ const Effect = () => {
 
   const [currentTypePri, setCurrentTypePri] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [currentTypeSec, setCurrentTypeSec] = useState('');
+  const [activeTypeSlot, setActiveTypeSlot] = useState<TypeSlot>('primary');
 
   const [weatherEffective, setWeatherEffective] = useState<string[]>([]);
 
@@ -33,12 +35,12 @@ const Effect = () => {
   }, [currentTypePri, currentTypeSec, getWeatherEffective, typesEffective]);
 
   return (
-    <div className="tw-mt-2">
-      <h5 className="tw-text-center">
+    <section className="pokemon-detail-section !tw-overflow-visible" data-testid="weather-by-type-section">
+      <h4 className="info-title">
         <b>As Pokémon Types</b>
-      </h5>
-      <div className="row">
-        <div className="col tw-flex tw-justify-center">
+      </h4>
+      <div className="tw-grid tw-grid-cols-1 tw-gap-3 sm:tw-grid-cols-2">
+        <div className="tw-flex tw-min-w-0 tw-justify-center">
           <SelectTypeComponent
             title="Type 1"
             data={typesEffective}
@@ -47,7 +49,7 @@ const Effect = () => {
             filterType={[currentTypePri, currentTypeSec]}
           />
         </div>
-        <div className="col tw-flex tw-justify-center">
+        <div className="tw-flex tw-min-w-0 tw-justify-center">
           <SelectTypeComponent
             title="Type 2"
             data={typesEffective}
@@ -58,10 +60,26 @@ const Effect = () => {
           />
         </div>
       </div>
+      <div className="tw-mx-auto tw-max-w-xl">
+        <DualTypeQuickSelect
+          types={Object.keys(typesEffective)}
+          primaryType={currentTypePri}
+          secondaryType={currentTypeSec}
+          activeSlot={activeTypeSlot}
+          onActiveSlotChange={setActiveTypeSlot}
+          onPrimaryTypeChange={setCurrentTypePri}
+          onSecondaryTypeChange={setCurrentTypeSec}
+          ariaLabel="Quick select boosted Pokémon type"
+        />
+      </div>
+      <div className="tw-mt-4 tw-rounded-lg tw-bg-table-primary tw-p-2 tw-text-center">
+        <strong className="tw-block tw-text-medium">{weatherEffective.length}</strong>
+        <span className="tw-text-caption">Matching weather</span>
+      </div>
       <Effective title="Weather Boosts">
-        <Weather arr={weatherEffective} className="tw-ml-3" />
+        <Weather arr={weatherEffective} className="!tw-ml-0" />
       </Effective>
-    </div>
+    </section>
   );
 };
 
