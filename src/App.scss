@@ -288,7 +288,7 @@ ul {
 }
 
 .card-input {
-  @apply tw-w-[300px] tw-h-[86px];
+  @apply tw-h-[86px] tw-w-full tw-max-w-[300px];
 }
 
 .card-input:hover {
@@ -302,7 +302,7 @@ ul {
 .result-type {
   box-shadow: 0 4px 8px 0 #00000033;
 
-  @apply tw-absolute tw-z-20 tw-w-[300px] tw-max-h-[50%] tw-overflow-y-auto;
+  @apply tw-absolute tw-z-20 tw-w-full tw-max-w-[300px] tw-max-h-[50%] tw-overflow-y-auto;
 }
 
 .type-title {

@@ -8,6 +8,7 @@ import {
   getSafeTypesEffective,
 } from '../../utils/helpers/options-context.helpers';
 import SelectTypeComponent from '../../components/Commons/Selects/SelectType';
+import QuickTypeSelect from '../../components/Effective/QuickTypeSelect';
 
 const Attacker = () => {
   const typesEffective = getTypeEffectiveContext();
@@ -26,23 +27,37 @@ const Attacker = () => {
   }, [currentType, getTypeEffective, typesEffective]);
 
   return (
-    <div className="tw-mt-2">
-      <h5 className="tw-text-center">
+    <section className="pokemon-detail-section !tw-overflow-visible" data-testid="type-effect-attacker-section">
+      <h4 className="info-title">
         <b>As Attacker</b>
-      </h5>
-      <div className="row">
-        <div className="col tw-flex tw-justify-center">
-          <SelectTypeComponent
-            title="Select Type"
-            data={typesEffective}
-            currentType={currentType}
-            setCurrentType={setCurrentType}
-            filterType={[currentType]}
-          />
-        </div>
+      </h4>
+      <div className="tw-flex tw-justify-center">
+        <SelectTypeComponent
+          title="Select Type"
+          data={typesEffective}
+          currentType={currentType}
+          setCurrentType={setCurrentType}
+          filterType={[currentType]}
+        />
       </div>
-      <TypeEffectiveComponent typeEffective={typeEffective} perspective="attacker" />
-    </div>
+      <div className="tw-mx-auto tw-mt-4 tw-max-w-xl">
+        <QuickTypeSelect
+          types={Object.keys(typesEffective)}
+          value={currentType}
+          onChange={setCurrentType}
+          ariaLabel="Quick select attack type"
+        />
+      </div>
+      <div className="tw-mt-4">
+        <TypeEffectiveComponent
+          typeEffective={typeEffective}
+          perspective="attacker"
+          variant="summary"
+          compactLayout
+          showCounts
+        />
+      </div>
+    </section>
   );
 };
 

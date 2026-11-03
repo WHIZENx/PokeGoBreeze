@@ -95,6 +95,8 @@ export interface ITypeEffectiveComponent {
   typeEffective: ITypeEffectiveChart | undefined;
   perspective?: 'attacker' | 'defender';
   variant?: 'default' | 'summary';
+  compactLayout?: boolean;
+  showCounts?: boolean;
 }
 
 export interface ITypeEffectiveSelectComponent {
