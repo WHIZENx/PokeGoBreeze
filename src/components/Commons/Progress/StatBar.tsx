@@ -34,9 +34,15 @@ const StatBar = (props: IStatBarComponent) => {
   return (
     <Box
       aria-disabled={isNavigationDisabled}
-      className={combineClasses('tw-w-full tw-relative progress', !isNavigationDisabled && 'progress-hover')}
+      aria-busy={isLoading}
+      className={combineClasses(
+        'tw-w-full tw-relative progress',
+        isLoading && 'progress-loading',
+        !isNavigationDisabled && 'progress-hover'
+      )}
       data-stat-tag={tag}
       data-stat-value={currentStats}
+      data-stat-percent={statsPercent}
       data-stat-loading={isLoading || undefined}
       data-testid="pokemon-stat-bar"
       onClick={
@@ -62,7 +68,13 @@ const StatBar = (props: IStatBarComponent) => {
           </span>
         </div>
       )}
-      <LinearProgress className="!tw-h-7.5 tw-rounded-md" variant={variant} value={statsPercent} {...progressProps} />
+      <LinearProgress
+        className="pokemon-stat-progress"
+        data-testid="pokemon-stat-progress"
+        variant={variant}
+        value={statsPercent}
+        {...progressProps}
+      />
     </Box>
   );
 };

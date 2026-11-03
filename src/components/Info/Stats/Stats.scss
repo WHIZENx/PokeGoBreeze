@@ -2,6 +2,18 @@
   @apply tw-min-w-[350px] tw-h-[30px] tw-my-2.5 tw-mx-0;
 }
 
+.progress .pokemon-stat-progress.MuiLinearProgress-root {
+  @apply tw-h-7.5 tw-w-full tw-rounded-md;
+}
+
+.progress .pokemon-stat-progress .MuiLinearProgress-bar {
+  @apply tw-rounded-md tw-duration-300 tw-ease-in-out;
+}
+
+.progress-loading .pokemon-stat-progress .MuiLinearProgress-bar {
+  @apply tw-transition-none;
+}
+
 .progress-hover {
   @apply tw-cursor-pointer;
 }

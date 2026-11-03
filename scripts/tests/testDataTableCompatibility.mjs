@@ -17,6 +17,7 @@ const styles = await readFile(join(sourceRoot, 'assets/styles/custom.scss'), 'ut
 const counterStyles = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.scss'), 'utf8');
 const counter = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.tsx'), 'utf8');
 const sharedSortIcon = await readFile(join(sourceRoot, 'components/Commons/Tables/DataTableSortIcon.tsx'), 'utf8');
+const statsRanking = await readFile(join(sourceRoot, 'pages/Sheets/StatsRanking/StatsRanking.tsx'), 'utf8');
 const customSortableTables = await Promise.all(
   ['components/Commons/Tables/Move/MoveTable.tsx', 'pages/PVP/Ranking/PVP.tsx', 'pages/PVP/Teams/PVP.tsx'].map((path) =>
     readFile(join(sourceRoot, path), 'utf8')
@@ -87,8 +88,38 @@ assert.match(
 );
 assert.match(
   counter,
-  /<span className="tw-font-bold">\s*\{toFloatWithPadding\(row\.ratio/,
+  /<span className="tw-whitespace-nowrap tw-font-bold">\s*\{toFloatWithPadding\(row\.ratio/,
   'The primary percentage value in Best Pokémon Counter must use the design-system bold weight.'
+);
+assert.match(
+  counter,
+  /data-testid="counter-performance"[\s\S]*tw-whitespace-nowrap tw-font-bold[\s\S]*tw-flex-col[\s\S]*sm:tw-flex-row sm:tw-gap-1/,
+  'Counter DPS values must stack their unit on mobile and return to one row at the small breakpoint.'
+);
+assert.match(
+  counterStyles,
+  /@media \(width <= 639px\)[\s\S]*\.rdt_TableCol:last-of-type,[\s\S]*\.rdt_TableCell:last-of-type[\s\S]*tw-px-1/,
+  'The mobile percentage column must reclaim horizontal space from data-table cell padding.'
+);
+assert.match(
+  statsRanking,
+  /data-tag="allowRowEvents"[\s\S]*PokemonIconType[\s\S]*tw-pointer-events-none[\s\S]*PokemonTableIcon[\s\S]*tw-pointer-events-none/,
+  'Stats Ranking Pokémon icons must forward custom-cell clicks to the v8 row selection handler.'
+);
+assert.match(
+  statsRanking,
+  /id: ColumnType\.Released,[\s\S]*data-tag="allowRowEvents"[\s\S]*DoneIcon[\s\S]*tw-pointer-events-none[\s\S]*CloseIcon[\s\S]*tw-pointer-events-none/,
+  'Stats Ranking release icons must forward custom-cell clicks to the v8 row selection handler.'
+);
+assert.match(
+  statsRanking,
+  /id: ColumnType\.Type,[\s\S]*data-tag="allowRowEvents"[\s\S]*IconType[\s\S]*tw-mr-2 tw-pointer-events-none/,
+  'Stats Ranking type images must forward custom-cell clicks to the v8 row selection handler.'
+);
+assert.match(
+  statsRanking,
+  /<LinkToTop[\s\S]*?to=\{`\/pokemon\/\$\{row\.num\}[\s\S]*?funcOnClick=\{\(event\) => event\.stopPropagation\(\)\}/,
+  'Stats Ranking view links must navigate without also selecting the table row.'
 );
 assert.match(
   sharedSortIcon,

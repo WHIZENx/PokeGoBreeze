@@ -3,16 +3,34 @@ import { Link, To, useNavigate } from 'react-router-dom';
 import { LinkToTopProps, NavigateToTopProps } from '../../utils/models/hook.model';
 import { toNumber } from '../../utils/extension';
 
+interface PendingNavigationScroll {
+  top: number;
+  left: number;
+  behavior: ScrollBehavior;
+}
+
+let pendingNavigationScroll: PendingNavigationScroll | undefined;
+
+export const flushPendingNavigationScroll = () => {
+  if (!pendingNavigationScroll) {
+    return;
+  }
+  const scroll = pendingNavigationScroll;
+  pendingNavigationScroll = undefined;
+  window.scrollTo(scroll);
+};
+
 export const useNavigateToTop = () => {
   const navigate = useNavigate();
   const navigateAndReset = useCallback(
     (to: To, options?: NavigateToTopProps) => {
-      navigate(to, { ...options });
-      window.scrollTo({
-        top: toNumber(options?.top),
-        left: toNumber(options?.left),
-        behavior: options?.behavior || 'instant',
-      });
+      const { top, left, behavior, ...navigateOptions } = options ?? {};
+      pendingNavigationScroll = {
+        top: toNumber(top),
+        left: toNumber(left),
+        behavior: behavior || 'instant',
+      };
+      navigate(to, navigateOptions);
     },
     [navigate]
   );

@@ -15,7 +15,7 @@ import {
   generateParamForm,
   getCustomThemeDataTable,
   getKeyWithData,
-  getValidPokemonImgPath,
+  getPreferredPokemonFormSprite,
   isSpecialFormType,
 } from '../../../utils/utils';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -29,7 +29,8 @@ import { TableColumnModify } from '../../../utils/models/overrides/data-table.mo
 import { getValueOrDefault, isEqual, isNullOrUndefined, toNumber } from '../../../utils/extension';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import type { PokemonMoveRanking } from '../../../core/models/API/pokemon-bundle.model';
+import type { PokemonBundleVariety, PokemonMoveRanking } from '../../../core/models/API/pokemon-bundle.model';
+import { PokemonSprite } from '../../../core/models/API/form.model';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
@@ -41,6 +42,9 @@ import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
+import { usePreloadedImage } from '../../../utils/hooks/usePreloadedImage';
+import PokemonProfileImageSkeleton from '../../../components/Info/PokemonProfileImageSkeleton';
+import { normalizePokemonFormIdentity } from '../../../utils/pokemon-form-identity';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
@@ -50,6 +54,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
       <LinkToTop
         to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}
         title={`#${row.num} ${formatPokemonDisplayName(row.name)}`}
+        funcOnClick={(event) => event.stopPropagation()}
       >
         <VisibilityIcon className="view-pokemon tw-text-default" fontSize="small" />
       </LinkToTop>
@@ -61,7 +66,15 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
     id: ColumnType.Released,
     name: 'Released',
-    selector: (row) => (row.releasedGO ? <DoneIcon color="success" /> : <CloseIcon color="error" />),
+    selector: (row) => (
+      <span className="tw-inline-flex" data-tag="allowRowEvents">
+        {row.releasedGO ? (
+          <DoneIcon className="tw-pointer-events-none" color="success" />
+        ) : (
+          <CloseIcon className="tw-pointer-events-none" color="error" />
+        )}
+      </span>
+    ),
     width: '80px',
   },
   {
@@ -69,9 +82,13 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
     name: 'Pokémon Name',
     selector: (row) => (
       <>
-        <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
-          <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-[1]">
-            <PokemonTableIcon {...row} />
+        <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center" data-tag="allowRowEvents">
+          <PokemonIconType
+            pokemonType={row.pokemonType}
+            size={24}
+            className="!tw-bottom-0 !tw-right-0 tw-z-[1] tw-pointer-events-none"
+          >
+            <PokemonTableIcon {...row} className="tw-pointer-events-none" />
           </PokemonIconType>
         </span>
         {formatPokemonDisplayName(row.name)}
@@ -82,18 +99,21 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
     id: ColumnType.Type,
     name: 'Type(s)',
-    selector: (row) =>
-      getValueOrDefault<string[]>(Array, row.types).map((value, index) => (
-        <IconType
-          key={index}
-          width={25}
-          height={25}
-          className="tw-mr-2"
-          alt="Pokémon GO Type Logo"
-          title={capitalize(value)}
-          type={value}
-        />
-      )),
+    selector: (row) => (
+      <span className="tw-inline-flex" data-tag="allowRowEvents">
+        {getValueOrDefault<string[]>(Array, row.types).map((value, index) => (
+          <IconType
+            key={index}
+            width={25}
+            height={25}
+            className="tw-mr-2 tw-pointer-events-none"
+            alt="Pokémon GO Type Logo"
+            title={capitalize(value)}
+            type={value}
+          />
+        ))}
+      </span>
+    ),
     width: '150px',
   },
   { id: ColumnType.Atk, name: 'ATK', selector: (row) => toNumber(row.atk.attack), sortable: true, width: '100px' },
@@ -124,6 +144,11 @@ interface StatsRankingResponse {
   data: IPokemonStatsRanking[];
   selected?: IPokemonStatsRanking;
   meta: { page: number; total: number; pages: number };
+}
+
+interface StatsRankingPokemonBundle {
+  moveRankings: PokemonMoveRanking[];
+  varieties: PokemonBundleVariety[];
 }
 
 const getSortId = (statsType: string | null) => {
@@ -181,9 +206,9 @@ const StatsRanking = () => {
   });
   const [searchParams, setSearchParams] = useSearchParams();
   const [select, setSelect] = useState<IPokemonStatsRanking>();
-  const [moveRankings, setMoveRankings] = useState<{ id: number; data: PokemonMoveRanking[] }>();
+  const [pokemonBundle, setPokemonBundle] = useState<{ id: number; data: StatsRankingPokemonBundle }>();
   const [movesLoading, setMovesLoading] = useState(false);
-  const moveRankingsCache = useRef(new Map<number, PokemonMoveRanking[]>());
+  const pokemonBundleCache = useRef(new Map<number, StatsRankingPokemonBundle>());
   const [rows, setRows] = useState<IPokemonStatsRanking[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
@@ -206,9 +231,39 @@ const StatsRanking = () => {
   const sortId = getSortId(paramStatsType);
   const routeTarget = `${paramId}|${paramForm}|${paramFormType}|${paramStatsType}`;
   const selectedId = select?.num;
+  const selectedBundle = selectedId && pokemonBundle?.id === selectedId ? pokemonBundle.data : undefined;
+  const selectedFormIdentity = normalizePokemonFormIdentity(selectedId ?? 0, select?.form ?? 'NORMAL');
+  const selectedForm = selectedBundle?.varieties
+    .flatMap(({ forms }) => forms)
+    .find((form) => {
+      const formIdentity = normalizePokemonFormIdentity(
+        selectedId ?? 0,
+        form.form_name || (form.is_default ? 'NORMAL' : form.name)
+      );
+      return formIdentity === selectedFormIdentity;
+    });
+  const fallbackForm = selectedBundle?.varieties.flatMap(({ forms }) => forms).find((form) => form.is_default);
+  const selectedPreferredImage = getPreferredPokemonFormSprite(
+    PokemonSprite.setDetails((selectedForm ?? fallbackForm)?.sprites)
+  );
+  const selectedOfficialImage = selectedId ? APIService.getPokeOfficialArtwork(selectedId) : undefined;
+  const selectedImageForm = convertPokemonImageName(
+    select && isEqual(select.baseForme, select.form) ? '' : select?.form
+  );
+  const selectedHybridImage = selectedId ? APIService.getPokeFullSprite(selectedId, selectedImageForm) : undefined;
+  const selectedImageCandidates =
+    selectedId && selectedBundle
+      ? [selectedPreferredImage, selectedOfficialImage, selectedHybridImage, APIService.getPokeFullAsset(selectedId)]
+      : [];
+  const { displayedUrl: selectedImage, isLoading: isSelectedImageLoading } = usePreloadedImage(
+    selectedImageCandidates,
+    APIService.getPokeSprite(),
+    [selectedPreferredImage, selectedOfficialImage, selectedHybridImage]
+  );
+  const showSelectedImageSkeleton = !selectedId || loading || !selectedBundle || isSelectedImageLoading;
   const moveRanking =
-    select && moveRankings?.id === select.num
-      ? moveRankings.data.find(
+    select && selectedBundle
+      ? selectedBundle.moveRankings.find(
           (item) =>
             item.pokemonType === (select.pokemonType ?? PokemonType.Normal) &&
             ((select.fullName && isEqual(item.fullName, select.fullName)) ||
@@ -224,24 +279,27 @@ const StatsRanking = () => {
     if (!selectedId) {
       return;
     }
-    const cached = moveRankingsCache.current.get(selectedId);
+    const cached = pokemonBundleCache.current.get(selectedId);
     if (cached) {
-      setMoveRankings({ id: selectedId, data: cached });
+      setPokemonBundle({ id: selectedId, data: cached });
       setMovesLoading(false);
       return;
     }
     const controller = new AbortController();
-    setMoveRankings(undefined);
+    setPokemonBundle(undefined);
     setMovesLoading(true);
     APIService.getPokemonBundle(selectedId, { signal: controller.signal })
       .then(({ data }) => {
-        const rankings = data.data.moveRankings ?? [];
-        moveRankingsCache.current.set(selectedId, rankings);
-        setMoveRankings({ id: selectedId, data: rankings });
+        const bundle = {
+          moveRankings: data.data.moveRankings ?? [],
+          varieties: data.data.varieties,
+        };
+        pokemonBundleCache.current.set(selectedId, bundle);
+        setPokemonBundle({ id: selectedId, data: bundle });
       })
       .catch((error) => {
         if (!APIService.isCancel(error)) {
-          setMoveRankings({ id: selectedId, data: [] });
+          setPokemonBundle({ id: selectedId, data: { moveRankings: [], varieties: [] } });
         }
       })
       .finally(() => {
@@ -399,19 +457,16 @@ const StatsRanking = () => {
     <div className="tw-pb-3 tw-relative poke-container tw-container">
       <div className="tw-w-full tw-inline-block tw-align-middle tw-my-3">
         <div className="tw-flex tw-justify-center tw-w-full">
-          <div className="tw-inline-block img-desc">
-            <img
-              className="pokemon-main-sprite !tw-align-baseline"
-              alt="Image Pokemon"
-              src={APIService.getPokeFullSprite(
-                select?.num,
-                convertPokemonImageName(select && isEqual(select.baseForme, select.form) ? '' : select?.form)
-              )}
-              onError={(event) => {
-                event.currentTarget.onerror = null;
-                event.currentTarget.src = getValidPokemonImgPath(event.currentTarget.src, select?.num);
-              }}
-            />
+          <div
+            className="tw-inline-flex tw-items-center tw-justify-center img-desc"
+            aria-busy={showSelectedImageSkeleton}
+            data-testid="stats-ranking-profile-image"
+          >
+            {showSelectedImageSkeleton ? (
+              <PokemonProfileImageSkeleton testId="stats-ranking-profile-image-skeleton" />
+            ) : (
+              <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={selectedImage} />
+            )}
           </div>
         </div>
         <div className="tw-grid tw-grid-cols-1 xl:tw-grid-cols-12 tw-w-full !tw-mt-2">
@@ -434,7 +489,7 @@ const StatsRanking = () => {
                 moveData={moveRanking?.moves}
                 rankMoveData={moveRanking?.bestMoves}
                 pokemonType={select.pokemonType}
-                isLoading={movesLoading || moveRankings?.id !== select.num}
+                isLoading={movesLoading || pokemonBundle?.id !== select.num}
                 maxHeight={400}
               />
             </div>

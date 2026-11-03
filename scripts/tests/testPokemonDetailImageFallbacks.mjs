@@ -27,7 +27,12 @@ assert.match(specialForm, /\.\.\.imageSources,[\s\S]*APIService\.getPokeSprite\(
 assert.doesNotMatch(specialForm, /sourceIndex|setSourceIndex/);
 assert.match(form, /const isCurrentPokemonLoaded = Boolean\(/);
 assert.match(form, /!params\.id \|\| Number\(params\.id\) === props\.defaultId/);
-assert.match(form, /searchingMainDetails\?\.id === props\.defaultId/);
+assert.match(form, /searchingMainForm\?\.defaultId === props\.defaultId/);
+assert.match(
+  form,
+  /props\.formList\.some\(\(forms\) => forms\.some\(\(form\) => form\.defaultId === props\.defaultId\)\)/,
+  'Loaded form content must belong to the current Pokémon before image-backed sections are shown.'
+);
 assert.match(form, /isCurrentPokemonLoaded && \(\s*<SpecialForm/);
 assert.match(evolution, /if \(formVaries\) \{\s*return \[\];/);
 assert.match(evolution, /exactMiniIcon !== undefined[\s\S]*<PokemonTableIcon/);

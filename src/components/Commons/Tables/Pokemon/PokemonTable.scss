@@ -15,7 +15,7 @@
   width: 25% !important;
   text-align: start !important;
 
-  @apply tw-min-w-[180px];
+  @apply tw-min-w-[110px] sm:tw-min-w-[180px];
 }
 
 .table-desc tbody tr:nth-child(odd) td,

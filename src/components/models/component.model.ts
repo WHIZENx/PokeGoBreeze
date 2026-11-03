@@ -94,6 +94,7 @@ export interface IEffectiveComponent {
 export interface ITypeEffectiveComponent {
   typeEffective: ITypeEffectiveChart | undefined;
   perspective?: 'attacker' | 'defender';
+  variant?: 'default' | 'summary';
 }
 
 export interface ITypeEffectiveSelectComponent {

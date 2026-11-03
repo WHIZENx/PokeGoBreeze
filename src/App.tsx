@@ -70,6 +70,7 @@ import { useDispatch } from 'react-redux';
 import useDataStore from './composables/useDataStore';
 import { getProcessedDataSectionsForRoute } from './utils/configs/processed-data-routes.config';
 import type { ProcessedDataSection } from './services/processed-data.service';
+import { flushPendingNavigationScroll } from './components/Link/LinkToTop';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -78,6 +79,7 @@ const ColorModeContext = createContext({
 function RouteReady({ location }: { location: Location }) {
   const dispatch = useDispatch();
   useEffect(() => {
+    flushPendingNavigationScroll();
     createProgressHelpers(dispatch).completeProgress();
   }, [dispatch, location]);
   return null;
