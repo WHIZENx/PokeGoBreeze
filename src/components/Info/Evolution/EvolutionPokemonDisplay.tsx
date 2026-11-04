@@ -1,5 +1,5 @@
 import { Badge } from '@mui/material';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/api.service';
 import useAssets from '../../../composables/useAssets';
@@ -40,10 +40,29 @@ const EvolutionPokemonDisplay = ({
     if (staticAsset) {
       sources.push(APIService.getPokemonSqModel(staticAsset));
     }
+    const normalizedForm = form.replaceAll('-', '_').toUpperCase();
+    const isOrdinaryDefaultForm =
+      (normalizedForm === '' || normalizedForm === 'NORMAL') &&
+      (pokemonType === PokemonType.None || pokemonType === PokemonType.Normal);
+    if (isOrdinaryDefaultForm) {
+      sources.push(APIService.getPokeSprite(id));
+    }
     return [...new Set(sources)];
-  }, [animation, formVaries, staticAsset]);
+  }, [animation, form, formVaries, id, pokemonType, staticAsset]);
   const exactMiniIcon = resolveExactPokemonIconIndex({ num: id, name, sprite, form, pokemonType });
   const { source: activeSource, advanceSource } = useImageSourceSequence(imageSources);
+  const activeImageRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const image = activeImageRef.current;
+    if (!activeSource || !image?.complete) {
+      return;
+    }
+    if (image.naturalWidth === 0) {
+      advanceSource();
+    }
+  }, [activeSource, advanceSource]);
+
   const imageContent = activeSource ? (
     <img
       key={`${id}-${form}-${sprite}-${activeSource}`}
@@ -52,7 +71,8 @@ const EvolutionPokemonDisplay = ({
       data-evolution-sprite={sprite}
       alt={name}
       src={activeSource}
-      loading="lazy"
+      ref={activeImageRef}
+      loading="eager"
       decoding="async"
       referrerPolicy="no-referrer"
       onError={advanceSource}
@@ -75,6 +95,8 @@ const EvolutionPokemonDisplay = ({
       data-evolution-sprite={sprite}
       alt={name}
       src={APIService.getPokeSprite()}
+      loading="eager"
+      decoding="async"
     />
   );
   const image = (

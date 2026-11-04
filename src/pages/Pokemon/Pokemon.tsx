@@ -46,7 +46,6 @@ import {
   splitAndCapitalize,
 } from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
-import Candy from '../../components/Sprites/Candy/Candy';
 import PokemonTable from '../../components/Commons/Tables/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
@@ -63,7 +62,6 @@ import {
   isInclude,
   isNotEmpty,
   isNullOrUndefined,
-  isUndefined,
   toNumber,
 } from '../../utils/extension';
 import { LocationState } from '../../core/models/router.model';
@@ -86,7 +84,6 @@ import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
 import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
-import { Skeleton } from '@mui/material';
 import PokemonProfileImageSkeleton from '../../components/Info/PokemonProfileImageSkeleton';
 import StableHeightSection from '../../components/Layout/StableHeightSection';
 
@@ -168,6 +165,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [pokemonGoAsset, setPokemonGoAsset] = useState<IAsset>();
   const [pokemonGoFusionOptions, setPokemonGoFusionOptions] = useState<PokemonFusionOption[]>([]);
   const [pokemonGoEvolutionChains, setPokemonGoEvolutionChains] = useState<IEvolutionChain[]>([]);
+  const [pokemonGoForms, setPokemonGoForms] = useState<PokemonGoFormCatalogEntry[]>([]);
   const [moveRankings, setMoveRankings] = useState<PokemonMoveRanking[]>([]);
   const [releasedAlert, setReleasedAlert] = useState<ReleasedAlertSnapshot>();
 
@@ -266,6 +264,7 @@ const Pokemon = (props: IPokemonPage) => {
       setPokemonGoAsset(bundledPokemonGoAsset ?? undefined);
       setPokemonGoFusionOptions(bundledFusionOptions);
       setPokemonGoEvolutionChains(bundledPokemonGoEvolutionChains);
+      setPokemonGoForms(bundledPokemonGoForms);
       setMoveRankings(bundledMoveRankings);
 
       const pokemon = getFindPokemon((item) => item.num === specie.id);
@@ -834,17 +833,6 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [getFilteredPokemons, getPokemonIdByParam, getPokemonNavigation, params.id, props.searchOption?.id]);
 
-  const reload = (element: JSX.Element) => {
-    if (progress.isLoadedForms) {
-      return element;
-    }
-    return (
-      <div className="slide-container !tw-w-3/4 !tw-m-0 !tw-p-0 !tw-h-6">
-        <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
-      </div>
-    );
-  };
-
   const currentPokemonId = dataStorePokemon?.current?.id;
   const isMainImageReady = Boolean(
     currentPokemonId && searchingMainForm?.form && searchingMainForm.defaultId === currentPokemonId
@@ -948,79 +936,6 @@ const Pokemon = (props: IPokemonPage) => {
               isLoadedForms={progress.isLoadedForms}
             />
           </div>
-          <div className="tw-inline-block !tw-p-0 tw-align-bottom">
-            <table className="table-info table-main" data-testid="pokemon-cost-table">
-              <thead />
-              <tbody>
-                <tr className="tw-text-center">
-                  <td className="table-sub-header">Unlock third move</td>
-                  <td className="table-sub-header">Costs</td>
-                </tr>
-                <tr className="info-costs">
-                  <td>
-                    <img alt="Image Cost Info" width={100} src={APIService.getItemSprite('Item_1202')} />
-                  </td>
-                  <td className="!tw-p-0">
-                    <div className="tw-flex tw-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
-                      {reload(
-                        <span>
-                          {!isUndefined(costModifier?.thirdMove.candy)
-                            ? `x${costModifier?.thirdMove.candy}`
-                            : 'Unavailable'}
-                        </span>
-                      )}
-                    </div>
-                    <div className="row-extra tw-flex">
-                      <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
-                        <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
-                      </div>
-                      {reload(
-                        <span>
-                          {!isUndefined(costModifier?.thirdMove.stardust)
-                            ? `x${costModifier?.thirdMove.stardust}`
-                            : 'Unavailable'}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-                <tr className="tw-text-center">
-                  <td className="table-sub-header">Purified</td>
-                  <td className="table-sub-header">Costs</td>
-                </tr>
-                <tr className="info-costs">
-                  <td>
-                    <img alt="Image Cost Info" width={60} height={60} src={APIService.getPokePurified()} />
-                  </td>
-                  <td className="!tw-p-0">
-                    <div className="tw-flex tw-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} className="tw-mr-1" />
-                      {reload(
-                        <span>
-                          {!isUndefined(costModifier?.purified.candy)
-                            ? `x${costModifier?.purified.candy}`
-                            : 'Unavailable'}
-                        </span>
-                      )}
-                    </div>
-                    <div className="row-extra tw-flex">
-                      <div className="tw-inline-flex tw-justify-center tw-mr-1 tw-w-5">
-                        <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
-                      </div>
-                      {reload(
-                        <span>
-                          {!isUndefined(costModifier?.purified.stardust)
-                            ? `x${costModifier?.purified.stardust}`
-                            : 'Unavailable'}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </section>
         <FormComponent
           formList={formList}
@@ -1031,7 +946,9 @@ const Pokemon = (props: IPokemonPage) => {
           pokemonGoAsset={pokemonGoAsset}
           pokemonGoFusionOptions={pokemonGoFusionOptions}
           pokemonGoEvolutionChains={pokemonGoEvolutionChains}
+          pokemonGoForms={pokemonGoForms}
           moveRankings={moveRankings}
+          trainingCosts={costModifier}
           isLoadedForms={progress.isLoadedForms}
         />
         <section className="pokemon-detail-section tw-mt-4">
