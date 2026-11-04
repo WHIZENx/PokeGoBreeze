@@ -4,6 +4,8 @@ import iconManifest from '../../../assets/generated/pokemon-icons/pokemon-icon-i
 import iconSheet from '../../../assets/generated/pokemon-icons/pokemonicons-sheet.png';
 import { PokemonType } from '../../../enums/type.enum';
 
+export const pokemonIconSheetSource = iconSheet;
+
 interface PokemonTableIconProps {
   num: number;
   name?: string;

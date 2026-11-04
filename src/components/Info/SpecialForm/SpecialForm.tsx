@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import APIService from '../../../services/api.service';
 import { getKeyWithData, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
 import './SpecialForm.scss';
@@ -31,8 +31,13 @@ const SpecialFormPokemonImage = ({ id, form }: SpecialFormPokemonImageProps) => 
     if (staticAsset) {
       sources.push(APIService.getPokemonSqModel(staticAsset));
     }
+    sources.push(
+      ...[form.sprites?.frontDefault, form.sprites?.frontHome, form.sprites?.frontArtwork].filter(
+        (source): source is string => Boolean(source)
+      )
+    );
     return [...new Set(sources)];
-  }, [animation, staticAsset]);
+  }, [animation, form.sprites, staticAsset]);
   const { source: activeSource, advanceSource } = useImageSourceSequence([...imageSources, APIService.getPokeSprite()]);
   return (
     <img
@@ -55,22 +60,19 @@ const SpecialForm = (props: IFormSpecialComponent) => {
   const { getFindPokemon } = usePokemon();
   const { findMoveByName } = useCombats();
 
-  const [pokemonType, setPokemonType] = useState(PokemonType.None);
-  const [arrEvoList, setArrEvoList] = useState<IForm[]>();
-
-  useEffect(() => {
+  const pokemonType = useMemo(() => {
     if (props.formList.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Mega))) {
-      setPokemonType(PokemonType.Mega);
-    } else if (props.formList.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal))) {
-      setPokemonType(PokemonType.Primal);
-    } else {
-      setPokemonType(PokemonType.None);
+      return PokemonType.Mega;
     }
+    if (props.formList.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal))) {
+      return PokemonType.Primal;
+    }
+    return PokemonType.None;
   }, [props.formList]);
 
-  useEffect(() => {
+  const arrEvoList = useMemo(() => {
     if (isNotEmpty(props.formList) && pokemonType !== PokemonType.None) {
-      const result = props.formList
+      return props.formList
         .filter((item) => item[0]?.form.pokemonType === pokemonType)
         .map((item) => {
           const form = item.at(0);
@@ -80,10 +82,8 @@ const SpecialForm = (props: IFormSpecialComponent) => {
           return form.form;
         })
         .filter((item) => !isUndefined(item.id));
-      setArrEvoList(result);
-    } else {
-      setArrEvoList([]);
     }
+    return [];
   }, [pokemonType, props.formList]);
 
   const getQuestEvo = (name: string) => {

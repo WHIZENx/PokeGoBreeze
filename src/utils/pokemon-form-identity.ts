@@ -201,6 +201,26 @@ export const pokemonGoFormIdentityKey = (pokemon: PokemonGoFormIdentity) => {
   return `${pokemon.num}:${pokemonType}:${identity}`;
 };
 
+export const findPokemonGoFormIdentityMatch = <T extends PokemonGoFormIdentity>(
+  pokemons: readonly T[] | undefined,
+  selection: PokemonGoFormIdentity
+) => {
+  if (!pokemons?.length) {
+    return undefined;
+  }
+  const selectedType = selection.pokemonType ?? 0;
+  const candidateTypes = selectedType === 0 ? [0, 1] : selectedType === 1 ? [1, 0] : [selectedType];
+  const form = selection.form || 'NORMAL';
+  for (const pokemonType of candidateTypes) {
+    const selectedKey = pokemonGoFormIdentityKey({ ...selection, form, pokemonType });
+    const match = pokemons.find((pokemon) => pokemonGoFormIdentityKey(pokemon) === selectedKey);
+    if (match) {
+      return match;
+    }
+  }
+  return undefined;
+};
+
 export const pokemonGoFormIdentityPriority = (pokemon: PokemonGoFormIdentity) =>
   Number(
     String(pokemon.form ?? '')
