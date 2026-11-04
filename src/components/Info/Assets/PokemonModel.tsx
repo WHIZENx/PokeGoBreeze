@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
@@ -25,7 +25,23 @@ interface PokemonAssetImageProps {
   resolvedSource: string | undefined;
 }
 
-const POKEMON_ASSET_SKELETON_COUNT = 4;
+const DEFAULT_POKEMON_ASSET_SKELETON_COUNT = 4;
+
+interface AssetLoadingSnapshot {
+  assetGroupCount: number;
+  hasUnavailableAssets: boolean;
+  originCryCount: number;
+  pokemonGoCryCount: number;
+  hasUnavailableCries: boolean;
+}
+
+const DEFAULT_ASSET_LOADING_SNAPSHOT: AssetLoadingSnapshot = {
+  assetGroupCount: DEFAULT_POKEMON_ASSET_SKELETON_COUNT,
+  hasUnavailableAssets: false,
+  originCryCount: 1,
+  pokemonGoCryCount: 1,
+  hasUnavailableCries: false,
+};
 
 const CompactUnavailable = ({ icon, label, testId }: { icon: React.ReactNode; label: string; testId: string }) => (
   <div
@@ -60,6 +76,22 @@ const PokemonAssetImage = ({ candidates, resolvedSource }: PokemonAssetImageProp
 
   return <img className="pokemon-sprite-model" alt="Pokémon Model" src={source} onError={advanceSource} />;
 };
+
+const CrySourceSkeleton = ({ label, count }: { label: string; count: number }) => (
+  <section className="tw-min-w-0" data-testid="pokemon-cry-source-skeleton" data-skeleton-count={count}>
+    <h5 className="!tw-m-0 !tw-mb-3">
+      <Chip component="span" label={label} size="small" variant="outlined" />
+    </h5>
+    <div className="tw-flex tw-min-w-0 tw-flex-col tw-gap-4">
+      {Array.from({ length: count }, (_, index) => (
+        <div className="tw-min-w-0" key={index}>
+          <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-mb-2 !tw-w-28" />
+          <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" className="!tw-h-8 !tw-w-full" />
+        </div>
+      ))}
+    </div>
+  </section>
+);
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const { findAssetsById } = useAssets();
@@ -135,6 +167,26 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const hasOriginCries = isNotEmpty(availableOriginSoundCries);
   const hasPokemonGoCries = isNotEmpty(asset?.sound.cry);
   const hasAnyCry = hasOriginCries || hasPokemonGoCries;
+  const originCryCount = availableOriginSoundCries.reduce(
+    (count, value) => count + safeObjectEntries(value.cries).filter(([, source]) => Boolean(source)).length,
+    0
+  );
+  const pokemonGoCryCount = asset?.sound.cry.length ?? 0;
+  const lastLoadedAssetSnapshot = useRef<AssetLoadingSnapshot>(DEFAULT_ASSET_LOADING_SNAPSHOT);
+
+  useEffect(() => {
+    if (areAssetImagesLoaded) {
+      lastLoadedAssetSnapshot.current = {
+        assetGroupCount: pokeAssets.length,
+        hasUnavailableAssets: !hasPokemonGoAssets,
+        originCryCount,
+        pokemonGoCryCount,
+        hasUnavailableCries: !hasAnyCry,
+      };
+    }
+  }, [areAssetImagesLoaded, hasAnyCry, hasPokemonGoAssets, originCryCount, pokeAssets.length, pokemonGoCryCount]);
+
+  const loadingSnapshot = lastLoadedAssetSnapshot.current;
 
   const renderGender = (candidates: string[], resolvedSource: string | undefined, tag: string) => (
     <div className="tw-flex tw-flex-col tw-w-full tw-justify-center tw-items-center">
@@ -161,8 +213,12 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         >
           {!areAssetImagesLoaded ? (
             <div className="tw-flex tw-w-full tw-flex-wrap" data-testid="pokemon-assets-skeleton">
-              {Array.from({ length: POKEMON_ASSET_SKELETON_COUNT }, (_, index) => (
-                <div key={index} className="group-model tw-h-[206px] tw-w-[234px] tw-max-w-full">
+              {Array.from({ length: loadingSnapshot.assetGroupCount }, (_, index) => (
+                <div
+                  key={index}
+                  className="group-model tw-h-[206px] tw-w-[234px] tw-max-w-full"
+                  data-testid="pokemon-asset-skeleton-card"
+                >
                   <Skeleton
                     data-skeleton-surface="page"
                     variant="rounded"
@@ -171,6 +227,15 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                   />
                 </div>
               ))}
+              {loadingSnapshot.hasUnavailableAssets && (
+                <Skeleton
+                  data-skeleton-surface="page"
+                  variant="rounded"
+                  animation="wave"
+                  className="!tw-h-10 !tw-w-72 !tw-max-w-full"
+                  data-testid="pokemon-assets-unavailable-skeleton"
+                />
+              )}
             </div>
           ) : (
             <Fragment>
@@ -262,9 +327,31 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           )}
         </h4>
         {!props.isLoadedForms ? (
-          <div className="tw-grid tw-grid-cols-1 tw-gap-6 lg:tw-grid-cols-2" data-testid="pokemon-cry-sources">
-            <Skeleton variant="rounded" animation="wave" data-skeleton-surface="page" className="!tw-h-9 !tw-w-full" />
-            <Skeleton variant="rounded" animation="wave" data-skeleton-surface="page" className="!tw-h-9 !tw-w-full" />
+          <div
+            className={combineClasses(
+              'tw-grid tw-grid-cols-1 tw-gap-6',
+              loadingSnapshot.originCryCount > 0 && loadingSnapshot.pokemonGoCryCount > 0
+                ? 'lg:tw-grid-cols-2'
+                : 'lg:tw-max-w-3xl'
+            )}
+            data-testid="pokemon-cry-sources"
+            aria-busy="true"
+          >
+            {loadingSnapshot.originCryCount > 0 && (
+              <CrySourceSkeleton label="Pokémon Origin" count={loadingSnapshot.originCryCount} />
+            )}
+            {loadingSnapshot.pokemonGoCryCount > 0 && (
+              <CrySourceSkeleton label="Pokémon GO" count={loadingSnapshot.pokemonGoCryCount} />
+            )}
+            {loadingSnapshot.hasUnavailableCries && (
+              <Skeleton
+                data-skeleton-surface="page"
+                variant="rounded"
+                animation="wave"
+                className="!tw-h-10 !tw-w-64 !tw-max-w-full"
+                data-testid="pokemon-cries-unavailable-skeleton"
+              />
+            )}
           </div>
         ) : !hasAnyCry ? (
           <CompactUnavailable

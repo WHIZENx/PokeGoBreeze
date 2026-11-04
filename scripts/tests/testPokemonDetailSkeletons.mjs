@@ -21,6 +21,8 @@ const [
   stableHeightSection,
   encounterTraining,
   trainingCosts,
+  evolutionSupplementSkeleton,
+  specialForm,
   theme,
   variables,
 ] = await Promise.all([
@@ -41,6 +43,8 @@ const [
   readFile(new URL('../../src/components/Layout/StableHeightSection.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Encounter/EncounterTraining.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/TrainingCosts/TrainingCosts.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Evolution/EvolutionSupplementSkeleton.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/SpecialForm/SpecialForm.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
   readFile(new URL('../../src/assets/styles/variables.scss', import.meta.url), 'utf8'),
 ]);
@@ -58,12 +62,39 @@ assert.match(evolution, /evo-chain tw-inline-flex tw-h-64/);
 assert.match(evolution, /const areEvolutionAssetsReady =/);
 assert.match(
   evolution,
-  /const hasEvolutionData = props\.isLoadedForms && resolvedEvolutionRequestKey === evolutionRequestKey/
+  /const canStartReusingResolvedEvolutionChain = Boolean\([\s\S]*requestedPokemonId !== resolvedEvolutionRequest\.pokemonId[\s\S]*isRequestedPokemonInResolvedChain/
 );
+assert.match(
+  evolution,
+  /canStartReusingResolvedEvolutionChain \|\|[\s\S]*isReusingResolvedEvolutionChain && isRequestedPokemonInResolvedChain/
+);
+assert.match(
+  evolution,
+  /const hasEvolutionData =[\s\S]*props\.isLoadedForms && resolvedEvolutionRequest\.requestKey === evolutionRequestKey[\s\S]*canReuseResolvedEvolutionChain/
+);
+assert.match(
+  evolution,
+  /isReusingResolvedEvolutionChain &&[\s\S]*props\.isLoadedForms &&[\s\S]*resolvedEvolutionRequest\.requestKey === evolutionRequestKey[\s\S]*setIsReusingResolvedEvolutionChain\(false\)/
+);
+assert.match(evolution, /const requestedPokemonId = pendingCurrentPokemonId \?\? toNumber\(params\.id, props\.id\)/);
+assert.match(evolution, /pendingCurrentPokemonId === props\.id && props\.isLoadedForms/);
+assert.equal(
+  evolution.match(/setPendingCurrentPokemonId\(value\.id\)/g)?.length,
+  2,
+  'Both embedded and routed Evolution selections must move the Current marker at click time.'
+);
+assert.match(
+  evolution,
+  /arrEvoList\.some\(\(stage\) => stage\.some\(\(pokemon\) => pokemon\.id === requestedPokemonId\)\)/
+);
+assert.match(evolution, /const hasRequestedPokemonDetails = props\.pokemonData\?\.id === requestedPokemonId/);
+assert.match(evolution, /requestedEvolutionNodes\.length === 1[\s\S]*requestedEvolutionNodes\[0\]/);
+assert.match(evolution, /data-testid="evolution-current-marker"/);
+assert.match(evolution, /data-evolution-current-id=\{value\.id\}/);
 assert.doesNotMatch(
   evolution,
   /props\.isLoadedForms \|\|[\s\S]*arrEvoList\.some/,
-  'Intermediate evolution data must not reveal the chain before the final form payload is ready.'
+  'Evolution reuse must be scoped to a previously resolved chain instead of revealing arbitrary intermediate data.'
 );
 assert.match(
   evolution,
@@ -93,8 +124,8 @@ assert.match(assets, /title-evo !tw-m-0 !tw-mb-3/);
 assert.match(assets, /title-evo !tw-m-0 !tw-mb-4/);
 assert.equal(
   assets.match(/<h5 className="!tw-m-0 !tw-mb-3">/g)?.length,
-  2,
-  'Both cry source headings must retain their spacing after the important margin reset.'
+  3,
+  'Loaded and skeleton cry source headings must retain their spacing after the important margin reset.'
 );
 assert.match(assets, /const hasAnyCry = hasOriginCries \|\| hasPokemonGoCries/);
 assert.match(assets, /hasOriginCries && hasPokemonGoCries \? 'lg:tw-grid-cols-2' : 'lg:tw-max-w-3xl'/);
@@ -102,7 +133,11 @@ assert.match(assets, /preload="metadata"/);
 assert.doesNotMatch(assets, /Assets in Pokémon GO unavailable/);
 assert.doesNotMatch(assets, /Sound in Pokémon GO unavailable\./);
 assert.match(assets, /data-testid="pokemon-cry-sources"/);
-assert.match(assets, /tw-grid tw-grid-cols-1 tw-gap-6 lg:tw-grid-cols-2/);
+assert.match(assets, /'tw-grid tw-grid-cols-1 tw-gap-6'/);
+assert.match(
+  assets,
+  /loadingSnapshot\.originCryCount > 0 && loadingSnapshot\.pokemonGoCryCount > 0\s+\? 'lg:tw-grid-cols-2'/
+);
 assert.match(assets, /label="Pokémon Origin" size="small" variant="outlined"/);
 assert.match(assets, /label="Pokémon GO" size="small" variant="outlined"/);
 assert.doesNotMatch(assets, /tw-list-(?:disc|circle)/);
@@ -110,8 +145,16 @@ assert.doesNotMatch(assets, /getPokemonGoIcon/);
 assert.doesNotMatch(assets, /Assets of .* in Pokémon GO/);
 assert.doesNotMatch(assets, /Sound of /);
 assert.match(assets, /data-testid="pokemon-assets-skeleton"/);
-assert.match(assets, /const POKEMON_ASSET_SKELETON_COUNT = 4/);
-assert.match(assets, /Array\.from\(\{ length: POKEMON_ASSET_SKELETON_COUNT \}/);
+assert.match(assets, /const DEFAULT_POKEMON_ASSET_SKELETON_COUNT = 4/);
+assert.match(assets, /const lastLoadedAssetSnapshot = useRef<AssetLoadingSnapshot>/);
+assert.match(assets, /assetGroupCount: pokeAssets\.length/);
+assert.match(assets, /originCryCount/);
+assert.match(assets, /pokemonGoCryCount/);
+assert.match(assets, /Array\.from\(\{ length: loadingSnapshot\.assetGroupCount \}/);
+assert.match(assets, /data-testid="pokemon-asset-skeleton-card"/);
+assert.match(assets, /data-testid="pokemon-cry-source-skeleton" data-skeleton-count=\{count\}/);
+assert.match(assets, /<CrySourceSkeleton label="Pokémon Origin" count=\{loadingSnapshot\.originCryCount\} \/>/);
+assert.match(assets, /<CrySourceSkeleton label="Pokémon GO" count=\{loadingSnapshot\.pokemonGoCryCount\} \/>/);
 assert.match(
   assets,
   /Promise\.all\(imageRequests\.map\(\(\{ candidates \}\) => preloadFirstAvailableImage\(candidates\)\)\)/
@@ -182,6 +225,20 @@ assert.match(form, /<h4 className="info-title">\s*<b>Form varieties<\/b>\s*<\/h4
 assert.match(form, /<h4 className="info-title">\s*<b>Gender ratio<\/b>\s*<\/h4>/);
 assert.match(form, /<h4 className="info-title">\s*<b>Pokémon stats<\/b>\s*<\/h4>/);
 assert.match(form, /data-testid="pokemon-information-card"/);
+assert.match(form, /const lastLoadedEvolutionSupplement = useRef<EvolutionSupplementSnapshot>/);
+assert.match(
+  form,
+  /if \(isCurrentPokemonLoaded\) \{[\s\S]*lastLoadedEvolutionSupplement\.current = currentEvolutionSupplement/
+);
+assert.match(form, /testId="mega-evolution-loading"/);
+assert.match(form, /testId="form-change-loading"/);
+assert.match(form, /testId="fusion-loading"/);
+assert.match(evolutionSupplementSkeleton, /data-skeleton-surface="page"/);
+assert.match(evolutionSupplementSkeleton, /variant\?: 'card' \| 'relationship'/);
+assert.match(evolutionSupplementSkeleton, /aria-label=\{`Loading \$\{title\}`\}/);
+assert.match(specialForm, /const pokemonType = useMemo\(\(\) =>/);
+assert.match(specialForm, /const arrEvoList = useMemo\(\(\) =>/);
+assert.doesNotMatch(specialForm, /setArrEvoList|setPokemonType/);
 assert.match(form, /minHeight=\{320\} testId="pokemon-information-section"/);
 assert.match(form, /data-testid="pokemon-battle-card"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Battle data<\/b>\s*<\/h4>/);

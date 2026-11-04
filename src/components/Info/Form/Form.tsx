@@ -43,6 +43,7 @@ import StableHeightSection from '../../Layout/StableHeightSection';
 import EncounterTraining from '../Encounter/EncounterTraining';
 import { findPokemonGoFormIdentityMatch } from '../../../utils/pokemon-form-identity';
 import TrainingCosts from '../TrainingCosts/TrainingCosts';
+import EvolutionSupplementSkeleton from '../Evolution/EvolutionSupplementSkeleton';
 
 const unavailablePokemonMoves: PokemonMoves = {
   fastMoves: [],
@@ -56,6 +57,12 @@ const unavailablePokemonMoves: PokemonMoves = {
   dynamaxMoves: [],
 };
 const unavailableBestMoves: IPokemonQueryRankMove = { data: [] };
+
+interface EvolutionSupplementSnapshot {
+  specialFormTitle?: 'Mega Evolution' | 'Primal Reversion';
+  hasFormChange: boolean;
+  hasFusion: boolean;
+}
 
 const hasSpriteImage = (sprite: IPokemonSprite | undefined) =>
   Object.values(sprite ?? {}).some((value) => typeof value === 'string' && Boolean(value.trim()));
@@ -126,6 +133,37 @@ const FormComponent = (props: IFormInfoComponent) => {
       searchingMainForm?.defaultId === props.defaultId &&
       props.formList.some((forms) => forms.some((form) => form.defaultId === props.defaultId))
   );
+  const currentEvolutionSupplement = useMemo<EvolutionSupplementSnapshot>(() => {
+    const isBaseEvolutionView =
+      searchingMainDetails?.pokemonType !== PokemonType.GMax && !isSpecialFormType(searchingMainDetails?.pokemonType);
+    const hasMega = props.formList.some((forms) =>
+      forms.some((pokemon) => pokemon.form.pokemonType === PokemonType.Mega)
+    );
+    const hasPrimal = props.formList.some((forms) =>
+      forms.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal)
+    );
+    return {
+      specialFormTitle: isBaseEvolutionView
+        ? hasMega
+          ? 'Mega Evolution'
+          : hasPrimal
+            ? 'Primal Reversion'
+            : undefined
+        : undefined,
+      hasFormChange: isNotEmpty(searchingMainDetails?.formChange),
+      hasFusion: Boolean(props.defaultId && props.pokemonGoFusionOptions?.length),
+    };
+  }, [props.defaultId, props.formList, props.pokemonGoFusionOptions, searchingMainDetails]);
+  const lastLoadedEvolutionSupplement = useRef<EvolutionSupplementSnapshot>({
+    hasFormChange: false,
+    hasFusion: false,
+  });
+
+  useEffect(() => {
+    if (isCurrentPokemonLoaded) {
+      lastLoadedEvolutionSupplement.current = currentEvolutionSupplement;
+    }
+  }, [currentEvolutionSupplement, isCurrentPokemonLoaded]);
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
   const currentGenderRatio =
@@ -365,33 +403,46 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const renderEvolutionContent = () => (
     <>
-      {searchingMainDetails?.pokemonType !== PokemonType.GMax &&
-      !isSpecialFormType(searchingMainDetails?.pokemonType) ? (
-        <div className="tw-w-full">
-          <div className="tw-w-full tw-relative" data-testid="evolution-section">
-            {renderEvolution()}
-          </div>
-          {isCurrentPokemonLoaded && (
-            <SpecialForm
-              className="tw-mt-8 tw-w-full tw-relative !tw-p-0"
-              formList={props.formList}
-              id={props.defaultId}
-            />
-          )}
+      <div className="tw-w-full">
+        <div className="tw-w-full tw-relative" data-testid="evolution-section">
+          {renderEvolution()}
         </div>
-      ) : (
-        renderEvolution()
-      )}
-      {isNotEmpty(searchingMainDetails?.formChange) && (
-        <FromChange currentId={props.defaultId} pokemonData={searchingMainDetails} />
-      )}
-      {isCurrentPokemonLoaded && props.defaultId && Boolean(props.pokemonGoFusionOptions?.length) && (
-        <Fusion
-          options={props.pokemonGoFusionOptions ?? []}
-          componentId={props.defaultId}
-          componentName={searchingMainDetails?.pokemonId ?? ''}
-        />
-      )}
+        {isCurrentPokemonLoaded
+          ? searchingMainDetails?.pokemonType !== PokemonType.GMax &&
+            !isSpecialFormType(searchingMainDetails?.pokemonType) && (
+              <SpecialForm
+                className="tw-mt-8 tw-w-full tw-relative !tw-p-0"
+                formList={props.formList}
+                id={props.defaultId}
+              />
+            )
+          : lastLoadedEvolutionSupplement.current.specialFormTitle && (
+              <EvolutionSupplementSkeleton
+                title={lastLoadedEvolutionSupplement.current.specialFormTitle}
+                testId="mega-evolution-loading"
+                variant="card"
+              />
+            )}
+      </div>
+      {isCurrentPokemonLoaded
+        ? isNotEmpty(searchingMainDetails?.formChange) && (
+            <FromChange currentId={props.defaultId} pokemonData={searchingMainDetails} />
+          )
+        : lastLoadedEvolutionSupplement.current.hasFormChange && (
+            <EvolutionSupplementSkeleton title="Form Change" testId="form-change-loading" />
+          )}
+      {isCurrentPokemonLoaded
+        ? props.defaultId &&
+          Boolean(props.pokemonGoFusionOptions?.length) && (
+            <Fusion
+              options={props.pokemonGoFusionOptions ?? []}
+              componentId={props.defaultId}
+              componentName={searchingMainDetails?.pokemonId ?? ''}
+            />
+          )
+        : lastLoadedEvolutionSupplement.current.hasFusion && (
+            <EvolutionSupplementSkeleton title="Fusion" testId="fusion-loading" />
+          )}
     </>
   );
 

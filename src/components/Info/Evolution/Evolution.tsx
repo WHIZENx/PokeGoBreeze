@@ -22,7 +22,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import QuestRequirements from './QuestRequirements';
 import React, { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Xarrow from 'react-xarrows';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import APIService from '../../../services/api.service';
 
 import './Evolution.scss';
@@ -104,6 +104,9 @@ class PokemonEvo implements IPokemonEvo {
 
 const Evolution = (props: IEvolutionComponent) => {
   const { findPokemonByIdAndForm, getEvolutionParents, getPokemonById } = usePokemon();
+  const params = useParams();
+  const [pendingCurrentPokemonId, setPendingCurrentPokemonId] = useState<number>();
+  const requestedPokemonId = pendingCurrentPokemonId ?? toNumber(params.id, props.id);
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
   const evolutionRequestKey = JSON.stringify([
     props.pokemonData?.id,
@@ -113,7 +116,11 @@ const Evolution = (props: IEvolutionComponent) => {
     props.pokemonData?.evoList,
     props.pokemonData?.tempEvo,
   ]);
-  const [resolvedEvolutionRequestKey, setResolvedEvolutionRequestKey] = useState('');
+  const [resolvedEvolutionRequest, setResolvedEvolutionRequest] = useState<{
+    pokemonId?: number;
+    requestKey: string;
+  }>({ requestKey: '' });
+  const [isReusingResolvedEvolutionChain, setIsReusingResolvedEvolutionChain] = useState(false);
   const [evolutionMinHeight, setEvolutionMinHeight] = useState(0);
   const evolutionContainerRef = useRef<HTMLDivElement>(null);
   const evolutionAssetKeys = useMemo(
@@ -146,7 +153,38 @@ const Evolution = (props: IEvolutionComponent) => {
     },
     [evolutionAssetSetKey]
   );
-  const hasEvolutionData = props.isLoadedForms && resolvedEvolutionRequestKey === evolutionRequestKey;
+  const isRequestedPokemonInResolvedChain = Boolean(
+    requestedPokemonId && arrEvoList.some((stage) => stage.some((pokemon) => pokemon.id === requestedPokemonId))
+  );
+  const canStartReusingResolvedEvolutionChain = Boolean(
+    resolvedEvolutionRequest.requestKey &&
+      requestedPokemonId &&
+      resolvedEvolutionRequest.pokemonId &&
+      requestedPokemonId !== resolvedEvolutionRequest.pokemonId &&
+      isRequestedPokemonInResolvedChain
+  );
+  const canReuseResolvedEvolutionChain =
+    canStartReusingResolvedEvolutionChain || (isReusingResolvedEvolutionChain && isRequestedPokemonInResolvedChain);
+  const hasEvolutionData =
+    (props.isLoadedForms && resolvedEvolutionRequest.requestKey === evolutionRequestKey) ||
+    canReuseResolvedEvolutionChain;
+  const requestedEvolutionNodes = arrEvoList
+    .flatMap((stage) => stage)
+    .filter((pokemon) => pokemon.id === requestedPokemonId);
+  const hasRequestedPokemonDetails = props.pokemonData?.id === requestedPokemonId;
+  const currentEvolutionIdentity = hasRequestedPokemonDetails
+    ? {
+        form: generateFormName(
+          props.pokemonData?.form,
+          props.pokemonData?.pokemonType ?? PokemonType.Normal,
+          '-'
+        ).toUpperCase(),
+        id: requestedPokemonId,
+        pokemonType: props.pokemonData?.pokemonType,
+      }
+    : requestedEvolutionNodes.length === 1
+      ? requestedEvolutionNodes[0]
+      : undefined;
   const areEvolutionPokemonAssetsReady =
     hasEvolutionData &&
     evolutionAssetKeys.length > 0 &&
@@ -156,6 +194,39 @@ const Evolution = (props: IEvolutionComponent) => {
     areEvolutionPokemonAssetsReady &&
     evolutionDomImageState.assetSetKey === evolutionAssetSetKey &&
     evolutionDomImageState.ready;
+
+  useEffect(() => {
+    if (pendingCurrentPokemonId === props.id && props.isLoadedForms) {
+      setPendingCurrentPokemonId(undefined);
+    }
+  }, [pendingCurrentPokemonId, props.id, props.isLoadedForms]);
+
+  useEffect(() => {
+    if (!isRequestedPokemonInResolvedChain) {
+      if (isReusingResolvedEvolutionChain) {
+        setIsReusingResolvedEvolutionChain(false);
+      }
+      return;
+    }
+    if (canStartReusingResolvedEvolutionChain && !isReusingResolvedEvolutionChain) {
+      setIsReusingResolvedEvolutionChain(true);
+      return;
+    }
+    if (
+      isReusingResolvedEvolutionChain &&
+      props.isLoadedForms &&
+      resolvedEvolutionRequest.requestKey === evolutionRequestKey
+    ) {
+      setIsReusingResolvedEvolutionChain(false);
+    }
+  }, [
+    canStartReusingResolvedEvolutionChain,
+    evolutionRequestKey,
+    isRequestedPokemonInResolvedChain,
+    isReusingResolvedEvolutionChain,
+    props.isLoadedForms,
+    resolvedEvolutionRequest.requestKey,
+  ]);
 
   const pokeSetName = (name: string) => name.replace(`_${formNormal()}`, '').replaceAll('_', '-').replace('MR', 'MR.');
 
@@ -279,7 +350,7 @@ const Evolution = (props: IEvolutionComponent) => {
     getCurrEvoChainStore(pokemon, result);
     getNextEvoChainStore(pokemon.name, pokemon.evoList, result);
     setArrEvoList(result);
-    setResolvedEvolutionRequestKey(evolutionRequestKey);
+    setResolvedEvolutionRequest({ pokemonId: pokemon.id, requestKey: evolutionRequestKey });
   };
 
   const getSpecialEvoChain = (pokemon: Partial<IPokemonDetail>) => {
@@ -294,7 +365,7 @@ const Evolution = (props: IEvolutionComponent) => {
         ),
       ],
     ]);
-    setResolvedEvolutionRequestKey(evolutionRequestKey);
+    setResolvedEvolutionRequest({ pokemonId: pokemon.id, requestKey: evolutionRequestKey });
   };
 
   useEffect(() => {
@@ -416,9 +487,9 @@ const Evolution = (props: IEvolutionComponent) => {
     const isConverging = incomingEvolutions.length > 1;
     const edgeLabelAnchor = isConverging ? 'source' : isBranched ? 'target' : 'middle';
     const isCurrent =
-      value.id === props.id &&
-      value.pokemonType === props.pokemonData?.pokemonType &&
-      isEqual(form, generateFormName(props.pokemonData?.form, value.pokemonType, '-'), EqualMode.IgnoreCaseSensitive);
+      value.id === currentEvolutionIdentity?.id &&
+      value.pokemonType === currentEvolutionIdentity?.pokemonType &&
+      isEqual(form, currentEvolutionIdentity?.form, EqualMode.IgnoreCaseSensitive);
     return (
       <Fragment>
         <span
@@ -799,7 +870,13 @@ const Evolution = (props: IEvolutionComponent) => {
           />
         </span>
         {value.isBaby && <span className="caption tw-text-error">(Baby)</span>}
-        <p>{isCurrent && <span className="caption">Current</span>}</p>
+        <p>
+          {isCurrent && (
+            <span className="caption" data-testid="evolution-current-marker" data-evolution-current-id={value.id}>
+              Current
+            </span>
+          )}
+        </p>
       </Fragment>
     );
   };
@@ -1054,6 +1131,7 @@ const Evolution = (props: IEvolutionComponent) => {
                       <div
                         className="select-evo"
                         onClick={() => {
+                          setPendingCurrentPokemonId(value.id);
                           props.setSearchOption?.({ id: value.id, form: value.form, pokemonType: value.pokemonType });
                         }}
                         title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
@@ -1063,6 +1141,7 @@ const Evolution = (props: IEvolutionComponent) => {
                     ) : (
                       <Link
                         className="select-evo"
+                        onClick={() => setPendingCurrentPokemonId(value.id)}
                         to={`/pokemon/${value.id}${generateParamForm(value.form, value.pokemonType)}`}
                         title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
                       >
