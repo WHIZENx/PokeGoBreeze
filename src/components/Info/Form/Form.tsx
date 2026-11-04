@@ -42,6 +42,7 @@ import { preloadFirstAvailableImage } from '../../../utils/hooks/usePreloadedIma
 import StableHeightSection from '../../Layout/StableHeightSection';
 import EncounterTraining from '../Encounter/EncounterTraining';
 import { findPokemonGoFormIdentityMatch } from '../../../utils/pokemon-form-identity';
+import TrainingCosts from '../TrainingCosts/TrainingCosts';
 
 const unavailablePokemonMoves: PokemonMoves = {
   fastMoves: [],
@@ -521,6 +522,11 @@ const FormComponent = (props: IFormInfoComponent) => {
               isLoading={!isCurrentPokemonLoaded}
               tabValue={moveTabValue}
               onTabChange={setMoveTabValue}
+            />
+            <TrainingCosts
+              pokemonId={props.defaultId}
+              thirdMove={props.trainingCosts?.thirdMove}
+              purified={props.trainingCosts?.purified}
             />
             <Counter
               pokemonData={searchingMainDetails}

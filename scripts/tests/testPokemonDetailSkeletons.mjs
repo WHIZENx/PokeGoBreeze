@@ -20,6 +20,7 @@ const [
   pokemonDetailLayoutStyles,
   stableHeightSection,
   encounterTraining,
+  trainingCosts,
   theme,
   variables,
 ] = await Promise.all([
@@ -39,6 +40,7 @@ const [
   readFile(new URL('../../src/components/Info/PokemonDetailLayout.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Layout/StableHeightSection.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Encounter/EncounterTraining.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/TrainingCosts/TrainingCosts.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
   readFile(new URL('../../src/assets/styles/variables.scss', import.meta.url), 'utf8'),
 ]);
@@ -183,6 +185,16 @@ assert.match(form, /data-testid="pokemon-information-card"/);
 assert.match(form, /minHeight=\{320\} testId="pokemon-information-section"/);
 assert.match(form, /data-testid="pokemon-battle-card"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Battle data<\/b>\s*<\/h4>/);
+assert.match(
+  form,
+  /<TrainingCosts[\s\S]*thirdMove=\{props\.trainingCosts\?\.thirdMove\}[\s\S]*purified=\{props\.trainingCosts\?\.purified\}/
+);
+assert.match(trainingCosts, /data-testid="pokemon-training-costs"/);
+assert.match(trainingCosts, /label="Second Charged Move"/);
+assert.match(trainingCosts, /label="Purification"/);
+assert.match(trainingCosts, /if \(!hasThirdMoveCost && !hasPurificationCost\)/);
+assert.doesNotMatch(trainingCosts, /Unavailable/);
+assert.doesNotMatch(pokemonPage, /data-testid="pokemon-cost-table"/);
 assert.match(form, /data-testid="pokemon-raid-card"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Raid<\/b>\s*<\/h4>/);
 assert.match(form, /minHeight=\{340\} testId="pokemon-raid-section"/);
@@ -326,17 +338,19 @@ assert.ok(
   'Forms, Gender, Stats, Information, Battle data, Raid, and Evolution must render in separate section cards.'
 );
 assert.match(pokemonPage, /pokemon-detail-section pokemon-detail-hero-section/);
-assert.match(pokemonPage, /data-testid="pokemon-cost-table"/);
+assert.doesNotMatch(pokemonPage, /data-testid="pokemon-cost-table"/);
 assert.match(pokemonPage, /testId="pokemon-assets-stable"/);
 assert.match(
   pokemonDetailLayoutStyles,
   /\.pokemon-detail-section[\s\S]*tw-rounded-2xl[\s\S]*var\(--background-paper\)/
 );
 assert.match(pokemonDetailLayoutStyles, /\.pokemon-detail-table[\s\S]*@apply tw-h-\[217px\]/);
-assert.match(pokemonPageStyles, /\.table-main[\s\S]*@apply tw-h-\[217px\]/);
+assert.doesNotMatch(pokemonPageStyles, /\.table-main/);
 assert.match(stableHeightSection, /new ResizeObserver\(measure\)/);
 assert.match(stableHeightSection, /if \(isLoading && retainedHeightRef\.current > 0\)/);
-assert.match(stableHeightSection, /tw-transition-\[height\] tw-duration-300 tw-ease-in-out/);
+assert.match(stableHeightSection, /tw-transition-\[min-height\] tw-duration-300 tw-ease-in-out/);
+assert.match(stableHeightSection, /style=\{\{ minHeight: height \}\}/);
+assert.doesNotMatch(stableHeightSection, /style=\{\{ height \}\}/);
 assert.match(stableHeightSection, /motion-reduce:tw-transition-none/);
 
 console.log('Pokémon detail skeleton dimensions and page surfaces passed.');

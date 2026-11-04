@@ -1,6 +1,7 @@
 import { IFormSoundCry, IPokemonFormModify, IPokemonSprite } from '../../core/models/API/form.model';
 import { IAsset, IImage } from '../../core/models/asset.model';
 import { IEvolutionChain } from '../../core/models/evolution-chain.model';
+import type { PokemonTypeCost } from '../../core/models/evolution.model';
 import { ICombat } from '../../core/models/combat.model';
 import {
   IPokemonData,
@@ -192,6 +193,10 @@ export interface IFormInfoComponent {
   pokemonGoEvolutionChains?: IEvolutionChain[];
   pokemonGoForms?: PokemonGoFormCatalogEntry[];
   moveRankings: PokemonMoveRanking[];
+  trainingCosts?: {
+    purified: PokemonTypeCost;
+    thirdMove: PokemonTypeCost;
+  };
   isLoadedForms: boolean;
 }
 
