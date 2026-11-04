@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 
 const [
   evolution,
+  evolutionPokemonDisplay,
   assets,
   gender,
   form,
@@ -27,6 +28,7 @@ const [
   variables,
 ] = await Promise.all([
   readFile(new URL('../../src/components/Info/Evolution/Evolution.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Evolution/EvolutionPokemonDisplay.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Assets/PokemonModel.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
@@ -60,6 +62,9 @@ assert.match(evolution, /chain\.dataset\.testid === 'evolution-chain-skeleton'/)
 assert.match(evolution, /data-testid="evolution-chain-skeleton"/);
 assert.match(evolution, /evo-chain tw-inline-flex tw-h-64/);
 assert.match(evolution, /const areEvolutionAssetsReady =/);
+assert.match(evolution, /const readyEvolutionAssetSetKeys = new Set<string>\(\)/);
+assert.match(evolution, /isRequestedPokemonInResolvedChain && readyEvolutionAssetSetKeys\.has\(evolutionAssetSetKey\)/);
+assert.match(evolution, /readyEvolutionAssetSetKeys\.add\(evolutionAssetSetKey\)/);
 assert.match(
   evolution,
   /const canStartReusingResolvedEvolutionChain = Boolean\([\s\S]*requestedPokemonId !== resolvedEvolutionRequest\.pokemonId[\s\S]*isRequestedPokemonInResolvedChain/
@@ -96,17 +101,20 @@ assert.doesNotMatch(
   /props\.isLoadedForms \|\|[\s\S]*arrEvoList\.some/,
   'Evolution reuse must be scoped to a previously resolved chain instead of revealing arbitrary intermediate data.'
 );
-assert.match(
-  evolution,
-  /evolutionAssetKeys\.every\(\(assetKey\) => loadedEvolutionAssets\.assetKeys\.includes\(assetKey\)\)/
-);
-assert.match(evolution, /chain\.querySelectorAll<HTMLImageElement>\('img'\)/);
-assert.match(evolution, /images\.every\(\(image\) => image\.complete\)/);
+assert.match(evolution, /querySelectorAll<HTMLElement>\('\[data-testid="evolution-node"\]'\)/);
+assert.match(evolution, /nodes\.length === evolutionAssetKeys\.length/);
+assert.match(evolution, /image\.complete && image\.naturalWidth > 0/);
+assert.match(evolution, /node\.querySelector\('\.evolution-pokemon-mini-icon'\)/);
 assert.match(evolution, /container\.addEventListener\('load', scheduleImageCheck, true\)/);
 assert.match(evolution, /attributeFilter: \['src'\]/);
 assert.match(evolution, /!areEvolutionAssetsReady &&/);
 assert.match(evolution, /data-evolution-assets-ready=\{areEvolutionAssetsReady\}/);
 assert.match(evolution, /areEvolutionAssetsReady \? 'tw-visible' : 'tw-invisible'/);
+assert.match(evolutionPokemonDisplay, /const activeImageRef = useRef<HTMLImageElement>\(null\)/);
+assert.match(evolutionPokemonDisplay, /if \(!activeSource \|\| !image\?\.complete\)/);
+assert.match(evolutionPokemonDisplay, /image\.naturalWidth === 0/);
+assert.match(evolutionPokemonDisplay, /ref=\{activeImageRef\}/);
+assert.match(evolutionPokemonDisplay, /advanceSource\(\)/);
 assert.doesNotMatch(
   evolution,
   /slide-container !tw-w-3\/4/,

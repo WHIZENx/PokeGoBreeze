@@ -1,13 +1,10 @@
 import { Badge } from '@mui/material';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/api.service';
 import useAssets from '../../../composables/useAssets';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
-import PokemonTableIcon, {
-  pokemonIconSheetSource,
-  resolveExactPokemonIconIndex,
-} from '../../Sprites/PokemonTableIcon/PokemonTableIcon';
+import PokemonTableIcon, { resolveExactPokemonIconIndex } from '../../Sprites/PokemonTableIcon/PokemonTableIcon';
 import { sortAnimationSources } from '../../../utils/pokemon-animation-assets';
 import { useImageSourceSequence } from '../../../utils/hooks/useImageSourceSequence';
 
@@ -20,8 +17,6 @@ interface EvolutionPokemonDisplayProps {
   stage?: number;
   formLabel?: string;
   formVaries?: boolean;
-  assetKey?: string;
-  onAssetReady?: (assetKey: string) => void;
 }
 
 const EvolutionPokemonDisplay = ({
@@ -33,8 +28,6 @@ const EvolutionPokemonDisplay = ({
   stage,
   formLabel,
   formVaries = false,
-  assetKey,
-  onAssetReady,
 }: EvolutionPokemonDisplayProps) => {
   const { findAnimationForm, findExactAssetForm } = useAssets();
   const animation = findAnimationForm(id, form, pokemonType);
@@ -58,31 +51,17 @@ const EvolutionPokemonDisplay = ({
   }, [animation, form, formVaries, id, pokemonType, staticAsset]);
   const exactMiniIcon = resolveExactPokemonIconIndex({ num: id, name, sprite, form, pokemonType });
   const { source: activeSource, advanceSource } = useImageSourceSequence(imageSources);
-  const reportedAssetKeyRef = useRef('');
-  const reportAssetReady = useCallback(() => {
-    if (!assetKey || !onAssetReady || reportedAssetKeyRef.current === assetKey) {
-      return;
-    }
-    reportedAssetKeyRef.current = assetKey;
-    onAssetReady(assetKey);
-  }, [assetKey, onAssetReady]);
+  const activeImageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    if (!onAssetReady || activeSource || exactMiniIcon === undefined) {
+    const image = activeImageRef.current;
+    if (!activeSource || !image?.complete) {
       return;
     }
-    const iconSheetImage = new Image();
-    iconSheetImage.addEventListener('load', reportAssetReady);
-    iconSheetImage.addEventListener('error', reportAssetReady);
-    iconSheetImage.src = pokemonIconSheetSource;
-    if (iconSheetImage.complete) {
-      reportAssetReady();
+    if (image.naturalWidth === 0) {
+      advanceSource();
     }
-    return () => {
-      iconSheetImage.removeEventListener('load', reportAssetReady);
-      iconSheetImage.removeEventListener('error', reportAssetReady);
-    };
-  }, [activeSource, exactMiniIcon, reportAssetReady]);
+  }, [activeSource, advanceSource]);
 
   const imageContent = activeSource ? (
     <img
@@ -92,10 +71,10 @@ const EvolutionPokemonDisplay = ({
       data-evolution-sprite={sprite}
       alt={name}
       src={activeSource}
+      ref={activeImageRef}
       loading="eager"
       decoding="async"
       referrerPolicy="no-referrer"
-      onLoad={reportAssetReady}
       onError={advanceSource}
     />
   ) : exactMiniIcon !== undefined ? (
@@ -118,8 +97,6 @@ const EvolutionPokemonDisplay = ({
       src={APIService.getPokeSprite()}
       loading="eager"
       decoding="async"
-      onLoad={reportAssetReady}
-      onError={reportAssetReady}
     />
   );
   const image = (

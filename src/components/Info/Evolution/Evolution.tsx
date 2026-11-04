@@ -20,7 +20,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import QuestRequirements from './QuestRequirements';
-import React, { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Xarrow from 'react-xarrows';
 import { Link, useParams } from 'react-router-dom';
 import APIService from '../../../services/api.service';
@@ -53,6 +53,7 @@ import EvolutionPokemonDisplay from './EvolutionPokemonDisplay';
 
 const EVOLUTION_MIN_HEIGHT = 256;
 const EVOLUTION_SKELETON_STAGES = 3;
+const readyEvolutionAssetSetKeys = new Set<string>();
 
 interface IPokemonEvo {
   prev?: string;
@@ -134,25 +135,7 @@ const Evolution = (props: IEvolutionComponent) => {
     [arrEvoList]
   );
   const evolutionAssetSetKey = JSON.stringify(evolutionAssetKeys);
-  const [loadedEvolutionAssets, setLoadedEvolutionAssets] = useState<{
-    assetSetKey: string;
-    assetKeys: string[];
-  }>({ assetSetKey: '', assetKeys: [] });
   const [evolutionDomImageState, setEvolutionDomImageState] = useState({ assetSetKey: '', ready: false });
-  const reportEvolutionAssetReady = useCallback(
-    (assetKey: string) => {
-      setLoadedEvolutionAssets((current) => {
-        const assetKeys = current.assetSetKey === evolutionAssetSetKey ? current.assetKeys : [];
-        if (assetKeys.includes(assetKey)) {
-          return current.assetSetKey === evolutionAssetSetKey
-            ? current
-            : { assetSetKey: evolutionAssetSetKey, assetKeys };
-        }
-        return { assetSetKey: evolutionAssetSetKey, assetKeys: [...assetKeys, assetKey] };
-      });
-    },
-    [evolutionAssetSetKey]
-  );
   const isRequestedPokemonInResolvedChain = Boolean(
     requestedPokemonId && arrEvoList.some((stage) => stage.some((pokemon) => pokemon.id === requestedPokemonId))
   );
@@ -185,15 +168,20 @@ const Evolution = (props: IEvolutionComponent) => {
     : requestedEvolutionNodes.length === 1
       ? requestedEvolutionNodes[0]
       : undefined;
-  const areEvolutionPokemonAssetsReady =
-    hasEvolutionData &&
+  const areReportedEvolutionAssetsReady =
     evolutionAssetKeys.length > 0 &&
-    loadedEvolutionAssets.assetSetKey === evolutionAssetSetKey &&
-    evolutionAssetKeys.every((assetKey) => loadedEvolutionAssets.assetKeys.includes(assetKey));
-  const areEvolutionAssetsReady =
-    areEvolutionPokemonAssetsReady &&
     evolutionDomImageState.assetSetKey === evolutionAssetSetKey &&
     evolutionDomImageState.ready;
+  const canReuseReadyEvolutionAssetSet =
+    isRequestedPokemonInResolvedChain && readyEvolutionAssetSetKeys.has(evolutionAssetSetKey);
+  const areEvolutionAssetsReady =
+    (hasEvolutionData && areReportedEvolutionAssetsReady) || canReuseReadyEvolutionAssetSet;
+
+  useEffect(() => {
+    if (hasEvolutionData && areReportedEvolutionAssetsReady) {
+      readyEvolutionAssetSetKeys.add(evolutionAssetSetKey);
+    }
+  }, [areReportedEvolutionAssetsReady, evolutionAssetSetKey, hasEvolutionData]);
 
   useEffect(() => {
     if (pendingCurrentPokemonId === props.id && props.isLoadedForms) {
@@ -439,8 +427,16 @@ const Evolution = (props: IEvolutionComponent) => {
     let animationFrame = 0;
     const checkImages = () => {
       const chain = container.querySelector<HTMLUListElement>('ul.evo-chain');
-      const images = chain ? Array.from(chain.querySelectorAll<HTMLImageElement>('img')) : [];
-      const ready = Boolean(chain) && images.every((image) => image.complete);
+      const nodes = chain ? Array.from(chain.querySelectorAll<HTMLElement>('[data-testid="evolution-node"]')) : [];
+      const ready =
+        Boolean(chain) &&
+        nodes.length === evolutionAssetKeys.length &&
+        nodes.every((node) => {
+          const image = node.querySelector<HTMLImageElement>('[data-testid="evolution-pokemon-image"]');
+          return image
+            ? image.complete && image.naturalWidth > 0
+            : Boolean(node.querySelector('.evolution-pokemon-mini-icon'));
+        });
       setEvolutionDomImageState((current) =>
         current.assetSetKey === evolutionAssetSetKey && current.ready === ready
           ? current
@@ -464,7 +460,7 @@ const Evolution = (props: IEvolutionComponent) => {
       container.removeEventListener('load', scheduleImageCheck, true);
       container.removeEventListener('error', scheduleImageCheck, true);
     };
-  }, [evolutionAssetSetKey]);
+  }, [evolutionAssetKeys.length, evolutionAssetSetKey]);
 
   const getIncomingEvolutions = (target: IPokemonEvo, stage: number) =>
     (arrEvoList[stage - 1] ?? []).flatMap((source, index) => {
@@ -846,8 +842,6 @@ const Evolution = (props: IEvolutionComponent) => {
             form={value.dataForm}
             sprite={value.sprite}
             pokemonType={props.pokemonData?.pokemonType}
-            assetKey={`${evo}:${index}:${value.id}:${value.dataForm}:${value.sprite}:${value.pokemonType}`}
-            onAssetReady={reportEvolutionAssetReady}
             stage={evoCount > 1 ? evo + 1 : undefined}
             formVaries={value.formVaries}
             formLabel={
