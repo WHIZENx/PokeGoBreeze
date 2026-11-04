@@ -6,7 +6,7 @@
 ![Version](https://img.shields.io/badge/version-6.0.0-blue.svg)
 ![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-3178C6?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-6.4.3-646CFF?logo=vite)
+![Vite](https://img.shields.io/badge/Vite-6.4.5-646CFF?logo=vite)
 
 [![Vercel Production](https://img.shields.io/badge/Production-Vercel-000000?logo=vercel&logoColor=white)](https://poke-go-breeze.vercel.app/)
 [![Firebase Production](https://img.shields.io/badge/Production-Firebase-FFCA28?logo=firebase&logoColor=black)](https://pokego-breeze.web.app/)
@@ -45,13 +45,13 @@ The versions below reflect the currently committed `package-lock.json`.
 
 ### Frontend Framework
 - **Core**: React 18.3.1 with TypeScript 5.5.3
-- **Build Tool**: Vite 6.4.3
+- **Build Tool**: Vite 6.4.5
 - **State Management**:
   - Redux 4.2.1 with React-Redux 7.2.9
   - Redux Thunk 2.4.2 for async operations
   - Redux Persist 6.0.0 for browser caching
 - **Routing**: React Router DOM 7.18.3
-- **HTTP Client**: Axios 1.18.1
+- **HTTP Client**: Axios 1.20.0
 
 ### UI & Styling
 - **Component Libraries**:
@@ -60,17 +60,18 @@ The versions below reflect the currently committed `package-lock.json`.
   - Styled Components 6.4.1
   - Emotion React 11.14.0 and Emotion Styled 11.14.1
 - **Styling System**:
-  - SCSS/Sass 1.83.0 with modern `@use` syntax
-  - Tailwind CSS 3.4.19 for utility classes
+  - Tailwind CSS 3.4.19 is the primary design system for component and page changes
+  - SCSS/Sass 1.83.0 with modern `@use` syntax supports global styles and cases that cannot be expressed reliably with Tailwind
   - Custom theming system with dark/light modes
   - PostCSS 8.5.26 with Autoprefixer 10.5.0
+  - Shared typography tokens keep MUI, Tailwind, semantic elements, and native controls on one font and metric system
 - **Data Visualization**:
   - React Data Table Component 7.7.0 for data grids
   - React XArrows 2.0.2 for visual connections
 - **Utilities**:
   - Lodash 4.18.1 for data manipulation
-  - Moment 2.30.1 for date/time handling
-  - DOMPurify 3.4.13 for safe HTML rendering
+  - Moment 2.31.0 for date/time handling
+  - DOMPurify 3.4.17 for safe HTML rendering
   - Immutability Helper 3.1.1 for state updates
   - usehooks-ts 2.16.0 for reusable React hooks
   - React Device Detect 2.2.3 for device-aware UI
@@ -87,7 +88,7 @@ The versions below reflect the currently committed `package-lock.json`.
 - **Code Quality**:
   - ESLint 10.10.0 flat config with typescript-eslint 8.70.0 and eslint-react 5.19.1
   - Prettier 3.6.2 for code formatting
-  - Stylelint 17.15.0 with Stylistic 5.3.0 for SCSS/CSS linting
+  - Stylelint 17.16.0 with Stylistic 5.3.0 for SCSS/CSS linting
   - Vite ESLint 3.0.1 and Stylelint 6.1.0 plugins for development feedback
 - **TypeScript**:
   - Strict type checking (TypeScript 5.5.3)
@@ -130,7 +131,8 @@ src/
 │   ├── Effective/
 │   ├── ErrorBoundary/
 │   ├── Find/
-│   ├── Info/
+│   ├── Info/               # Pokémon detail sections, assets, evolution, encounter, and training costs
+│   ├── Layout/             # Shared stable-height and page layout primitives
 │   ├── Link/
 │   ├── Raid/
 │   ├── Spinner/
@@ -179,7 +181,7 @@ src/
 │   │   ├── RaidBattle/
 │   │   ├── SearchBattle/
 │   │   └── StatsInfo/
-│   ├── Trainer/            # Legacy view; not registered in App.tsx
+│   ├── Trainer/            # Registered experimental/legacy Trainer Lab route
 │   ├── TypeEffect/
 │   ├── Weather/
 │   └── models/
@@ -215,8 +217,10 @@ src/
 #### **Pokédex** (`/`)
 Server-paginated Pokémon catalogue with name matching, release status, type, generation, game version, and special-form filters. Each result links to its Pokémon detail page.
 
-#### **Game News** (`/news`)
-API-backed Pokémon GO news feed with event dates, descriptions, bonuses, rewards, and related assets when supplied by the source.
+#### **Event Tickets** (`/news`)
+API-backed Game Master ticket and event entries with dates, descriptions,
+bonuses, rewards, and related assets when supplied by the generated snapshot.
+This is not a live proxy of the official Pokémon GO News feed.
 
 #### **Game Master Updates** (`/game-master-updates`, `/game-master-updates/:patchSlug`)
 Paginated patch notes for web-relevant Game Master changes. Entries can be searched and filtered by section and status, while detail routes show readable changes and links to supported Pokémon or moves.
@@ -265,8 +269,8 @@ League-specific ranking tables with role score modes, Pokémon search, sorting, 
 #### **PVP Teams** (`/pvp/teams/:serie/:cp`)
 League team-performance data with top performers, team combinations, move sets, game counts, and sortable score columns.
 
-#### **PVP Battle Simulator** (`/pvp/battle`, `/pvp/battle/:cp`)
-Compares two Pokémon using selected league, IV, move, and shield settings, then presents the API simulation as an animated battle timeline.
+#### **PVP Battle Simulator** (`/pvp/battle`, `/pvp/battle/:cp`, `/pvp/battle/:cp/replay`)
+Compares two Pokémon using selected league, IV, move, and shield settings, then presents the API simulation as an animated battle timeline. Replay routes restore a serialized battle for deterministic playback.
 
 #### **PVP Pokémon Analysis** (`/pvp/:cp/:serie/:pokemon`)
 League-specific Pokémon analysis with scores, recommended moves, calculated stats, and best matchup/counter lists.
@@ -308,6 +312,12 @@ Maps each Pokémon GO weather condition to its boosted types and finds matching 
 
 #### **Stickers** (`/stickers`)
 Browses sticker data and pack information with Pokémon association and shop-availability filters.
+
+### 🧪 Experimental
+
+#### **Trainer Lab** (`/trainer`)
+Registered legacy Team Leader battle tool. The route remains available for
+testing but is intentionally hidden from the primary navigation.
 
 ### 🧭 Navigation & Errors
 
@@ -435,6 +445,9 @@ Data-backed pages also require `REACT_APP_DATA_API_URL`. When developing through
 # Lint code (ESLint + Stylelint)
 npm run lint
 
+# Check both TypeScript projects without emitting files
+npm run typecheck
+
 # Format code (Prettier + Stylelint)
 npm run format
 
@@ -483,15 +496,18 @@ cp .env.example .env  # fill in your values
 docker compose up app-dev
 ```
 
-**Production with Docker** (Nginx on `localhost:8000`):
+**Production image with Docker** (Nginx on `localhost:8000`):
 ```bash
-# Build and start production container (requires .env to be populated)
-docker compose up --build app-build nginx
+# Using the example Compose file
+docker compose up --build app-prod
 
-# Or build the image directly
+# Or build the self-contained Nginx image directly
 docker build -f Dockerfile -t pokego-breeze:latest .
-docker run -p 80:80 pokego-breeze:latest
+docker run --rm -p 8000:80 pokego-breeze:latest
 ```
+
+The production Dockerfile already contains Nginx and the compiled application,
+so `app-prod` does not require a second Nginx service or a shared `dist` volume.
 
 ### Deployment Options
 
@@ -526,7 +542,12 @@ REACT_APP_DEPLOYMENT_MODE=production npm run deploy
 npx wrangler pages deploy dist --project-name pokego-breeze
 ```
 
-Vercel remains the canonical SEO origin. Firebase Hosting and Cloudflare Pages serve the same prerendered loading shell and application bundle directly, while fingerprinted files under `/static/` use immutable caching on every provider. Cloudflare Pages uses its built-in SPA fallback because the build has no top-level `404.html`.
+Vercel remains the canonical SEO origin. Firebase Hosting is deployed by the
+committed workflow. Cloudflare Pages is an optional manual deployment target;
+the repository currently has no Cloudflare deployment workflow, so its hosted
+state may be unavailable or stale. When deployed, `public/_headers` supplies
+the static-asset cache policy and Cloudflare's SPA fallback handles routes
+because the build has no top-level `404.html`.
 
 ### Project Scripts
 
@@ -541,6 +562,7 @@ Vercel remains the canonical SEO origin. Firebase Hosting and Cloudflare Pages s
 | `npm run lint` | Run ESLint and Stylelint |
 | `npm run lint:code` | Run ESLint only |
 | `npm run lint:style` | Run Stylelint only |
+| `npm run typecheck` | Check the app and Node/Vite TypeScript projects without emitting files |
 | `npm run format` | Format code with Prettier and Stylelint |
 | `npm run format:code` | Run Prettier only |
 | `npm run format:style` | Run Stylelint --fix only |
@@ -604,9 +626,14 @@ Contributions are welcome and greatly appreciated! Whether you're fixing bugs, a
 
 5. **Run quality checks**
    ```bash
-   npm run lint    # Check for linting errors
-   npm run format  # Format code
+   npm run lint       # Require zero code/style warnings and errors
+   npm run typecheck  # Check both TypeScript projects
+   npm run build      # Verify sitemap, Vite build, and SEO prerendering
    ```
+
+   Run the focused `test:*` or `audit:*` command related to the changed feature.
+   `npm run format` mutates files and should be used before these checks rather
+   than treated as a validation command.
 
 6. **Commit your changes**
    ```bash
