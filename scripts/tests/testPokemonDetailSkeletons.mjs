@@ -60,7 +60,20 @@ assert.match(evolution, /const EVOLUTION_MIN_HEIGHT = 256/);
 assert.match(evolution, /Math\.max\(EVOLUTION_MIN_HEIGHT, evolutionMinHeight\)/);
 assert.match(evolution, /chain\.dataset\.testid === 'evolution-chain-skeleton'/);
 assert.match(evolution, /data-testid="evolution-chain-skeleton"/);
-assert.match(evolution, /evo-chain tw-inline-flex tw-h-64/);
+assert.match(evolution, /const DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS = \[1, 1, 1\]/);
+assert.match(evolution, /const lastLoadedEvolutionStageCounts = useRef<number\[]>/);
+assert.match(
+  evolution,
+  /if \(areEvolutionAssetsReady && arrEvoList\.length\)[\s\S]*arrEvoList\.map\(\(stage\) => Math\.max\(1, stage\.length\)\)/
+);
+assert.match(evolution, /evo-chain tw-inline-flex tw-min-h-64/);
+assert.match(evolution, /data-skeleton-stage-count=\{lastLoadedEvolutionStageCounts\.current\.length\}/);
+assert.match(evolution, /lastLoadedEvolutionStageCounts\.current\.map\(\(nodeCount, stageIndex\)/);
+assert.match(evolution, /data-testid="evolution-skeleton-stage"/);
+assert.match(evolution, /data-skeleton-node-count=\{nodeCount\}/);
+assert.match(evolution, /Array\.from\(\{ length: nodeCount \}/);
+assert.match(evolution, /data-testid="evolution-skeleton-node"/);
+assert.match(evolution, /tw-h-\[130px\]/);
 assert.match(evolution, /const areEvolutionAssetsReady =/);
 assert.match(evolution, /const readyEvolutionAssetSetKeys = new Set<string>\(\)/);
 assert.match(evolution, /isRequestedPokemonInResolvedChain && readyEvolutionAssetSetKeys\.has\(evolutionAssetSetKey\)/);
