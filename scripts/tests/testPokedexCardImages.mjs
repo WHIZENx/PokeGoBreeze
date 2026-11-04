@@ -76,13 +76,23 @@ assert.equal(
 const cardSource = await readFile(new URL('../../src/components/Card/CardPokemonInfo.tsx', import.meta.url), 'utf8');
 assert.match(
   cardSource,
-  /key=\{requestedImage\}/,
-  'switching between default and Shiny images must reset the failed-image fallback state'
+  /src=\{props\.image\.default\}/,
+  'the default image must remain mounted while a Shiny image is loading'
 );
 assert.match(
   cardSource,
-  /showShiny \? \(props\.image\.shinyFallbacks \?\? \[\]\) : \[\]/,
-  'Shiny Addressable Asset failures must try the matching Shiny fallback before any default image'
+  /loaded && visible \? 'tw-opacity-100' : 'tw-opacity-0'/,
+  'the Shiny image must remain transparent until it has loaded successfully'
+);
+assert.match(
+  cardSource,
+  /setNextPokemonImageFallback\(event\.currentTarget, \[src, \.\.\.fallbacks\]\)/,
+  'Shiny Addressable Asset failures must stay in the Shiny fallback sequence'
+);
+assert.doesNotMatch(
+  cardSource,
+  /key=\{requestedImage\}/,
+  'hovering Shiny must not unmount the already rendered default image'
 );
 assert.deepEqual(
   buildPokedexCardImageCandidates(undefined, 'profile.png', 'form.png', 'base.png'),
