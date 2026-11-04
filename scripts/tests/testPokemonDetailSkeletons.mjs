@@ -238,18 +238,28 @@ assert.match(
 );
 assert.match(form, /searchingMainForm\?\.defaultId === props\.defaultId/);
 assert.doesNotMatch(form, /searchingMainDetails\?\.id === props\.defaultId/);
+assert.match(form, /const getGenderCardCount = \(ratio: IPokemonGenderRatio \| undefined\)/);
+assert.match(form, /const lastLoadedGenderSkeletonCount = useRef\(2\)/);
+assert.match(form, /const \[readyGenderDisplay, setReadyGenderDisplay\] = useState<GenderDisplaySnapshot>/);
 assert.match(
   form,
-  /const genderSkeletonCount = genderRatio \? \(genderRatio\.M !== 0 && genderRatio\.F !== 0 \? 2 : 1\) : 2/
+  /Promise\.all\(candidateGroups\.map\(preloadFirstAvailableImage\)\)\.then\(\(\) => \{[\s\S]*lastLoadedGenderSkeletonCount\.current = getGenderCardCount\(nextGenderDisplay\.ratio\)[\s\S]*setReadyGenderDisplay\(nextGenderDisplay\)/
 );
+assert.match(
+  form,
+  /const genderSkeletonCount = genderDisplay[\s\S]*getGenderCardCount\(genderRatio\)[\s\S]*lastLoadedGenderSkeletonCount\.current/
+);
+assert.match(form, /data-skeleton-count=\{genderSkeletonCount\}/);
 assert.match(form, /const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12\.5 tw-overflow-x-auto'/);
-assert.match(form, /const lastLoadedGender = useRef<GenderDisplaySnapshot>/);
-assert.match(form, /const \[searchGenderDisplay, setSearchGenderDisplay\] = useState<GenderDisplaySnapshot>/);
 assert.match(form, /Promise\.all\(candidateGroups\.map\(preloadFirstAvailableImage\)\)/);
-assert.match(form, /setSearchGenderDisplay\(nextGenderDisplay\)/);
-assert.match(form, /const directGenderDisplay: GenderDisplaySnapshot \| undefined = isCurrentPokemonLoaded/);
-assert.match(form, /const genderDisplay = params\.id/);
-assert.match(form, /lastGender\.pokemonId === props\.defaultId/);
+assert.match(form, /const unknownSprite = APIService\.getPokeSprite\(\)/);
+assert.match(form, /\[\.\.\.candidates\.default, unknownSprite\]/);
+assert.match(form, /\[\.\.\.candidates\.shiny, unknownSprite\]/);
+assert.match(
+  form,
+  /const genderDisplay =[\s\S]*isCurrentPokemonLoaded &&[\s\S]*readyGenderDisplay &&[\s\S]*readyGenderDisplay\.pokemonId === props\.defaultId[\s\S]*readyGenderDisplay\.formId === searchingMainForm\?\.form\?\.id/
+);
+assert.doesNotMatch(form, /directGenderDisplay|searchGenderDisplay|lastLoadedGender =/);
 assert.match(gender, /export const getGenderSpriteCandidates/);
 assert.match(form, /!genderDisplay \? \(/);
 assert.equal(form.match(/className=\{genderDisplayClass\}/g)?.length, 2);
