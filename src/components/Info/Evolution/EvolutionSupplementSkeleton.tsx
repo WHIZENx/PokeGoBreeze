@@ -5,29 +5,46 @@ interface EvolutionSupplementSkeletonProps {
   title: string;
   testId: string;
   variant?: 'card' | 'relationship';
+  count?: number;
 }
 
-const EvolutionSupplementSkeleton = ({ title, testId, variant = 'relationship' }: EvolutionSupplementSkeletonProps) => (
-  <section className="tw-mt-8 tw-w-full tw-relative" data-testid={testId} aria-label={`Loading ${title}`}>
+const EvolutionSupplementSkeleton = ({
+  title,
+  testId,
+  variant = 'relationship',
+  count = 1,
+}: EvolutionSupplementSkeletonProps) => (
+  <section
+    className="tw-mt-8 tw-w-full tw-relative"
+    data-testid={testId}
+    data-skeleton-count={variant === 'card' ? count : undefined}
+    aria-label={`Loading ${title}`}
+  >
     <h4 className="title-evo">
       <b>{title}</b>
     </h4>
     {variant === 'card' ? (
-      <div className="tw-flex tw-w-full tw-justify-center">
-        <div className="tw-flex tw-w-full tw-max-w-[22rem] tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-p-3">
-          <div className="tw-flex tw-items-center tw-gap-3">
-            <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
-            <div className="tw-flex tw-flex-1 tw-flex-col tw-gap-2">
-              <Skeleton data-skeleton-surface="page" variant="text" animation="wave" width="25%" />
-              <Skeleton data-skeleton-surface="page" variant="text" animation="wave" width="70%" />
-              <Skeleton data-skeleton-surface="page" variant="text" animation="wave" width="45%" />
+      <div className="tw-flex tw-w-full tw-justify-center tw-gap-3 tw-overflow-x-auto tw-pb-2">
+        {Array.from({ length: Math.max(1, count) }, (_, index) => (
+          <div
+            className="tw-flex tw-w-[calc(100vw-3rem)] tw-max-w-[22rem] tw-flex-none tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-p-3"
+            data-testid="evolution-supplement-skeleton-card"
+            key={index}
+          >
+            <div className="tw-flex tw-items-center tw-gap-3">
+              <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
+              <div className="tw-flex tw-flex-1 tw-flex-col tw-gap-2">
+                <Skeleton data-skeleton-surface="page" variant="text" animation="wave" width="25%" />
+                <Skeleton data-skeleton-surface="page" variant="text" animation="wave" width="70%" />
+                <Skeleton data-skeleton-surface="page" variant="text" animation="wave" width="45%" />
+              </div>
+            </div>
+            <div className="tw-grid tw-grid-cols-2 tw-gap-2">
+              <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" height={64} />
+              <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" height={64} />
             </div>
           </div>
-          <div className="tw-grid tw-grid-cols-2 tw-gap-2">
-            <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" height={64} />
-            <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" height={64} />
-          </div>
-        </div>
+        ))}
       </div>
     ) : (
       <div className="tw-grid tw-grid-cols-1 tw-gap-4 sm:tw-grid-cols-2">

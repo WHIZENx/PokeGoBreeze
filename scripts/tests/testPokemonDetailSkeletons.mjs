@@ -234,15 +234,22 @@ assert.match(form, /<h4 className="info-title">\s*<b>Gender ratio<\/b>\s*<\/h4>/
 assert.match(form, /<h4 className="info-title">\s*<b>Pokémon stats<\/b>\s*<\/h4>/);
 assert.match(form, /data-testid="pokemon-information-card"/);
 assert.match(form, /const lastLoadedEvolutionSupplement = useRef<EvolutionSupplementSnapshot>/);
+assert.match(form, /specialFormCount: number/);
+assert.match(form, /const megaFormCount = props\.formList\.filter/);
+assert.match(form, /const primalFormCount = props\.formList\.filter/);
 assert.match(
   form,
   /if \(isCurrentPokemonLoaded\) \{[\s\S]*lastLoadedEvolutionSupplement\.current = currentEvolutionSupplement/
 );
 assert.match(form, /testId="mega-evolution-loading"/);
+assert.match(form, /count=\{lastLoadedEvolutionSupplement\.current\.specialFormCount\}/);
 assert.match(form, /testId="form-change-loading"/);
 assert.match(form, /testId="fusion-loading"/);
 assert.match(evolutionSupplementSkeleton, /data-skeleton-surface="page"/);
 assert.match(evolutionSupplementSkeleton, /variant\?: 'card' \| 'relationship'/);
+assert.match(evolutionSupplementSkeleton, /count\?: number/);
+assert.match(evolutionSupplementSkeleton, /Array\.from\(\{ length: Math\.max\(1, count\) \}/);
+assert.match(evolutionSupplementSkeleton, /data-testid="evolution-supplement-skeleton-card"/);
 assert.match(evolutionSupplementSkeleton, /aria-label=\{`Loading \$\{title\}`\}/);
 assert.match(specialForm, /const pokemonType = useMemo\(\(\) =>/);
 assert.match(specialForm, /const arrEvoList = useMemo\(\(\) =>/);
@@ -279,6 +286,18 @@ assert.match(encounterTraining, /label="Weather Boost"/);
 assert.match(encounterTraining, /label="Best Buddy"/);
 assert.match(encounterTraining, /<StatusPill label="Pokémon HOME"/);
 assert.match(encounterTraining, /data-skeleton-surface="page"/);
+assert.match(encounterTraining, /const cpTileClassName = \(compact: boolean\)/);
+assert.match(encounterTraining, /isLoading\?: boolean/);
+assert.match(encounterTraining, /aria-busy=\{isLoading\}/);
+assert.match(encounterTraining, /tw-relative tw-inline-block tw-w-16/);
+assert.match(encounterTraining, /tw-relative tw-inline-block tw-w-10 tw-text-right/);
+assert.match(encounterTraining, /className="!tw-absolute !tw-inset-0"/);
+assert.match(encounterTraining, /<CpTile[\s\S]*isLoading=\{isLoading\}/);
+assert.match(encounterTraining, /<RatePill[\s\S]*isLoading=\{isLoading\}/);
+assert.match(encounterTraining, /<StatusPill[\s\S]*isLoading=\{isLoading\}/);
+assert.doesNotMatch(encounterTraining, /if \(isLoading\) \{/);
+assert.doesNotMatch(encounterTraining, /availabilityPillWidths/);
+assert.doesNotMatch(encounterTraining, /height=\{index < 3 \? 80 : 64\}/);
 assert.doesNotMatch(form, /<li>Raid<\/li>/);
 const statsSectionIndex = form.indexOf('testId="pokemon-stats-section"');
 const informationSectionIndex = form.indexOf('testId="pokemon-information-section"');

@@ -60,6 +60,7 @@ const unavailableBestMoves: IPokemonQueryRankMove = { data: [] };
 
 interface EvolutionSupplementSnapshot {
   specialFormTitle?: 'Mega Evolution' | 'Primal Reversion';
+  specialFormCount: number;
   hasFormChange: boolean;
   hasFusion: boolean;
 }
@@ -136,25 +137,23 @@ const FormComponent = (props: IFormInfoComponent) => {
   const currentEvolutionSupplement = useMemo<EvolutionSupplementSnapshot>(() => {
     const isBaseEvolutionView =
       searchingMainDetails?.pokemonType !== PokemonType.GMax && !isSpecialFormType(searchingMainDetails?.pokemonType);
-    const hasMega = props.formList.some((forms) =>
-      forms.some((pokemon) => pokemon.form.pokemonType === PokemonType.Mega)
-    );
-    const hasPrimal = props.formList.some((forms) =>
-      forms.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal)
-    );
+    const megaFormCount = props.formList.filter((forms) => forms[0]?.form.pokemonType === PokemonType.Mega).length;
+    const primalFormCount = props.formList.filter((forms) => forms[0]?.form.pokemonType === PokemonType.Primal).length;
     return {
       specialFormTitle: isBaseEvolutionView
-        ? hasMega
+        ? megaFormCount > 0
           ? 'Mega Evolution'
-          : hasPrimal
+          : primalFormCount > 0
             ? 'Primal Reversion'
             : undefined
         : undefined,
+      specialFormCount: isBaseEvolutionView ? megaFormCount || primalFormCount : 0,
       hasFormChange: isNotEmpty(searchingMainDetails?.formChange),
       hasFusion: Boolean(props.defaultId && props.pokemonGoFusionOptions?.length),
     };
   }, [props.defaultId, props.formList, props.pokemonGoFusionOptions, searchingMainDetails]);
   const lastLoadedEvolutionSupplement = useRef<EvolutionSupplementSnapshot>({
+    specialFormCount: 0,
     hasFormChange: false,
     hasFusion: false,
   });
@@ -421,6 +420,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                 title={lastLoadedEvolutionSupplement.current.specialFormTitle}
                 testId="mega-evolution-loading"
                 variant="card"
+                count={lastLoadedEvolutionSupplement.current.specialFormCount}
               />
             )}
       </div>
