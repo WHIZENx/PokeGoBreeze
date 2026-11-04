@@ -93,9 +93,24 @@ assert.match(
   /arrEvoList\.some\(\(stage\) => stage\.some\(\(pokemon\) => pokemon\.id === requestedPokemonId\)\)/
 );
 assert.match(evolution, /const hasRequestedPokemonDetails = props\.pokemonData\?\.id === requestedPokemonId/);
-assert.match(evolution, /requestedEvolutionNodes\.length === 1[\s\S]*requestedEvolutionNodes\[0\]/);
+assert.match(
+  evolution,
+  /const currentEvolutionIdentity =[\s\S]*requestedEvolutionNodes\.length === 1[\s\S]*requestedEvolutionNodes\[0\][\s\S]*hasRequestedPokemonDetails/
+);
+assert.doesNotMatch(
+  evolution,
+  /const currentEvolutionIdentity = hasRequestedPokemonDetails/,
+  'A settled detail response must not replace the unique selected chain identity and blink the Current marker.'
+);
 assert.match(evolution, /data-testid="evolution-current-marker"/);
 assert.match(evolution, /data-evolution-current-id=\{value\.id\}/);
+assert.match(evolution, /data-testid="evolution-status-tags"/);
+assert.match(evolution, /tw-flex tw-h-\[18px\] tw-items-center tw-justify-center tw-gap-1\.5/);
+assert.match(
+  evolution,
+  /data-testid="evolution-status-tags"[\s\S]*value\.isBaby[\s\S]*data-testid="evolution-current-marker"/
+);
+assert.doesNotMatch(evolution, /\{value\.isBaby[\s\S]*<p>[\s\S]*evolution-current-marker/);
 assert.doesNotMatch(
   evolution,
   /props\.isLoadedForms \|\|[\s\S]*arrEvoList\.some/,

@@ -155,19 +155,20 @@ const Evolution = (props: IEvolutionComponent) => {
     .flatMap((stage) => stage)
     .filter((pokemon) => pokemon.id === requestedPokemonId);
   const hasRequestedPokemonDetails = props.pokemonData?.id === requestedPokemonId;
-  const currentEvolutionIdentity = hasRequestedPokemonDetails
-    ? {
-        form: generateFormName(
-          props.pokemonData?.form,
-          props.pokemonData?.pokemonType ?? PokemonType.Normal,
-          '-'
-        ).toUpperCase(),
-        id: requestedPokemonId,
-        pokemonType: props.pokemonData?.pokemonType,
-      }
-    : requestedEvolutionNodes.length === 1
+  const currentEvolutionIdentity =
+    requestedEvolutionNodes.length === 1
       ? requestedEvolutionNodes[0]
-      : undefined;
+      : hasRequestedPokemonDetails
+        ? {
+            form: generateFormName(
+              props.pokemonData?.form,
+              props.pokemonData?.pokemonType ?? PokemonType.Normal,
+              '-'
+            ).toUpperCase(),
+            id: requestedPokemonId,
+            pokemonType: props.pokemonData?.pokemonType,
+          }
+        : undefined;
   const areReportedEvolutionAssetsReady =
     evolutionAssetKeys.length > 0 &&
     evolutionDomImageState.assetSetKey === evolutionAssetSetKey &&
@@ -863,14 +864,17 @@ const Evolution = (props: IEvolutionComponent) => {
             )}
           />
         </span>
-        {value.isBaby && <span className="caption tw-text-error">(Baby)</span>}
-        <p>
+        <span
+          className="tw-flex tw-h-[18px] tw-items-center tw-justify-center tw-gap-1.5 tw-whitespace-nowrap"
+          data-testid="evolution-status-tags"
+        >
+          {value.isBaby && <span className="caption tw-text-error">(Baby)</span>}
           {isCurrent && (
             <span className="caption" data-testid="evolution-current-marker" data-evolution-current-id={value.id}>
               Current
             </span>
           )}
-        </p>
+        </span>
       </Fragment>
     );
   };
