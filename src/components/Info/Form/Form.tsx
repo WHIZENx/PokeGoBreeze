@@ -40,6 +40,8 @@ import { IPokemonQueryRankMove } from '../../../utils/models/pokemon-top-move.mo
 import { IPokemonGenderRatio } from '../../../core/models/pokemon.model';
 import { preloadFirstAvailableImage } from '../../../utils/hooks/usePreloadedImage';
 import StableHeightSection from '../../Layout/StableHeightSection';
+import EncounterTraining from '../Encounter/EncounterTraining';
+import { findPokemonGoFormIdentityMatch } from '../../../utils/pokemon-form-identity';
 
 const unavailablePokemonMoves: PokemonMoves = {
   fastMoves: [],
@@ -76,6 +78,16 @@ const FormComponent = (props: IFormInfoComponent) => {
   const { searchingMainDetails, searchingMainForm } = useSearch();
 
   const selectedPokemonType = searchingMainForm?.form?.pokemonType;
+  const encounterSummary = useMemo(() => {
+    if (!props.defaultId || !searchingMainForm?.form) {
+      return undefined;
+    }
+    return findPokemonGoFormIdentityMatch(props.pokemonGoForms, {
+      num: props.defaultId,
+      form: searchingMainForm.form.formName || 'NORMAL',
+      pokemonType: selectedPokemonType,
+    })?.encounterSummary;
+  }, [props.defaultId, props.pokemonGoForms, searchingMainForm, selectedPokemonType]);
   const displaySpriteSources = useMemo(() => {
     const selectedSprites = searchingMainForm?.form?.sprites;
     if (!isSpecialFormType(selectedPokemonType)) {
@@ -518,24 +530,44 @@ const FormComponent = (props: IFormInfoComponent) => {
           </div>
         </StableHeightSection>
       </section>
-      {!isSpecialFormType(searchingMainForm?.form?.pokemonType) && (
-        <section className="pokemon-detail-section" data-testid="pokemon-raid-card">
+      <div className="tw-grid tw-grid-cols-1 tw-gap-4 lg:tw-grid-cols-2" data-testid="pokemon-raid-encounter-grid">
+        {!isSpecialFormType(searchingMainForm?.form?.pokemonType) && (
+          <section className="pokemon-detail-section" data-testid="pokemon-raid-card">
+            <h4 className="info-title">
+              <b>Raid</b>
+            </h4>
+            <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={340} testId="pokemon-raid-section">
+              <div className="tw-mx-auto tw-w-full tw-max-w-4xl">
+                <Raid
+                  pokemonType={searchingMainForm?.form?.pokemonType}
+                  id={props.defaultId}
+                  statATK={searchingMainDetails?.statsGO?.atk}
+                  statDEF={searchingMainDetails?.statsGO?.def}
+                  isLoadedForms={isCurrentPokemonLoaded}
+                />
+              </div>
+            </StableHeightSection>
+          </section>
+        )}
+        <section
+          className={combineClasses(
+            'pokemon-detail-section',
+            isSpecialFormType(searchingMainForm?.form?.pokemonType) ? 'lg:tw-col-span-2' : ''
+          )}
+          data-testid="pokemon-encounter-training-card"
+        >
           <h4 className="info-title">
-            <b>Raid</b>
+            <b>CP &amp; Availability</b>
           </h4>
-          <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={340} testId="pokemon-raid-section">
-            <div className="tw-mx-auto tw-w-full tw-max-w-4xl">
-              <Raid
-                pokemonType={searchingMainForm?.form?.pokemonType}
-                id={props.defaultId}
-                statATK={searchingMainDetails?.statsGO?.atk}
-                statDEF={searchingMainDetails?.statsGO?.def}
-                isLoadedForms={isCurrentPokemonLoaded}
-              />
-            </div>
+          <StableHeightSection
+            isLoading={!isCurrentPokemonLoaded}
+            minHeight={340}
+            testId="pokemon-encounter-training-section"
+          >
+            <EncounterTraining summary={encounterSummary} isLoading={!isCurrentPokemonLoaded} />
           </StableHeightSection>
         </section>
-      )}
+      </div>
       <section className="pokemon-detail-section">
         <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={256} testId="pokemon-evolution-stable">
           {renderEvolutionContent()}

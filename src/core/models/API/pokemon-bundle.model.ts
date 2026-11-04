@@ -28,10 +28,35 @@ export interface PokemonGoFormCatalogEntry {
   pokemonType?: PokemonType;
   types?: string[];
   releasedGO?: boolean;
+  encounterSummary?: PokemonEncounterSummary;
   asset?: {
     default: string;
     shiny?: string;
   } | null;
+}
+
+export interface PokemonEncounterSummary {
+  cp?: {
+    research?: { level: 15; min: number; max: number };
+    raidOrEgg?: { level: 20; min: number; max: number };
+    weatherBoost?: { level: 25; min: number; max: number };
+    level40?: { level: 40; max: number };
+    level50?: { level: 50; max: number };
+    bestBuddy?: { level: 51; max: number };
+  };
+  encounter?: {
+    baseCaptureRate?: number;
+    baseFleeRate?: number;
+    movementType?: string;
+    attackProbability?: number;
+    dodgeProbability?: number;
+  };
+  availability: {
+    tradable?: boolean;
+    deployable?: boolean;
+    pokemonHome?: boolean;
+    shadowAvailable: boolean;
+  };
 }
 
 export interface PokemonMoveRanking {

@@ -168,6 +168,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [pokemonGoAsset, setPokemonGoAsset] = useState<IAsset>();
   const [pokemonGoFusionOptions, setPokemonGoFusionOptions] = useState<PokemonFusionOption[]>([]);
   const [pokemonGoEvolutionChains, setPokemonGoEvolutionChains] = useState<IEvolutionChain[]>([]);
+  const [pokemonGoForms, setPokemonGoForms] = useState<PokemonGoFormCatalogEntry[]>([]);
   const [moveRankings, setMoveRankings] = useState<PokemonMoveRanking[]>([]);
   const [releasedAlert, setReleasedAlert] = useState<ReleasedAlertSnapshot>();
 
@@ -266,6 +267,7 @@ const Pokemon = (props: IPokemonPage) => {
       setPokemonGoAsset(bundledPokemonGoAsset ?? undefined);
       setPokemonGoFusionOptions(bundledFusionOptions);
       setPokemonGoEvolutionChains(bundledPokemonGoEvolutionChains);
+      setPokemonGoForms(bundledPokemonGoForms);
       setMoveRankings(bundledMoveRankings);
 
       const pokemon = getFindPokemon((item) => item.num === specie.id);
@@ -1031,6 +1033,7 @@ const Pokemon = (props: IPokemonPage) => {
           pokemonGoAsset={pokemonGoAsset}
           pokemonGoFusionOptions={pokemonGoFusionOptions}
           pokemonGoEvolutionChains={pokemonGoEvolutionChains}
+          pokemonGoForms={pokemonGoForms}
           moveRankings={moveRankings}
           isLoadedForms={progress.isLoadedForms}
         />

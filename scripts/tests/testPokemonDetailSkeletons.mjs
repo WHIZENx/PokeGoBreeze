@@ -17,7 +17,9 @@ const [
   pokemonTableStyles,
   pokemonPage,
   pokemonPageStyles,
+  pokemonDetailLayoutStyles,
   stableHeightSection,
+  encounterTraining,
   theme,
   variables,
 ] = await Promise.all([
@@ -34,7 +36,9 @@ const [
   readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/Pokemon/Pokemon.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/PokemonDetailLayout.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Layout/StableHeightSection.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Encounter/EncounterTraining.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/utils/models/overrides/themes.model.ts', import.meta.url), 'utf8'),
   readFile(new URL('../../src/assets/styles/variables.scss', import.meta.url), 'utf8'),
 ]);
@@ -49,14 +53,52 @@ assert.match(evolution, /Math\.max\(EVOLUTION_MIN_HEIGHT, evolutionMinHeight\)/)
 assert.match(evolution, /chain\.dataset\.testid === 'evolution-chain-skeleton'/);
 assert.match(evolution, /data-testid="evolution-chain-skeleton"/);
 assert.match(evolution, /evo-chain tw-inline-flex tw-h-64/);
+assert.match(evolution, /const areEvolutionAssetsReady =/);
+assert.match(
+  evolution,
+  /const hasEvolutionData = props\.isLoadedForms && resolvedEvolutionRequestKey === evolutionRequestKey/
+);
+assert.doesNotMatch(
+  evolution,
+  /props\.isLoadedForms \|\|[\s\S]*arrEvoList\.some/,
+  'Intermediate evolution data must not reveal the chain before the final form payload is ready.'
+);
+assert.match(
+  evolution,
+  /evolutionAssetKeys\.every\(\(assetKey\) => loadedEvolutionAssets\.assetKeys\.includes\(assetKey\)\)/
+);
+assert.match(evolution, /chain\.querySelectorAll<HTMLImageElement>\('img'\)/);
+assert.match(evolution, /images\.every\(\(image\) => image\.complete\)/);
+assert.match(evolution, /container\.addEventListener\('load', scheduleImageCheck, true\)/);
+assert.match(evolution, /attributeFilter: \['src'\]/);
+assert.match(evolution, /!areEvolutionAssetsReady &&/);
+assert.match(evolution, /data-evolution-assets-ready=\{areEvolutionAssetsReady\}/);
+assert.match(evolution, /areEvolutionAssetsReady \? 'tw-visible' : 'tw-invisible'/);
 assert.doesNotMatch(
   evolution,
   /slide-container !tw-w-3\/4/,
   'Evolution loading must not use a floating rectangular backdrop.'
 );
-assert.match(assets, /className="tw-flex tw-min-h-\[206px\] tw-flex-wrap" data-testid="pokemon-assets-content"/);
+assert.match(assets, /!areAssetImagesLoaded \|\| hasPokemonGoAssets \? 'tw-min-h-\[206px\]' : 'tw-min-h-0'/);
 assert.match(assets, /<b>Pokémon GO assets<\/b>/);
 assert.match(assets, /<b>Pokémon cry<\/b>/);
+assert.match(assets, /testId="pokemon-assets-unavailable"/);
+assert.match(assets, /label="Pokémon GO image assets unavailable"/);
+assert.match(assets, /testId="pokemon-cries-unavailable"/);
+assert.match(assets, /label="Cry audio unavailable"/);
+assert.match(assets, /tw-relative tw-mt-2 tw-flex tw-flex-col tw-gap-6/);
+assert.match(assets, /title-evo !tw-m-0 !tw-mb-3/);
+assert.match(assets, /title-evo !tw-m-0 !tw-mb-4/);
+assert.equal(
+  assets.match(/<h5 className="!tw-m-0 !tw-mb-3">/g)?.length,
+  2,
+  'Both cry source headings must retain their spacing after the important margin reset.'
+);
+assert.match(assets, /const hasAnyCry = hasOriginCries \|\| hasPokemonGoCries/);
+assert.match(assets, /hasOriginCries && hasPokemonGoCries \? 'lg:tw-grid-cols-2' : 'lg:tw-max-w-3xl'/);
+assert.match(assets, /preload="metadata"/);
+assert.doesNotMatch(assets, /Assets in Pokémon GO unavailable/);
+assert.doesNotMatch(assets, /Sound in Pokémon GO unavailable\./);
 assert.match(assets, /data-testid="pokemon-cry-sources"/);
 assert.match(assets, /tw-grid tw-grid-cols-1 tw-gap-6 lg:tw-grid-cols-2/);
 assert.match(assets, /label="Pokémon Origin" size="small" variant="outlined"/);
@@ -66,10 +108,21 @@ assert.doesNotMatch(assets, /getPokemonGoIcon/);
 assert.doesNotMatch(assets, /Assets of .* in Pokémon GO/);
 assert.doesNotMatch(assets, /Sound of /);
 assert.match(assets, /data-testid="pokemon-assets-skeleton"/);
+assert.match(assets, /const POKEMON_ASSET_SKELETON_COUNT = 4/);
+assert.match(assets, /Array\.from\(\{ length: POKEMON_ASSET_SKELETON_COUNT \}/);
+assert.match(
+  assets,
+  /Promise\.all\(imageRequests\.map\(\(\{ candidates \}\) => preloadFirstAvailableImage\(candidates\)\)\)/
+);
+assert.match(assets, /const areAssetImagesLoaded =/);
+assert.match(assets, /preloadedImages\.requestKey === imageRequestKey/);
+assert.match(assets, /aria-busy=\{!areAssetImagesLoaded\}/);
+assert.match(assets, /\{!areAssetImagesLoaded \? \(/);
+assert.match(assets, /key=\{assets\.form\}/);
+assert.match(assets, /key=\{`\$\{assets\.form\}:\$\{value\.gender/);
 assert.match(assets, /variant="rounded"/);
 assert.match(assets, /className="group-model tw-h-\[206px\] tw-w-\[234px\] tw-max-w-full"/);
 assert.match(assets, /className="!tw-h-full !tw-w-full"/);
-assert.doesNotMatch(assets, /assetSkeletonGroups/);
 assert.doesNotMatch(assets, /PokemonAssetModelSkeleton/);
 assert.match(assets, /data-skeleton-surface="page"/);
 assert.match(gender, /export const GenderSkeleton/);
@@ -134,6 +187,21 @@ assert.match(form, /data-testid="pokemon-raid-card"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Raid<\/b>\s*<\/h4>/);
 assert.match(form, /minHeight=\{340\} testId="pokemon-raid-section"/);
 assert.match(form, /className="tw-mx-auto tw-w-full tw-max-w-4xl"/);
+assert.match(form, /data-testid="pokemon-raid-encounter-grid"/);
+assert.match(form, /lg:tw-grid-cols-2/);
+assert.match(form, /data-testid="pokemon-encounter-training-card"/);
+assert.match(form, /<b>CP &amp; Availability<\/b>/);
+assert.match(form, /testId="pokemon-encounter-training-section"/);
+assert.match(form, /<EncounterTraining summary=\{encounterSummary\} isLoading=\{!isCurrentPokemonLoaded\} \/>/);
+assert.match(encounterTraining, />Catch CP<\/h5>/);
+assert.match(encounterTraining, />Power-up CP<\/h5>/);
+assert.match(encounterTraining, />Base rates &amp; availability<\/h5>/);
+assert.match(encounterTraining, /label="Research"/);
+assert.match(encounterTraining, /label="Raid \/ Egg"/);
+assert.match(encounterTraining, /label="Weather Boost"/);
+assert.match(encounterTraining, /label="Best Buddy"/);
+assert.match(encounterTraining, /<StatusPill label="Pokémon HOME"/);
+assert.match(encounterTraining, /data-skeleton-surface="page"/);
 assert.doesNotMatch(form, /<li>Raid<\/li>/);
 const statsSectionIndex = form.indexOf('testId="pokemon-stats-section"');
 const informationSectionIndex = form.indexOf('testId="pokemon-information-section"');
@@ -260,8 +328,12 @@ assert.ok(
 assert.match(pokemonPage, /pokemon-detail-section pokemon-detail-hero-section/);
 assert.match(pokemonPage, /data-testid="pokemon-cost-table"/);
 assert.match(pokemonPage, /testId="pokemon-assets-stable"/);
-assert.match(pokemonPageStyles, /\.pokemon-detail-section[\s\S]*tw-rounded-2xl[\s\S]*var\(--background-paper\)/);
-assert.match(pokemonPageStyles, /\.pokemon-detail-table,\s*\.table-main\s*\{\s*@apply tw-h-\[217px\]/);
+assert.match(
+  pokemonDetailLayoutStyles,
+  /\.pokemon-detail-section[\s\S]*tw-rounded-2xl[\s\S]*var\(--background-paper\)/
+);
+assert.match(pokemonDetailLayoutStyles, /\.pokemon-detail-table[\s\S]*@apply tw-h-\[217px\]/);
+assert.match(pokemonPageStyles, /\.table-main[\s\S]*@apply tw-h-\[217px\]/);
 assert.match(stableHeightSection, /new ResizeObserver\(measure\)/);
 assert.match(stableHeightSection, /if \(isLoading && retainedHeightRef\.current > 0\)/);
 assert.match(stableHeightSection, /tw-transition-\[height\] tw-duration-300 tw-ease-in-out/);

@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import {
   deduplicatePokemonFormSelections,
+  findPokemonGoFormIdentityMatch,
   hasPokemonGoBattleModifierCatalog,
   normalizePokemonFormIdentity,
   pokemonGoFormIdentityKey,
@@ -197,6 +198,9 @@ canonicalSourceAliasCases.forEach(([id, pokeApiIdentity, pokemonGoIdentity]) => 
 });
 
 const pokemons = JSON.parse(await readFile(resolve(import.meta.dirname, '../../../api/data/pokemons.json'), 'utf8'));
+const pokeApiForms = JSON.parse(
+  await readFile(resolve(import.meta.dirname, '../../../api/src/generator/data/pokeapi-forms.json'), 'utf8')
+).forms;
 const pokemonIds = new Set(pokemons.map((pokemon) => pokemon.num));
 const detailCatalog = buildPokemonFormCatalog(pokemons);
 const detailCatalogById = new Map();
@@ -212,6 +216,38 @@ assert.equal(
   new Set(detailCatalog.map(pokemonGoFormIdentityKey)).size,
   detailCatalog.length,
   'Pokémon Detail form catalog contains duplicate semantic form identities'
+);
+
+const goCatalogIdentityWithoutOrdinaryType = (pokemon) =>
+  pokemonGoFormIdentityKey(pokemon).replace(/^([^:]+):[01]:/, '$1:');
+const goCatalogIdentityKeys = new Set(
+  detailCatalog.map(goCatalogIdentityWithoutOrdinaryType)
+);
+const mappedPokeApiForms = pokeApiForms.filter((pokemon) =>
+  goCatalogIdentityKeys.has(goCatalogIdentityWithoutOrdinaryType(pokemon))
+);
+mappedPokeApiForms.forEach((pokemon) => {
+  assert(
+    findPokemonGoFormIdentityMatch(detailCatalogById.get(pokemon.num), pokemon),
+    `Pokémon Detail CP/Availability lookup failed for ${pokemon.num}:${pokemon.form}:${pokemon.pokemonType}`
+  );
+});
+assert(
+  findPokemonGoFormIdentityMatch(detailCatalogById.get(1), {
+    num: 1,
+    form: 'NORMAL',
+    pokemonType: 0,
+  }),
+  'Ordinary type 0 must fall back to the Bulbasaur NORMAL type 1 catalog entry'
+);
+assert.equal(
+  findPokemonGoFormIdentityMatch(detailCatalogById.get(586), {
+    num: 586,
+    form: 'SPRING',
+    pokemonType: 0,
+  })?.fullName,
+  'SAWSBUCK_SPRING',
+  'Sawsbuck Spring must retain its exact ordinary type 0 identity'
 );
 
 const shadowSpecies = new Set(pokemons.filter((pokemon) => pokemon.hasShadowForm).map((pokemon) => pokemon.num));
@@ -313,5 +349,6 @@ console.log(
     `${darmanitanGalarSelectionFixture.length} Darmanitan Galar aliases collapse to 1 canonical form; ` +
     `${canonicalSourceAliasCases.length} cross-source aliases match; ` +
     `${namedDefaultModifierRows.length} named-default modifier cases audited across IDs ` +
-    `${namedDefaultModifierRows.map((pokemon) => pokemon.num).join(', ')}.`
+    `${namedDefaultModifierRows.map((pokemon) => pokemon.num).join(', ')}; ` +
+    `${mappedPokeApiForms.length} PokéAPI forms resolve to exact GO CP/Availability entries.`
 );

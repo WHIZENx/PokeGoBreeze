@@ -20,7 +20,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import QuestRequirements from './QuestRequirements';
-import React, { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Xarrow from 'react-xarrows';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/api.service';
@@ -105,8 +105,57 @@ class PokemonEvo implements IPokemonEvo {
 const Evolution = (props: IEvolutionComponent) => {
   const { findPokemonByIdAndForm, getEvolutionParents, getPokemonById } = usePokemon();
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
+  const evolutionRequestKey = JSON.stringify([
+    props.pokemonData?.id,
+    props.pokemonData?.form,
+    props.pokemonData?.pokemonType,
+    props.pokemonData?.fullName,
+    props.pokemonData?.evoList,
+    props.pokemonData?.tempEvo,
+  ]);
+  const [resolvedEvolutionRequestKey, setResolvedEvolutionRequestKey] = useState('');
   const [evolutionMinHeight, setEvolutionMinHeight] = useState(0);
   const evolutionContainerRef = useRef<HTMLDivElement>(null);
+  const evolutionAssetKeys = useMemo(
+    () =>
+      arrEvoList.flatMap((stage, stageIndex) =>
+        stage.map(
+          (pokemon, pokemonIndex) =>
+            `${stageIndex}:${pokemonIndex}:${pokemon.id}:${pokemon.dataForm}:${pokemon.sprite}:${pokemon.pokemonType}`
+        )
+      ),
+    [arrEvoList]
+  );
+  const evolutionAssetSetKey = JSON.stringify(evolutionAssetKeys);
+  const [loadedEvolutionAssets, setLoadedEvolutionAssets] = useState<{
+    assetSetKey: string;
+    assetKeys: string[];
+  }>({ assetSetKey: '', assetKeys: [] });
+  const [evolutionDomImageState, setEvolutionDomImageState] = useState({ assetSetKey: '', ready: false });
+  const reportEvolutionAssetReady = useCallback(
+    (assetKey: string) => {
+      setLoadedEvolutionAssets((current) => {
+        const assetKeys = current.assetSetKey === evolutionAssetSetKey ? current.assetKeys : [];
+        if (assetKeys.includes(assetKey)) {
+          return current.assetSetKey === evolutionAssetSetKey
+            ? current
+            : { assetSetKey: evolutionAssetSetKey, assetKeys };
+        }
+        return { assetSetKey: evolutionAssetSetKey, assetKeys: [...assetKeys, assetKey] };
+      });
+    },
+    [evolutionAssetSetKey]
+  );
+  const hasEvolutionData = props.isLoadedForms && resolvedEvolutionRequestKey === evolutionRequestKey;
+  const areEvolutionPokemonAssetsReady =
+    hasEvolutionData &&
+    evolutionAssetKeys.length > 0 &&
+    loadedEvolutionAssets.assetSetKey === evolutionAssetSetKey &&
+    evolutionAssetKeys.every((assetKey) => loadedEvolutionAssets.assetKeys.includes(assetKey));
+  const areEvolutionAssetsReady =
+    areEvolutionPokemonAssetsReady &&
+    evolutionDomImageState.assetSetKey === evolutionAssetSetKey &&
+    evolutionDomImageState.ready;
 
   const pokeSetName = (name: string) => name.replace(`_${formNormal()}`, '').replaceAll('_', '-').replace('MR', 'MR.');
 
@@ -230,9 +279,10 @@ const Evolution = (props: IEvolutionComponent) => {
     getCurrEvoChainStore(pokemon, result);
     getNextEvoChainStore(pokemon.name, pokemon.evoList, result);
     setArrEvoList(result);
+    setResolvedEvolutionRequestKey(evolutionRequestKey);
   };
 
-  const getSpecialEvoChain = (pokemon: Partial<IPokemonDetail>) =>
+  const getSpecialEvoChain = (pokemon: Partial<IPokemonDetail>) => {
     setArrEvoList([
       [
         PokemonEvo.create(
@@ -244,6 +294,8 @@ const Evolution = (props: IEvolutionComponent) => {
         ),
       ],
     ]);
+    setResolvedEvolutionRequestKey(evolutionRequestKey);
+  };
 
   useEffect(() => {
     if (props.pokemonData?.fullName) {
@@ -306,6 +358,42 @@ const Evolution = (props: IEvolutionComponent) => {
       window.removeEventListener('resize', scheduleMeasurement);
     };
   }, [arrEvoList]);
+
+  useLayoutEffect(() => {
+    const container = evolutionContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    let animationFrame = 0;
+    const checkImages = () => {
+      const chain = container.querySelector<HTMLUListElement>('ul.evo-chain');
+      const images = chain ? Array.from(chain.querySelectorAll<HTMLImageElement>('img')) : [];
+      const ready = Boolean(chain) && images.every((image) => image.complete);
+      setEvolutionDomImageState((current) =>
+        current.assetSetKey === evolutionAssetSetKey && current.ready === ready
+          ? current
+          : { assetSetKey: evolutionAssetSetKey, ready }
+      );
+    };
+    const scheduleImageCheck = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(checkImages);
+    };
+    const mutationObserver = new MutationObserver(scheduleImageCheck);
+
+    container.addEventListener('load', scheduleImageCheck, true);
+    container.addEventListener('error', scheduleImageCheck, true);
+    mutationObserver.observe(container, { attributes: true, attributeFilter: ['src'], childList: true, subtree: true });
+    scheduleImageCheck();
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      mutationObserver.disconnect();
+      container.removeEventListener('load', scheduleImageCheck, true);
+      container.removeEventListener('error', scheduleImageCheck, true);
+    };
+  }, [evolutionAssetSetKey]);
 
   const getIncomingEvolutions = (target: IPokemonEvo, stage: number) =>
     (arrEvoList[stage - 1] ?? []).flatMap((source, index) => {
@@ -687,6 +775,8 @@ const Evolution = (props: IEvolutionComponent) => {
             form={value.dataForm}
             sprite={value.sprite}
             pokemonType={props.pokemonData?.pokemonType}
+            assetKey={`${evo}:${index}:${value.id}:${value.dataForm}:${value.sprite}:${value.pokemonType}`}
+            onAssetReady={reportEvolutionAssetReady}
             stage={evoCount > 1 ? evo + 1 : undefined}
             formVaries={value.formVaries}
             formLabel={
@@ -714,25 +804,17 @@ const Evolution = (props: IEvolutionComponent) => {
     );
   };
 
-  const reload = (element: JSX.Element) => {
-    if (
-      props.isLoadedForms ||
-      (isNotEmpty(arrEvoList) && arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id)))
-    ) {
-      return element;
-    }
-    return (
-      <div className="evo-chain tw-inline-flex tw-h-64 tw-items-start" data-testid="evolution-chain-skeleton">
-        {Array.from({ length: EVOLUTION_SKELETON_STAGES }, (_, index) => (
-          <div key={index} className="tw-flex tw-w-24 tw-flex-col tw-items-center">
-            <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
-            <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-mt-1 !tw-w-10" />
-            <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-20" />
-          </div>
-        ))}
-      </div>
-    );
-  };
+  const renderEvolutionSkeleton = () => (
+    <div className="evo-chain tw-inline-flex tw-h-64 tw-items-start" data-testid="evolution-chain-skeleton">
+      {Array.from({ length: EVOLUTION_SKELETON_STAGES }, (_, index) => (
+        <div key={index} className="tw-flex tw-w-24 tw-flex-col tw-items-center">
+          <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
+          <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-mt-1 !tw-w-10" />
+          <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-20" />
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <Fragment>
@@ -944,52 +1026,55 @@ const Evolution = (props: IEvolutionComponent) => {
       </h4>
       <div
         ref={evolutionContainerRef}
-        className="evo-container scroll-evolution"
+        className={`evo-container scroll-evolution tw-relative${
+          areEvolutionAssetsReady ? '' : ' evolution-assets-loading'
+        }`}
         data-testid="evolution-container"
+        data-evolution-assets-ready={areEvolutionAssetsReady}
         style={{ minHeight: `${Math.max(EVOLUTION_MIN_HEIGHT, evolutionMinHeight)}px` }}
       >
-        {reload(
-          <ul className="ul-evo evo-chain tw-inline-flex">
-            {arrEvoList.map((values, evo) => (
-              <li key={evo} className="img-form-gender-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0">
-                <ul className="ul-evo tw-flex tw-flex-col">
-                  {values.map((value, index) => (
-                    <li
-                      key={index}
-                      className="img-form-gender-group img-evo-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0"
-                    >
-                      {value.formVaries ? (
-                        <Tooltips title="Vivillon pattern depends on the Scatterbug encounter">
-                          <div className="select-evo">
-                            {renderImageEvo(value, values, evo, index, arrEvoList.length)}
-                          </div>
-                        </Tooltips>
-                      ) : props.setSearchOption ? (
-                        <div
-                          className="select-evo"
-                          onClick={() => {
-                            props.setSearchOption?.({ id: value.id, form: value.form, pokemonType: value.pokemonType });
-                          }}
-                          title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
-                        >
-                          {renderImageEvo(value, values, evo, index, arrEvoList.length)}
-                        </div>
-                      ) : (
-                        <Link
-                          className="select-evo"
-                          to={`/pokemon/${value.id}${generateParamForm(value.form, value.pokemonType)}`}
-                          title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
-                        >
-                          {renderImageEvo(value, values, evo, index, arrEvoList.length)}
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        )}
+        {!areEvolutionAssetsReady && <div className="tw-absolute tw-inset-0 tw-z-10">{renderEvolutionSkeleton()}</div>}
+        <ul
+          aria-hidden={!areEvolutionAssetsReady}
+          className={`ul-evo evo-chain tw-inline-flex ${areEvolutionAssetsReady ? 'tw-visible' : 'tw-invisible'}`}
+        >
+          {arrEvoList.map((values, evo) => (
+            <li key={evo} className="img-form-gender-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0">
+              <ul className="ul-evo tw-flex tw-flex-col">
+                {values.map((value, index) => (
+                  <li
+                    key={index}
+                    className="img-form-gender-group img-evo-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0"
+                  >
+                    {value.formVaries ? (
+                      <Tooltips title="Vivillon pattern depends on the Scatterbug encounter">
+                        <div className="select-evo">{renderImageEvo(value, values, evo, index, arrEvoList.length)}</div>
+                      </Tooltips>
+                    ) : props.setSearchOption ? (
+                      <div
+                        className="select-evo"
+                        onClick={() => {
+                          props.setSearchOption?.({ id: value.id, form: value.form, pokemonType: value.pokemonType });
+                        }}
+                        title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
+                      >
+                        {renderImageEvo(value, values, evo, index, arrEvoList.length)}
+                      </div>
+                    ) : (
+                      <Link
+                        className="select-evo"
+                        to={`/pokemon/${value.id}${generateParamForm(value.form, value.pokemonType)}`}
+                        title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
+                      >
+                        {renderImageEvo(value, values, evo, index, arrEvoList.length)}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
       </div>
     </Fragment>
   );

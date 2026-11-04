@@ -31,8 +31,13 @@ const SpecialFormPokemonImage = ({ id, form }: SpecialFormPokemonImageProps) => 
     if (staticAsset) {
       sources.push(APIService.getPokemonSqModel(staticAsset));
     }
+    sources.push(
+      ...[form.sprites?.frontDefault, form.sprites?.frontHome, form.sprites?.frontArtwork].filter(
+        (source): source is string => Boolean(source)
+      )
+    );
     return [...new Set(sources)];
-  }, [animation, staticAsset]);
+  }, [animation, form.sprites, staticAsset]);
   const { source: activeSource, advanceSource } = useImageSourceSequence([...imageSources, APIService.getPokeSprite()]);
   return (
     <img
