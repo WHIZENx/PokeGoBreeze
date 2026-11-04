@@ -19,8 +19,11 @@ assert.match(display, /findAnimationForm\(id, form, pokemonType\)/);
 assert.match(display, /findExactAssetForm\(id, form\)/);
 assert.match(display, /if \(formVaries\)/);
 assert.match(display, /sortAnimationSources\(animation\?\.sources \?\? \[\]\)/);
-assert.match(display, /loading="lazy"/);
+assert.match(display, /loading="eager"/);
 assert.match(display, /referrerPolicy="no-referrer"/);
+assert.match(display, /onLoad=\{reportAssetReady\}/);
+assert.match(display, /iconSheetImage\.addEventListener\('load', reportAssetReady\)/);
+assert.match(display, /iconSheetImage\.addEventListener\('error', reportAssetReady\)/);
 assert.match(display, /resolveExactPokemonIconIndex/);
 assert.match(display, /<PokemonTableIcon/);
 assert.match(display, /exactMiniIcon !== undefined/);
@@ -37,10 +40,25 @@ assert.match(evolutionStyles, /\.evolution-connector\s*\{[\s\S]*z-index: auto !i
 assert.match(evolutionStyles, /\.evolution-connector-canvas\s*\{[\s\S]*z-index: 0;/);
 assert.match(evolutionStyles, /\.evolution-connector > div\s*\{[\s\S]*z-index: 1;/);
 assert.match(evolutionStyles, /\.evo-arrow-details\s*\{[\s\S]*z-index: 1;/);
-assert.doesNotMatch(display, /getPokeSprite\(id\)/, 'Evolution must not fall back to a different default form by ID');
+assert.match(evolutionStyles, /\.evolution-assets-loading \.evolution-connector\s*\{[\s\S]*visibility: hidden/);
+assert.match(display, /const normalizedForm = form\.replaceAll\('-', '_'\)\.toUpperCase\(\)/);
+assert.match(
+  display,
+  /\(normalizedForm === '' \|\| normalizedForm === 'NORMAL'\)[\s\S]*pokemonType === PokemonType\.None \|\| pokemonType === PokemonType\.Normal/
+);
+assert.match(
+  display,
+  /if \(isOrdinaryDefaultForm\) \{\s*sources\.push\(APIService\.getPokeSprite\(id\)\);\s*\}/,
+  'An ordinary NORMAL form may use its same-ID static PokéAPI sprite when GO animation and model assets are absent.'
+);
 assert.match(specialForm, /findAnimationForm\(id, formName, pokemonType\)/);
 assert.match(specialForm, /findExactAssetForm\(id, formName\)/);
 assert.match(specialForm, /sortAnimationSources\(animation\?\.sources \?\? \[\]\)/);
+assert.match(
+  specialForm,
+  /form\.sprites\?\.frontDefault, form\.sprites\?\.frontHome, form\.sprites\?\.frontArtwork/,
+  'Canonical Mega forms without a GIF must use their exact PokéAPI form sprite before the unknown placeholder.'
+);
 assert.match(specialForm, /data-testid="mega-evolution-pokemon-image"/);
 assert.match(specialForm, /loading="lazy"/);
 assert.match(specialForm, /referrerPolicy="no-referrer"/);

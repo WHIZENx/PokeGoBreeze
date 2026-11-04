@@ -11,37 +11,6 @@ a b.link-title,
   text-decoration: underline !important;
 }
 
-.table-main {
-  max-width: 500px !important;
-
-  @apply tw-h-[217px];
-}
-
-.table-main thead tr th {
-  @apply tw-text-[16px] tw-py-[5px] tw-px-2.5 tw-h-[35px];
-}
-
-.table-main td h5,
-.table-main td h6 {
-  @apply tw-m-0;
-}
-
-.table-main tbody tr td:nth-child(1) {
-  @apply tw-w-1/4 tw-min-w-[180px];
-}
-
-.table-main tbody tr.tw-text-center td.table-sub-header:nth-child(2) {
-  @apply tw-font-bold;
-}
-
-.table-main tbody tr:nth-child(even) td:nth-child(2) {
-  @apply tw-text-start;
-}
-
-.table-main tbody tr:nth-child(even) td:nth-child(2) div.row-extra {
-  @apply tw-py-[5px] tw-px-2.5;
-}
-
 .text-navigate,
 .text-overflow {
   @apply tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis tw-w-full;

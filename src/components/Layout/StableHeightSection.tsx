@@ -60,13 +60,13 @@ const StableHeightSection = ({
     <div
       className={combineClasses(
         'tw-overflow-hidden motion-reduce:tw-transition-none',
-        canTransition ? 'tw-transition-[height] tw-duration-300 tw-ease-in-out' : '',
+        canTransition ? 'tw-transition-[min-height] tw-duration-300 tw-ease-in-out' : '',
         className
       )}
       data-testid={testId}
       data-stable-height={height}
       aria-busy={isLoading}
-      style={{ height }}
+      style={{ minHeight: height }}
     >
       <div ref={contentRef}>{children}</div>
     </div>

@@ -159,3 +159,7 @@
     max-width: calc(var(--evo-gap) - 1rem);
   }
 }
+
+.evolution-assets-loading .evolution-connector {
+  visibility: hidden !important;
+}

@@ -59,7 +59,7 @@
     "generate:sitemap": "node sitemap/buildSitemap.js",
     "prerender:seo": "node sitemap/prerenderSeo.js",
     "audit:pokemon-details": "node scripts/audits/auditPokemonDetails.mjs",
-    "audit:pokemon-form-identities": "node --experimental-strip-types scripts/audits/auditPokemonFormIdentities.mjs",
+    "audit:pokemon-form-identities": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/audits/auditPokemonFormIdentities.mjs",
     "audit:stats-ranking": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/audits/auditStatsRankingCoverage.mjs",
     "audit:pokemon-navigation": "node --experimental-strip-types scripts/audits/auditPokemonNavigation.mjs",
     "audit:pre-hydration-shell": "node scripts/audits/auditPreHydrationShell.mjs",
