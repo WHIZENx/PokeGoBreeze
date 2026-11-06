@@ -52,7 +52,7 @@ import Tooltips from '../../Commons/Tooltips/Tooltips';
 import EvolutionPokemonDisplay from './EvolutionPokemonDisplay';
 
 const EVOLUTION_MIN_HEIGHT = 256;
-const EVOLUTION_SKELETON_STAGES = 3;
+const DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS = [1, 1, 1];
 const readyEvolutionAssetSetKeys = new Set<string>();
 
 interface IPokemonEvo {
@@ -124,6 +124,7 @@ const Evolution = (props: IEvolutionComponent) => {
   const [isReusingResolvedEvolutionChain, setIsReusingResolvedEvolutionChain] = useState(false);
   const [evolutionMinHeight, setEvolutionMinHeight] = useState(0);
   const evolutionContainerRef = useRef<HTMLDivElement>(null);
+  const lastLoadedEvolutionStageCounts = useRef<number[]>([...DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS]);
   const evolutionAssetKeys = useMemo(
     () =>
       arrEvoList.flatMap((stage, stageIndex) =>
@@ -155,19 +156,20 @@ const Evolution = (props: IEvolutionComponent) => {
     .flatMap((stage) => stage)
     .filter((pokemon) => pokemon.id === requestedPokemonId);
   const hasRequestedPokemonDetails = props.pokemonData?.id === requestedPokemonId;
-  const currentEvolutionIdentity = hasRequestedPokemonDetails
-    ? {
-        form: generateFormName(
-          props.pokemonData?.form,
-          props.pokemonData?.pokemonType ?? PokemonType.Normal,
-          '-'
-        ).toUpperCase(),
-        id: requestedPokemonId,
-        pokemonType: props.pokemonData?.pokemonType,
-      }
-    : requestedEvolutionNodes.length === 1
+  const currentEvolutionIdentity =
+    requestedEvolutionNodes.length === 1
       ? requestedEvolutionNodes[0]
-      : undefined;
+      : hasRequestedPokemonDetails
+        ? {
+            form: generateFormName(
+              props.pokemonData?.form,
+              props.pokemonData?.pokemonType ?? PokemonType.Normal,
+              '-'
+            ).toUpperCase(),
+            id: requestedPokemonId,
+            pokemonType: props.pokemonData?.pokemonType,
+          }
+        : undefined;
   const areReportedEvolutionAssetsReady =
     evolutionAssetKeys.length > 0 &&
     evolutionDomImageState.assetSetKey === evolutionAssetSetKey &&
@@ -182,6 +184,12 @@ const Evolution = (props: IEvolutionComponent) => {
       readyEvolutionAssetSetKeys.add(evolutionAssetSetKey);
     }
   }, [areReportedEvolutionAssetsReady, evolutionAssetSetKey, hasEvolutionData]);
+
+  useEffect(() => {
+    if (areEvolutionAssetsReady && arrEvoList.length) {
+      lastLoadedEvolutionStageCounts.current = arrEvoList.map((stage) => Math.max(1, stage.length));
+    }
+  }, [areEvolutionAssetsReady, arrEvoList]);
 
   useEffect(() => {
     if (pendingCurrentPokemonId === props.id && props.isLoadedForms) {
@@ -863,25 +871,45 @@ const Evolution = (props: IEvolutionComponent) => {
             )}
           />
         </span>
-        {value.isBaby && <span className="caption tw-text-error">(Baby)</span>}
-        <p>
+        <span
+          className="tw-flex tw-h-[18px] tw-items-center tw-justify-center tw-gap-1.5 tw-whitespace-nowrap"
+          data-testid="evolution-status-tags"
+        >
+          {value.isBaby && <span className="caption tw-text-error">(Baby)</span>}
           {isCurrent && (
             <span className="caption" data-testid="evolution-current-marker" data-evolution-current-id={value.id}>
               Current
             </span>
           )}
-        </p>
+        </span>
       </Fragment>
     );
   };
 
   const renderEvolutionSkeleton = () => (
-    <div className="evo-chain tw-inline-flex tw-h-64 tw-items-start" data-testid="evolution-chain-skeleton">
-      {Array.from({ length: EVOLUTION_SKELETON_STAGES }, (_, index) => (
-        <div key={index} className="tw-flex tw-w-24 tw-flex-col tw-items-center">
-          <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
-          <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-mt-1 !tw-w-10" />
-          <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-20" />
+    <div
+      className="evo-chain tw-inline-flex tw-min-h-64 tw-items-start"
+      data-testid="evolution-chain-skeleton"
+      data-skeleton-stage-count={lastLoadedEvolutionStageCounts.current.length}
+    >
+      {lastLoadedEvolutionStageCounts.current.map((nodeCount, stageIndex) => (
+        <div
+          key={stageIndex}
+          className="tw-flex tw-w-24 tw-flex-col tw-items-center"
+          data-testid="evolution-skeleton-stage"
+          data-skeleton-node-count={nodeCount}
+        >
+          {Array.from({ length: nodeCount }, (_, nodeIndex) => (
+            <div
+              key={nodeIndex}
+              className="tw-flex tw-h-[130px] tw-w-24 tw-flex-col tw-items-center"
+              data-testid="evolution-skeleton-node"
+            >
+              <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
+              <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-mt-1 !tw-w-10" />
+              <Skeleton data-skeleton-surface="page" variant="text" animation="wave" className="!tw-w-20" />
+            </div>
+          ))}
         </div>
       ))}
     </div>

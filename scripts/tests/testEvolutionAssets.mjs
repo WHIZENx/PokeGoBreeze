@@ -1,29 +1,54 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [display, fusion, specialForm, evolutionStyles, selector, moveDetail, viteConfig, iconManifest] =
-  await Promise.all([
-    readFile(new URL('../../src/components/Info/Evolution/EvolutionPokemonDisplay.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Info/FormChange/Fusion.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Info/SpecialForm/SpecialForm.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Info/Evolution/Evolution.scss', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/utils/pokemon-animation-assets.ts', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../vite.config.ts', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/assets/generated/pokemon-icons/pokemon-icon-index.json', import.meta.url), 'utf8').then(
-      JSON.parse
-    ),
-  ]);
+const [
+  display,
+  fusion,
+  specialForm,
+  evolution,
+  evolutionStyles,
+  pokemonDetailModel,
+  pokemons,
+  selector,
+  moveDetail,
+  viteConfig,
+  iconManifest,
+] = await Promise.all([
+  readFile(new URL('../../src/components/Info/Evolution/EvolutionPokemonDisplay.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/FormChange/Fusion.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/SpecialForm/SpecialForm.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Evolution/Evolution.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/Evolution/Evolution.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/core/models/API/info.model.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../../../api/data/pokemons.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../../src/utils/pokemon-animation-assets.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../vite.config.ts', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/assets/generated/pokemon-icons/pokemon-icon-index.json', import.meta.url), 'utf8').then(
+    JSON.parse
+  ),
+]);
 
 assert.match(display, /findAnimationForm\(id, form, pokemonType\)/);
+const igglybuff = pokemons.find(
+  (pokemon) => Number(pokemon.num) === 174 && pokemon.form === 'NORMAL' && pokemon.pokemonType === 1
+);
+assert.equal(igglybuff?.isBaby, true, 'Generated Igglybuff must retain its canonical baby identity.');
+assert.match(pokemonDetailModel, /isBaby: boolean/);
+assert.match(pokemonDetailModel, /isBaby = false/);
+assert.match(pokemonDetailModel, /obj\.isBaby = data\.isBaby/);
+assert.match(evolution, /pokemon\.isBaby,/);
+assert.match(evolution, /value\.isBaby && <span className="caption tw-text-error">\(Baby\)<\/span>/);
 assert.match(display, /findExactAssetForm\(id, form\)/);
 assert.match(display, /if \(formVaries\)/);
 assert.match(display, /sortAnimationSources\(animation\?\.sources \?\? \[\]\)/);
 assert.match(display, /loading="eager"/);
 assert.match(display, /referrerPolicy="no-referrer"/);
-assert.match(display, /onLoad=\{reportAssetReady\}/);
-assert.match(display, /iconSheetImage\.addEventListener\('load', reportAssetReady\)/);
-assert.match(display, /iconSheetImage\.addEventListener\('error', reportAssetReady\)/);
+assert.match(display, /const activeImageRef = useRef<HTMLImageElement>\(null\)/);
+assert.match(display, /if \(!activeSource \|\| !image\?\.complete\)/);
+assert.match(display, /if \(image\.naturalWidth === 0\)/);
+assert.match(display, /ref=\{activeImageRef\}/);
+assert.match(display, /onError=\{advanceSource\}/);
 assert.match(display, /resolveExactPokemonIconIndex/);
 assert.match(display, /<PokemonTableIcon/);
 assert.match(display, /exactMiniIcon !== undefined/);
