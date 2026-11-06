@@ -302,6 +302,7 @@ export interface IPokemonDetail extends IPokemonDetailInfo {
   prevEvo: string | undefined;
   sprite?: string;
   releasedGO: boolean;
+  isBaby: boolean;
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
@@ -340,6 +341,7 @@ export class PokemonDetail implements IPokemonDetail {
   prevEvo: string | undefined;
   sprite?: string;
   releasedGO = true;
+  isBaby = false;
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
@@ -382,6 +384,7 @@ export class PokemonDetail implements IPokemonDetail {
     obj.prevEvo = data.prevEvo;
     obj.sprite = data.sprite;
     obj.releasedGO = data.releasedGO;
+    obj.isBaby = data.isBaby;
     obj.quickMoves = data.quickMoves;
     obj.cinematicMoves = data.cinematicMoves;
     obj.specialMoves = data.specialMoves;

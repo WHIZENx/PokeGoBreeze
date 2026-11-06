@@ -60,7 +60,20 @@ assert.match(evolution, /const EVOLUTION_MIN_HEIGHT = 256/);
 assert.match(evolution, /Math\.max\(EVOLUTION_MIN_HEIGHT, evolutionMinHeight\)/);
 assert.match(evolution, /chain\.dataset\.testid === 'evolution-chain-skeleton'/);
 assert.match(evolution, /data-testid="evolution-chain-skeleton"/);
-assert.match(evolution, /evo-chain tw-inline-flex tw-h-64/);
+assert.match(evolution, /const DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS = \[1, 1, 1\]/);
+assert.match(evolution, /const lastLoadedEvolutionStageCounts = useRef<number\[]>/);
+assert.match(
+  evolution,
+  /if \(areEvolutionAssetsReady && arrEvoList\.length\)[\s\S]*arrEvoList\.map\(\(stage\) => Math\.max\(1, stage\.length\)\)/
+);
+assert.match(evolution, /evo-chain tw-inline-flex tw-min-h-64/);
+assert.match(evolution, /data-skeleton-stage-count=\{lastLoadedEvolutionStageCounts\.current\.length\}/);
+assert.match(evolution, /lastLoadedEvolutionStageCounts\.current\.map\(\(nodeCount, stageIndex\)/);
+assert.match(evolution, /data-testid="evolution-skeleton-stage"/);
+assert.match(evolution, /data-skeleton-node-count=\{nodeCount\}/);
+assert.match(evolution, /Array\.from\(\{ length: nodeCount \}/);
+assert.match(evolution, /data-testid="evolution-skeleton-node"/);
+assert.match(evolution, /tw-h-\[130px\]/);
 assert.match(evolution, /const areEvolutionAssetsReady =/);
 assert.match(evolution, /const readyEvolutionAssetSetKeys = new Set<string>\(\)/);
 assert.match(evolution, /isRequestedPokemonInResolvedChain && readyEvolutionAssetSetKeys\.has\(evolutionAssetSetKey\)/);
@@ -93,9 +106,24 @@ assert.match(
   /arrEvoList\.some\(\(stage\) => stage\.some\(\(pokemon\) => pokemon\.id === requestedPokemonId\)\)/
 );
 assert.match(evolution, /const hasRequestedPokemonDetails = props\.pokemonData\?\.id === requestedPokemonId/);
-assert.match(evolution, /requestedEvolutionNodes\.length === 1[\s\S]*requestedEvolutionNodes\[0\]/);
+assert.match(
+  evolution,
+  /const currentEvolutionIdentity =[\s\S]*requestedEvolutionNodes\.length === 1[\s\S]*requestedEvolutionNodes\[0\][\s\S]*hasRequestedPokemonDetails/
+);
+assert.doesNotMatch(
+  evolution,
+  /const currentEvolutionIdentity = hasRequestedPokemonDetails/,
+  'A settled detail response must not replace the unique selected chain identity and blink the Current marker.'
+);
 assert.match(evolution, /data-testid="evolution-current-marker"/);
 assert.match(evolution, /data-evolution-current-id=\{value\.id\}/);
+assert.match(evolution, /data-testid="evolution-status-tags"/);
+assert.match(evolution, /tw-flex tw-h-\[18px\] tw-items-center tw-justify-center tw-gap-1\.5/);
+assert.match(
+  evolution,
+  /data-testid="evolution-status-tags"[\s\S]*value\.isBaby[\s\S]*data-testid="evolution-current-marker"/
+);
+assert.doesNotMatch(evolution, /\{value\.isBaby[\s\S]*<p>[\s\S]*evolution-current-marker/);
 assert.doesNotMatch(
   evolution,
   /props\.isLoadedForms \|\|[\s\S]*arrEvoList\.some/,
@@ -210,18 +238,28 @@ assert.match(
 );
 assert.match(form, /searchingMainForm\?\.defaultId === props\.defaultId/);
 assert.doesNotMatch(form, /searchingMainDetails\?\.id === props\.defaultId/);
+assert.match(form, /const getGenderCardCount = \(ratio: IPokemonGenderRatio \| undefined\)/);
+assert.match(form, /const lastLoadedGenderSkeletonCount = useRef\(2\)/);
+assert.match(form, /const \[readyGenderDisplay, setReadyGenderDisplay\] = useState<GenderDisplaySnapshot>/);
 assert.match(
   form,
-  /const genderSkeletonCount = genderRatio \? \(genderRatio\.M !== 0 && genderRatio\.F !== 0 \? 2 : 1\) : 2/
+  /Promise\.all\(candidateGroups\.map\(preloadFirstAvailableImage\)\)\.then\(\(\) => \{[\s\S]*lastLoadedGenderSkeletonCount\.current = getGenderCardCount\(nextGenderDisplay\.ratio\)[\s\S]*setReadyGenderDisplay\(nextGenderDisplay\)/
 );
+assert.match(
+  form,
+  /const genderSkeletonCount = genderDisplay[\s\S]*getGenderCardCount\(genderRatio\)[\s\S]*lastLoadedGenderSkeletonCount\.current/
+);
+assert.match(form, /data-skeleton-count=\{genderSkeletonCount\}/);
 assert.match(form, /const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12\.5 tw-overflow-x-auto'/);
-assert.match(form, /const lastLoadedGender = useRef<GenderDisplaySnapshot>/);
-assert.match(form, /const \[searchGenderDisplay, setSearchGenderDisplay\] = useState<GenderDisplaySnapshot>/);
 assert.match(form, /Promise\.all\(candidateGroups\.map\(preloadFirstAvailableImage\)\)/);
-assert.match(form, /setSearchGenderDisplay\(nextGenderDisplay\)/);
-assert.match(form, /const directGenderDisplay: GenderDisplaySnapshot \| undefined = isCurrentPokemonLoaded/);
-assert.match(form, /const genderDisplay = params\.id/);
-assert.match(form, /lastGender\.pokemonId === props\.defaultId/);
+assert.match(form, /const unknownSprite = APIService\.getPokeSprite\(\)/);
+assert.match(form, /\[\.\.\.candidates\.default, unknownSprite\]/);
+assert.match(form, /\[\.\.\.candidates\.shiny, unknownSprite\]/);
+assert.match(
+  form,
+  /const genderDisplay =[\s\S]*isCurrentPokemonLoaded &&[\s\S]*readyGenderDisplay &&[\s\S]*readyGenderDisplay\.pokemonId === props\.defaultId[\s\S]*readyGenderDisplay\.formId === searchingMainForm\?\.form\?\.id/
+);
+assert.doesNotMatch(form, /directGenderDisplay|searchGenderDisplay|lastLoadedGender =/);
 assert.match(gender, /export const getGenderSpriteCandidates/);
 assert.match(form, /!genderDisplay \? \(/);
 assert.equal(form.match(/className=\{genderDisplayClass\}/g)?.length, 2);
@@ -234,15 +272,22 @@ assert.match(form, /<h4 className="info-title">\s*<b>Gender ratio<\/b>\s*<\/h4>/
 assert.match(form, /<h4 className="info-title">\s*<b>Pokémon stats<\/b>\s*<\/h4>/);
 assert.match(form, /data-testid="pokemon-information-card"/);
 assert.match(form, /const lastLoadedEvolutionSupplement = useRef<EvolutionSupplementSnapshot>/);
+assert.match(form, /specialFormCount: number/);
+assert.match(form, /const megaFormCount = props\.formList\.filter/);
+assert.match(form, /const primalFormCount = props\.formList\.filter/);
 assert.match(
   form,
   /if \(isCurrentPokemonLoaded\) \{[\s\S]*lastLoadedEvolutionSupplement\.current = currentEvolutionSupplement/
 );
 assert.match(form, /testId="mega-evolution-loading"/);
+assert.match(form, /count=\{lastLoadedEvolutionSupplement\.current\.specialFormCount\}/);
 assert.match(form, /testId="form-change-loading"/);
 assert.match(form, /testId="fusion-loading"/);
 assert.match(evolutionSupplementSkeleton, /data-skeleton-surface="page"/);
 assert.match(evolutionSupplementSkeleton, /variant\?: 'card' \| 'relationship'/);
+assert.match(evolutionSupplementSkeleton, /count\?: number/);
+assert.match(evolutionSupplementSkeleton, /Array\.from\(\{ length: Math\.max\(1, count\) \}/);
+assert.match(evolutionSupplementSkeleton, /data-testid="evolution-supplement-skeleton-card"/);
 assert.match(evolutionSupplementSkeleton, /aria-label=\{`Loading \$\{title\}`\}/);
 assert.match(specialForm, /const pokemonType = useMemo\(\(\) =>/);
 assert.match(specialForm, /const arrEvoList = useMemo\(\(\) =>/);
@@ -279,6 +324,18 @@ assert.match(encounterTraining, /label="Weather Boost"/);
 assert.match(encounterTraining, /label="Best Buddy"/);
 assert.match(encounterTraining, /<StatusPill label="Pokémon HOME"/);
 assert.match(encounterTraining, /data-skeleton-surface="page"/);
+assert.match(encounterTraining, /const cpTileClassName = \(compact: boolean\)/);
+assert.match(encounterTraining, /isLoading\?: boolean/);
+assert.match(encounterTraining, /aria-busy=\{isLoading\}/);
+assert.match(encounterTraining, /tw-relative tw-inline-block tw-w-16/);
+assert.match(encounterTraining, /tw-relative tw-inline-block tw-w-10 tw-text-right/);
+assert.match(encounterTraining, /className="!tw-absolute !tw-inset-0"/);
+assert.match(encounterTraining, /<CpTile[\s\S]*isLoading=\{isLoading\}/);
+assert.match(encounterTraining, /<RatePill[\s\S]*isLoading=\{isLoading\}/);
+assert.match(encounterTraining, /<StatusPill[\s\S]*isLoading=\{isLoading\}/);
+assert.doesNotMatch(encounterTraining, /if \(isLoading\) \{/);
+assert.doesNotMatch(encounterTraining, /availabilityPillWidths/);
+assert.doesNotMatch(encounterTraining, /height=\{index < 3 \? 80 : 64\}/);
 assert.doesNotMatch(form, /<li>Raid<\/li>/);
 const statsSectionIndex = form.indexOf('testId="pokemon-stats-section"');
 const informationSectionIndex = form.indexOf('testId="pokemon-information-section"');
