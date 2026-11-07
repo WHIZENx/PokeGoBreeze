@@ -86,6 +86,7 @@ import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import PokemonProfileImageSkeleton from '../../components/Info/PokemonProfileImageSkeleton';
 import StableHeightSection from '../../components/Layout/StableHeightSection';
+import { hydrateCanonicalPokemonDetail } from '../../utils/pokemon-detail-form';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -672,6 +673,7 @@ const Pokemon = (props: IPokemonPage) => {
     // caused distinct forms to resolve to the first matching GO form.
     const formName = [form.form?.formName, form.form?.name, form.defaultName].find((value) => isNotEmpty(value));
     const details = getPokemonDetails(id, formName, form.form?.pokemonType, form.form?.isDefault);
+    hydrateCanonicalPokemonDetail(details, id, form);
     details.pokemonType = form.form?.pokemonType ?? PokemonType.Normal;
     const pokemonDetails = PokemonDetail.setData(details);
     const normalizeBodyName = (value: string | undefined) => value?.replaceAll('_', '-').toLowerCase();

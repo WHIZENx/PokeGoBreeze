@@ -13,6 +13,8 @@ const [
   moveDetail,
   viteConfig,
   iconManifest,
+  pokemonPage,
+  assets,
 ] = await Promise.all([
   readFile(new URL('../../src/components/Info/Evolution/EvolutionPokemonDisplay.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/FormChange/Fusion.tsx', import.meta.url), 'utf8'),
@@ -27,9 +29,20 @@ const [
   readFile(new URL('../../src/assets/generated/pokemon-icons/pokemon-icon-index.json', import.meta.url), 'utf8').then(
     JSON.parse
   ),
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../../api/data/assets.json', import.meta.url), 'utf8').then(JSON.parse),
 ]);
 
 assert.match(display, /findAnimationForm\(id, form, pokemonType\)/);
+assert.match(pokemonPage, /hydrateCanonicalPokemonDetail\(details, id, form\)/);
+const clefableMegaAnimation = assets
+  .find((asset) => asset.id === 36)
+  ?.animation?.find((animation) => animation.form === 'MEGA' && animation.pokemonType === 4);
+assert.deepEqual(
+  clefableMegaAnimation?.sources.map((source) => source.source),
+  ['pokeapi', 'showdown'],
+  'Clefable Mega must use exact canonical GIF sources rather than the Normal animation'
+);
 const igglybuff = pokemons.find(
   (pokemon) => Number(pokemon.num) === 174 && pokemon.form === 'NORMAL' && pokemon.pokemonType === 1
 );
