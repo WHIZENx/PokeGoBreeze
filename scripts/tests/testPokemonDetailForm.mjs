@@ -1,5 +1,38 @@
 import assert from 'node:assert/strict';
-import { hydrateCanonicalPokemonDetail, isCanonicalSpeciesDefaultForm } from '../../src/utils/pokemon-detail-form.ts';
+import {
+  findCanonicalSpeciesDefaultForm,
+  hydrateCanonicalPokemonDetail,
+  isCanonicalSpeciesDefaultForm,
+  isDuplicatePokemonGoNormalForm,
+} from '../../src/utils/pokemon-detail-form.ts';
+
+const mothimForms = [
+  {
+    defaultName: 'mothim',
+    name: 'mothim',
+    form: { id: 414, isDefault: true, name: 'mothim-plant', formName: 'plant' },
+  },
+  {
+    defaultName: 'mothim',
+    name: 'mothim',
+    form: { id: -1, isDefault: false, name: 'mothim', formName: 'normal' },
+  },
+];
+assert.equal(
+  findCanonicalSpeciesDefaultForm(mothimForms, 414),
+  mothimForms[0],
+  'Mothim must select its tagged Plant default before its GO-only NORMAL form'
+);
+assert.equal(
+  isDuplicatePokemonGoNormalForm(mothimForms[0], 414, { form: 'NORMAL', pokemonType: 1 }, 1),
+  true,
+  'Mothim GO NORMAL must merge into its canonical Plant default'
+);
+assert.equal(
+  isDuplicatePokemonGoNormalForm(mothimForms[0], 414, { form: 'SHADOW', pokemonType: 2 }, 1),
+  false,
+  'Battle modifiers must remain separate from the canonical default'
+);
 
 assert.equal(
   isCanonicalSpeciesDefaultForm(

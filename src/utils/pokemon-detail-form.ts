@@ -21,6 +21,11 @@ interface SelectedPokemonFormIdentity {
   };
 }
 
+interface PokemonGoNormalFormIdentity {
+  form?: string;
+  pokemonType?: number;
+}
+
 const normalizedForm = (value: string | undefined) => (value || 'NORMAL').replaceAll('-', '_').toUpperCase();
 
 const normalizedFullName = (value: string) => value.replaceAll('-', '_').toUpperCase();
@@ -38,6 +43,25 @@ export const isCanonicalSpeciesDefaultForm = (selection: SelectedPokemonFormIden
   const speciesName = normalizedIdentityName(selection.defaultName);
   return selection.form.id === speciesId || normalizedIdentityName(selection.form.name) === speciesName;
 };
+
+export const findCanonicalSpeciesDefaultForm = <T extends SelectedPokemonFormIdentity>(
+  selections: T[],
+  speciesId: number
+) => selections.find((selection) => isCanonicalSpeciesDefaultForm(selection, speciesId));
+
+export const isDuplicatePokemonGoNormalForm = (
+  canonicalDefault: SelectedPokemonFormIdentity | undefined,
+  speciesId: number,
+  pokemonGoForm: PokemonGoNormalFormIdentity,
+  normalPokemonType: number
+) =>
+  Boolean(
+    canonicalDefault &&
+      isCanonicalSpeciesDefaultForm(canonicalDefault, speciesId) &&
+      normalizedForm(canonicalDefault.form?.formName) !== 'NORMAL' &&
+      normalizedForm(pokemonGoForm.form) === 'NORMAL' &&
+      pokemonGoForm.pokemonType === normalPokemonType
+  );
 
 /** Preserve the selected canonical identity when no matching GO row exists. */
 export const hydrateCanonicalPokemonDetail = <T extends PokemonDetailFormIdentity>(

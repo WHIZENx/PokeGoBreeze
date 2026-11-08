@@ -86,7 +86,12 @@ import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import PokemonProfileImageSkeleton from '../../components/Info/PokemonProfileImageSkeleton';
 import StableHeightSection from '../../components/Layout/StableHeightSection';
-import { hydrateCanonicalPokemonDetail, isCanonicalSpeciesDefaultForm } from '../../utils/pokemon-detail-form';
+import {
+  findCanonicalSpeciesDefaultForm,
+  hydrateCanonicalPokemonDetail,
+  isCanonicalSpeciesDefaultForm,
+  isDuplicatePokemonGoNormalForm,
+} from '../../utils/pokemon-detail-form';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -369,6 +374,7 @@ const Pokemon = (props: IPokemonPage) => {
             }
           }
         });
+        const canonicalDefaultForm = findCanonicalSpeciesDefaultForm(formListResult.flat(), specie.id);
 
         bundledPokemonGoForms.forEach((pokemon, index) => {
           const key = pokemonGoFormIdentityKey(pokemon);
@@ -385,6 +391,16 @@ const Pokemon = (props: IPokemonPage) => {
               : pokemon.form
           );
           const inheritedSprites = modifier ? baseFormSprites.get(baseIdentity) : undefined;
+          if (isDuplicatePokemonGoNormalForm(canonicalDefaultForm, specie.id, pokemon, PokemonType.Normal)) {
+            selectedKeys.add(key);
+            if (canonicalDefaultForm && pokemon.asset) {
+              canonicalDefaultForm.form.sprites = withPokemonGoAssetSprites(
+                canonicalDefaultForm.form.sprites,
+                pokemon.asset
+              );
+            }
+            return;
+          }
           if (selectedKeys.has(key)) {
             const selectedForm = selectedForms.get(key);
             if (selectedForm && pokemon.asset) {
@@ -803,6 +819,9 @@ const Pokemon = (props: IPokemonPage) => {
         const result = convertPokemonForm(item.form.formName, formType, item.form.pokemonType);
         return isEqual(result, form, EqualMode.IgnoreCaseSensitive);
       });
+      if (!currentForm && !isNotEmpty(form) && !isNotEmpty(formType)) {
+        currentForm = findCanonicalSpeciesDefaultForm(flatForms, id);
+      }
       let pokemonCurrentData = pokeData.find((item) => isEqual(currentForm?.form.name, item.name));
       if (!pokemonCurrentData) {
         pokemonCurrentData = pokeData.find((item) => item.isDefault);
@@ -870,9 +889,9 @@ const Pokemon = (props: IPokemonPage) => {
   );
   const showMainImageSkeleton = !currentPokemonId || isRequestedMainImageFormPending || isMainImageLoading;
   const profileModifier =
-    searchingMainForm?.form?.pokemonType === PokemonType.Shadow
+    isMainImageReady && searchingMainForm?.form?.pokemonType === PokemonType.Shadow
       ? 'shadow'
-      : searchingMainForm?.form?.pokemonType === PokemonType.Purified
+      : isMainImageReady && searchingMainForm?.form?.pokemonType === PokemonType.Purified
         ? 'purified'
         : '';
 
