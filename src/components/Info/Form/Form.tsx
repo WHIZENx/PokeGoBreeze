@@ -226,20 +226,19 @@ const FormComponent = (props: IFormInfoComponent) => {
     selectedPokemonType,
   ]);
 
+  // Every variety is already present in the current Pokémon bundle. Keep the
+  // last decoded gender cards visible while the next form's images preload,
+  // and reserve skeletons for a different Pokémon (or the first load).
   const genderDisplay =
-    isCurrentPokemonLoaded &&
-    readyGenderDisplay &&
-    readyGenderDisplay.pokemonId === props.defaultId &&
-    readyGenderDisplay.formId === searchingMainForm?.form?.id
-      ? readyGenderDisplay
-      : undefined;
+    isCurrentPokemonLoaded && readyGenderDisplay?.pokemonId === props.defaultId ? readyGenderDisplay : undefined;
+  const isGenderDisplayCurrentForm = Boolean(genderDisplay && genderDisplay.formId === searchingMainForm?.form?.id);
   const genderRatio = genderDisplay?.ratio;
   const genderSkeletonCount = genderDisplay ? getGenderCardCount(genderRatio) : lastLoadedGenderSkeletonCount.current;
   const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12.5 tw-overflow-x-auto';
   const genderDisplayClass = combineClasses(
     genderTrackClass,
     'tw-transition-opacity tw-duration-200',
-    isCurrentPokemonLoaded ? 'tw-opacity-100' : 'tw-opacity-60'
+    isGenderDisplayCurrentForm ? 'tw-opacity-100' : 'tw-opacity-60'
   );
   const [moveTabValue, setMoveTabValue] = useState(0);
   const selectedMoveForm = getPokemonFormWithNoneSpecialForm(
@@ -463,7 +462,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             className="tw-h-[190px]"
             data-testid="gender-ratio-content"
             data-gender-form-id={genderDisplay?.formId ?? ''}
-            aria-busy={!isCurrentPokemonLoaded}
+            aria-busy={!isCurrentPokemonLoaded || !isGenderDisplayCurrentForm}
           >
             {!genderDisplay ? (
               <div
@@ -478,7 +477,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             ) : genderRatio && (genderRatio.M !== 0 || genderRatio.F !== 0) ? (
               <div
                 className={genderDisplayClass}
-                aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
+                aria-label={!isGenderDisplayCurrentForm ? 'Updating gender ratio' : undefined}
               >
                 {genderRatio.M !== 0 && (
                   <Gender
@@ -502,7 +501,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             ) : (
               <div
                 className={genderDisplayClass}
-                aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
+                aria-label={!isGenderDisplayCurrentForm ? 'Updating gender ratio' : undefined}
               >
                 <Gender
                   sex={TypeSex.Genderless}

@@ -35,6 +35,7 @@ const [
 
 assert.match(display, /findAnimationForm\(id, form, pokemonType\)/);
 assert.match(pokemonPage, /hydrateCanonicalPokemonDetail\(details, id, form\)/);
+assert.match(pokemonPage, /isCanonicalSpeciesDefaultForm\(form, id\)/);
 const clefableMegaAnimation = assets
   .find((asset) => asset.id === 36)
   ?.animation?.find((animation) => animation.form === 'MEGA' && animation.pokemonType === 4);

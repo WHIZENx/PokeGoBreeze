@@ -257,14 +257,21 @@ assert.match(form, /\[\.\.\.candidates\.default, unknownSprite\]/);
 assert.match(form, /\[\.\.\.candidates\.shiny, unknownSprite\]/);
 assert.match(
   form,
-  /const genderDisplay =[\s\S]*isCurrentPokemonLoaded &&[\s\S]*readyGenderDisplay &&[\s\S]*readyGenderDisplay\.pokemonId === props\.defaultId[\s\S]*readyGenderDisplay\.formId === searchingMainForm\?\.form\?\.id/
+  /const genderDisplay =[\s\S]*isCurrentPokemonLoaded && readyGenderDisplay\?\.pokemonId === props\.defaultId \? readyGenderDisplay : undefined/
+);
+assert.match(
+  form,
+  /const isGenderDisplayCurrentForm = Boolean\([\s\S]*genderDisplay && genderDisplay\.formId === searchingMainForm\?\.form\?\.id/
 );
 assert.doesNotMatch(form, /directGenderDisplay|searchGenderDisplay|lastLoadedGender =/);
 assert.match(gender, /export const getGenderSpriteCandidates/);
 assert.match(form, /!genderDisplay \? \(/);
 assert.equal(form.match(/className=\{genderDisplayClass\}/g)?.length, 2);
-assert.match(form, /aria-label=\{!isCurrentPokemonLoaded \? 'Updating gender ratio' : undefined\}/);
-assert.match(form, /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded\}/);
+assert.match(form, /aria-label=\{!isGenderDisplayCurrentForm \? 'Updating gender ratio' : undefined\}/);
+assert.match(
+  form,
+  /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded \|\| !isGenderDisplayCurrentForm\}/
+);
 assert.match(form, /data-gender-form-id=\{genderDisplay\?\.formId \?\? ''\}/);
 assert.match(form, /className="form-container tw-flex tw-h-\[190px\] tw-items-center"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Form varieties<\/b>\s*<\/h4>/);
