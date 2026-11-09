@@ -7,7 +7,7 @@
 }
 
 .ranking-container {
-  @apply tw-max-h-[70vh] tw-overflow-y-auto;
+  @apply tw-isolate tw-max-h-[70vh] tw-overflow-y-auto;
 }
 
 .card-container {
@@ -146,7 +146,7 @@
 }
 
 .battle-bar .battle-bar-container {
-  @apply tw-overflow-x-auto tw-overflow-y-hidden;
+  @apply tw-isolate tw-overflow-x-auto tw-overflow-y-hidden;
 }
 
 .battle-bar .battle-bar-container,
@@ -228,7 +228,7 @@
 }
 
 .fit-timeline {
-  @apply tw-min-h-[150px] tw-py-2.5 tw-px-0;
+  @apply tw-isolate tw-min-h-[150px] tw-py-2.5 tw-px-0;
 }
 
 .fit-timeline .timeline-fit-container > div {

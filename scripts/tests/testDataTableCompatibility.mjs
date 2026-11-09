@@ -18,6 +18,8 @@ const counterStyles = await readFile(join(sourceRoot, 'components/Commons/Tables
 const counter = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.tsx'), 'utf8');
 const moveTableStyles = await readFile(join(sourceRoot, 'components/Commons/Tables/Move/MoveTable.scss'), 'utf8');
 const pokemonStyles = await readFile(join(sourceRoot, 'pages/Pokemon/Pokemon.scss'), 'utf8');
+const calculatePoint = await readFile(join(sourceRoot, 'pages/Tools/CalculatePoint/CalculatePoint.tsx'), 'utf8');
+const calculatePointStyles = await readFile(join(sourceRoot, 'pages/Tools/CalculatePoint/CalculatePoint.scss'), 'utf8');
 const sharedSortIcon = await readFile(join(sourceRoot, 'components/Commons/Tables/DataTableSortIcon.tsx'), 'utf8');
 const statsRanking = await readFile(join(sourceRoot, 'pages/Sheets/StatsRanking/StatsRanking.tsx'), 'utf8');
 const customSortableTables = await Promise.all(
@@ -72,6 +74,11 @@ assert.match(
   styles,
   /\.rdt-v7-compat\s*\{[\s\S]*?contain:\s*inline-size;/,
   'Table content must not enlarge its parent grid or table column.'
+);
+assert.match(
+  styles,
+  /\.rdt-v7-compat\s*\{[\s\S]*?\.rdt_responsiveWrapper\s*\{[\s\S]*?isolation:\s*isolate;/,
+  'Sticky React Data Table headers must remain in the table scroll stacking context.'
 );
 assert.match(
   styles,
@@ -133,6 +140,11 @@ assert.match(
   /\.table-moves thead tr \+ tr th \{[\s\S]*top: 35px;[\s\S]*tw-z-2/,
   'Best Moves column headers must remain sticky below the Pokémon navigation stacking layer.'
 );
+assert.match(
+  moveTableStyles,
+  /\.table-moves-col \{[\s\S]*tw-isolate[\s\S]*tw-overflow-y-auto/,
+  'Sticky move headers must remain in their vertical scroll stacking context.'
+);
 assert.doesNotMatch(
   moveTableStyles,
   /\.table-moves thead tr \+ tr th \{[\s\S]*tw-z-10/,
@@ -142,6 +154,16 @@ assert.match(
   pokemonStyles,
   /\.prev-next-block \{[\s\S]*z-index: 3 !important/,
   'The Pokémon navigation bar must retain the higher stacking layer.'
+);
+assert.equal(
+  calculatePoint.match(/className="tw-isolate tw-overflow-x-auto/g)?.length,
+  5,
+  'Every Breakpoint and Bulkpoint horizontal table scroller must isolate its sticky columns.'
+);
+assert.match(
+  calculatePointStyles,
+  /\.sticky-left \{[\s\S]*tw-sticky tw-left-0 tw-z-\[1\][\s\S]*\.sticky-table-left tbody tr td:nth-child\(1\) \{[\s\S]*tw-sticky tw-left-0 tw-z-\[1\]/,
+  'Breakpoint and Bulkpoint sticky columns must stay above data cells inside the isolated scroller.'
 );
 assert.match(
   statsRanking,
