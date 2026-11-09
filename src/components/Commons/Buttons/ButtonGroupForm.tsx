@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import { IButtonGroupFormComponent } from '../models/component.model';
 import { combineClasses, toNumber } from '../../../utils/extension';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
@@ -8,8 +8,40 @@ import PokemonTableIcon from '../../Sprites/PokemonTableIcon/PokemonTableIcon';
 import ButtonMui from './ButtonMui';
 
 const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!props.isLoaded || !props.scrollToSelected || props.id === undefined) {
+      return;
+    }
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      const container = containerRef.current;
+      const selected = container?.querySelector<HTMLElement>('[aria-pressed="true"]');
+      if (!container || !selected || container.scrollWidth <= container.clientWidth) {
+        return;
+      }
+
+      const selectedLeft = selected.offsetLeft;
+      const selectedRight = selectedLeft + selected.offsetWidth;
+      const visibleLeft = container.scrollLeft;
+      const visibleRight = visibleLeft + container.clientWidth;
+      if (selectedLeft >= visibleLeft && selectedRight <= visibleRight) {
+        return;
+      }
+
+      container.scrollTo({
+        left: Math.max(0, selectedLeft - (container.clientWidth - selected.offsetWidth) / 2),
+        behavior: 'smooth',
+      });
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [props.id, props.isLoaded, props.scrollToSelected]);
+
   return (
     <div
+      ref={containerRef}
       style={{ width: props.width, height: props.height }}
       className={combineClasses(
         'tw-relative tw-whitespace-nowrap tw-overflow-x-auto',

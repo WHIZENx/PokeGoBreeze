@@ -1,5 +1,5 @@
 .table-moves-col {
-  @apply tw-max-h-[700px] tw-overflow-y-auto;
+  @apply tw-isolate tw-max-h-[700px] tw-overflow-y-auto;
 }
 
 .table-moves {
@@ -16,7 +16,7 @@
 .table-moves thead tr + tr th {
   top: 35px;
 
-  @apply tw-z-10;
+  @apply tw-z-2;
 }
 
 .table-moves tbody tr td {

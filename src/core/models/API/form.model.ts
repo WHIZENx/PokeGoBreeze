@@ -123,6 +123,8 @@ export interface IPokemonFormModify {
   defaultId: number;
   defaultName: string;
   name: string;
+  pokemonGoForm?: string;
+  pokemonGoStatsForm?: string;
   form: IForm;
   sprites?: IPokemonSprite;
 }

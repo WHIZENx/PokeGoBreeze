@@ -30,11 +30,11 @@
 }
 
 .sticky-left {
-  @apply tw-sticky tw-left-0;
+  @apply tw-sticky tw-left-0 tw-z-[1];
 }
 
 .sticky-table-left tbody tr td:nth-child(1) {
-  @apply tw-sticky tw-left-0;
+  @apply tw-sticky tw-left-0 tw-z-[1];
 }
 
 .text-iv {

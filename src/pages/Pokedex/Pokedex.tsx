@@ -310,25 +310,25 @@ const Pokedex = (props: IStyleSheetData) => {
             <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
           </div>
         )}
-        <div className="head-types">Filter By Types (Maximum 2)</div>
+        <div className="head-types">Pokémon types (up to 2)</div>
         <ToggleType fullWidth value={selectTypes} onSelectType={(type) => addTypeArr(type)} />
         <div className="tw-w-full">
           <div className="border-input">
-            <div className="head-types">Options</div>
+            <div className="head-types">Filters</div>
             <div className="row !tw-m-0">
               <div className="xl:tw-w-1/3 xl:tw-flex-initial !tw-p-0">
                 <InputMuiSearch
                   isNoWrap
                   value={searchTerm}
                   onChange={(value) => setSearchTerm(value)}
-                  placeholder="Enter Name or ID"
-                  labelPrepend="Search name or ID"
+                  placeholder="Enter Pokémon name or Pokédex number"
+                  labelPrepend="Search"
                 />
                 <FormControlMui
                   control={
                     <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
                   }
-                  label="Match Pokémon"
+                  label="Exact match"
                 >
                   <InputReleased
                     releasedGO={releasedGO}
@@ -343,7 +343,7 @@ const Pokedex = (props: IStyleSheetData) => {
                     className="tw-h-full"
                     label={
                       <span className="tw-flex tw-items-center">
-                        Show All Shiny Pokémon (Only Possible)
+                        Show Shiny when available
                         <img
                           className={combineClasses('tw-ml-1', isShiny ? 'filter-shiny' : 'filter-gray')}
                           width={28}
@@ -362,7 +362,7 @@ const Pokedex = (props: IStyleSheetData) => {
                     multiple
                     formClassName="tw-w-1/2"
                     formSx={{ m: 1 }}
-                    inputLabel="Generation(s)"
+                    inputLabel="Generations"
                     value={gen}
                     onChangeSelect={handleChangeGen}
                     renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
@@ -397,7 +397,7 @@ const Pokedex = (props: IStyleSheetData) => {
                     multiple
                     formClassName="tw-w-1/2"
                     formSx={{ m: 1 }}
-                    inputLabel="Version(s)"
+                    inputLabel="Introduced in"
                     value={version}
                     onChangeSelect={handleChangeVersion}
                     renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
@@ -428,7 +428,7 @@ const Pokedex = (props: IStyleSheetData) => {
                   />
                 </div>
                 <div className="input-group border-input">
-                  <span className="input-group-text !tw-max-h-[42px]">Filter only by</span>
+                  <span className="input-group-text !tw-max-h-[42px]">Filter by</span>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -443,7 +443,7 @@ const Pokedex = (props: IStyleSheetData) => {
                         }
                       />
                     }
-                    label={getKeyWithData(PokemonType, PokemonType.Mega)}
+                    label="Mega"
                   />
                   <FormControlLabel
                     control={
@@ -459,7 +459,7 @@ const Pokedex = (props: IStyleSheetData) => {
                         }
                       />
                     }
-                    label={getKeyWithData(PokemonType, PokemonType.GMax)}
+                    label="Gigantamax"
                   />
                   <FormControlLabel
                     control={
@@ -475,7 +475,7 @@ const Pokedex = (props: IStyleSheetData) => {
                         }
                       />
                     }
-                    label={getKeyWithData(PokemonType, PokemonType.Primal)}
+                    label="Primal"
                   />
                   <FormControlLabel
                     control={

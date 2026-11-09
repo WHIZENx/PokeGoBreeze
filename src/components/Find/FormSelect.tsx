@@ -40,6 +40,7 @@ import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import { markImageAsPreloaded, usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { deduplicatePokemonFormSelections, pokemonGoFormIdentityKey } from '../../utils/pokemon-form-identity';
+import { isCanonicalSpeciesDefaultForm } from '../../utils/pokemon-detail-form';
 
 const pokemonGoAssetSprites = (asset: PokemonGoFormCatalogEntry['asset']) => {
   const sprites = new PokemonSprite();
@@ -274,7 +275,12 @@ const FormSelect = (props: IFormSelectComponent) => {
         currentForm.form.formName,
         currentForm.defaultName
       );
-      const details = getPokemonDetails(id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
+      const details = getPokemonDetails(
+        id,
+        formName,
+        currentForm.form.pokemonType,
+        isCanonicalSpeciesDefaultForm(currentForm, id)
+      );
       details.pokemonType = currentForm.form.pokemonType ?? PokemonType.Normal;
       const pokemonDetails = PokemonDetail.setData(details);
       if (props.isObjective) {
