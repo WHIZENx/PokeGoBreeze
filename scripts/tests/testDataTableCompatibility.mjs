@@ -16,6 +16,8 @@ const pagination = await readFile(
 const styles = await readFile(join(sourceRoot, 'assets/styles/custom.scss'), 'utf8');
 const counterStyles = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.scss'), 'utf8');
 const counter = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.tsx'), 'utf8');
+const moveTableStyles = await readFile(join(sourceRoot, 'components/Commons/Tables/Move/MoveTable.scss'), 'utf8');
+const pokemonStyles = await readFile(join(sourceRoot, 'pages/Pokemon/Pokemon.scss'), 'utf8');
 const sharedSortIcon = await readFile(join(sourceRoot, 'components/Commons/Tables/DataTableSortIcon.tsx'), 'utf8');
 const statsRanking = await readFile(join(sourceRoot, 'pages/Sheets/StatsRanking/StatsRanking.tsx'), 'utf8');
 const customSortableTables = await Promise.all(
@@ -107,9 +109,39 @@ assert.match(
   'Counter DPS values must stack their unit on mobile and return to one row at the small breakpoint.'
 );
 assert.match(
+  counter,
+  /const isTargetUnreleased = props\.pokemonData\?\.releasedGO === false/,
+  'The counter empty state must depend on the selected target release state.'
+);
+assert.match(
+  counter,
+  /data-testid="counter-unreleased-empty-state"[\s\S]*SearchOffRoundedIcon[\s\S]*Counter data unavailable[\s\S]*not been released in Pokémon GO yet/,
+  'Unreleased forms must explain why counter data cannot be calculated.'
+);
+assert.match(
+  counter,
+  /tw-border-\[var\(--divider\)\][\s\S]*tw-bg-\[var\(--background-selected\)\][\s\S]*tw-text-\[var\(--text-primary\)\][\s\S]*tw-text-\[var\(--text-secondary\)\]/,
+  'The counter empty state must use theme-aware design-system tokens.'
+);
+assert.match(
   counterStyles,
   /@media \(width <= 639px\)[\s\S]*\.rdt_TableCol:last-of-type,[\s\S]*\.rdt_TableCell:last-of-type[\s\S]*tw-px-1/,
   'The mobile percentage column must reclaim horizontal space from data-table cell padding.'
+);
+assert.match(
+  moveTableStyles,
+  /\.table-moves thead tr \+ tr th \{[\s\S]*top: 35px;[\s\S]*tw-z-2/,
+  'Best Moves column headers must remain sticky below the Pokémon navigation stacking layer.'
+);
+assert.doesNotMatch(
+  moveTableStyles,
+  /\.table-moves thead tr \+ tr th \{[\s\S]*tw-z-10/,
+  'Best Moves column headers must not float above the Pokémon navigation bar.'
+);
+assert.match(
+  pokemonStyles,
+  /\.prev-next-block \{[\s\S]*z-index: 3 !important/,
+  'The Pokémon navigation bar must retain the higher stacking layer.'
 );
 assert.match(
   statsRanking,
