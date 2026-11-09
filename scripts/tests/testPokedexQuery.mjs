@@ -4,18 +4,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { serializePokedexSelection } from '../../src/utils/pokedex-query.ts';
 import { pokemonSearchOptionId } from '../../src/pages/Search/Pokemon/pokemon-search-navigation.ts';
-import {
-  toolPokemonOptionId,
-} from '../../src/components/Find/find-navigation.ts';
-import {
-  getPokemonKeyboardIndex,
-  getScrollTopToReveal,
-} from '../../src/utils/pokemon-keyboard-navigation.ts';
-import {
-  getViewportPrefetchThreshold,
-  isNearScrollEnd,
-  shouldPreventScrollChaining,
-} from '../../src/utils/scroll.ts';
+import { toolPokemonOptionId } from '../../src/components/Find/find-navigation.ts';
+import { getPokemonKeyboardIndex, getScrollTopToReveal } from '../../src/utils/pokemon-keyboard-navigation.ts';
+import { getViewportPrefetchThreshold, isNearScrollEnd, shouldPreventScrollChaining } from '../../src/utils/scroll.ts';
 
 const generations = [0, 1, 2];
 assert.equal(pokemonSearchOptionId(448), 'pokemon-card-448');
@@ -68,12 +59,27 @@ assert.equal(shouldPreventScrollChaining({ scrollTop: 2000, clientHeight: 570, s
 assert.equal(shouldPreventScrollChaining({ scrollTop: 4430, clientHeight: 570, scrollHeight: 5000 }, 1), true);
 assert.equal(shouldPreventScrollChaining({ scrollTop: 0, clientHeight: 570, scrollHeight: 570 }, 1), true);
 
-const [pokemonSearchSource, pokemonSelectSource, toolPokemonSearchSource, customStyleSource] = await Promise.all([
-  readFile(new URL('../../src/pages/Search/Pokemon/Search.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Commons/Selects/SelectCardPokemon.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Find/Find.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/assets/styles/custom.scss', import.meta.url), 'utf8'),
-]);
+const [pokedexSource, pokemonSearchSource, pokemonSelectSource, toolPokemonSearchSource, customStyleSource] =
+  await Promise.all([
+    readFile(new URL('../../src/pages/Pokedex/Pokedex.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Search/Pokemon/Search.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Commons/Selects/SelectCardPokemon.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Find/Find.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/assets/styles/custom.scss', import.meta.url), 'utf8'),
+  ]);
+assert.match(pokedexSource, /Pokémon types \(up to 2\)/);
+assert.match(pokedexSource, /<div className="head-types">Filters<\/div>/);
+assert.match(pokedexSource, /label="Exact match"/);
+assert.match(pokedexSource, /Show Shiny when available/);
+assert.match(pokedexSource, /inputLabel="Generations"/);
+assert.match(pokedexSource, /inputLabel="Introduced in"/);
+assert.match(pokedexSource, />Filter by<\/span>/);
+assert.doesNotMatch(pokedexSource, /Missing GO stats/);
+assert.doesNotMatch(pokedexSource, /missingStats/);
+assert.match(pokedexSource, /label="Mega"/);
+assert.match(pokedexSource, /label="Gigantamax"/);
+assert.match(pokedexSource, /label="Primal"/);
+assert.doesNotMatch(pokedexSource, /Show All Shiny Pokémon \(Only Possible\)|label="Match Pokémon"/);
 assert.match(pokemonSearchSource, /getOptionId=\{\(pokemon\) => pokemonSearchOptionId\(pokemon\.num\)\}/);
 assert.match(pokemonSearchSource, /behavior: 'auto'/);
 assert.match(pokemonSearchSource, /searchResults\.findIndex\(\(pokemon\) => pokemon\.num === selectId\)/);

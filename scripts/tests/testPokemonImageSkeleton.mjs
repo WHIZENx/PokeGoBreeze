@@ -51,6 +51,11 @@ assert.match(
   /isMainImageReady && searchingMainForm\?\.form\?\.id === currentPokemonId/,
   'Only the canonical species form may reuse the generic official artwork cache.'
 );
+assert.match(
+  pokemonPage,
+  /isMainImageReady && searchingMainForm\?\.form\?\.pokemonType === PokemonType\.Shadow[\s\S]*isMainImageReady && searchingMainForm\?\.form\?\.pokemonType === PokemonType\.Purified/,
+  'Shadow and Purified auras must clear as soon as navigation targets another Pokémon.'
+);
 assert.doesNotMatch(
   `${pokemonPage}\n${formSelect}`,
   /form\?\.isDefault \? .*OfficialImage|form\.isDefault \? .*OfficialImage/,

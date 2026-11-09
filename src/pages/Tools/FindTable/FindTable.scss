@@ -9,3 +9,9 @@
 .one-star,.three-star,.two-star,.zero-star {
   @apply tw-border tw-border-solid tw-border-yellow-400 tw-rounded-lg tw-m-2.5 tw-p-[5px];
 }
+
+.find-iv-result-table .rdt-v7-compat > div,
+.find-iv-result-table .rdt_Table {
+  --rdt-color-highlight: #dbeafe !important;
+  --rdt-color-highlight-text: var(--text-constant) !important;
+}

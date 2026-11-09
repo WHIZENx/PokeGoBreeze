@@ -323,8 +323,18 @@ assert.match(
 );
 assert.match(
   pvpStyles,
-  /\.battle-bar \.battle-bar-container \{[\s\S]*tw-overflow-x-auto tw-overflow-y-hidden/,
+  /\.battle-bar \.battle-bar-container \{[\s\S]*tw-isolate tw-overflow-x-auto tw-overflow-y-hidden/,
   'Normal Timeline must keep horizontal scrolling without exposing a vertical scrollbar.'
+);
+assert.match(
+  pvpStyles,
+  /\.ranking-container \{[\s\S]*tw-isolate[\s\S]*tw-overflow-y-auto/,
+  'PvP ranking sticky headers must remain in their scroll stacking context.'
+);
+assert.match(
+  pvpStyles,
+  /\.fit-timeline \{[\s\S]*tw-isolate/,
+  'Fit Timeline event badges must not escape their timeline stacking context.'
 );
 for (const content of [timeline, timelineFit]) {
   assert.match(

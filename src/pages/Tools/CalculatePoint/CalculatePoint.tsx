@@ -487,7 +487,7 @@ const CalculatePoint = () => {
                     <div className="xl:tw-w-2/3">
                       <h3>Attacker Breakpoint</h3>
                       {resultBreakPointAtk && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                      <div className="tw-overflow-x-auto">
+                      <div className="tw-isolate tw-overflow-x-auto">
                         <table className="table-info table-raid-cal sticky-left tw-w-fit">
                           <thead className="tw-text-center">
                             <tr className="table-header">
@@ -623,7 +623,7 @@ const CalculatePoint = () => {
                     <div className="xl:tw-w-2/3">
                       <h3>Defender Breakpoint</h3>
                       {resultBreakPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                      <div className="tw-overflow-x-auto">
+                      <div className="tw-isolate tw-overflow-x-auto">
                         <table className="table-info table-raid-cal sticky-left tw-w-fit">
                           <thead className="tw-text-center">
                             <tr className="table-header">
@@ -674,7 +674,7 @@ const CalculatePoint = () => {
                       </div>
                       <hr />
                       <h3>Stamina Breakpoint</h3>
-                      <div className="tw-overflow-x-auto">
+                      <div className="tw-isolate tw-overflow-x-auto">
                         <table className="table-info table-raid-cal sticky-left tw-w-max">
                           <thead className="tw-text-center">
                             <tr className="table-header">
@@ -885,10 +885,10 @@ const CalculatePoint = () => {
                         label="Calculate"
                       />
                     </div>
-                    <div className="xl:tw-w-2/3 tw-overflow-x-auto">
+                    <div className="tw-isolate tw-overflow-x-auto xl:tw-w-2/3">
                       <h3>BulkPoint</h3>
                       {resultBulkPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                      <div className="tw-overflow-x-auto">
+                      <div className="tw-isolate tw-overflow-x-auto">
                         <table className="table-info table-raid-cal sticky-left tw-w-fit">
                           <thead className="tw-text-center">
                             <tr className="table-header">

@@ -231,6 +231,7 @@ export interface IButtonGroupFormComponent {
   forms: IPokemonFormModify[][];
   isLoaded: boolean;
   isFullWidth?: boolean;
+  scrollToSelected?: boolean;
   loading: React.ReactNode;
   id: number | undefined;
   defaultId: number | undefined;

@@ -28,6 +28,8 @@ export interface PokemonGoFormCatalogEntry {
   pokemonType?: PokemonType;
   types?: string[];
   releasedGO?: boolean;
+  canonicalForm?: string;
+  canonicalAliases?: string[];
   encounterSummary?: PokemonEncounterSummary;
   asset?: {
     default: string;

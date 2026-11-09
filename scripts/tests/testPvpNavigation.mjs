@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [buttonGroup, home, linkToTop, app] = await Promise.all([
+const [buttonGroup, home, linkToTop, app, leagueStyles] = await Promise.all([
   readFile(new URL('../../src/components/Commons/Buttons/ButtonGroupLeague.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Home.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Link/LinkToTop.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Leagues/Leagues.scss', import.meta.url), 'utf8'),
 ]);
 
 assert.match(buttonGroup, /useNavigateToTop\(\)/);
@@ -26,6 +27,11 @@ assert.match(home, /id: 'pvp-rank-filter'/);
 assert.match(home, /id: 'pvp-team-filter'/);
 assert.match(buttonGroup, /leagueGroups\.flatMap/);
 assert.match(buttonGroup, /<img[\s\S]*?className="tw-mx-auto"[\s\S]*?alt="Image League"/);
+assert.match(
+  leagueStyles,
+  /\.season-league \{[\s\S]*tw-isolate[\s\S]*tw-overflow-x-auto[\s\S]*tw-overflow-y-hidden/,
+  'Battle League sticky reward columns must remain inside their horizontal scroll stacking context.'
+);
 for (const path of ['rankings', 'teams', 'battle']) {
   assert.match(home, new RegExp(`path="${path}"`), `PvP ${path} cards must share the scroll-reset navigation`);
 }

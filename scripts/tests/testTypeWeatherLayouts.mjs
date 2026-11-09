@@ -90,8 +90,18 @@ assert.match(
 assert.match(matchupMatrix, />\s*✓\s*<\/span>/, 'active multiplier buttons must reserve a visible check indicator');
 assert.match(
   matchupMatrix,
-  /multiplierClass\(multiplier\),[\s\S]*?selected \? 'tw-relative tw-z-\[1\] tw-ring-2/,
+  /multiplierClass\(multiplier\),[\s\S]*?selected \? 'tw-ring-2 tw-ring-inset tw-ring-primary'/,
   'matrix cells must preserve their original multiplier colors before adding the selected highlight'
+);
+assert.match(
+  matchupMatrix,
+  /className="tw-isolate tw-overflow-x-auto tw-pb-1"/,
+  'the matchup matrix must contain sticky and highlighted cells in its own stacking context'
+);
+assert.doesNotMatch(
+  matchupMatrix,
+  /selected \? '[^']*tw-z-/,
+  'highlighted multiplier cells must not compete with the sticky left column z-index'
 );
 assert.doesNotMatch(
   matchupMatrix,

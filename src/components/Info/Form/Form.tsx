@@ -45,6 +45,7 @@ import { findPokemonGoFormIdentityMatch } from '../../../utils/pokemon-form-iden
 import TrainingCosts from '../TrainingCosts/TrainingCosts';
 import EvolutionSupplementSkeleton from '../Evolution/EvolutionSupplementSkeleton';
 import APIService from '../../../services/api.service';
+import { getSpeciesGenderRatio } from '../../../utils/pokemon-detail-form';
 
 const unavailablePokemonMoves: PokemonMoves = {
   fastMoves: [],
@@ -97,20 +98,27 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
     return findPokemonGoFormIdentityMatch(props.pokemonGoForms, {
       num: props.defaultId,
-      form: searchingMainForm.form.formName || 'NORMAL',
+      form: searchingMainForm.pokemonGoForm || searchingMainForm.form.formName || 'NORMAL',
       pokemonType: selectedPokemonType,
     })?.encounterSummary;
   }, [props.defaultId, props.pokemonGoForms, searchingMainForm, selectedPokemonType]);
   const displaySpriteSources = useMemo(() => {
     const selectedSprites = searchingMainForm?.form?.sprites;
-    if (!isSpecialFormType(selectedPokemonType)) {
-      return { primary: selectedSprites };
-    }
-
-    const selectedBaseForm = getPokemonFormWithNoneSpecialForm(searchingMainForm?.form?.formName, selectedPokemonType);
     const baseForms = props.formList
       .flatMap((forms) => forms)
       .filter((item) => !isSpecialFormType(item.form.pokemonType) && hasSpriteImage(item.form.sprites));
+    const pokeApiBaseForms = baseForms.filter((item) => (item.form.id ?? 0) > 0);
+    const matchingVariety = pokeApiBaseForms.find((item) => isEqual(item.name, searchingMainForm?.name));
+    const defaultForm = pokeApiBaseForms.find((item) => item.defaultId === props.defaultId && item.form.isDefault);
+    const fallbackSprites = matchingVariety?.form.sprites ?? defaultForm?.form.sprites;
+    if (!isSpecialFormType(selectedPokemonType)) {
+      return {
+        primary: selectedSprites,
+        fallback: fallbackSprites === selectedSprites ? undefined : fallbackSprites,
+      };
+    }
+
+    const selectedBaseForm = getPokemonFormWithNoneSpecialForm(searchingMainForm?.form?.formName, selectedPokemonType);
     const matchingBaseForm = baseForms.find((item) =>
       isEqual(
         getPokemonFormWithNoneSpecialForm(item.form.formName, item.form.pokemonType),
@@ -118,10 +126,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         EqualMode.IgnoreCaseSensitive
       )
     );
-    const pokeApiBaseForms = baseForms.filter((item) => (item.form.id ?? 0) > 0);
-    const matchingVariety = pokeApiBaseForms.find((item) => isEqual(item.name, searchingMainForm?.name));
-    const defaultForm = pokeApiBaseForms.find((item) => item.defaultId === props.defaultId && item.form.isDefault);
-    const pokeApiSprites = matchingBaseForm?.form.sprites ?? matchingVariety?.form.sprites ?? defaultForm?.form.sprites;
+    const pokeApiSprites = matchingBaseForm?.form.sprites ?? fallbackSprites;
 
     return {
       primary: pokeApiSprites ?? selectedSprites,
@@ -169,8 +174,12 @@ const FormComponent = (props: IFormInfoComponent) => {
   }, [currentEvolutionSupplement, isCurrentPokemonLoaded]);
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
-  const currentGenderRatio =
+  const selectedGenderRatio =
     searchingMainForm?.defaultId === props.defaultId ? searchingMainDetails?.genderRatio : undefined;
+  const currentGenderRatio =
+    selectedGenderRatio?.M === 0 && selectedGenderRatio.F === 0
+      ? (getSpeciesGenderRatio(props.genderRate) ?? selectedGenderRatio)
+      : selectedGenderRatio;
   const lastLoadedGenderSkeletonCount = useRef(2);
   const [readyGenderDisplay, setReadyGenderDisplay] = useState<GenderDisplaySnapshot>();
 
@@ -226,24 +235,23 @@ const FormComponent = (props: IFormInfoComponent) => {
     selectedPokemonType,
   ]);
 
+  // Every variety is already present in the current Pokémon bundle. Keep the
+  // last decoded gender cards visible while the next form's images preload,
+  // and reserve skeletons for a different Pokémon (or the first load).
   const genderDisplay =
-    isCurrentPokemonLoaded &&
-    readyGenderDisplay &&
-    readyGenderDisplay.pokemonId === props.defaultId &&
-    readyGenderDisplay.formId === searchingMainForm?.form?.id
-      ? readyGenderDisplay
-      : undefined;
+    isCurrentPokemonLoaded && readyGenderDisplay?.pokemonId === props.defaultId ? readyGenderDisplay : undefined;
+  const isGenderDisplayCurrentForm = Boolean(genderDisplay && genderDisplay.formId === searchingMainForm?.form?.id);
   const genderRatio = genderDisplay?.ratio;
   const genderSkeletonCount = genderDisplay ? getGenderCardCount(genderRatio) : lastLoadedGenderSkeletonCount.current;
   const genderTrackClass = 'tw-flex tw-flex-nowrap tw-gap-x-12.5 tw-overflow-x-auto';
   const genderDisplayClass = combineClasses(
     genderTrackClass,
     'tw-transition-opacity tw-duration-200',
-    isCurrentPokemonLoaded ? 'tw-opacity-100' : 'tw-opacity-60'
+    isGenderDisplayCurrentForm ? 'tw-opacity-100' : 'tw-opacity-60'
   );
   const [moveTabValue, setMoveTabValue] = useState(0);
   const selectedMoveForm = getPokemonFormWithNoneSpecialForm(
-    searchingMainForm?.form?.formName,
+    searchingMainForm?.pokemonGoForm ?? searchingMainForm?.form?.formName,
     searchingMainForm?.form?.pokemonType
   );
   const moveRanking = props.moveRankings.find(
@@ -258,8 +266,18 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
-      getFormFromForms(stats, props.defaultId, searchingMainForm?.form?.formName, searchingMainForm?.form?.pokemonType),
-    [props.defaultId, searchingMainForm?.form?.formName, searchingMainForm?.form?.pokemonType]
+      getFormFromForms(
+        stats,
+        props.defaultId,
+        searchingMainForm?.pokemonGoStatsForm ?? searchingMainForm?.form?.formName,
+        searchingMainForm?.form?.pokemonType
+      ),
+    [
+      props.defaultId,
+      searchingMainForm?.form?.formName,
+      searchingMainForm?.form?.pokemonType,
+      searchingMainForm?.pokemonGoStatsForm,
+    ]
   );
 
   useEffect(() => {
@@ -432,6 +450,7 @@ const FormComponent = (props: IFormInfoComponent) => {
               className="tw-min-h-selection-button"
               isFullWidth
               isLoaded={isCurrentPokemonLoaded}
+              scrollToSelected={Boolean(params.id && searchParams.has(Params.Form))}
               forms={props.formList}
               id={searchingMainForm?.form?.id}
               defaultId={props.defaultId}
@@ -463,7 +482,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             className="tw-h-[190px]"
             data-testid="gender-ratio-content"
             data-gender-form-id={genderDisplay?.formId ?? ''}
-            aria-busy={!isCurrentPokemonLoaded}
+            aria-busy={!isCurrentPokemonLoaded || !isGenderDisplayCurrentForm}
           >
             {!genderDisplay ? (
               <div
@@ -478,7 +497,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             ) : genderRatio && (genderRatio.M !== 0 || genderRatio.F !== 0) ? (
               <div
                 className={genderDisplayClass}
-                aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
+                aria-label={!isGenderDisplayCurrentForm ? 'Updating gender ratio' : undefined}
               >
                 {genderRatio.M !== 0 && (
                   <Gender
@@ -502,7 +521,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             ) : (
               <div
                 className={genderDisplayClass}
-                aria-label={!isCurrentPokemonLoaded ? 'Updating gender ratio' : undefined}
+                aria-label={!isGenderDisplayCurrentForm ? 'Updating gender ratio' : undefined}
               >
                 <Gender
                   sex={TypeSex.Genderless}
