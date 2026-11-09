@@ -11,6 +11,7 @@ import { StyleSheetConfig } from '../../../../utils/configs/style-sheet.config';
 import { IncludeMode } from '../../../../utils/enums/string.enum';
 import DialogMui from '../../Dialogs/Dialogs';
 import CustomDataTablePagination from './CustomDataTablePagination';
+import TableEmptyState from '../TableEmptyState';
 
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,6 +59,14 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const handleShowOption = () => {
     setShowOption(true);
   };
+
+  const emptyStateOptions = typeof props.filteredEmptyState === 'object' ? props.filteredEmptyState : undefined;
+  const noDataComponent =
+    props.noDataComponent !== undefined ? (
+      props.noDataComponent
+    ) : props.isShowSearch || props.filteredEmptyState ? (
+      <TableEmptyState {...emptyStateOptions} />
+    ) : undefined;
 
   const handleSort: NonNullable<typeof props.onSort> = (column, direction, sortedRows, sortColumns) => {
     if (sortColumns.length === 0 && lastSortedColumnRef.current) {
@@ -144,6 +153,7 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
             onSort={handleSort}
             paginationComponent={props.paginationComponent ?? CustomDataTablePagination}
             progressSkeleton={props.progressSkeleton ?? false}
+            noDataComponent={noDataComponent}
             subHeader={
               props.isShowSearch && (
                 <CustomInput

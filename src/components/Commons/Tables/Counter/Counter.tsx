@@ -45,7 +45,7 @@ import FormControlMui from '../../Forms/FormControlMui';
 import { IMenuItem } from '../../models/menu.model';
 import { ProcessedDataPage } from '../../../../services/processed-data.service';
 import { formatPokemonDisplayName } from '../../../../utils/pokemon-display-name';
-import SearchOffRoundedIcon from '@mui/icons-material/SearchOffRounded';
+import TableEmptyState from '../TableEmptyState';
 
 const customStyles: TableStyles = {
   table: {
@@ -483,21 +483,12 @@ const Counter = (props: ICounterComponent) => {
           </div>
         )}
         {!isUpdating && isTargetUnreleased ? (
-          <div
-            className="tw-flex tw-min-h-[360px] tw-items-center tw-justify-center tw-px-4 tw-py-8"
-            data-testid="counter-unreleased-empty-state"
-            role="status"
-          >
-            <div className="tw-flex tw-w-full tw-max-w-2xl tw-flex-col tw-items-center tw-rounded tw-border tw-border-dashed tw-border-[var(--divider)] tw-bg-[var(--background-selected)] tw-px-6 tw-py-10 tw-text-center">
-              <div className="tw-mb-4 tw-flex tw-h-20 tw-w-20 tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--table-info)] tw-text-primary">
-                <SearchOffRoundedIcon className="!tw-text-[3.5rem]" aria-hidden="true" />
-              </div>
-              <span className="tw-text-body1 tw-font-bold tw-text-[var(--text-primary)]">Counter data unavailable</span>
-              <span className="tw-mt-2 tw-max-w-xl tw-text-body2 tw-text-[var(--text-secondary)]">
-                Best counters require Pokémon GO battle stats. This form has not been released in Pokémon GO yet.
-              </span>
-            </div>
-          </div>
+          <TableEmptyState
+            spacious
+            testId="counter-unreleased-empty-state"
+            title="Counter data unavailable"
+            description="Best counters require Pokémon GO battle stats. This form has not been released in Pokémon GO yet."
+          />
         ) : (
           <CustomDataTable
             className="table-counter-container"
@@ -538,7 +529,6 @@ const Counter = (props: ICounterComponent) => {
             paginationComponentOptions={{
               noRowsPerPage: true,
             }}
-            noDataComponent={null}
             paginationPerPage={100}
             data={counterList}
             isXFixed

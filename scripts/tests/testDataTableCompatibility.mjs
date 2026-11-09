@@ -9,6 +9,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const sourceRoot = join(root, 'src');
 const componentPath = join(sourceRoot, 'components/Commons/Tables/CustomDataTable/CustomDataTable.tsx');
 const component = await readFile(componentPath, 'utf8');
+const tableEmptyState = await readFile(join(sourceRoot, 'components/Commons/Tables/TableEmptyState.tsx'), 'utf8');
 const pagination = await readFile(
   join(sourceRoot, 'components/Commons/Tables/CustomDataTable/CustomDataTablePagination.tsx'),
   'utf8'
@@ -22,6 +23,10 @@ const calculatePoint = await readFile(join(sourceRoot, 'pages/Tools/CalculatePoi
 const calculatePointStyles = await readFile(join(sourceRoot, 'pages/Tools/CalculatePoint/CalculatePoint.scss'), 'utf8');
 const sharedSortIcon = await readFile(join(sourceRoot, 'components/Commons/Tables/DataTableSortIcon.tsx'), 'utf8');
 const statsRanking = await readFile(join(sourceRoot, 'pages/Sheets/StatsRanking/StatsRanking.tsx'), 'utf8');
+const searchMoves = await readFile(join(sourceRoot, 'pages/Search/Moves/SearchMoves.tsx'), 'utf8');
+const dpsTdo = await readFile(join(sourceRoot, 'pages/Sheets/DpsTdo/DpsTdo.tsx'), 'utf8');
+const statsInfo = await readFile(join(sourceRoot, 'pages/Tools/StatsInfo/StatsInfo.tsx'), 'utf8');
+const findTable = await readFile(join(sourceRoot, 'pages/Tools/FindTable/FindTable.tsx'), 'utf8');
 const customSortableTables = await Promise.all(
   ['components/Commons/Tables/Move/MoveTable.tsx', 'pages/PVP/Ranking/PVP.tsx', 'pages/PVP/Teams/PVP.tsx'].map((path) =>
     readFile(join(sourceRoot, path), 'utf8')
@@ -38,6 +43,20 @@ assert.match(
   component,
   /progressSkeleton=\{props\.progressSkeleton \?\? false\}/,
   'The v8 skeleton must not replace the project loading component unless explicitly enabled.'
+);
+assert.match(
+  component,
+  /props\.noDataComponent !== undefined[\s\S]*props\.isShowSearch \|\| props\.filteredEmptyState[\s\S]*<TableEmptyState/,
+  'Search and filter tables must use the shared empty state without replacing an explicit custom state.'
+);
+assert.match(component, /noDataComponent=\{noDataComponent\}/);
+assert.match(tableEmptyState, /SearchOffRoundedIcon/);
+assert.match(tableEmptyState, /No results found/);
+assert.match(tableEmptyState, /No data matches your current search or filters/);
+assert.match(
+  tableEmptyState,
+  /tw-border-\[var\(--divider\)\][\s\S]*tw-bg-\[var\(--background-selected\)\][\s\S]*tw-text-\[var\(--text-primary\)\][\s\S]*tw-text-\[var\(--text-secondary\)\]/,
+  'Filtered table empty states must use theme-aware design-system tokens.'
 );
 assert.match(
   component,
@@ -122,13 +141,20 @@ assert.match(
 );
 assert.match(
   counter,
-  /data-testid="counter-unreleased-empty-state"[\s\S]*SearchOffRoundedIcon[\s\S]*Counter data unavailable[\s\S]*not been released in Pokémon GO yet/,
+  /<TableEmptyState[\s\S]*testId="counter-unreleased-empty-state"[\s\S]*Counter data unavailable[\s\S]*not been released in Pokémon GO yet/,
   'Unreleased forms must explain why counter data cannot be calculated.'
 );
 assert.match(
-  counter,
-  /tw-border-\[var\(--divider\)\][\s\S]*tw-bg-\[var\(--background-selected\)\][\s\S]*tw-text-\[var\(--text-primary\)\][\s\S]*tw-text-\[var\(--text-secondary\)\]/,
-  'The counter empty state must use theme-aware design-system tokens.'
+  searchMoves,
+  /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*customColumns=/,
+  'Move Search tables must explain empty external-filter results.'
+);
+assert.match(dpsTdo, /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*progressPending=/);
+assert.match(statsInfo, /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*title=\{`Stat Battle/);
+assert.equal(
+  findTable.match(/filteredEmptyState/g)?.length,
+  2,
+  'Find IV and Find CP must explain searches that return no legal level or IV rows.'
 );
 assert.match(
   counterStyles,
