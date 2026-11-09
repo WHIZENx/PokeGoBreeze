@@ -538,7 +538,12 @@ const FormComponent = (props: IFormInfoComponent) => {
         <h4 className="info-title">
           <b>Pokémon stats</b>
         </h4>
-        <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={190} testId="pokemon-stats-section">
+        <StableHeightSection
+          animateHeight
+          isLoading={!isCurrentPokemonLoaded}
+          minHeight={190}
+          testId="pokemon-stats-section"
+        >
           <Stats
             pokemonType={searchingMainForm?.form?.pokemonType}
             statATK={statsPokemon?.atk}
@@ -553,7 +558,12 @@ const FormComponent = (props: IFormInfoComponent) => {
         </StableHeightSection>
       </section>
       <section className="pokemon-detail-section" data-testid="pokemon-information-card">
-        <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={320} testId="pokemon-information-section">
+        <StableHeightSection
+          animateHeight
+          isLoading={!isCurrentPokemonLoaded}
+          minHeight={320}
+          testId="pokemon-information-section"
+        >
           <Info isLoading={!isCurrentPokemonLoaded} />
         </StableHeightSection>
       </section>
@@ -561,7 +571,12 @@ const FormComponent = (props: IFormInfoComponent) => {
         <h4 className="info-title">
           <b>Battle data</b>
         </h4>
-        <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={640} testId="pokemon-battle-section">
+        <StableHeightSection
+          animateHeight
+          isLoading={!isCurrentPokemonLoaded}
+          minHeight={640}
+          testId="pokemon-battle-section"
+        >
           <div className="tw-min-w-0 tw-w-full">
             <TableMove
               moveData={moveRanking?.moves ?? (isCurrentPokemonLoaded ? unavailablePokemonMoves : undefined)}
@@ -590,7 +605,12 @@ const FormComponent = (props: IFormInfoComponent) => {
             <h4 className="info-title">
               <b>Raid</b>
             </h4>
-            <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={340} testId="pokemon-raid-section">
+            <StableHeightSection
+              animateHeight
+              isLoading={!isCurrentPokemonLoaded}
+              minHeight={340}
+              testId="pokemon-raid-section"
+            >
               <div className="tw-mx-auto tw-w-full tw-max-w-4xl">
                 <Raid
                   pokemonType={searchingMainForm?.form?.pokemonType}
@@ -614,6 +634,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             <b>CP &amp; Availability</b>
           </h4>
           <StableHeightSection
+            animateHeight
             isLoading={!isCurrentPokemonLoaded}
             minHeight={340}
             testId="pokemon-encounter-training-section"
@@ -623,7 +644,12 @@ const FormComponent = (props: IFormInfoComponent) => {
         </section>
       </div>
       <section className="pokemon-detail-section">
-        <StableHeightSection isLoading={!isCurrentPokemonLoaded} minHeight={256} testId="pokemon-evolution-stable">
+        <StableHeightSection
+          animateHeight
+          isLoading={!isCurrentPokemonLoaded}
+          minHeight={256}
+          testId="pokemon-evolution-stable"
+        >
           {renderEvolutionContent()}
         </StableHeightSection>
       </section>
