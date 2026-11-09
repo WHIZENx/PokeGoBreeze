@@ -33,7 +33,6 @@ const versionOptions = versionList.map((_, index) => index);
 interface IFilter {
   isMatch: boolean;
   releasedGO: boolean;
-  missingStats: boolean;
   isShiny: boolean;
   gen: number[];
   version: number[];
@@ -48,7 +47,6 @@ interface IFilter {
 class Filter implements IFilter {
   isMatch = false;
   releasedGO = false;
-  missingStats = false;
   isShiny = false;
   gen: number[] = [];
   version: number[] = [];
@@ -103,20 +101,8 @@ const Pokedex = (props: IStyleSheetData) => {
 
   const [filters, setFilters] = useState(Filter.setFilterGenAndVersion(generationOptions, versionOptions));
 
-  const {
-    isMatch,
-    releasedGO,
-    missingStats,
-    isShiny,
-    gen,
-    version,
-    isMega,
-    isGMax,
-    isPrimal,
-    isLegendary,
-    isMythic,
-    isUltraBeast,
-  } = filters;
+  const { isMatch, releasedGO, isShiny, gen, version, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast } =
+    filters;
 
   const [btnSelected, setBtnSelected] = useState(
     new BtnSelect({
@@ -147,7 +133,6 @@ const Pokedex = (props: IStyleSheetData) => {
     selectTypes,
     isMatch,
     releasedGO,
-    missingStats,
     isMega,
     isGMax,
     isPrimal,
@@ -165,7 +150,6 @@ const Pokedex = (props: IStyleSheetData) => {
       selectTypes,
       isMatch,
       releasedGO,
-      missingStats,
       isMega,
       isGMax,
       isPrimal,
@@ -203,7 +187,6 @@ const Pokedex = (props: IStyleSheetData) => {
         q: debouncedSearch,
         match: isMatch,
         released: releasedGO,
-        missingStats,
         types: selectTypes.join(','),
         generations: serializePokedexSelection(gen, generationOptions, (value) => value + 1),
         versions: serializePokedexSelection(version, versionOptions, (value) => versionList[value]),
@@ -242,7 +225,6 @@ const Pokedex = (props: IStyleSheetData) => {
     selectTypes,
     isMatch,
     releasedGO,
-    missingStats,
     isMega,
     isGMax,
     isPrimal,
@@ -447,15 +429,6 @@ const Pokedex = (props: IStyleSheetData) => {
                 </div>
                 <div className="input-group border-input">
                   <span className="input-group-text !tw-max-h-[42px]">Filter by</span>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={missingStats}
-                        onChange={(_, check) => setFilters({ ...filters, missingStats: check })}
-                      />
-                    }
-                    label="Missing GO stats"
-                  />
                   <FormControlLabel
                     control={
                       <Checkbox
