@@ -32,6 +32,20 @@ const normalizedFullName = (value: string) => value.replaceAll('-', '_').toUpper
 
 const normalizedIdentityName = (value: string | undefined) => (value ?? '').trim().replaceAll('_', '-').toLowerCase();
 
+/** PokéAPI stores gender as female eighths on the species, not on each form. */
+export const getSpeciesGenderRatio = (genderRate: number | undefined) => {
+  if (genderRate === -1) {
+    return { M: 0, F: 0 };
+  }
+  if (!Number.isInteger(genderRate) || genderRate === undefined || genderRate < 0 || genderRate > 8) {
+    return undefined;
+  }
+  return {
+    M: (8 - genderRate) / 8,
+    F: genderRate / 8,
+  };
+};
+
 /**
  * PokéAPI marks the primary form inside every variety as is_default. Only the
  * species' own variety may use the generated NORMAL row as a fallback.
@@ -53,14 +67,16 @@ export const isDuplicatePokemonGoNormalForm = (
   canonicalDefault: SelectedPokemonFormIdentity | undefined,
   speciesId: number,
   pokemonGoForm: PokemonGoNormalFormIdentity,
-  normalPokemonType: number
+  normalPokemonType: number,
+  hasCanonicalNormalAlias = false
 ) =>
   Boolean(
     canonicalDefault &&
       isCanonicalSpeciesDefaultForm(canonicalDefault, speciesId) &&
       normalizedForm(canonicalDefault.form?.formName) !== 'NORMAL' &&
       normalizedForm(pokemonGoForm.form) === 'NORMAL' &&
-      pokemonGoForm.pokemonType === normalPokemonType
+      pokemonGoForm.pokemonType === normalPokemonType &&
+      !hasCanonicalNormalAlias
   );
 
 /** Preserve the selected canonical identity when no matching GO row exists. */

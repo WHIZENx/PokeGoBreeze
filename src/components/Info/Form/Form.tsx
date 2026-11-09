@@ -45,6 +45,7 @@ import { findPokemonGoFormIdentityMatch } from '../../../utils/pokemon-form-iden
 import TrainingCosts from '../TrainingCosts/TrainingCosts';
 import EvolutionSupplementSkeleton from '../Evolution/EvolutionSupplementSkeleton';
 import APIService from '../../../services/api.service';
+import { getSpeciesGenderRatio } from '../../../utils/pokemon-detail-form';
 
 const unavailablePokemonMoves: PokemonMoves = {
   fastMoves: [],
@@ -97,20 +98,27 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
     return findPokemonGoFormIdentityMatch(props.pokemonGoForms, {
       num: props.defaultId,
-      form: searchingMainForm.form.formName || 'NORMAL',
+      form: searchingMainForm.pokemonGoForm || searchingMainForm.form.formName || 'NORMAL',
       pokemonType: selectedPokemonType,
     })?.encounterSummary;
   }, [props.defaultId, props.pokemonGoForms, searchingMainForm, selectedPokemonType]);
   const displaySpriteSources = useMemo(() => {
     const selectedSprites = searchingMainForm?.form?.sprites;
-    if (!isSpecialFormType(selectedPokemonType)) {
-      return { primary: selectedSprites };
-    }
-
-    const selectedBaseForm = getPokemonFormWithNoneSpecialForm(searchingMainForm?.form?.formName, selectedPokemonType);
     const baseForms = props.formList
       .flatMap((forms) => forms)
       .filter((item) => !isSpecialFormType(item.form.pokemonType) && hasSpriteImage(item.form.sprites));
+    const pokeApiBaseForms = baseForms.filter((item) => (item.form.id ?? 0) > 0);
+    const matchingVariety = pokeApiBaseForms.find((item) => isEqual(item.name, searchingMainForm?.name));
+    const defaultForm = pokeApiBaseForms.find((item) => item.defaultId === props.defaultId && item.form.isDefault);
+    const fallbackSprites = matchingVariety?.form.sprites ?? defaultForm?.form.sprites;
+    if (!isSpecialFormType(selectedPokemonType)) {
+      return {
+        primary: selectedSprites,
+        fallback: fallbackSprites === selectedSprites ? undefined : fallbackSprites,
+      };
+    }
+
+    const selectedBaseForm = getPokemonFormWithNoneSpecialForm(searchingMainForm?.form?.formName, selectedPokemonType);
     const matchingBaseForm = baseForms.find((item) =>
       isEqual(
         getPokemonFormWithNoneSpecialForm(item.form.formName, item.form.pokemonType),
@@ -118,10 +126,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         EqualMode.IgnoreCaseSensitive
       )
     );
-    const pokeApiBaseForms = baseForms.filter((item) => (item.form.id ?? 0) > 0);
-    const matchingVariety = pokeApiBaseForms.find((item) => isEqual(item.name, searchingMainForm?.name));
-    const defaultForm = pokeApiBaseForms.find((item) => item.defaultId === props.defaultId && item.form.isDefault);
-    const pokeApiSprites = matchingBaseForm?.form.sprites ?? matchingVariety?.form.sprites ?? defaultForm?.form.sprites;
+    const pokeApiSprites = matchingBaseForm?.form.sprites ?? fallbackSprites;
 
     return {
       primary: pokeApiSprites ?? selectedSprites,
@@ -169,8 +174,12 @@ const FormComponent = (props: IFormInfoComponent) => {
   }, [currentEvolutionSupplement, isCurrentPokemonLoaded]);
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
-  const currentGenderRatio =
+  const selectedGenderRatio =
     searchingMainForm?.defaultId === props.defaultId ? searchingMainDetails?.genderRatio : undefined;
+  const currentGenderRatio =
+    selectedGenderRatio?.M === 0 && selectedGenderRatio.F === 0
+      ? (getSpeciesGenderRatio(props.genderRate) ?? selectedGenderRatio)
+      : selectedGenderRatio;
   const lastLoadedGenderSkeletonCount = useRef(2);
   const [readyGenderDisplay, setReadyGenderDisplay] = useState<GenderDisplaySnapshot>();
 
@@ -242,7 +251,7 @@ const FormComponent = (props: IFormInfoComponent) => {
   );
   const [moveTabValue, setMoveTabValue] = useState(0);
   const selectedMoveForm = getPokemonFormWithNoneSpecialForm(
-    searchingMainForm?.form?.formName,
+    searchingMainForm?.pokemonGoForm ?? searchingMainForm?.form?.formName,
     searchingMainForm?.form?.pokemonType
   );
   const moveRanking = props.moveRankings.find(
@@ -257,8 +266,18 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
-      getFormFromForms(stats, props.defaultId, searchingMainForm?.form?.formName, searchingMainForm?.form?.pokemonType),
-    [props.defaultId, searchingMainForm?.form?.formName, searchingMainForm?.form?.pokemonType]
+      getFormFromForms(
+        stats,
+        props.defaultId,
+        searchingMainForm?.pokemonGoStatsForm ?? searchingMainForm?.form?.formName,
+        searchingMainForm?.form?.pokemonType
+      ),
+    [
+      props.defaultId,
+      searchingMainForm?.form?.formName,
+      searchingMainForm?.form?.pokemonType,
+      searchingMainForm?.pokemonGoStatsForm,
+    ]
   );
 
   useEffect(() => {
@@ -431,6 +450,7 @@ const FormComponent = (props: IFormInfoComponent) => {
               className="tw-min-h-selection-button"
               isFullWidth
               isLoaded={isCurrentPokemonLoaded}
+              scrollToSelected={Boolean(params.id && searchParams.has(Params.Form))}
               forms={props.formList}
               id={searchingMainForm?.form?.id}
               defaultId={props.defaultId}

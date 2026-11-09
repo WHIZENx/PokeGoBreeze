@@ -74,6 +74,8 @@ assert.match(pokedexSource, /Show Shiny when available/);
 assert.match(pokedexSource, /inputLabel="Generations"/);
 assert.match(pokedexSource, /inputLabel="Introduced in"/);
 assert.match(pokedexSource, />Filter by<\/span>/);
+assert.match(pokedexSource, /label="Missing GO stats"/);
+assert.match(pokedexSource, /missingStats,/);
 assert.match(pokedexSource, /label="Mega"/);
 assert.match(pokedexSource, /label="Gigantamax"/);
 assert.match(pokedexSource, /label="Primal"/);

@@ -88,8 +88,8 @@ import PokemonProfileImageSkeleton from '../../components/Info/PokemonProfileIma
 import StableHeightSection from '../../components/Layout/StableHeightSection';
 import {
   findCanonicalSpeciesDefaultForm,
+  getSpeciesGenderRatio,
   hydrateCanonicalPokemonDetail,
-  isCanonicalSpeciesDefaultForm,
   isDuplicatePokemonGoNormalForm,
 } from '../../utils/pokemon-detail-form';
 
@@ -375,6 +375,14 @@ const Pokemon = (props: IPokemonPage) => {
           }
         });
         const canonicalDefaultForm = findCanonicalSpeciesDefaultForm(formListResult.flat(), specie.id);
+        const canonicalNormalIdentity = normalizePokemonFormIdentity(specie.id, 'NORMAL');
+        const hasCanonicalNormalAlias = formListResult
+          .flat()
+          .some(
+            (item) =>
+              item !== canonicalDefaultForm &&
+              normalizePokemonFormIdentity(specie.id, item.form.formName) === canonicalNormalIdentity
+          );
 
         bundledPokemonGoForms.forEach((pokemon, index) => {
           const key = pokemonGoFormIdentityKey(pokemon);
@@ -391,14 +399,39 @@ const Pokemon = (props: IPokemonPage) => {
               : pokemon.form
           );
           const inheritedSprites = modifier ? baseFormSprites.get(baseIdentity) : undefined;
-          if (isDuplicatePokemonGoNormalForm(canonicalDefaultForm, specie.id, pokemon, PokemonType.Normal)) {
+          if (
+            isDuplicatePokemonGoNormalForm(
+              canonicalDefaultForm,
+              specie.id,
+              pokemon,
+              PokemonType.Normal,
+              hasCanonicalNormalAlias
+            )
+          ) {
             selectedKeys.add(key);
-            if (canonicalDefaultForm && pokemon.asset) {
-              canonicalDefaultForm.form.sprites = withPokemonGoAssetSprites(
-                canonicalDefaultForm.form.sprites,
-                pokemon.asset
-              );
-            }
+            const canonicalAliasIdentities = new Set(
+              (pokemon.canonicalAliases ?? [])
+                .map((form) => normalizePokemonFormIdentity(specie.id, form))
+                .filter(Boolean)
+            );
+            const aliasedCanonicalForms = canonicalAliasIdentities.size
+              ? formListResult
+                  .flat()
+                  .filter(
+                    (item) =>
+                      ![PokemonType.Shadow, PokemonType.Purified].includes(item.form.pokemonType ?? PokemonType.None) &&
+                      canonicalAliasIdentities.has(normalizePokemonFormIdentity(specie.id, item.form.formName))
+                  )
+              : canonicalDefaultForm
+                ? [canonicalDefaultForm]
+                : [];
+            aliasedCanonicalForms.forEach((canonicalForm) => {
+              canonicalForm.pokemonGoForm = String(pokemon.form ?? 'NORMAL');
+              canonicalForm.pokemonGoStatsForm = pokemon.canonicalForm;
+              if (pokemon.asset) {
+                canonicalForm.form.sprites = withPokemonGoAssetSprites(canonicalForm.form.sprites, pokemon.asset);
+              }
+            });
             return;
           }
           if (selectedKeys.has(key)) {
@@ -687,9 +720,17 @@ const Pokemon = (props: IPokemonPage) => {
     // is the most precise key for the Pokémon GO Game Master row. The PokeAPI
     // Pokémon name can be broader (for example marowak-alola) and previously
     // caused distinct forms to resolve to the first matching GO form.
-    const formName = [form.form?.formName, form.form?.name, form.defaultName].find((value) => isNotEmpty(value));
-    const details = getPokemonDetails(id, formName, form.form?.pokemonType, isCanonicalSpeciesDefaultForm(form, id));
+    const formName = [form.pokemonGoForm, form.form?.formName, form.form?.name, form.defaultName].find((value) =>
+      isNotEmpty(value)
+    );
+    const details = getPokemonDetails(id, formName, form.form?.pokemonType, Boolean(form.pokemonGoForm));
     hydrateCanonicalPokemonDetail(details, id, form);
+    if (!form.pokemonGoForm) {
+      const speciesGenderRatio = getSpeciesGenderRatio(data?.genderRate);
+      if (speciesGenderRatio) {
+        details.genderRatio = speciesGenderRatio;
+      }
+    }
     details.pokemonType = form.form?.pokemonType ?? PokemonType.Normal;
     const pokemonDetails = PokemonDetail.setData(details);
     const normalizeBodyName = (value: string | undefined) => value?.replaceAll('_', '-').toLowerCase();
@@ -961,6 +1002,7 @@ const Pokemon = (props: IPokemonPage) => {
         <FormComponent
           formList={formList}
           pokeData={pokeData}
+          genderRate={data?.genderRate}
           setSearchOption={props.setSearchOption}
           defaultId={dataStorePokemon?.current?.id}
           evolutionChain={evolutionChain}
