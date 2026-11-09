@@ -8,7 +8,6 @@ import React, {
   useMemo,
   useRef,
   useState,
-  useTransition,
 } from 'react';
 import { flushSync } from 'react-dom';
 import { Route, Routes, useLocation, type Location } from 'react-router-dom';
@@ -101,7 +100,6 @@ function App() {
   const [isBootstrapLoaded, setIsBootstrapLoaded] = useState(false);
   const [loadedRouteDataKey, setLoadedRouteDataKey] = useState<string | null>(null);
   const [displayLocation, setDisplayLocation] = useState(location);
-  const [, startTransition] = useTransition();
   const routeDataRequestRef = useRef(0);
   const dispatch = useDispatch();
   const { errorProgress } = createProgressHelpers(dispatch);
@@ -176,6 +174,7 @@ function App() {
     const routeDataSections = routeDataKey.split('|').filter(Boolean) as ProcessedDataSection[];
     if (routeDataSections.length === 0) {
       setLoadedRouteDataKey(routeDataKey);
+      setDisplayLocation(location);
       return;
     }
     loadProcessedSections(routeDataSections)
@@ -189,11 +188,11 @@ function App() {
           errorProgress({ message: `Load page data error: ${e}`, isError: true });
         }
       });
-  }, [isBootstrapLoaded, location.key, routeDataKey]);
+  }, [isBootstrapLoaded, location, routeDataKey]);
 
   useEffect(() => {
     if (isBootstrapLoaded && loadedRouteDataKey === routeDataKey) {
-      startTransition(() => setDisplayLocation(location));
+      setDisplayLocation(location);
     }
   }, [isBootstrapLoaded, loadedRouteDataKey, location, routeDataKey]);
 

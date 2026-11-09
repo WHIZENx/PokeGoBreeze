@@ -75,6 +75,7 @@
     "test:pokemon-display-names": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokemonDisplayNames.mjs",
     "test:pokedex-query": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokedexQuery.mjs",
     "test:pokedex-card-images": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/tests/testPokedexCardImages.mjs",
+    "test:route-navigation": "node scripts/tests/testRouteNavigation.mjs",
     "test:stats-ranking-layout": "node scripts/tests/testStatsRankingLayout.mjs",
     "test:dps-tdo-layout": "node scripts/tests/testDpsTdoLayout.mjs",
     "test:type-weather-layouts": "node scripts/tests/testTypeWeatherLayouts.mjs",
