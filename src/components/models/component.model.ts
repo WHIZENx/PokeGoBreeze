@@ -185,6 +185,7 @@ export interface IEvolutionComponent {
 export interface IFormInfoComponent {
   pokeData: IPokemonDetailInfo[];
   formList: IPokemonFormModify[][];
+  genderRate?: number;
   setSearchOption?: (searchOption: SearchOption) => void;
   defaultId: number | undefined;
   evolutionChain?: PokemonInfoEvo;

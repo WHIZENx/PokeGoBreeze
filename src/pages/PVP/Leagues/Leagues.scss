@@ -3,7 +3,7 @@
 }
 
 .season-league {
-  @apply tw-relative tw-w-full tw-max-w-full tw-overflow-x-auto tw-overflow-y-hidden;
+  @apply tw-isolate tw-relative tw-w-full tw-max-w-full tw-overflow-x-auto tw-overflow-y-hidden;
 
   overscroll-behavior-inline: contain;
 }

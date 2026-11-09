@@ -796,6 +796,7 @@ class PokemonVariety implements IPokemonVariety {
 
 export interface IPokemonSpecie {
   evolutionChainPath?: string;
+  genderRate: number;
   generation: number;
   hasGenderDifferences: boolean;
   id: number;
@@ -809,6 +810,7 @@ export interface IPokemonSpecie {
 
 export class PokemonSpecie implements IPokemonSpecie {
   evolutionChainPath?: string;
+  genderRate = -1;
   generation = 0;
   hasGenderDifferences = false;
   id = 0;
@@ -822,6 +824,7 @@ export class PokemonSpecie implements IPokemonSpecie {
   static create(value: Species) {
     const obj = new PokemonSpecie();
     obj.evolutionChainPath = value.evolution_chain?.url;
+    obj.genderRate = value.gender_rate;
     obj.generation = getGenerationPokemon(value.generation.url);
     obj.hasGenderDifferences = value.has_gender_differences;
     obj.id = value.id;

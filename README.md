@@ -215,7 +215,8 @@ src/
 ### 🏠 Home & Information
 
 #### **Pokédex** (`/`)
-Server-paginated Pokémon catalogue with name matching, release status, type, generation, game version, and special-form filters. Each result links to its Pokémon detail page.
+Server-paginated Pokémon catalogue with name matching, release status, missing GO stats, type, generation, game version, and special-form filters. Each result links to its Pokémon detail page.
+Its form list and totals use the same canonical/GO identity mapping as Pokémon Details. GO stats and assets are assigned only to the canonical form that owns the matching GO identity; other PokéAPI forms remain visible as not released in GO.
 
 #### **Event Tickets** (`/news`)
 API-backed Game Master ticket and event entries with dates, descriptions,
@@ -240,6 +241,7 @@ Browse Pokémon and fast/charged moves by type, with Pokémon GO release filteri
 
 #### **Pokémon Details** (`/pokemon/:id`)
 Displays identity, forms and availability, base and battle stats, move lists and best-move rankings, type/weather information, counters, evolution data, upgrade costs, and available media assets.
+Canonical display names remain separate from their underlying Pokémon GO form identity so stats, ranks, moves, encounter data, and assets stay synchronized without duplicating equivalent forms. PokéAPI-only forms remain selectable but display as not released in GO and do not borrow GO stats, assets, ranks, or availability from the canonical default.
 
 #### **Move Details** (`/move/:id`)
 Displays move identity and type, weather boost, PVE/PVP power and energy values, PVP buffs, timing and damage-window metadata, DPS/EPS comparisons, and Pokémon that can learn the move.

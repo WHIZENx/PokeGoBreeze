@@ -8,6 +8,7 @@ const [
   evolutionPokemonDisplay,
   assets,
   gender,
+  buttonGroupForm,
   form,
   stats,
   statsStyles,
@@ -31,6 +32,7 @@ const [
   readFile(new URL('../../src/components/Info/Evolution/EvolutionPokemonDisplay.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Assets/PokemonModel.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Buttons/ButtonGroupForm.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Stats/Stats.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Stats/Stats.scss', import.meta.url), 'utf8'),
@@ -236,6 +238,11 @@ assert.match(
   form,
   /searchingMainForm\?\.defaultId === props\.defaultId \? searchingMainDetails\?\.genderRatio : undefined/
 );
+assert.match(
+  form,
+  /selectedGenderRatio\?\.M === 0 && selectedGenderRatio\.F === 0[\s\S]*getSpeciesGenderRatio\(props\.genderRate\)/
+);
+assert.match(form, /fallback: fallbackSprites === selectedSprites \? undefined : fallbackSprites/);
 assert.match(form, /searchingMainForm\?\.defaultId === props\.defaultId/);
 assert.doesNotMatch(form, /searchingMainDetails\?\.id === props\.defaultId/);
 assert.match(form, /const getGenderCardCount = \(ratio: IPokemonGenderRatio \| undefined\)/);
@@ -257,17 +264,28 @@ assert.match(form, /\[\.\.\.candidates\.default, unknownSprite\]/);
 assert.match(form, /\[\.\.\.candidates\.shiny, unknownSprite\]/);
 assert.match(
   form,
-  /const genderDisplay =[\s\S]*isCurrentPokemonLoaded &&[\s\S]*readyGenderDisplay &&[\s\S]*readyGenderDisplay\.pokemonId === props\.defaultId[\s\S]*readyGenderDisplay\.formId === searchingMainForm\?\.form\?\.id/
+  /const genderDisplay =[\s\S]*isCurrentPokemonLoaded && readyGenderDisplay\?\.pokemonId === props\.defaultId \? readyGenderDisplay : undefined/
+);
+assert.match(
+  form,
+  /const isGenderDisplayCurrentForm = Boolean\([\s\S]*genderDisplay && genderDisplay\.formId === searchingMainForm\?\.form\?\.id/
 );
 assert.doesNotMatch(form, /directGenderDisplay|searchGenderDisplay|lastLoadedGender =/);
 assert.match(gender, /export const getGenderSpriteCandidates/);
 assert.match(form, /!genderDisplay \? \(/);
 assert.equal(form.match(/className=\{genderDisplayClass\}/g)?.length, 2);
-assert.match(form, /aria-label=\{!isCurrentPokemonLoaded \? 'Updating gender ratio' : undefined\}/);
-assert.match(form, /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded\}/);
+assert.match(form, /aria-label=\{!isGenderDisplayCurrentForm \? 'Updating gender ratio' : undefined\}/);
+assert.match(
+  form,
+  /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded \|\| !isGenderDisplayCurrentForm\}/
+);
 assert.match(form, /data-gender-form-id=\{genderDisplay\?\.formId \?\? ''\}/);
 assert.match(form, /className="form-container tw-flex tw-h-\[190px\] tw-items-center"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Form varieties<\/b>\s*<\/h4>/);
+assert.match(form, /scrollToSelected=\{Boolean\(params\.id && searchParams\.has\(Params\.Form\)\)\}/);
+assert.match(buttonGroupForm, /querySelector<HTMLElement>\('\[aria-pressed="true"\]'\)/);
+assert.match(buttonGroupForm, /container\.scrollWidth <= container\.clientWidth/);
+assert.match(buttonGroupForm, /container\.scrollTo\(\{[\s\S]*behavior: 'smooth'/);
 assert.match(form, /<h4 className="info-title">\s*<b>Gender ratio<\/b>\s*<\/h4>/);
 assert.match(form, /<h4 className="info-title">\s*<b>Pokémon stats<\/b>\s*<\/h4>/);
 assert.match(form, /data-testid="pokemon-information-card"/);

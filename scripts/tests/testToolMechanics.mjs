@@ -134,6 +134,8 @@ const [
   selectCardMoveSource,
   cardMoveSmallSource,
   alertReleasedSource,
+  findTableSource,
+  findTableStyles,
 ] = await Promise.all([
     readFile(new URL('../../src/pages/Sheets/DpsTdo/DpsTdo.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
@@ -147,6 +149,8 @@ const [
     readFile(new URL('../../src/components/Commons/Selects/SelectCardMove.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/components/Card/CardMoveSmall.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Pokemon/components/AlertReleased.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Tools/FindTable/FindTable.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Tools/FindTable/FindTable.scss', import.meta.url), 'utf8'),
   ]);
 assert.match(dpsTdoSource, /max=\{maxTrainerFriendshipLevel\(\)\}/);
 assert.match(moveSource, /PVE Power \/ Second/);
@@ -185,6 +189,12 @@ assert.match(counterSource, /tw-text-\[var\(--text-secondary\)\]/);
 assert.match(alertReleasedSource, /props\.releasedGO === false/);
 assert.doesNotMatch(alertReleasedSource, /useSearch/);
 assert.match(pokemonSource, /setReleasedAlert\(\{/);
+assert.match(findTableSource, /cells:\s*\{[\s\S]*color: 'inherit'/);
+assert.match(findTableSource, /className="find-iv-result-table"/);
+assert.match(
+  findTableStyles,
+  /\.find-iv-result-table \.rdt-v7-compat > div,\s*\.find-iv-result-table \.rdt_Table\s*\{[\s\S]*--rdt-color-highlight: #dbeafe !important;[\s\S]*--rdt-color-highlight-text: var\(--text-constant\) !important;/
+);
 
 console.log(
   'Tool mechanics regression passed: appraisal IV bands, encounter values, modifier moves, Raid tiers, integer stats, PvP stat products, move-rate labels, Friendship levels, Shadow counters, and Battle League labels are correct.'

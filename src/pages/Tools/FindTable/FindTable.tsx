@@ -114,13 +114,13 @@ const columnsCP = createDataRows<TableColumn<IPredictCPModel>>(
 
 const customStyles: TableStyles = {
   rows: {
-    highlightOnHoverStyle: {
-      color: 'white !important',
+    style: {
+      color: 'black',
     },
   },
   cells: {
     style: {
-      color: 'black',
+      color: 'inherit',
     },
   },
 };
@@ -410,17 +410,19 @@ const FindTable = () => {
             {renderStar(zeroStar, 0, 'zero')}
           </Fragment>
         )}
-        <CustomDataTable
-          title={`Levels/IV for CP: ${preIvArr?.CP}`}
-          columns={columnsIV}
-          data={getValueOrDefault(Array, preIvArr?.result)}
-          pagination
-          defaultSortFieldId={ColumnType.Percent}
-          defaultSortAsc={false}
-          conditionalRowStyles={conditionalRowStyles}
-          highlightOnHover
-          customDataStyles={customStyles}
-        />
+        <div className="find-iv-result-table">
+          <CustomDataTable
+            title={`Levels/IV for CP: ${preIvArr?.CP}`}
+            columns={columnsIV}
+            data={getValueOrDefault(Array, preIvArr?.result)}
+            pagination
+            defaultSortFieldId={ColumnType.Percent}
+            defaultSortAsc={false}
+            conditionalRowStyles={conditionalRowStyles}
+            highlightOnHover
+            customDataStyles={customStyles}
+          />
+        </div>
       </Fragment>
     );
   };

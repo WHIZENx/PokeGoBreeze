@@ -289,6 +289,10 @@ a.pokemon-link:hover {
     @apply tw-w-full tw-min-w-0 tw-max-w-full;
   }
 
+  .rdt_responsiveWrapper {
+    isolation: isolate;
+  }
+
   > div {
     --rdt-color-bg: var(--table-primary) !important;
     --rdt-color-header-bg: var(--table-primary) !important;

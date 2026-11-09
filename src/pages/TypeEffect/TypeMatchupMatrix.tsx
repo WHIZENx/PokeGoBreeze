@@ -79,7 +79,7 @@ const TypeMatchupMatrix = () => {
           </button>
         )}
       </div>
-      <div className="tw-overflow-x-auto tw-pb-1">
+      <div className="tw-isolate tw-overflow-x-auto tw-pb-1">
         <table className="tw-min-w-[980px] tw-w-full tw-border-collapse" aria-label="Pokémon GO type matchup matrix">
           <thead>
             <tr>
@@ -111,7 +111,7 @@ const TypeMatchupMatrix = () => {
                       className={combineClasses(
                         'tw-border tw-border-solid tw-border-gray-300 tw-bg-table-primary tw-p-2 tw-text-center tw-text-caption tw-font-medium tw-transition-colors tw-transition-opacity',
                         multiplierClass(multiplier),
-                        selected ? 'tw-relative tw-z-[1] tw-ring-2 tw-ring-inset tw-ring-primary' : '',
+                        selected ? 'tw-ring-2 tw-ring-inset tw-ring-primary' : '',
                         hasSelectedMultipliers && !selected ? 'tw-opacity-30' : ''
                       )}
                       key={defenseType}
