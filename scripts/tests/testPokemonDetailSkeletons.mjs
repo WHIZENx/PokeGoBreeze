@@ -96,12 +96,28 @@ assert.match(
   evolution,
   /isReusingResolvedEvolutionChain &&[\s\S]*props\.isLoadedForms &&[\s\S]*resolvedEvolutionRequest\.requestKey === evolutionRequestKey[\s\S]*setIsReusingResolvedEvolutionChain\(false\)/
 );
-assert.match(evolution, /const requestedPokemonId = pendingCurrentPokemonId \?\? toNumber\(params\.id, props\.id\)/);
-assert.match(evolution, /pendingCurrentPokemonId === props\.id && props\.isLoadedForms/);
+assert.match(
+  evolution,
+  /const requestedPokemonId = pendingCurrentPokemon\?\.id \?\? toNumber\(params\.id, props\.id\)/
+);
+assert.match(
+  evolution,
+  /pendingCurrentPokemon\.id === props\.id[\s\S]*pendingCurrentPokemon\.form[\s\S]*pendingCurrentPokemon\.pokemonType[\s\S]*props\.isLoadedForms/
+);
+assert.match(
+  evolution,
+  /setPendingCurrentPokemon\(\{ id: value\.id, form: value\.form, pokemonType: value\.pokemonType \}\)/,
+  'Pending Evolution navigation must distinguish forms that share one Pokédex ID.'
+);
 assert.equal(
-  evolution.match(/setPendingCurrentPokemonId\(value\.id\)/g)?.length,
+  evolution.match(/selectPendingEvolution\(value\)/g)?.length,
   2,
-  'Both embedded and routed Evolution selections must move the Current marker at click time.'
+  'Both embedded and routed Evolution selections must move the exact-form Current marker at click time.'
+);
+assert.match(
+  evolution,
+  /<LinkToTop[\s\S]*?funcOnClick=\{\(\) => selectPendingEvolution\(value\)\}[\s\S]*?generateParamForm\(value\.form, value\.pokemonType\)/,
+  'Routed Evolution forms must use the same navigation path as Pokémon search results.'
 );
 assert.match(
   evolution,
