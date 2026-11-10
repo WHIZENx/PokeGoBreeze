@@ -1,11 +1,12 @@
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useId, useMemo, useState } from 'react';
+import { Collapse } from '@mui/material';
 import APIService from '../../../services/api.service';
 import { getKeyWithData, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
 import './SpecialForm.scss';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
 import { isEqual, isNotEmpty, isUndefined } from '../../../utils/extension';
-import { TempEvo } from '../../../core/models/evolution.model';
+import { IMegaLevelBenefit, TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../Link/LinkToTop';
 import IconType from '../../Sprites/Icon/Type/Type';
@@ -19,6 +20,56 @@ interface SpecialFormPokemonImageProps {
   id: number;
   form: IForm;
 }
+
+interface MegaLevelBenefitsProps {
+  megaLevels: IMegaLevelBenefit[];
+}
+
+const MegaLevelBenefits = ({ megaLevels }: MegaLevelBenefitsProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const contentId = useId();
+
+  return (
+    <div data-testid="mega-level-benefits" className="tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-p-2">
+      <button
+        type="button"
+        className="tw-flex tw-w-full tw-cursor-pointer tw-items-center tw-border-0 tw-bg-transparent tw-p-0 tw-text-left tw-font-bold tw-text-default"
+        aria-expanded={isOpen}
+        aria-controls={contentId}
+        onClick={() => setIsOpen((current) => !current)}
+      >
+        <span
+          aria-hidden="true"
+          className={`tw-mr-1 tw-inline-block tw-text-xs tw-transition-transform tw-duration-200 ${
+            isOpen ? 'tw-rotate-90' : ''
+          }`}
+        >
+          ▶
+        </span>
+        Mega Level Benefits ({megaLevels.length})
+      </button>
+      <Collapse in={isOpen} timeout={200} unmountOnExit>
+        <div id={contentId} className="tw-mt-2 tw-flex tw-flex-col tw-gap-2">
+          {megaLevels.map((megaLevel) => (
+            <div className="tw-rounded tw-bg-custom-default tw-p-2" key={megaLevel.level} data-testid="mega-level-row">
+              <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
+                <b>{['', 'Base', 'High', 'Max'][megaLevel.level] ?? `Level ${megaLevel.level}`}</b>
+                <span className="caption">{megaLevel.cooldownHours / 24}d cooldown</span>
+              </div>
+              <div className="caption tw-mt-1">
+                {`Bypass ${megaLevel.bypassEnergy} energy · Candy +${megaLevel.sameTypeExtraCatchCandy}`}
+                {megaLevel.sameTypeExtraCatchXp !== undefined ? ` · XP +${megaLevel.sameTypeExtraCatchXp}` : ''}
+                {megaLevel.sameTypeExtraCatchCandyXlChance !== undefined
+                  ? ` · XL +${megaLevel.sameTypeExtraCatchCandyXlChance * 100}%`
+                  : ''}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Collapse>
+    </div>
+  );
+};
 
 const SpecialFormPokemonImage = ({ id, form }: SpecialFormPokemonImageProps) => {
   const { findAnimationForm, findExactAssetForm } = useAssets();
@@ -221,39 +272,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                       </div>
                     )}
 
-                    {Boolean(quest.megaLevels?.length) && (
-                      <details
-                        data-testid="mega-level-benefits"
-                        className="tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-p-2"
-                      >
-                        <summary className="tw-cursor-pointer tw-font-bold">
-                          Mega Level Benefits ({quest.megaLevels?.length})
-                        </summary>
-                        <div className="tw-mt-2 tw-flex tw-flex-col tw-gap-2">
-                          {quest.megaLevels?.map((megaLevel) => (
-                            <div
-                              className="tw-rounded tw-bg-custom-default tw-p-2"
-                              key={megaLevel.level}
-                              data-testid="mega-level-row"
-                            >
-                              <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
-                                <b>{['', 'Base', 'High', 'Max'][megaLevel.level] ?? `Level ${megaLevel.level}`}</b>
-                                <span className="caption">{megaLevel.cooldownHours / 24}d cooldown</span>
-                              </div>
-                              <div className="caption tw-mt-1">
-                                {`Bypass ${megaLevel.bypassEnergy} energy · Candy +${megaLevel.sameTypeExtraCatchCandy}`}
-                                {megaLevel.sameTypeExtraCatchXp !== undefined
-                                  ? ` · XP +${megaLevel.sameTypeExtraCatchXp}`
-                                  : ''}
-                                {megaLevel.sameTypeExtraCatchCandyXlChance !== undefined
-                                  ? ` · XL +${megaLevel.sameTypeExtraCatchCandyXlChance * 100}%`
-                                  : ''}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </details>
-                    )}
+                    {Boolean(quest.megaLevels?.length) && <MegaLevelBenefits megaLevels={quest.megaLevels ?? []} />}
                   </li>
                 );
               })}

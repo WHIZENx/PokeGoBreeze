@@ -16,6 +16,7 @@ const [
   quickTypeSelect,
   quickWeatherSelect,
   selectType,
+  raidBattle,
 ] = await Promise.all([
   readFile(new URL('../../src/pages/TypeEffect/TypeEffect.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/TypeEffect/Attacker.tsx', import.meta.url), 'utf8'),
@@ -29,6 +30,7 @@ const [
   readFile(new URL('../../src/components/Effective/QuickTypeSelect.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Effective/QuickWeatherSelect.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Selects/SelectType.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Tools/RaidBattle/RaidBattle.tsx', import.meta.url), 'utf8'),
 ]);
 
 for (const [pageName, source] of [
@@ -122,5 +124,20 @@ assert.match(quickWeatherSelect, /aria-pressed=\{selected\}/, 'quick weather act
 assert.match(weatherPage, /<WeatherOverview \/>/, 'Weather Boosts must include the all-weather overview');
 assert.match(weatherOverview, /getWeatherBoost\(\)/, 'all-weather overview must consume generated Game Master options');
 assert.match(selectType, /tw-w-full tw-max-w-\[300px\]/, 'type selectors must fit narrow cards and mobile viewports');
+assert.match(
+  raidBattle,
+  /<div className="tw-relative tw-mt-2 tw-w-full">[\s\S]*?Select Boss Moveset/,
+  'the Raid Battle moveset panel must fill its column so its selectors do not shrink to the heading width'
+);
+assert.match(
+  raidBattle,
+  /tw-grid tw-grid-cols-1 tw-gap-3 md:tw-grid-cols-2/,
+  'Raid Battle must stack Charged Moves below Fast Moves on mobile and use two columns on wider screens'
+);
+assert.equal(
+  [...raidBattle.matchAll(/<div className="tw-w-full tw-max-w-\[300px\]">[\s\S]*?<SelectMove/g)].length,
+  2,
+  'both Raid Battle move selectors must retain the same responsive 300px width as the shared card selectors'
+);
 
 console.log('Type Effectiveness and Weather Boosts shared layout regression tests passed.');

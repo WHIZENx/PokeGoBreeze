@@ -1015,7 +1015,12 @@ const Pokemon = (props: IPokemonPage) => {
           isLoadedForms={progress.isLoadedForms}
         />
         <section className="pokemon-detail-section tw-mt-4">
-          <StableHeightSection isLoading={!progress.isLoadedForms} minHeight={240} testId="pokemon-assets-stable">
+          <StableHeightSection
+            animateHeight
+            isLoading={!progress.isLoadedForms}
+            minHeight={240}
+            testId="pokemon-assets-stable"
+          >
             <PokemonAssetComponent
               asset={pokemonGoAsset}
               originSoundCry={originSoundCry}
