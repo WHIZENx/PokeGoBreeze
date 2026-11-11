@@ -493,8 +493,11 @@ const Pokemon = (props: IPokemonPage) => {
           currentForm = defaultFormSearch;
         } else {
           currentForm = defaultForm.find((item) => item.form.id === specie.id);
-          searchParams.delete(Params.Form);
-          setSearchParams(searchParams);
+          setSearchParams((currentSearchParams) => {
+            const nextSearchParams = new URLSearchParams(currentSearchParams);
+            nextSearchParams.delete(Params.Form);
+            return nextSearchParams;
+          });
         }
       } else if (props.isSearch && props.searchOption) {
         currentForm = flatForms.find(

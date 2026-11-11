@@ -362,20 +362,23 @@ const FormComponent = (props: IFormInfoComponent) => {
       return;
     }
     if (params.id) {
-      const pokemonForm = getPokemonFormWithNoneSpecialForm(form, pokemonType)?.toLowerCase().replaceAll('_', '-');
-      if (pokemonForm && !isEqual(pokemonForm, formNormal(), EqualMode.IgnoreCaseSensitive)) {
-        searchParams.set(Params.Form, pokemonForm);
-      } else {
-        searchParams.delete(Params.Form);
-      }
-      const isSpecialForm = isSpecialFormType(pokemonType);
-      if (isSpecialForm) {
-        const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
-        searchParams.set(Params.FormType, getValueOrDefault(String, formType));
-      } else {
-        searchParams.delete(Params.FormType);
-      }
-      setSearchParams(searchParams);
+      setSearchParams((currentSearchParams) => {
+        const nextSearchParams = new URLSearchParams(currentSearchParams);
+        const pokemonForm = getPokemonFormWithNoneSpecialForm(form, pokemonType)?.toLowerCase().replaceAll('_', '-');
+        if (pokemonForm && !isEqual(pokemonForm, formNormal(), EqualMode.IgnoreCaseSensitive)) {
+          nextSearchParams.set(Params.Form, pokemonForm);
+        } else {
+          nextSearchParams.delete(Params.Form);
+        }
+        const isSpecialForm = isSpecialFormType(pokemonType);
+        if (isSpecialForm) {
+          const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
+          nextSearchParams.set(Params.FormType, getValueOrDefault(String, formType));
+        } else {
+          nextSearchParams.delete(Params.FormType);
+        }
+        return nextSearchParams;
+      });
     } else {
       findFormData(name);
     }
