@@ -31,7 +31,13 @@ assert.equal(
   'Mothim GO NORMAL must merge into its canonical Plant default'
 );
 const pokemonPage = await readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8');
+const formComponent = await readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8');
 const pokemonModel = await readFile(new URL('../../src/core/models/pokemon.model.ts', import.meta.url), 'utf8');
+assert.match(
+  formComponent,
+  /setSearchParams\(\(currentSearchParams\) => \{[\s\S]*new URLSearchParams\(currentSearchParams\)[\s\S]*return nextSearchParams/,
+  'form changes must navigate with a new URLSearchParams value instead of mutating the active router state'
+);
 assert.match(
   pokemonModel,
   /obj\.genderRate = value\.gender_rate/,

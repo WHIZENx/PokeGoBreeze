@@ -29,6 +29,8 @@ const auditLoadingContinuity = args.get('audit-loading-continuity') === 'true';
 const auditEvolutionTooltip = args.get('audit-evolution-tooltip') === 'true';
 const auditEvolutionOverlap = args.get('audit-evolution-overlap') !== 'false';
 const navigationOnly = args.get('navigation-only') === 'true';
+const formNavigationOnly = args.get('form-navigation-only') === 'true';
+const clickEvolutionId = Number.parseInt(args.get('click-evolution-id') ?? '', 10);
 const searchPage = args.get('search-page') === 'true';
 const multipleFormsOnly = args.get('multiple-forms-only') === 'true';
 const formSwitchCycles = Math.max(1, Number.parseInt(args.get('form-switch-cycles') ?? '1', 10));
@@ -1499,6 +1501,38 @@ const main = async () => {
       if (!searchPage && !page.title.includes(`#${id}`))
         addIssue(issues, id, 'title_id_mismatch', { actual: page.title });
       if (/\b(undefined|NaN)\b/.test(page.bodyText)) addIssue(issues, id, 'invalid_text_rendered');
+      if (Number.isInteger(clickEvolutionId)) {
+        const clicked = await evaluate(`(() => {
+          const node = document.querySelector(
+            ${JSON.stringify(`[data-testid="evolution-node"][data-evolution-id="${clickEvolutionId}"]`)}
+          );
+          const link = node?.closest('a');
+          if (!link) return false;
+          link.click();
+          return true;
+        })()`);
+        if (!clicked) {
+          addIssue(issues, id, 'evolution_navigation_link_missing', { targetId: clickEvolutionId });
+        } else {
+          try {
+            const targetPage = await waitFor(
+              readPage,
+              (value) =>
+                value?.id === clickEvolutionId &&
+                !value.busy &&
+                new URL(value.href).pathname === `/pokemon/${clickEvolutionId}`,
+              `Evolution navigation #${id} to #${clickEvolutionId}`
+            );
+            page = targetPage;
+          } catch (error) {
+            addIssue(issues, id, 'evolution_navigation_failed', {
+              targetId: clickEvolutionId,
+              href: (await readPage())?.href,
+              error: error.message,
+            });
+          }
+        }
+      }
       if (navigationOnly) {
         previousPage = page;
         continue;
@@ -1571,6 +1605,28 @@ const main = async () => {
           `Pokémon #${id} evolution tooltip close`
         );
         auditedEvolutionTooltips += 1;
+      }
+
+      if (formNavigationOnly) {
+        const formTargets = page.buttons.map((button, index) => ({ ...button, index }));
+        for (const target of formTargets) {
+          if (page.buttons[target.index]?.active) continue;
+          await evaluate(`document.querySelectorAll('.form-container button[data-form]')[${target.index}].click()`);
+          page = await waitFor(
+            readPage,
+            (value) =>
+              value?.id === id &&
+              !value.busy &&
+              value.buttons[target.index]?.active &&
+              normalizeForm(value.selectedForm) === normalizeForm(target.form) &&
+              normalizePokemonType(value.selectedPokemonType) === normalizePokemonType(target.pokemonType) &&
+              new URL(value.href).pathname === `/pokemon/${id}`,
+            `Pokémon #${id} form navigation ${target.label}`
+          );
+          auditedFormSwitches += 1;
+        }
+        previousPage = page;
+        continue;
       }
 
       const buttonsByIdentity = new Map();
@@ -1815,6 +1871,8 @@ const main = async () => {
     range: { from: fromId, to: toId, latestPokemonGoId: lastPokemonId },
     multipleFormsOnly,
     navigationOnly,
+    formNavigationOnly,
+    clickEvolutionId: Number.isInteger(clickEvolutionId) ? clickEvolutionId : null,
     searchPage,
     summary: {
       expectedIds: idsToAudit.length,
