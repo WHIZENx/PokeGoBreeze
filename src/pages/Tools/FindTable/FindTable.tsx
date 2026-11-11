@@ -412,6 +412,7 @@ const FindTable = () => {
         )}
         <div className="find-iv-result-table">
           <CustomDataTable
+            filteredEmptyState
             title={`Levels/IV for CP: ${preIvArr?.CP}`}
             columns={columnsIV}
             data={getValueOrDefault(Array, preIvArr?.result)}
@@ -444,17 +445,18 @@ const FindTable = () => {
             <p className="tw-mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
-            <CustomDataTable
-              title={`Levels/CP for IV: ${preCpArr?.IV.atkIV}/${preCpArr?.IV.defIV}/${preCpArr?.IV.staIV}`}
-              columns={columnsCP}
-              data={getValueOrDefault(Array, preCpArr?.result)}
-              pagination
-              defaultSortFieldId={ColumnType.Level}
-              highlightOnHover
-              striped
-            />
           </Fragment>
         )}
+        <CustomDataTable
+          filteredEmptyState
+          title={`Levels/CP for IV: ${preCpArr?.IV.atkIV}/${preCpArr?.IV.defIV}/${preCpArr?.IV.staIV}`}
+          columns={columnsCP}
+          data={getValueOrDefault(Array, preCpArr?.result)}
+          pagination
+          defaultSortFieldId={ColumnType.Level}
+          highlightOnHover
+          striped
+        />
       </Fragment>
     );
   };

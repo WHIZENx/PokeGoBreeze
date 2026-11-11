@@ -1174,7 +1174,7 @@ const RaidBattle = () => {
           />
         </div>
         <div className="lg:tw-flex-1 tw-flex tw-justify-center tw-items-center !tw-p-0">
-          <div className="tw-mt-2 tw-relative">
+          <div className="tw-relative tw-mt-2 tw-w-full">
             {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
               <div className="tw-absolute tw-w-full tw-h-full tw-z-2">
                 <div className="moveset-error" />
@@ -1182,9 +1182,9 @@ const RaidBattle = () => {
               </div>
             )}
             <h3 className="tw-text-center tw-underline">Select Boss Moveset</h3>
-            <div className="row tw-mt-2">
-              <div className="col tw-flex tw-justify-center">
-                <div>
+            <div className="tw-mt-2 tw-grid tw-grid-cols-1 tw-gap-3 md:tw-grid-cols-2">
+              <div className="tw-flex tw-justify-center">
+                <div className="tw-w-full tw-max-w-[300px]">
                   <h6 className="tw-text-center">
                     <b>Fast Moves</b>
                   </h6>
@@ -1203,8 +1203,8 @@ const RaidBattle = () => {
                   />
                 </div>
               </div>
-              <div className="col tw-flex tw-justify-center">
-                <div>
+              <div className="tw-flex tw-justify-center">
+                <div className="tw-w-full tw-max-w-[300px]">
                   <h6 className="tw-text-center">
                     <b>Charged Moves</b>
                   </h6>

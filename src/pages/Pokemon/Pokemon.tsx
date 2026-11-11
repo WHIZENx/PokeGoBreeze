@@ -493,8 +493,11 @@ const Pokemon = (props: IPokemonPage) => {
           currentForm = defaultFormSearch;
         } else {
           currentForm = defaultForm.find((item) => item.form.id === specie.id);
-          searchParams.delete(Params.Form);
-          setSearchParams(searchParams);
+          setSearchParams((currentSearchParams) => {
+            const nextSearchParams = new URLSearchParams(currentSearchParams);
+            nextSearchParams.delete(Params.Form);
+            return nextSearchParams;
+          });
         }
       } else if (props.isSearch && props.searchOption) {
         currentForm = flatForms.find(
@@ -1015,7 +1018,12 @@ const Pokemon = (props: IPokemonPage) => {
           isLoadedForms={progress.isLoadedForms}
         />
         <section className="pokemon-detail-section tw-mt-4">
-          <StableHeightSection isLoading={!progress.isLoadedForms} minHeight={240} testId="pokemon-assets-stable">
+          <StableHeightSection
+            animateHeight
+            isLoading={!progress.isLoadedForms}
+            minHeight={240}
+            testId="pokemon-assets-stable"
+          >
             <PokemonAssetComponent
               asset={pokemonGoAsset}
               originSoundCry={originSoundCry}

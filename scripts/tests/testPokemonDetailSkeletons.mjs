@@ -96,12 +96,28 @@ assert.match(
   evolution,
   /isReusingResolvedEvolutionChain &&[\s\S]*props\.isLoadedForms &&[\s\S]*resolvedEvolutionRequest\.requestKey === evolutionRequestKey[\s\S]*setIsReusingResolvedEvolutionChain\(false\)/
 );
-assert.match(evolution, /const requestedPokemonId = pendingCurrentPokemonId \?\? toNumber\(params\.id, props\.id\)/);
-assert.match(evolution, /pendingCurrentPokemonId === props\.id && props\.isLoadedForms/);
+assert.match(
+  evolution,
+  /const requestedPokemonId = pendingCurrentPokemon\?\.id \?\? toNumber\(params\.id, props\.id\)/
+);
+assert.match(
+  evolution,
+  /pendingCurrentPokemon\.id === props\.id[\s\S]*pendingCurrentPokemon\.form[\s\S]*pendingCurrentPokemon\.pokemonType[\s\S]*props\.isLoadedForms/
+);
+assert.match(
+  evolution,
+  /setPendingCurrentPokemon\(\{ id: value\.id, form: value\.form, pokemonType: value\.pokemonType \}\)/,
+  'Pending Evolution navigation must distinguish forms that share one Pokédex ID.'
+);
 assert.equal(
-  evolution.match(/setPendingCurrentPokemonId\(value\.id\)/g)?.length,
+  evolution.match(/selectPendingEvolution\(value\)/g)?.length,
   2,
-  'Both embedded and routed Evolution selections must move the Current marker at click time.'
+  'Both embedded and routed Evolution selections must move the exact-form Current marker at click time.'
+);
+assert.match(
+  evolution,
+  /<LinkToTop[\s\S]*?funcOnClick=\{\(\) => selectPendingEvolution\(value\)\}[\s\S]*?generateParamForm\(value\.form, value\.pokemonType\)/,
+  'Routed Evolution forms must use the same navigation path as Pokémon search results.'
 );
 assert.match(
   evolution,
@@ -310,7 +326,7 @@ assert.match(evolutionSupplementSkeleton, /aria-label=\{`Loading \$\{title\}`\}/
 assert.match(specialForm, /const pokemonType = useMemo\(\(\) =>/);
 assert.match(specialForm, /const arrEvoList = useMemo\(\(\) =>/);
 assert.doesNotMatch(specialForm, /setArrEvoList|setPokemonType/);
-assert.match(form, /minHeight=\{320\} testId="pokemon-information-section"/);
+assert.match(form, /minHeight=\{320\}[\s\S]*?testId="pokemon-information-section"/);
 assert.match(form, /data-testid="pokemon-battle-card"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Battle data<\/b>\s*<\/h4>/);
 assert.match(
@@ -325,7 +341,7 @@ assert.doesNotMatch(trainingCosts, /Unavailable/);
 assert.doesNotMatch(pokemonPage, /data-testid="pokemon-cost-table"/);
 assert.match(form, /data-testid="pokemon-raid-card"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Raid<\/b>\s*<\/h4>/);
-assert.match(form, /minHeight=\{340\} testId="pokemon-raid-section"/);
+assert.match(form, /minHeight=\{340\}[\s\S]*?testId="pokemon-raid-section"/);
 assert.match(form, /className="tw-mx-auto tw-w-full tw-max-w-4xl"/);
 assert.match(form, /data-testid="pokemon-raid-encounter-grid"/);
 assert.match(form, /lg:tw-grid-cols-2/);
@@ -488,9 +504,28 @@ assert.match(pokemonDetailLayoutStyles, /\.pokemon-detail-table[\s\S]*@apply tw-
 assert.doesNotMatch(pokemonPageStyles, /\.table-main/);
 assert.match(stableHeightSection, /new ResizeObserver\(measure\)/);
 assert.match(stableHeightSection, /if \(isLoading && retainedHeightRef\.current > 0\)/);
-assert.match(stableHeightSection, /tw-transition-\[min-height\] tw-duration-300 tw-ease-in-out/);
-assert.match(stableHeightSection, /style=\{\{ minHeight: height \}\}/);
-assert.doesNotMatch(stableHeightSection, /style=\{\{ height \}\}/);
+assert.match(stableHeightSection, /animateHeight\?: boolean/);
+assert.match(stableHeightSection, /animateHeight \? 'tw-transition-\[height\]' : 'tw-transition-\[min-height\]'/);
+assert.match(stableHeightSection, /style=\{animateHeight \? \{ height \} : \{ minHeight: height \}\}/);
+assert.match(stableHeightSection, /event\.target !== section && event\.propertyName === 'height'/);
+assert.match(stableHeightSection, /addEventListener\('transitionrun', handleStart\)/);
+assert.match(stableHeightSection, /addEventListener\('transitionend', handleEnd\)/);
+assert.match(stableHeightSection, /addEventListener\('transitioncancel', handleEnd\)/);
 assert.match(stableHeightSection, /motion-reduce:tw-transition-none/);
+assert.equal(
+  form.match(/<StableHeightSection[\s\S]*?animateHeight/g)?.length,
+  6,
+  'Every Pokémon detail data section must animate height changes in both directions.'
+);
+assert.match(
+  pokemonPage,
+  /<StableHeightSection[\s\S]*?animateHeight[\s\S]*?testId="pokemon-assets-stable"/,
+  'The Pokémon asset section must animate height changes when navigating between IDs.'
+);
+assert.match(specialForm, /const MegaLevelBenefits =/);
+assert.match(specialForm, /<Collapse in=\{isOpen\} timeout=\{200\} unmountOnExit>/);
+assert.match(specialForm, /aria-expanded=\{isOpen\}/);
+assert.match(specialForm, /aria-controls=\{contentId\}/);
+assert.doesNotMatch(specialForm, /<details[\s\S]*data-testid="mega-level-benefits"/);
 
 console.log('Pokémon detail skeleton dimensions and page surfaces passed.');

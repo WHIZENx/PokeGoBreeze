@@ -38,17 +38,38 @@ export const useNavigateToTop = () => {
 };
 
 export const LinkToTop = (props: LinkToTopProps) => {
-  const { funcOnClick, ...restProps } = props;
-  const navigateToTop = useNavigateToTop();
+  const { funcOnClick, options, ...restProps } = props;
 
   const navigateAndReset: MouseEventHandler<HTMLAnchorElement> = (event) => {
-    event.preventDefault();
-    navigateToTop(props.to, props.options);
     funcOnClick?.(event);
+    const target = event.currentTarget.getAttribute('target');
+    const isPrimarySameWindowNavigation =
+      !event.defaultPrevented &&
+      event.button === 0 &&
+      (!target || target === '_self') &&
+      !event.metaKey &&
+      !event.altKey &&
+      !event.ctrlKey &&
+      !event.shiftKey;
+    if (isPrimarySameWindowNavigation) {
+      pendingNavigationScroll = {
+        top: toNumber(options?.top),
+        left: toNumber(options?.left),
+        behavior: options?.behavior || 'instant',
+      };
+    }
   };
 
   return (
-    <Link {...restProps} onClick={navigateAndReset}>
+    <Link
+      {...restProps}
+      preventScrollReset={options?.preventScrollReset ?? restProps.preventScrollReset}
+      relative={options?.relative ?? restProps.relative}
+      replace={options?.replace ?? restProps.replace}
+      state={options?.state ?? restProps.state}
+      viewTransition={options?.viewTransition ?? restProps.viewTransition}
+      onClick={navigateAndReset}
+    >
       {props.children}
     </Link>
   );

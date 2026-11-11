@@ -68,6 +68,7 @@ import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { ProcessedDataPage } from '../../../services/processed-data.service';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
+import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -1236,13 +1237,11 @@ const DpsTdo = () => {
       <div className="tw-relative" data-testid="dps-tdo-results-section">
         <BackdropMui open={isShowSpinner && isNotEmpty(dpsTable)} isShowOnAbove={false} />
         <CustomDataTable
+          filteredEmptyState
           customColumns={tableColumns}
           data={dpsTable}
-          noDataComponent={
-            <div className="tw-p-6 tw-text-center">
-              {isShowSpinner ? 'Loading Pokémon data...' : 'No Pokémon match the selected filters.'}
-            </div>
-          }
+          progressPending={isShowSpinner && !isNotEmpty(dpsTable)}
+          progressComponent={<CircularProgressTable />}
           pagination
           paginationServer
           paginationTotalRows={totalRows}

@@ -376,6 +376,7 @@ const StatsInfo = () => {
         </div>
       </form>
       <CustomDataTable
+        filteredEmptyState
         title={`Stat Battle for ${formatPokemonDisplayName(searchingToolCurrentDetails?.fullName)}`}
         columns={columnsStats}
         data={statsBattle}

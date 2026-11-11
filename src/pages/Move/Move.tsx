@@ -419,8 +419,11 @@ const Move = (props: IMovePage) => {
               formSx={{ width: 250 }}
               onChangeSelect={(value) => {
                 const type = value.toLowerCase();
-                searchParams.set(Params.MoveType, type);
-                setSearchParams(searchParams);
+                setSearchParams((currentSearchParams) => {
+                  const nextSearchParams = new URLSearchParams(currentSearchParams);
+                  nextSearchParams.set(Params.MoveType, type);
+                  return nextSearchParams;
+                });
                 setMoveType(type);
               }}
               value={moveType}
