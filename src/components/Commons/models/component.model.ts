@@ -329,6 +329,13 @@ export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
   isShowModalOptions?: boolean;
   titleModalOptions?: string;
   customOptionsModal?: () => React.ReactNode;
+  filteredEmptyState?:
+    | boolean
+    | {
+        title?: string;
+        description?: string;
+        testId?: string;
+      };
   isXFixed?: boolean;
 }
 

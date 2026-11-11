@@ -33,7 +33,10 @@ assert.match(
   /props\.formList\.some\(\(forms\) => forms\.some\(\(form\) => form\.defaultId === props\.defaultId\)\)/,
   'Loaded form content must belong to the current Pokémon before image-backed sections are shown.'
 );
-assert.match(form, /isCurrentPokemonLoaded && \(\s*<SpecialForm/);
+assert.match(
+  form,
+  /isCurrentPokemonLoaded\s*\?\s*searchingMainDetails\?\.pokemonType !== PokemonType\.GMax[\s\S]*<SpecialForm/
+);
 assert.match(evolution, /if \(formVaries\) \{\s*return \[\];/);
 assert.match(evolution, /exactMiniIcon !== undefined[\s\S]*<PokemonTableIcon/);
 assert.doesNotMatch(evolution, /sourceIndex|setSourceIndex/);

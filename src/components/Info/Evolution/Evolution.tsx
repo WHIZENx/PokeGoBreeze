@@ -22,7 +22,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import QuestRequirements from './QuestRequirements';
 import React, { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Xarrow from 'react-xarrows';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import APIService from '../../../services/api.service';
 
 import './Evolution.scss';
@@ -50,6 +50,7 @@ import { formNormal, formStandard } from '../../../utils/helpers/options-context
 import usePokemon from '../../../composables/usePokemon';
 import Tooltips from '../../Commons/Tooltips/Tooltips';
 import EvolutionPokemonDisplay from './EvolutionPokemonDisplay';
+import { LinkToTop } from '../../Link/LinkToTop';
 
 const EVOLUTION_MIN_HEIGHT = 256;
 const DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS = [1, 1, 1];
@@ -65,6 +66,12 @@ interface IPokemonEvo {
   formVaries: boolean;
   pokemonType: PokemonType;
   sprite: string;
+}
+
+interface PendingEvolutionIdentity {
+  form: string;
+  id: number;
+  pokemonType: PokemonType;
 }
 
 class PokemonEvo implements IPokemonEvo {
@@ -106,8 +113,8 @@ class PokemonEvo implements IPokemonEvo {
 const Evolution = (props: IEvolutionComponent) => {
   const { findPokemonByIdAndForm, getEvolutionParents, getPokemonById } = usePokemon();
   const params = useParams();
-  const [pendingCurrentPokemonId, setPendingCurrentPokemonId] = useState<number>();
-  const requestedPokemonId = pendingCurrentPokemonId ?? toNumber(params.id, props.id);
+  const [pendingCurrentPokemon, setPendingCurrentPokemon] = useState<PendingEvolutionIdentity>();
+  const requestedPokemonId = pendingCurrentPokemon?.id ?? toNumber(params.id, props.id);
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
   const evolutionRequestKey = JSON.stringify([
     props.pokemonData?.id,
@@ -156,8 +163,9 @@ const Evolution = (props: IEvolutionComponent) => {
     .flatMap((stage) => stage)
     .filter((pokemon) => pokemon.id === requestedPokemonId);
   const hasRequestedPokemonDetails = props.pokemonData?.id === requestedPokemonId;
-  const currentEvolutionIdentity =
-    requestedEvolutionNodes.length === 1
+  const currentEvolutionIdentity = pendingCurrentPokemon
+    ? pendingCurrentPokemon
+    : requestedEvolutionNodes.length === 1
       ? requestedEvolutionNodes[0]
       : hasRequestedPokemonDetails
         ? {
@@ -192,10 +200,25 @@ const Evolution = (props: IEvolutionComponent) => {
   }, [areEvolutionAssetsReady, arrEvoList]);
 
   useEffect(() => {
-    if (pendingCurrentPokemonId === props.id && props.isLoadedForms) {
-      setPendingCurrentPokemonId(undefined);
+    const resolvedForm = generateFormName(
+      props.pokemonData?.form,
+      props.pokemonData?.pokemonType ?? PokemonType.Normal,
+      '-'
+    ).toUpperCase();
+    if (
+      pendingCurrentPokemon &&
+      pendingCurrentPokemon.id === props.id &&
+      isEqual(pendingCurrentPokemon.form, resolvedForm, EqualMode.IgnoreCaseSensitive) &&
+      pendingCurrentPokemon.pokemonType === props.pokemonData?.pokemonType &&
+      props.isLoadedForms
+    ) {
+      setPendingCurrentPokemon(undefined);
     }
-  }, [pendingCurrentPokemonId, props.id, props.isLoadedForms]);
+  }, [pendingCurrentPokemon, props.id, props.isLoadedForms, props.pokemonData]);
+
+  const selectPendingEvolution = (value: IPokemonEvo) => {
+    setPendingCurrentPokemon({ id: value.id, form: value.form, pokemonType: value.pokemonType });
+  };
 
   useEffect(() => {
     if (!isRequestedPokemonInResolvedChain) {
@@ -1153,7 +1176,7 @@ const Evolution = (props: IEvolutionComponent) => {
                       <div
                         className="select-evo"
                         onClick={() => {
-                          setPendingCurrentPokemonId(value.id);
+                          selectPendingEvolution(value);
                           props.setSearchOption?.({ id: value.id, form: value.form, pokemonType: value.pokemonType });
                         }}
                         title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
@@ -1161,14 +1184,14 @@ const Evolution = (props: IEvolutionComponent) => {
                         {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                       </div>
                     ) : (
-                      <Link
+                      <LinkToTop
                         className="select-evo"
-                        onClick={() => setPendingCurrentPokemonId(value.id)}
+                        funcOnClick={() => selectPendingEvolution(value)}
                         to={`/pokemon/${value.id}${generateParamForm(value.form, value.pokemonType)}`}
                         title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
                       >
                         {renderImageEvo(value, values, evo, index, arrEvoList.length)}
-                      </Link>
+                      </LinkToTop>
                     )}
                   </li>
                 ))}

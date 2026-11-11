@@ -24,7 +24,7 @@ root.render(
   <>
     <Provider store={store}>
       <PersistGate loading={<LoadingPersist />} persistor={persistor}>
-        <BrowserRouter>
+        <BrowserRouter useTransitions={false}>
           <RouterSync />
           <Main />
         </BrowserRouter>

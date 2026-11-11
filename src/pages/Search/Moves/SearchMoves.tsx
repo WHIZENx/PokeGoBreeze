@@ -294,6 +294,7 @@ const Search = () => {
               <td className="data-table">
                 <div className="tw-relative" aria-busy={result.isLoading}>
                   <CustomDataTable
+                    filteredEmptyState
                     customColumns={category === TypeMove.Max ? maxColumns : columns}
                     data={result.data}
                     keyField="tableKey"
