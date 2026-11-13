@@ -164,6 +164,11 @@ assert.match(dpsTdoSource, /max=\{maxTrainerFriendshipLevel\(\)\}/);
 assert.match(moveSource, /PVE Power \/ Second/);
 assert.match(moveSource, /Scaled PVE Power/);
 assert.match(moveSource, /className="tw-inline-flex tw-items-center tw-gap-2"/);
+assert.match(
+  moveSource,
+  /<table className="bonus-combat-table tw-w-full">/,
+  'Bonus Combat details must fill the available accordion width.'
+);
 assert.doesNotMatch(searchMovesSource, /name: 'PvE DPS'/);
 assert.match(searchMovesSource, /name: 'PvE Power \/ Second'/);
 assert.doesNotMatch(pokemonSource, /details\.statsGO\.def \* getDmgMultiplyBonus/);
