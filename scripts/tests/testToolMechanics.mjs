@@ -138,6 +138,8 @@ const [
   findTableStyles,
   catchChanceSource,
   catchChanceStyles,
+  damageTableSource,
+  damageStyles,
 ] = await Promise.all([
     readFile(new URL('../../src/pages/Sheets/DpsTdo/DpsTdo.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
@@ -155,6 +157,8 @@ const [
     readFile(new URL('../../src/pages/Tools/FindTable/FindTable.scss', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Tools/CatchChance/CatchChance.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Tools/CatchChance/CatchChance.scss', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Tools/BattleDamage/DamageTable.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Tools/BattleDamage/Damage.scss', import.meta.url), 'utf8'),
   ]);
 assert.match(dpsTdoSource, /max=\{maxTrainerFriendshipLevel\(\)\}/);
 assert.match(moveSource, /PVE Power \/ Second/);
@@ -217,6 +221,16 @@ assert.match(
   catchChanceStyles,
   /\.table-catch-chance-compact tbody td,[\s\S]*tw-text-base/,
   'The relocated Catch Chance matrix must use compact design-system typography in the calculator column.'
+);
+assert.match(
+  damageTableSource,
+  /className="table-info table-result tw-w-full"/,
+  'Battle Result must use the full width of its available result column.'
+);
+assert.match(
+  damageStyles,
+  /@media \(width >= 640px\)[\s\S]*\.table-result td:first-child[\s\S]*tw-whitespace-nowrap/,
+  'Battle Result labels must remain on one line when the viewport can support the full table.'
 );
 
 console.log(

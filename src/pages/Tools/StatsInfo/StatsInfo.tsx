@@ -120,7 +120,7 @@ const StatsInfo = () => {
   const [statsBattle, setStatsBattle] = useState<IBattleBaseStats[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(100);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [submittedSearch, setSubmittedSearch] = useState<{
     cp: number;
     atkIv: number;

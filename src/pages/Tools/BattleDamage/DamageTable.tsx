@@ -49,7 +49,7 @@ const DamageTable = (props: IDamageTableComponent) => {
   return (
     <div className="tw-container">
       <div className="tw-flex tw-justify-center">
-        <table className="table-info table-result">
+        <table className="table-info table-result tw-w-full">
           <thead />
           <tbody>
             <tr className="tw-text-center">

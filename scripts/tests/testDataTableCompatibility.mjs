@@ -156,6 +156,11 @@ assert.match(
 );
 assert.match(dpsTdo, /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*progressPending=/);
 assert.match(statsInfo, /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*title=\{`Stat Battle/);
+assert.match(
+  statsInfo,
+  /const \[rowsPerPage, setRowsPerPage\] = useState\(25\)/,
+  'Stats Table must request 25 rows on its initial page.'
+);
 assert.equal(
   findTable.match(/filteredEmptyState/g)?.length,
   2,
