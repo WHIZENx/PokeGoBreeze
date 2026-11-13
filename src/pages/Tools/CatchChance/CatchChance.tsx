@@ -450,6 +450,50 @@ const CatchChance = () => {
                   onChange={(_, v) => onHandleLevel(v as number)}
                 />
               </div>
+              {!isAdvance && isEncounter && data?.result && (
+                <div className="catch-chance-results tw-relative tw-mt-4" data-testid="catch-chance-results">
+                  <BackdropMui open={isLoading} isShowOnAbove={false} noneCircular />
+                  <div className="table-container">
+                    <table className="table-catch-chance table-catch-chance-compact tw-w-full">
+                      <thead>
+                        <tr>
+                          <th>Throwing</th>
+                          {balls.map((value, index) => (
+                            <th key={index}>
+                              <div className="tw-flex tw-items-center tw-justify-center tw-gap-2">
+                                <img alt="Icon Item" height={32} src={getItemSpritePath(value.itemName)} />
+                                <span>{value.name}</span>
+                              </div>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {throws.map((value, index) => (
+                          <tr key={index} className="tw-text-center">
+                            <td>{value.name}</td>
+                            {safeObjectEntries(data.result)
+                              .reduce(
+                                (p, c) => [
+                                  ...p,
+                                  c[1][
+                                    getValueOrDefault(String, getKeyWithData(ThrowType, value.throwType)?.toLowerCase())
+                                  ],
+                                ],
+                                [] as number[]
+                              )
+                              .map((chance: number, chanceIndex) => (
+                                <td key={chanceIndex} style={getChanceCellStyle(chance)}>
+                                  {Math.round(chance)} %
+                                </td>
+                              ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
               <div className="tw-flex tw-w-full tw-mt-2 tw-justify-center tw-gap-3">
                 {data?.baseFleeRate && (
                   <div className="tw-w-1/4 tw-text-center tw-inline-block">
@@ -583,96 +627,55 @@ const CatchChance = () => {
               </div>
             </Fragment>
           )}
+          {isAdvance && isEncounter && (
+            <div className="catch-chance-results tw-relative tw-mt-4" data-testid="catch-chance-results">
+              <BackdropMui open={isLoading} isShowOnAbove={false} noneCircular />
+              <div className="table-container">
+                <table className="table-catch-chance table-catch-chance-compact tw-w-full">
+                  <thead>
+                    <tr>
+                      <th>Throwing</th>
+                      <th>
+                        <div className="tw-flex tw-items-center tw-justify-center tw-gap-2">
+                          <img alt="Icon Item" height={32} src={getItemSpritePath(dataAdv.ballItemName)} />
+                          <span>{dataAdv.ballName}</span>
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="tw-text-center">
+                      <td>{dataAdv.throwText}</td>
+                      <td style={getChanceCellStyle(dataAdv.result)}>{Math.round(dataAdv.result)} %</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <hr />
-      <div className="tw-relative">
-        <BackdropMui open={isLoading} isShowOnAbove={false} noneCircular />
-        {!isAdvance && isEncounter && data?.result && (
-          <div className="tw-flex tw-flex-col tw-flex-wrap tw-justify-center tw-items-center">
-            <div className="tw-container table-container">
-              <table className="table-catch-chance tw-w-full">
-                <thead>
-                  <tr>
-                    <th>Throwing</th>
-                    {balls.map((value, index) => (
-                      <th key={index}>
-                        <div className="tw-flex tw-items-center tw-gap-2">
-                          <img alt="Icon Item" height={48} src={getItemSpritePath(value.itemName)} />
-                          <span>{value.name}</span>
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {throws.map((value, index) => (
-                    <tr key={index} className="tw-text-center">
-                      <td>{value.name}</td>
-                      {safeObjectEntries(data.result)
-                        .reduce(
-                          (p, c) => [
-                            ...p,
-                            c[1][getValueOrDefault(String, getKeyWithData(ThrowType, value.throwType)?.toLowerCase())],
-                          ],
-                          [] as number[]
-                        )
-                        .map((value: number, index) => (
-                          <td key={index} style={getChanceCellStyle(value)}>
-                            {Math.round(value)} %
-                          </td>
-                        ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="tw-container tw-mt-2">
-              <table>
-                <thead />
-                <tbody>
-                  <tr>
-                    <td className="tw-text-center tw-w-1/4 tw-bg-table-info">
-                      <b>The Throw</b>
-                    </td>
-                    <td className="tw-w-3/4">
-                      Throwing inside the circle gives you an increased chance to catch, with the multiplier ranging
-                      between 1 - 2 times. We&apos;ve taken the averages of the circles, where the nice throw gives you
-                      a 1.15 times multiplier, the great throw gives you a 1.5 times multiplier and excellent throw
-                      gives you a 1.85 times multiplier.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-        {isAdvance && isEncounter && (
-          <div className="tw-flex tw-flex-wrap tw-justify-center">
-            <div className="tw-container table-container">
-              <table className="table-catch-chance tw-w-full">
-                <thead>
-                  <tr>
-                    <th>Throwing</th>
-                    <th>
-                      <div className="tw-flex tw-items-center tw-gap-2">
-                        <img alt="Icon Item" height={48} src={getItemSpritePath(dataAdv.ballItemName)} />
-                        <span>{dataAdv.ballName}</span>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="tw-text-center">
-                    <td>{dataAdv.throwText}</td>
-                    <td style={getChanceCellStyle(dataAdv.result)}>{Math.round(dataAdv.result)} %</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </div>
+      {!isAdvance && isEncounter && data?.result && (
+        <div className="tw-container tw-mt-2">
+          <table>
+            <thead />
+            <tbody>
+              <tr>
+                <td className="tw-text-center tw-w-1/4 tw-bg-table-info">
+                  <b>The Throw</b>
+                </td>
+                <td className="tw-w-3/4">
+                  Throwing inside the circle gives you an increased chance to catch, with the multiplier ranging between
+                  1 - 2 times. We&apos;ve taken the averages of the circles, where the nice throw gives you a 1.15 times
+                  multiplier, the great throw gives you a 1.5 times multiplier and excellent throw gives you a 1.85
+                  times multiplier.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

@@ -285,7 +285,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="tw-mr-1 tw-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
-          <b className="move-link-text tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
+          <b className="move-link-text tw-mr-1 tw-pt-1 tw-break-normal tw-text-wrap tw-text-sm">
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </b>
           <span className="tw-w-full">
@@ -312,7 +312,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="tw-mr-1 tw-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
-          <b className="move-link-text tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
+          <b className="move-link-text tw-mr-1 tw-pt-1 tw-break-normal tw-text-wrap tw-text-sm">
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </b>
           <span className="tw-w-full">

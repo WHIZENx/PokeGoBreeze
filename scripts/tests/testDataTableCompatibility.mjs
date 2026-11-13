@@ -134,6 +134,11 @@ assert.match(
   /data-testid="counter-performance"[\s\S]*tw-whitespace-nowrap tw-font-bold[\s\S]*tw-flex-col[\s\S]*sm:tw-flex-row sm:tw-gap-1/,
   'Counter DPS values must stack their unit on mobile and return to one row at the small breakpoint.'
 );
+assert.equal(
+  counter.match(/move-link-text[^"\n]*tw-break-normal[^"\n]*tw-text-wrap/g)?.length,
+  2,
+  'Counter move names must wrap at spaces without splitting a move word.'
+);
 assert.match(
   counter,
   /const isTargetUnreleased = props\.pokemonData\?\.releasedGO === false/,
