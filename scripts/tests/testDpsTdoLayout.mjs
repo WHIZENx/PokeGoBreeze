@@ -40,6 +40,12 @@ assert.match(source, /APIService\.getDpsTdo\(/, 'DPS/TDO calculations must remai
 assert.match(source, /paginationServer[\s\S]*?sortServer/, 'results must preserve server pagination and sorting');
 assert.match(
   source,
+  /!row\.pokemon\.releasedGO[\s\S]*<Chip[\s\S]*size="small"[\s\S]*color="warning"[\s\S]*variant="outlined"[\s\S]*label="Unreleased"[\s\S]*aria-label="Not released in Pokémon GO"/,
+  'unreleased rows must use the design-system status chip inside the Pokémon Name cell'
+);
+assert.match(source, /released: releasedGO/, 'release filtering must remain API-owned');
+assert.match(
+  source,
   /<SelectPokemon[\s\S]*?<SelectCardMove/,
   'defender and move matchup controls must remain available'
 );

@@ -13,7 +13,7 @@ import { getLevelList } from '../../../utils/compute';
 
 import APIService from '../../../services/api.service';
 
-import { Checkbox, FormControlLabel, Skeleton, Switch } from '@mui/material';
+import { Checkbox, Chip, FormControlLabel, Skeleton, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
@@ -169,14 +169,26 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
       <LinkToTop
         to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.form, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${formatPokemonDisplayName(row.pokemon.name)}`}
-        className="tw-flex tw-items-center"
+        className="tw-flex tw-min-w-0 tw-items-center tw-gap-2"
       >
-        <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
+        <span className="tw-relative tw-inline-flex tw-items-center">
           <PokemonIconType pokemonType={row.pokemonType} size={25} className="!tw-bottom-0 !tw-right-0 tw-z-[1]">
             <PokemonTableIcon {...row.pokemon} />
           </PokemonIconType>
         </span>
-        {formatPokemonDisplayName(row.pokemon.name)}
+        <span>{formatPokemonDisplayName(row.pokemon.name)}</span>
+        {!row.pokemon.releasedGO && (
+          <Chip
+            component="span"
+            size="small"
+            color="warning"
+            variant="outlined"
+            label="Unreleased"
+            className="tw-shrink-0"
+            title="Not released in Pokémon GO"
+            aria-label="Not released in Pokémon GO"
+          />
+        )}
       </LinkToTop>
     ),
     sortable: true,
