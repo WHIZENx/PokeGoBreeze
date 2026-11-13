@@ -40,6 +40,26 @@ assert.match(source, /APIService\.getDpsTdo\(/, 'DPS/TDO calculations must remai
 assert.match(source, /paginationServer[\s\S]*?sortServer/, 'results must preserve server pagination and sorting');
 assert.match(
   source,
+  /isShowSpinner && isNotEmpty\(dpsTable\)[\s\S]*<LinearProgress[\s\S]*aria-label="Refreshing DPS and TDO results"/,
+  'refreshes must preserve the current table and use a non-blocking progress indicator'
+);
+assert.doesNotMatch(
+  source,
+  /<BackdropMui[\s\S]*isNotEmpty\(dpsTable\)/,
+  'refreshes must not flash a blocking backdrop over existing table rows'
+);
+assert.match(
+  source,
+  /isShowSpinner && !isNotEmpty\(dpsTable\) \? \([\s\S]*aria-label="Loading DPS and TDO results"[\s\S]*\) : \([\s\S]*<CustomDataTable/,
+  'the table and its column header must remain unmounted while loading without rows'
+);
+assert.doesNotMatch(
+  source,
+  /<Skeleton[\s\S]*isShowSpinner/,
+  'result loading must not flash a skeleton over the filter controls'
+);
+assert.match(
+  source,
   /!row\.pokemon\.releasedGO[\s\S]*<Chip[\s\S]*size="small"[\s\S]*color="warning"[\s\S]*variant="outlined"[\s\S]*label="Unreleased"[\s\S]*aria-label="Not released in Pokémon GO"/,
   'unreleased rows must use the design-system status chip inside the Pokémon Name cell'
 );
