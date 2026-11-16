@@ -29,6 +29,15 @@ const hasCompleteCost = (cost?: PokemonTypeCost): cost is CompletePokemonTypeCos
 // Reserve typical value widths before the first response; these stay hidden.
 const loadingCost = { candy: 100, stardust: 100000 };
 
+interface TrainingCostsSnapshot {
+  thirdMove?: CompletePokemonTypeCost;
+  purified?: CompletePokemonTypeCost;
+}
+
+// Detail routes remount when the species changes. Preserve the last completed
+// layout and value widths for skeletons across that boundary as well.
+let latestTrainingCostsSnapshot: TrainingCostsSnapshot | undefined;
+
 const CostValue = ({ value, isLoading }: { value: number; isLoading: boolean }) => (
   <strong className="tw-relative tw-inline-block">
     <span className={isLoading ? 'tw-invisible' : undefined} aria-hidden={isLoading || undefined}>
@@ -85,17 +94,33 @@ const CostItem = ({ label, pokemonId, cost, isLoading }: CostItemProps) => (
 const TrainingCosts = ({ pokemonId, thirdMove, purified, isLoading = false }: TrainingCostsProps) => {
   const hasThirdMoveCost = hasCompleteCost(thirdMove);
   const hasPurificationCost = hasCompleteCost(purified);
-  const lastLoadedLayout = useRef({ thirdMove: true, purified: true });
+  const lastLoadedSnapshot = useRef<TrainingCostsSnapshot>(
+    latestTrainingCostsSnapshot ?? { thirdMove: loadingCost, purified: loadingCost }
+  );
 
   useEffect(() => {
     if (!isLoading) {
-      lastLoadedLayout.current = { thirdMove: hasThirdMoveCost, purified: hasPurificationCost };
+      const snapshot = {
+        thirdMove: hasThirdMoveCost ? { ...thirdMove } : undefined,
+        purified: hasPurificationCost ? { ...purified } : undefined,
+      };
+      lastLoadedSnapshot.current = snapshot;
+      latestTrainingCostsSnapshot = snapshot;
     }
-  }, [hasThirdMoveCost, hasPurificationCost, isLoading]);
+  }, [hasThirdMoveCost, hasPurificationCost, isLoading, thirdMove, purified]);
 
-  const hasKnownLayout = hasThirdMoveCost || hasPurificationCost;
-  const showThirdMove = isLoading && !hasKnownLayout ? lastLoadedLayout.current.thirdMove : hasThirdMoveCost;
-  const showPurification = isLoading && !hasKnownLayout ? lastLoadedLayout.current.purified : hasPurificationCost;
+  const displayedThirdMove = isLoading
+    ? lastLoadedSnapshot.current.thirdMove
+    : hasThirdMoveCost
+      ? thirdMove
+      : undefined;
+  const displayedPurified = isLoading
+    ? lastLoadedSnapshot.current.purified
+    : hasPurificationCost
+      ? purified
+      : undefined;
+  const showThirdMove = Boolean(displayedThirdMove);
+  const showPurification = Boolean(displayedPurified);
 
   if (!showThirdMove && !showPurification) {
     return null;
@@ -112,21 +137,11 @@ const TrainingCosts = ({ pokemonId, thirdMove, purified, isLoading = false }: Tr
       <div
         className={`tw-grid tw-grid-cols-1 tw-gap-2 ${showThirdMove && showPurification ? 'sm:tw-grid-cols-2' : ''}`}
       >
-        {showThirdMove && (
-          <CostItem
-            label="Second Charged Move"
-            pokemonId={pokemonId}
-            cost={hasThirdMoveCost ? thirdMove : loadingCost}
-            isLoading={isLoading}
-          />
+        {displayedThirdMove && (
+          <CostItem label="Second Charged Move" pokemonId={pokemonId} cost={displayedThirdMove} isLoading={isLoading} />
         )}
-        {showPurification && (
-          <CostItem
-            label="Purification"
-            pokemonId={pokemonId}
-            cost={hasPurificationCost ? purified : loadingCost}
-            isLoading={isLoading}
-          />
+        {displayedPurified && (
+          <CostItem label="Purification" pokemonId={pokemonId} cost={displayedPurified} isLoading={isLoading} />
         )}
       </div>
     </div>
