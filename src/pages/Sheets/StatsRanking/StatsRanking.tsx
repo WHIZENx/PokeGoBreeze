@@ -557,6 +557,7 @@ const StatsRanking = () => {
             <TableMove
               moveData={moveRanking?.moves}
               rankMoveData={moveRanking?.bestMoves}
+              cacheScope="stats-ranking"
               pokemonType={select?.pokemonType}
               compactLayout
               isLoading={!select || movesLoading || pokemonBundle?.id !== select.num}
