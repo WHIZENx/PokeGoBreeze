@@ -134,6 +134,11 @@ assert.match(
   /data-testid="counter-performance"[\s\S]*tw-whitespace-nowrap tw-font-bold[\s\S]*tw-flex-col[\s\S]*sm:tw-flex-row sm:tw-gap-1/,
   'Counter DPS values must stack their unit on mobile and return to one row at the small breakpoint.'
 );
+assert.equal(
+  counter.match(/move-link-text[^"\n]*tw-break-normal[^"\n]*tw-text-wrap/g)?.length,
+  2,
+  'Counter move names must wrap at spaces without splitting a move word.'
+);
 assert.match(
   counter,
   /const isTargetUnreleased = props\.pokemonData\?\.releasedGO === false/,
@@ -145,12 +150,36 @@ assert.match(
   'Unreleased forms must explain why counter data cannot be calculated.'
 );
 assert.match(
+  counter,
+  /const COUNTER_ROWS_PER_PAGE = 20;[\s\S]*limit: COUNTER_ROWS_PER_PAGE,[\s\S]*paginationPerPage=\{COUNTER_ROWS_PER_PAGE\}/,
+  'The fixed-height counter table must bound each server page instead of mounting 100 image-heavy rows.'
+);
+assert.match(
+  counter,
+  /className="pokemon-sprite-counter"[\s\S]*loading="lazy"[\s\S]*decoding="async"/,
+  'Counter sprites outside the nested scroll viewport must not be decoded eagerly.'
+);
+assert.doesNotMatch(
+  counterStyles,
+  /\.rdt_TableRow\s*\{[\s\S]*animation:/,
+  'Counter rows must not retain one composited opacity animation layer per row while scrolling.'
+);
+assert.match(
   searchMoves,
   /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*customColumns=/,
   'Move Search tables must explain empty external-filter results.'
 );
-assert.match(dpsTdo, /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*progressPending=/);
+assert.match(
+  dpsTdo,
+  /data-testid="dps-tdo-initial-loading"[\s\S]*<CircularProgressTable \/>[\s\S]*<CustomDataTable[\s\S]*filteredEmptyState/,
+  'DPS/TDO must keep its initial loading progress outside the table while preserving the filtered empty state.'
+);
 assert.match(statsInfo, /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*title=\{`Stat Battle/);
+assert.match(
+  statsInfo,
+  /const \[rowsPerPage, setRowsPerPage\] = useState\(25\)/,
+  'Stats Table must request 25 rows on its initial page.'
+);
 assert.equal(
   findTable.match(/filteredEmptyState/g)?.length,
   2,
@@ -170,6 +199,11 @@ assert.match(
   moveTableStyles,
   /\.table-moves-col \{[\s\S]*tw-isolate[\s\S]*tw-overflow-y-auto/,
   'Sticky move headers must remain in their vertical scroll stacking context.'
+);
+assert.doesNotMatch(
+  moveTableStyles,
+  /\.table-moves tbody tr\s*\{[\s\S]*animation:/,
+  'Move rows must not retain composited opacity animation layers inside their nested scroll containers.'
 );
 assert.doesNotMatch(
   moveTableStyles,

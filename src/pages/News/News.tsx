@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import './News.scss';
 import {
@@ -34,6 +34,8 @@ import { Divider, Skeleton } from '@mui/material';
 import DOMPurify from 'dompurify';
 import DismissibleAlert from '../../components/Commons/Alerts/DismissibleAlert';
 
+const NEWS_BATCH_SIZE = 12;
+
 const News = () => {
   useTitle({
     title: 'PokéGO Breeze - Game Master Event Tickets',
@@ -45,6 +47,8 @@ const News = () => {
   const [information, setInformation] = useState<IInformation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string>();
+  const [visibleNewsCount, setVisibleNewsCount] = useState(NEWS_BATCH_SIZE);
+  const loadMoreNewsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -208,6 +212,26 @@ const News = () => {
   };
 
   const data = mapDataInformation(information);
+  const visibleData = data.slice(0, visibleNewsCount);
+  const hasMoreNews = visibleNewsCount < data.length;
+
+  useEffect(() => {
+    const sentinel = loadMoreNewsRef.current;
+    if (!sentinel || !hasMoreNews) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setVisibleNewsCount((count) => Math.min(count + NEWS_BATCH_SIZE, data.length));
+        }
+      },
+      { rootMargin: '400px 0px' }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [data.length, hasMoreNews]);
 
   const renderReward = (value: IRewardNews) => (
     <div>
@@ -218,7 +242,13 @@ const News = () => {
           </div>
         ) : value.type === TicketRewardType.Exp ? (
           <div className="tw-mx-auto tw-flex tw-h-16 tw-w-16 tw-items-center tw-justify-center tw-overflow-hidden tw-rounded-full tw-border-2 tw-border-blue-900 tw-bg-blue-700 tw-shadow-md">
-            <img className="tw-h-12 tw-w-12 tw-object-contain" alt={value.title || 'Experience'} src={value.imageSrc} />
+            <img
+              className="tw-h-12 tw-w-12 tw-object-contain"
+              alt={value.title || 'Experience'}
+              src={value.imageSrc}
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         ) : (
           <img
@@ -229,6 +259,8 @@ const News = () => {
                 ? APIService.getPokemonModel(value.imageSrc, value.pokemon?.id)
                 : value.imageSrc
             }
+            loading="lazy"
+            decoding="async"
             onError={(e) => {
               e.currentTarget.onerror = null;
               e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.id, value.imageSrc);
@@ -281,7 +313,7 @@ const News = () => {
             )}
           >
             {!isNotEmpty(data) && <div className="tw-p-4 tw-text-center tw-text-secondary">No ticket data found.</div>}
-            {data.map((value) => (
+            {visibleData.map((value) => (
               <div className="info-news" key={value.id}>
                 <div className="tw-relative info-container">
                   <img
@@ -289,8 +321,16 @@ const News = () => {
                     aria-hidden="true"
                     className="info-background"
                     src={value.backgroundImgUrl || value.bannerUrl}
+                    loading="lazy"
+                    decoding="async"
                   />
-                  <img alt="Info Banner" className="info-banner-img" src={value.bannerUrl} />
+                  <img
+                    alt="Info Banner"
+                    className="info-banner-img"
+                    src={value.bannerUrl}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
                 <AccordionMui
                   items={[
@@ -298,7 +338,15 @@ const News = () => {
                       label: (
                         <div className="tw-w-full tw-flex tw-flex-wrap tw-items-center tw-justify-between tw-mr-3 tw-gap-3">
                           <div className="tw-flex tw-min-w-0 tw-items-center tw-justify-start tw-gap-x-2">
-                            {value.titleImgUrl && <img alt="Image League" height={50} src={value.titleImgUrl} />}
+                            {value.titleImgUrl && (
+                              <img
+                                alt="Image League"
+                                height={50}
+                                src={value.titleImgUrl}
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            )}
                             <b className="tw-break-words">{value.title || value.id}</b>
                           </div>
                           <div className="tw-flex tw-items-center tw-justify-end">
@@ -366,6 +414,14 @@ const News = () => {
                 />
               </div>
             ))}
+            {hasMoreNews && (
+              <div
+                ref={loadMoreNewsRef}
+                aria-hidden="true"
+                className="tw-h-px tw-w-full"
+                data-testid="news-load-more-sentinel"
+              />
+            )}
           </div>
         )}
       </div>

@@ -201,7 +201,7 @@ assert.doesNotMatch(assets, /Sound of /);
 assert.match(assets, /data-testid="pokemon-assets-skeleton"/);
 assert.match(assets, /const DEFAULT_POKEMON_ASSET_SKELETON_COUNT = 4/);
 assert.match(assets, /const lastLoadedAssetSnapshot = useRef<AssetLoadingSnapshot>/);
-assert.match(assets, /assetGroupCount: pokeAssets\.length/);
+assert.match(assets, /assetGroupCount: Math\.min\(pokeAssets\.length, ASSET_GROUP_BATCH_SIZE\)/);
 assert.match(assets, /originCryCount/);
 assert.match(assets, /pokemonGoCryCount/);
 assert.match(assets, /Array\.from\(\{ length: loadingSnapshot\.assetGroupCount \}/);
@@ -209,14 +209,18 @@ assert.match(assets, /data-testid="pokemon-asset-skeleton-card"/);
 assert.match(assets, /data-testid="pokemon-cry-source-skeleton" data-skeleton-count=\{count\}/);
 assert.match(assets, /<CrySourceSkeleton label="Pokémon Origin" count=\{loadingSnapshot\.originCryCount\} \/>/);
 assert.match(assets, /<CrySourceSkeleton label="Pokémon GO" count=\{loadingSnapshot\.pokemonGoCryCount\} \/>/);
-assert.match(
-  assets,
-  /Promise\.all\(imageRequests\.map\(\(\{ candidates \}\) => preloadFirstAvailableImage\(candidates\)\)\)/
-);
-assert.match(assets, /const areAssetImagesLoaded =/);
-assert.match(assets, /preloadedImages\.requestKey === imageRequestKey/);
+assert.match(assets, /const ASSET_GROUP_BATCH_SIZE = 12/);
+assert.match(assets, /const visiblePokeAssets = pokeAssets\.slice\(0, visibleAssetGroupCount\)/);
+assert.match(assets, /new IntersectionObserver/);
+assert.match(assets, /count \+ ASSET_GROUP_BATCH_SIZE/);
+assert.match(assets, /data-testid="pokemon-assets-load-more-sentinel"/);
+assert.match(assets, /loading="lazy"/);
+assert.match(assets, /decoding="async"/);
+assert.doesNotMatch(assets, /preloadFirstAvailableImage|Promise\.all\(imageRequests/);
+assert.match(assets, /const areAssetImagesLoaded = props\.isLoadedForms/);
 assert.match(assets, /aria-busy=\{!areAssetImagesLoaded\}/);
 assert.match(assets, /\{!areAssetImagesLoaded \? \(/);
+assert.match(assets, /\{visiblePokeAssets\.map\(\(assets\) => \(/);
 assert.match(assets, /key=\{assets\.form\}/);
 assert.match(assets, /key=\{`\$\{assets\.form\}:\$\{value\.gender/);
 assert.match(assets, /variant="rounded"/);

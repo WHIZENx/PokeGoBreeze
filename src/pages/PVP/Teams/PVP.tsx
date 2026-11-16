@@ -55,6 +55,7 @@ import useCombats from '../../../composables/useCombats';
 import usePokemon from '../../../composables/usePokemon';
 import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
+import TableLoadingProgress from '../../../components/Commons/Tables/TableLoadingProgress';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const { pvpData, pokemonsData, combatsData, assetsData } = useDataStore();
@@ -66,6 +67,7 @@ const TeamPVP = (props: IStyleSheetData) => {
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<TeamsPVP>();
+  const [isLoading, setIsLoading] = useState(true);
   const latestRequestRef = useRef(0);
   const [search, setSearch] = useState('');
   const [sortedBy, setSortedBy] = useState(SortType.TeamScore);
@@ -146,6 +148,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     const requestId = ++latestRequestRef.current;
     const controller = new AbortController();
     const fetchPokemon = async () => {
+      setIsLoading(true);
       showSpinner();
       try {
         const cp = toNumber(params.cp);
@@ -219,7 +222,6 @@ const TeamPVP = (props: IStyleSheetData) => {
           });
         });
         setRankingData(file);
-        hideSpinner();
       } catch (e) {
         if (requestId !== latestRequestRef.current || APIService.isCancel(e)) {
           return;
@@ -231,6 +233,11 @@ const TeamPVP = (props: IStyleSheetData) => {
             isError: true,
             message: (e as AxiosError).message,
           });
+        }
+      } finally {
+        if (requestId === latestRequestRef.current) {
+          setIsLoading(false);
+          hideSpinner();
         }
       }
     };
@@ -454,7 +461,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         <hr />
         <h2>Top Performer Pokémon</h2>
         <InputMuiSearch value={search} placeholder="Enter Name or ID" onChange={(value) => setSearch(value)} />
-        <div className="ranking-container card-container">
+        <div className="ranking-container card-container" aria-busy={isLoading}>
           <div className="ranking-group tw-w-full ranking-header tw-gap-y-3">
             <div className="ranking-score">Pokémon</div>
             <div className="tw-flex tw-mr-3 tw-gap-x-7.5">
@@ -516,6 +523,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
             </div>
+            <TableLoadingProgress loading={isLoading} label="Loading top PVP performers" />
           </div>
           {visiblePerformers.map((value, index) => (
             <div
@@ -603,7 +611,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         </div>
         <hr />
         <h2>Top Team Pokémon</h2>
-        <div className="ranking-container card-container">
+        <div className="ranking-container card-container" aria-busy={isLoading}>
           <div className="ranking-group tw-w-full ranking-header tw-gap-y-3">
             <div className="ranking-score">Team</div>
             <div className="tw-flex tw-mr-5 tw-gap-x-15">
@@ -650,6 +658,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
             </div>
+            <TableLoadingProgress loading={isLoading} label="Loading top PVP teams" />
           </div>
           <AccordionMui
             className="!tw-min-w-max"

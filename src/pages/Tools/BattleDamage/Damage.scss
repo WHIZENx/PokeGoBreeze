@@ -2,6 +2,12 @@
   width: 40% !important;
 }
 
+@media (width >= 640px) {
+  .table-result td:first-child {
+    @apply tw-whitespace-nowrap;
+  }
+}
+
 .battle-game {
   @apply tw-m-0 tw-p-2.5;
 }

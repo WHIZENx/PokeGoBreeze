@@ -47,6 +47,8 @@ import { ProcessedDataPage } from '../../../../services/processed-data.service';
 import { formatPokemonDisplayName } from '../../../../utils/pokemon-display-name';
 import TableEmptyState from '../TableEmptyState';
 
+const COUNTER_ROWS_PER_PAGE = 20;
+
 const customStyles: TableStyles = {
   table: {
     style: {
@@ -261,6 +263,8 @@ const Counter = (props: ICounterComponent) => {
                     className="pokemon-sprite-counter"
                     alt="Pokémon Image"
                     src={APIService.getPokemonModel(assets, row.pokemonId)}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, row.pokemonId, assets);
@@ -285,7 +289,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="tw-mr-1 tw-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
-          <b className="move-link-text tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
+          <b className="move-link-text tw-mr-1 tw-pt-1 tw-break-normal tw-text-wrap tw-text-sm">
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </b>
           <span className="tw-w-full">
@@ -312,7 +316,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="tw-mr-1 tw-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
-          <b className="move-link-text tw-mr-1 tw-pt-1 tw-text-wrap tw-text-sm">
+          <b className="move-link-text tw-mr-1 tw-pt-1 tw-break-normal tw-text-wrap tw-text-sm">
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </b>
           <span className="tw-w-full">
@@ -389,7 +393,7 @@ const Counter = (props: ICounterComponent) => {
         sort: 'ratio',
         order: ratioSortOrder,
         page,
-        limit: 100,
+        limit: COUNTER_ROWS_PER_PAGE,
       }),
       { signal: controller.signal }
     )
@@ -529,7 +533,7 @@ const Counter = (props: ICounterComponent) => {
             paginationComponentOptions={{
               noRowsPerPage: true,
             }}
-            paginationPerPage={100}
+            paginationPerPage={COUNTER_ROWS_PER_PAGE}
             data={counterList}
             isXFixed
             isShowModalOptions

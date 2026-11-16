@@ -31,6 +31,12 @@ assert.equal(
 assert.equal(getItemSpriteAssetName('ITEM_UNKNOWN'), undefined);
 
 const newsSource = await readFile(new URL('../../src/pages/News/News.tsx', import.meta.url), 'utf8');
+assert.match(newsSource, /const NEWS_BATCH_SIZE = 12/);
+assert.match(newsSource, /const visibleData = data\.slice\(0, visibleNewsCount\)/);
+assert.match(newsSource, /new IntersectionObserver/);
+assert.match(newsSource, /data-testid="news-load-more-sentinel"/);
+assert.match(newsSource, /\{visibleData\.map\(\(value\) => \(/);
+assert.doesNotMatch(newsSource, /\{data\.map\(\(value\) => \(/);
 assert.match(
   newsSource,
   /TicketRewardType\.Exp[\s\S]*?APIService\.getItemSprite\('experience'\)/,
@@ -40,6 +46,23 @@ assert.match(
   newsSource,
   /TicketRewardType\.Exp[\s\S]*?tw-border-blue-900 tw-bg-blue-700/,
   'The transparent white XP glyph must have an opaque, theme-safe badge background and border'
+);
+for (const imageClass of ['info-background', 'info-banner-img']) {
+  assert.match(
+    newsSource,
+    new RegExp(`className="${imageClass}"[\\s\\S]*?loading="lazy"[\\s\\S]*?decoding="async"`),
+    `${imageClass} images must not be loaded and decoded for every ticket before they approach the viewport`
+  );
+}
+assert.match(
+  newsSource,
+  /alt="Image League"[\s\S]*?loading="lazy"[\s\S]*?decoding="async"/,
+  'Ticket title images must use deferred image loading'
+);
+assert.match(
+  newsSource,
+  /className="pokemon-sprite-medium tw-w-16"[\s\S]*?loading="lazy"[\s\S]*?decoding="async"/,
+  'Expanded ticket reward images must decode asynchronously'
 );
 
 console.log(`News item asset regression passed: ${expectedNewsItemAssets.size} verified reward mappings.`);

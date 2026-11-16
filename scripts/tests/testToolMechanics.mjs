@@ -136,6 +136,10 @@ const [
   alertReleasedSource,
   findTableSource,
   findTableStyles,
+  catchChanceSource,
+  catchChanceStyles,
+  damageTableSource,
+  damageStyles,
 ] = await Promise.all([
     readFile(new URL('../../src/pages/Sheets/DpsTdo/DpsTdo.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8'),
@@ -151,11 +155,20 @@ const [
     readFile(new URL('../../src/pages/Pokemon/components/AlertReleased.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Tools/FindTable/FindTable.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../../src/pages/Tools/FindTable/FindTable.scss', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Tools/CatchChance/CatchChance.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Tools/CatchChance/CatchChance.scss', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Tools/BattleDamage/DamageTable.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Tools/BattleDamage/Damage.scss', import.meta.url), 'utf8'),
   ]);
 assert.match(dpsTdoSource, /max=\{maxTrainerFriendshipLevel\(\)\}/);
 assert.match(moveSource, /PVE Power \/ Second/);
 assert.match(moveSource, /Scaled PVE Power/);
 assert.match(moveSource, /className="tw-inline-flex tw-items-center tw-gap-2"/);
+assert.match(
+  moveSource,
+  /<table className="bonus-combat-table tw-w-full">/,
+  'Bonus Combat details must fill the available accordion width.'
+);
 assert.doesNotMatch(searchMovesSource, /name: 'PvE DPS'/);
 assert.match(searchMovesSource, /name: 'PvE Power \/ Second'/);
 assert.doesNotMatch(pokemonSource, /details\.statsGO\.def \* getDmgMultiplyBonus/);
@@ -194,6 +207,35 @@ assert.match(findTableSource, /className="find-iv-result-table"/);
 assert.match(
   findTableStyles,
   /\.find-iv-result-table \.rdt-v7-compat > div,\s*\.find-iv-result-table \.rdt_Table\s*\{[\s\S]*--rdt-color-highlight: #dbeafe !important;[\s\S]*--rdt-color-highlight-text: var\(--text-constant\) !important;/
+);
+assert.equal(
+  catchChanceSource.match(/data-testid="catch-chance-results"/g)?.length,
+  2,
+  'Standard and advanced Catch Chance results must render inside the calculator column.'
+);
+assert.ok(
+  catchChanceSource.indexOf('data-testid="catch-chance-results"') < catchChanceSource.indexOf('<h1>FLEE</h1>'),
+  'The standard Catch Chance matrix must appear before secondary encounter details.'
+);
+assert.doesNotMatch(
+  catchChanceSource,
+  /<hr \/>[\s\S]*data-testid="catch-chance-results"/,
+  'Catch Chance results must not return to the page-bottom section below the Pokémon card.'
+);
+assert.match(
+  catchChanceStyles,
+  /\.table-catch-chance-compact tbody td,[\s\S]*tw-text-base/,
+  'The relocated Catch Chance matrix must use compact design-system typography in the calculator column.'
+);
+assert.match(
+  damageTableSource,
+  /className="table-info table-result tw-w-full"/,
+  'Battle Result must use the full width of its available result column.'
+);
+assert.match(
+  damageStyles,
+  /@media \(width >= 640px\)[\s\S]*\.table-result td:first-child[\s\S]*tw-whitespace-nowrap/,
+  'Battle Result labels must remain on one line when the viewport can support the full table.'
 );
 
 console.log(

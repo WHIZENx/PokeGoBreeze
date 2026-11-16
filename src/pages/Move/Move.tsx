@@ -828,7 +828,7 @@ const Move = (props: IMovePage) => {
                           noPadding: true,
                           label: 'Bonus Combat',
                           children: (
-                            <table>
+                            <table className="bonus-combat-table tw-w-full">
                               <tbody>
                                 <tr>
                                   <td>Bonus Type</td>

@@ -23,10 +23,6 @@
   @apply tw-font-bold;
 }
 
-.move-tables-content:not(.is-loading) .table-moves tbody tr {
-  animation: move-table-row-enter 160ms ease-out both;
-}
-
 .main-move {
   @apply tw-w-2/5;
 }
@@ -38,21 +34,5 @@
 .move-tables-content {
   &.is-loading {
     @apply tw-select-none;
-  }
-}
-
-@keyframes move-table-row-enter {
-  from {
-    opacity: 0.55;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .move-tables-content:not(.is-loading) .table-moves tbody tr {
-    animation: none;
   }
 }

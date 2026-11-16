@@ -14,6 +14,7 @@ const baseUrl = (
 ).replace(/\/$/, '');
 const screenshotPath = process.argv.find((value) => value.startsWith('--screenshot='))?.split('=')[1];
 const timeoutMs = 20000;
+const stickerPageSize = 40;
 const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const outputPath = resolve(workspaceRoot, 'artifacts/stickers-audit.json');
 const source = JSON.parse(await readFile(resolve(workspaceRoot, 'modules/api/data/stickers.json'), 'utf8'));
@@ -157,6 +158,8 @@ const main = async () => {
             shop: card.dataset.shop === 'true',
             fallback: image?.dataset.fallback === 'true',
             imageComplete: Boolean(image?.complete && image.naturalWidth > 0),
+            loading: image?.loading ?? '',
+            decoding: image?.decoding ?? '',
           };
         });
         return {
@@ -197,6 +200,9 @@ const main = async () => {
         addIssue('duplicate_rendered_sticker', { label });
       }
       for (const card of page.cards) {
+        if (card.loading !== 'lazy' || card.decoding !== 'async') {
+          addIssue('sticker_image_not_deferred', { label, id: card.id });
+        }
         const sticker = expectedById.get(card.id);
         if (!sticker) addIssue('unexpected_sticker', { label, card });
         else if (card.shop !== sticker.isShop || card.pokemonId !== String(sticker.pokemonId ?? '')) {
@@ -207,7 +213,7 @@ const main = async () => {
 
     let page = await navigate();
     validateRows(page, source, 'all');
-    if (page.cards.length !== Math.min(100, source.length)) {
+    if (page.cards.length !== Math.min(stickerPageSize, source.length)) {
       addIssue('first_page_size_mismatch', { actual: page.cards.length });
     }
     await waitFor((value) => value?.cards.every((card) => card.imageComplete), 'initial sticker images');
