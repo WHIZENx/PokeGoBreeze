@@ -22,7 +22,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import QuestRequirements from './QuestRequirements';
 import React, { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Xarrow from 'react-xarrows';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import APIService from '../../../services/api.service';
 
 import './Evolution.scss';
@@ -51,6 +51,8 @@ import usePokemon from '../../../composables/usePokemon';
 import Tooltips from '../../Commons/Tooltips/Tooltips';
 import EvolutionPokemonDisplay from './EvolutionPokemonDisplay';
 import { LinkToTop } from '../../Link/LinkToTop';
+import useDataStore from '../../../composables/useDataStore';
+import { Params } from '../../../utils/constants';
 
 const DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS = [1, 1, 1];
 const readyEvolutionAssetSetKeys = new Set<string>();
@@ -72,6 +74,14 @@ interface PendingEvolutionIdentity {
   id: number;
   pokemonType: PokemonType;
 }
+
+interface EvolutionSnapshot {
+  catalog: ReturnType<typeof useDataStore>['pokemonsData'];
+  chain: IPokemonEvo[][];
+  request: { pokemonId?: number; requestKey: string };
+}
+
+let latestEvolutionSnapshot: EvolutionSnapshot | undefined;
 
 class PokemonEvo implements IPokemonEvo {
   prev?: string;
@@ -112,9 +122,27 @@ class PokemonEvo implements IPokemonEvo {
 const Evolution = (props: IEvolutionComponent) => {
   const { findPokemonByIdAndForm, getEvolutionParents, getPokemonById } = usePokemon();
   const params = useParams();
+  const [searchParams] = useSearchParams();
+  const { pokemonsData } = useDataStore();
+  const initialSnapshot = useRef(
+    params.id &&
+      !searchParams.has(Params.Form) &&
+      !searchParams.has(Params.FormType) &&
+      latestEvolutionSnapshot?.catalog === pokemonsData &&
+      latestEvolutionSnapshot.chain.some((stage) =>
+        stage.some(
+          (pokemon) =>
+            pokemon.id === Number(params.id) &&
+            [PokemonType.None, PokemonType.Normal].includes(pokemon.pokemonType) &&
+            (!pokemon.form || pokemon.form === 'NORMAL')
+        )
+      )
+      ? latestEvolutionSnapshot
+      : undefined
+  );
   const [pendingCurrentPokemon, setPendingCurrentPokemon] = useState<PendingEvolutionIdentity>();
   const requestedPokemonId = pendingCurrentPokemon?.id ?? toNumber(params.id, props.id);
-  const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
+  const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>(() => initialSnapshot.current?.chain ?? []);
   const evolutionRequestKey = JSON.stringify([
     props.pokemonData?.id,
     props.pokemonData?.form,
@@ -126,8 +154,10 @@ const Evolution = (props: IEvolutionComponent) => {
   const [resolvedEvolutionRequest, setResolvedEvolutionRequest] = useState<{
     pokemonId?: number;
     requestKey: string;
-  }>({ requestKey: '' });
-  const [isReusingResolvedEvolutionChain, setIsReusingResolvedEvolutionChain] = useState(false);
+  }>(() => initialSnapshot.current?.request ?? { requestKey: '' });
+  const [isReusingResolvedEvolutionChain, setIsReusingResolvedEvolutionChain] = useState(
+    Boolean(initialSnapshot.current)
+  );
   const [evolutionMinHeight, setEvolutionMinHeight] = useState(0);
   const evolutionContainerRef = useRef<HTMLDivElement>(null);
   const lastLoadedEvolutionStageCounts = useRef<number[]>([...DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS]);
@@ -189,8 +219,16 @@ const Evolution = (props: IEvolutionComponent) => {
   useEffect(() => {
     if (hasEvolutionData && areReportedEvolutionAssetsReady) {
       readyEvolutionAssetSetKeys.add(evolutionAssetSetKey);
+      latestEvolutionSnapshot = { catalog: pokemonsData, chain: arrEvoList, request: resolvedEvolutionRequest };
     }
-  }, [areReportedEvolutionAssetsReady, evolutionAssetSetKey, hasEvolutionData]);
+  }, [
+    areReportedEvolutionAssetsReady,
+    evolutionAssetSetKey,
+    hasEvolutionData,
+    pokemonsData,
+    arrEvoList,
+    resolvedEvolutionRequest,
+  ]);
 
   useEffect(() => {
     if (areEvolutionAssetsReady && arrEvoList.length) {
@@ -387,14 +425,14 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   useEffect(() => {
-    if (props.pokemonData?.fullName) {
+    if (props.isLoadedForms && props.pokemonData?.id === requestedPokemonId && props.pokemonData.fullName) {
       if (props.pokemonData.pokemonType === PokemonType.GMax || isSpecialMegaFormType(props.pokemonData.pokemonType)) {
         getSpecialEvoChain(props.pokemonData);
       } else {
         getEvoChainStore(props.pokemonData);
       }
     }
-  }, [props.pokemonData, props.pokemonData?.pokemonType]);
+  }, [props.pokemonData, props.pokemonData?.pokemonType, props.isLoadedForms, requestedPokemonId]);
 
   useLayoutEffect(() => {
     const container = evolutionContainerRef.current;
