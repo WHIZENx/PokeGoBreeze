@@ -165,6 +165,36 @@ assert.doesNotMatch(
   'Counter rows must not retain one composited opacity animation layer per row while scrolling.'
 );
 assert.match(
+  counter,
+  /const isCanonicalCounterTargetReady = Boolean\(props\.pokemonData\?\.fullName && props\.pokemonData\?\.form\)/,
+  'Counter loading must wait for the canonical Pokémon GO form instead of reacting to the temporary body snapshot.'
+);
+assert.match(
+  counter,
+  /if \(skipStalePageRequest \|\| props\.isLoading \|\| isCounterTargetPending\) \{\s*return;/,
+  'The temporary body snapshot must not close the skeleton or start a duplicate counter request.'
+);
+assert.match(
+  counter,
+  /<TableLoadingProgress loading=\{isUpdating\} label="Loading Pokémon counters" \/>/,
+  'Counter loading must use the same lightweight header progress pattern as the PVP tables.'
+);
+assert.match(
+  counter,
+  /<TableLoadingProgress loading=\{isUpdating\}[\s\S]*<CustomDataTable[\s\S]*data=\{counterList\}/,
+  'Counter refreshes must retain the latest rows beneath the header progress bar until new data arrives.'
+);
+assert.doesNotMatch(
+  counter,
+  /setCounterList\(\[\]\)|displayedCounterList/,
+  'Counter refreshes must not blank the table while a replacement request is pending.'
+);
+assert.doesNotMatch(
+  counter,
+  /Skeleton|counter-initial-loading|counter-loading-skeleton/,
+  'Counter loading must not mount a skeleton before or over the table.'
+);
+assert.match(
   searchMoves,
   /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*customColumns=/,
   'Move Search tables must explain empty external-filter results.'
