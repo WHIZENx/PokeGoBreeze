@@ -166,8 +166,13 @@ assert.doesNotMatch(
 );
 assert.match(
   counter,
-  /const isCanonicalCounterTargetReady = Boolean\(props\.pokemonData\?\.fullName && props\.pokemonData\?\.form\)/,
-  'Counter loading must wait for the canonical Pokémon GO form instead of reacting to the temporary body snapshot.'
+  /const isCanonicalCounterTargetReady = Boolean\([\s\S]*pokemonData\?\.fullName && props\.pokemonData\?\.form !== undefined[\s\S]*\)/,
+  'Counter loading must accept the canonical empty-string Normal form while rejecting an incomplete body snapshot.'
+);
+assert.match(
+  counter,
+  /const resetPagination = useCallback\(\(\) => \{[\s\S]*if \(currentPageRef\.current === 1\) \{[\s\S]*return;[\s\S]*currentPageRef\.current = 1;[\s\S]*setResetPaginationToggle/,
+  'Counter target changes must not feed redundant page-one resets back into the data table.'
 );
 assert.match(
   counter,
@@ -183,6 +188,26 @@ assert.match(
   counter,
   /<TableLoadingProgress loading=\{isUpdating\}[\s\S]*<CustomDataTable[\s\S]*data=\{counterList\}/,
   'Counter refreshes must retain the latest rows beneath the header progress bar until new data arrives.'
+);
+assert.match(
+  counter,
+  /let latestCounterSnapshot:[\s\S]*useState<ICounterModel\[\]>\(\(\) => initialSnapshotRef\.current\?\.rows \?\? \[\]\)/,
+  'Pokémon Detail remounts must reuse the latest completed Counter rows while the next target loads.'
+);
+assert.match(
+  counter,
+  /latestCounterSnapshot = \{[\s\S]*rows,[\s\S]*totalRows: data\.meta\.total,[\s\S]*\};[\s\S]*setCounterList\(rows\)/,
+  'Counter snapshots must update only after the replacement request resolves successfully.'
+);
+assert.match(
+  counter,
+  /const counterTargetKey = \[[\s\S]*pokemonData\?\.id,[\s\S]*pokemonData\?\.fullName,[\s\S]*pokemonData\?\.form,[\s\S]*\]\.join\('\|'\)/,
+  'Counter request identity must distinguish species and forms even when their battle stats match.'
+);
+assert.match(
+  counter,
+  /data-testid="counter-stale-interaction-guard"/,
+  'Retained Counter rows must not accept stale interactions while their replacement is loading.'
 );
 assert.doesNotMatch(
   counter,

@@ -39,6 +39,16 @@ assert.match(
   'form changes must navigate with a new URLSearchParams value instead of mutating the active router state'
 );
 assert.match(
+  formComponent,
+  /if \(!isCurrentPokemonLoaded \|\| value\.defaultId !== props\.defaultId\) \{[\s\S]*return;/,
+  'form changes must ignore stale selections while a different Pokémon bundle is loading'
+);
+assert.match(
+  pokemonPage,
+  /nextSearchParams\.delete\(Params\.Form\);[\s\S]*nextSearchParams\.delete\(Params\.FormType\);[\s\S]*\{ replace: true \}/,
+  'invalid form and form-type pairs must be replaced atomically with the canonical species route'
+);
+assert.match(
   pokemonModel,
   /obj\.genderRate = value\.gender_rate/,
   'the normalized species model must preserve the PokéAPI gender rate'

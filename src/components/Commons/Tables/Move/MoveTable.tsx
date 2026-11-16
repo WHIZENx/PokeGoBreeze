@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { getKeyWithData, splitAndCapitalize } from '../../../../utils/utils';
 
 import './MoveTable.scss';
@@ -23,6 +23,7 @@ import {
 import useDataStore from '../../../../composables/useDataStore';
 import DataTableSortIcon from '../DataTableSortIcon';
 import TableLoadingProgress from '../TableLoadingProgress';
+import type { PokemonMoves } from '../../../../core/models/API/pokemon-bundle.model';
 
 const formatMinuteOfDay = (minute: number) =>
   `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
@@ -76,18 +77,38 @@ class TableSort implements ITableSort {
 
 const emptyMoveRanking: IPokemonQueryRankMove = { data: [] };
 
+interface MoveTableSnapshot {
+  moveData: PokemonMoves;
+  rankMoveData: IPokemonQueryRankMove;
+}
+
+const latestMoveTableSnapshots = new Map<string, MoveTableSnapshot>();
+
 const TableMove = (props: ITableMoveComponent) => {
   const { optionsData } = useDataStore();
-  const cachedMoveData = useRef(props.moveData);
-  const cachedRankMoveData = useRef(props.rankMoveData);
-  const isLoading = props.isLoading ?? (!props.moveData || !props.rankMoveData);
-  const hasFreshMoveData = Boolean(props.moveData && props.rankMoveData);
+  const cacheScope = props.cacheScope ?? 'default';
+  const initialSnapshotRef = useRef(latestMoveTableSnapshots.get(cacheScope));
+  const hasMoveData = Boolean(props.moveData && props.rankMoveData);
+  const isLoading = props.isLoading ?? !hasMoveData;
+  const hasFreshMoveData = Boolean(!isLoading && props.moveData && props.rankMoveData);
+  const cachedMoveData = useRef(props.moveData ?? initialSnapshotRef.current?.moveData);
+  const cachedRankMoveData = useRef(props.rankMoveData ?? initialSnapshotRef.current?.rankMoveData);
   // Swap both datasets together so the old rows remain coherent while the
   // next Pokémon/form request is in flight.
-  if (hasFreshMoveData) {
+  if (hasFreshMoveData && props.moveData && props.rankMoveData) {
     cachedMoveData.current = props.moveData;
     cachedRankMoveData.current = props.rankMoveData;
   }
+
+  useEffect(() => {
+    if (!hasFreshMoveData || !props.moveData || !props.rankMoveData) {
+      return;
+    }
+    latestMoveTableSnapshots.set(cacheScope, {
+      moveData: props.moveData,
+      rankMoveData: props.rankMoveData,
+    });
+  }, [cacheScope, hasFreshMoveData, props.moveData, props.rankMoveData]);
 
   const hasCachedMoveData = Boolean(cachedMoveData.current && cachedRankMoveData.current);
   const isUpdating = isLoading || (!hasFreshMoveData && hasCachedMoveData);
@@ -361,6 +382,13 @@ const TableMove = (props: ITableMoveComponent) => {
 
   return (
     <div className="move-tables-wrapper" aria-busy={isUpdating}>
+      {isUpdating && hasCachedMoveData && (
+        <div
+          className="tw-absolute tw-inset-0 tw-z-10 tw-cursor-wait"
+          data-testid="move-tables-stale-interaction-guard"
+          aria-hidden="true"
+        />
+      )}
       <div className={combineClasses('move-tables-content', isUpdating ? 'is-loading' : '')}>
         <TabsPanel
           value={props.tabValue}

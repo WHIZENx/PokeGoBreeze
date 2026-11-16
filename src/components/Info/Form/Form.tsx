@@ -176,10 +176,16 @@ const FormComponent = (props: IFormInfoComponent) => {
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
   const selectedGenderRatio =
     searchingMainForm?.defaultId === props.defaultId ? searchingMainDetails?.genderRatio : undefined;
-  const currentGenderRatio =
-    selectedGenderRatio?.M === 0 && selectedGenderRatio.F === 0
-      ? (getSpeciesGenderRatio(props.genderRate) ?? selectedGenderRatio)
-      : selectedGenderRatio;
+  // A genderless fallback must keep its identity across the image-ready render.
+  // Otherwise cached preloads resolve immediately and repeatedly commit a new
+  // display snapshot, starving the browser event loop with promise callbacks.
+  const currentGenderRatio = useMemo(
+    () =>
+      selectedGenderRatio?.M === 0 && selectedGenderRatio.F === 0
+        ? (getSpeciesGenderRatio(props.genderRate) ?? selectedGenderRatio)
+        : selectedGenderRatio,
+    [props.genderRate, selectedGenderRatio]
+  );
   const lastLoadedGenderSkeletonCount = useRef(2);
   const [readyGenderDisplay, setReadyGenderDisplay] = useState<GenderDisplaySnapshot>();
 
@@ -354,6 +360,9 @@ const FormComponent = (props: IFormInfoComponent) => {
   }, [routerAction]);
 
   const changeForm = (value: IPokemonFormModify) => {
+    if (!isCurrentPokemonLoaded || value.defaultId !== props.defaultId) {
+      return;
+    }
     const isSelected = value.form.id === searchingMainForm?.form?.id;
     const name = value.form.name;
     const form = value.form.formName;
@@ -584,12 +593,14 @@ const FormComponent = (props: IFormInfoComponent) => {
             <TableMove
               moveData={moveRanking?.moves ?? (isCurrentPokemonLoaded ? unavailablePokemonMoves : undefined)}
               rankMoveData={moveRanking?.bestMoves ?? (isCurrentPokemonLoaded ? unavailableBestMoves : undefined)}
+              cacheScope="pokemon-detail"
               pokemonType={searchingMainDetails?.pokemonType}
               isLoading={!isCurrentPokemonLoaded}
               tabValue={moveTabValue}
               onTabChange={setMoveTabValue}
             />
             <TrainingCosts
+              isLoading={!isCurrentPokemonLoaded}
               pokemonId={props.defaultId}
               thirdMove={props.trainingCosts?.thirdMove}
               purified={props.trainingCosts?.purified}
@@ -650,7 +661,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         <StableHeightSection
           animateHeight
           isLoading={!isCurrentPokemonLoaded}
-          minHeight={256}
+          retainHeightWhileLoading={false}
           testId="pokemon-evolution-stable"
         >
           {renderEvolutionContent()}

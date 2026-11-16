@@ -60,8 +60,7 @@ const lightThemeVariables = variables.slice(
 );
 const darkThemeVariables = variables.slice(variables.indexOf(':root[data-theme=#{$dark-mode}]'));
 
-assert.match(evolution, /const EVOLUTION_MIN_HEIGHT = 256/);
-assert.match(evolution, /Math\.max\(EVOLUTION_MIN_HEIGHT, evolutionMinHeight\)/);
+assert.match(evolution, /minHeight: areEvolutionAssetsReady \? evolutionMinHeight : undefined/);
 assert.match(evolution, /chain\.dataset\.testid === 'evolution-chain-skeleton'/);
 assert.match(evolution, /data-testid="evolution-chain-skeleton"/);
 assert.match(evolution, /const DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS = \[1, 1, 1\]/);
@@ -70,7 +69,7 @@ assert.match(
   evolution,
   /if \(areEvolutionAssetsReady && arrEvoList\.length\)[\s\S]*arrEvoList\.map\(\(stage\) => Math\.max\(1, stage\.length\)\)/
 );
-assert.match(evolution, /evo-chain tw-inline-flex tw-min-h-64/);
+assert.match(evolution, /evo-chain tw-inline-flex tw-min-h-\[196px\] tw-items-start/);
 assert.match(evolution, /data-skeleton-stage-count=\{lastLoadedEvolutionStageCounts\.current\.length\}/);
 assert.match(evolution, /lastLoadedEvolutionStageCounts\.current\.map\(\(nodeCount, stageIndex\)/);
 assert.match(evolution, /data-testid="evolution-skeleton-stage"/);
@@ -157,7 +156,7 @@ assert.match(evolution, /container\.addEventListener\('load', scheduleImageCheck
 assert.match(evolution, /attributeFilter: \['src'\]/);
 assert.match(evolution, /!areEvolutionAssetsReady &&/);
 assert.match(evolution, /data-evolution-assets-ready=\{areEvolutionAssetsReady\}/);
-assert.match(evolution, /areEvolutionAssetsReady \? 'tw-visible' : 'tw-invisible'/);
+assert.match(evolution, /areEvolutionAssetsReady \? 'tw-visible' : 'tw-invisible tw-absolute tw-left-0 tw-top-0'/);
 assert.match(evolutionPokemonDisplay, /const activeImageRef = useRef<HTMLImageElement>\(null\)/);
 assert.match(evolutionPokemonDisplay, /if \(!activeSource \|\| !image\?\.complete\)/);
 assert.match(evolutionPokemonDisplay, /image\.naturalWidth === 0/);
@@ -264,6 +263,11 @@ assert.match(
   form,
   /selectedGenderRatio\?\.M === 0 && selectedGenderRatio\.F === 0[\s\S]*getSpeciesGenderRatio\(props\.genderRate\)/
 );
+assert.match(
+  form,
+  /const currentGenderRatio = useMemo\([\s\S]*getSpeciesGenderRatio\(props\.genderRate\)[\s\S]*\[props\.genderRate, selectedGenderRatio\]/,
+  'Genderless fallback ratios must retain object identity after cached image preloads commit their display snapshot.'
+);
 assert.match(form, /fallback: fallbackSprites === selectedSprites \? undefined : fallbackSprites/);
 assert.match(form, /searchingMainForm\?\.defaultId === props\.defaultId/);
 assert.doesNotMatch(form, /searchingMainDetails\?\.id === props\.defaultId/);
@@ -342,7 +346,7 @@ assert.match(
 assert.match(trainingCosts, /data-testid="pokemon-training-costs"/);
 assert.match(trainingCosts, /label="Second Charged Move"/);
 assert.match(trainingCosts, /label="Purification"/);
-assert.match(trainingCosts, /if \(!hasThirdMoveCost && !hasPurificationCost\)/);
+assert.match(trainingCosts, /if \(!showThirdMove && !showPurification\)/);
 assert.doesNotMatch(trainingCosts, /Unavailable/);
 assert.doesNotMatch(pokemonPage, /data-testid="pokemon-cost-table"/);
 assert.match(form, /data-testid="pokemon-raid-card"/);
@@ -520,24 +524,22 @@ assert.match(
 assert.match(pokemonDetailLayoutStyles, /\.pokemon-detail-table[\s\S]*@apply tw-h-\[217px\]/);
 assert.doesNotMatch(pokemonPageStyles, /\.table-main/);
 assert.match(stableHeightSection, /new ResizeObserver\(measure\)/);
-assert.match(stableHeightSection, /if \(isLoading && retainedHeightRef\.current > 0\)/);
+assert.match(stableHeightSection, /if \(isLoading && retainHeightWhileLoading && retainedHeightRef\.current > 0\)/);
 assert.match(stableHeightSection, /animateHeight\?: boolean/);
-assert.match(stableHeightSection, /animateHeight \? 'tw-transition-\[height\]' : 'tw-transition-\[min-height\]'/);
-assert.match(stableHeightSection, /style=\{animateHeight \? \{ height \} : \{ minHeight: height \}\}/);
-assert.match(stableHeightSection, /event\.target !== section && event\.propertyName === 'height'/);
-assert.match(stableHeightSection, /addEventListener\('transitionrun', handleStart\)/);
-assert.match(stableHeightSection, /addEventListener\('transitionend', handleEnd\)/);
-assert.match(stableHeightSection, /addEventListener\('transitioncancel', handleEnd\)/);
+assert.match(stableHeightSection, /animateHeight \? 'tw-transition-\[min-height\]/);
+assert.match(stableHeightSection, /style=\{\{ minHeight: height \}\}/);
+assert.doesNotMatch(stableHeightSection, /tw-transition-\[height\]|style=\{\{ height \}\}/);
+assert.doesNotMatch(stableHeightSection, /addEventListener\('transition(?:run|end|cancel)'/);
 assert.match(stableHeightSection, /motion-reduce:tw-transition-none/);
 assert.equal(
   form.match(/<StableHeightSection[\s\S]*?animateHeight/g)?.length,
   6,
-  'Every Pokémon detail data section must animate height changes in both directions.'
+  'Every Pokémon detail data section must retain its measured minimum height while data changes.'
 );
 assert.match(
   pokemonPage,
   /<StableHeightSection[\s\S]*?animateHeight[\s\S]*?testId="pokemon-assets-stable"/,
-  'The Pokémon asset section must animate height changes when navigating between IDs.'
+  'The Pokémon asset section must retain its measured minimum height when navigating between IDs.'
 );
 assert.match(specialForm, /const MegaLevelBenefits =/);
 assert.match(specialForm, /<Collapse in=\{isOpen\} timeout=\{200\} unmountOnExit>/);

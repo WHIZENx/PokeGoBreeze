@@ -22,7 +22,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import QuestRequirements from './QuestRequirements';
 import React, { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Xarrow from 'react-xarrows';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import APIService from '../../../services/api.service';
 
 import './Evolution.scss';
@@ -51,8 +51,9 @@ import usePokemon from '../../../composables/usePokemon';
 import Tooltips from '../../Commons/Tooltips/Tooltips';
 import EvolutionPokemonDisplay from './EvolutionPokemonDisplay';
 import { LinkToTop } from '../../Link/LinkToTop';
+import useDataStore from '../../../composables/useDataStore';
+import { Params } from '../../../utils/constants';
 
-const EVOLUTION_MIN_HEIGHT = 256;
 const DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS = [1, 1, 1];
 const readyEvolutionAssetSetKeys = new Set<string>();
 
@@ -73,6 +74,14 @@ interface PendingEvolutionIdentity {
   id: number;
   pokemonType: PokemonType;
 }
+
+interface EvolutionSnapshot {
+  catalog: ReturnType<typeof useDataStore>['pokemonsData'];
+  chain: IPokemonEvo[][];
+  request: { pokemonId?: number; requestKey: string };
+}
+
+let latestEvolutionSnapshot: EvolutionSnapshot | undefined;
 
 class PokemonEvo implements IPokemonEvo {
   prev?: string;
@@ -113,9 +122,27 @@ class PokemonEvo implements IPokemonEvo {
 const Evolution = (props: IEvolutionComponent) => {
   const { findPokemonByIdAndForm, getEvolutionParents, getPokemonById } = usePokemon();
   const params = useParams();
+  const [searchParams] = useSearchParams();
+  const { pokemonsData } = useDataStore();
+  const initialSnapshot = useRef(
+    params.id &&
+      !searchParams.has(Params.Form) &&
+      !searchParams.has(Params.FormType) &&
+      latestEvolutionSnapshot?.catalog === pokemonsData &&
+      latestEvolutionSnapshot.chain.some((stage) =>
+        stage.some(
+          (pokemon) =>
+            pokemon.id === Number(params.id) &&
+            [PokemonType.None, PokemonType.Normal].includes(pokemon.pokemonType) &&
+            (!pokemon.form || pokemon.form === 'NORMAL')
+        )
+      )
+      ? latestEvolutionSnapshot
+      : undefined
+  );
   const [pendingCurrentPokemon, setPendingCurrentPokemon] = useState<PendingEvolutionIdentity>();
   const requestedPokemonId = pendingCurrentPokemon?.id ?? toNumber(params.id, props.id);
-  const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
+  const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>(() => initialSnapshot.current?.chain ?? []);
   const evolutionRequestKey = JSON.stringify([
     props.pokemonData?.id,
     props.pokemonData?.form,
@@ -127,8 +154,10 @@ const Evolution = (props: IEvolutionComponent) => {
   const [resolvedEvolutionRequest, setResolvedEvolutionRequest] = useState<{
     pokemonId?: number;
     requestKey: string;
-  }>({ requestKey: '' });
-  const [isReusingResolvedEvolutionChain, setIsReusingResolvedEvolutionChain] = useState(false);
+  }>(() => initialSnapshot.current?.request ?? { requestKey: '' });
+  const [isReusingResolvedEvolutionChain, setIsReusingResolvedEvolutionChain] = useState(
+    Boolean(initialSnapshot.current)
+  );
   const [evolutionMinHeight, setEvolutionMinHeight] = useState(0);
   const evolutionContainerRef = useRef<HTMLDivElement>(null);
   const lastLoadedEvolutionStageCounts = useRef<number[]>([...DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS]);
@@ -190,8 +219,16 @@ const Evolution = (props: IEvolutionComponent) => {
   useEffect(() => {
     if (hasEvolutionData && areReportedEvolutionAssetsReady) {
       readyEvolutionAssetSetKeys.add(evolutionAssetSetKey);
+      latestEvolutionSnapshot = { catalog: pokemonsData, chain: arrEvoList, request: resolvedEvolutionRequest };
     }
-  }, [areReportedEvolutionAssetsReady, evolutionAssetSetKey, hasEvolutionData]);
+  }, [
+    areReportedEvolutionAssetsReady,
+    evolutionAssetSetKey,
+    hasEvolutionData,
+    pokemonsData,
+    arrEvoList,
+    resolvedEvolutionRequest,
+  ]);
 
   useEffect(() => {
     if (areEvolutionAssetsReady && arrEvoList.length) {
@@ -388,14 +425,14 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   useEffect(() => {
-    if (props.pokemonData?.fullName) {
+    if (props.isLoadedForms && props.pokemonData?.id === requestedPokemonId && props.pokemonData.fullName) {
       if (props.pokemonData.pokemonType === PokemonType.GMax || isSpecialMegaFormType(props.pokemonData.pokemonType)) {
         getSpecialEvoChain(props.pokemonData);
       } else {
         getEvoChainStore(props.pokemonData);
       }
     }
-  }, [props.pokemonData, props.pokemonData?.pokemonType]);
+  }, [props.pokemonData, props.pokemonData?.pokemonType, props.isLoadedForms, requestedPokemonId]);
 
   useLayoutEffect(() => {
     const container = evolutionContainerRef.current;
@@ -423,7 +460,7 @@ const Evolution = (props: IEvolutionComponent) => {
       const containerTop = container.getBoundingClientRect().top;
       const content = [chain, ...container.querySelectorAll<HTMLElement>('[data-testid="evolution-edge"]')];
       const contentBottom = Math.max(...content.map((element) => element.getBoundingClientRect().bottom));
-      const nextHeight = Math.max(0, Math.ceil(contentBottom - containerTop + 16));
+      const nextHeight = Math.max(0, Math.ceil(contentBottom - containerTop));
       setEvolutionMinHeight((current) => (Math.abs(current - nextHeight) > 1 ? nextHeight : current));
     };
     const scheduleMeasurement = () => {
@@ -911,7 +948,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const renderEvolutionSkeleton = () => (
     <div
-      className="evo-chain tw-inline-flex tw-min-h-64 tw-items-start"
+      className="evo-chain tw-inline-flex tw-min-h-[196px] tw-items-start"
       data-testid="evolution-chain-skeleton"
       data-skeleton-stage-count={lastLoadedEvolutionStageCounts.current.length}
     >
@@ -1153,12 +1190,14 @@ const Evolution = (props: IEvolutionComponent) => {
         }`}
         data-testid="evolution-container"
         data-evolution-assets-ready={areEvolutionAssetsReady}
-        style={{ minHeight: `${Math.max(EVOLUTION_MIN_HEIGHT, evolutionMinHeight)}px` }}
+        style={{
+          minHeight: areEvolutionAssetsReady ? evolutionMinHeight : undefined,
+        }}
       >
-        {!areEvolutionAssetsReady && <div className="tw-absolute tw-inset-0 tw-z-10">{renderEvolutionSkeleton()}</div>}
+        {!areEvolutionAssetsReady && renderEvolutionSkeleton()}
         <ul
           aria-hidden={!areEvolutionAssetsReady}
-          className={`ul-evo evo-chain tw-inline-flex ${areEvolutionAssetsReady ? 'tw-visible' : 'tw-invisible'}`}
+          className={`ul-evo evo-chain tw-inline-flex ${areEvolutionAssetsReady ? 'tw-visible' : 'tw-invisible tw-absolute tw-left-0 tw-top-0'}`}
         >
           {arrEvoList.map((values, evo) => (
             <li key={evo} className="img-form-gender-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0">
