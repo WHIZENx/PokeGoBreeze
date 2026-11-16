@@ -7,6 +7,10 @@ const indexSource = await readFile(new URL('../../src/index.tsx', import.meta.ur
 const linkToTopSource = await readFile(new URL('../../src/components/Link/LinkToTop.tsx', import.meta.url), 'utf8');
 const pokemonPageSource = await readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8');
 const movePageSource = await readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8');
+const counterSource = await readFile(
+  new URL('../../src/components/Commons/Tables/Counter/Counter.tsx', import.meta.url),
+  'utf8'
+);
 const noDataRouteBranch = appSource.match(
   /if \(routeDataSections\.length === 0\) \{(?<body>[\s\S]*?)\n\s*return;\n\s*\}/
 )?.groups?.body;
@@ -36,6 +40,14 @@ if (/const navigateAndReset[\s\S]*?event\.preventDefault\(\)/.test(linkToTopSour
 }
 if (!linkToTopSource.includes('onClick={navigateAndReset}')) {
   failures.push('LinkToTop does not preserve the router Link click handler');
+}
+for (const [name, source] of [
+  ['Pokémon Detail', pokemonPageSource],
+  ['Counter table', counterSource],
+]) {
+  if (!source.includes('// @refresh reset')) {
+    failures.push(`${name} preserves unsafe async state across development hot updates`);
+  }
 }
 for (const [name, source] of [
   ['Pokémon Detail', pokemonPageSource],
