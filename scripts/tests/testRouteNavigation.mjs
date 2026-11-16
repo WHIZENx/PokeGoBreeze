@@ -29,6 +29,20 @@ if (!noDataRouteBranch) {
 if (!readyRouteEffect?.includes('setDisplayLocation(location);')) {
   failures.push('data-backed routes do not commit the current location directly');
 }
+if (!appSource.includes("displayLocation.pathname.startsWith('/pokemon/')")) {
+  failures.push('Pokémon Detail routes do not isolate local state by species pathname');
+}
+if (!appSource.includes('<Pokemon key={pokemonRouteKey} />')) {
+  failures.push('Pokémon Detail routes reuse async component state across species navigation');
+}
+if (!appSource.includes("displayLocation.pathname.startsWith('/pvp/battle')")) {
+  failures.push('PVP Battle routes do not isolate simulator state by pathname');
+}
+for (const battleElement of ['<Battle key={battleRouteKey} />', '<Battle key={battleRouteKey} replayMode />']) {
+  if (!appSource.includes(battleElement)) {
+    failures.push(`PVP Battle route is missing its state-isolation key: ${battleElement}`);
+  }
+}
 if (!indexSource.includes('<BrowserRouter useTransitions={false}>')) {
   failures.push('browser navigation can be deferred indefinitely by React Router transitions');
 }
