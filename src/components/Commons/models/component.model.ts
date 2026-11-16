@@ -430,6 +430,7 @@ export interface ISelectCardPokemonComponent<T> {
 }
 
 export interface IStatsTableComponent {
+  className?: string;
   isLoadedForms?: boolean;
   isShowHp?: boolean;
   tier: number;

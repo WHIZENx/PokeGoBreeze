@@ -8,7 +8,7 @@ import { RAID_BOSS_TIER } from '../../../../utils/constants';
 import { createDataRows } from '../../../../utils/utils';
 import { IRow, IStatsTableComponent } from '../../models/component.model';
 import Table from '../Table';
-import { isUndefined } from '../../../../utils/extension';
+import { combineClasses, isUndefined } from '../../../../utils/extension';
 import { Skeleton } from '@mui/material';
 
 const StatsTable = (props: IStatsTableComponent) => {
@@ -113,7 +113,7 @@ const StatsTable = (props: IStatsTableComponent) => {
     return rows;
   };
 
-  return <Table tableClass="table-raid" rows={setRows()} />;
+  return <Table tableClass={combineClasses('table-raid', props.className)} rows={setRows()} />;
 };
 
 export default StatsTable;

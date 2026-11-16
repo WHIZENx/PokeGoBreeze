@@ -88,6 +88,33 @@ assert.match(
   /props\.compactLayout \? 'md:tw-col-span-2' : ''/,
   'compact Max Moves must span both move columns'
 );
+assert.match(
+  moveTableSource,
+  /data-testid="best-moves-loading-row"[\s\S]*?!tw-top-\[70px\][\s\S]*?<TableLoadingProgress[\s\S]*?label=\{`Loading Best Moves/,
+  'Best Moves List must expose loading progress below its column sub-header.'
+);
+for (const label of ['Loading Fast Moves', 'Loading Charged Moves', 'Loading Max Moves']) {
+  assert.match(
+    moveTableSource,
+    new RegExp(`<th className="table-sub-header">[\\s\\S]*?<TableLoadingProgress[^>]*label="${label}"`),
+    `${label} progress must render in its table sub-header.`
+  );
+}
+assert.doesNotMatch(
+  moveTableSource,
+  /tw-top-12[\s\S]*<TableLoadingProgress/,
+  'Move loading progress must not remain beneath the tabs.'
+);
+assert.match(
+  moveTableSource,
+  /const move = \(hasFreshMoveData \? props\.rankMoveData : cachedRankMoveData\.current\)[\s\S]*const moveOrigin = hasFreshMoveData \? props\.moveData : cachedMoveData\.current/,
+  'Move tables must retain the last coherent move datasets while the progress bar is active.'
+);
+assert.doesNotMatch(
+  moveTableSource,
+  /Skeleton|slide-container/,
+  'Move table loading must not replace or cover retained rows with a skeleton.'
+);
 assert.match(sharedLayoutStyles, /\.pokemon-detail-section \{/, 'shared detail card styling must remain centralized');
 assert.match(
   sharedLayoutStyles,
