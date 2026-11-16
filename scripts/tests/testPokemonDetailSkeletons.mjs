@@ -463,7 +463,16 @@ assert.doesNotMatch(
 );
 assert.doesNotMatch(info, /Skeleton/);
 assert.match(pokemonTable, /new Intl\.NumberFormat\('en-US',[\s\S]*maximumFractionDigits: 2/);
-assert.match(pokemonTable, /tw-grid tw-grid-cols-\[1\.15fr_0\.85fr\]/);
+assert.match(
+  pokemonTable,
+  /tw-grid tw-grid-cols-\[1\.1fr_0\.9fr\] min-\[420px\]:tw-grid-cols-\[1\.15fr_0\.85fr\]/,
+  'Body measurements must remain in one row with a mobile-safe column ratio.'
+);
+assert.equal(
+  pokemonTable.match(/max-\[419px\]:tw-text-body2/g)?.length,
+  4,
+  'Body measurement labels and values must use the compact typography token on narrow screens.'
+);
 assert.equal(
   pokemonTable.match(/tw-min-w-0 tw-tabular-nums/g)?.length,
   2,
