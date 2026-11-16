@@ -13,7 +13,7 @@ import { getLevelList } from '../../../utils/compute';
 
 import APIService from '../../../services/api.service';
 
-import { Checkbox, Chip, FormControlLabel, LinearProgress, Switch } from '@mui/material';
+import { Checkbox, Chip, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
@@ -68,6 +68,7 @@ import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/Pokem
 import { ProcessedDataPage } from '../../../services/processed-data.service';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
+import TableLoadingProgress from '../../../components/Commons/Tables/TableLoadingProgress';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -1241,13 +1242,12 @@ const DpsTdo = () => {
         </div>
       </div>
       <div className="tw-relative" data-testid="dps-tdo-results-section">
-        {isShowSpinner && isNotEmpty(dpsTable) && (
-          <LinearProgress
-            className="!tw-absolute tw-inset-x-0 tw-top-0 tw-z-[2]"
-            aria-label="Refreshing DPS and TDO results"
-            data-testid="dps-tdo-refresh-progress"
+        <div className="tw-pointer-events-none tw-absolute tw-inset-x-0 tw-top-[52px] tw-z-2 tw-h-1">
+          <TableLoadingProgress
+            loading={isShowSpinner && isNotEmpty(dpsTable)}
+            label="Refreshing DPS and TDO results"
           />
-        )}
+        </div>
         {isShowSpinner && !isNotEmpty(dpsTable) ? (
           <div
             className="tw-flex tw-min-h-64 tw-items-center tw-justify-center tw-bg-custom-default"

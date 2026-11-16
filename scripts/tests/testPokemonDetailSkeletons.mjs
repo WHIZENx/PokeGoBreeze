@@ -10,6 +10,7 @@ const [
   gender,
   buttonGroupForm,
   form,
+  raid,
   stats,
   statsStyles,
   statBar,
@@ -34,6 +35,7 @@ const [
   readFile(new URL('../../src/components/Info/Gender.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Buttons/ButtonGroupForm.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Raid/Raid.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Stats/Stats.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/Stats/Stats.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
@@ -347,6 +349,8 @@ assert.match(form, /data-testid="pokemon-raid-card"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Raid<\/b>\s*<\/h4>/);
 assert.match(form, /minHeight=\{340\}[\s\S]*?testId="pokemon-raid-section"/);
 assert.match(form, /className="tw-mx-auto tw-w-full tw-max-w-4xl"/);
+assert.match(raid, /!tw-w-2\/5[\s\S]*!tw-w-3\/5/);
+assert.match(raid, /<StatsTable[\s\S]*className="tw-w-full tw-table-fixed"/);
 assert.match(form, /data-testid="pokemon-raid-encounter-grid"/);
 assert.match(form, /lg:tw-grid-cols-2/);
 assert.match(form, /data-testid="pokemon-encounter-training-card"/);
@@ -459,7 +463,16 @@ assert.doesNotMatch(
 );
 assert.doesNotMatch(info, /Skeleton/);
 assert.match(pokemonTable, /new Intl\.NumberFormat\('en-US',[\s\S]*maximumFractionDigits: 2/);
-assert.match(pokemonTable, /tw-grid tw-grid-cols-\[1\.15fr_0\.85fr\]/);
+assert.match(
+  pokemonTable,
+  /tw-grid tw-grid-cols-\[1\.1fr_0\.9fr\] min-\[420px\]:tw-grid-cols-\[1\.15fr_0\.85fr\]/,
+  'Body measurements must remain in one row with a mobile-safe column ratio.'
+);
+assert.equal(
+  pokemonTable.match(/max-\[419px\]:tw-text-body2/g)?.length,
+  4,
+  'Body measurement labels and values must use the compact typography token on narrow screens.'
+);
 assert.equal(
   pokemonTable.match(/tw-min-w-0 tw-tabular-nums/g)?.length,
   2,

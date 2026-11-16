@@ -1,4 +1,5 @@
-import { Checkbox, Skeleton } from '@mui/material';
+// @refresh reset
+import { Checkbox } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../../services/api.service';
 import {
@@ -46,6 +47,7 @@ import { IMenuItem } from '../../models/menu.model';
 import { ProcessedDataPage } from '../../../../services/processed-data.service';
 import { formatPokemonDisplayName } from '../../../../utils/pokemon-display-name';
 import TableEmptyState from '../TableEmptyState';
+import TableLoadingProgress from '../TableLoadingProgress';
 
 const COUNTER_ROWS_PER_PAGE = 20;
 
@@ -178,10 +180,11 @@ const Counter = (props: ICounterComponent) => {
   ].join('|');
   const hasValidCounterTarget = defense > 0 && Boolean(typesKey);
   const isTargetUnreleased = props.pokemonData?.releasedGO === false;
-  const isCounterTargetPending = props.pokemonData === undefined;
+  const isCanonicalCounterTargetReady = Boolean(props.pokemonData?.fullName && props.pokemonData?.form);
+  const isCounterTargetPending = props.pokemonData === undefined || !isCanonicalCounterTargetReady;
   const hasFreshCounters = resolvedCounterRequestKeyRef.current === counterRequestKey;
   const isUpdating = Boolean(
-    props.isLoading || isCounterTargetPending || showFrame || (hasValidCounterTarget && !hasFreshCounters)
+    props.isLoading || isCounterTargetPending || (hasValidCounterTarget && (showFrame || !hasFreshCounters))
   );
 
   const resetPagination = useCallback(() => {
@@ -358,7 +361,7 @@ const Counter = (props: ICounterComponent) => {
   );
 
   useEffect(() => {
-    if (skipStalePageRequest || props.isLoading) {
+    if (skipStalePageRequest || props.isLoading || isCounterTargetPending) {
       return;
     }
     if (hasResolvedCountersRef.current && resolvedCounterRequestKeyRef.current === counterRequestKey) {
@@ -432,6 +435,7 @@ const Counter = (props: ICounterComponent) => {
     page,
     skipStalePageRequest,
     props.isLoading,
+    isCounterTargetPending,
     hasValidCounterTarget,
     counterRequestKey,
   ]);
@@ -476,17 +480,13 @@ const Counter = (props: ICounterComponent) => {
     <div className="table-info">
       <div className="sub-header input-group tw-items-center tw-justify-center">
         <span className="sub-title">Best Pokémon Counter</span>
+        <TableLoadingProgress loading={isUpdating} label="Loading Pokémon counters" />
       </div>
       <div
         className={combineClasses('tw-relative counter-table-content', isUpdating ? 'is-loading' : '')}
         aria-busy={isUpdating}
       >
-        {isUpdating && (
-          <div className="slide-container !tw-left-0 !tw-right-0 !tw-bottom-0 !tw-top-[41px] !tw-p-0 !tw-w-full !tw-h-auto !tw-absolute tw-z-2">
-            <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
-          </div>
-        )}
-        {!isUpdating && isTargetUnreleased ? (
+        {isTargetUnreleased ? (
           <TableEmptyState
             spacious
             testId="counter-unreleased-empty-state"
@@ -535,6 +535,7 @@ const Counter = (props: ICounterComponent) => {
             }}
             paginationPerPage={COUNTER_ROWS_PER_PAGE}
             data={counterList}
+            noDataComponent={isUpdating ? <div aria-hidden="true" className="tw-h-24" /> : undefined}
             isXFixed
             isShowModalOptions
             titleModalOptions="Pokémon counter options"

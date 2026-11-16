@@ -433,6 +433,26 @@ assert.match(
 );
 assert.match(
   timeline,
+  /value\.type === AttackType\.Wait[\s\S]*data-timeline-wait-marker="true"[\s\S]*value\.type === AttackType\.New/,
+  'Normal Timeline must show a subtle marker for Fast Move wait turns without marking Charged Attack sequence padding.'
+);
+assert.match(
+  timelineFit,
+  /value\.type === AttackType\.Wait[\s\S]*data-timeline-wait-marker="true"[\s\S]*value\.type === AttackType\.New/,
+  'Fit Timeline must show a subtle marker for Fast Move wait turns without marking Charged Attack sequence padding.'
+);
+assert.match(
+  timeline,
+  /tw-relative tw-flex tw-shrink-0 tw-items-center tw-justify-center[\s\S]*value\.type === AttackType\.Block[\s\S]*value\.type === AttackType\.Fast/,
+  'Normal Timeline must center different-sized action markers within their shared turn columns.'
+);
+assert.match(
+  timelineFit,
+  /center: `\$\{position \+ width \/ 2\}%`[\s\S]*centeredMarkerStyle[\s\S]*left: centerPositions\[index\][\s\S]*translate\(-50%, -50%\)/,
+  'Fit Timeline must position different-sized action markers around the center of their shared turn columns.'
+);
+assert.match(
+  timeline,
   /minimumTeamEventGap = 96[\s\S]*timelineGap = 12[\s\S]*lastPositionByRow\.findIndex[\s\S]*teamEventRowByIndex\.set\(index, row\)[\s\S]*data-timeline-event-divider=\{teamEventType\}[\s\S]*data-timeline-event-row=\{row\}[\s\S]*<TimelineTeamEvent/,
   'Normal Timeline must stack nearby switch and faint badges while keeping dividers aligned with their move boxes.'
 );

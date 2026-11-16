@@ -109,23 +109,23 @@ const PokemonTable = (props: IPokemonTableComponent) => {
             <h5 className="tw-flex">Body</h5>
           </td>
           <td colSpan={2} className="!tw-p-0">
-            <div className="tw-grid tw-grid-cols-[1.15fr_0.85fr]">
-              <div className="first-extra-col tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-1 tw-whitespace-nowrap !tw-px-1.5 sm:!tw-px-2.5">
-                <h6>Weight:</h6>
+            <div className="tw-grid tw-grid-cols-[1.1fr_0.9fr] min-[420px]:tw-grid-cols-[1.15fr_0.85fr]">
+              <div className="first-extra-col tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-0.5 tw-whitespace-nowrap !tw-px-0.5 min-[420px]:tw-gap-1 min-[420px]:!tw-px-1.5 sm:!tw-px-2.5">
+                <h6 className="max-[419px]:tw-text-body2">Weight:</h6>
                 <div className="tw-min-w-0 tw-tabular-nums">
                   {reload(
-                    <h6 className="tw-whitespace-nowrap">
+                    <h6 className="tw-whitespace-nowrap max-[419px]:tw-text-body2">
                       {!isUndefined(props.weight) && formatBodyMeasurement(props.weight / 10, 'kg')}
                     </h6>,
                     !isUndefined(props.weight)
                   )}
                 </div>
               </div>
-              <div className="tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-1 tw-whitespace-nowrap !tw-px-1.5 sm:!tw-px-2.5">
-                <h6>Height:</h6>
+              <div className="tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-0.5 tw-whitespace-nowrap !tw-px-0.5 min-[420px]:tw-gap-1 min-[420px]:!tw-px-1.5 sm:!tw-px-2.5">
+                <h6 className="max-[419px]:tw-text-body2">Height:</h6>
                 <div className="tw-min-w-0 tw-tabular-nums">
                   {reload(
-                    <h6 className="tw-whitespace-nowrap">
+                    <h6 className="tw-whitespace-nowrap max-[419px]:tw-text-body2">
                       {!isUndefined(props.height) && formatBodyMeasurement(props.height / 10, 'm')}
                     </h6>,
                     !isUndefined(props.height)

@@ -63,7 +63,7 @@ const Timeline = (
               const tapPauseGroup = tapPauseGroupByStart.get(index);
               return (
                 <span
-                  className="tw-relative tw-flex tw-shrink-0 tw-items-center"
+                  className="tw-relative tw-flex tw-shrink-0 tw-items-center tw-justify-center"
                   key={index}
                   style={{ width: value.size }}
                 >
@@ -166,7 +166,12 @@ const Timeline = (
           }}
         >
           {poke.timeline.map((value, index) => (
-            <div id={index.toString()} className="tw-relative tw-shrink-0" key={index} style={{ width: value.size }}>
+            <div
+              id={index.toString()}
+              className="tw-relative tw-flex tw-shrink-0 tw-items-center tw-justify-center"
+              key={index}
+              style={{ width: value.size }}
+            >
               {value.type === AttackType.Block && (
                 <HexagonIcon className="tw-text-combat-block" sx={{ fontSize: value.size }} />
               )}
@@ -185,7 +190,14 @@ const Timeline = (
                   style={{ width: value.size, height: value.size }}
                 />
               )}
-              {(value.type === AttackType.Wait || value.type === AttackType.New) && <div className="wait-attack" />}
+              {value.type === AttackType.Wait && (
+                <div
+                  aria-hidden="true"
+                  className="wait-attack !tw-h-1 !tw-w-1 tw-rounded-full tw-bg-[var(--text-secondary)] tw-opacity-30"
+                  data-timeline-wait-marker="true"
+                />
+              )}
+              {value.type === AttackType.New && <div className="wait-attack" />}
               {!value.type && <div className="wait-charge-attack" style={{ width: value.size, height: value.size }} />}
               {value.type === AttackType.Dead && <div className="wait-attack" />}
               {value.type === AttackType.Switch && <div className="wait-attack" />}

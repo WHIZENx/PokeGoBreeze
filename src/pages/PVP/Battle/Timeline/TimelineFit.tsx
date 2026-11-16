@@ -24,19 +24,27 @@ const TimelineFit = (
   const calculateWidthBasedPositions = (timeline: ITimeline[]) => {
     const totalScaledWidth = timeline.reduce((sum, item) => sum + toNumber(item.size), 0);
     if (totalScaledWidth <= 0) {
-      return timeline.map(() => '0%');
+      return timeline.map(() => ({ start: '0%', center: '0%' }));
     }
     const scaleFactor = 100 / totalScaledWidth;
     let position = 0;
     return timeline.map((item) => {
-      const current = `${position}%`;
-      position += toNumber(item.size) * scaleFactor;
+      const width = toNumber(item.size) * scaleFactor;
+      const current = { start: `${position}%`, center: `${position + width / 2}%` };
+      position += width;
       return current;
     });
   };
 
   const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle, team: IPokemonBattle[]) => {
     const positions = calculateWidthBasedPositions(poke.timeline);
+    const startPositions = positions.map(({ start }) => start);
+    const centerPositions = positions.map(({ center }) => center);
+    const centeredMarkerStyle = (index: number, style: React.CSSProperties = {}): React.CSSProperties => ({
+      ...style,
+      left: centerPositions[index],
+      transform: 'translate(-50%, -50%)',
+    });
     const totalTimelineWidth = poke.timeline.reduce((sum, entry) => sum + toNumber(entry.size), 0);
     const tapPauseGroups = getTimelineTapPauseGroups(poke.timeline, pokeObj.timeline);
     const isSwitchEvent = (value: ITimeline) =>
@@ -52,7 +60,7 @@ const TimelineFit = (
         const turn = value.timer ?? index;
         const existing = events.find((event) => event.turn === turn);
         if (!existing) {
-          events.push({ entry: value, index, left: positions[index], turn });
+          events.push({ entry: value, index, left: centerPositions[index], turn });
           return events;
         }
         const switchEntry = hasSwitch ? value : isSwitchEvent(existing.entry) ? existing.entry : undefined;
@@ -65,7 +73,7 @@ const TimelineFit = (
         };
         if (hasSwitch) {
           existing.index = index;
-          existing.left = positions[index];
+          existing.left = centerPositions[index];
         }
         return events;
       },
@@ -126,7 +134,7 @@ const TimelineFit = (
                 {!value.isTap && (
                   <Fragment>
                     {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
-                      <div className="icon-buff-timeline" style={{ left: positions[index] }}>
+                      <div className="icon-buff-timeline" style={{ left: centerPositions[index] }}>
                         {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
                             {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
@@ -138,7 +146,7 @@ const TimelineFit = (
                         {pokeObj.timeline.at(index) &&
                         pokeObj.timeline.at(index)?.type === AttackType.Charge &&
                         isNotEmpty(value.buff) ? (
-                          <div className="icon-buff-timeline" style={{ left: positions[index] }}>
+                          <div className="icon-buff-timeline" style={{ left: centerPositions[index] }}>
                             {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? '!tw-text-error' : '!tw-text-success'}>
                                 {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
@@ -162,7 +170,7 @@ const TimelineFit = (
                   className="tw-pointer-events-none !tw-absolute tw-top-1/2 tw-z-10 !tw-flex tw-h-1.5 -tw-translate-y-1/2 tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--text-secondary)] tw-opacity-80"
                   data-timeline-tap-pause="charged-attack"
                   style={{
-                    left: positions[group.start],
+                    left: startPositions[group.start],
                     width: `${(getTimelineTapPauseWidth(poke.timeline, group) / totalTimelineWidth) * 100}%`,
                   }}
                   title="Charged Attack pause"
@@ -179,7 +187,7 @@ const TimelineFit = (
                       className="charge-attack tw-z-20 opacity-50"
                       style={{
                         width: value.size,
-                        left: positions[index],
+                        ...centeredMarkerStyle(index),
                         borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                       }}
                     />
@@ -192,7 +200,7 @@ const TimelineFit = (
           {poke.timeline.map((value, index) => (
             <Fragment key={index}>
               {value.type === AttackType.Block && (
-                <div id={index.toString()} style={{ left: positions[index] }}>
+                <div id={index.toString()} style={centeredMarkerStyle(index)}>
                   <HexagonIcon className="tw-text-combat-block" sx={{ fontSize: value.size }} />
                 </div>
               )}
@@ -200,50 +208,56 @@ const TimelineFit = (
                 <div
                   id={index.toString()}
                   className={combineClasses('fast-attack', value.color, 'black-border')}
-                  style={{ left: positions[index] }}
+                  style={centeredMarkerStyle(index)}
                 />
               )}
               {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
                 <div
                   id={index.toString()}
                   className={combineClasses('charge-attack', `${value.color}-border`)}
-                  style={{
+                  style={centeredMarkerStyle(index, {
                     width: value.size,
                     height: value.size,
-                    left: positions[index],
-                  }}
+                  })}
                 />
               )}
               {value.type === AttackType.Charge && (
                 <div
                   id={index.toString()}
                   className={combineClasses('charge-attack', value.color, `${value.color}-border`)}
-                  style={{
+                  style={centeredMarkerStyle(index, {
                     width: value.size,
                     height: value.size,
-                    left: positions[index],
-                  }}
+                  })}
                 />
               )}
-              {(value.type === AttackType.Wait || value.type === AttackType.New) && (
-                <div id={index.toString()} className="wait-attack" style={{ left: positions[index] }} />
+              {value.type === AttackType.Wait && (
+                <div
+                  id={index.toString()}
+                  aria-hidden="true"
+                  className="wait-attack !tw-h-1 !tw-w-1 tw-rounded-full tw-bg-[var(--text-secondary)] tw-opacity-30"
+                  data-timeline-wait-marker="true"
+                  style={centeredMarkerStyle(index)}
+                />
+              )}
+              {value.type === AttackType.New && (
+                <div id={index.toString()} className="wait-attack" style={centeredMarkerStyle(index)} />
               )}
               {!value.type && (
                 <div
                   id={index.toString()}
                   className="wait-charge-attack"
-                  style={{
+                  style={centeredMarkerStyle(index, {
                     width: value.size,
                     height: value.size,
-                    left: positions[index],
-                  }}
+                  })}
                 />
               )}
               {value.type === AttackType.Dead && (
-                <div id={index.toString()} className="wait-attack" style={{ left: positions[index] }} />
+                <div id={index.toString()} className="wait-attack" style={centeredMarkerStyle(index)} />
               )}
               {value.type === AttackType.Switch && (
-                <div id={index.toString()} className="wait-attack" style={{ left: positions[index] }} />
+                <div id={index.toString()} className="wait-attack" style={centeredMarkerStyle(index)} />
               )}
               {value.type === AttackType.Timeout && (
                 <span
@@ -256,7 +270,7 @@ const TimelineFit = (
                         ? 'tw-text-error'
                         : 'tw-text-default'
                   )}
-                  style={{ left: positions[index] }}
+                  style={{ left: centerPositions[index], transform: 'translateX(-50%)' }}
                   title="Battle ended by time limit"
                 >
                   {value.outcome === 'win' ? 'W' : value.outcome === 'lose' ? 'L' : 'T'}

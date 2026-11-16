@@ -98,15 +98,16 @@ const Raid = (props: IRaidComponent) => {
         </div>
       </div>
       <div className="row !tw-mt-2 tw-container !tw-m-0">
-        <div className="tw-flex-1 tw-flex tw-justify-center tw-items-center tw-mb-3">
+        <div className="!tw-w-2/5 tw-flex-none tw-flex tw-justify-center tw-items-center tw-mb-3">
           <img
             className={tier === 2 ? 'img-type-icon' : ''}
             alt="Image Raid Egg"
             src={raidEgg(tier, props.pokemonType, pokemonClass)}
           />
         </div>
-        <div className="col tw-flex tw-justify-center tw-mb-3">
+        <div className="!tw-w-3/5 tw-flex-none tw-flex tw-justify-center tw-mb-3">
           <StatsTable
+            className="tw-w-full tw-table-fixed"
             isLoadedForms={props.isLoadedForms}
             tier={tier}
             pokemonType={props.pokemonType}

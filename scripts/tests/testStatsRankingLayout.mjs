@@ -52,6 +52,36 @@ assert.match(
   /pokemon-detail-section xl:tw-col-span-2/,
   'the ranking table must retain the full desktop content width'
 );
+assert.match(
+  statsRankingSource,
+  /const defaultPerPages = 20;[\s\S]*paginationRowsPerPageOptions=\{\[20, 50, 100\]\}/,
+  'Stats Ranking pagination must default to 20 rows and offer 20, 50, and 100 in ascending order'
+);
+assert.match(
+  statsRankingSource,
+  /if \(locate && data\.selected\) \{[\s\S]*applySelection\(data\.selected\);/,
+  'Stats Ranking must only apply a server-selected Pokémon while resolving an explicit deep link'
+);
+assert.doesNotMatch(
+  statsRankingSource,
+  /applySelection\(data\.data\[0\]\)/,
+  'Stats Ranking pagination must not automatically select the first row of each page'
+);
+assert.match(
+  statsRankingSource,
+  /<h4 className="info-title tw-relative tw-pb-1">[\s\S]*<TableLoadingProgress loading=\{loading\} label="Loading Stats rankings" \/>[\s\S]*<CustomDataTable[\s\S]*data=\{rows\}/,
+  'Stats Ranking must show table loading progress below its header while preserving the current rows'
+);
+assert.match(
+  statsRankingSource,
+  /aria-busy=\{loading\}[\s\S]*noDataComponent=\{loading \? <div aria-hidden="true" className="tw-h-24" \/> : undefined\}/,
+  'Stats Ranking must reserve an empty initial-loading area without replacing the table'
+);
+assert.doesNotMatch(
+  statsRankingSource,
+  /BackdropMui|CircularProgressTable|progressPending|progressComponent/,
+  'Stats Ranking must not cover or replace its table with an overlay, spinner, or skeleton while loading'
+);
 assert.match(statsRankingSource, /compactLayout/, 'the half-width Battle data card must request compact move layout');
 assert.match(
   statsRankingSource,
@@ -87,6 +117,33 @@ assert.match(
   moveTableSource,
   /props\.compactLayout \? 'md:tw-col-span-2' : ''/,
   'compact Max Moves must span both move columns'
+);
+assert.match(
+  moveTableSource,
+  /data-testid="best-moves-loading-row"[\s\S]*?!tw-top-\[70px\][\s\S]*?<TableLoadingProgress[\s\S]*?label=\{`Loading Best Moves/,
+  'Best Moves List must expose loading progress below its column sub-header.'
+);
+for (const label of ['Loading Fast Moves', 'Loading Charged Moves', 'Loading Max Moves']) {
+  assert.match(
+    moveTableSource,
+    new RegExp(`<th className="table-sub-header">[\\s\\S]*?<TableLoadingProgress[^>]*label="${label}"`),
+    `${label} progress must render in its table sub-header.`
+  );
+}
+assert.doesNotMatch(
+  moveTableSource,
+  /tw-top-12[\s\S]*<TableLoadingProgress/,
+  'Move loading progress must not remain beneath the tabs.'
+);
+assert.match(
+  moveTableSource,
+  /const move = \(hasFreshMoveData \? props\.rankMoveData : cachedRankMoveData\.current\)[\s\S]*const moveOrigin = hasFreshMoveData \? props\.moveData : cachedMoveData\.current/,
+  'Move tables must retain the last coherent move datasets while the progress bar is active.'
+);
+assert.doesNotMatch(
+  moveTableSource,
+  /Skeleton|slide-container/,
+  'Move table loading must not replace or cover retained rows with a skeleton.'
 );
 assert.match(sharedLayoutStyles, /\.pokemon-detail-section \{/, 'shared detail card styling must remain centralized');
 assert.match(

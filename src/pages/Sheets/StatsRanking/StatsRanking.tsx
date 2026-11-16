@@ -33,14 +33,13 @@ import PokemonIconType from '../../../components/Sprites/PokemonIconType/Pokemon
 import type { PokemonBundleVariety, PokemonMoveRanking } from '../../../core/models/API/pokemon-bundle.model';
 import { PokemonSprite } from '../../../core/models/API/form.model';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
-import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
+import TableLoadingProgress from '../../../components/Commons/Tables/TableLoadingProgress';
 import { IMenuItem } from '../../../components/Commons/models/menu.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
-import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import { usePreloadedImage } from '../../../utils/hooks/usePreloadedImage';
@@ -131,7 +130,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
 );
 
 const customStyles: TableStyles = { rows: { style: { cursor: 'pointer' } } };
-const defaultPerPages = 25;
+const defaultPerPages = 20;
 
 class Filter {
   isMatch = false;
@@ -374,12 +373,8 @@ const StatsRanking = () => {
           setPage(data.meta.page);
           setResetPaginationToggle((value) => !value);
         }
-        if (data.selected) {
+        if (locate && data.selected) {
           applySelection(data.selected);
-        } else if (data.data[0]) {
-          applySelection(data.data[0]);
-        } else {
-          setSelect(undefined);
         }
       })
       .catch((error) => {
@@ -574,11 +569,11 @@ const StatsRanking = () => {
           className="pokemon-detail-section xl:tw-col-span-2 tw-scroll-mt-20"
           data-testid="stats-ranking-table-section"
         >
-          <h4 className="info-title">
+          <h4 className="info-title tw-relative tw-pb-1">
             <b>Stats ranking</b>
+            <TableLoadingProgress loading={loading} label="Loading Stats rankings" />
           </h4>
-          <div className="tw-relative">
-            <BackdropMui open={loading && rows.length > 0} isShowOnAbove={false} />
+          <div className="tw-relative" aria-busy={loading}>
             <CustomDataTable
               customColumns={columnPokemon}
               data={rows}
@@ -588,7 +583,7 @@ const StatsRanking = () => {
               paginationResetDefaultPage={resetPaginationToggle}
               paginationDefaultPage={page}
               paginationPerPage={rowsPerPage}
-              paginationRowsPerPageOptions={[25, 50, 100]}
+              paginationRowsPerPageOptions={[20, 50, 100]}
               defaultSortFieldId={sortId}
               defaultSortAsc={sortOrder === 'asc'}
               sortServer
@@ -608,10 +603,9 @@ const StatsRanking = () => {
                 setRowsPerPage(currentRowsPerPage);
                 setPage(currentPage);
               }}
+              noDataComponent={loading ? <div aria-hidden="true" className="tw-h-24" /> : undefined}
               conditionalRowStyles={conditionalRowStyles}
               customDataStyles={getCustomThemeDataTable(customStyles)}
-              progressPending={loading && rows.length === 0}
-              progressComponent={<CircularProgressTable />}
               isShowSearch
               inputPlaceholder="Search Pokémon Name, Form or ID"
               onSearchTermChange={setSearchTerm}
