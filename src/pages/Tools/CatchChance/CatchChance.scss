@@ -22,3 +22,12 @@
 
   @apply tw-font-medium;
 }
+
+.catch-chance-results .table-container {
+  @apply tw-min-w-0 tw-px-0;
+}
+
+.table-catch-chance-compact tbody td,
+.table-catch-chance-compact thead th {
+  @apply tw-px-2 tw-py-2 tw-text-base;
+}

@@ -280,7 +280,7 @@ League-specific Pokémon analysis with scores, recommended moves, calculated sta
 ### 📊 Data Sheets & Rankings
 
 #### **DPS/TDO Sheets** (`/dps-tdo-sheets`)
-Server-calculated DPS/TDO results for Pokémon and move combinations, with attacker/target settings, combat modifiers, release/form filters, and sortable columns.
+Server-calculated DPS/TDO results for Pokémon and move combinations, with attacker/target settings, combat modifiers, release/form filters, and sortable columns. When the release-only filter is disabled, unreleased forms are identified by an inline badge in the Pokémon Name cell without adding another results column.
 
 #### **Stats Ranking** (`/stats-ranking`)
 Global base-stat ranking table for Attack, Defense, Stamina, and stat product, with name/release filters and an expandable Pokémon summary.

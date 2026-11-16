@@ -13,7 +13,7 @@ import { getLevelList } from '../../../utils/compute';
 
 import APIService from '../../../services/api.service';
 
-import { Checkbox, FormControlLabel, Skeleton, Switch } from '@mui/material';
+import { Checkbox, Chip, FormControlLabel, LinearProgress, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
@@ -64,7 +64,6 @@ import SelectMui from '../../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../../components/Commons/Buttons/ToggleType';
 import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
-import BackdropMui from '../../../components/Commons/Backdrops/BackdropMui';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { ProcessedDataPage } from '../../../services/processed-data.service';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
@@ -169,14 +168,26 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
       <LinkToTop
         to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.form, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${formatPokemonDisplayName(row.pokemon.name)}`}
-        className="tw-flex tw-items-center"
+        className="tw-flex tw-min-w-0 tw-items-center tw-gap-2"
       >
-        <span className="tw-relative tw-mr-2 tw-inline-flex tw-items-center">
+        <span className="tw-relative tw-inline-flex tw-items-center">
           <PokemonIconType pokemonType={row.pokemonType} size={25} className="!tw-bottom-0 !tw-right-0 tw-z-[1]">
             <PokemonTableIcon {...row.pokemon} />
           </PokemonIconType>
         </span>
-        {formatPokemonDisplayName(row.pokemon.name)}
+        <span>{formatPokemonDisplayName(row.pokemon.name)}</span>
+        {!row.pokemon.releasedGO && (
+          <Chip
+            component="span"
+            size="small"
+            color="warning"
+            variant="outlined"
+            label="Unreleased"
+            className="tw-shrink-0"
+            title="Not released in Pokémon GO"
+            aria-label="Not released in Pokémon GO"
+          />
+        )}
       </LinkToTop>
     ),
     sortable: true,
@@ -659,11 +670,6 @@ const DpsTdo = () => {
   return (
     <div className="tw-relative" data-testid="dps-tdo-page">
       <div className="tw-relative tw-text-center tw-w-full">
-        {isShowSpinner && !isNotEmpty(dpsTable) && (
-          <div className="slide-container !tw-p-0 !tw-w-full !tw-h-full !tw-absolute tw-z-2">
-            <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
-          </div>
-        )}
         <div className="head-types" data-testid="dps-tdo-type-filters">
           Fast &amp; Charged Move Types (Both Must Match)
         </div>
@@ -1235,44 +1241,59 @@ const DpsTdo = () => {
         </div>
       </div>
       <div className="tw-relative" data-testid="dps-tdo-results-section">
-        <BackdropMui open={isShowSpinner && isNotEmpty(dpsTable)} isShowOnAbove={false} />
-        <CustomDataTable
-          filteredEmptyState
-          customColumns={tableColumns}
-          data={dpsTable}
-          progressPending={isShowSpinner && !isNotEmpty(dpsTable)}
-          progressComponent={<CircularProgressTable />}
-          pagination
-          paginationServer
-          paginationTotalRows={totalRows}
-          paginationResetDefaultPage={resetPaginationToggle}
-          sortServer
-          defaultSortFieldId={defaultSorted.selectedColumn}
-          defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC}
-          highlightOnHover
-          striped
-          paginationDefaultPage={defaultPage}
-          paginationPerPage={defaultRowPerPage}
-          onChangePage={(page) => {
-            setDefaultPage(page);
-          }}
-          onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
-            setDefaultPage(currentPage);
-            setDefaultRowPerPage(currentRowsPerPage);
-          }}
-          onSort={(selectedColumn, sortDirection) => {
-            setDefaultPage(1);
-            setResetPaginationToggle((value) => !value);
-            setDefaultSorted(
-              OptionDPSSort.create({
-                selectedColumn: toNumber(selectedColumn.id, ColumnType.Id),
-                sortDirection: isEqual(sortDirection, SortOrderType.ASC)
-                  ? SortDirectionType.ASC
-                  : SortDirectionType.DESC,
-              })
-            );
-          }}
-        />
+        {isShowSpinner && isNotEmpty(dpsTable) && (
+          <LinearProgress
+            className="!tw-absolute tw-inset-x-0 tw-top-0 tw-z-[2]"
+            aria-label="Refreshing DPS and TDO results"
+            data-testid="dps-tdo-refresh-progress"
+          />
+        )}
+        {isShowSpinner && !isNotEmpty(dpsTable) ? (
+          <div
+            className="tw-flex tw-min-h-64 tw-items-center tw-justify-center tw-bg-custom-default"
+            role="status"
+            aria-label="Loading DPS and TDO results"
+            data-testid="dps-tdo-initial-loading"
+          >
+            <CircularProgressTable />
+          </div>
+        ) : (
+          <CustomDataTable
+            filteredEmptyState
+            customColumns={tableColumns}
+            data={dpsTable}
+            pagination
+            paginationServer
+            paginationTotalRows={totalRows}
+            paginationResetDefaultPage={resetPaginationToggle}
+            sortServer
+            defaultSortFieldId={defaultSorted.selectedColumn}
+            defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC}
+            highlightOnHover
+            striped
+            paginationDefaultPage={defaultPage}
+            paginationPerPage={defaultRowPerPage}
+            onChangePage={(page) => {
+              setDefaultPage(page);
+            }}
+            onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
+              setDefaultPage(currentPage);
+              setDefaultRowPerPage(currentRowsPerPage);
+            }}
+            onSort={(selectedColumn, sortDirection) => {
+              setDefaultPage(1);
+              setResetPaginationToggle((value) => !value);
+              setDefaultSorted(
+                OptionDPSSort.create({
+                  selectedColumn: toNumber(selectedColumn.id, ColumnType.Id),
+                  sortDirection: isEqual(sortDirection, SortOrderType.ASC)
+                    ? SortDirectionType.ASC
+                    : SortDirectionType.DESC,
+                })
+              );
+            }}
+          />
+        )}
       </div>
     </div>
   );
