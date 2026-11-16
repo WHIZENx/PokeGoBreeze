@@ -70,6 +70,7 @@ import useDataStore from './composables/useDataStore';
 import { getProcessedDataSectionsForRoute } from './utils/configs/processed-data-routes.config';
 import type { ProcessedDataSection } from './services/processed-data.service';
 import { flushPendingNavigationScroll } from './components/Link/LinkToTop';
+import { preparePvpDetailRoute, type PreparedPvpDetail } from './services/pvp-detail-route.service';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -100,6 +101,8 @@ function App() {
   const [isBootstrapLoaded, setIsBootstrapLoaded] = useState(false);
   const [loadedRouteDataKey, setLoadedRouteDataKey] = useState<string | null>(null);
   const [displayLocation, setDisplayLocation] = useState(location);
+  const [hasCommittedLocation, setHasCommittedLocation] = useState(false);
+  const [preparedPvpDetail, setPreparedPvpDetail] = useState<PreparedPvpDetail>();
   const routeDataRequestRef = useRef(0);
   const dispatch = useDispatch();
   const { errorProgress } = createProgressHelpers(dispatch);
@@ -192,9 +195,27 @@ function App() {
   }, [isBootstrapLoaded, routeDataKey]);
 
   useEffect(() => {
+    const controller = new AbortController();
     if (isBootstrapLoaded && loadedRouteDataKey === routeDataKey) {
-      setDisplayLocation(location);
+      preparePvpDetailRoute(location, controller.signal)
+        .then((prepared) => {
+          if (!controller.signal.aborted) {
+            setPreparedPvpDetail(prepared);
+            setDisplayLocation(location);
+            setHasCommittedLocation(true);
+          }
+        })
+        .catch(() => {
+          if (!controller.signal.aborted) {
+            // Commit failed destinations so their existing error handling can
+            // display not-found or transport errors instead of trapping navigation.
+            setPreparedPvpDetail(undefined);
+            setDisplayLocation(location);
+            setHasCommittedLocation(true);
+          }
+        });
     }
+    return () => controller.abort();
   }, [isBootstrapLoaded, loadedRouteDataKey, location, routeDataKey]);
 
   useEffect(() => {
@@ -231,7 +252,7 @@ function App() {
   return (
     <Box className="app-theme-root tw-min-h-full" sx={{ backgroundColor: 'background.default' }}>
       <ResponsiveAppBar toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
-      {isBootstrapLoaded && loadedRouteDataKey !== null && (
+      {isBootstrapLoaded && loadedRouteDataKey !== null && hasCommittedLocation && (
         <Suspense fallback={null}>
           <Routes location={displayLocation}>
             <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
@@ -261,7 +282,16 @@ function App() {
             <Route path="/pvp/battle" element={<Battle key={battleRouteKey} />} />
             <Route path="/pvp/battle/:cp" element={<Battle key={battleRouteKey} />} />
             <Route path="/pvp/battle/:cp/replay" element={<Battle key={battleRouteKey} replayMode />} />
-            <Route path="/pvp/:cp/:serie/:pokemon" element={<PokemonPVP styleSheet={styleSheet.current} />} />
+            <Route
+              path="/pvp/:cp/:serie/:pokemon"
+              element={
+                <PokemonPVP
+                  key={displayLocation.pathname}
+                  styleSheet={styleSheet.current}
+                  preparedDetail={preparedPvpDetail}
+                />
+              }
+            />
             <Route path="/battle-leagues" element={<Leagues />} />
             <Route path="/trainer" element={<TrainerLab />} />
             <Route path="/stickers" element={<Sticker />} />

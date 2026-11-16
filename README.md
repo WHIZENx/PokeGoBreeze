@@ -99,6 +99,7 @@ The versions below reflect the currently committed `package-lock.json`.
 - **Navigation and data loading**:
   - Route-level lazy imports keep feature code out of the initial bundle
   - The current page remains visible while the next route and its required data load
+  - PvP Detail navigation prepares its page module and Pokémon response before switching views, avoiding an empty detail layout between rankings or matchup selections
   - API requests use debouncing, cancellation, stale-response guards, and request deduplication where applicable
   - Pages request and cache only their required processed-data sections
 - **Production build**:

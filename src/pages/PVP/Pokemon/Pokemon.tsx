@@ -33,20 +33,26 @@ import useSpinner from '../../../composables/useSpinner';
 import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
 import { IPVPInfo } from '../../../core/models/pvp.model';
 import { PvpPokemonApiResponse } from '../../../core/models/API/pvp-pokemon.model';
+import type { PreparedPvpDetail } from '../../../services/pvp-detail-route.service';
 
-const PokemonPVP = (props: IStyleSheetData) => {
+const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetail }) => {
   const navigate = useNavigate();
   const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
   const [searchParams] = useSearchParams();
 
   const params = useParams();
+  const requestedType = (searchParams.get(Params.LeagueType) || 'overall').toLowerCase();
+  const requestedKey = `${toNumber(params.cp)}:${params.serie}:${requestedType}:${params.pokemon}`.toLowerCase();
+  const preparedResult = props.preparedDetail?.requestKey === requestedKey ? props.preparedDetail.data : undefined;
 
-  const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
-  const [league, setLeague] = useState<IPVPInfo>();
-  const [loadedRequestKey, setLoadedRequestKey] = useState('');
-  const [loadedLeagueType, setLoadedLeagueType] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking | undefined>(() =>
+    preparedResult?.data && preparedResult.name ? new PokemonBattleRanking(preparedResult) : undefined
+  );
+  const [league, setLeague] = useState<IPVPInfo | undefined>(preparedResult?.league);
+  const [loadedRequestKey, setLoadedRequestKey] = useState(preparedResult ? requestedKey : '');
+  const [loadedLeagueType, setLoadedLeagueType] = useState<string | null>(preparedResult ? requestedType : null);
+  const [isLoading, setIsLoading] = useState(!preparedResult);
   const [isFound, setIsFound] = useState(true);
   const requestController = useRef<AbortController>();
 
@@ -77,24 +83,33 @@ const PokemonPVP = (props: IStyleSheetData) => {
   useTitle(titleProps);
 
   const fetchPokemonInfo = useCallback(async () => {
+    // The current route stays mounted while App prepares a new destination.
+    // Do not issue another request from the old page when its query changes.
+    if (props.preparedDetail && !preparedResult) {
+      return;
+    }
     requestController.current?.abort();
     const controller = new AbortController();
     requestController.current = controller;
-    setIsLoading(true);
-    showSpinner();
+    if (!preparedResult) {
+      setIsLoading(true);
+      showSpinner();
+    }
     try {
       const cp = toNumber(params.cp);
       const overall = getValueOrDefault(String, getKeyWithData(ScoreType, ScoreType.Overall));
       const type = getValueOrDefault(String, searchParams.get(Params.LeagueType), overall).toLowerCase();
-      const response = await APIService.getFetchUrl<{ data: PvpPokemonApiResponse }>(
-        APIService.getPvpPokemon({
-          series: params.serie,
-          cp,
-          type,
-          name: params.pokemon,
-        }),
-        { signal: controller.signal }
-      );
+      const response = preparedResult
+        ? { data: { data: preparedResult } }
+        : await APIService.getFetchUrl<{ data: PvpPokemonApiResponse }>(
+            APIService.getPvpPokemon({
+              series: params.serie,
+              cp,
+              type,
+              name: params.pokemon,
+            }),
+            { signal: controller.signal }
+          );
       const result = response.data.data;
       if (requestController.current !== controller) {
         return;
@@ -159,7 +174,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
         hideSpinner();
       }
     }
-  }, [params.serie, params.pokemon, params.cp, searchParams]);
+  }, [params.serie, params.pokemon, params.cp, searchParams, preparedResult, props.preparedDetail]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
