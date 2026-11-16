@@ -30,6 +30,8 @@ const ProgressiveShinyImage = ({ alt, fallbacks = [], src, visible }: Progressiv
         loaded && visible ? 'tw-opacity-100' : 'tw-opacity-0'
       )}
       src={src}
+      loading="lazy"
+      decoding="async"
       onLoad={() => setLoaded(true)}
       onError={(event) => {
         setLoaded(false);
@@ -126,6 +128,8 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
                   alt={`#${props.id} ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}
                   title={`#${props.id} ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}
                   src={props.image.default}
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     if (
                       !setNextPokemonImageFallback(e.currentTarget, [

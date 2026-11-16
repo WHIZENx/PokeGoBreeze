@@ -53,6 +53,7 @@ import InputMuiSearch from '../../../components/Commons/Inputs/InputMuiSearch';
 import AccordionMui from '../../../components/Commons/Accordions/AccordionMui';
 import { Skeleton } from '@mui/material';
 import { isNearScrollEnd } from '../../../utils/scroll';
+import TableLoadingProgress from '../../../components/Commons/Tables/TableLoadingProgress';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const navigate = useNavigate();
@@ -368,6 +369,7 @@ const RankingPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
             </div>
+            <TableLoadingProgress loading={isLoading} label="Loading PVP rankings" />
           </div>
           <AccordionMui
             isShowAction

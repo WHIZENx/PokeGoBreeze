@@ -29,6 +29,7 @@ import { serializePokedexSelection } from '../../utils/pokedex-query';
 
 const generationOptions = Object.values(genList).map((_, index) => index);
 const versionOptions = versionList.map((_, index) => index);
+const POKEDEX_PAGE_SIZE = 40;
 
 interface IFilter {
   isMatch: boolean;
@@ -96,7 +97,6 @@ const Pokedex = (props: IStyleSheetData) => {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
-  const subItem = useRef(100);
   const latestRequestRef = useRef(0);
 
   const [filters, setFilters] = useState(Filter.setFilterGenAndVersion(generationOptions, versionOptions));
@@ -193,7 +193,7 @@ const Pokedex = (props: IStyleSheetData) => {
         pokemonType,
         pokemonClass,
         page,
-        limit: subItem.current,
+        limit: POKEDEX_PAGE_SIZE,
       }),
       { signal: controller.signal }
     )

@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [buttonGroup, home, linkToTop, app, leagueStyles] = await Promise.all([
+const [buttonGroup, home, linkToTop, app, leagueStyles, ranking, teams, tableLoadingProgress] = await Promise.all([
   readFile(new URL('../../src/components/Commons/Buttons/ButtonGroupLeague.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Home.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Link/LinkToTop.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/PVP/Leagues/Leagues.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Ranking/PVP.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/PVP/Teams/PVP.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Tables/TableLoadingProgress.tsx', import.meta.url), 'utf8'),
 ]);
 
 assert.match(buttonGroup, /useNavigateToTop\(\)/);
@@ -47,5 +50,22 @@ assert.match(
   /function RouteReady[\s\S]*useEffect\(\(\) => \{[\s\S]*flushPendingNavigationScroll\(\);[\s\S]*completeProgress/,
   'The committed destination route must flush the pending scroll reset.'
 );
+assert.match(tableLoadingProgress, /import \{ LinearProgress \} from '@mui\/material'/);
+assert.match(
+  tableLoadingProgress,
+  /className="!tw-absolute tw-inset-x-0 tw-bottom-0"/,
+  'The MUI loading indicator must remain attached to the bottom of its sticky table header.'
+);
+assert.match(ranking, /aria-busy=\{isLoading\}[\s\S]*TableLoadingProgress loading=\{isLoading\}/);
+assert.equal(
+  teams.match(/<TableLoadingProgress loading=\{isLoading\}/g)?.length,
+  2,
+  'Both PVP team table sections must display their shared request progress.'
+);
+assert.equal(
+  teams.match(/aria-busy=\{isLoading\}/g)?.length,
+  2,
+  'Both PVP team table sections must expose their loading state to assistive technology.'
+);
 
-console.log('Validated scroll-reset navigation for PvP rankings, teams, and battle cards.');
+console.log('Validated PvP navigation and table loading progress for rankings, teams, and battle cards.');

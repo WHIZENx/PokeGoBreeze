@@ -18,14 +18,13 @@ import { Chip, Skeleton } from '@mui/material';
 import { useAssets } from '../../../composables/useAssets';
 import { getAvailableOriginSoundCries, getPokemonGoCryFormLabel } from './pokemon-sound.utils';
 import { useImageSourceSequence } from '../../../utils/hooks/useImageSourceSequence';
-import { preloadFirstAvailableImage } from '../../../utils/hooks/usePreloadedImage';
 
 interface PokemonAssetImageProps {
   candidates: string[];
-  resolvedSource: string | undefined;
 }
 
 const DEFAULT_POKEMON_ASSET_SKELETON_COUNT = 4;
+const ASSET_GROUP_BATCH_SIZE = 12;
 
 interface AssetLoadingSnapshot {
   assetGroupCount: number;
@@ -63,18 +62,19 @@ const getPokemonAssetImageCandidates = (asset: string, id: number | undefined) =
   ];
 };
 
-const getPokemonAssetImageKey = (
-  form: string,
-  gender: GenderType | undefined,
-  id: number | undefined,
-  variant: 'default' | 'shiny',
-  asset: string
-) => `${id ?? 'unknown'}:${form}:${gender ?? GenderType.GenderLess}:${variant}:${asset}`;
+const PokemonAssetImage = ({ candidates }: PokemonAssetImageProps) => {
+  const { source, advanceSource } = useImageSourceSequence(candidates);
 
-const PokemonAssetImage = ({ candidates, resolvedSource }: PokemonAssetImageProps) => {
-  const { source, advanceSource } = useImageSourceSequence([resolvedSource, ...candidates]);
-
-  return <img className="pokemon-sprite-model" alt="Pokémon Model" src={source} onError={advanceSource} />;
+  return (
+    <img
+      className="pokemon-sprite-model"
+      alt="Pokémon Model"
+      src={source}
+      loading="lazy"
+      decoding="async"
+      onError={advanceSource}
+    />
+  );
 };
 
 const CrySourceSkeleton = ({ label, count }: { label: string; count: number }) => (
@@ -116,53 +116,35 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       ),
     [asset]
   );
-  const imageRequests = useMemo(
-    () =>
-      pokeAssets.flatMap((assetGroup) =>
-        assetGroup.image.flatMap((image) => {
-          const requests = [
-            {
-              key: getPokemonAssetImageKey(assetGroup.form, image.gender, image.pokemonId, 'default', image.default),
-              candidates: getPokemonAssetImageCandidates(image.default, image.pokemonId),
-            },
-          ];
-          if (image.shiny) {
-            requests.push({
-              key: getPokemonAssetImageKey(assetGroup.form, image.gender, image.pokemonId, 'shiny', image.shiny),
-              candidates: getPokemonAssetImageCandidates(image.shiny, image.pokemonId),
-            });
-          }
-          return requests;
-        })
-      ),
-    [pokeAssets]
-  );
-  const imageRequestKey = JSON.stringify(imageRequests);
-  const [preloadedImages, setPreloadedImages] = useState<{
-    requestKey: string;
-    sources: Record<string, string | undefined>;
-  }>({ requestKey: '', sources: {} });
+  const [visibleAssetGroupCount, setVisibleAssetGroupCount] = useState(ASSET_GROUP_BATCH_SIZE);
+  const assetLoadMoreRef = useRef<HTMLDivElement>(null);
+  const visiblePokeAssets = pokeAssets.slice(0, visibleAssetGroupCount);
+  const hasMoreAssetGroups = visibleAssetGroupCount < pokeAssets.length;
 
   useEffect(() => {
-    if (!props.isLoadedForms || imageRequests.length === 0) {
+    setVisibleAssetGroupCount(ASSET_GROUP_BATCH_SIZE);
+  }, [pokemonId, pokeAssets]);
+
+  useEffect(() => {
+    const sentinel = assetLoadMoreRef.current;
+    if (!props.isLoadedForms || !hasMoreAssetGroups || !sentinel) {
       return;
     }
-    let active = true;
-    Promise.all(imageRequests.map(({ candidates }) => preloadFirstAvailableImage(candidates))).then((sources) => {
-      if (active) {
-        setPreloadedImages({
-          requestKey: imageRequestKey,
-          sources: Object.fromEntries(imageRequests.map(({ key }, index) => [key, sources[index]])),
-        });
-      }
-    });
-    return () => {
-      active = false;
-    };
-  }, [imageRequestKey, imageRequests, props.isLoadedForms]);
 
-  const areAssetImagesLoaded =
-    props.isLoadedForms && (imageRequests.length === 0 || preloadedImages.requestKey === imageRequestKey);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setVisibleAssetGroupCount((count) => Math.min(count + ASSET_GROUP_BATCH_SIZE, pokeAssets.length));
+        }
+      },
+      { rootMargin: '400px 0px' }
+    );
+    observer.observe(sentinel);
+
+    return () => observer.disconnect();
+  }, [hasMoreAssetGroups, pokeAssets.length, props.isLoadedForms]);
+
+  const areAssetImagesLoaded = props.isLoadedForms;
   const hasPokemonGoAssets = isNotEmpty(pokeAssets);
   const hasOriginCries = isNotEmpty(availableOriginSoundCries);
   const hasPokemonGoCries = isNotEmpty(asset?.sound.cry);
@@ -177,7 +159,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   useEffect(() => {
     if (areAssetImagesLoaded) {
       lastLoadedAssetSnapshot.current = {
-        assetGroupCount: pokeAssets.length,
+        assetGroupCount: Math.min(pokeAssets.length, ASSET_GROUP_BATCH_SIZE),
         hasUnavailableAssets: !hasPokemonGoAssets,
         originCryCount,
         pokemonGoCryCount,
@@ -188,10 +170,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
 
   const loadingSnapshot = lastLoadedAssetSnapshot.current;
 
-  const renderGender = (candidates: string[], resolvedSource: string | undefined, tag: string) => (
+  const renderGender = (candidates: string[], tag: string) => (
     <div className="tw-flex tw-flex-col tw-w-full tw-justify-center tw-items-center">
       <div className="!tw-w-20">
-        <PokemonAssetImage candidates={candidates} resolvedSource={resolvedSource} />
+        <PokemonAssetImage candidates={candidates} />
       </div>
       <span className="caption">{tag}</span>
     </div>
@@ -239,20 +221,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
             </div>
           ) : (
             <Fragment>
-              {pokeAssets.map((assets) => (
+              {visiblePokeAssets.map((assets) => (
                 <div key={assets.form} className="group-model tw-flex tw-w-fit tw-flex-col tw-items-center">
                   <div className="tw-flex tw-flex-wrap tw-w-full tw-items-center">
                     {assets.image.map((value) => {
-                      const defaultKey = getPokemonAssetImageKey(
-                        assets.form,
-                        value.gender,
-                        value.pokemonId,
-                        'default',
-                        value.default
-                      );
-                      const shinyKey = value.shiny
-                        ? getPokemonAssetImageKey(assets.form, value.gender, value.pokemonId, 'shiny', value.shiny)
-                        : undefined;
                       return (
                         <div
                           key={`${assets.form}:${value.gender ?? GenderType.GenderLess}:${value.default}`}
@@ -283,19 +255,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                             <div
                               className={combineClasses('model text-center', value.shiny ? 'tw-w-1/2' : 'tw-w-full')}
                             >
-                              {renderGender(
-                                getPokemonAssetImageCandidates(value.default, value.pokemonId),
-                                preloadedImages.sources[defaultKey],
-                                'Default'
-                              )}
+                              {renderGender(getPokemonAssetImageCandidates(value.default, value.pokemonId), 'Default')}
                             </div>
                             {value.shiny && (
                               <div className="model tw-text-center">
-                                {renderGender(
-                                  getPokemonAssetImageCandidates(value.shiny, value.pokemonId),
-                                  shinyKey ? preloadedImages.sources[shinyKey] : undefined,
-                                  'Shiny'
-                                )}
+                                {renderGender(getPokemonAssetImageCandidates(value.shiny, value.pokemonId), 'Shiny')}
                               </div>
                             )}
                           </div>
@@ -306,6 +270,14 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                   <div className="desc tw-text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
                 </div>
               ))}
+              {hasMoreAssetGroups && (
+                <div
+                  ref={assetLoadMoreRef}
+                  aria-hidden="true"
+                  className="tw-h-px tw-w-full"
+                  data-testid="pokemon-assets-load-more-sentinel"
+                />
+              )}
               {!hasPokemonGoAssets && (
                 <CompactUnavailable
                   icon={<ImageNotSupportedOutlinedIcon fontSize="small" />}
