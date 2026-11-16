@@ -221,6 +221,7 @@ const StatsRanking = () => {
   const [loading, setLoading] = useState(true);
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const latestRequestRef = useRef(0);
+  const hasSelectedPokemonRef = useRef(false);
   const locatedRouteRef = useRef('');
   const skipSyncedPageRequestRef = useRef(false);
   const rankingTableRef = useRef<HTMLElement>(null);
@@ -281,6 +282,7 @@ const StatsRanking = () => {
       : undefined;
 
   const applySelection = (row: IPokemonStatsRanking) => {
+    hasSelectedPokemonRef.current = true;
     setSelect(row);
   };
 
@@ -375,6 +377,11 @@ const StatsRanking = () => {
         }
         if (locate && data.selected) {
           applySelection(data.selected);
+        } else if (!paramId && !hasSelectedPokemonRef.current) {
+          const initialRow = data.data[0];
+          if (initialRow) {
+            applySelection(initialRow);
+          }
         }
       })
       .catch((error) => {
