@@ -14,7 +14,6 @@ import { LinkToTop } from '../../../Link/LinkToTop';
 import { FloatPaddingOption } from '../../../../utils/models/extension.model';
 import IconType from '../../../Sprites/Icon/Type/Type';
 import TabsPanel from '../../Tabs/TabsPanel';
-import Skeleton from '@mui/material/Skeleton';
 import Tooltips from '../../Tooltips/Tooltips';
 import {
   formatMaxMoveLevelSummary,
@@ -23,6 +22,7 @@ import {
 } from '../../../../utils/max-move';
 import useDataStore from '../../../../composables/useDataStore';
 import DataTableSortIcon from '../DataTableSortIcon';
+import TableLoadingProgress from '../TableLoadingProgress';
 
 const formatMinuteOfDay = (minute: number) =>
   `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
@@ -165,6 +165,14 @@ const TableMove = (props: ITableMoveComponent) => {
                 <span className={stateSorted[tableType].sortBy === TypeSorted.Effective ? 'opacity-100' : 'opacity-30'}>
                   <DataTableSortIcon direction={stateSorted[tableType].effective ? 'desc' : 'asc'} />
                 </span>
+              </th>
+            </tr>
+            <tr className="tw-h-0" data-testid="best-moves-loading-row">
+              <th className="!tw-sticky !tw-top-[70px] !tw-h-0 !tw-p-0" colSpan={3}>
+                <TableLoadingProgress
+                  loading={isUpdating}
+                  label={`Loading Best Moves ${getKeyWithData(TableType, table)}`}
+                />
               </th>
             </tr>
           </thead>
@@ -353,11 +361,6 @@ const TableMove = (props: ITableMoveComponent) => {
 
   return (
     <div className="move-tables-wrapper" aria-busy={isUpdating}>
-      {isUpdating && (
-        <div className="slide-container !tw-left-0 !tw-right-0 !tw-bottom-0 !tw-top-12 !tw-p-0 !tw-w-full !tw-h-auto !tw-absolute tw-z-2">
-          <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
-        </div>
-      )}
       <div className={combineClasses('move-tables-content', isUpdating ? 'is-loading' : '')}>
         <TabsPanel
           value={props.tabValue}
@@ -377,7 +380,10 @@ const TableMove = (props: ITableMoveComponent) => {
                       <colgroup className="main-move" />
                       <thead>
                         <tr className="tw-text-center">
-                          <th className="table-sub-header">Fast Moves</th>
+                          <th className="table-sub-header">
+                            Fast Moves
+                            <TableLoadingProgress loading={isUpdating} label="Loading Fast Moves" />
+                          </th>
                         </tr>
                       </thead>
                       <tbody data-testid="pokemon-fast-moves">
@@ -390,7 +396,10 @@ const TableMove = (props: ITableMoveComponent) => {
                       <colgroup className="main-move" />
                       <thead>
                         <tr className="tw-text-center">
-                          <th className="table-sub-header">Charged Moves</th>
+                          <th className="table-sub-header">
+                            Charged Moves
+                            <TableLoadingProgress loading={isUpdating} label="Loading Charged Moves" />
+                          </th>
                         </tr>
                       </thead>
                       <tbody data-testid="pokemon-charged-moves">
@@ -511,6 +520,7 @@ const TableMove = (props: ITableMoveComponent) => {
                                   </Tooltips>
                                 ) : null}
                               </span>
+                              <TableLoadingProgress loading={isUpdating} label="Loading Max Moves" />
                             </th>
                           </tr>
                         </thead>

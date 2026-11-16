@@ -40,8 +40,8 @@ assert.match(source, /APIService\.getDpsTdo\(/, 'DPS/TDO calculations must remai
 assert.match(source, /paginationServer[\s\S]*?sortServer/, 'results must preserve server pagination and sorting');
 assert.match(
   source,
-  /isShowSpinner && isNotEmpty\(dpsTable\)[\s\S]*<LinearProgress[\s\S]*aria-label="Refreshing DPS and TDO results"/,
-  'refreshes must preserve the current table and use a non-blocking progress indicator'
+  /tw-top-\[52px\][\s\S]*<TableLoadingProgress[\s\S]*loading=\{isShowSpinner && isNotEmpty\(dpsTable\)\}[\s\S]*label="Refreshing DPS and TDO results"/,
+  'refreshes must preserve the current table and show progress below the column header'
 );
 assert.doesNotMatch(
   source,

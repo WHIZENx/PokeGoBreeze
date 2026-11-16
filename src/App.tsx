@@ -107,6 +107,8 @@ function App() {
   const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
   const routeDataKey = useMemo(() => getProcessedDataSectionsForRoute(pathname).join('|'), [pathname]);
+  const pokemonRouteKey = displayLocation.pathname.startsWith('/pokemon/') ? displayLocation.pathname : undefined;
+  const battleRouteKey = displayLocation.pathname.startsWith('/pvp/battle') ? displayLocation.pathname : undefined;
 
   useOptionsObserver();
 
@@ -240,7 +242,7 @@ function App() {
             <Route path="/type-effective" element={<TypeEffect />} />
             <Route path="/weather-boosts" element={<Weather />} />
             <Route path="/search-pokemon" element={<SearchPokemon />} />
-            <Route path="/pokemon/:id" element={<Pokemon />} />
+            <Route path="/pokemon/:id" element={<Pokemon key={pokemonRouteKey} />} />
             <Route path="/search-moves" element={<SearchMove />} />
             <Route path="/move/:id" element={<Move />} />
             <Route path="/search-types" element={<SearchTypes styleSheet={styleSheet.current} />} />
@@ -257,9 +259,9 @@ function App() {
             <Route path="/pvp" element={<PVPHome />} />
             <Route path="/pvp/rankings/:serie/:cp" element={<RankingPVP styleSheet={styleSheet.current} />} />
             <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP styleSheet={styleSheet.current} />} />
-            <Route path="/pvp/battle" element={<Battle />} />
-            <Route path="/pvp/battle/:cp" element={<Battle />} />
-            <Route path="/pvp/battle/:cp/replay" element={<Battle replayMode />} />
+            <Route path="/pvp/battle" element={<Battle key={battleRouteKey} />} />
+            <Route path="/pvp/battle/:cp" element={<Battle key={battleRouteKey} />} />
+            <Route path="/pvp/battle/:cp/replay" element={<Battle key={battleRouteKey} replayMode />} />
             <Route path="/pvp/:cp/:serie/:pokemon" element={<PokemonPVP styleSheet={styleSheet.current} />} />
             <Route path="/battle-leagues" element={<Leagues />} />
             <Route path="/trainer" element={<TrainerLab />} />
