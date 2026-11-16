@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { StoreState } from '../store/models/state.model';
 import {
@@ -42,6 +43,7 @@ import { setCpmData as configureCpmData } from '../services/cpm.service';
 export const useDataStore = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
+  const appliedProcessedSectionsRef = useRef(new Map<ProcessedDataSection, unknown>());
   const { setProgress, completeProgress } = createProgressHelpers(dispatch);
 
   /**
@@ -132,6 +134,13 @@ export const useDataStore = () => {
    * Hydrates Redux exclusively from the server-preprocessed snapshot.
    */
   const applyProcessedSection = (section: ProcessedDataSection, data: unknown) => {
+    if (
+      appliedProcessedSectionsRef.current.has(section) &&
+      Object.is(appliedProcessedSectionsRef.current.get(section), data)
+    ) {
+      return;
+    }
+
     switch (section) {
       case 'options':
         dispatch(StoreActions.SetOptions.create(data as IOptions));
@@ -168,6 +177,8 @@ export const useDataStore = () => {
         dispatch(StoreActions.SetTrainerBattlePresets.create(data as ITrainerBattlePreset[]));
         break;
     }
+
+    appliedProcessedSectionsRef.current.set(section, data);
   };
 
   const loadProcessedSections = async (sections: ProcessedDataSection[], refreshRevision = true) => {

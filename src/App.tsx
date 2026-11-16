@@ -176,7 +176,6 @@ function App() {
     const routeDataSections = routeDataKey.split('|').filter(Boolean) as ProcessedDataSection[];
     if (routeDataSections.length === 0) {
       setLoadedRouteDataKey(routeDataKey);
-      setDisplayLocation(location);
       return;
     }
     loadProcessedSections(routeDataSections)
@@ -190,7 +189,7 @@ function App() {
           errorProgress({ message: `Load page data error: ${e}`, isError: true });
         }
       });
-  }, [isBootstrapLoaded, location, routeDataKey]);
+  }, [isBootstrapLoaded, routeDataKey]);
 
   useEffect(() => {
     if (isBootstrapLoaded && loadedRouteDataKey === routeDataKey) {
