@@ -150,6 +150,8 @@ const Pokemon = (props: IPokemonPage) => {
   const navigateToTop = useNavigateToTop();
   const location = useLocation() as unknown as Location<LocationState>;
   const [searchParams, setSearchParams] = useSearchParams();
+  const latestSearchParamsRef = useRef(searchParams);
+  latestSearchParamsRef.current = searchParams;
 
   const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
@@ -472,11 +474,12 @@ const Pokemon = (props: IPokemonPage) => {
       // Set Default Form
       const flatForms = formListResult.flatMap((item) => item);
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
-      let formParams = getValueOrDefault(String, searchParams.get(Params.Form))
+      const requestedSearchParams = latestSearchParamsRef.current;
+      let formParams = getValueOrDefault(String, requestedSearchParams.get(Params.Form))
         .toUpperCase()
         .replaceAll('_', '-')
         .toLowerCase();
-      const formTypeParams = searchParams.get(Params.FormType)?.toLowerCase();
+      const formTypeParams = requestedSearchParams.get(Params.FormType)?.toLowerCase();
       if (!isNullOrUndefined(formTypeParams)) {
         formParams += isNotEmpty(formParams) && isNotEmpty(formTypeParams) ? `-${formTypeParams}` : formTypeParams;
       }
@@ -494,11 +497,15 @@ const Pokemon = (props: IPokemonPage) => {
           currentForm = defaultFormSearch;
         } else {
           currentForm = defaultForm.find((item) => item.form.id === specie.id);
-          setSearchParams((currentSearchParams) => {
-            const nextSearchParams = new URLSearchParams(currentSearchParams);
-            nextSearchParams.delete(Params.Form);
-            return nextSearchParams;
-          });
+          setSearchParams(
+            (currentSearchParams) => {
+              const nextSearchParams = new URLSearchParams(currentSearchParams);
+              nextSearchParams.delete(Params.Form);
+              nextSearchParams.delete(Params.FormType);
+              return nextSearchParams;
+            },
+            { replace: true }
+          );
         }
       } else if (props.isSearch && props.searchOption) {
         currentForm = flatForms.find(
@@ -520,7 +527,9 @@ const Pokemon = (props: IPokemonPage) => {
       currentForm ??= flatForms.find((item) => item.defaultId === specie.id);
       let defaultData = dataPokeList.find((value) => isEqual(value.name, currentForm?.form.name));
       defaultData ??= dataPokeList.find((value) => isEqual(value.name, currentForm?.name));
-      if (defaultData && currentForm) {
+      // On detail routes the URL effect below publishes the hydrated form and
+      // battle details together, after this bundle is committed locally.
+      if (!params.id && defaultData && currentForm) {
         const pokemonDetails = PokemonDetail.setDetails(defaultData);
         pokemonDetails.pokemonType = currentForm.form.pokemonType;
         dispatch(
@@ -529,7 +538,7 @@ const Pokemon = (props: IPokemonPage) => {
             pokemon: pokemonDetails,
           })
         );
-      } else {
+      } else if (!params.id) {
         currentForm ??= defaultForm.at(0);
         if (currentForm) {
           dispatch(SearchingActions.SetMainPokemonForm.create(currentForm));
@@ -539,7 +548,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     },
-    [getFindPokemon, retrieveMoves, searchParams, dispatch]
+    [getFindPokemon, retrieveMoves, dispatch]
   );
 
   const queryPokemon = useCallback(
@@ -777,7 +786,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = toNumber(data?.id);
-    if (searchingMainForm && id > 0 && data) {
+    if (searchingMainForm && searchingMainForm.defaultId === id && id > 0 && data) {
       const formParams = searchParams.get(Params.Form)?.replaceAll('_', '-');
       setVersion(getValueOrDefault(String, searchingMainForm.form?.version));
       setGeneration(getValueOrDefault(String, data.generation.toString()));
@@ -832,7 +841,11 @@ const Pokemon = (props: IPokemonPage) => {
           ),
         });
       }
-      checkReleased(id, searchingMainForm, convertSexName(nameInfo));
+      // Routed selections are hydrated by the URL effect below. Writing them
+      // back from this selection observer creates a second selection writer.
+      if (!params.id) {
+        checkReleased(id, searchingMainForm, convertSexName(nameInfo));
+      }
     } else {
       clearData();
     }

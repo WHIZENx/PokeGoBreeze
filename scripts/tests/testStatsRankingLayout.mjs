@@ -140,6 +140,21 @@ assert.match(
   /const move = \(hasFreshMoveData \? props\.rankMoveData : cachedRankMoveData\.current\)[\s\S]*const moveOrigin = hasFreshMoveData \? props\.moveData : cachedMoveData\.current/,
   'Move tables must retain the last coherent move datasets while the progress bar is active.'
 );
+assert.match(
+  moveTableSource,
+  /const latestMoveTableSnapshots = new Map<string, MoveTableSnapshot>\(\)[\s\S]*initialSnapshotRef = useRef\(latestMoveTableSnapshots\.get\(cacheScope\)\)/,
+  'Move List and Best Moves must retain their latest coherent snapshot across Pokémon Detail remounts.'
+);
+assert.match(
+  moveTableSource,
+  /const hasFreshMoveData = Boolean\(!isLoading && props\.moveData && props\.rankMoveData\)/,
+  'Move snapshots must not accept stale props as fresh while the next target is loading.'
+);
+assert.match(
+  moveTableSource,
+  /data-testid="move-tables-stale-interaction-guard"/,
+  'Retained Move List and Best Moves rows must not accept interactions while loading replacements.'
+);
 assert.doesNotMatch(
   moveTableSource,
   /Skeleton|slide-container/,
