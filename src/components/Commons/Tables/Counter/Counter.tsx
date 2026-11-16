@@ -47,6 +47,8 @@ import { ProcessedDataPage } from '../../../../services/processed-data.service';
 import { formatPokemonDisplayName } from '../../../../utils/pokemon-display-name';
 import TableEmptyState from '../TableEmptyState';
 
+const COUNTER_ROWS_PER_PAGE = 20;
+
 const customStyles: TableStyles = {
   table: {
     style: {
@@ -261,6 +263,8 @@ const Counter = (props: ICounterComponent) => {
                     className="pokemon-sprite-counter"
                     alt="Pokémon Image"
                     src={APIService.getPokemonModel(assets, row.pokemonId)}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, row.pokemonId, assets);
@@ -389,7 +393,7 @@ const Counter = (props: ICounterComponent) => {
         sort: 'ratio',
         order: ratioSortOrder,
         page,
-        limit: 100,
+        limit: COUNTER_ROWS_PER_PAGE,
       }),
       { signal: controller.signal }
     )
@@ -529,7 +533,7 @@ const Counter = (props: ICounterComponent) => {
             paginationComponentOptions={{
               noRowsPerPage: true,
             }}
-            paginationPerPage={100}
+            paginationPerPage={COUNTER_ROWS_PER_PAGE}
             data={counterList}
             isXFixed
             isShowModalOptions

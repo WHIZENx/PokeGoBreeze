@@ -150,11 +150,30 @@ assert.match(
   'Unreleased forms must explain why counter data cannot be calculated.'
 );
 assert.match(
+  counter,
+  /const COUNTER_ROWS_PER_PAGE = 20;[\s\S]*limit: COUNTER_ROWS_PER_PAGE,[\s\S]*paginationPerPage=\{COUNTER_ROWS_PER_PAGE\}/,
+  'The fixed-height counter table must bound each server page instead of mounting 100 image-heavy rows.'
+);
+assert.match(
+  counter,
+  /className="pokemon-sprite-counter"[\s\S]*loading="lazy"[\s\S]*decoding="async"/,
+  'Counter sprites outside the nested scroll viewport must not be decoded eagerly.'
+);
+assert.doesNotMatch(
+  counterStyles,
+  /\.rdt_TableRow\s*\{[\s\S]*animation:/,
+  'Counter rows must not retain one composited opacity animation layer per row while scrolling.'
+);
+assert.match(
   searchMoves,
   /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*customColumns=/,
   'Move Search tables must explain empty external-filter results.'
 );
-assert.match(dpsTdo, /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*progressPending=/);
+assert.match(
+  dpsTdo,
+  /data-testid="dps-tdo-initial-loading"[\s\S]*<CircularProgressTable \/>[\s\S]*<CustomDataTable[\s\S]*filteredEmptyState/,
+  'DPS/TDO must keep its initial loading progress outside the table while preserving the filtered empty state.'
+);
 assert.match(statsInfo, /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*title=\{`Stat Battle/);
 assert.match(
   statsInfo,
