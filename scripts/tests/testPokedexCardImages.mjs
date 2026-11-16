@@ -73,7 +73,10 @@ assert.equal(
   'forms without a Shiny asset must retain their default image'
 );
 
-const cardSource = await readFile(new URL('../../src/components/Card/CardPokemonInfo.tsx', import.meta.url), 'utf8');
+const [cardSource, pokedexSource] = await Promise.all([
+  readFile(new URL('../../src/components/Card/CardPokemonInfo.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokedex/Pokedex.tsx', import.meta.url), 'utf8'),
+]);
 assert.match(
   cardSource,
   /src=\{props\.image\.default\}/,
@@ -93,6 +96,16 @@ assert.doesNotMatch(
   cardSource,
   /key=\{requestedImage\}/,
   'hovering Shiny must not unmount the already rendered default image'
+);
+assert.equal(
+  cardSource.match(/loading="lazy"[\s\S]{0,80}decoding="async"/g)?.length,
+  2,
+  'Pokédex default and optional Shiny artwork must decode lazily.'
+);
+assert.match(
+  pokedexSource,
+  /const POKEDEX_PAGE_SIZE = 40;[\s\S]*limit: POKEDEX_PAGE_SIZE/,
+  'Infinite Pokédex loading must add a bounded number of image-heavy cards per page.'
 );
 assert.deepEqual(
   buildPokedexCardImageCandidates(undefined, 'profile.png', 'form.png', 'base.png'),

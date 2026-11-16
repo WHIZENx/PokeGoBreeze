@@ -89,6 +89,21 @@ assert.match(
   'compact Max Moves must span both move columns'
 );
 assert.match(sharedLayoutStyles, /\.pokemon-detail-section \{/, 'shared detail card styling must remain centralized');
+assert.match(
+  sharedLayoutStyles,
+  /\.pokemon-profile-aura--shadow \.pokemon-main-sprite \{[\s\S]*drop-shadow/,
+  'Shadow profiles must retain their visual treatment without requiring continuous animation.'
+);
+assert.match(
+  sharedLayoutStyles,
+  /\.pokemon-profile-aura--purified \.pokemon-main-sprite \{[\s\S]*drop-shadow/,
+  'Purified profiles must retain their visual treatment without requiring continuous animation.'
+);
+assert.doesNotMatch(
+  sharedLayoutStyles,
+  /will-change:\s*filter|pokemon-(?:shadow|purified)-silhouette-aura|animation:[^;]*infinite/,
+  'Profile modifiers must not keep an off-screen GPU filter animation alive while the user scrolls.'
+);
 assert.doesNotMatch(
   pokemonStyles,
   /\.pokemon-detail-section \{/,

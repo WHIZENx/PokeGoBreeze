@@ -202,6 +202,11 @@ assert.match(
 );
 assert.doesNotMatch(
   moveTableStyles,
+  /\.table-moves tbody tr\s*\{[\s\S]*animation:/,
+  'Move rows must not retain composited opacity animation layers inside their nested scroll containers.'
+);
+assert.doesNotMatch(
+  moveTableStyles,
   /\.table-moves thead tr \+ tr th \{[\s\S]*tw-z-10/,
   'Best Moves column headers must not float above the Pokémon navigation bar.'
 );

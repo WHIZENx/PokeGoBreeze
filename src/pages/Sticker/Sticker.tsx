@@ -37,6 +37,7 @@ const validShopType = (value: number) => (Object.values(ShopType).includes(value
 const validPokemonId = (value: number) =>
   Number.isInteger(value) && value >= GlobalType.None ? value : GlobalType.All;
 const stickerName = (value: string) => splitAndCapitalize(value.toLowerCase(), '_', ' ');
+const STICKER_PAGE_SIZE = 40;
 
 const Sticker = () => {
   useTitle({
@@ -111,7 +112,7 @@ const Sticker = () => {
     setLoading(true);
     setFailed(false);
     APIService.getFetchUrl<StickerApiResponse>(
-      APIService.getStickers({ q: debouncedSearch, pokemonId: id, shop: shopType, page, limit: 100 }),
+      APIService.getStickers({ q: debouncedSearch, pokemonId: id, shop: shopType, page, limit: STICKER_PAGE_SIZE }),
       { signal: controller.signal }
     )
       .then(({ data }) => {
@@ -280,6 +281,8 @@ const Sticker = () => {
                   alt={`${stickerName(value.id)} sticker`}
                   src={value.stickerUrl ?? APIService.getSticker(stickerAssets?.[value.id] ?? value.id.toLowerCase())}
                   data-testid="sticker-image"
+                  loading="lazy"
+                  decoding="async"
                   onError={(event) => {
                     event.currentTarget.onerror = null;
                     event.currentTarget.dataset.fallback = 'true';
