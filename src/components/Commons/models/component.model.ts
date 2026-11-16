@@ -342,6 +342,7 @@ export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
 export interface ITableMoveComponent {
   moveData?: PokemonMoves;
   rankMoveData?: IPokemonQueryRankMove;
+  cacheScope?: string;
   pokemonType?: PokemonType;
   compactLayout?: boolean;
   isLoading?: boolean;

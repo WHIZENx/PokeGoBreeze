@@ -52,7 +52,6 @@ import Tooltips from '../../Commons/Tooltips/Tooltips';
 import EvolutionPokemonDisplay from './EvolutionPokemonDisplay';
 import { LinkToTop } from '../../Link/LinkToTop';
 
-const EVOLUTION_MIN_HEIGHT = 256;
 const DEFAULT_EVOLUTION_SKELETON_STAGE_COUNTS = [1, 1, 1];
 const readyEvolutionAssetSetKeys = new Set<string>();
 
@@ -423,7 +422,7 @@ const Evolution = (props: IEvolutionComponent) => {
       const containerTop = container.getBoundingClientRect().top;
       const content = [chain, ...container.querySelectorAll<HTMLElement>('[data-testid="evolution-edge"]')];
       const contentBottom = Math.max(...content.map((element) => element.getBoundingClientRect().bottom));
-      const nextHeight = Math.max(0, Math.ceil(contentBottom - containerTop + 16));
+      const nextHeight = Math.max(0, Math.ceil(contentBottom - containerTop));
       setEvolutionMinHeight((current) => (Math.abs(current - nextHeight) > 1 ? nextHeight : current));
     };
     const scheduleMeasurement = () => {
@@ -911,7 +910,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const renderEvolutionSkeleton = () => (
     <div
-      className="evo-chain tw-inline-flex tw-min-h-64 tw-items-start"
+      className="evo-chain tw-inline-flex tw-min-h-[196px] tw-items-start"
       data-testid="evolution-chain-skeleton"
       data-skeleton-stage-count={lastLoadedEvolutionStageCounts.current.length}
     >
@@ -1153,12 +1152,14 @@ const Evolution = (props: IEvolutionComponent) => {
         }`}
         data-testid="evolution-container"
         data-evolution-assets-ready={areEvolutionAssetsReady}
-        style={{ minHeight: `${Math.max(EVOLUTION_MIN_HEIGHT, evolutionMinHeight)}px` }}
+        style={{
+          minHeight: areEvolutionAssetsReady ? evolutionMinHeight : undefined,
+        }}
       >
-        {!areEvolutionAssetsReady && <div className="tw-absolute tw-inset-0 tw-z-10">{renderEvolutionSkeleton()}</div>}
+        {!areEvolutionAssetsReady && renderEvolutionSkeleton()}
         <ul
           aria-hidden={!areEvolutionAssetsReady}
-          className={`ul-evo evo-chain tw-inline-flex ${areEvolutionAssetsReady ? 'tw-visible' : 'tw-invisible'}`}
+          className={`ul-evo evo-chain tw-inline-flex ${areEvolutionAssetsReady ? 'tw-visible' : 'tw-invisible tw-absolute tw-left-0 tw-top-0'}`}
         >
           {arrEvoList.map((values, evo) => (
             <li key={evo} className="img-form-gender-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0">

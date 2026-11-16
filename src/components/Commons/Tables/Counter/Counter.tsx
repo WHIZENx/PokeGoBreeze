@@ -51,6 +51,13 @@ import TableLoadingProgress from '../TableLoadingProgress';
 
 const COUNTER_ROWS_PER_PAGE = 20;
 
+interface CounterSnapshot {
+  rows: ICounterModel[];
+  totalRows: number;
+}
+
+let latestCounterSnapshot: CounterSnapshot | undefined;
+
 const customStyles: TableStyles = {
   table: {
     style: {
@@ -147,13 +154,15 @@ const customStyles: TableStyles = {
 const Counter = (props: ICounterComponent) => {
   const { findAssetForm } = useAssets();
   const { optionsCounter, setCounterOptions } = useOptionStore();
-  const [counterList, setCounterList] = useState<ICounterModel[]>([]);
+  const initialSnapshotRef = useRef(latestCounterSnapshot);
+  const [counterList, setCounterList] = useState<ICounterModel[]>(() => initialSnapshotRef.current?.rows ?? []);
   const [showFrame, setShowFrame] = useState(true);
-  const [totalRows, setTotalRows] = useState(0);
+  const [totalRows, setTotalRows] = useState(() => initialSnapshotRef.current?.totalRows ?? 0);
   const [page, setPage] = useState(1);
   const [ratioSortOrder, setRatioSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState('');
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+  const currentPageRef = useRef(1);
   const latestRequestRef = useRef(0);
   const hasResolvedCountersRef = useRef(false);
   const resolvedCounterRequestKeyRef = useRef('');
@@ -165,7 +174,15 @@ const Counter = (props: ICounterComponent) => {
   const defense = toNumber(props.pokemonData?.statsGO?.def);
   const targetPokemonType = props.pokemonType ?? props.pokemonData?.pokemonType ?? PokemonType.Normal;
   const typesKey = props.pokemonData?.types?.join(',') ?? '';
+  const counterTargetKey = [
+    props.pokemonData?.id,
+    props.pokemonData?.pokemonId,
+    props.pokemonData?.fullName,
+    props.pokemonData?.form,
+    targetPokemonType,
+  ].join('|');
   const counterRequestKey = [
+    counterTargetKey,
     defense,
     targetPokemonType,
     typesKey,
@@ -180,7 +197,7 @@ const Counter = (props: ICounterComponent) => {
   ].join('|');
   const hasValidCounterTarget = defense > 0 && Boolean(typesKey);
   const isTargetUnreleased = props.pokemonData?.releasedGO === false;
-  const isCanonicalCounterTargetReady = Boolean(props.pokemonData?.fullName && props.pokemonData?.form);
+  const isCanonicalCounterTargetReady = Boolean(props.pokemonData?.fullName && props.pokemonData?.form !== undefined);
   const isCounterTargetPending = props.pokemonData === undefined || !isCanonicalCounterTargetReady;
   const hasFreshCounters = resolvedCounterRequestKeyRef.current === counterRequestKey;
   const isUpdating = Boolean(
@@ -188,8 +205,17 @@ const Counter = (props: ICounterComponent) => {
   );
 
   const resetPagination = useCallback(() => {
+    if (currentPageRef.current === 1) {
+      return;
+    }
+    currentPageRef.current = 1;
     setPage(1);
     setResetPaginationToggle((value) => !value);
+  }, []);
+
+  const handlePageChange = useCallback((nextPage: number) => {
+    currentPageRef.current = nextPage;
+    setPage(nextPage);
   }, []);
 
   const handleSearchTermChange = useCallback(
@@ -207,6 +233,7 @@ const Counter = (props: ICounterComponent) => {
   useEffect(() => {
     resetPagination();
   }, [
+    counterTargetKey,
     defense,
     targetPokemonType,
     typesKey,
@@ -221,7 +248,7 @@ const Counter = (props: ICounterComponent) => {
 
   const skipStalePageRequest = useSkipStalePageRequest(
     page,
-    `${defense}|${targetPokemonType}|${typesKey}|${showMegaPrimal}|${releasedGO}|${enableBest}|${isSearchId}|${isMatch}|${ratioSortOrder}`
+    `${counterTargetKey}|${defense}|${targetPokemonType}|${typesKey}|${showMegaPrimal}|${releasedGO}|${enableBest}|${isSearchId}|${isMatch}|${ratioSortOrder}`
   );
 
   const menuItems = createDataRows<IMenuItem<ICounterModel>>(
@@ -404,9 +431,14 @@ const Counter = (props: ICounterComponent) => {
         if (requestId !== latestRequestRef.current) {
           return;
         }
+        const rows = data.data.map((row) => new CounterModel(row));
+        latestCounterSnapshot = {
+          rows,
+          totalRows: data.meta.total,
+        };
         hasResolvedCountersRef.current = true;
         resolvedCounterRequestKeyRef.current = counterRequestKey;
-        setCounterList(data.data.map((row) => new CounterModel(row)));
+        setCounterList(rows);
         setTotalRows(data.meta.total);
         setShowFrame(false);
       })
@@ -486,6 +518,13 @@ const Counter = (props: ICounterComponent) => {
         className={combineClasses('tw-relative counter-table-content', isUpdating ? 'is-loading' : '')}
         aria-busy={isUpdating}
       >
+        {isUpdating && isNotEmpty(counterList) && (
+          <div
+            className="tw-absolute tw-inset-0 tw-z-10 tw-cursor-wait"
+            data-testid="counter-stale-interaction-guard"
+            aria-hidden="true"
+          />
+        )}
         {isTargetUnreleased ? (
           <TableEmptyState
             spacious
@@ -522,7 +561,7 @@ const Counter = (props: ICounterComponent) => {
                 setRatioSortOrder(direction === 'asc' ? 'asc' : 'desc');
               }
             }}
-            onChangePage={setPage}
+            onChangePage={handlePageChange}
             paginationDefaultPage={1}
             paginationResetDefaultPage={resetPaginationToggle}
             onSearchTermChange={handleSearchTermChange}
