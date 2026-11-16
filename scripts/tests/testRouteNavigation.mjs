@@ -7,6 +7,7 @@ const indexSource = await readFile(new URL('../../src/index.tsx', import.meta.ur
 const linkToTopSource = await readFile(new URL('../../src/components/Link/LinkToTop.tsx', import.meta.url), 'utf8');
 const pokemonPageSource = await readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8');
 const movePageSource = await readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8');
+const useDataStoreSource = await readFile(new URL('../../src/composables/useDataStore.ts', import.meta.url), 'utf8');
 const counterSource = await readFile(
   new URL('../../src/components/Commons/Tables/Counter/Counter.tsx', import.meta.url),
   'utf8'
@@ -14,6 +15,9 @@ const counterSource = await readFile(
 const noDataRouteBranch = appSource.match(
   /if \(routeDataSections\.length === 0\) \{(?<body>[\s\S]*?)\n\s*return;\n\s*\}/
 )?.groups?.body;
+const routeDataLoadEffect = appSource.match(
+  /useEffect\(\(\) => \{(?<body>[\s\S]*?loadProcessedSections\(routeDataSections\)[\s\S]*?)\n\s*\}, \[(?<dependencies>[^\]]+)\]\);/
+);
 const readyRouteEffect = appSource.match(
   /if \(isBootstrapLoaded && loadedRouteDataKey === routeDataKey\) \{(?<body>[\s\S]*?)\n\s*\}/
 )?.groups?.body;
@@ -21,13 +25,23 @@ const readyRouteEffect = appSource.match(
 const failures = [];
 if (!noDataRouteBranch) {
   failures.push('no-data route branch is missing');
-} else {
-  if (!noDataRouteBranch.includes('setDisplayLocation(location);')) {
-    failures.push('no-data routes do not commit the current location directly');
-  }
+}
+if (!routeDataLoadEffect) {
+  failures.push('route data loading effect is missing');
+} else if (routeDataLoadEffect.groups.dependencies.includes('location')) {
+  failures.push('route data reloads when only the location changes within the same data-backed route group');
 }
 if (!readyRouteEffect?.includes('setDisplayLocation(location);')) {
   failures.push('data-backed routes do not commit the current location directly');
+}
+if (!useDataStoreSource.includes('appliedProcessedSectionsRef')) {
+  failures.push('processed data sections are not tracked after hydration');
+}
+if (
+  !useDataStoreSource.includes('appliedProcessedSectionsRef.current.has(section)') ||
+  !useDataStoreSource.includes('Object.is(appliedProcessedSectionsRef.current.get(section), data)')
+) {
+  failures.push('cached processed data sections are dispatched to Redux repeatedly');
 }
 if (!appSource.includes("displayLocation.pathname.startsWith('/pokemon/')")) {
   failures.push('Pokémon Detail routes do not isolate local state by species pathname');
