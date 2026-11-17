@@ -99,6 +99,7 @@ The versions below reflect the currently committed `package-lock.json`.
 - **Navigation and data loading**:
   - Route-level lazy imports keep feature code out of the initial bundle
   - The current page remains visible while the next route and its required data load
+  - PvP Detail navigation prepares its page module and Pokémon response before switching views, avoiding an empty detail layout between rankings or matchup selections
   - API requests use debouncing, cancellation, stale-response guards, and request deduplication where applicable
   - Pages request and cache only their required processed-data sections
 - **Production build**:
@@ -115,8 +116,8 @@ The versions below reflect the currently committed `package-lock.json`.
   - GitHub Actions for automated workflows
   - A push to `develop`, `stage`, or `main` deploys that branch from this repository
 - **Analytics**:
-  - Vercel Analytics
-  - Vercel Speed Insights
+  - Vercel Analytics and Speed Insights run on `.vercel.app` hosts.
+  - Firebase Hosting and other hosts skip the Vercel-only script endpoints so SPA fallbacks do not execute HTML as JavaScript.
 
 ## Project Structure
 
@@ -292,6 +293,18 @@ League IV/stat-product table for a selected Pokémon and CP limit, with optional
 
 #### **Find CP/IV** (`/find-cp-iv`)
 Finds possible level and IV combinations from a Pokémon and CP, or calculates CP values from selected IVs and levels.
+All three tables request `page` and `limit` from the Find API and sort across
+the complete result on the server. Changing page size or sorting resets to the
+first page; a new search uses the submitted inputs, and subsequent pagination
+keeps those inputs until another search is submitted. Averages and appraisal
+counts come from the API's full-result summary. Existing rows remain visible
+under a header progress bar while the next page loads, and obsolete requests
+are cancelled.
+With local Web and API running, `npm run audit:find-pagination` checks the
+three tables in a temporary headless Google Chrome profile. It verifies page
+navigation, page size, sort reset, full-result summaries, and submitted inputs.
+Google Chrome must be installed at its standard macOS application path;
+`WEB_BASE_URL` overrides `http://localhost:9000`.
 
 #### **Calculate Stats** (`/calculate-stats`)
 Calculates CP, HP, battle stats, level, and power-up costs for a selected Pokémon and IV spread, including supported buddy, lucky, shadow, and purified states.
@@ -736,7 +749,7 @@ The API checks for new Game Master snapshots on a schedule. The web client recei
 Some previously loaded browser assets may remain cached, but data-backed pages and calculators require access to the PokeGoBreeze API.
 
 ### Is my data secure?
-Browser storage is not encrypted; do not place account credentials or other secrets in client-side configuration. Production deployments also use Vercel Analytics and Speed Insights.
+Browser storage is not encrypted; do not place account credentials or other secrets in client-side configuration. Vercel-hosted production deployments also use Vercel Analytics and Speed Insights.
 
 ### Can I suggest new features?
 Absolutely! Please open an issue on GitHub with your feature request.

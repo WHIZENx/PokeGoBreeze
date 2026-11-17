@@ -40,18 +40,19 @@ assert.match(source, /APIService\.getDpsTdo\(/, 'DPS/TDO calculations must remai
 assert.match(source, /paginationServer[\s\S]*?sortServer/, 'results must preserve server pagination and sorting');
 assert.match(
   source,
-  /tw-top-\[52px\][\s\S]*<TableLoadingProgress[\s\S]*loading=\{isShowSpinner && isNotEmpty\(dpsTable\)\}[\s\S]*label="Refreshing DPS and TDO results"/,
-  'refreshes must preserve the current table and show progress below the column header'
+  /tw-top-\[52px\][\s\S]*<TableLoadingProgress[\s\S]*loading=\{isShowSpinner\}/,
+  'initial loads and refreshes must show progress below the column header'
 );
 assert.doesNotMatch(
   source,
   /<BackdropMui[\s\S]*isNotEmpty\(dpsTable\)/,
   'refreshes must not flash a blocking backdrop over existing table rows'
 );
-assert.match(
+assert.match(source, /<CustomDataTable\s+persistTableHead/, 'column headers must remain visible before rows load');
+assert.doesNotMatch(
   source,
-  /isShowSpinner && !isNotEmpty\(dpsTable\) \? \([\s\S]*aria-label="Loading DPS and TDO results"[\s\S]*\) : \([\s\S]*<CustomDataTable/,
-  'the table and its column header must remain unmounted while loading without rows'
+  /CircularProgressTable|dps-tdo-initial-loading/,
+  'initial loads must not replace the table with a spinner'
 );
 assert.doesNotMatch(
   source,
