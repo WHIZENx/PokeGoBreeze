@@ -116,8 +116,8 @@ The versions below reflect the currently committed `package-lock.json`.
   - GitHub Actions for automated workflows
   - A push to `develop`, `stage`, or `main` deploys that branch from this repository
 - **Analytics**:
-  - Vercel Analytics
-  - Vercel Speed Insights
+  - Vercel Analytics and Speed Insights run on `.vercel.app` hosts.
+  - Firebase Hosting and other hosts skip the Vercel-only script endpoints so SPA fallbacks do not execute HTML as JavaScript.
 
 ## Project Structure
 
@@ -749,7 +749,7 @@ The API checks for new Game Master snapshots on a schedule. The web client recei
 Some previously loaded browser assets may remain cached, but data-backed pages and calculators require access to the PokeGoBreeze API.
 
 ### Is my data secure?
-Browser storage is not encrypted; do not place account credentials or other secrets in client-side configuration. Production deployments also use Vercel Analytics and Speed Insights.
+Browser storage is not encrypted; do not place account credentials or other secrets in client-side configuration. Vercel-hosted production deployments also use Vercel Analytics and Speed Insights.
 
 ### Can I suggest new features?
 Absolutely! Please open an issue on GitHub with your feature request.

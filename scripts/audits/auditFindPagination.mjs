@@ -49,7 +49,14 @@ try {
     if (message.method === 'Network.requestWillBeSent' && message.params.request.url.includes('/api/v1/find?')) {
       requests.push(new URL(message.params.request.url));
     }
-    if (message.method === 'Runtime.exceptionThrown') errors.push(message.params.exceptionDetails.text);
+    if (message.method === 'Runtime.exceptionThrown') {
+      const details = message.params.exceptionDetails;
+      errors.push({
+        message: details.exception?.description ?? details.text,
+        url: details.url,
+        line: details.lineNumber,
+      });
+    }
     const request = pending.get(message.id);
     if (!request) return;
     pending.delete(message.id);
@@ -82,19 +89,59 @@ try {
     }
     throw new Error(`Timeout: ${description}; ${await evaluate('document.body.innerText.slice(-2000)')}`);
   };
-  const table = (name) =>
-    `Array.from(document.querySelectorAll('.rdt-v7-compat')).find(e => e.textContent.includes(${JSON.stringify(name)}))`;
+  // Only fixed audit table expressions are executable code.
+  const tableExpressions = new Map([
+    [
+      'Pokémon MIN/MAX CP',
+      "Array.from(document.querySelectorAll('.rdt-v7-compat')).find(e => e.textContent.includes('Pokémon MIN/MAX CP'))",
+    ],
+    [
+      'Levels/IV for CP:',
+      "Array.from(document.querySelectorAll('.rdt-v7-compat')).find(e => e.textContent.includes('Levels/IV for CP:'))",
+    ],
+    [
+      'Levels/IV for CP: 700',
+      "Array.from(document.querySelectorAll('.rdt-v7-compat')).find(e => e.textContent.includes('Levels/IV for CP: 700'))",
+    ],
+    [
+      'Levels/CP for IV:',
+      "Array.from(document.querySelectorAll('.rdt-v7-compat')).find(e => e.textContent.includes('Levels/CP for IV:'))",
+    ],
+  ]);
+  const table = (name) => {
+    const expression = tableExpressions.get(name);
+    assert(expression, 'Unknown audit table');
+    return expression;
+  };
   const ready = (name) =>
     `(() => {const t=${table(name)};return t?.querySelectorAll('.rdt_TableRow').length > 0 && !t.querySelector('[role="progressbar"]')})()`;
   const tableAction = (name, action) =>
     evaluate(`(() => {const t=${table(name)};if(!t)throw Error('Table missing');${action}})()`);
-  const setInput = (selector, value) =>
-    evaluate(`(() => {
-    const input=document.querySelector(${JSON.stringify(selector)});
-    if(!input) throw Error('Input missing');
-    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input, ${JSON.stringify(value)});
-    input.dispatchEvent(new Event('input',{bubbles:true}));
-  })()`);
+  const setInput = async (selector, value) => {
+    const global = await send('Runtime.evaluate', { expression: 'globalThis' }, sessionId);
+    const objectId = global.result.objectId;
+    try {
+      const result = await send(
+        'Runtime.callFunctionOn',
+        {
+          objectId,
+          functionDeclaration: `function(selector, value) {
+          const input = document.querySelector(selector);
+          if (!input) throw Error('Input missing');
+          Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, value);
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        }`,
+          arguments: [{ value: selector }, { value }],
+          returnByValue: true,
+        },
+        sessionId
+      );
+      if (result.exceptionDetails)
+        throw new Error(result.exceptionDetails.exception?.description ?? result.exceptionDetails.text);
+    } finally {
+      await send('Runtime.releaseObject', { objectId }, sessionId);
+    }
+  };
   await send('Page.navigate', { url: `${baseUrl}/find-cp-iv` }, sessionId);
   await waitFor(ready('Pokémon MIN/MAX CP'), 'initial MIN/MAX rows');
   await tableAction('Pokémon MIN/MAX CP', `t.querySelector('button[title="Go to next page"]').click()`);
