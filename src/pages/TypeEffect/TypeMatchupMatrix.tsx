@@ -3,10 +3,14 @@ import IconType from '../../components/Sprites/Icon/Type/Type';
 import { DynamicObj, combineClasses, safeObjectEntries, toFloat, toNumber } from '../../utils/extension';
 import { capitalize } from '../../utils/utils';
 import { getTypeEffective } from '../../utils/helpers/options-context.helpers';
+import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 
 const multiplierClass = (value: number) => {
   if (value > 1) {
     return 'tw-bg-red-100 tw-text-red-950 dark:tw-bg-red-950 dark:tw-text-red-100';
+  }
+  if (value <= EffectiveType.VeryResistance) {
+    return 'tw-bg-green-200 tw-text-green-950 dark:tw-bg-green-900 dark:tw-text-green-100';
   }
   if (value < 1) {
     return 'tw-bg-green-100 tw-text-green-950 dark:tw-bg-green-950 dark:tw-text-green-100';
@@ -109,7 +113,7 @@ const TypeMatchupMatrix = () => {
                   return (
                     <td
                       className={combineClasses(
-                        'tw-border tw-border-solid tw-border-gray-300 tw-bg-table-primary tw-p-2 tw-text-center tw-text-caption tw-font-medium tw-transition-colors tw-transition-opacity',
+                        'tw-border tw-border-solid tw-border-gray-300 tw-p-2 tw-text-center tw-text-caption tw-font-medium tw-transition-colors tw-transition-opacity',
                         multiplierClass(multiplier),
                         selected ? 'tw-ring-2 tw-ring-inset tw-ring-primary' : '',
                         hasSelectedMultipliers && !selected ? 'tw-opacity-30' : ''

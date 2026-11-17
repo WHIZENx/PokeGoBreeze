@@ -39,6 +39,7 @@
   },
   "scripts": {
     "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "audit:find-pagination": "node scripts/audits/auditFindPagination.mjs",
     "start": "node scripts/withConfig.js vite",
     "build": "npm run generate:sitemap && cross-env VITE_CJS_IGNORE_WARNING=true vite build && npm run prerender:seo",
     "format:code": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",

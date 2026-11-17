@@ -226,8 +226,8 @@ assert.match(
 );
 assert.match(
   dpsTdo,
-  /data-testid="dps-tdo-initial-loading"[\s\S]*<CircularProgressTable \/>[\s\S]*<CustomDataTable[\s\S]*filteredEmptyState/,
-  'DPS/TDO must keep its initial loading progress outside the table while preserving the filtered empty state.'
+  /<TableLoadingProgress[\s\S]*loading=\{isShowSpinner\}[\s\S]*<CustomDataTable[\s\S]*persistTableHead[\s\S]*filteredEmptyState/,
+  'DPS/TDO must keep the column header mounted and show progress on initial loads and refreshes while preserving the filtered empty state.'
 );
 assert.match(statsInfo, /<CustomDataTable[\s\S]*filteredEmptyState[\s\S]*title=\{`Stat Battle/);
 assert.match(

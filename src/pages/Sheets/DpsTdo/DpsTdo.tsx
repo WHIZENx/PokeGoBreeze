@@ -67,7 +67,6 @@ import SelectCardMove from '../../../components/Commons/Selects/SelectCardMove';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { ProcessedDataPage } from '../../../services/processed-data.service';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
-import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import TableLoadingProgress from '../../../components/Commons/Tables/TableLoadingProgress';
 
 interface PokemonSheetData {
@@ -1241,59 +1240,50 @@ const DpsTdo = () => {
           </div>
         </div>
       </div>
-      <div className="tw-relative" data-testid="dps-tdo-results-section">
+      <div className="tw-relative" data-testid="dps-tdo-results-section" aria-busy={isShowSpinner}>
         <div className="tw-pointer-events-none tw-absolute tw-inset-x-0 tw-top-[52px] tw-z-2 tw-h-1">
           <TableLoadingProgress
-            loading={isShowSpinner && isNotEmpty(dpsTable)}
-            label="Refreshing DPS and TDO results"
+            loading={isShowSpinner}
+            label={isNotEmpty(dpsTable) ? 'Refreshing DPS and TDO results' : 'Loading DPS and TDO results'}
           />
         </div>
-        {isShowSpinner && !isNotEmpty(dpsTable) ? (
-          <div
-            className="tw-flex tw-min-h-64 tw-items-center tw-justify-center tw-bg-custom-default"
-            role="status"
-            aria-label="Loading DPS and TDO results"
-            data-testid="dps-tdo-initial-loading"
-          >
-            <CircularProgressTable />
-          </div>
-        ) : (
-          <CustomDataTable
-            filteredEmptyState
-            customColumns={tableColumns}
-            data={dpsTable}
-            pagination
-            paginationServer
-            paginationTotalRows={totalRows}
-            paginationResetDefaultPage={resetPaginationToggle}
-            sortServer
-            defaultSortFieldId={defaultSorted.selectedColumn}
-            defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC}
-            highlightOnHover
-            striped
-            paginationDefaultPage={defaultPage}
-            paginationPerPage={defaultRowPerPage}
-            onChangePage={(page) => {
-              setDefaultPage(page);
-            }}
-            onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
-              setDefaultPage(currentPage);
-              setDefaultRowPerPage(currentRowsPerPage);
-            }}
-            onSort={(selectedColumn, sortDirection) => {
-              setDefaultPage(1);
-              setResetPaginationToggle((value) => !value);
-              setDefaultSorted(
-                OptionDPSSort.create({
-                  selectedColumn: toNumber(selectedColumn.id, ColumnType.Id),
-                  sortDirection: isEqual(sortDirection, SortOrderType.ASC)
-                    ? SortDirectionType.ASC
-                    : SortDirectionType.DESC,
-                })
-              );
-            }}
-          />
-        )}
+        <CustomDataTable
+          persistTableHead
+          noDataComponent={isShowSpinner ? <div className="tw-min-h-64" aria-hidden="true" /> : undefined}
+          filteredEmptyState
+          customColumns={tableColumns}
+          data={dpsTable}
+          pagination
+          paginationServer
+          paginationTotalRows={totalRows}
+          paginationResetDefaultPage={resetPaginationToggle}
+          sortServer
+          defaultSortFieldId={defaultSorted.selectedColumn}
+          defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC}
+          highlightOnHover
+          striped
+          paginationDefaultPage={defaultPage}
+          paginationPerPage={defaultRowPerPage}
+          onChangePage={(page) => {
+            setDefaultPage(page);
+          }}
+          onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
+            setDefaultPage(currentPage);
+            setDefaultRowPerPage(currentRowsPerPage);
+          }}
+          onSort={(selectedColumn, sortDirection) => {
+            setDefaultPage(1);
+            setResetPaginationToggle((value) => !value);
+            setDefaultSorted(
+              OptionDPSSort.create({
+                selectedColumn: toNumber(selectedColumn.id, ColumnType.Id),
+                sortDirection: isEqual(sortDirection, SortOrderType.ASC)
+                  ? SortDirectionType.ASC
+                  : SortDirectionType.DESC,
+              })
+            );
+          }}
+        />
       </div>
     </div>
   );
