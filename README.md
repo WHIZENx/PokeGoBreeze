@@ -440,13 +440,23 @@ npm ci
    authoritative credential list. Branches map to Vercel as follows:
    `develop` → Preview develop, `stage` → Preview stage, and `main` →
    Production. Firebase Hosting uses the same branch and API environment
-   mapping:
+   mapping. The Vercel project is deployed by GitHub Actions rather than a
+   direct Vercel Git connection, so Preview deployments receive
+   `REACT_APP_DEPLOYMENT_MODE` and `REACT_APP_DATA_API_URL` explicitly as
+   build environment variables. This keeps the long-lived Preview aliases
+   isolated even when the generic Preview fallback targets the develop API:
 
    | Branch | Firebase Hosting | Data API |
    |---|---|---|
    | `develop` | `pokego-breeze-develop.web.app` | `pokego-breeze-api-develop.vercel.app` |
    | `stage` | `pokego-breeze-stage.web.app` | `pokego-breeze-api-stage.vercel.app` |
    | `main` | `pokego-breeze.web.app` | `pokego-breeze-api.vercel.app` |
+
+   Vercel Development uses `development` and `http://localhost:3001` for
+   `vercel dev`. Generic Preview deployments use `development` and the develop
+   API; the workflow overrides those values with `staging` and the stage API
+   when deploying the `stage` branch. Production continues to use the
+   Production values configured in Vercel.
 
    The deployment workflow validates that the selected API URL is embedded in
    the Firebase build and verifies the hosted SPA route after deployment. SPA
