@@ -293,6 +293,18 @@ League IV/stat-product table for a selected Pokémon and CP limit, with optional
 
 #### **Find CP/IV** (`/find-cp-iv`)
 Finds possible level and IV combinations from a Pokémon and CP, or calculates CP values from selected IVs and levels.
+All three tables request `page` and `limit` from the Find API and sort across
+the complete result on the server. Changing page size or sorting resets to the
+first page; a new search uses the submitted inputs, and subsequent pagination
+keeps those inputs until another search is submitted. Averages and appraisal
+counts come from the API's full-result summary. Existing rows remain visible
+under a header progress bar while the next page loads, and obsolete requests
+are cancelled.
+With local Web and API running, `npm run audit:find-pagination` checks the
+three tables in a temporary headless Google Chrome profile. It verifies page
+navigation, page size, sort reset, full-result summaries, and submitted inputs.
+Google Chrome must be installed at its standard macOS application path;
+`WEB_BASE_URL` overrides `http://localhost:9000`.
 
 #### **Calculate Stats** (`/calculate-stats`)
 Calculates CP, HP, battle stats, level, and power-up costs for a selected Pokémon and IV spread, including supported buddy, lucky, shadow, and purified states.

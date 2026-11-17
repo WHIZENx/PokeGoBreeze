@@ -1,7 +1,6 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { createDataRows, HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
-import APIService from '../../../services/api.service';
 
 import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
 import { Box, Rating } from '@mui/material';
@@ -12,8 +11,6 @@ import {
   IPredictStatsCalculate,
   IPredictCPModel,
   IPredictCPCalculate,
-  PredictStatsModel,
-  PredictCPModel,
 } from '../../../utils/models/calculate.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
@@ -33,21 +30,13 @@ import InputMui from '../../../components/Commons/Inputs/InputMui';
 import ButtonMui from '../../../components/Commons/Buttons/ButtonMui';
 import { useSnackbar } from '../../../contexts/snackbar.context';
 import { pokemonGoAppraisalStars } from './appraisal';
+import { useFindTable } from './useFindTable';
+import TableLoadingProgress from '../../../components/Commons/Tables/TableLoadingProgress';
 
 interface IFindCP {
   level: number;
   minCP: number;
   maxCP: number;
-}
-
-class FindCP implements IFindCP {
-  level = 0;
-  minCP = 0;
-  maxCP = 0;
-
-  constructor({ ...props }: IFindCP) {
-    Object.assign(this, props);
-  }
 }
 
 const columnsIV = createDataRows<TableColumn<IPredictStatsModel>>(
@@ -180,6 +169,13 @@ const columns = createDataRows<TableColumn<IFindCP>>(
   }
 );
 
+const tableTitle = (title: string, loading: boolean) => (
+  <div className="tw-relative tw-w-full tw-py-3">
+    {title}
+    <TableLoadingProgress loading={loading} />
+  </div>
+);
+
 const FindTable = () => {
   useTitle({
     title: 'Find CP&IV - Tool',
@@ -195,13 +191,24 @@ const FindTable = () => {
   const [searchDEFIv, setSearchDEFIv] = useState(0);
   const [searchSTAIv, setSearchSTAIv] = useState(0);
 
-  const [preIvArr, setPreIvArr] = useState<IPredictStatsCalculate>();
-  const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
-  const [minMaxRows, setMinMaxRows] = useState<IFindCP[]>([]);
-  const findIvController = useRef<AbortController>();
-  const findCpController = useRef<AbortController>();
-
   const { showSnackbar } = useSnackbar();
+  const ivTable = useFindTable<IPredictStatsModel, IPredictStatsCalculate>(
+    'percent',
+    (error) => showSnackbar(`Unable to calculate IV: ${error}`, 'error'),
+    (result) => {
+      const name = splitAndCapitalize(searchingToolCurrentDetails?.fullName ?? '', '_', ' ');
+      showSnackbar(`At CP: ${result.CP} impossible found in ${name}`, 'error');
+    }
+  );
+  const cpTable = useFindTable<IPredictCPModel, IPredictCPCalculate>('level', (error) =>
+    showSnackbar(`Unable to calculate CP: ${error}`, 'error')
+  );
+  const minMaxTable = useFindTable<IFindCP, { result: IFindCP[] }>('level', (error) =>
+    showSnackbar(`Unable to calculate CP: ${error}`, 'error')
+  );
+  const { data: preIvArr, summary: ivSummary } = ivTable;
+  const { data: preCpArr, summary: cpSummary } = cpTable;
+  const { submit: submitMinMax, clear: clearMinMax } = minMaxTable;
 
   const calculationParams = useCallback(
     () => ({
@@ -218,40 +225,15 @@ const FindTable = () => {
     [searchingToolCurrentDetails]
   );
 
-  const findStatsIv = useCallback(async () => {
+  const findStatsIv = useCallback(() => {
     if (!searchingToolCurrentDetails) {
       return;
     }
     if (toNumber(searchCP) < minCp()) {
       return showSnackbar(`Please input CP greater than or equal to ${minCp()}`, 'error');
     }
-    findIvController.current?.abort();
-    const controller = new AbortController();
-    findIvController.current = controller;
-    try {
-      const { data } = await APIService.getFetchUrl<{ data: IPredictStatsCalculate }>(
-        APIService.getFindCalculation({ ...calculationParams(), mode: 'iv', cp: searchCP }),
-        { signal: controller.signal }
-      );
-      const result = data.data;
-      if (!isNotEmpty(result.result)) {
-        setPreIvArr(undefined);
-        const name = splitAndCapitalize(searchingToolCurrentDetails.fullName, '_', ' ');
-        return showSnackbar(`At CP: ${result.CP} impossible found in ${name}`, 'error');
-      }
-      setPreIvArr(result);
-    } catch (error) {
-      if (APIService.isCancel(error)) {
-        return;
-      }
-      setPreIvArr(undefined);
-      showSnackbar(`Unable to calculate IV: ${error}`, 'error');
-    } finally {
-      if (findIvController.current === controller) {
-        findIvController.current = undefined;
-      }
-    }
-  }, [searchingToolCurrentDetails, searchCP, calculationParams]);
+    ivTable.submit({ ...calculationParams(), mode: 'iv', cp: searchCP });
+  }, [searchingToolCurrentDetails, searchCP, calculationParams, ivTable.submit]);
 
   const onFindStats = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -262,17 +244,15 @@ const FindTable = () => {
   );
 
   const clearArrStats = useCallback(() => {
-    findIvController.current?.abort();
-    findCpController.current?.abort();
-    setPreIvArr(undefined);
-    setPreCpArr(undefined);
+    ivTable.clear();
+    cpTable.clear();
     setSearchCP('');
     setSearchATKIv(0);
     setSearchDEFIv(0);
     setSearchSTAIv(0);
-  }, []);
+  }, [ivTable.clear, cpTable.clear]);
 
-  const findStatsCP = useCallback(async () => {
+  const findStatsCP = useCallback(() => {
     if (!searchingToolCurrentDetails) {
       return;
     }
@@ -280,60 +260,22 @@ const FindTable = () => {
       showSnackbar(`Please input IV between ${minIv()} - ${maxIv()}.`, 'error');
       return;
     }
-    findCpController.current?.abort();
-    const controller = new AbortController();
-    findCpController.current = controller;
-    try {
-      const { data } = await APIService.getFetchUrl<{ data: IPredictCPCalculate }>(
-        APIService.getFindCalculation({
-          ...calculationParams(),
-          mode: 'cp',
-          atkIv: searchATKIv,
-          defIv: searchDEFIv,
-          staIv: searchSTAIv,
-        }),
-        { signal: controller.signal }
-      );
-      setPreCpArr(data.data);
-    } catch (error) {
-      if (APIService.isCancel(error)) {
-        return;
-      }
-      setPreCpArr(undefined);
-      showSnackbar(`Unable to calculate CP: ${error}`, 'error');
-    } finally {
-      if (findCpController.current === controller) {
-        findCpController.current = undefined;
-      }
-    }
-  }, [searchingToolCurrentDetails, searchATKIv, searchDEFIv, searchSTAIv, calculationParams]);
+    cpTable.submit({
+      ...calculationParams(),
+      mode: 'cp',
+      atkIv: searchATKIv,
+      defIv: searchDEFIv,
+      staIv: searchSTAIv,
+    });
+  }, [searchingToolCurrentDetails, searchATKIv, searchDEFIv, searchSTAIv, calculationParams, cpTable.submit]);
 
   useEffect(() => {
     if (!searchingToolCurrentDetails) {
-      setMinMaxRows([]);
+      clearMinMax();
       return;
     }
-    const controller = new AbortController();
-    APIService.getFetchUrl<{ data: { result: IFindCP[] } }>(
-      APIService.getFindCalculation({ ...calculationParams(), mode: 'minmax' }),
-      { signal: controller.signal }
-    )
-      .then(({ data }) => setMinMaxRows(data.data.result.map((row) => new FindCP(row))))
-      .catch((error) => {
-        if (!APIService.isCancel(error)) {
-          setMinMaxRows([]);
-        }
-      });
-    return () => controller.abort();
-  }, [searchingToolCurrentDetails, calculationParams]);
-
-  useEffect(
-    () => () => {
-      findIvController.current?.abort();
-      findCpController.current?.abort();
-    },
-    []
-  );
+    submitMinMax({ ...calculationParams(), mode: 'minmax' });
+  }, [searchingToolCurrentDetails, calculationParams, submitMinMax, clearMinMax]);
 
   const onFindCP = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -356,67 +298,38 @@ const FindTable = () => {
           <b className={isEqual(style, 'zero') ? 'tw-text-default' : 'tw-text-black'}>{star}</b>
         </div>
       </div>
-      <p>{toFloatWithPadding((toNumber(star) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
+      <p>{toFloatWithPadding((toNumber(star) * 100) / (ivSummary?.total || 1), 2)}%</p>
     </div>
   );
 
   const showResultTableIV = () => {
-    const avgPercent =
-      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.percent, 0) /
-      toNumber(preIvArr?.result.length, 1);
-    const avgHP =
-      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.hp, 0) /
-      toNumber(preIvArr?.result.length, 1);
-    let fourStar = 0,
-      threeStar = 0,
-      twoStar = 0,
-      oneStar = 0,
-      zeroStar = 0;
-    for (const item of preIvArr?.result ?? []) {
-      switch (pokemonGoAppraisalStars(item)) {
-        case 4:
-          fourStar++;
-          break;
-        case 3:
-          threeStar++;
-          break;
-        case 2:
-          twoStar++;
-          break;
-        case 1:
-          oneStar++;
-          break;
-        default:
-          zeroStar++;
-      }
-    }
     return (
       <Fragment>
         {isNotEmpty(preIvArr?.result) && (
           <Fragment>
             <p className="tw-mt-2">
-              All of result: <b>{preIvArr?.result.length}</b>
+              All of result: <b>{ivSummary?.total}</b>
             </p>
             <p className="tw-mt-2">
-              Average of percent: <b>{toFloatWithPadding(avgPercent, 2)}</b>
+              Average of percent: <b>{toFloatWithPadding(ivSummary?.averagePercent ?? 0, 2)}</b>
             </p>
             <p className="tw-mt-2">
-              Average of HP: <b>{Math.round(avgHP)}</b>
+              Average of HP: <b>{Math.round(ivSummary?.averageHp ?? 0)}</b>
             </p>
-            {renderStar(fourStar, 3, 'four')}
-            {renderStar(threeStar, 3, 'three')}
-            {renderStar(twoStar, 2, 'two')}
-            {renderStar(oneStar, 1, 'one')}
-            {renderStar(zeroStar, 0, 'zero')}
+            {renderStar(ivSummary?.stars[4], 3, 'four')}
+            {renderStar(ivSummary?.stars[3], 3, 'three')}
+            {renderStar(ivSummary?.stars[2], 2, 'two')}
+            {renderStar(ivSummary?.stars[1], 1, 'one')}
+            {renderStar(ivSummary?.stars[0], 0, 'zero')}
           </Fragment>
         )}
         <div className="find-iv-result-table">
           <CustomDataTable
             filteredEmptyState
-            title={`Levels/IV for CP: ${preIvArr?.CP}`}
+            title={tableTitle(`Levels/IV for CP: ${preIvArr?.CP}`, ivTable.loading)}
             columns={columnsIV}
             data={getValueOrDefault(Array, preIvArr?.result)}
-            pagination
+            {...ivTable.tableProps}
             defaultSortFieldId={ColumnType.Percent}
             defaultSortAsc={false}
             conditionalRowStyles={conditionalRowStyles}
@@ -429,30 +342,27 @@ const FindTable = () => {
   };
 
   const showResultTableCP = () => {
-    const avgCp =
-      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.CP, 0) /
-      toNumber(preCpArr?.result.length, 1);
-    const avgHP =
-      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) /
-      toNumber(preCpArr?.result.length, 1);
     return (
       <Fragment>
         {isNotEmpty(preCpArr?.result) && (
           <Fragment>
             <p className="tw-mt-2">
-              Average of CP: <b>{Math.round(avgCp)}</b>
+              Average of CP: <b>{Math.round(cpSummary?.averageCp ?? 0)}</b>
             </p>
             <p className="tw-mt-2">
-              Average of HP: <b>{Math.round(avgHP)}</b>
+              Average of HP: <b>{Math.round(cpSummary?.averageHp ?? 0)}</b>
             </p>
           </Fragment>
         )}
         <CustomDataTable
           filteredEmptyState
-          title={`Levels/CP for IV: ${preCpArr?.IV.atkIV}/${preCpArr?.IV.defIV}/${preCpArr?.IV.staIV}`}
+          title={tableTitle(
+            `Levels/CP for IV: ${preCpArr?.IV.atkIV}/${preCpArr?.IV.defIV}/${preCpArr?.IV.staIV}`,
+            cpTable.loading
+          )}
           columns={columnsCP}
           data={getValueOrDefault(Array, preCpArr?.result)}
-          pagination
+          {...cpTable.tableProps}
           defaultSortFieldId={ColumnType.Level}
           highlightOnHover
           striped
@@ -467,10 +377,10 @@ const FindTable = () => {
     }
     return (
       <CustomDataTable
-        title="Pokémon MIN/MAX CP"
+        title={tableTitle('Pokémon MIN/MAX CP', minMaxTable.loading)}
         columns={columns}
-        data={minMaxRows}
-        pagination
+        data={minMaxTable.data?.result ?? []}
+        {...minMaxTable.tableProps}
         defaultSortFieldId={ColumnType.Level}
         striped
         highlightOnHover
