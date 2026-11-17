@@ -197,6 +197,7 @@ const RankingPVP = (props: IStyleSheetData) => {
         to={`/pvp/${params.cp}/${params.serie?.toLowerCase()}/${data.data?.speciesId?.replaceAll('_', '-')}?${
           Params.LeagueType
         }=${getValueOrDefault(String, loadedLeagueType, getKeyWithData(ScoreType, ScoreType.Overall)).toLowerCase()}`}
+        funcOnClick={(event) => event.stopPropagation()}
       >
         <VisibilityIcon className="view-pokemon tw-text-default" fontSize="large" />
       </LinkToTop>

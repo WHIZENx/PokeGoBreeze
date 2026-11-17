@@ -17,6 +17,7 @@ import RouterSync from './utils/hooks/useRouterSync';
 import LoadingPersist from './components/Sprites/Loading/LoadingPersist';
 
 const { store, persistor } = configureStore();
+const supportsVercelTelemetry = window.location.hostname.endsWith('.vercel.app');
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -30,8 +31,12 @@ root.render(
         </BrowserRouter>
       </PersistGate>
     </Provider>
-    <Analytics />
-    <SpeedInsights />
+    {supportsVercelTelemetry && (
+      <>
+        <Analytics />
+        <SpeedInsights />
+      </>
+    )}
   </>
 );
 

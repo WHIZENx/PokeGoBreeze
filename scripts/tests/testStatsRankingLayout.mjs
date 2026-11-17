@@ -60,7 +60,17 @@ assert.match(
 assert.match(
   statsRankingSource,
   /if \(locate && data\.selected\) \{[\s\S]*applySelection\(data\.selected\);/,
-  'Stats Ranking must only apply a server-selected Pokémon while resolving an explicit deep link'
+  'Stats Ranking must apply a server-selected Pokémon while resolving an explicit deep link'
+);
+assert.match(
+  statsRankingSource,
+  /else if \(!paramId && !hasSelectedPokemonRef\.current\) \{[\s\S]*const initialRow = data\.data\[0\];[\s\S]*applySelection\(initialRow\)/,
+  'A bare Stats Ranking route must select its first result once without replacing selection on pagination.'
+);
+assert.match(
+  statsRankingSource,
+  /const applySelection = \(row: IPokemonStatsRanking\) => \{\s*hasSelectedPokemonRef\.current = true;/,
+  'Both initial and explicit selections must prevent later page results from selecting another Pokémon.'
 );
 assert.doesNotMatch(
   statsRankingSource,
