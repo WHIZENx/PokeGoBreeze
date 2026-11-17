@@ -14,7 +14,6 @@ env:
   APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
   REACT_APP_EDGE_ID: ${{ secrets.REACT_APP_EDGE_ID }}
   REACT_APP_EDGE_READ_TOKEN: ${{ secrets.REACT_APP_EDGE_READ_TOKEN }}
-  REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
   # Public API aliases are branch-specific. Keep this explicit so non-Vercel
   # builders (Firebase Hosting and PR previews) receive the same API endpoint.
   REACT_APP_DATA_API_URL: ${{ github.ref_name == 'main' && 'https://pokego-breeze-api.vercel.app' || github.ref_name == 'stage' && 'https://pokego-breeze-api-stage.vercel.app' || 'https://pokego-breeze-api-develop.vercel.app' }}

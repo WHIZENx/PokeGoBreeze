@@ -66,7 +66,7 @@ The versions below reflect the currently committed `package-lock.json`.
   - PostCSS 8.5.26 with Autoprefixer 10.5.0
   - Shared typography tokens keep MUI, Tailwind, semantic elements, and native controls on one font and metric system
 - **Data Visualization**:
-  - React Data Table Component 7.7.0 for data grids
+  - React Data Table Component 8.12.0 for data grids
   - React XArrows 2.0.2 for visual connections
 - **Utilities**:
   - Lodash 4.18.1 for data manipulation
@@ -88,8 +88,8 @@ The versions below reflect the currently committed `package-lock.json`.
 - **Code Quality**:
   - ESLint 10.10.0 flat config with typescript-eslint 8.70.0 and eslint-react 5.19.1
   - Prettier 3.6.2 for code formatting
-  - Stylelint 17.16.0 with Stylistic 5.3.0 for SCSS/CSS linting
-  - Vite ESLint 3.0.1 and Stylelint 6.1.0 plugins for development feedback
+  - Stylelint 17.16.0 with `@stylistic/stylelint-plugin` 5.3.1 for SCSS/CSS linting
+  - `@nabla/vite-plugin-eslint` 3.0.1 and `vite-plugin-stylelint` 6.3.0 for development feedback
 - **TypeScript**:
   - Strict type checking (TypeScript 5.5.3)
   - Custom type definitions
@@ -111,7 +111,7 @@ The versions below reflect the currently committed `package-lock.json`.
 - **Hosting**:
   - Vercel deployments for production and branch environments
   - Firebase Hosting deployments and pull-request previews
-- **Containerization**: Docker support with Docker Compose
+- **Containerization**: Docker Compose development environment with hot reload
 - **CI/CD**:
   - GitHub Actions for automated workflows
   - A push to `develop`, `stage`, or `main` deploys that branch from this repository
@@ -121,9 +121,16 @@ The versions below reflect the currently committed `package-lock.json`.
 
 ## Project Structure
 
+This tree shows the complete top-level `src` layout and selected feature subdirectories.
+
 ```text
 src/
 ├── assets/                 # Images, icons, global styles, themes, and shared style types
+│   ├── generated/          # Generated local UI, move-type, and Pokémon icon assets
+│   │   ├── move-type-hq/
+│   │   ├── move-type-mask/
+│   │   ├── pokemon-go-ui/
+│   │   └── pokemon-icons/
 │   ├── styles/
 │   └── types/
 ├── components/             # Reusable UI and domain components
@@ -140,13 +147,12 @@ src/
 │   ├── Sprites/
 │   ├── enums/
 │   └── models/
-├── composables/            # Store-backed application hooks
+├── composables/            # Reusable application hooks and store adapters
 ├── contexts/               # Options and snackbar React contexts
 ├── core/                   # Shared domain contracts
 │   ├── constants/
 │   ├── enums/
 │   └── models/
-├── data/                   # Client-owned CP multiplier and candy-color reference data
 ├── enums/                  # Application-level enumerations
 ├── pages/                  # Route views and page-local code
 │   ├── Error/
@@ -182,11 +188,11 @@ src/
 │   │   ├── RaidBattle/
 │   │   ├── SearchBattle/
 │   │   └── StatsInfo/
-│   ├── Trainer/            # Registered experimental/legacy Trainer Lab route
+│   ├── Trainer/            # Trainer Lab battle simulator and level rewards
 │   ├── TypeEffect/
 │   ├── Weather/
 │   └── models/
-├── services/               # API, processed-data, and stats-calculation services
+├── services/               # API, processed-data, CPM, route-prefetch, and calculation services
 │   └── models/
 ├── store/                  # Redux state and persistence
 │   ├── actions/
@@ -331,8 +337,9 @@ Browses sticker data and pack information with Pokémon association and shop-ava
 ### 🧪 Experimental
 
 #### **Trainer Lab** (`/trainer`)
-Registered legacy Team Leader battle tool. The route remains available for
-testing but is intentionally hidden from the primary navigation.
+API-backed Team Leader battle simulator with league, opponent, team, IV, level,
+move, and timeline controls plus Trainer level rewards. The experimental route
+is registered and indexed but remains hidden from the primary navigation.
 
 ### 🧭 Navigation & Errors
 
@@ -393,11 +400,16 @@ npm ci
 
    **Option A — `config.json` (recommended for local dev, no Vercel account needed)**
 
-   Copy the example file and fill in the values:
+   Copy the local config and environment examples:
    ```bash
    cp config.example.json config.json
+   cp .env.example .env
    ```
-   Edit `config.json` with your values. This file is gitignored and takes precedence over Vercel Edge Config when present. No Edge Config credentials are required, but data-backed pages still need a compatible `REACT_APP_DATA_API_URL` value in the selected configuration.
+   Edit `config.json` with the application options and version keys. This file
+   is gitignored and takes precedence over Vercel Edge Config when present, so
+   Edge Config credentials are not required. Set `REACT_APP_DATA_API_URL` in
+   `.env` to a compatible API and leave `REACT_APP_VERSION` empty when the
+   version should come from `config.json`.
 
    **Option B — Vercel Edge Config**
 
@@ -411,7 +423,6 @@ npm ci
    | Variable | When required | Purpose |
    |---|---|---|
    | `REACT_APP_DEPLOYMENT_MODE` | Optional | `development` (default), `staging`, or `production` |
-   | `REACT_APP_BASE_URL` | Sitemap builds | Public application URL used by the sitemap generator |
    | `REACT_APP_DATA_API_URL` | Data-backed pages | Base URL of a compatible PokeGoBreeze API deployment |
    | `REACT_APP_EDGE_TOKEN` | Local `deploy.sh` | Edge Config write token |
    | `REACT_APP_EDGE_READ_TOKEN` | Edge Config mode | Edge Config read token when `config.json` is absent |
@@ -419,11 +430,17 @@ npm ci
    | `REACT_APP_VERSION` | Optional | Overrides the version selected from config |
    | `MONGODB_URI` | Optional | Records deployment versions when running `deploy.sh` |
 
-   GitHub Actions deployment also requires the `VERCEL_TOKEN` Actions secret
-   and the `VERCEL_ORG_ID` plus `VERCEL_PROJECT_ID` Actions variables. Branches
-   map to Vercel as follows: `develop` → Preview develop, `stage` → Preview
-   stage, and `main` → Production. Firebase Hosting uses the same branch and API
-   environment mapping:
+   GitHub Actions deployment uses the `REACT_APP_EDGE_ID`,
+   `REACT_APP_EDGE_READ_TOKEN`, `REACT_APP_EDGE_TOKEN`, and `VERCEL_TOKEN`
+   secrets plus the `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` Actions variables.
+   `MONGODB_URI` is optional. Firebase branch deployments use `FIREBASE_TOKEN`,
+   while same-repository pull-request previews use
+   `FIREBASE_SERVICE_ACCOUNT_POKEGO_BREEZE`. Treat
+   [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) as the
+   authoritative credential list. Branches map to Vercel as follows:
+   `develop` → Preview develop, `stage` → Preview stage, and `main` →
+   Production. Firebase Hosting uses the same branch and API environment
+   mapping:
 
    | Branch | Firebase Hosting | Data API |
    |---|---|---|
@@ -499,30 +516,23 @@ The npm `prebuild` lifecycle cleans `dist/` automatically before `npm run build`
 npx vite preview
 ```
 
-### Docker Deployment
+### Docker Development
 
 **Development with Docker** (hot-reload on `localhost:9000`):
 ```bash
-# Copy the example config and set up your .env first
+# Copy the Compose example and configure config.json or Edge Config first
 cp docker-compose.example.yml docker-compose.yml
-cp .env.example .env  # fill in your values
+cp config.example.json config.json
+cp .env.example .env  # set REACT_APP_DATA_API_URL and local values
 
 # Build and start development container
 docker compose up app-dev
 ```
 
-**Production image with Docker** (Nginx on `localhost:8000`):
-```bash
-# Using the example Compose file
-docker compose up --build app-prod
-
-# Or build the self-contained Nginx image directly
-docker build -f Dockerfile -t pokego-breeze:latest .
-docker run --rm -p 8000:80 pokego-breeze:latest
-```
-
-The production Dockerfile already contains Nginx and the compiled application,
-so `app-prod` does not require a second Nginx service or a shared `dist` volume.
+The committed example is supported for local development. Production releases
+use the Firebase and Vercel workflows below; the example Compose production
+service does not currently inject the build-time configuration required by
+`npm run deploy`.
 
 ### Deployment Options
 
@@ -564,16 +574,17 @@ state may be unavailable or stale. When deployed, `public/_headers` supplies
 the static-asset cache policy and Cloudflare's SPA fallback handles routes
 because the build has no top-level `404.html`.
 
-### Project Scripts
+### Common Project Scripts
 
 | Script | Description |
 |--------|-------------|
 | `npm start` | Start Vite dev server (loads `config.json` if present, otherwise fetches Vercel Edge Config) |
 | `npm run develop` | Alias for `npm start` |
-| `npm run build` | Build production bundle and generate sitemap |
-| `npm run build:vite` | Build production bundle only (no sitemap) |
+| `npm run build` | Generate sitemap files, build the production bundle, and prerender SEO routes |
+| `npm run build:vite` | Build the production bundle only, without sitemap generation or SEO prerendering |
 | `npm run prebuild` | Clean `dist/` (runs automatically before `npm run build`) |
-| `npm run deploy` | Load runtime config, then lint, generate the sitemap, and build for the configured deployment mode |
+| `npm run deploy` | Load configuration, then lint, generate sitemap files, build, and prerender for the configured deployment mode |
+| `npm run audit:prod` | Audit production dependencies at high severity or above |
 | `npm run lint` | Run ESLint and Stylelint |
 | `npm run lint:code` | Run ESLint only |
 | `npm run lint:style` | Run Stylelint only |
@@ -581,9 +592,15 @@ because the build has no top-level `404.html`.
 | `npm run format` | Format code with Prettier and Stylelint |
 | `npm run format:code` | Run Prettier only |
 | `npm run format:style` | Run Stylelint --fix only |
-| `npm run generate:sitemap` | Generate sitemap.xml for SEO |
+| `npm run generate:sitemap` | Generate the sitemap index and grouped sitemap files from the API SEO-route manifest |
+| `npm run prerender:seo` | Prerender static and API-provided SEO routes into `dist/` |
+| `npm run update:local-ui-assets` | Refresh generated local Pokémon GO UI and move-type assets |
+| `npm run update:pokemon-icon-sheet` | Refresh the generated Pokémon icon sheet and index |
 | `npm run test-vite` | Start Vite directly without runtime config loading |
 | `npm run debug-vite` | Start Vite directly with `--debug --force` for diagnostics |
+
+Feature-specific `test:*` and `audit:*` commands are declared in
+`package.json` and organized under [`scripts/`](scripts/README.md).
 
 ### Browser Support
 
@@ -704,7 +721,7 @@ When reporting issues, please include:
 
 ## Project Status
 
-### Recent Changes
+### Implemented Capabilities
 
 - Added paginated Game Master patch notes with readable field changes and linked entity assets.
 - Moved processed datasets and calculation-heavy tools to versioned API endpoints.
@@ -728,7 +745,7 @@ When reporting issues, please include:
 - **Deployment Secrets**: CI and hosting credentials belong in GitHub/Vercel/Firebase secret stores, never in client configuration
 - **Operational Telemetry**: Vercel Analytics and Speed Insights contain no Pokémon GO account credentials
 - **HTTPS Only**: All production deployments use HTTPS
-- **Dependency Controls**: The committed lockfile, targeted overrides, install-script allowlist, and `npm audit` are used to control dependency risk
+- **Dependency Controls**: The committed lockfile, targeted overrides, and `npm audit` are used to control dependency risk
 
 ## Acknowledgments
 
