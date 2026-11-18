@@ -109,7 +109,14 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                             <small>(Default)</small>
                           </b>
                         )}
-                        {toNumber(value.form.id) <= 0 && <small className="tw-text-error">* Only in GO</small>}
+                        {toNumber(value.form.id) <= 0 && (
+                          <small
+                            className="tw-text-secondary"
+                            title="Defined in Pokémon GO data; this does not confirm release in the game."
+                          >
+                            * GO-specific form
+                          </small>
+                        )}
                       </div>
                     </div>
                   }
