@@ -69,7 +69,11 @@ jobs:
             ALIAS=poke-go-breeze.vercel.app
           else
             vercel pull --yes --environment=preview --git-branch="$GITHUB_REF_NAME" --token="$CLI_TOKEN"
-            DEPLOYMENT_URL=$(vercel deploy --force --local-config=vercel.preview.json --token="$CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --force \
+              --local-config=vercel.preview.json \
+              --build-env REACT_APP_DEPLOYMENT_MODE="$REACT_APP_DEPLOYMENT_MODE" \
+              --build-env REACT_APP_DATA_API_URL="$REACT_APP_DATA_API_URL" \
+              --token="$CLI_TOKEN")
             ALIAS="poke-go-breeze-${GITHUB_REF_NAME}.vercel.app"
           fi
           vercel alias set "$DEPLOYMENT_URL" "$ALIAS" --token="$CLI_TOKEN"

@@ -122,7 +122,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
         <div className="tw-h-full tw-flex tw-flex-col tw-justify-between tw-gap-2">
           <div>
             <div className="tw-flex tw-justify-center tw-p-2">
-              <span className="tw-relative tw-block tw-w-24">
+              <span className="tw-relative tw-block tw-h-24 tw-w-24 tw-shrink-0">
                 <img
                   className="pokemon-sprite-large"
                   alt={`#${props.id} ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}
