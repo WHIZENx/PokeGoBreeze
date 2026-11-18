@@ -67,7 +67,8 @@ import {
 } from '../../utils/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
-import { PokemonType } from '../../enums/type.enum';
+import { PokemonClass, PokemonType } from '../../enums/type.enum';
+import ClassificationBadge from './components/ClassificationBadge';
 import {
   deduplicatePokemonFormSelections,
   hasPokemonGoBattleModifierCatalog,
@@ -953,6 +954,32 @@ const Pokemon = (props: IPokemonPage) => {
         ? 'purified'
         : '';
 
+  const classificationLabels: string[] = [];
+  if (progress.isLoadedForms && isMainImageReady) {
+    const pokemonClass = searchingMainDetails?.pokemonClass;
+    if (pokemonClass === PokemonClass.Legendary || data?.isLegendary) {
+      classificationLabels.push('Legendary');
+    } else if (pokemonClass === PokemonClass.Mythical || data?.isMythical) {
+      classificationLabels.push('Mythical');
+    } else if (pokemonClass === PokemonClass.UltraBeast) {
+      classificationLabels.push('Ultra Beast');
+    }
+    const formLabels: Partial<Record<PokemonType, string>> = {
+      [PokemonType.Mega]: 'Mega',
+      [PokemonType.Primal]: 'Primal',
+      [PokemonType.GMax]: 'Gigantamax',
+      [PokemonType.Shadow]: 'Shadow',
+      [PokemonType.Purified]: 'Purified',
+    };
+    const formLabel = formLabels[searchingMainForm?.form?.pokemonType ?? PokemonType.None];
+    if (formLabel) {
+      classificationLabels.push(formLabel);
+    }
+    if (data?.isBaby) {
+      classificationLabels.push('Baby');
+    }
+  }
+
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
       <div className="tw-w-full row prev-next-block tw-sticky tw-top-14">
@@ -987,22 +1014,34 @@ const Pokemon = (props: IPokemonPage) => {
             icon={iconData}
             releasedGO={releasedAlert?.releasedGO}
           />
-          <div
-            className={combineClasses(
-              'tw-relative tw-isolate tw-inline-flex tw-align-bottom tw-items-center tw-justify-center tw-overflow-visible img-desc pokemon-profile-aura',
-              profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
-            )}
-            aria-busy={showMainImageSkeleton}
-            data-testid="pokemon-profile-image"
-            data-profile-modifier={profileModifier}
-          >
-            {showMainImageSkeleton ? (
-              <PokemonProfileImageSkeleton />
-            ) : (
-              <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
-            )}
+          <div className="tw-inline-flex tw-w-pokemon-profile tw-flex-col tw-align-top">
+            <div
+              className={combineClasses(
+                'tw-relative tw-isolate tw-inline-flex tw-items-center tw-justify-center tw-overflow-visible img-desc pokemon-profile-aura',
+                profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
+              )}
+              aria-busy={showMainImageSkeleton}
+              data-testid="pokemon-profile-image"
+              data-profile-modifier={profileModifier}
+            >
+              {showMainImageSkeleton ? (
+                <PokemonProfileImageSkeleton />
+              ) : (
+                <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
+              )}
+            </div>
+            <div
+              className="tw-mt-2 tw-mb-3 sm:tw-mb-0 tw-flex tw-h-6 tw-items-center tw-justify-center tw-gap-2"
+              aria-label="Pokémon classification"
+              aria-hidden={classificationLabels.length === 0}
+              data-testid="pokemon-classification-badges"
+            >
+              {classificationLabels.map((label) => (
+                <ClassificationBadge key={label} label={label} />
+              ))}
+            </div>
           </div>
-          <div className="tw-inline-block tw-align-bottom">
+          <div className="tw-inline-block tw-align-top">
             <PokemonTable
               className="pokemon-detail-table"
               id={dataStorePokemon?.current?.id}

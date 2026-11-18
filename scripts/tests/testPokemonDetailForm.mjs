@@ -2,11 +2,47 @@ import assert from 'node:assert/strict';
 import {
   findCanonicalSpeciesDefaultForm,
   getSpeciesGenderRatio,
+  hasPokemonCounterStats,
   hydrateCanonicalPokemonDetail,
   isCanonicalSpeciesDefaultForm,
   isDuplicatePokemonGoNormalForm,
 } from '../../src/utils/pokemon-detail-form.ts';
 import { readFile } from 'node:fs/promises';
+
+const generatedPokemon = JSON.parse(
+  await readFile(new URL('../../../api/data/pokemons.json', import.meta.url), 'utf8')
+);
+for (const pokemon of generatedPokemon) {
+  const expected = Number.isFinite(pokemon.statsGO?.def) && pokemon.statsGO.def > 0 && pokemon.types?.length > 0;
+  for (const releasedGO of [true, false]) {
+    assert.equal(
+      hasPokemonCounterStats({ ...pokemon, releasedGO, asset: undefined }),
+      Boolean(expected),
+      `Counter readiness must not depend on release or assets: ${pokemon.fullName}`
+    );
+  }
+}
+for (const def of [undefined, 0, -1, NaN, Infinity]) {
+  assert.equal(hasPokemonCounterStats({ statsGO: { def }, types: ['normal'] }), false);
+}
+assert.equal(hasPokemonCounterStats({ statsGO: { def: 120 }, types: [] }), false);
+assert.equal(hasPokemonCounterStats({ statsGO: { def: 120 }, types: [''] }), false);
+assert.equal(hasPokemonCounterStats(undefined), false);
+
+const spinda14 = generatedPokemon.find((pokemon) => pokemon.num === 327 && pokemon.form === '14');
+assert(spinda14);
+assert.equal(hasPokemonCounterStats({ ...spinda14, asset: undefined }), true);
+const formButtons = await readFile(
+  new URL('../../src/components/Commons/Buttons/ButtonGroupForm.tsx', import.meta.url),
+  'utf8'
+);
+assert.match(formButtons, /GO-specific form/);
+assert.doesNotMatch(formButtons, /Only in GO/);
+const counter = await readFile(
+  new URL('../../src/components/Commons/Tables/Counter/Counter.tsx', import.meta.url),
+  'utf8'
+);
+assert.doesNotMatch(counter, /isTargetUnreleased|pokemonData\?\.releasedGO/);
 
 const mothimForms = [
   {

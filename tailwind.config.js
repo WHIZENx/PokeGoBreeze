@@ -130,6 +130,7 @@ module.exports = {
         75: '300px',
       },
       width: {
+        'pokemon-profile': '217px',
         sidebar: '250px',
         'battle-icon': '35px',
         'move-select': 'calc(100% - 50px)',

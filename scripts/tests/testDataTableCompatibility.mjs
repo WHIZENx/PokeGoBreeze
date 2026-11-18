@@ -141,13 +141,13 @@ assert.equal(
 );
 assert.match(
   counter,
-  /const isTargetUnreleased = props\.pokemonData\?\.releasedGO === false/,
-  'The counter empty state must depend on the selected target release state.'
+  /const hasValidCounterTarget = hasPokemonCounterStats\(props\.pokemonData\)/,
+  'Counter availability must depend on the selected target battle stats.'
 );
 assert.match(
   counter,
-  /<TableEmptyState[\s\S]*testId="counter-unreleased-empty-state"[\s\S]*Counter data unavailable[\s\S]*not been released in Pokémon GO yet/,
-  'Unreleased forms must explain why counter data cannot be calculated.'
+  /<TableEmptyState[\s\S]*testId="counter-missing-stats-empty-state"[\s\S]*Counter data unavailable[\s\S]*missing the Pokémon GO Defense or typing/,
+  'Missing battle data must explain why counters cannot be calculated.'
 );
 assert.match(
   counter,

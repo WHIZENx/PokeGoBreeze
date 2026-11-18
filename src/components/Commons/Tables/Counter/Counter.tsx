@@ -11,6 +11,7 @@ import {
 } from '../../../../utils/utils';
 
 import './Counter.scss';
+import { hasPokemonCounterStats } from '../../../../utils/pokemon-detail-form';
 import { TableStyles } from 'react-data-table-component';
 import { CounterModel, ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../../models/component.model';
@@ -195,8 +196,7 @@ const Counter = (props: ICounterComponent) => {
     ratioSortOrder,
     page,
   ].join('|');
-  const hasValidCounterTarget = defense > 0 && Boolean(typesKey);
-  const isTargetUnreleased = props.pokemonData?.releasedGO === false;
+  const hasValidCounterTarget = hasPokemonCounterStats(props.pokemonData);
   const isCanonicalCounterTargetReady = Boolean(props.pokemonData?.fullName && props.pokemonData?.form !== undefined);
   const isCounterTargetPending = props.pokemonData === undefined || !isCanonicalCounterTargetReady;
   const hasFreshCounters = resolvedCounterRequestKeyRef.current === counterRequestKey;
@@ -525,12 +525,12 @@ const Counter = (props: ICounterComponent) => {
             aria-hidden="true"
           />
         )}
-        {isTargetUnreleased ? (
+        {!props.isLoading && !isCounterTargetPending && !hasValidCounterTarget ? (
           <TableEmptyState
             spacious
-            testId="counter-unreleased-empty-state"
+            testId="counter-missing-stats-empty-state"
             title="Counter data unavailable"
-            description="Best counters require Pokémon GO battle stats. This form has not been released in Pokémon GO yet."
+            description="This form is missing the Pokémon GO Defense or typing required to calculate counters."
           />
         ) : (
           <CustomDataTable
