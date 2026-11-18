@@ -9,6 +9,12 @@ interface PokemonDetailFormIdentity {
   form?: string;
 }
 
+/** Counter calculations need GO Defense and typing, independently of images or release status. */
+export const hasPokemonCounterStats = (pokemon: { statsGO?: { def?: number }; types?: string[] } | undefined) =>
+  Number.isFinite(pokemon?.statsGO?.def) &&
+  (pokemon?.statsGO?.def ?? 0) > 0 &&
+  Boolean(pokemon?.types?.length && pokemon.types.every((type) => type.trim().length > 0));
+
 interface SelectedPokemonFormIdentity {
   defaultName?: string;
   name?: string;

@@ -18,7 +18,6 @@ import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
 import useIcon from '../../composables/useIcon';
 import InputMuiSearch from '../../components/Commons/Inputs/InputMuiSearch';
-import InputReleased from '../../components/Commons/Inputs/InputReleased';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
 import ButtonMui from '../../components/Commons/Buttons/ButtonMui';
 import ToggleType from '../../components/Commons/Buttons/ToggleType';
@@ -30,10 +29,11 @@ import { serializePokedexSelection } from '../../utils/pokedex-query';
 const generationOptions = Object.values(genList).map((_, index) => index);
 const versionOptions = versionList.map((_, index) => index);
 const POKEDEX_PAGE_SIZE = 40;
+type ReleaseStatus = 'all' | 'released' | 'unreleased';
 
 interface IFilter {
   isMatch: boolean;
-  releasedGO: boolean;
+  releaseStatus: ReleaseStatus;
   isShiny: boolean;
   gen: number[];
   version: number[];
@@ -47,7 +47,7 @@ interface IFilter {
 
 class Filter implements IFilter {
   isMatch = false;
-  releasedGO = false;
+  releaseStatus: ReleaseStatus = 'all';
   isShiny = false;
   gen: number[] = [];
   version: number[] = [];
@@ -101,8 +101,19 @@ const Pokedex = (props: IStyleSheetData) => {
 
   const [filters, setFilters] = useState(Filter.setFilterGenAndVersion(generationOptions, versionOptions));
 
-  const { isMatch, releasedGO, isShiny, gen, version, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast } =
-    filters;
+  const {
+    isMatch,
+    releaseStatus,
+    isShiny,
+    gen,
+    version,
+    isMega,
+    isGMax,
+    isPrimal,
+    isLegendary,
+    isMythic,
+    isUltraBeast,
+  } = filters;
 
   const [btnSelected, setBtnSelected] = useState(
     new BtnSelect({
@@ -132,7 +143,7 @@ const Pokedex = (props: IStyleSheetData) => {
     debouncedSearch,
     selectTypes,
     isMatch,
-    releasedGO,
+    releaseStatus,
     isMega,
     isGMax,
     isPrimal,
@@ -149,7 +160,7 @@ const Pokedex = (props: IStyleSheetData) => {
       debouncedSearch,
       selectTypes,
       isMatch,
-      releasedGO,
+      releaseStatus,
       isMega,
       isGMax,
       isPrimal,
@@ -186,7 +197,7 @@ const Pokedex = (props: IStyleSheetData) => {
       APIService.getPokedex({
         q: debouncedSearch,
         match: isMatch,
-        released: releasedGO,
+        releaseStatus,
         types: selectTypes.join(','),
         generations: serializePokedexSelection(gen, generationOptions, (value) => value + 1),
         versions: serializePokedexSelection(version, versionOptions, (value) => versionList[value]),
@@ -224,7 +235,7 @@ const Pokedex = (props: IStyleSheetData) => {
     debouncedSearch,
     selectTypes,
     isMatch,
-    releasedGO,
+    releaseStatus,
     isMega,
     isGMax,
     isPrimal,
@@ -317,24 +328,40 @@ const Pokedex = (props: IStyleSheetData) => {
             <div className="head-types">Filters</div>
             <div className="row !tw-m-0">
               <div className="xl:tw-w-1/3 xl:tw-flex-initial !tw-p-0">
-                <InputMuiSearch
-                  isNoWrap
-                  value={searchTerm}
-                  onChange={(value) => setSearchTerm(value)}
-                  placeholder="Enter Pokémon name or Pokédex number"
-                  labelPrepend="Search"
-                />
-                <FormControlMui
-                  control={
-                    <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
-                  }
-                  label="Exact match"
-                >
-                  <InputReleased
-                    releasedGO={releasedGO}
-                    setReleaseGO={(check) => setFilters({ ...filters, releasedGO: check })}
-                    isAvailable={releasedGO}
+                <div className="tw-flex tw-flex-nowrap tw-items-center tw-gap-2 tw-pr-3">
+                  <div className="tw-min-w-0 tw-flex-1">
+                    <InputMuiSearch
+                      isNoWrap
+                      fullWidth
+                      value={searchTerm}
+                      onChange={(value) => setSearchTerm(value)}
+                      placeholder="Enter Pokémon name or Pokédex number"
+                      labelPrepend="Search"
+                    />
+                  </div>
+                  <FormControlLabel
+                    className="!tw-m-0 tw-shrink-0 tw-whitespace-nowrap"
+                    control={
+                      <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
+                    }
+                    label="Exact match"
                   />
+                </div>
+                <FormControlMui>
+                  <div className="tw-w-full tw-px-3 tw-py-2">
+                    <SelectMui<ReleaseStatus>
+                      inputLabel="GO release status"
+                      formClassName="tw-min-w-0"
+                      fullWidth
+                      value={releaseStatus}
+                      onChangeSelect={(value) => setFilters({ ...filters, releaseStatus: value })}
+                      menuItems={[
+                        { value: 'all', label: 'All Pokémon' },
+                        { value: 'released', label: 'Released in GO' },
+                        { value: 'unreleased', label: 'Not released in GO' },
+                      ]}
+                    />
+                  </div>
                   <FormControlMui
                     isNotGroup
                     control={

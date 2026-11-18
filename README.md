@@ -223,6 +223,7 @@ src/
 
 #### **Pokédex** (`/`)
 Server-paginated Pokémon catalogue with name matching, release status, missing GO stats, type, generation, game version, and special-form filters. Each result links to its Pokémon detail page.
+The GO release dropdown defaults to All Pokémon and can show only Released in GO or Not released in GO; changing it resets pagination.
 Its form list and totals use the same canonical/GO identity mapping as Pokémon Details. GO stats and assets are assigned only to the canonical form that owns the matching GO identity; other PokéAPI forms remain visible as not released in GO.
 
 #### **Event Tickets** (`/news`)
@@ -248,7 +249,11 @@ Browse Pokémon and fast/charged moves by type, with Pokémon GO release filteri
 
 #### **Pokémon Details** (`/pokemon/:id`)
 Displays identity, forms and availability, base and battle stats, move lists and best-move rankings, type/weather information, counters, evolution data, upgrade costs, and available media assets.
+Classification badges show Legendary, Mythical, Ultra Beast, and Baby status, together with the selected Mega, Primal, Gigantamax, Shadow, or Purified form when applicable.
+Badges sit centered below the Pokémon image, outside the profile table, and reserve a fixed height while navigating between Pokémon IDs, including species without badges.
+Each classification has a distinct color and decorative icon alongside its text label.
 Canonical display names remain separate from their underlying Pokémon GO form identity so stats, ranks, moves, encounter data, and assets stay synchronized without duplicating equivalent forms. PokéAPI-only forms remain selectable but display as not released in GO and do not borrow GO stats, assets, ranks, or availability from the canonical default.
+The form selector's “GO-specific form” label describes a GO data identity absent from PokéAPI, not release availability. Release alerts use the exact form's API `releasedGO` value. Counters require GO Defense and typing rather than a sprite or release flag; unreleased forms with those values can show calculated counters without implying they are obtainable.
 
 #### **Move Details** (`/move/:id`)
 Displays move identity and type, weather boost, PVE/PVP power and energy values, PVP buffs, timing and damage-window metadata, DPS/EPS comparisons, and Pokémon that can learn the move.
@@ -440,13 +445,23 @@ npm ci
    authoritative credential list. Branches map to Vercel as follows:
    `develop` → Preview develop, `stage` → Preview stage, and `main` →
    Production. Firebase Hosting uses the same branch and API environment
-   mapping:
+   mapping. The Vercel project is deployed by GitHub Actions rather than a
+   direct Vercel Git connection, so Preview deployments receive
+   `REACT_APP_DEPLOYMENT_MODE` and `REACT_APP_DATA_API_URL` explicitly as
+   build environment variables. This keeps the long-lived Preview aliases
+   isolated even when the generic Preview fallback targets the develop API:
 
    | Branch | Firebase Hosting | Data API |
    |---|---|---|
    | `develop` | `pokego-breeze-develop.web.app` | `pokego-breeze-api-develop.vercel.app` |
    | `stage` | `pokego-breeze-stage.web.app` | `pokego-breeze-api-stage.vercel.app` |
    | `main` | `pokego-breeze.web.app` | `pokego-breeze-api.vercel.app` |
+
+   Vercel Development uses `development` and `http://localhost:3001` for
+   `vercel dev`. Generic Preview deployments use `development` and the develop
+   API; the workflow overrides those values with `staging` and the stage API
+   when deploying the `stage` branch. Production continues to use the
+   Production values configured in Vercel.
 
    The deployment workflow validates that the selected API URL is embedded in
    the Firebase build and verifies the hosted SPA route after deployment. SPA
