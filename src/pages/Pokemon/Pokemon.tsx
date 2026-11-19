@@ -90,6 +90,7 @@ import { getPokemonClassificationLabels } from '../../components/Info/Classifica
 import { buildPokemonDetailHeroTable } from '../../utils/pokemon-detail-hero';
 import StableHeightSection from '../../components/Layout/StableHeightSection';
 import {
+  applyPokemonGoFormIdentity,
   findCanonicalSpeciesDefaultForm,
   getSpeciesGenderRatio,
   hydrateCanonicalPokemonDetail,
@@ -454,8 +455,7 @@ const Pokemon = (props: IPokemonPage) => {
                 ? [canonicalDefaultForm]
                 : [];
             aliasedCanonicalForms.forEach((canonicalForm) => {
-              canonicalForm.pokemonGoForm = String(pokemon.form ?? 'NORMAL');
-              canonicalForm.pokemonGoStatsForm = pokemon.canonicalForm;
+              applyPokemonGoFormIdentity(canonicalForm, pokemon);
               if (pokemon.asset) {
                 canonicalForm.form.sprites = withPokemonGoAssetSprites(canonicalForm.form.sprites, pokemon.asset);
               }
@@ -464,11 +464,14 @@ const Pokemon = (props: IPokemonPage) => {
           }
           if (selectedKeys.has(key)) {
             const selectedForm = selectedForms.get(key);
-            if (selectedForm && pokemon.asset) {
-              selectedForm.form.sprites = withPokemonGoAssetSprites(
-                inheritedSprites ?? selectedForm.form.sprites,
-                pokemon.asset
-              );
+            if (selectedForm) {
+              applyPokemonGoFormIdentity(selectedForm, pokemon);
+              if (pokemon.asset) {
+                selectedForm.form.sprites = withPokemonGoAssetSprites(
+                  inheritedSprites ?? selectedForm.form.sprites,
+                  pokemon.asset
+                );
+              }
             }
             return;
           }

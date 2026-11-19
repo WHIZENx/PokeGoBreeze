@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {
+  applyPokemonGoFormIdentity,
   findCanonicalSpeciesDefaultForm,
   getSpeciesGenderRatio,
   hasPokemonCounterStats,
@@ -33,6 +34,19 @@ assert.equal(hasPokemonCounterStats(undefined), false);
 const spinda14 = generatedPokemon.find((pokemon) => pokemon.num === 327 && pokemon.form === '14');
 assert(spinda14);
 assert.equal(hasPokemonCounterStats({ ...spinda14, asset: undefined }), true);
+
+const tingLu = generatedPokemon.find((pokemon) => pokemon.num === 1003 && pokemon.form === 'NORMAL');
+assert(tingLu, 'Ting-Lu must exist in the generated Game Master catalog');
+assert.equal(hasPokemonCounterStats({ ...tingLu, asset: undefined }), true);
+const tingLuSelection = applyPokemonGoFormIdentity(
+  { pokemonGoForm: undefined, pokemonGoStatsForm: undefined },
+  { form: tingLu.form, canonicalForm: 'NORMAL' }
+);
+assert.deepEqual(
+  tingLuSelection,
+  { pokemonGoForm: 'NORMAL', pokemonGoStatsForm: 'NORMAL' },
+  'A PokéAPI name with punctuation must retain the exact generated GO form used for Counter stats'
+);
 const formButtons = await readFile(
   new URL('../../src/components/Commons/Buttons/ButtonGroupForm.tsx', import.meta.url),
   'utf8'
@@ -70,6 +84,11 @@ assert.equal(
 const pokemonPage = await readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8');
 const formComponent = await readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8');
 const pokemonModel = await readFile(new URL('../../src/core/models/pokemon.model.ts', import.meta.url), 'utf8');
+assert.match(
+  pokemonPage,
+  /if \(selectedKeys\.has\(key\)\)[\s\S]*applyPokemonGoFormIdentity\(selectedForm, pokemon\)[\s\S]*if \(pokemon\.asset\)/,
+  'Existing PokéAPI forms must receive their generated GO identity even when no GO asset exists'
+);
 assert.match(
   formComponent,
   /setSearchParams\(\(currentSearchParams\) => \{[\s\S]*new URLSearchParams\(currentSearchParams\)[\s\S]*return nextSearchParams/,
@@ -112,7 +131,7 @@ assert.match(
 );
 assert.match(
   pokemonPage,
-  /canonicalForm\.pokemonGoStatsForm = pokemon\.canonicalForm/,
+  /applyPokemonGoFormIdentity\(canonicalForm, pokemon\)/,
   'canonical aliases must retain the ranking form that owns the shared GO stats'
 );
 assert.equal(

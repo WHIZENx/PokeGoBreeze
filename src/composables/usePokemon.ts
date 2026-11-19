@@ -15,52 +15,14 @@ import { versionList } from '../utils/constants';
 import useDataStore from './useDataStore';
 import { useCallback, useMemo } from 'react';
 import { buildPokemonSpeciesNavigation, findPokemonSpeciesNavigation } from '../utils/pokemon-navigation';
-import { normalizePokemonFormIdentity, selectPreferredPokemonGoFormIdentity } from '../utils/pokemon-form-identity';
 import { getPvpokeSpeciesCandidates, normalizePvpokeSpeciesId } from '../utils/pvpoke-species';
-
-const normalizePokemonForm = (value: string | undefined) =>
-  (value ?? '').trim().replaceAll('-', '_').replaceAll(' ', '_').toUpperCase();
-
-const stripStandardSuffix = (value: string) =>
-  value === formStandard() ? value : value.replace(`_${formStandard()}`, '');
-
-const getPokemonFormCandidates = (pokemons: IPokemonData[], form: string, pokemonType: PokemonType) => {
-  const candidates = new Set<string>();
-  const id = pokemons[0]?.num ?? 0;
-  [form, getPokemonFormWithNoneSpecialForm(form, pokemonType)].forEach((value) => {
-    const candidate = stripStandardSuffix(normalizePokemonForm(value));
-    candidates.add(candidate);
-    candidates.add(normalizePokemonFormIdentity(id, candidate));
-    if (id === 422 || id === 423) {
-      candidates.add(candidate.replace(/_EAST$/, '_EAST_SEA').replace(/_WEST$/, '_WEST_SEA'));
-      candidates.add(candidate.replace(/^EAST$/, 'EAST_SEA').replace(/^WEST$/, 'WEST_SEA'));
-    }
-  });
-  return candidates;
-};
+import { resolvePokemonForm as resolveGeneratedPokemonForm } from '../utils/pokemon-form-resolution';
 
 export const resolvePokemonForm = (
   pokemons: IPokemonData[],
   form: string | undefined,
   pokemonType = PokemonType.None
-) => {
-  if (!form) {
-    return pokemons.find(
-      (pokemon) =>
-        isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive) ||
-        (isNotEmpty(pokemon.baseForme) && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
-    );
-  }
-  const requestedForms = getPokemonFormCandidates(pokemons, form, pokemonType);
-  const id = pokemons[0]?.num ?? 0;
-  return selectPreferredPokemonGoFormIdentity(
-    pokemons.filter(
-      (pokemon) =>
-        requestedForms.has(normalizePokemonFormIdentity(id, pokemon.fullName)) ||
-        requestedForms.has(normalizePokemonFormIdentity(id, pokemon.form))
-    )
-  );
-};
+) => resolveGeneratedPokemonForm(pokemons, form, pokemonType, formNormal(), formStandard());
 
 export const usePokemon = () => {
   const { pokemonsData } = useDataStore();
