@@ -46,6 +46,7 @@ import TrainingCosts from '../TrainingCosts/TrainingCosts';
 import EvolutionSupplementSkeleton from '../Evolution/EvolutionSupplementSkeleton';
 import APIService from '../../../services/api.service';
 import { getSpeciesGenderRatio } from '../../../utils/pokemon-detail-form';
+import { findPokemonDetailMoveRanking } from '../../../utils/pokemon-detail-presentation';
 
 const unavailablePokemonMoves: PokemonMoves = {
   fastMoves: [],
@@ -256,19 +257,13 @@ const FormComponent = (props: IFormInfoComponent) => {
     isGenderDisplayCurrentForm ? 'tw-opacity-100' : 'tw-opacity-60'
   );
   const [moveTabValue, setMoveTabValue] = useState(0);
-  const selectedMoveForm = getPokemonFormWithNoneSpecialForm(
-    searchingMainForm?.pokemonGoForm ?? searchingMainForm?.form?.formName,
-    searchingMainForm?.form?.pokemonType
-  );
-  const moveRanking = props.moveRankings.find(
-    (item) =>
-      normalizePokemonType(item.pokemonType) === normalizePokemonType(searchingMainDetails?.pokemonType) &&
-      ((item.fullName &&
-        (isEqual(item.fullName, searchingMainDetails?.fullName) ||
-          isEqual(item.fullName, searchingMainForm?.form?.name))) ||
-        isEqual(item.form, searchingMainDetails?.form) ||
-        isEqual(item.form, selectedMoveForm))
-  );
+  const moveRanking = findPokemonDetailMoveRanking(props.moveRankings, {
+    num: props.defaultId ?? 0,
+    form:
+      searchingMainForm?.pokemonGoForm ?? searchingMainDetails?.form ?? searchingMainForm?.form?.formName ?? 'NORMAL',
+    fullName: searchingMainDetails?.fullName ?? searchingMainForm?.form?.name,
+    pokemonType: normalizePokemonType(searchingMainDetails?.pokemonType),
+  });
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
@@ -307,6 +302,10 @@ const FormComponent = (props: IFormInfoComponent) => {
     const currentForm = props.formList.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
     currentData ??= props.pokeData.find((p) => p.isDefault);
     if (currentForm && currentData) {
+      if (props.onSelectForm) {
+        props.onSelectForm(currentForm);
+        return;
+      }
       const pokemonDetails = PokemonDetail.setDetails(currentData);
       pokemonDetails.pokemonType = currentForm.form.pokemonType;
       dispatch(

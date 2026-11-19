@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {
+  applyPokemonGoFormIdentity,
   findCanonicalSpeciesDefaultForm,
   getSpeciesGenderRatio,
   hasPokemonCounterStats,
@@ -7,6 +8,7 @@ import {
   isCanonicalSpeciesDefaultForm,
   isDuplicatePokemonGoNormalForm,
 } from '../../src/utils/pokemon-detail-form.ts';
+import { findPokemonDetailBodyByForm } from '../../src/utils/pokemon-form-identity.ts';
 import { readFile } from 'node:fs/promises';
 
 const generatedPokemon = JSON.parse(
@@ -32,6 +34,19 @@ assert.equal(hasPokemonCounterStats(undefined), false);
 const spinda14 = generatedPokemon.find((pokemon) => pokemon.num === 327 && pokemon.form === '14');
 assert(spinda14);
 assert.equal(hasPokemonCounterStats({ ...spinda14, asset: undefined }), true);
+
+const tingLu = generatedPokemon.find((pokemon) => pokemon.num === 1003 && pokemon.form === 'NORMAL');
+assert(tingLu, 'Ting-Lu must exist in the generated Game Master catalog');
+assert.equal(hasPokemonCounterStats({ ...tingLu, asset: undefined }), true);
+const tingLuSelection = applyPokemonGoFormIdentity(
+  { pokemonGoForm: undefined, pokemonGoStatsForm: undefined },
+  { form: tingLu.form, canonicalForm: 'NORMAL' }
+);
+assert.deepEqual(
+  tingLuSelection,
+  { pokemonGoForm: 'NORMAL', pokemonGoStatsForm: 'NORMAL' },
+  'A PokéAPI name with punctuation must retain the exact generated GO form used for Counter stats'
+);
 const formButtons = await readFile(
   new URL('../../src/components/Commons/Buttons/ButtonGroupForm.tsx', import.meta.url),
   'utf8'
@@ -70,6 +85,11 @@ const pokemonPage = await readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx'
 const formComponent = await readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8');
 const pokemonModel = await readFile(new URL('../../src/core/models/pokemon.model.ts', import.meta.url), 'utf8');
 assert.match(
+  pokemonPage,
+  /if \(selectedKeys\.has\(key\)\)[\s\S]*applyPokemonGoFormIdentity\(selectedForm, pokemon\)[\s\S]*if \(pokemon\.asset\)/,
+  'Existing PokéAPI forms must receive their generated GO identity even when no GO asset exists'
+);
+assert.match(
   formComponent,
   /setSearchParams\(\(currentSearchParams\) => \{[\s\S]*new URLSearchParams\(currentSearchParams\)[\s\S]*return nextSearchParams/,
   'form changes must navigate with a new URLSearchParams value instead of mutating the active router state'
@@ -78,6 +98,21 @@ assert.match(
   formComponent,
   /if \(!isCurrentPokemonLoaded \|\| value\.defaultId !== props\.defaultId\) \{[\s\S]*return;/,
   'form changes must ignore stale selections while a different Pokémon bundle is loading'
+);
+assert.match(
+  formComponent,
+  /if \(props\.onSelectForm\) \{[\s\S]*props\.onSelectForm\(currentForm\);[\s\S]*return;/,
+  'embedded Pokémon Search must hand form changes to the shared atomic Details selector'
+);
+assert.match(
+  pokemonPage,
+  /const initialSelection = !params\.id[\s\S]*resolvePokemonSelection\(specie\.id, currentForm, specie\.genderRate\)[\s\S]*pokemon: initialSelection\.pokemon/,
+  'embedded initial loading must publish the generated Pokémon snapshot without a temporary PokéAPI body'
+);
+assert.doesNotMatch(
+  pokemonPage,
+  /if \(!params\.id\) \{\s*checkReleased\(id, searchingMainForm/,
+  'the presentation observer must not publish a second embedded form selection'
 );
 assert.match(
   pokemonPage,
@@ -96,7 +131,7 @@ assert.match(
 );
 assert.match(
   pokemonPage,
-  /canonicalForm\.pokemonGoStatsForm = pokemon\.canonicalForm/,
+  /applyPokemonGoFormIdentity\(canonicalForm, pokemon\)/,
   'canonical aliases must retain the ranking form that owns the shared GO stats'
 );
 assert.equal(
@@ -117,12 +152,12 @@ assert.equal(
 
 assert.match(
   pokemonPage,
-  /getPokemonDetails\(id, formName, form\.form\?\.pokemonType, Boolean\(form\.pokemonGoForm\)\)/,
+  /getPokemonDetails\([\s\S]*id,[\s\S]*selectedFormName,[\s\S]*form\.form\?\.pokemonType,[\s\S]*Boolean\(form\.pokemonGoForm\)/,
   'canonical defaults may reuse GO NORMAL mechanics only after an explicit identity merge'
 );
 assert.match(
   pokemonPage,
-  /if \(!form\.pokemonGoForm\)[\s\S]*getSpeciesGenderRatio\(data\?\.genderRate\)/,
+  /if \(!form\.pokemonGoForm\)[\s\S]*getSpeciesGenderRatio\(genderRate\)/,
   'PokéAPI-only forms must fall back to their species gender rate'
 );
 assert.deepEqual(getSpeciesGenderRatio(0), { M: 1, F: 0 }, 'Mothim gender_rate 0 must resolve to 100% male');
@@ -130,6 +165,18 @@ assert.deepEqual(getSpeciesGenderRatio(4), { M: 0.5, F: 0.5 }, 'gender_rate 4 mu
 assert.deepEqual(getSpeciesGenderRatio(8), { M: 0, F: 1 }, 'gender_rate 8 must resolve to 100% female');
 assert.deepEqual(getSpeciesGenderRatio(-1), { M: 0, F: 0 }, 'gender_rate -1 must remain genderless');
 assert.equal(getSpeciesGenderRatio(9), undefined, 'invalid species gender rates must not create a ratio');
+
+const darmanitanBodies = [
+  { name: 'darmanitan-standard', height: 13, weight: 929 },
+  { name: 'darmanitan-zen', height: 13, weight: 929 },
+  { name: 'darmanitan-galar-standard', height: 17, weight: 1200 },
+  { name: 'darmanitan-galar-zen', height: 17, weight: 1200 },
+];
+assert.deepEqual(
+  findPokemonDetailBodyByForm(darmanitanBodies, 555, 'darmanitan', 'galarian-zen'),
+  darmanitanBodies[3],
+  'Galarian Zen must resolve PokéAPI Galar naming before falling back to the species default body'
+);
 
 assert.equal(
   isCanonicalSpeciesDefaultForm(

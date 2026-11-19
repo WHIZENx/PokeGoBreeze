@@ -187,6 +187,7 @@ export interface IFormInfoComponent {
   formList: IPokemonFormModify[][];
   genderRate?: number;
   setSearchOption?: (searchOption: SearchOption) => void;
+  onSelectForm?: (form: IPokemonFormModify) => void;
   defaultId: number | undefined;
   evolutionChain?: PokemonInfoEvo;
   pokemonGoAsset?: IAsset;
