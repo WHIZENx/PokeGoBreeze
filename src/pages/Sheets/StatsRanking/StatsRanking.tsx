@@ -282,8 +282,7 @@ const StatsRanking = () => {
       ? selectedBundle.moveRankings.find(
           (item) =>
             item.pokemonType === (select.pokemonType ?? PokemonType.Normal) &&
-            ((select.fullName && isEqual(item.fullName, select.fullName)) ||
-              (select.form && isEqual(item.form, select.form)))
+            normalizePokemonFormIdentity(selectedId ?? 0, item.form ?? 'NORMAL') === selectedFormIdentity
         )
       : undefined;
 

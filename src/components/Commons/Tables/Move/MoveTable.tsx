@@ -111,10 +111,13 @@ const TableMove = (props: ITableMoveComponent) => {
   }, [cacheScope, hasFreshMoveData, props.moveData, props.rankMoveData]);
 
   const hasCachedMoveData = Boolean(cachedMoveData.current && cachedRankMoveData.current);
-  const isUpdating = isLoading || (!hasFreshMoveData && hasCachedMoveData);
+  const shouldUseCachedMoveData = isLoading && hasCachedMoveData;
+  const isUpdating = isLoading;
 
-  const move = (hasFreshMoveData ? props.rankMoveData : cachedRankMoveData.current) ?? emptyMoveRanking;
-  const moveOrigin = hasFreshMoveData ? props.moveData : cachedMoveData.current;
+  const move =
+    (hasFreshMoveData ? props.rankMoveData : shouldUseCachedMoveData ? cachedRankMoveData.current : undefined) ??
+    emptyMoveRanking;
+  const moveOrigin = hasFreshMoveData ? props.moveData : shouldUseCachedMoveData ? cachedMoveData.current : undefined;
   const showMaxMoves = Boolean(moveOrigin?.dynamaxMoves.length);
   const getMoveRowKey = (value: ICombat) =>
     `${value.typeMove ?? 'move'}:${value.moveType ?? 'regular'}:${value.id}:${value.name}:${value.type ?? 'unknown'}`;

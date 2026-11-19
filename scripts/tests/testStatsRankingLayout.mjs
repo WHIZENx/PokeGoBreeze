@@ -168,6 +168,11 @@ assert.match(
   /applyPokemonSelectionParams\(next, select\)/,
   'Stats bar selection must preserve the current Pokémon and form'
 );
+assert.match(
+  statsRankingSource,
+  /normalizePokemonFormIdentity\(selectedId \?\? 0, item\.form \?\? 'NORMAL'\) === selectedFormIdentity/,
+  'Move rankings must resolve canonical form aliases after Stats bar navigation.'
+);
 assert.doesNotMatch(
   statsRankingSource,
   /<Stats[\s\S]*?isDisabled[\s\S]*?<\/StableHeightSection>/,
@@ -207,8 +212,13 @@ assert.doesNotMatch(
 );
 assert.match(
   moveTableSource,
-  /const move = \(hasFreshMoveData \? props\.rankMoveData : cachedRankMoveData\.current\)[\s\S]*const moveOrigin = hasFreshMoveData \? props\.moveData : cachedMoveData\.current/,
-  'Move tables must retain the last coherent move datasets while the progress bar is active.'
+  /const shouldUseCachedMoveData = isLoading && hasCachedMoveData;[\s\S]*const isUpdating = isLoading;[\s\S]*shouldUseCachedMoveData \? cachedRankMoveData\.current[\s\S]*shouldUseCachedMoveData[\s\S]*cachedMoveData\.current/,
+  'Move tables must retain the last coherent datasets only while the replacement request is active.'
+);
+assert.doesNotMatch(
+  moveTableSource,
+  /isUpdating\s*=\s*isLoading\s*\|\|/,
+  'A settled request without a matching move record must not leave the loading bar active.'
 );
 assert.match(
   moveTableSource,
