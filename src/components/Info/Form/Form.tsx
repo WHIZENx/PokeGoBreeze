@@ -307,6 +307,10 @@ const FormComponent = (props: IFormInfoComponent) => {
     const currentForm = props.formList.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
     currentData ??= props.pokeData.find((p) => p.isDefault);
     if (currentForm && currentData) {
+      if (props.onSelectForm) {
+        props.onSelectForm(currentForm);
+        return;
+      }
       const pokemonDetails = PokemonDetail.setDetails(currentData);
       pokemonDetails.pokemonType = currentForm.form.pokemonType;
       dispatch(

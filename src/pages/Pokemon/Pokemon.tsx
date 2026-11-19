@@ -242,6 +242,31 @@ const Pokemon = (props: IPokemonPage) => {
     return formType ? `${result}${result ? '-' : ''}${formType.toUpperCase()}` : result;
   };
 
+  const resolvePokemonSelection = useCallback(
+    (id: number, form: Partial<IPokemonFormModify> | undefined, genderRate?: number) => {
+      if (!form) {
+        return undefined;
+      }
+      const selectedFormName = [form.pokemonGoForm, form.form?.formName, form.form?.name, form.defaultName].find(
+        (value) => isNotEmpty(value)
+      );
+      const details = getPokemonDetails(id, selectedFormName, form.form?.pokemonType, Boolean(form.pokemonGoForm));
+      hydrateCanonicalPokemonDetail(details, id, form);
+      if (!form.pokemonGoForm) {
+        const speciesGenderRatio = getSpeciesGenderRatio(genderRate);
+        if (speciesGenderRatio) {
+          details.genderRatio = speciesGenderRatio;
+        }
+      }
+      details.pokemonType = form.form?.pokemonType ?? PokemonType.Normal;
+      return {
+        details,
+        pokemon: PokemonDetail.setData(details),
+      };
+    },
+    [getPokemonDetails]
+  );
+
   const fetchMap = useCallback(
     (
       specie: IPokemonSpecie,
@@ -472,7 +497,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       // Set Default Form
       const flatForms = formListResult.flatMap((item) => item);
-      let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
+      let currentForm: IPokemonFormModify | undefined;
       const requestedSearchParams = latestSearchParamsRef.current;
       let formParams = getValueOrDefault(String, requestedSearchParams.get(Params.Form))
         .toUpperCase()
@@ -524,19 +549,23 @@ const Pokemon = (props: IPokemonPage) => {
         currentForm = defaultForm.find((item) => item.defaultId === specie.id);
       }
       currentForm ??= flatForms.find((item) => item.defaultId === specie.id);
-      let defaultData = dataPokeList.find((value) => isEqual(value.name, currentForm?.form.name));
-      defaultData ??= dataPokeList.find((value) => isEqual(value.name, currentForm?.name));
-      // On detail routes the URL effect below publishes the hydrated form and
-      // battle details together, after this bundle is committed locally.
-      if (!params.id && defaultData && currentForm) {
-        const pokemonDetails = PokemonDetail.setDetails(defaultData);
-        pokemonDetails.pokemonType = currentForm.form.pokemonType;
+      // Embedded Search and routed Details both publish one hydrated snapshot.
+      // Do not expose a temporary PokéAPI body before the generated GO row.
+      const initialSelection = !params.id
+        ? resolvePokemonSelection(specie.id, currentForm, specie.genderRate)
+        : undefined;
+      if (!params.id && currentForm && initialSelection) {
         dispatch(
           SearchingActions.SetMainPokemonSelection.create({
             form: currentForm,
-            pokemon: pokemonDetails,
+            pokemon: initialSelection.pokemon,
           })
         );
+        setReleasedAlert({
+          formName: convertSexName(currentForm.form.name),
+          pokemonType: currentForm.form.pokemonType,
+          releasedGO: initialSelection.details.releasedGO,
+        });
       } else if (!params.id) {
         currentForm ??= defaultForm.at(0);
         if (currentForm) {
@@ -547,7 +576,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     },
-    [getFindPokemon, retrieveMoves, dispatch]
+    [getFindPokemon, retrieveMoves, dispatch, resolvePokemonSelection]
   );
 
   const queryPokemon = useCallback(
@@ -722,38 +751,22 @@ const Pokemon = (props: IPokemonPage) => {
   }, [params.id, props.searchOption?.id, getFilteredPokemons, navigatePokemon]);
 
   const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined, releasedAlertFormName?: string) => {
-    if (!form) {
+    const selection = resolvePokemonSelection(id, form, data?.genderRate);
+    if (!form || !selection) {
       return false;
     }
-    // The canonical form name (for example ALOLA_TOTEM, ICE, MALE, or HERO)
-    // is the most precise key for the Pokémon GO Game Master row. The PokeAPI
-    // Pokémon name can be broader (for example marowak-alola) and previously
-    // caused distinct forms to resolve to the first matching GO form.
-    const formName = [form.pokemonGoForm, form.form?.formName, form.form?.name, form.defaultName].find((value) =>
-      isNotEmpty(value)
-    );
-    const details = getPokemonDetails(id, formName, form.form?.pokemonType, Boolean(form.pokemonGoForm));
-    hydrateCanonicalPokemonDetail(details, id, form);
-    if (!form.pokemonGoForm) {
-      const speciesGenderRatio = getSpeciesGenderRatio(data?.genderRate);
-      if (speciesGenderRatio) {
-        details.genderRatio = speciesGenderRatio;
-      }
-    }
-    details.pokemonType = form.form?.pokemonType ?? PokemonType.Normal;
-    const pokemonDetails = PokemonDetail.setData(details);
     dispatch(
       SearchingActions.SetMainPokemonSelection.create({
         form,
-        pokemon: pokemonDetails,
+        pokemon: selection.pokemon,
       })
     );
     setReleasedAlert({
       formName: releasedAlertFormName,
       pokemonType: form.form?.pokemonType,
-      releasedGO: details.releasedGO,
+      releasedGO: selection.details.releasedGO,
     });
-    return details.releasedGO;
+    return selection.details.releasedGO;
   };
 
   useEffect(() => {
@@ -795,11 +808,8 @@ const Pokemon = (props: IPokemonPage) => {
           ),
         });
       }
-      // Routed selections are hydrated by the URL effect below. Writing them
-      // back from this selection observer creates a second selection writer.
-      if (!params.id) {
-        checkReleased(id, searchingMainForm, convertSexName(nameInfo));
-      }
+      // Form changes are published by the route effect or the embedded
+      // selection callback. This observer only derives presentation state.
     } else {
       clearData();
     }
@@ -980,6 +990,22 @@ const Pokemon = (props: IPokemonPage) => {
           pokeData={pokeData}
           genderRate={data?.genderRate}
           setSearchOption={props.setSearchOption}
+          onSelectForm={
+            props.isSearch
+              ? (value) => {
+                  const id = toNumber(data?.id);
+                  if (!id || value.defaultId !== id) {
+                    return;
+                  }
+                  checkReleased(id, value, convertSexName(value.form.name));
+                  props.setSearchOption?.({
+                    id,
+                    form: value.form.formName,
+                    pokemonType: value.form.pokemonType,
+                  });
+                }
+              : undefined
+          }
           defaultId={dataStorePokemon?.current?.id}
           evolutionChain={evolutionChain}
           pokemonGoAsset={pokemonGoAsset}

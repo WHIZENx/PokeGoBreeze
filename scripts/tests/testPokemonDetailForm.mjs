@@ -81,6 +81,21 @@ assert.match(
   'form changes must ignore stale selections while a different Pokémon bundle is loading'
 );
 assert.match(
+  formComponent,
+  /if \(props\.onSelectForm\) \{[\s\S]*props\.onSelectForm\(currentForm\);[\s\S]*return;/,
+  'embedded Pokémon Search must hand form changes to the shared atomic Details selector'
+);
+assert.match(
+  pokemonPage,
+  /const initialSelection = !params\.id[\s\S]*resolvePokemonSelection\(specie\.id, currentForm, specie\.genderRate\)[\s\S]*pokemon: initialSelection\.pokemon/,
+  'embedded initial loading must publish the generated Pokémon snapshot without a temporary PokéAPI body'
+);
+assert.doesNotMatch(
+  pokemonPage,
+  /if \(!params\.id\) \{\s*checkReleased\(id, searchingMainForm/,
+  'the presentation observer must not publish a second embedded form selection'
+);
+assert.match(
   pokemonPage,
   /nextSearchParams\.delete\(Params\.Form\);[\s\S]*nextSearchParams\.delete\(Params\.FormType\);[\s\S]*\{ replace: true \}/,
   'invalid form and form-type pairs must be replaced atomically with the canonical species route'
@@ -118,12 +133,12 @@ assert.equal(
 
 assert.match(
   pokemonPage,
-  /getPokemonDetails\(id, formName, form\.form\?\.pokemonType, Boolean\(form\.pokemonGoForm\)\)/,
+  /getPokemonDetails\([\s\S]*id,[\s\S]*selectedFormName,[\s\S]*form\.form\?\.pokemonType,[\s\S]*Boolean\(form\.pokemonGoForm\)/,
   'canonical defaults may reuse GO NORMAL mechanics only after an explicit identity merge'
 );
 assert.match(
   pokemonPage,
-  /if \(!form\.pokemonGoForm\)[\s\S]*getSpeciesGenderRatio\(data\?\.genderRate\)/,
+  /if \(!form\.pokemonGoForm\)[\s\S]*getSpeciesGenderRatio\(genderRate\)/,
   'PokéAPI-only forms must fall back to their species gender rate'
 );
 assert.deepEqual(getSpeciesGenderRatio(0), { M: 1, F: 0 }, 'Mothim gender_rate 0 must resolve to 100% male');
