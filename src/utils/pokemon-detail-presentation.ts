@@ -19,7 +19,7 @@ export const findPokemonDetailMoveRanking = (
   selection: PokemonDetailSelection
 ) => findPokemonGoFormIdentityMatch(rankings, selection);
 
-interface PokemonDetailCanonicalForm {
+export interface PokemonDetailCanonicalForm {
   id?: number;
   num?: number;
   form?: string | number;
@@ -38,7 +38,7 @@ export const findPokemonDetailCanonicalForm = <T extends PokemonDetailCanonicalF
   selection: PokemonDetailSelection
 ) => {
   const modifier = selection.pokemonType === 2 ? 'SHADOW' : selection.pokemonType === 3 ? 'PURIFIED' : undefined;
-  const selectedForm = String(selection.form ?? 'NORMAL').toUpperCase();
+  const selectedForm = String(selection.form || 'NORMAL').toUpperCase();
   const canonicalForm = modifier
     ? selectedForm.replace(new RegExp(`_${modifier}$|^${modifier}$`), '') || 'NORMAL'
     : selectedForm;
@@ -53,7 +53,6 @@ export const findPokemonDetailCanonicalForm = <T extends PokemonDetailCanonicalF
     return normalizePokemonFormIdentity(selection.num, formName) === selectedIdentity;
   });
 };
-
 interface PokemonDetailImageCandidateInput {
   pokemonGoImage?: string;
   preferredImage?: string;
@@ -110,6 +109,9 @@ export const buildPokemonDetailProfilePresentation = <T extends PokemonDetailCan
     pokemonGoForm,
     preferredImage,
     pokemonGoImage,
+    officialImage,
+    hybridImage,
+    fullAssetImage,
     imageCandidates: buildPokemonDetailImageCandidates({
       preferredImage,
       pokemonGoImage,

@@ -175,8 +175,11 @@ assert.doesNotMatch(pokemonSource, /details\.statsGO\.def \* getDmgMultiplyBonus
 assert.match(counterSource, /pokemonType: targetPokemonType/);
 assert.match(counterSource, /props\.pokemonType \?\? props\.pokemonData\?\.pokemonType/);
 assert.match(pokemonFormSource, /pokemonType=\{selectedPokemonType\}/);
-assert.match(pokemonFormSource, /const selectedMoveForm = getPokemonFormWithNoneSpecialForm/);
-assert.match(pokemonFormSource, /isEqual\(item\.form, selectedMoveForm\)/);
+assert.match(pokemonFormSource, /const moveRanking = findPokemonDetailMoveRanking/);
+assert.match(
+  pokemonFormSource,
+  /pokemonGoForm \?\? searchingMainDetails\?\.form \?\? searchingMainForm\?\.form\?\.formName/
+);
 assert.match(pokemonFormSource, /primary: pokeApiSprites \?\? selectedSprites/);
 assert.match(pokemonFormSource, /fallback: pokeApiSprites \? selectedSprites : undefined/);
 assert.match(genderSource, /useImageSourceSequence\(defaultSpriteCandidates\)/);

@@ -10,12 +10,10 @@ import APIService from '../../../services/api.service';
 import '../../../components/Info/PokemonDetailLayout.scss';
 import {
   capitalize,
-  convertPokemonImageName,
   createDataRows,
   generateParamForm,
   getCustomThemeDataTable,
   getKeyWithData,
-  getPreferredPokemonFormSprite,
   isSpecialFormType,
 } from '../../../utils/utils';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -25,7 +23,7 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
-import { getValueOrDefault, isEqual, isNullOrUndefined, toNumber } from '../../../utils/extension';
+import { getValueOrDefault, isNullOrUndefined, toNumber } from '../../../utils/extension';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import type {
@@ -33,7 +31,6 @@ import type {
   PokemonGoFormCatalogEntry,
   PokemonMoveRanking,
 } from '../../../core/models/API/pokemon-bundle.model';
-import { PokemonSprite } from '../../../core/models/API/form.model';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
 import CustomDataTable from '../../../components/Commons/Tables/CustomDataTable/CustomDataTable';
@@ -49,10 +46,8 @@ import PokemonDetailHero from '../../../components/Info/PokemonDetailHero';
 import { getPokemonClassificationLabels } from '../../../components/Info/ClassificationBadge';
 import StableHeightSection from '../../../components/Layout/StableHeightSection';
 import { buildPokemonDetailHeroTable } from '../../../utils/pokemon-detail-hero';
-import {
-  buildPokemonDetailProfilePresentation,
-  findPokemonDetailMoveRanking,
-} from '../../../utils/pokemon-detail-presentation';
+import { findPokemonDetailMoveRanking } from '../../../utils/pokemon-detail-presentation';
+import { buildPokemonDetailProfileImagePresentation } from '../../../utils/pokemon-detail-profile-images';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
@@ -245,13 +240,9 @@ const StatsRanking = () => {
   const selectedId = select?.num;
   const selectedBundle = selectedId && pokemonBundle?.id === selectedId ? pokemonBundle.data : undefined;
   const selectedOfficialImage = selectedId ? APIService.getPokeOfficialArtwork(selectedId) : undefined;
-  const selectedImageForm = convertPokemonImageName(
-    select && isEqual(select.baseForme, select.form) ? '' : select?.form
-  );
-  const selectedHybridImage = selectedId ? APIService.getPokeFullSprite(selectedId, selectedImageForm) : undefined;
   const selectedProfile =
     selectedId && selectedBundle
-      ? buildPokemonDetailProfilePresentation({
+      ? buildPokemonDetailProfileImagePresentation({
           canonicalForms: selectedBundle.varieties.flatMap(({ forms }) => forms),
           pokemonGoForms: selectedBundle.pokemonGoForms,
           selection: {
@@ -260,12 +251,6 @@ const StatsRanking = () => {
             fullName: select?.fullName,
             pokemonType: select?.pokemonType,
           },
-          getCanonicalImage: (form) => getPreferredPokemonFormSprite(PokemonSprite.setDetails(form.sprites)),
-          getPokemonGoImage: (form) =>
-            form.asset?.default ? APIService.getPokemonModel(form.asset.default) : undefined,
-          officialImage: selectedOfficialImage,
-          hybridImage: selectedHybridImage,
-          fullAssetImage: APIService.getPokeFullAsset(selectedId),
         })
       : undefined;
   const selectedPreferredImage = selectedProfile?.preferredImage;
@@ -273,7 +258,8 @@ const StatsRanking = () => {
   const { displayedUrl: selectedImage, isLoading: isSelectedImageLoading } = usePreloadedImage(
     selectedImageCandidates,
     APIService.getPokeSprite(),
-    [selectedPreferredImage, selectedOfficialImage, selectedHybridImage]
+    [selectedPreferredImage, selectedProfile?.officialImage ?? selectedOfficialImage, selectedProfile?.hybridImage],
+    true
   );
   const showSelectedImageSkeleton = !selectedId || loading || !selectedBundle || isSelectedImageLoading;
   const profileModifier =

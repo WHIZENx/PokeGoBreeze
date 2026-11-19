@@ -36,7 +36,7 @@ This repository contains the public React web client. Processed game data and ca
 - The API publishes metadata and generated sections from one consistent Game Master snapshot.
 - Pages request only the sections and endpoint results they need instead of loading the complete dataset at startup.
 - The web client validates the processed-data schema before accepting a dataset.
-- Pokémon profile images use one shared fallback order: exact canonical form artwork first, then the exact Pokémon GO form asset and species-level fallbacks; GO-only forms never borrow the canonical species-default artwork.
+- Pokémon Details, Stats Ranking, and Tools selectors use one shared profile-image fallback order: exact canonical form artwork first, then the exact Pokémon GO form asset and species-level fallbacks; GO-only forms never borrow the canonical species-default artwork.
 - Internal data-processing implementation and generated server data are not part of this public repository.
 
 For local development, set `REACT_APP_DATA_API_URL` to a compatible deployed API or to the API service running locally.

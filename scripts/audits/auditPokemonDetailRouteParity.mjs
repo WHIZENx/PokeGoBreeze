@@ -83,6 +83,17 @@ assert.equal(
   mewtwoCanonicalForms[1],
   'An exact canonical form must retain its preferred artwork ahead of the GO asset'
 );
+const bulbasaurCanonicalForm = canonicalFormsById.get(1)?.find((form) => form.isDefault);
+assert.equal(
+  findPokemonDetailCanonicalForm(canonicalFormsById.get(1), {
+    num: 1,
+    form: '',
+    fullName: 'BULBASAUR',
+    pokemonType: 1,
+  }),
+  bulbasaurCanonicalForm,
+  'An empty PokéAPI default form name must resolve as NORMAL before the GO profile asset'
+);
 
 let moveMatches = 0;
 let imageMatches = 0;
@@ -130,10 +141,24 @@ for (const selection of detailForms) {
       pokemonType: selection.pokemonType,
     },
   });
+  const toolsProfile = buildPokemonDetailProfilePresentation({
+    ...sharedProfileInput,
+    selection: {
+      num: selection.num,
+      form: selection.form,
+      fullName: selection.fullName,
+      pokemonType: selection.pokemonType,
+    },
+  });
   assert.deepEqual(
     statsRankingProfile.imageCandidates,
     detailsProfile.imageCandidates,
     `Pokémon Details and Stats Ranking profile URLs drifted for ${identity}`
+  );
+  assert.deepEqual(
+    toolsProfile.imageCandidates,
+    detailsProfile.imageCandidates,
+    `Pokémon Details and Tools profile URLs drifted for ${identity}`
   );
   const expectedFirstImage =
     detailsProfile.preferredImage ?? detailsProfile.pokemonGoImage ?? `official/${selection.num}`;
@@ -207,25 +232,55 @@ for (const canonicalForm of mappedCanonicalForms) {
   );
 }
 
-const [pokemonPage, statsRankingPage, formComponent] = await Promise.all([
-  readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/pages/Sheets/StatsRanking/StatsRanking.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
-]);
+const [pokemonPage, statsRankingPage, formComponent, toolsFind, toolsFormSelect, toolsSelectPokemon] =
+  await Promise.all([
+    readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/pages/Sheets/StatsRanking/StatsRanking.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Info/Form/Form.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Find/Find.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Find/FormSelect.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../../src/components/Commons/Selects/SelectPokemon.tsx', import.meta.url), 'utf8'),
+  ]);
+
+const profileImageResolver = await readFile(
+  new URL('../../src/utils/pokemon-detail-profile-images.ts', import.meta.url),
+  'utf8'
+);
 
 for (const [route, source] of [
   ['Pokémon Details', pokemonPage],
   ['Stats Ranking', statsRankingPage],
+  ['Tools', toolsFormSelect],
 ]) {
   assert.match(
     source,
-    /buildPokemonDetailProfilePresentation\(/,
-    `${route} must resolve canonical forms, GO forms, and ordered profile URLs through one shared view model`
+    /buildPokemonDetailProfileImagePresentation\(/,
+    `${route} must construct the complete ordered profile URL chain through one shared view model`
   );
+}
+assert.match(
+  profileImageResolver,
+  /convertPokemonImageName\(String\(selection\.form\)\)/,
+  'The shared profile contract must derive hybrid fallback identity from the normalized selected form'
+);
+for (const [route, source] of [
+  ['Pokémon Details', pokemonPage],
+  ['Stats Ranking', statsRankingPage],
+  ['Tools', toolsFormSelect],
+]) {
+  assert.doesNotMatch(source, /hybridForm:/, `${route} must not supply a route-specific profile fallback identity`);
 }
 assert.match(formComponent, /findPokemonDetailMoveRanking\(/, 'Pokémon Details must use the shared move resolver');
 assert.match(statsRankingPage, /findPokemonDetailMoveRanking\(/, 'Stats Ranking must use the shared move resolver');
+assert.match(formComponent, /<ButtonGroupForm/, 'Pokémon Details must use the shared form selector');
+assert.match(toolsFind, /<FormSelect/, 'Every Tools Find selector must render the shared form/profile component');
+assert.match(toolsFormSelect, /<ButtonGroupForm/, 'Tools must use the shared form selector');
+assert.match(
+  toolsSelectPokemon,
+  /selectedPokemonIcon=[\s\S]*<PokemonIconType[\s\S]*<PokemonTableIcon/,
+  'Tools selected-Pokémon controls must preserve the exact form icon and modifier badge'
+);
 
 console.log(
-  `Pokémon detail route parity passed: ${detailForms.length} GO form/modifier selections across ${formsById.size} species, ${counterTargets} Counter targets, ${moveMatches} Move/Best Move identities, ${imageMatches} exact cross-route profile URL chains, and ${mappedCanonicalForms.length} canonical aliases.`
+  `Pokémon detail route parity passed: ${detailForms.length} GO form/modifier selections across ${formsById.size} species, ${counterTargets} Counter targets, ${moveMatches} Move/Best Move identities, ${imageMatches} exact Details/Stats Ranking/Tools profile URL chains, and ${mappedCanonicalForms.length} canonical aliases.`
 );
