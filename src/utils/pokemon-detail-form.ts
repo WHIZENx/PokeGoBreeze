@@ -32,7 +32,27 @@ interface PokemonGoNormalFormIdentity {
   pokemonType?: number;
 }
 
+interface PokemonGoCanonicalFormIdentity {
+  form?: string;
+  canonicalForm?: string;
+}
+
+interface PokemonGoFormSelectionMapping {
+  pokemonGoForm?: string;
+  pokemonGoStatsForm?: string;
+}
+
 const normalizedForm = (value: string | undefined) => (value || 'NORMAL').replaceAll('-', '_').toUpperCase();
+
+/** Keep an existing PokéAPI selection tied to its exact generated GO identity. */
+export const applyPokemonGoFormIdentity = <T extends PokemonGoFormSelectionMapping>(
+  selection: T,
+  pokemon: PokemonGoCanonicalFormIdentity
+) => {
+  selection.pokemonGoForm = pokemon.form || 'NORMAL';
+  selection.pokemonGoStatsForm = pokemon.canonicalForm;
+  return selection;
+};
 
 const normalizedFullName = (value: string) => value.replaceAll('-', '_').toUpperCase();
 

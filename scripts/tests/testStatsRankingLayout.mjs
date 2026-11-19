@@ -3,15 +3,27 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [statsRankingSource, pokemonSource, moveTableSource, statBarSource, sharedLayoutStyles, pokemonStyles] =
-  await Promise.all([
-    readFile(new URL('../../src/pages/Sheets/StatsRanking/StatsRanking.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Commons/Tables/Move/MoveTable.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Info/PokemonDetailLayout.scss', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/pages/Pokemon/Pokemon.scss', import.meta.url), 'utf8'),
-  ]);
+const [
+  statsRankingSource,
+  pokemonSource,
+  pokemonDetailHero,
+  classificationBadge,
+  moveTableSource,
+  statBarSource,
+  sharedLayoutStyles,
+  pokemonStyles,
+  heroTableMapper,
+] = await Promise.all([
+  readFile(new URL('../../src/pages/Sheets/StatsRanking/StatsRanking.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/PokemonDetailHero.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/ClassificationBadge.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Tables/Move/MoveTable.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Progress/StatBar.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/PokemonDetailLayout.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Pokemon/Pokemon.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/utils/pokemon-detail-hero.ts', import.meta.url), 'utf8'),
+]);
 
 for (const [page, source] of [
   ['Pokémon Details', pokemonSource],
@@ -26,19 +38,67 @@ for (const [page, source] of [
 
 assert.match(
   statsRankingSource,
-  /pokemon-detail-section pokemon-detail-hero-section/,
-  'Stats Ranking must use the same hero card as Pokémon Details'
+  /<PokemonDetailHero/,
+  'Stats Ranking must use the shared Pokémon detail hero component'
+);
+assert.match(pokemonSource, /<PokemonDetailHero/, 'Pokémon Details must use the shared Pokémon detail hero component');
+assert.match(
+  pokemonDetailHero,
+  /pokemon-detail-section pokemon-detail-hero-section[\s\S]*tw-inline-flex tw-max-w-full tw-items-start[\s\S]*tw-w-pokemon-profile tw-shrink-0[\s\S]*tw-min-w-0 tw-align-top[\s\S]*<PokemonTable/,
+  'The shared hero must center a content-sized group and let its table expand to the section edge'
+);
+assert.match(
+  pokemonDetailHero,
+  /<PokemonTable \{\.\.\.table\} className="pokemon-detail-table" \/>/,
+  'The shared hero must own the only Pokémon metadata table sizing class'
+);
+assert.match(pokemonSource, /table=\{buildPokemonDetailHeroTable\(/);
+assert.match(statsRankingSource, /table=\{buildPokemonDetailHeroTable\(select,/);
+assert.match(
+  pokemonSource,
+  /weightKg: searchingMainDetails\.weightKg,[\s\S]*heightM: searchingMainDetails\.heightM/,
+  'Pokémon Details must pass generated body units without replacing them with PokéAPI measurements'
+);
+assert.doesNotMatch(
+  pokemonSource,
+  /pokemonDetails\.(?:weight|height)\s*=\s*(?:fallbackBody|formBody)/,
+  'Pokémon Details must not overwrite generated body metadata with a second data source'
+);
+for (const field of ['version', 'weightKg', 'heightM']) {
+  assert.match(
+    heroTableMapper,
+    new RegExp(`${field}: pokemon\\?\\.${field}`),
+    `The shared hero mapper must own ${field}`
+  );
+}
+assert.doesNotMatch(
+  statsRankingSource,
+  /tableClassName|table-stats-ranking|StatsRanking\.scss/,
+  'Stats Ranking must not override the shared metadata table sizing'
 );
 assert.match(
   statsRankingSource,
-  /className="pokemon-detail-table table-stats-ranking"/,
-  'Stats Ranking Pokémon metadata must use the shared detail table sizing'
+  /getPokemonClassificationLabels\([\s\S]*pokemonClass: select\?\.pokemonClass[\s\S]*pokemonType: select\?\.pokemonType[\s\S]*isBaby: select\?\.isBaby[\s\S]*classificationLabels=\{classificationLabels\}/,
+  'Stats Ranking must pass API-backed species and form classifications into the shared hero'
 );
+for (const label of [
+  'Legendary',
+  'Mythical',
+  'Ultra Beast',
+  'Mega',
+  'Primal',
+  'Gigantamax',
+  'Shadow',
+  'Purified',
+  'Baby',
+]) {
+  assert.match(classificationBadge, new RegExp(`['"]${label}['"]`), `missing shared classification label: ${label}`);
+}
 for (const testId of ['stats-ranking-stats-section', 'stats-ranking-battle-section', 'stats-ranking-table-section']) {
   assert.match(statsRankingSource, new RegExp(`data-testid="${testId}"`), `missing shared section: ${testId}`);
 }
 assert.match(
-  statsRankingSource,
+  pokemonDetailHero,
   /pokemon-profile-aura--\$\{profileModifier\}/,
   'Stats Ranking must preserve the shared Shadow and Purified profile treatment'
 );
@@ -108,6 +168,11 @@ assert.match(
   /applyPokemonSelectionParams\(next, select\)/,
   'Stats bar selection must preserve the current Pokémon and form'
 );
+assert.match(
+  statsRankingSource,
+  /findPokemonDetailMoveRanking\(selectedBundle\.moveRankings,/,
+  'Move rankings must use the shared canonical form and modifier resolver after Stats bar navigation.'
+);
 assert.doesNotMatch(
   statsRankingSource,
   /<Stats[\s\S]*?isDisabled[\s\S]*?<\/StableHeightSection>/,
@@ -147,8 +212,13 @@ assert.doesNotMatch(
 );
 assert.match(
   moveTableSource,
-  /const move = \(hasFreshMoveData \? props\.rankMoveData : cachedRankMoveData\.current\)[\s\S]*const moveOrigin = hasFreshMoveData \? props\.moveData : cachedMoveData\.current/,
-  'Move tables must retain the last coherent move datasets while the progress bar is active.'
+  /const shouldUseCachedMoveData = isLoading && hasCachedMoveData;[\s\S]*const isUpdating = isLoading;[\s\S]*shouldUseCachedMoveData \? cachedRankMoveData\.current[\s\S]*shouldUseCachedMoveData[\s\S]*cachedMoveData\.current/,
+  'Move tables must retain the last coherent datasets only while the replacement request is active.'
+);
+assert.doesNotMatch(
+  moveTableSource,
+  /isUpdating\s*=\s*isLoading\s*\|\|/,
+  'A settled request without a matching move record must not leave the loading bar active.'
 );
 assert.match(
   moveTableSource,

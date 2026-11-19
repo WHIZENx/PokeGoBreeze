@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import {
   formatPokemonDisplayName,
   formatPokemonSpeciesDisplayName,
+  getPokemonDetailTableName,
 } from '../../src/utils/pokemon-display-name.ts';
 
 for (const [input, expected] of [
@@ -39,6 +40,9 @@ for (const [name, baseSpecies, expected] of [
   ['Rayquaza', undefined, 'Rayquaza'],
 ])
   assert.equal(formatPokemonSpeciesDisplayName(name, baseSpecies), expected);
+
+assert.equal(getPokemonDetailTableName('DARMANITAN_GALARIAN_ZEN', 2), 'DARMANITAN_GALARIAN_ZEN-shadow');
+assert.equal(getPokemonDetailTableName('DARMANITAN_GALARIAN_ZEN', 1), 'DARMANITAN_GALARIAN_ZEN');
 
 if (process.argv[2]) {
   const pokemon = JSON.parse(await readFile(process.argv[2], 'utf8'));

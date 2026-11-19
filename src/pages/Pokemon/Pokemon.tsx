@@ -47,11 +47,10 @@ import {
   splitAndCapitalize,
 } from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
-import PokemonTable from '../../components/Commons/Tables/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { regionList, Params, versionList } from '../../utils/constants';
+import { Params, versionList } from '../../utils/constants';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
@@ -67,10 +66,10 @@ import {
 } from '../../utils/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
-import { PokemonClass, PokemonType } from '../../enums/type.enum';
-import ClassificationBadge from './components/ClassificationBadge';
+import { PokemonType } from '../../enums/type.enum';
 import {
   deduplicatePokemonFormSelections,
+  findPokemonDetailBodyByForm,
   hasPokemonGoBattleModifierCatalog,
   normalizePokemonFormIdentity,
   pokemonGoFormIdentityKey,
@@ -86,14 +85,18 @@ import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
 import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
-import PokemonProfileImageSkeleton from '../../components/Info/PokemonProfileImageSkeleton';
+import PokemonDetailHero from '../../components/Info/PokemonDetailHero';
+import { getPokemonClassificationLabels } from '../../components/Info/ClassificationBadge';
+import { buildPokemonDetailHeroTable } from '../../utils/pokemon-detail-hero';
 import StableHeightSection from '../../components/Layout/StableHeightSection';
 import {
+  applyPokemonGoFormIdentity,
   findCanonicalSpeciesDefaultForm,
   getSpeciesGenderRatio,
   hydrateCanonicalPokemonDetail,
   isDuplicatePokemonGoNormalForm,
 } from '../../utils/pokemon-detail-form';
+import { buildPokemonDetailImageCandidates, findPokemonDetailGoForm } from '../../utils/pokemon-detail-presentation';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -162,9 +165,6 @@ const Pokemon = (props: IPokemonPage) => {
   const navigationIdRef = useRef(0);
   const pokemonRequestIdRef = useRef(0);
 
-  const [version, setVersion] = useState('');
-  const [region, setRegion] = useState('');
-  const [generation, setGeneration] = useState('');
   const [formName, setFormName] = useState<string>();
   const [originForm, setOriginForm] = useState<string>();
   const [originSoundCry, setOriginSoundCry] = useState<IFormSoundCry[]>([]);
@@ -243,6 +243,31 @@ const Pokemon = (props: IPokemonPage) => {
     )?.replaceAll('_', '-');
     return formType ? `${result}${result ? '-' : ''}${formType.toUpperCase()}` : result;
   };
+
+  const resolvePokemonSelection = useCallback(
+    (id: number, form: Partial<IPokemonFormModify> | undefined, genderRate?: number) => {
+      if (!form) {
+        return undefined;
+      }
+      const selectedFormName = [form.pokemonGoForm, form.form?.formName, form.form?.name, form.defaultName].find(
+        (value) => isNotEmpty(value)
+      );
+      const details = getPokemonDetails(id, selectedFormName, form.form?.pokemonType, Boolean(form.pokemonGoForm));
+      hydrateCanonicalPokemonDetail(details, id, form);
+      if (!form.pokemonGoForm) {
+        const speciesGenderRatio = getSpeciesGenderRatio(genderRate);
+        if (speciesGenderRatio) {
+          details.genderRatio = speciesGenderRatio;
+        }
+      }
+      details.pokemonType = form.form?.pokemonType ?? PokemonType.Normal;
+      return {
+        details,
+        pokemon: PokemonDetail.setData(details),
+      };
+    },
+    [getPokemonDetails]
+  );
 
   const fetchMap = useCallback(
     (
@@ -430,8 +455,7 @@ const Pokemon = (props: IPokemonPage) => {
                 ? [canonicalDefaultForm]
                 : [];
             aliasedCanonicalForms.forEach((canonicalForm) => {
-              canonicalForm.pokemonGoForm = String(pokemon.form ?? 'NORMAL');
-              canonicalForm.pokemonGoStatsForm = pokemon.canonicalForm;
+              applyPokemonGoFormIdentity(canonicalForm, pokemon);
               if (pokemon.asset) {
                 canonicalForm.form.sprites = withPokemonGoAssetSprites(canonicalForm.form.sprites, pokemon.asset);
               }
@@ -440,11 +464,14 @@ const Pokemon = (props: IPokemonPage) => {
           }
           if (selectedKeys.has(key)) {
             const selectedForm = selectedForms.get(key);
-            if (selectedForm && pokemon.asset) {
-              selectedForm.form.sprites = withPokemonGoAssetSprites(
-                inheritedSprites ?? selectedForm.form.sprites,
-                pokemon.asset
-              );
+            if (selectedForm) {
+              applyPokemonGoFormIdentity(selectedForm, pokemon);
+              if (pokemon.asset) {
+                selectedForm.form.sprites = withPokemonGoAssetSprites(
+                  inheritedSprites ?? selectedForm.form.sprites,
+                  pokemon.asset
+                );
+              }
             }
             return;
           }
@@ -474,7 +501,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       // Set Default Form
       const flatForms = formListResult.flatMap((item) => item);
-      let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
+      let currentForm: IPokemonFormModify | undefined;
       const requestedSearchParams = latestSearchParamsRef.current;
       let formParams = getValueOrDefault(String, requestedSearchParams.get(Params.Form))
         .toUpperCase()
@@ -526,19 +553,23 @@ const Pokemon = (props: IPokemonPage) => {
         currentForm = defaultForm.find((item) => item.defaultId === specie.id);
       }
       currentForm ??= flatForms.find((item) => item.defaultId === specie.id);
-      let defaultData = dataPokeList.find((value) => isEqual(value.name, currentForm?.form.name));
-      defaultData ??= dataPokeList.find((value) => isEqual(value.name, currentForm?.name));
-      // On detail routes the URL effect below publishes the hydrated form and
-      // battle details together, after this bundle is committed locally.
-      if (!params.id && defaultData && currentForm) {
-        const pokemonDetails = PokemonDetail.setDetails(defaultData);
-        pokemonDetails.pokemonType = currentForm.form.pokemonType;
+      // Embedded Search and routed Details both publish one hydrated snapshot.
+      // Do not expose a temporary PokéAPI body before the generated GO row.
+      const initialSelection = !params.id
+        ? resolvePokemonSelection(specie.id, currentForm, specie.genderRate)
+        : undefined;
+      if (!params.id && currentForm && initialSelection) {
         dispatch(
           SearchingActions.SetMainPokemonSelection.create({
             form: currentForm,
-            pokemon: pokemonDetails,
+            pokemon: initialSelection.pokemon,
           })
         );
+        setReleasedAlert({
+          formName: convertSexName(currentForm.form.name),
+          pokemonType: currentForm.form.pokemonType,
+          releasedGO: initialSelection.details.releasedGO,
+        });
       } else if (!params.id) {
         currentForm ??= defaultForm.at(0);
         if (currentForm) {
@@ -549,7 +580,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     },
-    [getFindPokemon, retrieveMoves, dispatch]
+    [getFindPokemon, retrieveMoves, dispatch, resolvePokemonSelection]
   );
 
   const queryPokemon = useCallback(
@@ -636,9 +667,6 @@ const Pokemon = (props: IPokemonPage) => {
 
     setOriginForm(undefined);
     setFormName(undefined);
-    setVersion('');
-    setRegion('');
-    setGeneration('');
     dispatch(SearchingActions.ResetMainPokemon.create());
     dispatch(SearchingActions.ResetPokemonMainSearch.create());
     if (isForceClear) {
@@ -727,86 +755,28 @@ const Pokemon = (props: IPokemonPage) => {
   }, [params.id, props.searchOption?.id, getFilteredPokemons, navigatePokemon]);
 
   const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined, releasedAlertFormName?: string) => {
-    if (!form) {
+    const selection = resolvePokemonSelection(id, form, data?.genderRate);
+    if (!form || !selection) {
       return false;
-    }
-    // The canonical form name (for example ALOLA_TOTEM, ICE, MALE, or HERO)
-    // is the most precise key for the Pokémon GO Game Master row. The PokeAPI
-    // Pokémon name can be broader (for example marowak-alola) and previously
-    // caused distinct forms to resolve to the first matching GO form.
-    const formName = [form.pokemonGoForm, form.form?.formName, form.form?.name, form.defaultName].find((value) =>
-      isNotEmpty(value)
-    );
-    const details = getPokemonDetails(id, formName, form.form?.pokemonType, Boolean(form.pokemonGoForm));
-    hydrateCanonicalPokemonDetail(details, id, form);
-    if (!form.pokemonGoForm) {
-      const speciesGenderRatio = getSpeciesGenderRatio(data?.genderRate);
-      if (speciesGenderRatio) {
-        details.genderRatio = speciesGenderRatio;
-      }
-    }
-    details.pokemonType = form.form?.pokemonType ?? PokemonType.Normal;
-    const pokemonDetails = PokemonDetail.setData(details);
-    const normalizeBodyName = (value: string | undefined) => value?.replaceAll('_', '-').toLowerCase();
-    const normalizedFullName = normalizeBodyName(details.fullName);
-    const normalizedFormName = normalizeBodyName(form.form?.formName);
-    const canonicalFormName =
-      data?.name && normalizedFormName ? `${normalizeBodyName(data.name)}-${normalizedFormName}` : undefined;
-    const canonicalBodyNames = new Set([normalizedFullName, canonicalFormName]);
-    const formBody =
-      pokeData.find((item) => canonicalBodyNames.has(normalizeBodyName(item.name))) ??
-      pokeData.find((item) => isEqual(item.name, form.form?.name, EqualMode.IgnoreCaseSensitive)) ??
-      pokeData.find((item) => isEqual(item.name, form.name, EqualMode.IgnoreCaseSensitive));
-    const fallbackBody = formBody ?? pokeData.find((item) => item.isDefault);
-    if (fallbackBody) {
-      // PokeAPI body measurements use decimetres/hectograms, which is the
-      // representation expected by PokemonTable. Keep those form-specific
-      // values while enriching the same snapshot with Pokémon GO mechanics.
-      pokemonDetails.height = fallbackBody.height;
-      pokemonDetails.weight = fallbackBody.weight;
-      pokemonDetails.name = fallbackBody.name;
-    } else {
-      // Generated Game Master values are metres/kilograms. Normalize them only
-      // when no canonical form detail exists (for example a GO-only costume).
-      pokemonDetails.height = toNumber(details.heightM) * 10;
-      pokemonDetails.weight = toNumber(details.weightKg) * 10;
     }
     dispatch(
       SearchingActions.SetMainPokemonSelection.create({
         form,
-        pokemon: pokemonDetails,
+        pokemon: selection.pokemon,
       })
     );
     setReleasedAlert({
       formName: releasedAlertFormName,
       pokemonType: form.form?.pokemonType,
-      releasedGO: details.releasedGO,
+      releasedGO: selection.details.releasedGO,
     });
-    return details.releasedGO;
+    return selection.details.releasedGO;
   };
 
   useEffect(() => {
     const id = toNumber(data?.id);
     if (searchingMainForm && searchingMainForm.defaultId === id && id > 0 && data) {
       const formParams = searchParams.get(Params.Form)?.replaceAll('_', '-');
-      setVersion(getValueOrDefault(String, searchingMainForm.form?.version));
-      setGeneration(getValueOrDefault(String, data.generation.toString()));
-      if (!params.id) {
-        setRegion(regionList[data.generation]);
-      } else if (isNotEmpty(searchingMainForm.form?.formName)) {
-        const currentRegion = Object.values(regionList).find((item) =>
-          isInclude(searchingMainForm.form?.formName, item, IncludeMode.IncludeIgnoreCaseSensitive)
-        );
-        setRegion(
-          currentRegion && (!region || !isEqual(region, currentRegion))
-            ? currentRegion
-            : currentRegion
-              ? region
-              : regionList[data.generation]
-        );
-      } else {
-        setRegion(regionList[data.generation]);
-      }
       const nameInfo =
         routerAction === Action.Pop && searchingMainData && !params.id
           ? searchingMainForm?.form?.name
@@ -842,11 +812,8 @@ const Pokemon = (props: IPokemonPage) => {
           ),
         });
       }
-      // Routed selections are hydrated by the URL effect below. Writing them
-      // back from this selection observer creates a second selection writer.
-      if (!params.id) {
-        checkReleased(id, searchingMainForm, convertSexName(nameInfo));
-      }
+      // Form changes are published by the route effect or the embedded
+      // selection callback. This observer only derives presentation state.
     } else {
       clearData();
     }
@@ -881,7 +848,9 @@ const Pokemon = (props: IPokemonPage) => {
       if (!currentForm && !isNotEmpty(form) && !isNotEmpty(formType)) {
         currentForm = findCanonicalSpeciesDefaultForm(flatForms, id);
       }
-      let pokemonCurrentData = pokeData.find((item) => isEqual(currentForm?.form.name, item.name));
+      let pokemonCurrentData =
+        pokeData.find((item) => isEqual(currentForm?.form.name, item.name)) ??
+        findPokemonDetailBodyByForm(pokeData, id, data?.name, currentForm?.form.formName);
       if (!pokemonCurrentData) {
         pokemonCurrentData = pokeData.find((item) => item.isDefault);
         if (!currentForm && pokemonCurrentData) {
@@ -933,13 +902,34 @@ const Pokemon = (props: IPokemonPage) => {
   const preferredMainImage = isMainImageReady
     ? getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites)
     : undefined;
+  const selectedPokemonGoForm = isMainImageReady
+    ? findPokemonDetailGoForm(pokemonGoForms, {
+        num: currentPokemonId ?? 0,
+        form:
+          searchingMainForm?.pokemonGoForm ??
+          searchingMainDetails?.form ??
+          searchingMainForm?.form?.formName ??
+          'NORMAL',
+        fullName: searchingMainDetails?.fullName,
+        pokemonType: searchingMainForm?.form?.pokemonType,
+      })
+    : undefined;
+  const selectedPokemonGoImage = selectedPokemonGoForm?.asset?.default
+    ? APIService.getPokemonModel(selectedPokemonGoForm.asset.default)
+    : undefined;
   const officialMainImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
   const isCanonicalDefaultMainForm = Boolean(isMainImageReady && searchingMainForm?.form?.id === currentPokemonId);
   const cacheableOfficialMainImage =
     (!isMainImageReady && !hasRequestedMainImageForm) || isCanonicalDefaultMainForm ? officialMainImage : undefined;
   const mainImageCandidates =
     currentPokemonId && !isRequestedMainImageFormPending
-      ? [preferredMainImage, officialMainImage, hybridImage, APIService.getPokeFullAsset(currentPokemonId)]
+      ? buildPokemonDetailImageCandidates({
+          pokemonGoImage: selectedPokemonGoImage,
+          preferredImage: preferredMainImage,
+          officialImage: officialMainImage,
+          hybridImage,
+          fullAssetImage: APIService.getPokeFullAsset(currentPokemonId),
+        })
       : [];
   const { displayedUrl: mainImage, isLoading: isMainImageLoading } = usePreloadedImage(
     mainImageCandidates,
@@ -954,31 +944,14 @@ const Pokemon = (props: IPokemonPage) => {
         ? 'purified'
         : '';
 
-  const classificationLabels: string[] = [];
-  if (progress.isLoadedForms && isMainImageReady) {
-    const pokemonClass = searchingMainDetails?.pokemonClass;
-    if (pokemonClass === PokemonClass.Legendary || data?.isLegendary) {
-      classificationLabels.push('Legendary');
-    } else if (pokemonClass === PokemonClass.Mythical || data?.isMythical) {
-      classificationLabels.push('Mythical');
-    } else if (pokemonClass === PokemonClass.UltraBeast) {
-      classificationLabels.push('Ultra Beast');
-    }
-    const formLabels: Partial<Record<PokemonType, string>> = {
-      [PokemonType.Mega]: 'Mega',
-      [PokemonType.Primal]: 'Primal',
-      [PokemonType.GMax]: 'Gigantamax',
-      [PokemonType.Shadow]: 'Shadow',
-      [PokemonType.Purified]: 'Purified',
-    };
-    const formLabel = formLabels[searchingMainForm?.form?.pokemonType ?? PokemonType.None];
-    if (formLabel) {
-      classificationLabels.push(formLabel);
-    }
-    if (data?.isBaby) {
-      classificationLabels.push('Baby');
-    }
-  }
+  const classificationLabels = getPokemonClassificationLabels({
+    isReady: progress.isLoadedForms && isMainImageReady,
+    pokemonClass: searchingMainDetails?.pokemonClass,
+    pokemonType: searchingMainForm?.form?.pokemonType,
+    isBaby: data?.isBaby,
+    isLegendary: data?.isLegendary,
+    isMythical: data?.isMythical,
+  });
 
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
@@ -1007,59 +980,57 @@ const Pokemon = (props: IPokemonPage) => {
           props.isSearch ? '' : 'tw-container'
         )}
       >
-        <section className="pokemon-detail-section pokemon-detail-hero-section tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
-          <AlertReleased
-            formName={releasedAlert?.formName}
-            pokemonType={releasedAlert?.pokemonType}
-            icon={iconData}
-            releasedGO={releasedAlert?.releasedGO}
-          />
-          <div className="tw-inline-flex tw-w-pokemon-profile tw-flex-col tw-align-top">
-            <div
-              className={combineClasses(
-                'tw-relative tw-isolate tw-inline-flex tw-items-center tw-justify-center tw-overflow-visible img-desc pokemon-profile-aura',
-                profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
-              )}
-              aria-busy={showMainImageSkeleton}
-              data-testid="pokemon-profile-image"
-              data-profile-modifier={profileModifier}
-            >
-              {showMainImageSkeleton ? (
-                <PokemonProfileImageSkeleton />
-              ) : (
-                <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={mainImage} />
-              )}
-            </div>
-            <div
-              className="tw-mt-2 tw-mb-3 sm:tw-mb-0 tw-flex tw-h-6 tw-items-center tw-justify-center tw-gap-2"
-              aria-label="Pokémon classification"
-              aria-hidden={classificationLabels.length === 0}
-              data-testid="pokemon-classification-badges"
-            >
-              {classificationLabels.map((label) => (
-                <ClassificationBadge key={label} label={label} />
-              ))}
-            </div>
-          </div>
-          <div className="tw-inline-block tw-align-top">
-            <PokemonTable
-              className="pokemon-detail-table"
-              id={dataStorePokemon?.current?.id}
-              gen={generation}
-              formName={formName}
-              region={region}
-              version={version}
-              weight={searchingMainDetails?.weight}
-              height={searchingMainDetails?.height}
-              isLoadedForms={progress.isLoadedForms}
+        <PokemonDetailHero
+          notice={
+            <AlertReleased
+              formName={releasedAlert?.formName}
+              pokemonType={releasedAlert?.pokemonType}
+              icon={iconData}
+              releasedGO={releasedAlert?.releasedGO}
             />
-          </div>
-        </section>
+          }
+          imageSrc={mainImage}
+          isImageLoading={showMainImageSkeleton}
+          imageTestId="pokemon-profile-image"
+          profileModifier={profileModifier}
+          classificationLabels={classificationLabels}
+          table={buildPokemonDetailHeroTable(
+            searchingMainDetails
+              ? {
+                  num: searchingMainDetails.id || dataStorePokemon?.current?.id,
+                  fullName: searchingMainDetails.fullName || formName,
+                  pokemonType: searchingMainDetails.pokemonType,
+                  gen: searchingMainDetails.gen,
+                  region: searchingMainDetails.region,
+                  version: searchingMainDetails.version,
+                  weightKg: searchingMainDetails.weightKg,
+                  heightM: searchingMainDetails.heightM,
+                }
+              : undefined,
+            progress.isLoadedForms
+          )}
+        />
         <FormComponent
           formList={formList}
           pokeData={pokeData}
           genderRate={data?.genderRate}
           setSearchOption={props.setSearchOption}
+          onSelectForm={
+            props.isSearch
+              ? (value) => {
+                  const id = toNumber(data?.id);
+                  if (!id || value.defaultId !== id) {
+                    return;
+                  }
+                  checkReleased(id, value, convertSexName(value.form.name));
+                  props.setSearchOption?.({
+                    id,
+                    form: value.form.formName,
+                    pokemonType: value.form.pokemonType,
+                  });
+                }
+              : undefined
+          }
           defaultId={dataStorePokemon?.current?.id}
           evolutionChain={evolutionChain}
           pokemonGoAsset={pokemonGoAsset}
