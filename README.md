@@ -589,6 +589,11 @@ state may be unavailable or stale. When deployed, `public/_headers` supplies
 the static-asset cache policy and Cloudflare's SPA fallback handles routes
 because the build has no top-level `404.html`.
 
+Vercel serves existing prerendered SEO pages from the filesystem first, then
+falls back to the SPA shell for direct `/pokemon/:id` links that are absent
+from the released-only SEO manifest. This keeps unreleased forms with usable
+Pokémon GO mechanics directly accessible without indexing them as released.
+
 ### Common Project Scripts
 
 | Script | Description |
