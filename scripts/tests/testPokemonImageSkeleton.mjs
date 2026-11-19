@@ -151,23 +151,28 @@ assert.match(
 );
 assert.match(
   statsRanking,
-  /getPreferredPokemonFormSprite\([\s\S]*PokemonSprite\.setDetails\([\s\S]*selectedForm[\s\S]*fallbackForm[\s\S]*sprites[\s\S]*usePreloadedImage\([\s\S]*selectedImageCandidates,[\s\S]*APIService\.getPokeSprite\(\)/,
-  'Stats Ranking must resolve the selected PokeAPI form artwork before generic fallbacks.'
+  /buildPokemonDetailProfilePresentation\([\s\S]*getCanonicalImage:[\s\S]*getPreferredPokemonFormSprite\([\s\S]*PokemonSprite\.setDetails\(form\.sprites\)[\s\S]*usePreloadedImage\([\s\S]*selectedImageCandidates,[\s\S]*APIService\.getPokeSprite\(\)/,
+  'Stats Ranking must prefer only exact canonical form artwork before GO and generic fallbacks.'
+);
+assert.doesNotMatch(
+  statsRanking,
+  /selectedForm \?\? fallbackForm/,
+  'A GO-only form must not borrow the canonical species-default profile image.'
 );
 assert.match(
   statsRanking,
-  /const selectedPokemonGoForm = findPokemonDetailGoForm[\s\S]*APIService\.getPokemonModel\(selectedPokemonGoForm\.asset\.default\)/,
+  /getPokemonGoImage:[\s\S]*form\.asset\?\.default[\s\S]*APIService\.getPokemonModel\(form\.asset\.default\)/,
   'Stats Ranking must retain and resolve Pokémon GO-only form assets from the shared bundle.'
 );
 assert.match(statsRanking, /pokemonGoForms: data\.data\.pokemonGo\?\.forms \?\? \[\]/);
 assert.match(
   statsRanking,
-  /const selectedImageCandidates =\s*selectedId && selectedBundle[\s\S]*buildPokemonDetailImageCandidates\(\{[\s\S]*pokemonGoImage: selectedPokemonGoImage,[\s\S]*preferredImage: selectedPreferredImage,[\s\S]*officialImage: selectedOfficialImage,[\s\S]*hybridImage: selectedHybridImage,[\s\S]*fullAssetImage: APIService\.getPokeFullAsset/,
+  /const selectedProfile =[\s\S]*buildPokemonDetailProfilePresentation\(\{[\s\S]*canonicalForms:[\s\S]*pokemonGoForms:[\s\S]*officialImage: selectedOfficialImage,[\s\S]*hybridImage: selectedHybridImage,[\s\S]*fullAssetImage: APIService\.getPokeFullAsset/,
   'Stats Ranking must use the shared exact-form profile image fallback order.'
 );
 assert.match(
   pokemonPage,
-  /findPokemonDetailGoForm\(pokemonGoForms,[\s\S]*buildPokemonDetailImageCandidates\(\{[\s\S]*pokemonGoImage: selectedPokemonGoImage/,
+  /const mainProfile =[\s\S]*buildPokemonDetailProfilePresentation\(\{[\s\S]*canonicalForms:[\s\S]*pokemonGoForms,[\s\S]*getCanonicalImage:[\s\S]*getPokemonGoImage:/,
   'Pokémon Details must use the same exact GO form and image candidate resolver as Stats Ranking.'
 );
 assert.doesNotMatch(

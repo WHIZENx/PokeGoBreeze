@@ -8,6 +8,7 @@ import '../../components/Info/PokemonDetailLayout.scss';
 
 import {
   Form,
+  PokemonForm,
   IFormSoundCry,
   FormSoundCry,
   IPokemonFormModify,
@@ -96,7 +97,7 @@ import {
   hydrateCanonicalPokemonDetail,
   isDuplicatePokemonGoNormalForm,
 } from '../../utils/pokemon-detail-form';
-import { buildPokemonDetailImageCandidates, findPokemonDetailGoForm } from '../../utils/pokemon-detail-presentation';
+import { buildPokemonDetailProfilePresentation } from '../../utils/pokemon-detail-presentation';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -177,6 +178,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [pokemonGoEvolutionChains, setPokemonGoEvolutionChains] = useState<IEvolutionChain[]>([]);
   const [pokemonGoForms, setPokemonGoForms] = useState<PokemonGoFormCatalogEntry[]>([]);
   const [moveRankings, setMoveRankings] = useState<PokemonMoveRanking[]>([]);
+  const [canonicalFormBundle, setCanonicalFormBundle] = useState<{ id: number; forms: PokemonForm[] }>();
   const [releasedAlert, setReleasedAlert] = useState<ReleasedAlertSnapshot>();
 
   const [progress, setProgress] = useState(new PokemonProgress());
@@ -283,6 +285,7 @@ const Pokemon = (props: IPokemonPage) => {
       const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
       const soundCries: IFormSoundCry[] = [];
+      setCanonicalFormBundle({ id: specie.id, forms: varieties.flatMap(({ forms }) => forms) });
       varieties.forEach(({ pokemon: pokeInfo, forms }) => {
         const pokeForm = forms.map((form) => PokemonFormDetail.setDetails(form));
         pokeInfo.isIncludeShadow = checkPokemonIncludeShadowForm(pokeInfo.name);
@@ -899,38 +902,35 @@ const Pokemon = (props: IPokemonPage) => {
         : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
     )
   );
-  const preferredMainImage = isMainImageReady
-    ? getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites)
-    : undefined;
-  const selectedPokemonGoForm = isMainImageReady
-    ? findPokemonDetailGoForm(pokemonGoForms, {
-        num: currentPokemonId ?? 0,
-        form:
-          searchingMainForm?.pokemonGoForm ??
-          searchingMainDetails?.form ??
-          searchingMainForm?.form?.formName ??
-          'NORMAL',
-        fullName: searchingMainDetails?.fullName,
-        pokemonType: searchingMainForm?.form?.pokemonType,
+  const officialMainImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
+  const mainProfile = isMainImageReady
+    ? buildPokemonDetailProfilePresentation({
+        canonicalForms:
+          canonicalFormBundle && canonicalFormBundle.id === currentPokemonId ? canonicalFormBundle.forms : undefined,
+        pokemonGoForms,
+        selection: {
+          num: currentPokemonId ?? 0,
+          form:
+            searchingMainForm?.pokemonGoForm ??
+            searchingMainDetails?.form ??
+            searchingMainForm?.form?.formName ??
+            'NORMAL',
+          fullName: searchingMainDetails?.fullName,
+          pokemonType: searchingMainForm?.form?.pokemonType,
+        },
+        getCanonicalImage: (form) => getPreferredPokemonFormSprite(PokemonSprite.setDetails(form.sprites)),
+        getPokemonGoImage: (form) => (form.asset?.default ? APIService.getPokemonModel(form.asset.default) : undefined),
+        officialImage: officialMainImage,
+        hybridImage,
+        fullAssetImage: APIService.getPokeFullAsset(currentPokemonId),
       })
     : undefined;
-  const selectedPokemonGoImage = selectedPokemonGoForm?.asset?.default
-    ? APIService.getPokemonModel(selectedPokemonGoForm.asset.default)
-    : undefined;
-  const officialMainImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
+  const preferredMainImage = mainProfile?.preferredImage;
   const isCanonicalDefaultMainForm = Boolean(isMainImageReady && searchingMainForm?.form?.id === currentPokemonId);
   const cacheableOfficialMainImage =
     (!isMainImageReady && !hasRequestedMainImageForm) || isCanonicalDefaultMainForm ? officialMainImage : undefined;
   const mainImageCandidates =
-    currentPokemonId && !isRequestedMainImageFormPending
-      ? buildPokemonDetailImageCandidates({
-          pokemonGoImage: selectedPokemonGoImage,
-          preferredImage: preferredMainImage,
-          officialImage: officialMainImage,
-          hybridImage,
-          fullAssetImage: APIService.getPokeFullAsset(currentPokemonId),
-        })
-      : [];
+    currentPokemonId && !isRequestedMainImageFormPending ? (mainProfile?.imageCandidates ?? []) : [];
   const { displayedUrl: mainImage, isLoading: isMainImageLoading } = usePreloadedImage(
     mainImageCandidates,
     APIService.getPokeSprite(),
