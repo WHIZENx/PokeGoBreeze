@@ -19,6 +19,7 @@ const [
   pokemonTable,
   pokemonTableStyles,
   pokemonPage,
+  pokemonDetailHero,
   pokemonPageStyles,
   pokemonDetailLayoutStyles,
   stableHeightSection,
@@ -44,6 +45,7 @@ const [
   readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Commons/Tables/Pokemon/PokemonTable.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/PokemonDetailHero.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/Pokemon/Pokemon.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/PokemonDetailLayout.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Layout/StableHeightSection.tsx', import.meta.url), 'utf8'),
@@ -469,8 +471,23 @@ assert.doesNotMatch(info, /Skeleton/);
 assert.match(pokemonTable, /new Intl\.NumberFormat\('en-US',[\s\S]*maximumFractionDigits: 2/);
 assert.match(
   pokemonTable,
-  /tw-grid tw-grid-cols-\[1\.1fr_0\.9fr\] min-\[420px\]:tw-grid-cols-\[1\.15fr_0\.85fr\]/,
-  'Body measurements must remain in one row with a mobile-safe column ratio.'
+  /formatBodyMeasurement\(props\.weightKg, 'kg'\)[\s\S]*formatBodyMeasurement\(props\.heightM, 'm'\)/,
+  'The shared metadata table must render explicit kilogram and metre values without another unit conversion.'
+);
+assert.doesNotMatch(
+  pokemonTable,
+  /props\.(?:weightKg|heightM)\s*\/\s*10/,
+  'The shared metadata table must not divide already-normalized body units.'
+);
+assert.match(
+  pokemonTable,
+  /tw-grid-cols-\[minmax\(max-content,1\.1fr\)_minmax\(max-content,0\.9fr\)\][\s\S]*min-\[420px\]:tw-grid-cols-\[minmax\(max-content,1\.15fr\)_minmax\(max-content,0\.85fr\)\]/,
+  'Body measurements must remain in one row without shrinking either column below its content.'
+);
+assert.match(
+  pokemonTable,
+  /!tw-pl-0\.5 !tw-pr-3[\s\S]*sm:!tw-pl-2\.5 sm:!tw-pr-4/,
+  'The rightmost Height value must retain visible space from the table edge.'
 );
 assert.equal(
   pokemonTable.match(/max-\[419px\]:tw-text-body2/g)?.length,
@@ -514,7 +531,12 @@ assert.ok(
   (form.match(/className="pokemon-detail-section/g)?.length ?? 0) >= 7,
   'Forms, Gender, Stats, Information, Battle data, Raid, and Evolution must render in separate section cards.'
 );
-assert.match(pokemonPage, /pokemon-detail-section pokemon-detail-hero-section/);
+assert.match(pokemonPage, /<PokemonDetailHero/);
+assert.match(
+  pokemonDetailHero,
+  /tw-inline-flex tw-max-w-full tw-items-start tw-align-top[\s\S]*tw-w-pokemon-profile tw-shrink-0[\s\S]*tw-min-w-0 tw-align-top[\s\S]*<PokemonTable/,
+  'The centered Pokémon hero group must size to its content before metadata rows expand toward the section edge.'
+);
 assert.doesNotMatch(pokemonPage, /data-testid="pokemon-cost-table"/);
 assert.match(pokemonPage, /testId="pokemon-assets-stable"/);
 assert.match(
@@ -522,6 +544,11 @@ assert.match(
   /\.pokemon-detail-section[\s\S]*tw-rounded-2xl[\s\S]*var\(--background-paper\)/
 );
 assert.match(pokemonDetailLayoutStyles, /\.pokemon-detail-table[\s\S]*@apply tw-h-\[217px\]/);
+assert.doesNotMatch(
+  pokemonDetailLayoutStyles,
+  /\.pokemon-detail-table\s*\{[^}]*max-width:\s*500px/,
+  'The shared metadata table must not stop growing before its content reaches the section edge.'
+);
 assert.doesNotMatch(pokemonPageStyles, /\.table-main/);
 assert.match(stableHeightSection, /new ResizeObserver\(measure\)/);
 assert.match(stableHeightSection, /if \(isLoading && retainHeightWhileLoading && retainedHeightRef\.current > 0\)/);

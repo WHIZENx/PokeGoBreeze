@@ -15,6 +15,7 @@ const [
   statsTable,
   customStyles,
   profileSkeleton,
+  detailHero,
   statsRanking,
 ] = await Promise.all([
   readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
@@ -28,6 +29,7 @@ const [
   readFile(new URL('../../src/components/Commons/Tables/Stats/StatsTable.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/assets/styles/custom.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/PokemonProfileImageSkeleton.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/PokemonDetailHero.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/Sheets/StatsRanking/StatsRanking.tsx', import.meta.url), 'utf8'),
 ]);
 
@@ -37,9 +39,14 @@ assert.match(
   'The Pokémon profile image skeleton must use the dedicated image surface.'
 );
 assert.match(
+  detailHero,
+  /<PokemonProfileImageSkeleton testId=\{imageSkeletonTestId\} \/>/,
+  'The shared detail hero must own the shared profile image skeleton.'
+);
+assert.match(
   pokemonPage,
-  /<PokemonProfileImageSkeleton \/>/,
-  'Pokémon Details must use the shared profile image skeleton.'
+  /<PokemonDetailHero[\s\S]*isImageLoading=\{showMainImageSkeleton\}/,
+  'Pokémon Details must pass its image readiness into the shared detail hero.'
 );
 assert.match(
   pokemonPage,
@@ -139,8 +146,8 @@ assert.match(
 );
 assert.match(
   statsRanking,
-  /<PokemonProfileImageSkeleton testId="stats-ranking-profile-image-skeleton" \/>/,
-  'Stats Ranking must reuse the Pokémon Details profile skeleton.'
+  /<PokemonDetailHero[\s\S]*imageSkeletonTestId="stats-ranking-profile-image-skeleton"/,
+  'Stats Ranking must reuse the Pokémon Details hero and profile skeleton.'
 );
 assert.match(
   statsRanking,

@@ -7,6 +7,7 @@ import {
   isCanonicalSpeciesDefaultForm,
   isDuplicatePokemonGoNormalForm,
 } from '../../src/utils/pokemon-detail-form.ts';
+import { findPokemonDetailBodyByForm } from '../../src/utils/pokemon-form-identity.ts';
 import { readFile } from 'node:fs/promises';
 
 const generatedPokemon = JSON.parse(
@@ -130,6 +131,18 @@ assert.deepEqual(getSpeciesGenderRatio(4), { M: 0.5, F: 0.5 }, 'gender_rate 4 mu
 assert.deepEqual(getSpeciesGenderRatio(8), { M: 0, F: 1 }, 'gender_rate 8 must resolve to 100% female');
 assert.deepEqual(getSpeciesGenderRatio(-1), { M: 0, F: 0 }, 'gender_rate -1 must remain genderless');
 assert.equal(getSpeciesGenderRatio(9), undefined, 'invalid species gender rates must not create a ratio');
+
+const darmanitanBodies = [
+  { name: 'darmanitan-standard', height: 13, weight: 929 },
+  { name: 'darmanitan-zen', height: 13, weight: 929 },
+  { name: 'darmanitan-galar-standard', height: 17, weight: 1200 },
+  { name: 'darmanitan-galar-zen', height: 17, weight: 1200 },
+];
+assert.deepEqual(
+  findPokemonDetailBodyByForm(darmanitanBodies, 555, 'darmanitan', 'galarian-zen'),
+  darmanitanBodies[3],
+  'Galarian Zen must resolve PokéAPI Galar naming before falling back to the species default body'
+);
 
 assert.equal(
   isCanonicalSpeciesDefaultForm(

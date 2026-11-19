@@ -294,6 +294,11 @@ export interface IPokemonDetail extends IPokemonDetailInfo {
   form?: string;
   pokemonClass?: PokemonClass;
   pokemonType?: PokemonType;
+  gen: number;
+  region?: string;
+  version?: string;
+  weightKg?: number;
+  heightM?: number;
   formChange?: IPokemonFormChange[];
   genderRatio: IPokemonGenderRatio;
   pokemonId?: string;
@@ -333,6 +338,11 @@ export class PokemonDetail implements IPokemonDetail {
   form?: string;
   pokemonClass?: PokemonClass;
   pokemonType?: PokemonType;
+  gen = 0;
+  region?: string;
+  version?: string;
+  weightKg?: number;
+  heightM?: number;
   formChange?: IPokemonFormChange[];
   genderRatio = new PokemonGenderRatio();
   pokemonId?: string;
@@ -376,6 +386,11 @@ export class PokemonDetail implements IPokemonDetail {
     obj.form = data.form;
     obj.pokemonClass = data.pokemonClass;
     obj.pokemonType = data.pokemonType;
+    obj.gen = data.gen;
+    obj.region = data.region;
+    obj.version = data.version;
+    obj.weightKg = data.weightKg;
+    obj.heightM = data.heightM;
     obj.formChange = data.formChange;
     obj.genderRatio = data.genderRatio;
     obj.pokemonId = data.pokemonId?.toString();
