@@ -50,8 +50,13 @@ assert.match(
 );
 assert.match(
   pokemonPage,
-  /const showMainImageSkeleton = !currentPokemonId \|\| isRequestedMainImageFormPending \|\| isMainImageLoading;/,
-  'The Pokémon profile must keep its skeleton until an image candidate is available.'
+  /const cachedMainNavigationImage =[\s\S]*isImagePreloaded\(officialMainImage\)[\s\S]*const displayedMainImage = cachedMainNavigationImage \?\? mainImage;[\s\S]*const showMainImageSkeleton = cachedMainNavigationImage[\s\S]*\? false[\s\S]*!currentPokemonId \|\| !isMainProfileReady \|\| isRequestedMainImageFormPending \|\| isMainImageLoading;/,
+  'Pokémon Details must show a cached default artwork or keep its skeleton until the exact form profile is ready.'
+);
+assert.match(
+  pokemonPage,
+  /const isMainProfileReady = Boolean\([\s\S]*isMainImageReady && canonicalFormBundle && canonicalFormBundle\.id === currentPokemonId[\s\S]*\);/,
+  'Pokémon Details must wait for the selected ID canonical form catalog before resolving profile candidates.'
 );
 assert.match(
   pokemonPage,

@@ -84,7 +84,7 @@ import useIcon from '../../composables/useIcon';
 import useRouter from '../../composables/useRouter';
 import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
-import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
+import { isImagePreloaded, usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import PokemonDetailHero from '../../components/Info/PokemonDetailHero';
 import { getPokemonClassificationLabels } from '../../components/Info/ClassificationBadge';
@@ -884,13 +884,16 @@ const Pokemon = (props: IPokemonPage) => {
   const isMainImageReady = Boolean(
     currentPokemonId && searchingMainForm?.form && searchingMainForm.defaultId === currentPokemonId
   );
+  const isMainProfileReady = Boolean(
+    isMainImageReady && canonicalFormBundle && canonicalFormBundle.id === currentPokemonId
+  );
   const requestedMainImageForm = searchParams.get(Params.Form)?.trim();
   const hasRequestedMainImageForm = Boolean(
     requestedMainImageForm && !isEqual(requestedMainImageForm, 'normal', EqualMode.IgnoreCaseSensitive)
   );
   const isRequestedMainImageFormPending = hasRequestedMainImageForm && !isMainImageReady;
   const officialMainImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
-  const mainProfile = isMainImageReady
+  const mainProfile = isMainProfileReady
     ? buildPokemonDetailProfileImagePresentation({
         canonicalForms:
           canonicalFormBundle && canonicalFormBundle.id === currentPokemonId ? canonicalFormBundle.forms : undefined,
@@ -919,7 +922,14 @@ const Pokemon = (props: IPokemonPage) => {
     [preferredMainImage, cacheableOfficialMainImage, mainProfile?.hybridImage],
     true
   );
-  const showMainImageSkeleton = !currentPokemonId || isRequestedMainImageFormPending || isMainImageLoading;
+  const cachedMainNavigationImage =
+    !isMainProfileReady && !hasRequestedMainImageForm && isImagePreloaded(officialMainImage)
+      ? officialMainImage
+      : undefined;
+  const displayedMainImage = cachedMainNavigationImage ?? mainImage;
+  const showMainImageSkeleton = cachedMainNavigationImage
+    ? false
+    : !currentPokemonId || !isMainProfileReady || isRequestedMainImageFormPending || isMainImageLoading;
   const profileModifier =
     isMainImageReady && searchingMainForm?.form?.pokemonType === PokemonType.Shadow
       ? 'shadow'
@@ -972,7 +982,7 @@ const Pokemon = (props: IPokemonPage) => {
               releasedGO={releasedAlert?.releasedGO}
             />
           }
-          imageSrc={mainImage}
+          imageSrc={displayedMainImage}
           isImageLoading={showMainImageSkeleton}
           imageTestId="pokemon-profile-image"
           profileModifier={profileModifier}
