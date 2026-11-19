@@ -28,7 +28,11 @@ import { TableColumnModify } from '../../../utils/models/overrides/data-table.mo
 import { getValueOrDefault, isEqual, isNullOrUndefined, toNumber } from '../../../utils/extension';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import type { PokemonBundleVariety, PokemonMoveRanking } from '../../../core/models/API/pokemon-bundle.model';
+import type {
+  PokemonBundleVariety,
+  PokemonGoFormCatalogEntry,
+  PokemonMoveRanking,
+} from '../../../core/models/API/pokemon-bundle.model';
 import { PokemonSprite } from '../../../core/models/API/form.model';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
@@ -46,6 +50,11 @@ import { getPokemonClassificationLabels } from '../../../components/Info/Classif
 import { normalizePokemonFormIdentity } from '../../../utils/pokemon-form-identity';
 import StableHeightSection from '../../../components/Layout/StableHeightSection';
 import { buildPokemonDetailHeroTable } from '../../../utils/pokemon-detail-hero';
+import {
+  buildPokemonDetailImageCandidates,
+  findPokemonDetailGoForm,
+  findPokemonDetailMoveRanking,
+} from '../../../utils/pokemon-detail-presentation';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
@@ -149,6 +158,7 @@ interface StatsRankingResponse {
 
 interface StatsRankingPokemonBundle {
   moveRankings: PokemonMoveRanking[];
+  pokemonGoForms: PokemonGoFormCatalogEntry[];
   varieties: PokemonBundleVariety[];
 }
 
@@ -247,6 +257,14 @@ const StatsRanking = () => {
       return formIdentity === selectedFormIdentity;
     });
   const fallbackForm = selectedBundle?.varieties.flatMap(({ forms }) => forms).find((form) => form.is_default);
+  const selectedPokemonGoForm = findPokemonDetailGoForm(selectedBundle?.pokemonGoForms, {
+    num: selectedId ?? 0,
+    form: select?.form ?? 'NORMAL',
+    pokemonType: select?.pokemonType,
+  });
+  const selectedPokemonGoImage = selectedPokemonGoForm?.asset?.default
+    ? APIService.getPokemonModel(selectedPokemonGoForm.asset.default)
+    : undefined;
   const selectedPreferredImage = getPreferredPokemonFormSprite(
     PokemonSprite.setDetails((selectedForm ?? fallbackForm)?.sprites)
   );
@@ -257,7 +275,13 @@ const StatsRanking = () => {
   const selectedHybridImage = selectedId ? APIService.getPokeFullSprite(selectedId, selectedImageForm) : undefined;
   const selectedImageCandidates =
     selectedId && selectedBundle
-      ? [selectedPreferredImage, selectedOfficialImage, selectedHybridImage, APIService.getPokeFullAsset(selectedId)]
+      ? buildPokemonDetailImageCandidates({
+          pokemonGoImage: selectedPokemonGoImage,
+          preferredImage: selectedPreferredImage,
+          officialImage: selectedOfficialImage,
+          hybridImage: selectedHybridImage,
+          fullAssetImage: APIService.getPokeFullAsset(selectedId),
+        })
       : [];
   const { displayedUrl: selectedImage, isLoading: isSelectedImageLoading } = usePreloadedImage(
     selectedImageCandidates,
@@ -279,11 +303,12 @@ const StatsRanking = () => {
   });
   const moveRanking =
     select && selectedBundle
-      ? selectedBundle.moveRankings.find(
-          (item) =>
-            item.pokemonType === (select.pokemonType ?? PokemonType.Normal) &&
-            normalizePokemonFormIdentity(selectedId ?? 0, item.form ?? 'NORMAL') === selectedFormIdentity
-        )
+      ? findPokemonDetailMoveRanking(selectedBundle.moveRankings, {
+          num: select.num,
+          form: select.form ?? 'NORMAL',
+          fullName: select.fullName,
+          pokemonType: select.pokemonType ?? PokemonType.Normal,
+        })
       : undefined;
 
   const applySelection = (row: IPokemonStatsRanking) => {
@@ -308,6 +333,7 @@ const StatsRanking = () => {
       .then(({ data }) => {
         const bundle = {
           moveRankings: data.data.moveRankings ?? [],
+          pokemonGoForms: data.data.pokemonGo?.forms ?? [],
           varieties: data.data.varieties,
         };
         pokemonBundleCache.current.set(selectedId, bundle);
@@ -315,7 +341,7 @@ const StatsRanking = () => {
       })
       .catch((error) => {
         if (!APIService.isCancel(error)) {
-          setPokemonBundle({ id: selectedId, data: { moveRankings: [], varieties: [] } });
+          setPokemonBundle({ id: selectedId, data: { moveRankings: [], pokemonGoForms: [], varieties: [] } });
         }
       })
       .finally(() => {

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { buildPokemonFormCatalog, deduplicatePokemonForms } from '../../../api/src/pokemon/forms.ts';
+import { alignPokemonFormsWithDetailPresentation } from '../../../api/src/pokemon/pokedex-catalog.ts';
 import { calculateTheoreticalPokemonGoStats } from '../../../api/src/pokemon/pokeapi-stats.ts';
 import { pokemonGoBaseStatProduct } from '../../src/utils/pokemon-go-stats.ts';
 import {
@@ -21,7 +22,8 @@ const [pokemons, rankings, options, canonicalCatalog] = await Promise.all([
   readFile(canonicalFormsPath, 'utf8').then(JSON.parse),
 ]);
 
-const detailForms = buildPokemonFormCatalog(deduplicatePokemonForms(pokemons));
+const displayedPokemon = alignPokemonFormsWithDetailPresentation(deduplicatePokemonForms(pokemons));
+const detailForms = buildPokemonFormCatalog(displayedPokemon);
 const bonus = (pokemonType) =>
   pokemonType === 2
     ? options.combatOptions.shadowBonus
@@ -59,7 +61,7 @@ const sections = [
   ['statProd', 'product'],
 ];
 const goBaseIdentities = new Set(
-  deduplicatePokemonForms(pokemons).map((pokemon) => key(pokemon.num, pokemon.form, pokemon.pokemonType))
+  displayedPokemon.map((pokemon) => key(pokemon.num, pokemon.form, pokemon.pokemonType))
 );
 const canonicalOnly = canonicalCatalog.forms.filter(
   (pokemon) => !goBaseIdentities.has(key(pokemon.num, pokemon.form, pokemon.pokemonType))

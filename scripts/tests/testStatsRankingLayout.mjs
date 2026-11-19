@@ -170,8 +170,8 @@ assert.match(
 );
 assert.match(
   statsRankingSource,
-  /normalizePokemonFormIdentity\(selectedId \?\? 0, item\.form \?\? 'NORMAL'\) === selectedFormIdentity/,
-  'Move rankings must resolve canonical form aliases after Stats bar navigation.'
+  /findPokemonDetailMoveRanking\(selectedBundle\.moveRankings,/,
+  'Move rankings must use the shared canonical form and modifier resolver after Stats bar navigation.'
 );
 assert.doesNotMatch(
   statsRankingSource,

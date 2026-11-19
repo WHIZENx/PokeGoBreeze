@@ -95,6 +95,7 @@ import {
   hydrateCanonicalPokemonDetail,
   isDuplicatePokemonGoNormalForm,
 } from '../../utils/pokemon-detail-form';
+import { buildPokemonDetailImageCandidates, findPokemonDetailGoForm } from '../../utils/pokemon-detail-presentation';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -898,13 +899,34 @@ const Pokemon = (props: IPokemonPage) => {
   const preferredMainImage = isMainImageReady
     ? getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites)
     : undefined;
+  const selectedPokemonGoForm = isMainImageReady
+    ? findPokemonDetailGoForm(pokemonGoForms, {
+        num: currentPokemonId ?? 0,
+        form:
+          searchingMainForm?.pokemonGoForm ??
+          searchingMainDetails?.form ??
+          searchingMainForm?.form?.formName ??
+          'NORMAL',
+        fullName: searchingMainDetails?.fullName,
+        pokemonType: searchingMainForm?.form?.pokemonType,
+      })
+    : undefined;
+  const selectedPokemonGoImage = selectedPokemonGoForm?.asset?.default
+    ? APIService.getPokemonModel(selectedPokemonGoForm.asset.default)
+    : undefined;
   const officialMainImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
   const isCanonicalDefaultMainForm = Boolean(isMainImageReady && searchingMainForm?.form?.id === currentPokemonId);
   const cacheableOfficialMainImage =
     (!isMainImageReady && !hasRequestedMainImageForm) || isCanonicalDefaultMainForm ? officialMainImage : undefined;
   const mainImageCandidates =
     currentPokemonId && !isRequestedMainImageFormPending
-      ? [preferredMainImage, officialMainImage, hybridImage, APIService.getPokeFullAsset(currentPokemonId)]
+      ? buildPokemonDetailImageCandidates({
+          pokemonGoImage: selectedPokemonGoImage,
+          preferredImage: preferredMainImage,
+          officialImage: officialMainImage,
+          hybridImage,
+          fullAssetImage: APIService.getPokeFullAsset(currentPokemonId),
+        })
       : [];
   const { displayedUrl: mainImage, isLoading: isMainImageLoading } = usePreloadedImage(
     mainImageCandidates,
