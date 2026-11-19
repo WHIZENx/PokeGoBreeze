@@ -1,14 +1,60 @@
-import React from 'react';
-import Chip from '@mui/material/Chip';
-import StarsIcon from '@mui/icons-material/Stars';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import PublicIcon from '@mui/icons-material/Public';
-import BoltIcon from '@mui/icons-material/Bolt';
-import FlareIcon from '@mui/icons-material/Flare';
-import ExpandIcon from '@mui/icons-material/Expand';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import BoltIcon from '@mui/icons-material/Bolt';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import ExpandIcon from '@mui/icons-material/Expand';
+import FlareIcon from '@mui/icons-material/Flare';
+import PublicIcon from '@mui/icons-material/Public';
+import StarsIcon from '@mui/icons-material/Stars';
+import Chip from '@mui/material/Chip';
+
+import { PokemonClass, PokemonType } from '../../enums/type.enum';
+
+interface PokemonClassification {
+  isReady: boolean;
+  pokemonClass?: PokemonClass;
+  pokemonType?: PokemonType;
+  isBaby?: boolean;
+  isLegendary?: boolean;
+  isMythical?: boolean;
+}
+
+export const getPokemonClassificationLabels = ({
+  isReady,
+  pokemonClass,
+  pokemonType,
+  isBaby,
+  isLegendary,
+  isMythical,
+}: PokemonClassification) => {
+  if (!isReady) {
+    return [];
+  }
+  const labels: string[] = [];
+  if (pokemonClass === PokemonClass.Legendary || isLegendary) {
+    labels.push('Legendary');
+  } else if (pokemonClass === PokemonClass.Mythical || isMythical) {
+    labels.push('Mythical');
+  } else if (pokemonClass === PokemonClass.UltraBeast) {
+    labels.push('Ultra Beast');
+  }
+  const formLabels: Partial<Record<PokemonType, string>> = {
+    [PokemonType.Mega]: 'Mega',
+    [PokemonType.Primal]: 'Primal',
+    [PokemonType.GMax]: 'Gigantamax',
+    [PokemonType.Shadow]: 'Shadow',
+    [PokemonType.Purified]: 'Purified',
+  };
+  const formLabel = formLabels[pokemonType ?? PokemonType.None];
+  if (formLabel) {
+    labels.push(formLabel);
+  }
+  if (isBaby) {
+    labels.push('Baby');
+  }
+  return labels;
+};
 
 const classifications: Record<string, { icon: typeof StarsIcon; className: string }> = {
   Legendary: {

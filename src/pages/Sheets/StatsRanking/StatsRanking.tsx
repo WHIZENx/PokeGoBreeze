@@ -7,7 +7,6 @@ import { useSearchParams } from 'react-router-dom';
 import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 
 import APIService from '../../../services/api.service';
-import './StatsRanking.scss';
 import '../../../components/Info/PokemonDetailLayout.scss';
 import {
   capitalize,
@@ -22,15 +21,18 @@ import {
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Commons/Tables/Move/MoveTable';
 import { IPokemonStatsRanking } from '../../../core/models/stats.model';
-import PokemonTable from '../../../components/Commons/Tables/Pokemon/PokemonTable';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
-import { combineClasses, getValueOrDefault, isEqual, isNullOrUndefined, toNumber } from '../../../utils/extension';
+import { getValueOrDefault, isEqual, isNullOrUndefined, toNumber } from '../../../utils/extension';
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import type { PokemonBundleVariety, PokemonMoveRanking } from '../../../core/models/API/pokemon-bundle.model';
+import type {
+  PokemonBundleVariety,
+  PokemonGoFormCatalogEntry,
+  PokemonMoveRanking,
+} from '../../../core/models/API/pokemon-bundle.model';
 import { PokemonSprite } from '../../../core/models/API/form.model';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import useSkipStalePageRequest from '../../../utils/hooks/useSkipStalePageRequest';
@@ -43,9 +45,16 @@ import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
 import { usePreloadedImage } from '../../../utils/hooks/usePreloadedImage';
-import PokemonProfileImageSkeleton from '../../../components/Info/PokemonProfileImageSkeleton';
+import PokemonDetailHero from '../../../components/Info/PokemonDetailHero';
+import { getPokemonClassificationLabels } from '../../../components/Info/ClassificationBadge';
 import { normalizePokemonFormIdentity } from '../../../utils/pokemon-form-identity';
 import StableHeightSection from '../../../components/Layout/StableHeightSection';
+import { buildPokemonDetailHeroTable } from '../../../utils/pokemon-detail-hero';
+import {
+  buildPokemonDetailImageCandidates,
+  findPokemonDetailGoForm,
+  findPokemonDetailMoveRanking,
+} from '../../../utils/pokemon-detail-presentation';
 
 const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
   {
@@ -149,6 +158,7 @@ interface StatsRankingResponse {
 
 interface StatsRankingPokemonBundle {
   moveRankings: PokemonMoveRanking[];
+  pokemonGoForms: PokemonGoFormCatalogEntry[];
   varieties: PokemonBundleVariety[];
 }
 
@@ -247,6 +257,14 @@ const StatsRanking = () => {
       return formIdentity === selectedFormIdentity;
     });
   const fallbackForm = selectedBundle?.varieties.flatMap(({ forms }) => forms).find((form) => form.is_default);
+  const selectedPokemonGoForm = findPokemonDetailGoForm(selectedBundle?.pokemonGoForms, {
+    num: selectedId ?? 0,
+    form: select?.form ?? 'NORMAL',
+    pokemonType: select?.pokemonType,
+  });
+  const selectedPokemonGoImage = selectedPokemonGoForm?.asset?.default
+    ? APIService.getPokemonModel(selectedPokemonGoForm.asset.default)
+    : undefined;
   const selectedPreferredImage = getPreferredPokemonFormSprite(
     PokemonSprite.setDetails((selectedForm ?? fallbackForm)?.sprites)
   );
@@ -257,7 +275,13 @@ const StatsRanking = () => {
   const selectedHybridImage = selectedId ? APIService.getPokeFullSprite(selectedId, selectedImageForm) : undefined;
   const selectedImageCandidates =
     selectedId && selectedBundle
-      ? [selectedPreferredImage, selectedOfficialImage, selectedHybridImage, APIService.getPokeFullAsset(selectedId)]
+      ? buildPokemonDetailImageCandidates({
+          pokemonGoImage: selectedPokemonGoImage,
+          preferredImage: selectedPreferredImage,
+          officialImage: selectedOfficialImage,
+          hybridImage: selectedHybridImage,
+          fullAssetImage: APIService.getPokeFullAsset(selectedId),
+        })
       : [];
   const { displayedUrl: selectedImage, isLoading: isSelectedImageLoading } = usePreloadedImage(
     selectedImageCandidates,
@@ -271,14 +295,20 @@ const StatsRanking = () => {
       : select?.pokemonType === PokemonType.Purified
         ? 'purified'
         : '';
+  const classificationLabels = getPokemonClassificationLabels({
+    isReady: !loading && Boolean(select),
+    pokemonClass: select?.pokemonClass,
+    pokemonType: select?.pokemonType,
+    isBaby: select?.isBaby,
+  });
   const moveRanking =
     select && selectedBundle
-      ? selectedBundle.moveRankings.find(
-          (item) =>
-            item.pokemonType === (select.pokemonType ?? PokemonType.Normal) &&
-            ((select.fullName && isEqual(item.fullName, select.fullName)) ||
-              (select.form && isEqual(item.form, select.form)))
-        )
+      ? findPokemonDetailMoveRanking(selectedBundle.moveRankings, {
+          num: select.num,
+          form: select.form ?? 'NORMAL',
+          fullName: select.fullName,
+          pokemonType: select.pokemonType ?? PokemonType.Normal,
+        })
       : undefined;
 
   const applySelection = (row: IPokemonStatsRanking) => {
@@ -303,6 +333,7 @@ const StatsRanking = () => {
       .then(({ data }) => {
         const bundle = {
           moveRankings: data.data.moveRankings ?? [],
+          pokemonGoForms: data.data.pokemonGo?.forms ?? [],
           varieties: data.data.varieties,
         };
         pokemonBundleCache.current.set(selectedId, bundle);
@@ -310,7 +341,7 @@ const StatsRanking = () => {
       })
       .catch((error) => {
         if (!APIService.isCancel(error)) {
-          setPokemonBundle({ id: selectedId, data: { moveRankings: [], varieties: [] } });
+          setPokemonBundle({ id: selectedId, data: { moveRankings: [], pokemonGoForms: [], varieties: [] } });
         }
       })
       .finally(() => {
@@ -504,40 +535,15 @@ const StatsRanking = () => {
 
   return (
     <div className="tw-pb-3 tw-relative poke-container tw-container tw-text-default">
-      <section className="pokemon-detail-section pokemon-detail-hero-section tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
-        <div
-          className={combineClasses(
-            'tw-relative tw-isolate tw-inline-flex tw-align-bottom tw-items-center tw-justify-center tw-overflow-visible img-desc pokemon-profile-aura',
-            profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
-          )}
-          aria-busy={showSelectedImageSkeleton}
-          data-testid="stats-ranking-profile-image"
-          data-profile-modifier={profileModifier}
-        >
-          {showSelectedImageSkeleton ? (
-            <PokemonProfileImageSkeleton testId="stats-ranking-profile-image-skeleton" />
-          ) : (
-            <img className="pokemon-main-sprite !tw-align-baseline" alt="Image Pokemon" src={selectedImage} />
-          )}
-        </div>
-        <div className="tw-inline-block tw-align-bottom">
-          <PokemonTable
-            id={select?.num}
-            gen={select?.gen}
-            formName={
-              select
-                ? `${select.name}${isSpecialFormType(select.pokemonType) ? '-' + getKeyWithData(PokemonType, select.pokemonType) : ''}`
-                : undefined
-            }
-            region={select?.region}
-            version={select?.version}
-            weight={select?.weightKg}
-            height={select?.heightM}
-            className="pokemon-detail-table table-stats-ranking"
-            isLoadedForms={!loading && Boolean(select)}
-          />
-        </div>
-      </section>
+      <PokemonDetailHero
+        imageSrc={selectedImage}
+        isImageLoading={showSelectedImageSkeleton}
+        imageTestId="stats-ranking-profile-image"
+        imageSkeletonTestId="stats-ranking-profile-image-skeleton"
+        profileModifier={profileModifier}
+        classificationLabels={classificationLabels}
+        table={buildPokemonDetailHeroTable(select, !loading && Boolean(select))}
+      />
       <div className="pokemon-detail-sections tw-grid tw-gap-4 xl:tw-grid-cols-2">
         <section className="pokemon-detail-section" data-testid="stats-ranking-stats-section">
           <h4 className="info-title">

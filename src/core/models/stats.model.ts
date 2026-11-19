@@ -1,4 +1,4 @@
-import { PokemonType } from '../../enums/type.enum';
+import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import { toNumber } from '../../utils/extension';
 import { minIv, maxIv } from '../../utils/helpers/options-context.helpers';
 
@@ -273,6 +273,8 @@ export interface IPokemonStatsRanking {
   releasedGO: boolean;
   fullName?: string;
   pokemonType?: PokemonType;
+  pokemonClass?: PokemonClass;
+  isBaby: boolean;
 }
 
 export class PokemonStatsRanking implements IPokemonStatsRanking {
@@ -299,6 +301,8 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   releasedGO = false;
   fullName?: string;
   pokemonType?: PokemonType;
+  pokemonClass?: PokemonClass;
+  isBaby = false;
 
   static create(value: IPokemonStatsRanking) {
     const obj = new PokemonStatsRanking();

@@ -46,3 +46,11 @@ export const formatPokemonDisplayName = (name?: string | null): string => {
 
 export const formatPokemonSpeciesDisplayName = (name?: string | null, baseSpecies?: string | null): string =>
   formatPokemonDisplayName(baseSpecies || name);
+
+export const getPokemonDetailTableName = (name: string | undefined, pokemonType: number | undefined) => {
+  if (!name) {
+    return undefined;
+  }
+  const modifier = pokemonType === 2 ? 'shadow' : pokemonType === 3 ? 'purified' : undefined;
+  return modifier ? `${name}-${modifier}` : name;
+};

@@ -295,7 +295,7 @@ League-specific Pokémon analysis with scores, recommended moves, calculated sta
 Server-calculated DPS/TDO results for Pokémon and move combinations, with attacker/target settings, combat modifiers, release/form filters, and sortable columns. When the release-only filter is disabled, unreleased forms are identified by an inline badge in the Pokémon Name cell without adding another results column.
 
 #### **Stats Ranking** (`/stats-ranking`)
-Global base-stat ranking table for Attack, Defense, Stamina, and stat product, with name/release filters and an expandable Pokémon summary.
+Global base-stat ranking table for Attack, Defense, Stamina, and stat product, with name/release filters and an expandable Pokémon summary. The summary reuses the Pokémon Details hero and displays the same selected-form name, canonical body measurements, species-class, selected-form, and Baby badges from typed API fields. Shared hero tables accept body measurements explicitly in kilograms and metres.
 
 #### **Stats Table** (`/stats-table`)
 League IV/stat-product table for a selected Pokémon and CP limit, with optional CP and exact-IV inputs for narrowing combinations.

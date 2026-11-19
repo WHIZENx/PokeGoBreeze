@@ -15,6 +15,7 @@ const [
   statsTable,
   customStyles,
   profileSkeleton,
+  detailHero,
   statsRanking,
 ] = await Promise.all([
   readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
@@ -28,6 +29,7 @@ const [
   readFile(new URL('../../src/components/Commons/Tables/Stats/StatsTable.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/assets/styles/custom.scss', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Info/PokemonProfileImageSkeleton.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Info/PokemonDetailHero.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/pages/Sheets/StatsRanking/StatsRanking.tsx', import.meta.url), 'utf8'),
 ]);
 
@@ -37,9 +39,14 @@ assert.match(
   'The Pokémon profile image skeleton must use the dedicated image surface.'
 );
 assert.match(
+  detailHero,
+  /<PokemonProfileImageSkeleton testId=\{imageSkeletonTestId\} \/>/,
+  'The shared detail hero must own the shared profile image skeleton.'
+);
+assert.match(
   pokemonPage,
-  /<PokemonProfileImageSkeleton \/>/,
-  'Pokémon Details must use the shared profile image skeleton.'
+  /<PokemonDetailHero[\s\S]*isImageLoading=\{showMainImageSkeleton\}/,
+  'Pokémon Details must pass its image readiness into the shared detail hero.'
 );
 assert.match(
   pokemonPage,
@@ -139,8 +146,8 @@ assert.match(
 );
 assert.match(
   statsRanking,
-  /<PokemonProfileImageSkeleton testId="stats-ranking-profile-image-skeleton" \/>/,
-  'Stats Ranking must reuse the Pokémon Details profile skeleton.'
+  /<PokemonDetailHero[\s\S]*imageSkeletonTestId="stats-ranking-profile-image-skeleton"/,
+  'Stats Ranking must reuse the Pokémon Details hero and profile skeleton.'
 );
 assert.match(
   statsRanking,
@@ -149,8 +156,19 @@ assert.match(
 );
 assert.match(
   statsRanking,
-  /const selectedImageCandidates =\s*selectedId && selectedBundle[\s\S]*selectedPreferredImage,[\s\S]*selectedOfficialImage,[\s\S]*selectedHybridImage,[\s\S]*APIService\.getPokeFullAsset/,
-  'Stats Ranking must preload real profile candidates before exposing the final fallback.'
+  /const selectedPokemonGoForm = findPokemonDetailGoForm[\s\S]*APIService\.getPokemonModel\(selectedPokemonGoForm\.asset\.default\)/,
+  'Stats Ranking must retain and resolve Pokémon GO-only form assets from the shared bundle.'
+);
+assert.match(statsRanking, /pokemonGoForms: data\.data\.pokemonGo\?\.forms \?\? \[\]/);
+assert.match(
+  statsRanking,
+  /const selectedImageCandidates =\s*selectedId && selectedBundle[\s\S]*buildPokemonDetailImageCandidates\(\{[\s\S]*pokemonGoImage: selectedPokemonGoImage,[\s\S]*preferredImage: selectedPreferredImage,[\s\S]*officialImage: selectedOfficialImage,[\s\S]*hybridImage: selectedHybridImage,[\s\S]*fullAssetImage: APIService\.getPokeFullAsset/,
+  'Stats Ranking must use the shared exact-form profile image fallback order.'
+);
+assert.match(
+  pokemonPage,
+  /findPokemonDetailGoForm\(pokemonGoForms,[\s\S]*buildPokemonDetailImageCandidates\(\{[\s\S]*pokemonGoImage: selectedPokemonGoImage/,
+  'Pokémon Details must use the same exact GO form and image candidate resolver as Stats Ranking.'
 );
 assert.doesNotMatch(
   statsRanking,

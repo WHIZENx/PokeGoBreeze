@@ -158,6 +158,26 @@ export const normalizePokemonFormIdentity = (id: number, value: string | number 
   return identity;
 };
 
+export const findPokemonDetailBodyByForm = <T extends { name: string }>(
+  bodies: readonly T[],
+  speciesId: number,
+  speciesName: string | undefined,
+  formName: string | undefined
+) => {
+  const normalizedSpeciesName = (speciesName ?? '').trim().replaceAll('_', '-').toLowerCase();
+  const selectedIdentity = normalizePokemonFormIdentity(speciesId, formName);
+  if (!normalizedSpeciesName || !selectedIdentity) {
+    return undefined;
+  }
+  return bodies.find((body) => {
+    const normalizedBodyName = body.name.trim().replaceAll('_', '-').toLowerCase();
+    const bodyFormName = normalizedBodyName.startsWith(`${normalizedSpeciesName}-`)
+      ? normalizedBodyName.slice(normalizedSpeciesName.length + 1)
+      : normalizedBodyName;
+    return normalizePokemonFormIdentity(speciesId, bodyFormName) === selectedIdentity;
+  });
+};
+
 export const findPokemonStatsForm = <T extends { id?: number; form?: string | number }>(
   forms: readonly T[] | undefined,
   id: number | undefined,
