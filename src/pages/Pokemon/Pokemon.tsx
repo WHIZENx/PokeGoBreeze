@@ -8,6 +8,7 @@ import '../../components/Info/PokemonDetailLayout.scss';
 
 import {
   Form,
+  PokemonForm,
   IFormSoundCry,
   FormSoundCry,
   IPokemonFormModify,
@@ -83,7 +84,7 @@ import useIcon from '../../composables/useIcon';
 import useRouter from '../../composables/useRouter';
 import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
-import { usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
+import { isImagePreloaded, usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import PokemonDetailHero from '../../components/Info/PokemonDetailHero';
 import { getPokemonClassificationLabels } from '../../components/Info/ClassificationBadge';
@@ -96,7 +97,7 @@ import {
   hydrateCanonicalPokemonDetail,
   isDuplicatePokemonGoNormalForm,
 } from '../../utils/pokemon-detail-form';
-import { buildPokemonDetailImageCandidates, findPokemonDetailGoForm } from '../../utils/pokemon-detail-presentation';
+import { buildPokemonDetailProfileImagePresentation } from '../../utils/pokemon-detail-profile-images';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -166,7 +167,6 @@ const Pokemon = (props: IPokemonPage) => {
   const pokemonRequestIdRef = useRef(0);
 
   const [formName, setFormName] = useState<string>();
-  const [originForm, setOriginForm] = useState<string>();
   const [originSoundCry, setOriginSoundCry] = useState<IFormSoundCry[]>([]);
   const [isFound, setIsFound] = useState(true);
 
@@ -177,6 +177,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [pokemonGoEvolutionChains, setPokemonGoEvolutionChains] = useState<IEvolutionChain[]>([]);
   const [pokemonGoForms, setPokemonGoForms] = useState<PokemonGoFormCatalogEntry[]>([]);
   const [moveRankings, setMoveRankings] = useState<PokemonMoveRanking[]>([]);
+  const [canonicalFormBundle, setCanonicalFormBundle] = useState<{ id: number; forms: PokemonForm[] }>();
   const [releasedAlert, setReleasedAlert] = useState<ReleasedAlertSnapshot>();
 
   const [progress, setProgress] = useState(new PokemonProgress());
@@ -283,6 +284,7 @@ const Pokemon = (props: IPokemonPage) => {
       const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
       const soundCries: IFormSoundCry[] = [];
+      setCanonicalFormBundle({ id: specie.id, forms: varieties.flatMap(({ forms }) => forms) });
       varieties.forEach(({ pokemon: pokeInfo, forms }) => {
         const pokeForm = forms.map((form) => PokemonFormDetail.setDetails(form));
         pokeInfo.isIncludeShadow = checkPokemonIncludeShadowForm(pokeInfo.name);
@@ -665,7 +667,6 @@ const Pokemon = (props: IPokemonPage) => {
       return;
     }
 
-    setOriginForm(undefined);
     setFormName(undefined);
     dispatch(SearchingActions.ResetMainPokemon.create());
     dispatch(SearchingActions.ResetPokemonMainSearch.create());
@@ -787,7 +788,6 @@ const Pokemon = (props: IPokemonPage) => {
               : data.name;
       setFormName(convertSexName(nameInfo));
       const originForm = splitAndCapitalize(searchingMainForm.form?.formName, '-', '-');
-      setOriginForm(originForm);
       if (params.id) {
         const pokemonName = splitAndCapitalize(nameInfo, '-', ' ');
         setTitleProps({
@@ -860,8 +860,6 @@ const Pokemon = (props: IPokemonPage) => {
         }
       }
       if (currentForm && pokemonCurrentData) {
-        const originForm = splitAndCapitalize(currentForm.form.formName, '-', '-');
-        setOriginForm(originForm);
         setFormName(convertSexName(currentForm.form.name));
         // checkReleased resolves the selected form against the Game Master and
         // dispatches the form/details pair atomically. Dispatching the raw
@@ -886,57 +884,52 @@ const Pokemon = (props: IPokemonPage) => {
   const isMainImageReady = Boolean(
     currentPokemonId && searchingMainForm?.form && searchingMainForm.defaultId === currentPokemonId
   );
+  const isMainProfileReady = Boolean(
+    isMainImageReady && canonicalFormBundle && canonicalFormBundle.id === currentPokemonId
+  );
   const requestedMainImageForm = searchParams.get(Params.Form)?.trim();
   const hasRequestedMainImageForm = Boolean(
     requestedMainImageForm && !isEqual(requestedMainImageForm, 'normal', EqualMode.IgnoreCaseSensitive)
   );
   const isRequestedMainImageFormPending = hasRequestedMainImageForm && !isMainImageReady;
-  const hybridImage = APIService.getPokeFullSprite(
-    currentPokemonId,
-    convertPokemonImageName(
-      searchingMainForm && originForm && searchingMainForm.defaultId === searchingMainForm.form?.id
-        ? ''
-        : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
-    )
-  );
-  const preferredMainImage = isMainImageReady
-    ? getPreferredPokemonFormSprite(searchingMainForm?.form?.sprites)
-    : undefined;
-  const selectedPokemonGoForm = isMainImageReady
-    ? findPokemonDetailGoForm(pokemonGoForms, {
-        num: currentPokemonId ?? 0,
-        form:
-          searchingMainForm?.pokemonGoForm ??
-          searchingMainDetails?.form ??
-          searchingMainForm?.form?.formName ??
-          'NORMAL',
-        fullName: searchingMainDetails?.fullName,
-        pokemonType: searchingMainForm?.form?.pokemonType,
+  const officialMainImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
+  const mainProfile = isMainProfileReady
+    ? buildPokemonDetailProfileImagePresentation({
+        canonicalForms:
+          canonicalFormBundle && canonicalFormBundle.id === currentPokemonId ? canonicalFormBundle.forms : undefined,
+        pokemonGoForms,
+        selection: {
+          num: currentPokemonId ?? 0,
+          form:
+            searchingMainForm?.pokemonGoForm ??
+            searchingMainDetails?.form ??
+            searchingMainForm?.form?.formName ??
+            'NORMAL',
+          fullName: searchingMainDetails?.fullName,
+          pokemonType: searchingMainForm?.form?.pokemonType,
+        },
       })
     : undefined;
-  const selectedPokemonGoImage = selectedPokemonGoForm?.asset?.default
-    ? APIService.getPokemonModel(selectedPokemonGoForm.asset.default)
-    : undefined;
-  const officialMainImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
+  const preferredMainImage = mainProfile?.preferredImage;
   const isCanonicalDefaultMainForm = Boolean(isMainImageReady && searchingMainForm?.form?.id === currentPokemonId);
   const cacheableOfficialMainImage =
     (!isMainImageReady && !hasRequestedMainImageForm) || isCanonicalDefaultMainForm ? officialMainImage : undefined;
   const mainImageCandidates =
-    currentPokemonId && !isRequestedMainImageFormPending
-      ? buildPokemonDetailImageCandidates({
-          pokemonGoImage: selectedPokemonGoImage,
-          preferredImage: preferredMainImage,
-          officialImage: officialMainImage,
-          hybridImage,
-          fullAssetImage: APIService.getPokeFullAsset(currentPokemonId),
-        })
-      : [];
+    currentPokemonId && !isRequestedMainImageFormPending ? (mainProfile?.imageCandidates ?? []) : [];
   const { displayedUrl: mainImage, isLoading: isMainImageLoading } = usePreloadedImage(
     mainImageCandidates,
     APIService.getPokeSprite(),
-    [preferredMainImage, cacheableOfficialMainImage, hybridImage]
+    [preferredMainImage, cacheableOfficialMainImage, mainProfile?.hybridImage],
+    true
   );
-  const showMainImageSkeleton = !currentPokemonId || isRequestedMainImageFormPending || isMainImageLoading;
+  const cachedMainNavigationImage =
+    !isMainProfileReady && !hasRequestedMainImageForm && isImagePreloaded(officialMainImage)
+      ? officialMainImage
+      : undefined;
+  const displayedMainImage = cachedMainNavigationImage ?? mainImage;
+  const showMainImageSkeleton = cachedMainNavigationImage
+    ? false
+    : !currentPokemonId || !isMainProfileReady || isRequestedMainImageFormPending || isMainImageLoading;
   const profileModifier =
     isMainImageReady && searchingMainForm?.form?.pokemonType === PokemonType.Shadow
       ? 'shadow'
@@ -989,7 +982,7 @@ const Pokemon = (props: IPokemonPage) => {
               releasedGO={releasedAlert?.releasedGO}
             />
           }
-          imageSrc={mainImage}
+          imageSrc={displayedMainImage}
           isImageLoading={showMainImageSkeleton}
           imageTestId="pokemon-profile-image"
           profileModifier={profileModifier}
