@@ -1,14 +1,13 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import './FormSelect.scss';
+import '../Info/PokemonDetailLayout.scss';
 import APIService from '../../services/api.service';
 import type { PokemonBundleVariety, PokemonGoFormCatalogEntry } from '../../core/models/API/pokemon-bundle.model';
 import Tools from './Tools';
 
 import {
-  convertPokemonImageName,
   convertSexName,
   getItemSpritePath,
-  getPreferredPokemonFormSprite,
   getPokemonType,
   isSpecialFormType,
   splitAndCapitalize,
@@ -24,6 +23,7 @@ import {
   PokemonFormModify,
   PokemonFormModifyModel,
   PokemonFormDetail,
+  PokemonForm,
   IPokemonFormDetail,
   PokemonSprite,
 } from '../../core/models/API/form.model';
@@ -31,16 +31,22 @@ import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo } from '../../core
 import { IFormSelectComponent } from '../models/component.model';
 import { PokemonType, TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
 import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
 import { useSnackbar } from '../../contexts/snackbar.context';
-import { markImageAsPreloaded, usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
+import {
+  isImagePreloaded,
+  markImageAsPreloaded,
+  preloadFirstAvailableImage,
+  usePreloadedImage,
+} from '../../utils/hooks/usePreloadedImage';
 import { deduplicatePokemonFormSelections, pokemonGoFormIdentityKey } from '../../utils/pokemon-form-identity';
 import { isCanonicalSpeciesDefaultForm } from '../../utils/pokemon-detail-form';
+import { buildPokemonDetailProfileImagePresentation } from '../../utils/pokemon-detail-profile-images';
 
 const pokemonGoAssetSprites = (asset: PokemonGoFormCatalogEntry['asset']) => {
   const sprites = new PokemonSprite();
@@ -79,6 +85,11 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
 
   const [currentForm, setCurrentForm] = useState<IPokemonFormModify>();
+  const [profileBundle, setProfileBundle] = useState<{
+    id: number;
+    canonicalForms: PokemonForm[];
+    pokemonGoForms: PokemonGoFormCatalogEntry[];
+  }>();
   const isBattleModifierForm = isSpecialFormType(currentForm?.form.pokemonType);
 
   const axiosSource = useRef(APIService.getCancelToken());
@@ -88,6 +99,11 @@ const FormSelect = (props: IFormSelectComponent) => {
     (specie: IPokemonSpecie, varieties: PokemonBundleVariety[], pokemonGoForms: PokemonGoFormCatalogEntry[] = []) => {
       setFormList([]);
       setPokeData([]);
+      setProfileBundle({
+        id: specie.id,
+        canonicalForms: varieties.flatMap(({ forms }) => forms),
+        pokemonGoForms,
+      });
       const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
       varieties.forEach(({ pokemon: pokeInfo, forms }) => {
@@ -303,6 +319,14 @@ const FormSelect = (props: IFormSelectComponent) => {
     }
   }, [getPokemonNavigation, props.id]);
 
+  useEffect(() => {
+    [dataStorePokemon?.prev?.id, dataStorePokemon?.next?.id].forEach((id) => {
+      if (id) {
+        void preloadFirstAvailableImage([APIService.getPokeOfficialArtwork(id)]);
+      }
+    });
+  }, [dataStorePokemon?.next?.id, dataStorePokemon?.prev?.id]);
+
   const clearData = () => {
     setCurrentForm(undefined);
     setFormList([]);
@@ -361,32 +385,51 @@ const FormSelect = (props: IFormSelectComponent) => {
     props.onClearStats?.(true);
   }, [isBattleModifierForm, isRaid, props.setRaid, props.onClearStats]);
 
+  const requestedPokemonId = toNumber(props.id);
+  const requestedOfficialImage = requestedPokemonId ? APIService.getPokeOfficialArtwork(requestedPokemonId) : undefined;
   const currentPokemonId = dataStorePokemon?.current?.id;
-  const isSelectedImageReady = Boolean(currentPokemonId && currentForm?.defaultId === currentPokemonId);
-  const selectedHybridImage = APIService.getPokeFullSprite(
-    currentPokemonId,
-    convertPokemonImageName(currentForm?.form.formName)
+  const isSelectedNavigationCurrent = Boolean(requestedPokemonId > 0 && currentPokemonId === requestedPokemonId);
+  const isSelectedImageReady = Boolean(isSelectedNavigationCurrent && currentForm?.defaultId === currentPokemonId);
+  const isSelectedProfileReady = Boolean(
+    isSelectedImageReady && profileBundle && profileBundle.id === currentPokemonId
   );
-  const selectedPreferredImage = isSelectedImageReady
-    ? getPreferredPokemonFormSprite(currentForm?.form.sprites)
-    : undefined;
   const selectedOfficialImage = currentPokemonId ? APIService.getPokeOfficialArtwork(currentPokemonId) : undefined;
+  const selectedProfile = isSelectedProfileReady
+    ? buildPokemonDetailProfileImagePresentation({
+        canonicalForms:
+          profileBundle && profileBundle.id === currentPokemonId ? profileBundle.canonicalForms : undefined,
+        pokemonGoForms:
+          profileBundle && profileBundle.id === currentPokemonId ? profileBundle.pokemonGoForms : undefined,
+        selection: {
+          num: currentPokemonId ?? 0,
+          form: currentForm?.pokemonGoForm || currentForm?.form.formName || 'NORMAL',
+          fullName: currentForm?.form.name,
+          pokemonType: currentForm?.form.pokemonType,
+        },
+      })
+    : undefined;
+  const selectedPreferredImage = selectedProfile?.preferredImage;
   const cacheableSelectedOfficialImage =
     !isSelectedImageReady || currentForm?.form.id === currentPokemonId ? selectedOfficialImage : undefined;
-  const selectedImageCandidates = currentPokemonId
-    ? [
-        selectedPreferredImage,
-        selectedOfficialImage,
-        selectedHybridImage,
-        APIService.getPokeFullAsset(currentPokemonId),
-      ]
-    : [];
+  const selectedImageCandidates = currentPokemonId ? (selectedProfile?.imageCandidates ?? []) : [];
   const { displayedUrl: selectedImage, isLoading: isSelectedImageLoading } = usePreloadedImage(
     selectedImageCandidates,
     APIService.getPokeSprite(),
-    [selectedPreferredImage, cacheableSelectedOfficialImage, selectedHybridImage]
+    [selectedPreferredImage, cacheableSelectedOfficialImage, selectedProfile?.hybridImage],
+    true
   );
-  const showSelectedImageSkeleton = !currentPokemonId || isSelectedImageLoading;
+  const cachedNavigationImage =
+    !isSelectedProfileReady && isImagePreloaded(requestedOfficialImage) ? requestedOfficialImage : undefined;
+  const displayedSelectedImage = cachedNavigationImage ?? selectedImage;
+  const showSelectedImageSkeleton = cachedNavigationImage
+    ? false
+    : !isSelectedNavigationCurrent || !isSelectedProfileReady || isSelectedImageLoading;
+  const profileModifier =
+    isSelectedProfileReady && currentForm?.form.pokemonType === PokemonType.Shadow
+      ? 'shadow'
+      : isSelectedProfileReady && currentForm?.form.pokemonType === PokemonType.Purified
+        ? 'purified'
+        : '';
 
   return (
     <Fragment>
@@ -415,7 +458,11 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <span
         aria-busy={showSelectedImageSkeleton}
-        className="tw-inline-flex tw-h-[216px] tw-w-[216px] tw-shrink-0 tw-align-middle tw-items-center tw-justify-center"
+        className={combineClasses(
+          'tw-inline-flex tw-h-[216px] tw-w-[216px] tw-shrink-0 tw-align-middle tw-items-center tw-justify-center pokemon-profile-aura',
+          profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
+        )}
+        data-profile-modifier={profileModifier}
       >
         {showSelectedImageSkeleton ? (
           <Skeleton
@@ -426,7 +473,11 @@ const FormSelect = (props: IFormSelectComponent) => {
             data-testid="selected-pokemon-image-skeleton"
           />
         ) : (
-          <img className="tw-h-[200px] tw-w-[200px] tw-object-contain tw-p-2" alt="Image Pokemon" src={selectedImage} />
+          <img
+            className="tw-h-[200px] tw-w-[200px] tw-object-contain tw-p-2"
+            alt="Image Pokemon"
+            src={displayedSelectedImage}
+          />
         )}
       </span>
       <div className="tw-inline-block tw-w-16 tw-h-16">

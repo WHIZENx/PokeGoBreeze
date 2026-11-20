@@ -50,8 +50,13 @@ assert.match(
 );
 assert.match(
   pokemonPage,
-  /const showMainImageSkeleton = !currentPokemonId \|\| isRequestedMainImageFormPending \|\| isMainImageLoading;/,
-  'The Pokémon profile must keep its skeleton until an image candidate is available.'
+  /const cachedMainNavigationImage =[\s\S]*isImagePreloaded\(officialMainImage\)[\s\S]*const displayedMainImage = cachedMainNavigationImage \?\? mainImage;[\s\S]*const showMainImageSkeleton = cachedMainNavigationImage[\s\S]*\? false[\s\S]*!currentPokemonId \|\| !isMainProfileReady \|\| isRequestedMainImageFormPending \|\| isMainImageLoading;/,
+  'Pokémon Details must show a cached default artwork or keep its skeleton until the exact form profile is ready.'
+);
+assert.match(
+  pokemonPage,
+  /const isMainProfileReady = Boolean\([\s\S]*isMainImageReady && canonicalFormBundle && canonicalFormBundle\.id === currentPokemonId[\s\S]*\);/,
+  'Pokémon Details must wait for the selected ID canonical form catalog before resolving profile candidates.'
 );
 assert.match(
   pokemonPage,
@@ -75,8 +80,33 @@ assert.match(
 );
 assert.match(
   formSelect,
-  /const showSelectedImageSkeleton = !currentPokemonId \|\| isSelectedImageLoading;/,
-  'FormSelect must not reveal the question-mark fallback while its image candidate is unresolved.'
+  /const cachedNavigationImage =[\s\S]*isImagePreloaded\(requestedOfficialImage\)[\s\S]*const displayedSelectedImage = cachedNavigationImage \?\? selectedImage;[\s\S]*const showSelectedImageSkeleton = cachedNavigationImage[\s\S]*\? false[\s\S]*!isSelectedNavigationCurrent \|\| !isSelectedProfileReady \|\| isSelectedImageLoading;/,
+  'FormSelect must reuse an exact cached navigation artwork while its form catalog is still loading.'
+);
+assert.match(
+  formSelect,
+  /const requestedPokemonId = toNumber\(props\.id\);[\s\S]*currentPokemonId === requestedPokemonId/,
+  'Tools must hide the previous profile in the render where rapid navigation changes the requested Pokémon ID.'
+);
+assert.match(
+  formSelect,
+  /const isSelectedProfileReady = Boolean\([\s\S]*isSelectedImageReady && profileBundle && profileBundle\.id === currentPokemonId[\s\S]*\);/,
+  'Tools must wait for the canonical form catalog belonging to the selected Pokémon before resolving a profile image.'
+);
+assert.match(
+  formSelect,
+  /form: currentForm\?\.pokemonGoForm \|\| currentForm\?\.form\.formName \|\| 'NORMAL'/,
+  'Tools must normalize an empty PokéAPI default form name to NORMAL before resolving profile candidates.'
+);
+assert.match(
+  formSelect,
+  /buildPokemonDetailProfileImagePresentation\([\s\S]*canonicalForms:[\s\S]*pokemonGoForms:[\s\S]*selection:/,
+  'Tools must use the complete ordered profile-image pipeline from Pokémon Details.'
+);
+assert.match(
+  formSelect,
+  /pokemon-profile-aura[\s\S]*data-profile-modifier=\{profileModifier\}/,
+  'Tools must preserve the shared Shadow and Purified profile treatment.'
 );
 assert.match(
   formSelect,
@@ -111,8 +141,8 @@ assert.match(
 );
 assert.match(
   imagePreloader,
-  /const cachedCandidate = cacheCandidateUrls\.find\(isImagePreloaded\)/,
-  'The image preloader must suppress loading state only for an exact cache candidate.'
+  /: cacheCandidateUrls\.find\(isImagePreloaded\)/,
+  'The default image preloader must suppress loading state only for an exact cache candidate.'
 );
 assert.match(
   imagePreloader,
@@ -121,13 +151,35 @@ assert.match(
 );
 assert.match(
   imagePreloader,
-  /image\.onload = \(\) => \{\s*markImageAsPreloaded\(url\);\s*if \(active\)/,
+  /enforceCandidateOrder[\s\S]*candidateUrls\[0\][\s\S]*isImagePreloaded\(candidateUrls\[0\]\)/,
+  'Strict profile loading must never let a cached lower-priority fallback bypass the first candidate.'
+);
+for (const profileConsumer of [pokemonPage, statsRanking, formSelect]) {
+  assert.match(
+    profileConsumer,
+    /usePreloadedImage\([\s\S]*?,\s*true\s*\)/,
+    'Every profile consumer must enforce the Pokémon Details candidate order.'
+  );
+}
+assert.match(
+  imagePreloader,
+  /const loadImageOnce =[\s\S]*image\.onload = \(\) => \{\s*markImageAsPreloaded\(url\);\s*resolve\(true\)/,
   'A completed preload must be cached even if navigation has already changed.'
 );
 assert.match(
   imagePreloader,
-  /export const preloadFirstAvailableImage = async[\s\S]*if \(isImagePreloaded\(url\)\)[\s\S]*markImageAsPreloaded\(url\)/,
+  /export const preloadFirstAvailableImage = async[\s\S]*for \(const url of uniqueUrls\(candidates\)\)[\s\S]*await loadImageOnce\(url\)/,
   'Search form switching must preload and cache the next Gender sprite before committing its snapshot.'
+);
+assert.match(
+  imagePreloader,
+  /const loadingImageUrls = new Map<string, Promise<boolean>>\(\);[\s\S]*loadingImageUrls\.get\(normalizedUrl\)[\s\S]*loadingImageUrls\.set\(normalizedUrl, request\)/,
+  'Rapid navigation must reuse one in-flight request per profile URL instead of racing duplicate image loads.'
+);
+assert.match(
+  formSelect,
+  /preloadFirstAvailableImage\(\[APIService\.getPokeOfficialArtwork\(id\)\]\)/,
+  'Tools must warm the shared profile cache with the previous and next official artwork.'
 );
 assert.match(
   theme,
@@ -151,23 +203,23 @@ assert.match(
 );
 assert.match(
   statsRanking,
-  /getPreferredPokemonFormSprite\([\s\S]*PokemonSprite\.setDetails\([\s\S]*selectedForm[\s\S]*fallbackForm[\s\S]*sprites[\s\S]*usePreloadedImage\([\s\S]*selectedImageCandidates,[\s\S]*APIService\.getPokeSprite\(\)/,
-  'Stats Ranking must resolve the selected PokeAPI form artwork before generic fallbacks.'
+  /buildPokemonDetailProfileImagePresentation\([\s\S]*canonicalForms:[\s\S]*pokemonGoForms:[\s\S]*usePreloadedImage\([\s\S]*selectedImageCandidates,[\s\S]*APIService\.getPokeSprite\(\)/,
+  'Stats Ranking must prefer only exact canonical form artwork before GO and generic fallbacks.'
 );
-assert.match(
+assert.doesNotMatch(
   statsRanking,
-  /const selectedPokemonGoForm = findPokemonDetailGoForm[\s\S]*APIService\.getPokemonModel\(selectedPokemonGoForm\.asset\.default\)/,
-  'Stats Ranking must retain and resolve Pokémon GO-only form assets from the shared bundle.'
+  /selectedForm \?\? fallbackForm/,
+  'A GO-only form must not borrow the canonical species-default profile image.'
 );
 assert.match(statsRanking, /pokemonGoForms: data\.data\.pokemonGo\?\.forms \?\? \[\]/);
 assert.match(
   statsRanking,
-  /const selectedImageCandidates =\s*selectedId && selectedBundle[\s\S]*buildPokemonDetailImageCandidates\(\{[\s\S]*pokemonGoImage: selectedPokemonGoImage,[\s\S]*preferredImage: selectedPreferredImage,[\s\S]*officialImage: selectedOfficialImage,[\s\S]*hybridImage: selectedHybridImage,[\s\S]*fullAssetImage: APIService\.getPokeFullAsset/,
+  /const selectedProfile =[\s\S]*buildPokemonDetailProfileImagePresentation\(\{[\s\S]*canonicalForms:[\s\S]*pokemonGoForms:[\s\S]*selection:/,
   'Stats Ranking must use the shared exact-form profile image fallback order.'
 );
 assert.match(
   pokemonPage,
-  /findPokemonDetailGoForm\(pokemonGoForms,[\s\S]*buildPokemonDetailImageCandidates\(\{[\s\S]*pokemonGoImage: selectedPokemonGoImage/,
+  /const mainProfile =[\s\S]*buildPokemonDetailProfileImagePresentation\(\{[\s\S]*canonicalForms:[\s\S]*pokemonGoForms,[\s\S]*selection:/,
   'Pokémon Details must use the same exact GO form and image candidate resolver as Stats Ranking.'
 );
 assert.doesNotMatch(
