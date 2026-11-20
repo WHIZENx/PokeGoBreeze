@@ -11,6 +11,7 @@ import { ISelectPokemonComponent } from '../models/component.model';
 import usePokemon from '../../../composables/usePokemon';
 import SelectCardPokemon from './SelectCardPokemon';
 import PokemonTableIcon from '../../Sprites/PokemonTableIcon/PokemonTableIcon';
+import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const { retrieveMoves, getFilteredPokemons } = usePokemon();
@@ -82,8 +83,18 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       cardElement={(pokemon) => <CardPokemon value={pokemon} />}
       maxHeight={props.maxHeight}
       isShowPokemonIcon
-      selectedPokemonIcon={props.pokemon && <PokemonTableIcon {...props.pokemon} size={40} />}
-      renderSelectedPokemonIcon={(pokemon) => <PokemonTableIcon {...pokemon} size={40} />}
+      selectedPokemonIcon={
+        props.pokemon && (
+          <PokemonIconType pokemonType={props.pokemon.pokemonType} size={20}>
+            <PokemonTableIcon {...props.pokemon} size={40} />
+          </PokemonIconType>
+        )
+      }
+      renderSelectedPokemonIcon={(pokemon) => (
+        <PokemonIconType pokemonType={pokemon.pokemonType} size={20}>
+          <PokemonTableIcon {...pokemon} size={40} />
+        </PokemonIconType>
+      )}
       isDisable={props.isDisable}
     />
   );

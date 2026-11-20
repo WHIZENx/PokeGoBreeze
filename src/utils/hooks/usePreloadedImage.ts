@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 const loadedImageUrls = new Set<string>();
+const loadingImageUrls = new Map<string, Promise<boolean>>();
 
 const normalizeImageUrl = (url: string) => {
   if (typeof window === 'undefined') {
@@ -22,24 +23,37 @@ export const markImageAsPreloaded = (url: string | null | undefined) => {
 export const isImagePreloaded = (url: string | null | undefined) =>
   Boolean(url && loadedImageUrls.has(normalizeImageUrl(url)));
 
+const loadImageOnce = (url: string) => {
+  if (isImagePreloaded(url)) {
+    return Promise.resolve(true);
+  }
+
+  const normalizedUrl = normalizeImageUrl(url);
+  const pending = loadingImageUrls.get(normalizedUrl);
+  if (pending) {
+    return pending;
+  }
+
+  const request = new Promise<boolean>((resolve) => {
+    const image = new Image();
+    image.onload = () => {
+      markImageAsPreloaded(url);
+      resolve(true);
+    };
+    image.onerror = () => resolve(false);
+    image.src = url;
+  }).finally(() => loadingImageUrls.delete(normalizedUrl));
+  loadingImageUrls.set(normalizedUrl, request);
+  return request;
+};
+
 const uniqueUrls = (candidates: Array<string | null | undefined>) => [
   ...new Set(candidates.filter((candidate): candidate is string => Boolean(candidate))),
 ];
 
 export const preloadFirstAvailableImage = async (candidates: Array<string | null | undefined>) => {
   for (const url of uniqueUrls(candidates)) {
-    if (isImagePreloaded(url)) {
-      return url;
-    }
-
-    const loaded = await new Promise<boolean>((resolve) => {
-      const image = new Image();
-      image.onload = () => resolve(true);
-      image.onerror = () => resolve(false);
-      image.src = url;
-    });
-    if (loaded) {
-      markImageAsPreloaded(url);
+    if (await loadImageOnce(url)) {
       return url;
     }
   }
@@ -49,7 +63,8 @@ export const preloadFirstAvailableImage = async (candidates: Array<string | null
 export const usePreloadedImage = (
   candidates: Array<string | null | undefined>,
   fallback: string,
-  cacheCandidates: Array<string | null | undefined> = candidates
+  cacheCandidates: Array<string | null | undefined> = candidates,
+  enforceCandidateOrder = false
 ) => {
   const candidateKey = JSON.stringify(uniqueUrls(candidates));
   const cacheCandidateKey = JSON.stringify(uniqueUrls(cacheCandidates));
@@ -57,7 +72,11 @@ export const usePreloadedImage = (
   const candidateUrls = useMemo(() => JSON.parse(candidateKey) as string[], [candidateKey]);
   const cacheCandidateUrls = useMemo(() => JSON.parse(cacheCandidateKey) as string[], [cacheCandidateKey]);
   const urls = useMemo(() => uniqueUrls([...candidateUrls, fallback]), [candidateUrls, fallback]);
-  const cachedCandidate = cacheCandidateUrls.find(isImagePreloaded);
+  const cachedCandidate = enforceCandidateOrder
+    ? candidateUrls[0] && isImagePreloaded(candidateUrls[0])
+      ? candidateUrls[0]
+      : undefined
+    : cacheCandidateUrls.find(isImagePreloaded);
   const [imageState, setImageState] = useState({
     imageKey,
     displayedUrl: cachedCandidate ?? fallback,
@@ -67,7 +86,11 @@ export const usePreloadedImage = (
   useEffect(() => {
     let active = true;
     let candidateIndex = 0;
-    const cachedUrl = cacheCandidateUrls.find(isImagePreloaded);
+    const cachedUrl = enforceCandidateOrder
+      ? candidateUrls[0] && isImagePreloaded(candidateUrls[0])
+        ? candidateUrls[0]
+        : undefined
+      : cacheCandidateUrls.find(isImagePreloaded);
     setImageState((current) => ({
       imageKey,
       displayedUrl: cachedUrl ?? (candidateUrls.length === 0 ? fallback : current.displayedUrl),
@@ -80,7 +103,7 @@ export const usePreloadedImage = (
       };
     }
 
-    const loadNext = () => {
+    const loadNext = async () => {
       const url = urls[candidateIndex++];
       if (!url) {
         if (active) {
@@ -89,31 +112,28 @@ export const usePreloadedImage = (
         return;
       }
 
-      if (isImagePreloaded(url)) {
+      if (await loadImageOnce(url)) {
         if (active) {
           setImageState({ imageKey, displayedUrl: url, isLoading: false });
         }
         return;
       }
-
-      const image = new Image();
-      image.onload = () => {
-        markImageAsPreloaded(url);
-        if (active) {
-          setImageState({ imageKey, displayedUrl: url, isLoading: false });
-        }
-      };
-      image.onerror = loadNext;
-      image.src = url;
+      if (active) {
+        void loadNext();
+      }
     };
 
-    loadNext();
+    void loadNext();
     return () => {
       active = false;
     };
-  }, [cacheCandidateUrls, candidateUrls, fallback, imageKey, urls]);
+  }, [cacheCandidateUrls, candidateUrls, enforceCandidateOrder, fallback, imageKey, urls]);
 
-  const currentCachedCandidate = cacheCandidateUrls.find(isImagePreloaded);
+  const currentCachedCandidate = enforceCandidateOrder
+    ? candidateUrls[0] && isImagePreloaded(candidateUrls[0])
+      ? candidateUrls[0]
+      : undefined
+    : cacheCandidateUrls.find(isImagePreloaded);
   const candidateChanged = imageState.imageKey !== imageKey;
 
   return {
