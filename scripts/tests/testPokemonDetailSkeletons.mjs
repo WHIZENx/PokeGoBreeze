@@ -534,8 +534,8 @@ assert.ok(
 assert.match(pokemonPage, /<PokemonDetailHero/);
 assert.match(
   pokemonDetailHero,
-  /tw-inline-flex tw-max-w-full tw-items-start tw-align-top[\s\S]*tw-w-pokemon-profile tw-shrink-0[\s\S]*tw-min-w-0 tw-align-top[\s\S]*<PokemonTable/,
-  'The centered Pokémon hero group must size to its content before metadata rows expand toward the section edge.'
+  /tw-contents min-\[576px\]:tw-inline-flex[\s\S]*tw-w-pokemon-profile tw-shrink-0[\s\S]*tw-inline-block tw-max-w-full tw-align-top min-\[576px\]:tw-min-w-0[\s\S]*<PokemonTable/,
+  'The Pokémon hero must restore separate mobile image and table flow before grouping them on larger screens.'
 );
 assert.doesNotMatch(pokemonPage, /data-testid="pokemon-cost-table"/);
 assert.match(pokemonPage, /testId="pokemon-assets-stable"/);
