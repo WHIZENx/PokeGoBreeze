@@ -438,10 +438,6 @@ npm ci
    | `REACT_APP_VERSION` | Optional | Overrides the version selected from config |
    | `MONGODB_URI` | Optional | Records deployment versions when running `deploy.sh` |
 
-   `REACT_APP_TOKEN_PRIVATE_REPO` is intentionally unsupported. Project-owned
-   browser assets are read from the public runtime mirror, while publishing
-   credentials remain scoped to the private source repository workflow.
-
    GitHub Actions deployment uses the `REACT_APP_EDGE_ID`,
    `REACT_APP_EDGE_READ_TOKEN`, `REACT_APP_EDGE_TOKEN`, and `VERCEL_TOKEN`
    secrets plus the `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` Actions variables.
