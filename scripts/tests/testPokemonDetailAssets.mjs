@@ -7,12 +7,24 @@ import {
 } from '../../src/components/Info/Assets/pokemon-sound.utils.ts';
 import { findPokemonStatsForm } from '../../src/utils/pokemon-form-identity.ts';
 
-const [pokemons, assets, pokemonPage, linkToTop] = await Promise.all([
+const [pokemons, assets, pokemonPage, linkToTop, serviceConstants] = await Promise.all([
   readFile(new URL('../../../api/data/pokemons.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../../../api/data/assets.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../../src/components/Link/LinkToTop.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/services/constants.ts', import.meta.url), 'utf8'),
 ]);
+
+assert.match(
+  serviceConstants,
+  /raw\.githubusercontent\.com\/WHIZENx\/pokemon-assets-runtime\/master\//,
+  'Browser asset fallbacks must use the public runtime mirror instead of the private source repository.'
+);
+assert.doesNotMatch(
+  serviceConstants,
+  /raw\.githubusercontent\.com\/WHIZENx\/pokemon-assets\/master\//,
+  'The browser must never depend on direct access to the private asset source repository.'
+);
 
 assert.match(
   linkToTop,
