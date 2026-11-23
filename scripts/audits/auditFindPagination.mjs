@@ -6,9 +6,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const baseUrl = process.env.WEB_BASE_URL ?? 'http://localhost:9000';
+const chromePath = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const profile = await mkdtemp(join(tmpdir(), 'pokebreeze-find-pagination-'));
 const chrome = spawn(
-  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  chromePath,
   [
     '--headless=new',
     '--disable-gpu',

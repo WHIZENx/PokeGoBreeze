@@ -65,7 +65,8 @@
     }
   }
 
-  &__controls {
+  &__controls,
+  &__patch-sections {
     display: flex;
     flex-direction: column;
     gap: 14px;
@@ -90,12 +91,6 @@
     gap: 12px;
     grid-template-columns: minmax(260px, 1fr) 180px auto;
     padding: 16px;
-  }
-
-  &__patch-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
   }
 
   &__patch-section {
@@ -581,10 +576,7 @@
       }
     }
 
-    &__controls {
-      gap: 10px;
-    }
-
+    &__controls,
     &__patch-sections {
       gap: 10px;
     }

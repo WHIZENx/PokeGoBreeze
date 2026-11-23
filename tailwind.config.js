@@ -116,6 +116,10 @@ module.exports = {
         link: 'var(--link-color)',
         error: 'var(--text-error)',
         success: 'var(--text-success)',
+        'charge-normal': 'var(--text-charge-normal)',
+        'charge-nice': 'var(--text-charge-nice)',
+        'charge-great': 'var(--text-charge-great)',
+        'charge-excellent': 'var(--text-charge-excellent)',
         spinner: {
           default: 'var(--loading-spinner)',
           overlay: 'var(--loading-spinner-bg)',

@@ -317,7 +317,9 @@ are cancelled.
 With local Web and API running, `npm run audit:find-pagination` checks the
 three tables in a temporary headless Google Chrome profile. It verifies page
 navigation, page size, sort reset, full-result summaries, and submitted inputs.
-Google Chrome must be installed at its standard macOS application path;
+Use a Web runtime config with working calculator and form settings for this
+audit. The placeholder options in `config.example.json` can leave Find tables empty.
+Set `CHROME_PATH` when Chrome is installed outside the default macOS path.
 `WEB_BASE_URL` overrides `http://localhost:9000`.
 
 #### **Calculate Stats** (`/calculate-stats`)
@@ -413,11 +415,16 @@ npm ci
    cp config.example.json config.json
    cp .env.example .env
    ```
-   Edit `config.json` with the application options and version keys. This file
-   is gitignored and takes precedence over Vercel Edge Config when present, so
-   Edge Config credentials are not required. Set `REACT_APP_DATA_API_URL` in
-   `.env` to a compatible API and leave `REACT_APP_VERSION` empty when the
-   version should come from `config.json`.
+   In Windows PowerShell, use `Copy-Item` in place of `cp`. If PowerShell
+   blocks the npm PowerShell shim, use `npm.cmd` for the npm commands below.
+
+   The local config includes version labels for all three modes. Its other
+   values are placeholders that let you start the app and browse API-backed
+   data. Fill in the relevant runtime options for tools you are developing,
+   such as level bounds and step size, IV bounds, and default rows per page
+   for calculators and tables. The gitignored file takes precedence over
+   Vercel Edge Config. Set `REACT_APP_DATA_API_URL` in `.env` to a compatible
+   API and leave `REACT_APP_VERSION` empty to use the version from `config.json`.
 
    **Option B — Vercel Edge Config**
 
@@ -425,6 +432,8 @@ npm ci
    ```bash
    cp .env.example .env
    ```
+
+   Use `Copy-Item .env.example .env` in Windows PowerShell.
 
    Configuration variables:
 
@@ -437,10 +446,6 @@ npm ci
    | `REACT_APP_EDGE_ID` | Edge Config mode or deployment | Edge Config ID (for example, `ecfg_xxx`) |
    | `REACT_APP_VERSION` | Optional | Overrides the version selected from config |
    | `MONGODB_URI` | Optional | Records deployment versions when running `deploy.sh` |
-
-   `REACT_APP_TOKEN_PRIVATE_REPO` is intentionally unsupported. Project-owned
-   browser assets are read from the public runtime mirror, while publishing
-   credentials remain scoped to the private source repository workflow.
 
    GitHub Actions deployment uses the `REACT_APP_EDGE_ID`,
    `REACT_APP_EDGE_READ_TOKEN`, `REACT_APP_EDGE_TOKEN`, and `VERCEL_TOKEN`
@@ -522,7 +527,7 @@ npm run format:style
 
 **Full production build** (loads config, lints, generates the sitemap, and builds `dist/`):
 ```bash
-REACT_APP_DEPLOYMENT_MODE=production npm run deploy
+npm exec -- cross-env REACT_APP_DEPLOYMENT_MODE=production npm run deploy
 ```
 
 **Build without linting or runtime config loading**:
@@ -531,6 +536,8 @@ npm run build
 ```
 
 The npm `prebuild` lifecycle cleans `dist/` automatically before `npm run build`.
+For a runnable preview, use the configuration-loading build above or supply
+the build-time `REACT_APP_CONFIG` and `REACT_APP_DATA_API_URL` separately.
 
 **Preview production build locally**:
 ```bash
@@ -551,6 +558,10 @@ cp .env.example .env  # set REACT_APP_DATA_API_URL and local values
 docker compose up app-dev
 ```
 
+On Windows, use Docker Desktop with Linux containers and replace the copy
+commands with `Copy-Item`. With the API also running, use its browser-accessible
+origin in `.env` because the Web client makes requests from the host browser.
+
 The committed example is supported for local development. Production releases
 use the Firebase and Vercel workflows below; the example Compose production
 service does not currently inject the build-time configuration required by
@@ -567,7 +578,7 @@ npm install -g firebase-tools
 firebase login
 
 # Build and deploy only the production hosting target
-REACT_APP_DEPLOYMENT_MODE=production npm run deploy
+npm exec -- cross-env REACT_APP_DEPLOYMENT_MODE=production npm run deploy
 firebase deploy --project pokego-breeze --only hosting:pokego-breeze
 ```
 
@@ -583,7 +594,7 @@ vercel --prod
 #### Cloudflare Pages
 ```bash
 # Build the same static output used by the other hosting providers
-REACT_APP_DEPLOYMENT_MODE=production npm run deploy
+npm exec -- cross-env REACT_APP_DEPLOYMENT_MODE=production npm run deploy
 
 # Deploy dist/ with the committed _headers cache rules
 npx wrangler pages deploy dist --project-name pokego-breeze
@@ -623,11 +634,39 @@ Pokémon GO mechanics directly accessible without indexing them as released.
 | `npm run prerender:seo` | Prerender static and API-provided SEO routes into `dist/` |
 | `npm run update:local-ui-assets` | Refresh generated local Pokémon GO UI and move-type assets |
 | `npm run update:pokemon-icon-sheet` | Refresh the generated Pokémon icon sheet and index |
+| `npm run audit:assets` | Verify committed UI assets and the Pokémon icon sheet without network calls or writes |
 | `npm run test-vite` | Start Vite directly without runtime config loading |
 | `npm run debug-vite` | Start Vite directly with `--debug --force` for diagnostics |
 
 Feature-specific `test:*` and `audit:*` commands are declared in
 `package.json` and organized under [`scripts/`](scripts/README.md).
+The grouped regression suites include `test:pokedex`, `test:pokemon-images`,
+`test:route-navigation`, `test:app-shell`, and `test:design-system`.
+
+With local Web and API running, run
+`npm run audit:typography -- --interactive` to open every registered route
+in a visible Chrome window at desktop and iPhone SE widths in both Light
+and Dark themes. The audit uses the theme switch and pointer clicks on
+representative page controls, then reports page overflow or browser
+exceptions by route and theme. It loads fixtures from the running API for the
+patch and PvP replay routes. Use `--theme=dark` or `--route=/raid-battle`
+after `--interactive` to narrow a run. Set `API_BASE_URL` and pass `--base-url` as
+`--base-url=http://localhost:9000` when testing different local endpoints.
+
+With local Web and API running, run
+`node scripts/audits/auditRaidBattleLayout.mjs --headed` to select an attacker,
+calculate a Raid Battle, and check the HP and DPS layout in Chrome at 1280,
+375, and 320px in both themes. Omit `--headed` to run headless. Set `CHROME_PATH` when Chrome
+is installed outside the default macOS location, or set `WEB_BASE_URL` to
+test a different running Web instance.
+
+For these Chrome audits on Windows PowerShell, set the actual executable
+path before running the audit:
+
+```powershell
+$env:CHROME_PATH = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+npm run audit:find-pagination
+```
 
 ### Browser Support
 
@@ -655,6 +694,10 @@ npm run develop
 rm -rf node_modules
 npm ci
 ```
+
+In Windows PowerShell, use `Get-NetTCPConnection -LocalPort 9000 -State Listen`
+to find the process using the dev-server port. Use `Remove-Item -Recurse -Force`
+with the appropriate path to clear the Vite cache or reinstall dependencies.
 
 ## Contributing
 

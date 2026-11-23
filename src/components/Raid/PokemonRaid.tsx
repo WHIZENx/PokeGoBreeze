@@ -65,7 +65,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
             <div className="tw-flex tw-items-center tw-justify-end tw-gap-2">
               <ButtonMui
                 isRound
-                className="ic-copy-small !tw-p-0 !tw-min-w-8 !tw-h-8"
+                className="ic-copy !tw-p-0 !tw-min-w-8 !tw-h-8"
                 disabled={!dataTargetPokemon}
                 title="Options"
                 label={<SettingsIcon color="inherit" className="!tw-title-medium" />}
@@ -73,7 +73,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               />
               <ButtonMui
                 isRound
-                className="ic-copy-small !tw-p-0 !tw-min-w-8 !tw-h-8"
+                className="ic-copy !tw-p-0 !tw-min-w-8 !tw-h-8"
                 disabled={!dataTargetPokemon || props.id < 0 || props.data.length >= 6}
                 title="Copy"
                 label={<ContentCopyIcon color="inherit" className="!tw-title-medium" />}
@@ -81,7 +81,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               />
               <ButtonMui
                 isRound
-                className="ic-remove-small !tw-p-0 !tw-min-w-8 !tw-h-8"
+                className="ic-remove !tw-p-0 !tw-min-w-8 !tw-h-8"
                 disabled={props.id <= 0 && (props.data.length <= 1 || !props.data.at(0)?.dataTargetPokemon)}
                 color="error"
                 title="Remove"

@@ -17,7 +17,12 @@ export const getProcessedDataSectionsForRoute = (pathname: string): ProcessedDat
   if (pathname === '/search-pokemon' || pathname.startsWith('/pokemon/')) {
     return pokemonDetails;
   }
-  if (pathname === '/find-cp-iv' || pathname === '/calculate-stats') {
+  if (
+    pathname === '/find-cp-iv' ||
+    pathname === '/calculate-stats' ||
+    pathname === '/calculate-catch-chance' ||
+    pathname === '/stats-table'
+  ) {
     return ['pokemons', 'cpm', 'statsRankings'];
   }
   if (pathname === '/calculate-point') {
@@ -27,13 +32,7 @@ export const getProcessedDataSectionsForRoute = (pathname: string): ProcessedDat
     return ['pokemons', 'combats', 'assets', 'cpm', 'statsRankings'];
   }
   if (pathname === '/damage-calculate') {
-    return ['pokemons', 'combats', 'statsRankings'];
-  }
-  if (pathname === '/calculate-catch-chance') {
-    return ['pokemons', 'statsRankings'];
-  }
-  if (pathname === '/stats-table') {
-    return ['pokemons', 'statsRankings'];
+    return ['pokemons', 'combats', 'cpm', 'statsRankings'];
   }
   if (pathname === '/dps-tdo-sheets') {
     return ['pokemons', 'combats', 'assets'];

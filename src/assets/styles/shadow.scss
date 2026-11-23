@@ -17,7 +17,7 @@
   @include default-shadow(none, 3px, #222222);
 }
 
-.progress-hover:hover {
+.pokemon-stat-bar-hover:hover {
   @include default-shadow(none, 2px, #0a0a0a80);
 }
 
