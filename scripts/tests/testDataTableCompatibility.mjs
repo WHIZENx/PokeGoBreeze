@@ -17,6 +17,7 @@ const pagination = await readFile(
 const styles = await readFile(join(sourceRoot, 'assets/styles/custom.scss'), 'utf8');
 const counterStyles = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.scss'), 'utf8');
 const counter = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.tsx'), 'utf8');
+const moveTable = await readFile(join(sourceRoot, 'components/Commons/Tables/Move/MoveTable.tsx'), 'utf8');
 const moveTableStyles = await readFile(join(sourceRoot, 'components/Commons/Tables/Move/MoveTable.scss'), 'utf8');
 const pokemonStyles = await readFile(join(sourceRoot, 'pages/Pokemon/Pokemon.scss'), 'utf8');
 const calculatePoint = await readFile(join(sourceRoot, 'pages/Tools/CalculatePoint/CalculatePoint.tsx'), 'utf8');
@@ -264,6 +265,21 @@ assert.doesNotMatch(
   moveTableStyles,
   /\.table-moves thead tr \+ tr th \{[\s\S]*tw-z-10/,
   'Best Moves column headers must not float above the Pokémon navigation bar.'
+);
+assert.equal(
+  moveTable.match(/tw-inline-flex tw-items-center tw-self-center tw-w-max/g)?.length,
+  3,
+  'Every move classification badge must center against the type icon and move name instead of using text-baseline alignment.'
+);
+assert.equal(
+  moveTable.match(/className="tw-flex tw-items-center"/g)?.length,
+  2,
+  'Both Best Moves links must center their type icon, move name, and classification badge as one row.'
+);
+assert.doesNotMatch(
+  moveTable,
+  /tw-align-text-bottom/,
+  'Move rows must not retain the baseline alignment that offsets icons or classification badges vertically.'
 );
 assert.match(
   pokemonStyles,

@@ -224,14 +224,14 @@ const TableMove = (props: ITableMoveComponent) => {
         key={`${type}:${getMoveRowKey(value.fMove)}:${getMoveRowKey(value.cMove)}:${value.eDPS.offensive}:${value.eDPS.defensive}`}
       >
         <td className="text-origin tw-bg-table-primary">
-          <LinkToTop to={`../move/${value.fMove.id}`} className="tw-block">
-            <div className="tw-inline-block tw-mr-1 tw-align-text-bottom">
+          <LinkToTop to={`../move/${value.fMove.id}`} className="tw-flex tw-items-center">
+            <div className="tw-inline-flex tw-mr-1 tw-shrink-0">
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.fMove.type} />
             </div>
             <span className="move-link-text tw-mr-1">
               {splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}
             </span>
-            <span className="tw-w-max tw-align-text-bottom">
+            <span className="tw-inline-flex tw-items-center tw-self-center tw-w-max">
               {value.fMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -246,14 +246,14 @@ const TableMove = (props: ITableMoveComponent) => {
           </LinkToTop>
         </td>
         <td className="text-origin tw-bg-table-primary">
-          <LinkToTop to={`../move/${value.cMove.id}`} className="tw-block">
-            <div className="tw-inline-block tw-mr-1 tw-align-text-bottom">
+          <LinkToTop to={`../move/${value.cMove.id}`} className="tw-flex tw-items-center">
+            <div className="tw-inline-flex tw-mr-1 tw-shrink-0">
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.cMove.type} />
             </div>
             <span className="move-link-text tw-mr-1">
               {splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}
             </span>
-            <span className="tw-w-max tw-align-text-bottom">
+            <span className="tw-inline-flex tw-items-center tw-self-center tw-w-max">
               {value.cMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -279,11 +279,11 @@ const TableMove = (props: ITableMoveComponent) => {
           <td className="text-origin tw-bg-table-primary">
             <span className="tw-inline-flex tw-items-center">
               <LinkToTop to={`../move/${value.id}`} className="tw-inline-flex tw-items-center">
-                <span className="tw-inline-flex tw-mr-1 tw-align-text-bottom">
+                <span className="tw-inline-flex tw-mr-1 tw-shrink-0">
                   <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.type} />
                 </span>
                 <span className="move-link-text tw-mr-1">{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
-                <span className="tw-w-max tw-align-text-bottom">
+                <span className="tw-inline-flex tw-items-center tw-self-center tw-w-max">
                   {value.moveType !== MoveType.None && (
                     <span
                       className={combineClasses(
