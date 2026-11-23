@@ -41,7 +41,7 @@ html.theme-view-transition *::after {
 .caption {
   text-decoration: none !important;
 
-  @apply tw-text-[12px] tw-block;
+  @apply tw-block tw-text-extra-small;
 }
 
 a {
@@ -92,7 +92,8 @@ img.pokemon-sprite-small {
   @apply tw-w-full tw-h-4 tw-object-contain;
 }
 
-img.pokemon-sprite-medium {
+img.pokemon-sprite-medium,
+img.pokemon-sprite-counter {
   @apply tw-w-full tw-h-16 tw-object-contain;
 }
 
@@ -101,15 +102,10 @@ img.pokemon-sprite-large {
   @apply tw-w-full tw-h-24 tw-object-contain;
 }
 
-img.pokemon-sprite-counter {
-  @apply tw-w-full tw-h-16 tw-object-contain;
-}
-
 img.pokemon-sprite-model {
   @apply tw-w-full tw-h-20 tw-object-contain;
 }
 
-img.sprite-type-large,
 img.pokemon-sprite-raid {
   @apply tw-w-full tw-h-32 tw-object-contain;
 }
@@ -148,7 +144,6 @@ ul {
 }
 
 .result-type ul,
-.result-weather ul,
 .result-move ul {
   @apply tw-m-0 tw-p-0;
 }

@@ -3,7 +3,6 @@ import APIService from '../../services/api.service';
 import { getWeatherDisplayName } from '../../utils/utils';
 import { IWeatherComponent } from '../models/component.model';
 import { isNotEmpty } from '../../utils/extension';
-import { combineClasses } from '../../utils/extension';
 
 const Weather = (props: IWeatherComponent) => {
   return (
@@ -16,7 +15,7 @@ const Weather = (props: IWeatherComponent) => {
           </div>
         </div>
       ) : (
-        <div className={combineClasses('mt-2', props.className)} style={props.style}>
+        <div className={props.className} style={props.style}>
           {props.text && <p>{props.text}</p>}
           <div className="tw-inline-flex tw-flex-wrap type-list tw-items-center">
             {props.arr?.map((value, index) => (

@@ -414,7 +414,7 @@ const FindTable = () => {
                 }}
               />
             </div>
-            <div className="btn-search tw-flex tw-justify-center tw-text-center">
+            <div className="tw-flex tw-justify-center tw-text-center">
               <ButtonMui type="submit" label="Search" />
             </div>
           </Box>

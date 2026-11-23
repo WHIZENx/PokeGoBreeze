@@ -287,7 +287,7 @@ const Leagues = () => {
   };
 
   const renderBody = (league: ILeague) => (
-    <div className="sub-body">
+    <div>
       <h4 className="title-leagues">{league.title}</h4>
       <div className="tw-text-center">
         {!isEqual(league.leagueBattleType, LeagueBattleType.None) &&
@@ -326,7 +326,7 @@ const Leagues = () => {
         )}
       </div>
       <h5 className="title-leagues tw-mt-2">Conditions</h5>
-      <ul className="list-style-inherit">
+      <ul>
         <li className="tw-font-medium">
           <h6>
             <b>Max CP:</b>{' '}

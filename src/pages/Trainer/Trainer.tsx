@@ -46,7 +46,7 @@ const Trainer = () => {
   }, [trainersData, level]);
 
   return (
-    <section className="trainer-rewards tw-py-3">
+    <section className="tw-py-3">
       <h2 className="title-leagues tw-mb-3">Trainer Level Rewards</h2>
       <hr />
       <div>

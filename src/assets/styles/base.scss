@@ -119,10 +119,7 @@ img, svg {
   @apply tw-align-middle;
 }
 
-audio {
-  color-scheme: var(--mode);
-}
-
+audio,
 input[type="number"] {
   color-scheme: var(--mode);
 }

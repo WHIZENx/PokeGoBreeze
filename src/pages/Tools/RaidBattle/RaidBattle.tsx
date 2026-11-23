@@ -535,41 +535,39 @@ const RaidBattle = () => {
     const dps = (sumDps * 100) / bossHp;
     const percent = (Math.floor(bossHp - tdo) * 100) / Math.floor(bossHp);
     return (
-      <Fragment>
-        <div className="progress tw-relative">
-          <div className="tw-absolute tw-flex tw-w-full">
-            <LinearProgress
-              color="success"
-              className="!tw-h-7.5 tw-rounded-s-sm"
-              style={{ width: `${Math.round(percent)}%` }}
-              variant="determinate"
-              value={100}
-            />
-            <LinearProgress
-              color="error"
-              className="!tw-h-7.5 tw-rounded-e-sm"
-              style={{ width: `${Math.round(100 - percent)}%` }}
-              variant="determinate"
-              value={100}
-            />
-          </div>
-          <div className="tw-justify-start tw-items-center tw-flex tw-absolute tw-h-full tw-w-full">
-            <div className="line-dps tw-relative" style={{ width: `calc(${dps}% + 2px` }}>
-              <hr className="tw-w-full !tw-mt-0.75" />
-              <span className="line-left">
-                <b>|</b>
-              </span>
-              <span className="line-right">
-                <b>|</b>
-              </span>
-              <div className="caption text-dps">DPS</div>
-            </div>
-          </div>
-          <div className="box-text rank-text tw-text-black tw-justify-end tw-flex tw-w-full tw-absolute !tw-text-extra-small">
-            <span>HP: {`${Math.floor(bossHp - tdo)} / ${Math.floor(bossHp)}`}</span>
+      <div className="tw-relative tw-my-2.5" data-testid="raid-boss-hp">
+        <div className="tw-flex tw-w-full">
+          <LinearProgress
+            color="success"
+            className="!tw-h-7.5 tw-rounded-s-sm"
+            style={{ width: `${Math.round(percent)}%` }}
+            variant="determinate"
+            value={100}
+          />
+          <LinearProgress
+            color="error"
+            className="!tw-h-7.5 tw-rounded-e-sm"
+            style={{ width: `${Math.round(100 - percent)}%` }}
+            variant="determinate"
+            value={100}
+          />
+        </div>
+        <div className="tw-absolute tw-inset-0 tw-flex tw-items-center">
+          <div className="line-dps tw-relative tw-max-w-full" style={{ width: `calc(${dps}% + 2px)` }}>
+            <hr className="tw-w-full !tw-mt-0.75" />
+            <span className="line-left">
+              <b>|</b>
+            </span>
+            <span className="line-right">
+              <b>|</b>
+            </span>
+            <div className="caption text-dps">DPS</div>
           </div>
         </div>
-      </Fragment>
+        <div className="box-text tw-absolute tw-inset-0 tw-flex tw-items-center tw-justify-end tw-pr-1 tw-text-black !tw-text-extra-small">
+          <span>HP: {`${Math.floor(bossHp - tdo)} / ${Math.floor(bossHp)}`}</span>
+        </div>
+      </div>
     );
   };
 
@@ -1265,7 +1263,7 @@ const RaidBattle = () => {
               </div>
             </div>
             <div className="row tw-items-center tw-mt-2 !tw-m-0">
-              <div className="!tw-w-1/2 tw-flex-none tw-flex tw-justify-end pr-0">
+              <div className="!tw-w-1/2 tw-flex-none tw-flex tw-justify-end">
                 <FormControlLabel
                   control={
                     <Switch
@@ -1573,7 +1571,7 @@ const RaidBattle = () => {
             {isNotEmpty(resultRaid) && (
               <Fragment>
                 <hr />
-                <ul className="tw-mt-2 list-style-initial">
+                <ul className="tw-mt-2">
                   {resultRaid?.map((result, turn) => (
                     <li className="tw-mb-3" key={turn}>
                       <h4>

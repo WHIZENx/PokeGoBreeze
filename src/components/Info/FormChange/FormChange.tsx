@@ -1,7 +1,10 @@
 import React, { useId } from 'react';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Xarrow, { Xwrapper } from 'react-xarrows';
 import APIService from '../../../services/api.service';
+import { combineClasses } from '../../../utils/extension';
 import { convertModelSpritName, splitAndCapitalize } from '../../../utils/utils';
 import { IFromChangeComponent } from '../../models/component.model';
 import useCombats from '../../../composables/useCombats';
@@ -25,7 +28,8 @@ const humanize = (value: string) => splitAndCapitalize(value, '_', ' ');
 
 const FromChange = (props: IFromChangeComponent) => {
   const { findMoveByName } = useCombats();
-  const isMobileLayout = useMediaQuery('(max-width:639px)');
+  const theme = useTheme();
+  const isWideLayout = useMediaQuery(theme.breakpoints.up('sm'));
   const arrowId = useId().replaceAll(':', '');
   const pokemon = props.pokemonData;
   if (!pokemon?.id || props.currentId !== pokemon.id || !pokemon.formChange?.length) {
@@ -33,6 +37,7 @@ const FromChange = (props: IFromChangeComponent) => {
   }
   const pokemonId = pokemon.id;
   const formChangeTargets = groupPokemonFormChangesByTarget(pokemon.formChange);
+  const hasBranches = formChangeTargets.length > 1;
 
   const displayName = (fullName: string) => {
     if (pokemon.id === 718) {
@@ -92,40 +97,104 @@ const FromChange = (props: IFromChangeComponent) => {
   };
 
   return (
-    <section data-testid="form-change-section" data-form-change-path="grid">
+    <section
+      data-testid="form-change-section"
+      data-form-change-path={isWideLayout ? 'grid' : hasBranches ? 'branch' : 'vertical'}
+    >
       <h4 className="title-evo">
         <b>Form Change</b>
       </h4>
       {pokemon.id === 676 && <p className="caption">Trims vary by region and event.</p>}
       {pokemon.id === 718 && <p className="caption">Cell costs depend on unlocked forms.</p>}
       <Xwrapper>
-        <div className="tw-mt-2 tw-flex tw-w-full tw-min-w-0 tw-flex-col tw-gap-8 sm:tw-flex-row sm:tw-gap-4">
+        <div className="tw-mt-2 tw-flex tw-w-full tw-min-w-0 tw-flex-col sm:tw-flex-row sm:tw-gap-4">
           <div className="tw-flex tw-w-full tw-min-w-0 tw-flex-col tw-items-center tw-justify-start sm:tw-w-1/2">
             <div id={`${arrowId}-origin`} className="tw-min-w-0 tw-text-center" data-testid="form-change-origin">
               {renderPokemon(pokemon.fullName ?? `${pokemon.pokemonId}_${pokemon.form}`, pokemon.form ?? 'NORMAL')}
             </div>
           </div>
-          <div className="tw-flex tw-w-full tw-min-w-0 tw-flex-col tw-items-center tw-justify-start tw-gap-8 sm:tw-w-1/2 sm:tw-gap-3">
+          {hasBranches ? (
+            <div aria-hidden="true" className="tw-relative tw-h-8 sm:tw-hidden">
+              <span
+                className="tw-absolute tw-inset-y-0 tw-left-1/2 tw-w-0.5 tw-bg-link"
+                data-testid="form-change-connector"
+              />
+              <span
+                className="tw-absolute tw-bottom-0 tw-left-0 tw-h-0.5 tw-w-1/2 tw-bg-link"
+                data-testid="form-change-connector"
+              />
+            </div>
+          ) : (
+            <div
+              aria-hidden="true"
+              className="tw-flex tw-h-8 tw-items-center tw-justify-center tw-text-link sm:tw-hidden"
+            >
+              <ArrowDownwardIcon data-testid="form-change-connector" />
+            </div>
+          )}
+          <div className="tw-flex tw-w-full tw-min-w-0 tw-flex-col tw-items-center tw-justify-start sm:tw-w-1/2 sm:tw-gap-3">
             {formChangeTargets.map(({ target, changes }, targetIndex) => (
-              <div key={target} className="tw-flex tw-w-full tw-min-w-0 tw-flex-col tw-items-center tw-justify-center">
+              <div
+                key={target}
+                className={combineClasses(
+                  'tw-relative tw-flex tw-w-full tw-min-w-0 tw-flex-col tw-items-center tw-justify-center',
+                  hasBranches && 'tw-px-4 tw-pb-8 last:tw-pb-0 sm:tw-px-0 sm:tw-pb-0'
+                )}
+              >
+                {hasBranches && targetIndex < formChangeTargets.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className="tw-absolute tw-inset-y-0 tw-left-0 tw-w-0.5 tw-bg-link sm:tw-hidden"
+                    data-testid="form-change-connector"
+                  />
+                )}
                 <div
-                  id={`${arrowId}-${targetIndex}-${target}`}
-                  className="tw-min-w-0 tw-text-center"
-                  data-form-change-target={target}
-                  data-testid="form-change-target"
+                  className={combineClasses(
+                    'tw-relative tw-flex tw-min-w-0 tw-items-center tw-justify-center',
+                    hasBranches && '-tw-mx-4 tw-self-stretch sm:tw-mx-0'
+                  )}
                 >
-                  {renderPokemon(target)}
+                  {hasBranches && (
+                    <>
+                      {targetIndex === formChangeTargets.length - 1 && (
+                        <span
+                          aria-hidden="true"
+                          className="tw-absolute tw-bottom-1/2 tw-left-0 tw-top-0 tw-w-0.5 tw-bg-link sm:tw-hidden"
+                          data-testid="form-change-connector"
+                        />
+                      )}
+                      <span
+                        aria-hidden="true"
+                        className="tw-flex tw-flex-1 tw-items-center sm:tw-hidden"
+                        data-testid="form-change-branch"
+                      >
+                        <span className="tw-h-0.5 tw-flex-1 tw-bg-link" />
+                        <span className="tw-border-y-4 tw-border-l-8 tw-border-r-0 tw-border-solid tw-border-y-transparent tw-border-l-link" />
+                      </span>
+                    </>
+                  )}
+                  <div
+                    id={`${arrowId}-${targetIndex}-${target}`}
+                    className="tw-min-w-0 tw-text-center"
+                    data-form-change-target={target}
+                    data-testid="form-change-target"
+                  >
+                    {renderPokemon(target)}
+                  </div>
+                  {hasBranches && <span aria-hidden="true" className="tw-flex-1 sm:tw-hidden" />}
                 </div>
-                <Xarrow
-                  strokeWidth={2}
-                  path="grid"
-                  startAnchor={isMobileLayout ? 'bottom' : 'right'}
-                  endAnchor={isMobileLayout ? 'top' : 'left'}
-                  start={`${arrowId}-origin`}
-                  end={`${arrowId}-${targetIndex}-${target}`}
-                />
+                {isWideLayout && (
+                  <Xarrow
+                    strokeWidth={2}
+                    path="grid"
+                    startAnchor="right"
+                    endAnchor="left"
+                    start={`${arrowId}-origin`}
+                    end={`${arrowId}-${targetIndex}-${target}`}
+                  />
+                )}
                 <div
-                  className="tw-mt-4 tw-flex tw-w-full tw-min-w-0 tw-max-w-full tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start sm:tw-w-fit sm:tw-min-w-[20rem] sm:tw-max-w-sm"
+                  className="tw-mt-4 tw-flex tw-w-full tw-min-w-0 tw-max-w-full tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start sm:tw-w-80 lg:tw-w-fit lg:tw-min-w-80 lg:tw-max-w-sm"
                   data-form-change-route-count={changes.length}
                   data-testid="form-change-detail"
                 >

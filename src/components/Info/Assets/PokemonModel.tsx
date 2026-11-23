@@ -252,9 +252,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                                 )}
                               </div>
                             )}
-                            <div
-                              className={combineClasses('model text-center', value.shiny ? 'tw-w-1/2' : 'tw-w-full')}
-                            >
+                            <div className={combineClasses('model', value.shiny ? 'tw-w-1/2' : 'tw-w-full')}>
                               {renderGender(getPokemonAssetImageCandidates(value.default, value.pokemonId), 'Default')}
                             </div>
                             {value.shiny && (

@@ -122,7 +122,7 @@ assert.match(
 );
 assert.match(
   counterStyles,
-  /\.rdt_TableCol,\s*\.rdt_TableCell\s*\{[\s\S]*?tw-justify-center[\s\S]*?tw-text-center/,
+  /\.rdt_TableCol,\s*\.rdt_TableCell,\s*\.rdt_TableCol_Sortable,\s*\.rdt_TableCell > \*\s*\{[^}]*tw-justify-center[^}]*tw-text-center/,
   'Counter headers and cells must retain their centered v7 alignment under the v8 class architecture.'
 );
 assert.match(

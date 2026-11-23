@@ -415,8 +415,8 @@ const FindBattle = () => {
                       value: index,
                       label: <b>More information</b>,
                       children: (
-                        <div className="sub-body">
-                          <div className="row tw-justify-center league-info-content !tw-m-0">
+                        <div>
+                          <div className="row tw-justify-center !tw-m-0">
                             {value.map((item, index) => (
                               <div className="col tw-inline-block evo-item-desc tw-justify-center !tw-p-0" key={index}>
                                 <div className="pokemon-best-league">

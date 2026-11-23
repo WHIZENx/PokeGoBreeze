@@ -164,31 +164,21 @@ const TableMove = (props: ITableMoveComponent) => {
                 onClick={() => arrowSort(table, TypeSorted.Fast)}
               >
                 Fast
-                {!disableSortFM && (
-                  <span className={stateSorted[tableType].sortBy === TypeSorted.Fast ? 'opacity-100' : 'opacity-30'}>
-                    <DataTableSortIcon direction={stateSorted[tableType].fast ? 'desc' : 'asc'} />
-                  </span>
-                )}
+                {!disableSortFM && <DataTableSortIcon direction={stateSorted[tableType].fast ? 'desc' : 'asc'} />}
               </th>
               <th
                 className="table-column-head main-move tw-cursor-pointer"
                 onClick={() => arrowSort(table, TypeSorted.Charge)}
               >
                 Charged
-                {!disableSortCM && (
-                  <span className={stateSorted[tableType].sortBy === TypeSorted.Charge ? 'opacity-100' : 'opacity-30'}>
-                    <DataTableSortIcon direction={stateSorted[tableType].charged ? 'desc' : 'asc'} />
-                  </span>
-                )}
+                {!disableSortCM && <DataTableSortIcon direction={stateSorted[tableType].charged ? 'desc' : 'asc'} />}
               </th>
               <th
                 className="table-column-head tw-cursor-pointer"
                 onClick={() => arrowSort(table, TypeSorted.Effective)}
               >
                 %
-                <span className={stateSorted[tableType].sortBy === TypeSorted.Effective ? 'opacity-100' : 'opacity-30'}>
-                  <DataTableSortIcon direction={stateSorted[tableType].effective ? 'desc' : 'asc'} />
-                </span>
+                <DataTableSortIcon direction={stateSorted[tableType].effective ? 'desc' : 'asc'} />
               </th>
             </tr>
             <tr className="tw-h-0" data-testid="best-moves-loading-row">
@@ -572,7 +562,6 @@ const TableMove = (props: ITableMoveComponent) => {
               ),
             },
           ]}
-          className="lg-2"
         />
       </div>
     </div>

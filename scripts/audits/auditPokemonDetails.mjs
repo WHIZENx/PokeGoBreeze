@@ -508,6 +508,14 @@ const readPage = () =>
           horizontalOverflow: detail.scrollWidth > detail.clientWidth + 2,
         }))
       : [];
+    const formChangeBranches = Array.from(
+      formChangeSection?.querySelectorAll('[data-testid="form-change-branch"]') ?? [],
+      bounds
+    ).filter(({ width, height }) => width > 0 && height > 0);
+    const formChangeConnectors = [
+      ...Array.from(formChangeSection?.querySelectorAll('[data-testid="form-change-connector"]') ?? [], bounds),
+      ...formChangeBranches,
+    ].filter(({ width, height }) => width > 0 && height > 0);
     const fusionSection = document.querySelector('[data-testid="fusion-section"]');
     const fusionOrigins = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-origin"]')] : [];
     const fusionTargets = fusionSection ? [...fusionSection.querySelectorAll('[data-testid="fusion-target"]')] : [];
@@ -708,6 +716,8 @@ const readPage = () =>
               origin: bounds(formChangeOrigin),
               targets: formChangeTargets,
               details: formChangeDetails,
+              branches: formChangeBranches,
+              connectors: formChangeConnectors,
             }
           : null,
       fusionLayout: fusionSection
@@ -1028,17 +1038,34 @@ const validateExpectedRow = (issues, id, row, button, page) => {
         targets: targetIdentities,
       });
     }
-    if (page.formChangeLayout.path !== 'grid') {
-      addIssue(issues, id, 'form_change_connector_not_grid', {
+    const { bounds, path, origin, targets, details, branches, connectors } = page.formChangeLayout;
+    const isStacked = path !== 'grid';
+    if (isStacked && (targets.length > 1 ? branches.length !== targets.length : connectors.length !== 1)) {
+      addIssue(issues, id, 'form_change_connector_missing', {
         ...context,
-        path: page.formChangeLayout.path,
+        path,
+        targetCount: targets.length,
+        branchCount: branches.length,
+        connectorCount: connectors.length,
       });
     }
-    const primaryTarget = page.formChangeLayout.targets[0];
-    const axisDifference =
-      page.viewportWidth >= 640
-        ? Math.abs(page.formChangeLayout.origin.centerY - primaryTarget.centerY)
-        : Math.abs(page.formChangeLayout.origin.centerX - primaryTarget.centerX);
+    const overlappingConnector = connectors.find((connector) =>
+      [origin, ...targets, ...details.map((detail) => detail.bounds)].some(
+        (card) =>
+          Math.min(connector.right, card.right) - Math.max(connector.left, card.left) > 1 &&
+          Math.min(connector.bottom, card.bottom) - Math.max(connector.top, card.top) > 1
+      )
+    );
+    if (overlappingConnector) {
+      addIssue(issues, id, 'form_change_connector_overlaps_card', {
+        ...context,
+        connector: overlappingConnector,
+      });
+    }
+    const primaryTarget = targets[0];
+    const axisDifference = isStacked
+      ? Math.abs(origin.centerX - primaryTarget.centerX)
+      : Math.abs(origin.centerY - primaryTarget.centerY);
     if (axisDifference > 2) {
       addIssue(issues, id, 'form_change_primary_nodes_misaligned', {
         ...context,
@@ -1046,7 +1073,7 @@ const validateExpectedRow = (issues, id, row, button, page) => {
         layout: page.formChangeLayout,
       });
     }
-    for (const [detailIndex, detail] of page.formChangeLayout.details.entries()) {
+    for (const [detailIndex, detail] of details.entries()) {
       if (detail.horizontalOverflow) {
         addIssue(issues, id, 'form_change_detail_horizontal_overflow', {
           ...context,
@@ -1054,12 +1081,8 @@ const validateExpectedRow = (issues, id, row, button, page) => {
           detail,
         });
       }
-      if (
-        page.viewportWidth < 640 &&
-        (detail.bounds.left < page.formChangeLayout.bounds.left - 1 ||
-          detail.bounds.right > page.formChangeLayout.bounds.right + 1)
-      ) {
-        addIssue(issues, id, 'form_change_detail_outside_mobile_viewport', {
+      if (detail.bounds.left < bounds.left - 1 || detail.bounds.right > bounds.right + 1) {
+        addIssue(issues, id, 'form_change_detail_outside_section', {
           ...context,
           detailIndex,
           detail,

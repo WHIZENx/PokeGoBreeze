@@ -34,7 +34,6 @@ $black: black;
 $fafafa: #fafafa;
 $light-page-background: #f3f4f6;
 $gray: gray;
-$v262626: #262626;
 $light-gray: lightgray;
 $b0b0b0: #b0b0b0;
 $eeeeee: #eeeeee;
@@ -62,46 +61,33 @@ $white-smoke: #f8f8f8;
 $e2eaf1: #e2eaf1;
 $ffffff60: #ffffff60;
 $f8f8f8: #f8f8f8;
-$v464646b3: #464646b3;
-$v46464666: #46464666;
 $e3f2fd: #e3f2fd;
-$grey: grey;
 $f1ffff: #f1ffff;
 $f1f1ff: #f1f1ff;
 $v0571c2: #0571c2;
 $b8d4da: #b8d4da;
 $v3386d2: #3386d2;
-$f6f6f6: #f6f6f6;
-$e6ffe6: #e6ffe6;
 $e6e6e6: #e6e6e6;
 $lightyellow: lightyellow;
 $e1e1e1: #e1e1e1;
 $v969696: #969696;
-$c8c8c8: #c8c8c8;
 $fafafaba: #fafafaba;
 $e7e7e7: #e7e7e7;
 $c8c8c8e6: #c8c8c8e6;
 $a8a8a8: #a8a8a8;
-$v00000000: #00000000;
 $v000000cc: #000000cc;
 $v2a3038: #2a3038;
 $v00000060: #00000060;
 $v232323: #232323;
 $v1e1e1e: #1e1e1e;
-$v303030b3: #303030b3;
-$v30303066: #30303066;
 $afafaf: #afafaf;
 $ebebeb: #ebebeb;
 $v90caf9: #90caf9;
 $v495559: #495559;
 $v0d5ca0: #0d5ca0;
-$v788c92: #788c92;
-$v193319: #193319;
 $v4d4d30: #4d4d30;
 $v3a3a45: #3a3a45;
 $v4f4f5c: #4f4f5c;
-$v454550: #454550;
-$v5a5a6a: #5a5a6a;
 $v222222ba: #222222ba;
 $v181818: #181818;
 $v373737e6: #373737e6;
@@ -199,8 +185,6 @@ $dark-link: #6ea8fe;
   --background-paper: #{$white};
   --background-revert: #{$black};
   --background-selected: #{$eeeeee};
-  --background-btn-type: #{$fafafa};
-  --background-btn-type-select: #{$v757575};
   --table-primary: #{$white};
   --background-table-divided: #{$v0000001f};
   --background-table-strip: #{$fafafa};
@@ -217,22 +201,22 @@ $dark-link: #6ea8fe;
   --text-caption: #{$v5f6368};
   --text-error: #600000;
   --text-success: #137333;
+  --text-charge-normal: var(--text-error);
+  --text-charge-nice: #963e14;
+  --text-charge-great: #795c00;
+  --text-charge-excellent: var(--text-success);
 
   // Divider color
   --divider: rgb(0 0 0 / 12%);
 
   // Shadow colors
   --shadow-default: #{$black};
-  --shadow-default-revert: #{$white};
-  --shadow-custom: #{$v00000000};
   --shadow-hover: #{$v000000cc};
 
   // Placeholder
   --loading-spinner: rgb(238 238 238 / 60%);
   --loading-spinner-bg: #{$f8f8f8};
   --loading-custom-bg: #{$white-smoke};
-  --loading-spinner-bg-start: #{$v464646b3};
-  --loading-spinner-bg-end: #{$v46464666};
   --skeleton-page-background: rgb(0 0 0 / 10%);
   --skeleton-page-wave-opacity: 0.7;
 
@@ -263,12 +247,9 @@ $dark-link: #6ea8fe;
   --custom-table-background-sub-head-border: #{$b8d4da};
   --custom-table-background-sub-head-hover: #{$v3386d2};
   --custom-table-border: #{$light-gray};
-  --custom-btn-type-border: #{$b8d4da};
 
   // According
   --custom-according-header: #{$light-gray};
-  --custom-according-footer: #{$f6f6f6};
-  --custom-according-highlight: #{$e6ffe6};
 
   // Dropdown
   --custom-dropdown-header: #{$e6e6e6};
@@ -277,8 +258,6 @@ $dark-link: #6ea8fe;
   // Custom button
   --custom-btn-form: #{$e1e1e1};
   --custom-btn-form-selected: #{$v969696};
-  --custom-btn-form-hover: #{$c8c8c8};
-  --custom-btn-form-focus: #{$grey};
 
   // Validator
   --custom-validator-disable: #{$light-gray};
@@ -320,8 +299,6 @@ $dark-link: #6ea8fe;
   --background-paper: #{$v333333};
   --background-revert: #{$white};
   --background-selected: #{$v555555};
-  --background-btn-type: #{$v555555};
-  --background-btn-type-select: #{$v111111};
   --table-primary: #{$v222222};
   --background-table-divided: #{$ffffff1f};
   --background-table-strip: #{$v050505};
@@ -338,22 +315,22 @@ $dark-link: #6ea8fe;
   --text-caption: #{$ebebeb};
   --text-error: #ffc1ba;
   --text-success: #81c995;
+  --text-charge-normal: #ffe4df;
+  --text-charge-nice: #ffe5c7;
+  --text-charge-great: #ffe99b;
+  --text-charge-excellent: #c6f7cb;
 
   // Divider color
   --divider: rgb(255 255 255 / 12%);
 
   // Shadow colors
   --shadow-default: #{$white};
-  --shadow-default-revert: #{$white};
-  --shadow-custom: #{$white};
   --shadow-hover: #{$white};
 
   // Placeholder
   --loading-spinner: #{$v00000060};
   --loading-spinner-bg: #{$v232323};
   --loading-custom-bg: #{$v1e1e1e};
-  --loading-spinner-bg-start: #{$v303030b3};
-  --loading-spinner-bg-end: #{$v30303066};
   --skeleton-page-background: var(--custom-default);
   --skeleton-page-wave-opacity: 0.35;
 
@@ -384,12 +361,9 @@ $dark-link: #6ea8fe;
   --custom-table-background-sub-head-border: #{$v495559};
   --custom-table-background-sub-head-hover: #{$v0d5ca0};
   --custom-table-border: #{$dark-gray};
-  --custom-btn-type-border: #{$v788c92};
 
   // According
   --custom-according-header: #{$dark-gray};
-  --custom-according-footer: #{$v262626};
-  --custom-according-highlight: #{$v193319};
 
   // Dropdown
   --custom-dropdown-header: #{$v333333};
@@ -398,8 +372,6 @@ $dark-link: #6ea8fe;
   // Custom button
   --custom-btn-form: #{$v3a3a45};
   --custom-btn-form-selected: #{$v4f4f5c};
-  --custom-btn-form-hover: #{$v454550};
-  --custom-btn-form-focus: #{$v5a5a6a};
 
   // Validator
   --custom-validator-disable: #{$dark-gray};
