@@ -5,14 +5,15 @@
 // portalled and conditional text is included in the computed-style scan.
 
 import { spawn } from 'node:child_process';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+const interactive = process.argv.includes('--interactive');
 const baseUrl = (
-  process.argv.find((value) => value.startsWith('--base-url='))?.split('=')[1] ?? 'http://localhost:9000'
+  process.argv.find((value) => value.startsWith('--base-url='))?.slice('--base-url='.length) ?? 'http://localhost:9000'
 ).replace(/\/$/, '');
-const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const chromePath = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const routes = [
   '/',
   '/news',
@@ -46,8 +47,84 @@ const routes = [
 ];
 const viewports = [
   { name: 'desktop', width: 1440, height: 1200 },
-  { name: 'mobile', width: 390, height: 844 },
+  interactive ? { name: 'mobile', width: 375, height: 667 } : { name: 'mobile', width: 390, height: 844 },
 ];
+const routeFilters = process.argv.filter((value) => value.startsWith('--route=')).map((value) => value.slice(8));
+const viewportFilter = process.argv.find((value) => value.startsWith('--viewport='))?.slice('--viewport='.length);
+const themeFilter = process.argv.find((value) => value.startsWith('--theme='))?.slice('--theme='.length);
+
+if (interactive) {
+  const { encodeBattleTimelineSeed } = await import('../../src/pages/PVP/Battle/utils/battle-seed.ts');
+  const apiUrl = process.env.API_BASE_URL ?? 'http://localhost:3001';
+  const getData = async (path) => {
+    const response = await fetch(new URL(path, apiUrl), { signal: AbortSignal.timeout(15000) });
+    if (!response.ok) throw new Error(path + ' returned HTTP ' + response.status);
+    return (await response.json()).data;
+  };
+  const [archive, ...fighters] = await Promise.all([
+    getData('/api/v1/game-master-updates?page=1&limit=1'),
+    ...['cradily', 'altaria'].map((name) =>
+      getData('/api/v1/pvp-pokemon?series=all&cp=1500&type=overall&name=' + name)
+    ),
+  ]);
+  const [player, opponent] = fighters.map(({ id, pokemon, pokemonType, data, fMove, cMovePri }) => ({
+    speciesId: data.speciesId,
+    id,
+    form: pokemon.form ?? '',
+    pokemonType,
+    fastMoveId: fMove.id,
+    primaryMoveId: cMovePri.id,
+    secondaryMoveId: 0,
+    level: 20,
+    atkIv: 0,
+    defIv: 0,
+    staIv: 0,
+    energy: 0,
+    block: 0,
+    chargeSlot: 1,
+    disablePrimary: false,
+    disableSecondary: true,
+    attackStage: 0,
+    defenseStage: 0,
+  }));
+  const strategy = { shield: 'always', charged: 'selected', voluntarySwitch: 'none', forcedSwitch: 'first' };
+  const seed = encodeBattleTimelineSeed({
+    battle: {
+      league: 1500,
+      leagueId: 'DEFAULT_GREAT',
+      playerTeam: [player],
+      opponentTeam: [opponent],
+      playerStrategy: strategy,
+      opponentStrategy: strategy,
+    },
+    randomSeed: 123,
+    showTap: false,
+    timelineType: 0,
+    duration: 1,
+    volume: 0,
+    progress: 0,
+  });
+  const patchSlug = archive.patches?.[0]?.slug;
+  if (!patchSlug) throw new Error('The API did not return a Game Master patch slug.');
+  routes.splice(routes.indexOf('/game-master-updates') + 1, 0, '/game-master-updates/' + encodeURIComponent(patchSlug));
+  routes.splice(routes.indexOf('/pvp/battle/1500'), 0, '/pvp/battle');
+  routes.splice(routes.indexOf('/pvp/battle/1500') + 1, 0, '/pvp/battle/1500/replay?seed=' + seed);
+
+  const app = await readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8');
+  const patterns = [...app.matchAll(/<Route\s+path="([^"]+)"/g)].map(([, path]) => path);
+  const uncovered = patterns.filter(
+    (pattern) =>
+      pattern !== '*' &&
+      !routes.some((route) => {
+        const shape = pattern.split('/');
+        const parts = route.split('?')[0].split('/');
+        return (
+          parts.length === shape.length && shape.every((part, index) => part.startsWith(':') || part === parts[index])
+        );
+      })
+  );
+  if (uncovered.length) throw new Error('Missing browser fixtures for ' + uncovered.join(', '));
+}
 
 class Client {
   constructor(url) {
@@ -86,7 +163,7 @@ const profile = await mkdtemp(join(tmpdir(), 'pokebreeze-typography-audit-'));
 const chrome = spawn(
   chromePath,
   [
-    '--headless=new',
+    ...(interactive ? [] : ['--headless=new']),
     '--disable-gpu',
     '--no-first-run',
     '--no-default-browser-check',
@@ -140,9 +217,11 @@ const waitForApplication = async () => {
       routeContent: [...(document.querySelector('.app-theme-root')?.children ?? [])].some((element) =>
         !element.matches('.MuiAppBar-root, .MuiBackdrop-root') && element.textContent.trim().length > 0
       ),
-      spinner: Boolean(document.querySelector('.MuiBackdrop-root[aria-hidden="false"]'))
+      spinner: [...document.querySelectorAll('.app-theme-root > .MuiBackdrop-root')].some((element) =>
+        getComputedStyle(element).visibility !== 'hidden' && Number(getComputedStyle(element).opacity) > 0
+      )
     }))()`);
-    if (latest.state === 'complete' && latest.app && latest.text > 0 && latest.routeContent && !latest.spinner) return;
+    if (latest.state !== 'loading' && latest.app && latest.text > 0 && latest.routeContent && !latest.spinner) return;
     await delay(150);
   }
   throw new Error(`Application did not settle: ${JSON.stringify(latest)}`);
@@ -187,7 +266,7 @@ const scanTypography = () =>
       if (element.closest('code, pre, [aria-hidden="true"]') || element.matches('script, style, svg, title')) continue;
       textElements += 1;
       const style = getComputedStyle(element);
-      const text = (element.value || element.textContent || element.placeholder || '').trim().replace(/\s+/g, ' ').slice(0, 100);
+      const text = (element.value || element.textContent || element.placeholder || '').trim().replace(/\\s+/g, ' ').slice(0, 100);
       if (style.fontFamily !== bodyFamily) {
         familyFindings.push({ selector: selector(element), tag: element.tagName.toLowerCase(), text, expected: bodyFamily, actual: style.fontFamily });
       }
@@ -216,7 +295,8 @@ const collectInteractions = () =>
       '.MuiAccordionSummary-root',
       '[role="tab"]',
       '.MuiAppBar-root button',
-      '.MuiCardActionArea-root'
+      '.MuiCardActionArea-root',
+      ...(${interactive} ? ['button', 'input:not([type=hidden])', 'details > summary', 'a[href^="/"]'] : []),
     ].join(',');
     const signatures = new Set();
     const interactions = [];
@@ -224,6 +304,8 @@ const collectInteractions = () =>
       const style = getComputedStyle(element);
       const rect = element.getBoundingClientRect();
       if (style.display === 'none' || style.visibility === 'hidden' || rect.width < 1 || rect.height < 1 || element.disabled) continue;
+      if (${interactive} && (element.closest('.MuiAppBar-root, [aria-hidden="true"]') ||
+        element.getAttribute('aria-disabled') === 'true' || element.matches('[download], [target="_blank"]'))) continue;
       const kind = element.matches('.MuiCardActionArea-root')
         ? 'card'
         : element.matches('[role="tab"]')
@@ -231,7 +313,8 @@ const collectInteractions = () =>
           : element.matches('.MuiAccordionSummary-root')
             ? 'accordion'
             : 'option-trigger';
-      const text = (element.textContent || element.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').slice(0, 80);
+      const text = (element.textContent || element.getAttribute('aria-label') || element.getAttribute('title') ||
+        element.getAttribute('placeholder') || element.tagName).trim().replace(/\\s+/g, ' ').slice(0, 80);
       const signature = [kind, element.tagName, [...element.classList].slice(0, 2).join('.'), text].join('|');
       if (signatures.has(signature)) continue;
       signatures.add(signature);
@@ -251,15 +334,147 @@ const dismissSurface = async () => {
 
 const results = [];
 let interactionsOpened = 0;
+const interactiveFailures = [];
+const auditedRoutes = routes.filter((entry) => !routeFilters.length || routeFilters.includes(entry.split('?')[0]));
+const auditedViewports = viewports.filter((viewport) => !viewportFilter || viewport.name === viewportFilter);
+const auditedThemes = interactive ? ['light', 'dark'].filter((theme) => !themeFilter || theme === themeFilter) : [null];
+const exceptionTexts = new Set();
+const verifyPageRendered = async (allowNotFound) => {
+  const fallback = await evaluate(`(() => {
+    const text = document.body.innerText;
+    if (text.includes('The application encountered an error.')) {
+      return document.querySelector('pre')?.textContent?.split('\\n')[0] ?? 'React application error fallback';
+    }
+    if (!${allowNotFound} && [...document.querySelectorAll('h1')].some(heading => heading.textContent.trim() === 'Page Not Found')) {
+      return 'A registered route rendered the not-found screen';
+    }
+    return null;
+  })()`);
+  if (fallback) throw new Error(fallback);
+};
+client.socket.addEventListener('message', (event) => {
+  const message = JSON.parse(event.data);
+  if (message.method === 'Runtime.exceptionThrown') {
+    const { exception, text } = message.params.exceptionDetails;
+    exceptionTexts.add((exception?.description ?? text).split('\n')[0]);
+  }
+});
+const clickControl = async (selector) => {
+  const locate = `(() => {
+    const element = document.querySelector(${JSON.stringify(selector)});
+    if (!element) return null;
+    element.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
+    const rect = element.getBoundingClientRect();
+    const x = Math.min(innerWidth - 1, Math.max(1, rect.x + rect.width / 2));
+    const y = Math.min(innerHeight - 1, Math.max(1, rect.y + rect.height / 2));
+    return element.contains(document.elementFromPoint(x, y)) ? { x, y } : null;
+  })()`;
+  let point;
+  for (let attempt = 0; attempt < 4 && !point; attempt++) {
+    point = await evaluate(locate);
+    if (!point) await delay(100);
+  }
+  if (!point) return false;
+  for (const type of ['mousePressed', 'mouseReleased']) {
+    await client.send('Input.dispatchMouseEvent', { type, button: 'left', clickCount: 1, ...point }, sessionId);
+  }
+  return true;
+};
 try {
-  for (const viewport of viewports) {
+  if (!auditedRoutes.length || !auditedViewports.length || !auditedThemes.length) {
+    throw new Error('No browser audit cases matched the filters.');
+  }
+  for (const { viewport, theme } of auditedViewports.flatMap((viewport) =>
+    auditedThemes.map((theme) => ({ viewport, theme }))
+  )) {
     await client.send(
       'Emulation.setDeviceMetricsOverride',
       { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: viewport.name === 'mobile' },
       sessionId
     );
-    for (const route of routes) {
+    if (theme) {
+      await client.send('Page.navigate', { url: baseUrl }, sessionId);
+      await waitForApplication();
+      if ((await evaluate('document.documentElement.dataset.theme')) !== theme) {
+        const selector = `button[aria-label="Switch to ${theme} theme"]`;
+        if (!(await clickControl(selector))) throw new Error(`Could not click the ${theme} theme switch`);
+        const deadline = Date.now() + 5000;
+        while ((await evaluate('document.documentElement.dataset.theme')) !== theme) {
+          if (Date.now() >= deadline) throw new Error(`The theme switch did not apply ${theme}`);
+          await delay(100);
+        }
+      }
+    }
+    for (const route of auditedRoutes) {
       const routeUrl = baseUrl + route;
+      if (interactive) {
+        const observedRoute = route.split('?')[0];
+        const allowNotFound = observedRoute === '/__typography-audit-not-found__';
+        const label = `${theme} ${viewport.name} ${observedRoute}`;
+        exceptionTexts.clear();
+        try {
+          await client.send('Page.navigate', { url: routeUrl }, sessionId);
+          await waitForApplication();
+          if (observedRoute.endsWith('/replay')) {
+            const deadline = Date.now() + 15000;
+            while (!(await evaluate('!!document.querySelector(\'[aria-label="Battle timeline"]\')'))) {
+              if (Date.now() >= deadline) throw new Error('The seeded battle timeline did not render');
+              await delay(150);
+            }
+          }
+          await delay(300);
+          await verifyPageRendered(allowNotFound);
+          const controlsDeadline = Date.now() + 8000;
+          while (!(await collectInteractions()).length && Date.now() < controlsDeadline) {
+            await delay(200);
+          }
+          const initial = await evaluate(`({
+            path: location.pathname,
+            overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+            theme: document.documentElement.dataset.theme
+          })`);
+          if (initial.path !== observedRoute) throw new Error(`rendered ${initial.path}`);
+          if (initial.theme !== theme) throw new Error(`expected ${theme} theme, got ${initial.theme}`);
+          const seen = new Set();
+          const clicked = [];
+          for (let attempt = 0; attempt < 8 && clicked.length < 3; attempt++) {
+            const controls = await collectInteractions();
+            const next = controls.find((control) => !seen.has(control.kind + control.text));
+            if (!next) break;
+            seen.add(next.kind + next.text);
+            if (!(await clickControl(`[data-typography-audit-id="${next.id}"]`))) {
+              await waitForApplication();
+              continue;
+            }
+            clicked.push(next.text);
+            interactionsOpened++;
+            await delay(180);
+            await verifyPageRendered(allowNotFound);
+            if ((await evaluate('location.href')) !== routeUrl) break;
+            await dismissSurface();
+          }
+          if (!clicked.length) throw new Error('no page controls clicked (' + [...seen].join(', ') + ')');
+          if (exceptionTexts.size) throw new Error([...exceptionTexts].join(' | '));
+          if (initial.overflow > 1) {
+            const overflowSources = await evaluate(`[...document.querySelectorAll('.app-theme-root *')]
+              .filter(element => {
+                if (element.getBoundingClientRect().right <= document.documentElement.clientWidth) return false;
+                for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+                  if (getComputedStyle(parent).overflowX !== 'visible') return false;
+                }
+                return true;
+              })
+              .slice(0, 6)
+              .map(element => element.tagName + '.' + [...element.classList].slice(0, 3).join('.'))`);
+            throw new Error(`page is ${initial.overflow}px wider than the viewport (${overflowSources.join(', ')})`);
+          }
+          console.log(`PASS ${label} | ${clicked.join(', ')}`);
+        } catch (error) {
+          interactiveFailures.push({ label, message: error.message });
+          console.log(`FAIL ${label} | ${error.message}`);
+        }
+        continue;
+      }
       await client.send('Page.navigate', { url: routeUrl }, sessionId);
       await waitForApplication();
       await delay(250);
@@ -308,6 +523,13 @@ try {
   client.socket.close();
   await delay(250);
   await rm(profile, { recursive: true, force: true }).catch(() => undefined);
+}
+
+if (interactive) {
+  console.log(
+    `${auditedRoutes.length} routes × ${auditedViewports.length} viewports × ${auditedThemes.length} themes, ${interactionsOpened} pointer clicks, ${interactiveFailures.length} findings.`
+  );
+  process.exit(interactiveFailures.length ? 1 : 0);
 }
 
 const observedFindings = results.flatMap((result) => [

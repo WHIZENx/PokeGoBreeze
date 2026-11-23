@@ -83,7 +83,7 @@ const Timeline = (
                       style={{
                         borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                       }}
-                      className="charge-attack opacity-50"
+                      className="charge-attack"
                     />
                   )}
                   {!value.isTap && (
@@ -198,7 +198,7 @@ const Timeline = (
                 />
               )}
               {value.type === AttackType.New && <div className="wait-attack" />}
-              {!value.type && <div className="wait-charge-attack" style={{ width: value.size, height: value.size }} />}
+              {!value.type && <div style={{ width: value.size, height: value.size }} />}
               {value.type === AttackType.Dead && <div className="wait-attack" />}
               {value.type === AttackType.Switch && <div className="wait-attack" />}
               {value.type === AttackType.Timeout && (

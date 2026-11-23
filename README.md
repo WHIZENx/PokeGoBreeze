@@ -438,10 +438,6 @@ npm ci
    | `REACT_APP_VERSION` | Optional | Overrides the version selected from config |
    | `MONGODB_URI` | Optional | Records deployment versions when running `deploy.sh` |
 
-   `REACT_APP_TOKEN_PRIVATE_REPO` is intentionally unsupported. Project-owned
-   browser assets are read from the public runtime mirror, while publishing
-   credentials remain scoped to the private source repository workflow.
-
    GitHub Actions deployment uses the `REACT_APP_EDGE_ID`,
    `REACT_APP_EDGE_READ_TOKEN`, `REACT_APP_EDGE_TOKEN`, and `VERCEL_TOKEN`
    secrets plus the `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` Actions variables.
@@ -623,11 +619,31 @@ Pokémon GO mechanics directly accessible without indexing them as released.
 | `npm run prerender:seo` | Prerender static and API-provided SEO routes into `dist/` |
 | `npm run update:local-ui-assets` | Refresh generated local Pokémon GO UI and move-type assets |
 | `npm run update:pokemon-icon-sheet` | Refresh the generated Pokémon icon sheet and index |
+| `npm run audit:assets` | Verify committed UI assets and the Pokémon icon sheet without network calls or writes |
 | `npm run test-vite` | Start Vite directly without runtime config loading |
 | `npm run debug-vite` | Start Vite directly with `--debug --force` for diagnostics |
 
 Feature-specific `test:*` and `audit:*` commands are declared in
 `package.json` and organized under [`scripts/`](scripts/README.md).
+The grouped regression suites include `test:pokedex`, `test:pokemon-images`,
+`test:route-navigation`, `test:app-shell`, and `test:design-system`.
+
+With local Web and API running, run
+`npm run audit:typography -- --interactive` to open every registered route
+in a visible Chrome window at desktop and iPhone SE widths in both Light
+and Dark themes. The audit uses the theme switch and pointer clicks on
+representative page controls, then reports page overflow or browser
+exceptions by route and theme. It loads fixtures from the running API for the
+patch and PvP replay routes. Use `--theme=dark` or `--route=/raid-battle`
+after `--interactive` to narrow a run. Set `API_BASE_URL` and pass `--base-url` as
+`--base-url=http://localhost:9000` when testing different local endpoints.
+
+With local Web and API running, run
+`node scripts/audits/auditRaidBattleLayout.mjs --headed` to select an attacker,
+calculate a Raid Battle, and check the HP and DPS layout in Chrome at 1280,
+375, and 320px in both themes. Omit `--headed` to run headless. Set `CHROME_PATH` when Chrome
+is installed outside the default macOS location, or set `WEB_BASE_URL` to
+test a different running Web instance.
 
 ### Browser Support
 

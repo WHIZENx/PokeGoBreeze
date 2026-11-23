@@ -44,19 +44,19 @@ import { defaultMaxMoveLevel, getMaxMoveLevelValue } from '../../../utils/max-mo
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
     color: 'var(--text-primary)',
-    style: '!tw-text-error',
+    style: 'tw-text-charge-normal',
   }),
   1: LabelDamage.create({
     color: 'blue',
-    style: '!tw-text-yellow-600',
+    style: 'tw-text-charge-nice',
   }),
   2: LabelDamage.create({
     color: 'green',
-    style: '!tw-text-yellow-600',
+    style: 'tw-text-charge-great',
   }),
   3: LabelDamage.create({
     color: 'red',
-    style: '!tw-text-success',
+    style: 'tw-text-charge-excellent',
   }),
 };
 

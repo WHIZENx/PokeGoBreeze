@@ -1203,10 +1203,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <li key={evo} className="img-form-gender-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0">
               <ul className="ul-evo tw-flex tw-flex-col">
                 {values.map((value, index) => (
-                  <li
-                    key={index}
-                    className="img-form-gender-group img-evo-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0"
-                  >
+                  <li key={index} className="img-form-gender-group li-evo !tw-w-auto tw-min-w-24 !tw-mr-0">
                     {value.formVaries ? (
                       <Tooltips title="Vivillon pattern depends on the Scatterbug encounter">
                         <div className="select-evo">{renderImageEvo(value, values, evo, index, arrEvoList.length)}</div>

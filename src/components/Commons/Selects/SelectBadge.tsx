@@ -15,11 +15,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
         onClick={() => props.setPriority(type)}
       >
         <span className="tw-w-6">
-          <img
-            alt="Frame Type"
-            className={combineClasses('frame-type-sprite', type === BadgeType.Platinum ? 'filter-platinum' : '')}
-            src={priorityBadge(type)}
-          />
+          <img alt="Frame Type" className="frame-type-sprite" src={priorityBadge(type)} />
         </span>
         {type !== BadgeType.None && (
           <span className="position-badge tw-w-3">
@@ -34,7 +30,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
   return (
     <div className="tw-w-full tw-mt-2">
       <div className="tw-flex tw-justify-center tw-items-center">
-        <div className={combineClasses('type-icon-small w-max-content', props.type.toLowerCase())}>
+        <div className={combineClasses('type-icon-small', props.type.toLowerCase())}>
           {capitalize(props.type)} Badge
         </div>
       </div>

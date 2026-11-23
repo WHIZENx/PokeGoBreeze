@@ -46,9 +46,9 @@ const StatBar = (props: IStatBarComponent) => {
       aria-disabled={isNavigationDisabled}
       aria-busy={isLoading}
       className={combineClasses(
-        'tw-w-full tw-relative progress',
-        isLoading && 'progress-loading',
-        !isNavigationDisabled && 'progress-hover'
+        'tw-grid tw-w-full tw-min-w-0 tw-grid-cols-1 pokemon-stat-bar',
+        isLoading && 'pokemon-stat-bar-loading',
+        !isNavigationDisabled && 'pokemon-stat-bar-hover'
       )}
       data-stat-tag={tag}
       data-stat-value={currentStats}
@@ -69,18 +69,16 @@ const StatBar = (props: IStatBarComponent) => {
       role={isNavigationDisabled ? undefined : 'button'}
       tabIndex={isNavigationDisabled ? undefined : 0}
     >
-      <div className="tw-absolute box-text stats-text tw-z-2 tw-flex tw-justify-start tw-w-full">
-        <span className="tw-text-extra-small">
+      <div className="box-text tw-z-2 tw-col-start-1 tw-row-start-1 tw-flex tw-min-h-7.5 tw-min-w-0 tw-items-center tw-justify-between tw-gap-1 tw-px-1">
+        <span className="tw-min-w-0 tw-break-words tw-text-extra-small">
           {tag} {pokemonStatsRank && getValueOrDefault(String, optionalStats, currentStats.toString())}
         </span>
-      </div>
-      {pokemonStatsRank && !isUndefined(rank) && (
-        <div className="tw-absolute tw-z-2 tw-flex tw-w-full box-text rank-text tw-justify-end">
-          <span className="tw-text-extra-small">
+        {pokemonStatsRank && !isUndefined(rank) && (
+          <span className="tw-min-w-0 tw-break-words tw-text-right tw-text-extra-small">
             Rank: {rank} / {pokemonStatsRank.maxRank}
           </span>
-        </div>
-      )}
+        )}
+      </div>
       <LinearProgress
         className="pokemon-stat-progress"
         data-testid="pokemon-stat-progress"

@@ -10,7 +10,6 @@ import {
   isSpecialFormType,
 } from '../../../utils/utils';
 
-import './Form.scss';
 import Gender, { GenderSkeleton, getGenderSpriteCandidates } from '../Gender';
 import Stats from '../Stats/Stats';
 import Raid from '../../Raid/Raid';

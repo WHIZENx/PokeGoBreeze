@@ -503,7 +503,7 @@ const Calculate = () => {
             <Box className="tw-w-full tw-min-w-content tw-overflow-x-auto md:tw-w-4/5">
               <div className="row">
                 <div className="col !tw-p-0">
-                  <table className="table-info table-stats">
+                  <table className="table-info">
                     <thead>
                       <tr className="tw-text-center">
                         <th colSpan={2}>Simulate Power Up Pokémon</th>

@@ -340,7 +340,7 @@ const SearchTypes = (props: IStyleSheetData) => {
   };
 
   return (
-    <div className="tw-container tw-my-4 type-search-page">
+    <div className="tw-container tw-my-4">
       <header className="type-search-toolbar">
         <div>
           <h1 className="type-search-heading">{`${capitalize(currentType)} Type`}</h1>

@@ -139,12 +139,7 @@ const TimelineVertical = (
           {value.type === AttackType.Fast && (
             <div className="tw-flex tw-items-center tw-gap-2">
               {!end && value.isTap && renderTapBadge()}
-              <div
-                className={combineClasses(
-                  'fast-attack-content tw-flex tw-flex-col tw-items-center tw-gap-1 tw-text-center',
-                  value.color
-                )}
-              >
+              <div className={combineClasses('timeline-attack-content', value.color)}>
                 <span className="tw-text-yellow-600 text-shadow-black">
                   {renderActionLabel('Fast Attack!', value, index, team, pokeCurr.timeline)}
                 </span>
@@ -157,19 +152,14 @@ const TimelineVertical = (
             <div
               className={combineClasses(
                 pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune
-                  ? 'fast-attack-container'
+                  ? 'timeline-attack-container'
                   : 'wait-attack-container',
                 '!tw-flex !tw-h-auto tw-items-center tw-gap-2'
               )}
             >
               {!end && value.isTap && renderTapBadge()}
               {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune ? (
-                <div
-                  className={combineClasses(
-                    'fast-attack-content tw-flex tw-flex-col tw-items-center tw-gap-1 tw-text-center',
-                    value.move?.type?.toLowerCase()
-                  )}
-                >
+                <div className={combineClasses('timeline-attack-content', value.move?.type?.toLowerCase())}>
                   <span className="tw-text-yellow-600 text-shadow-black">
                     {renderActionLabel('Fast Attack!', value, index, team, pokeCurr.timeline)}
                   </span>
@@ -206,13 +196,8 @@ const TimelineVertical = (
             </div>
           )}
           {value.type === AttackType.Charge && (
-            <div className="charged-attack-container !tw-h-auto">
-              <div
-                className={combineClasses(
-                  'charged-attack-content tw-flex tw-flex-col tw-items-center tw-gap-1 tw-text-center',
-                  value.color
-                )}
-              >
+            <div className="timeline-attack-container !tw-h-auto">
+              <div className={combineClasses('timeline-attack-content', value.color)}>
                 <span className="tw-text-yellow-600 text-shadow-black">
                   {renderActionLabel('Charged Attack!', value, index, team, pokeCurr.timeline)}
                 </span>
@@ -223,7 +208,7 @@ const TimelineVertical = (
           {value.type === AttackType.Dead &&
           pokeObj.timeline.at(index) &&
           pokeObj.timeline.at(index)?.type === AttackType.Dead ? (
-            <div className={combineClasses(resultClasses, 'bg-dark')}>
+            <div className={resultClasses}>
               {renderResultLabel('TIE!', value, index, team, pokeCurr.timeline, true)}
             </div>
           ) : (
@@ -246,7 +231,7 @@ const TimelineVertical = (
                       ? '!tw-bg-green-600'
                       : value.outcome === 'lose'
                         ? '!tw-bg-red-600'
-                        : 'bg-dark'
+                        : undefined
                   )}
                 >
                   {renderResultLabel(
