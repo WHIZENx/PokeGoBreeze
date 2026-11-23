@@ -34,9 +34,9 @@ const CollapseMui = <T,>(props: ICollapseComponent<T>) => {
                 className="!tw-py-0"
                 selected={!isNullOrUndefined(subMenu.value) && props.isSelect?.(subMenu)}
               >
-                <ListItemButton className="tw-truncate" onClick={() => handleSubMenuClick(subMenu)}>
+                <ListItemButton onClick={() => handleSubMenuClick(subMenu)}>
                   {subMenu.icon && <ListItemIcon>{subMenu.icon}</ListItemIcon>}
-                  <ListItemText primary={subMenu.label} />
+                  <ListItemText primary={subMenu.label} className="tw-whitespace-normal tw-break-words" />
                 </ListItemButton>
               </ListItem>
             ) : (

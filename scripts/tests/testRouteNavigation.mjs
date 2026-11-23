@@ -8,6 +8,10 @@ const linkToTopSource = await readFile(new URL('../../src/components/Link/LinkTo
 const pokemonPageSource = await readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8');
 const movePageSource = await readFile(new URL('../../src/pages/Move/Move.tsx', import.meta.url), 'utf8');
 const useDataStoreSource = await readFile(new URL('../../src/composables/useDataStore.ts', import.meta.url), 'utf8');
+const drawerSubmenuSource = await readFile(
+  new URL('../../src/components/Commons/Collapses/CollapseMui.tsx', import.meta.url),
+  'utf8'
+);
 const counterSource = await readFile(
   new URL('../../src/components/Commons/Tables/Counter/Counter.tsx', import.meta.url),
   'utf8'
@@ -23,6 +27,12 @@ const readyRouteEffect = appSource.match(
 )?.groups?.body;
 
 const failures = [];
+if (
+  drawerSubmenuSource.includes('tw-truncate') ||
+  !drawerSubmenuSource.includes('<ListItemText primary={subMenu.label} className="tw-whitespace-normal tw-break-words"')
+) {
+  failures.push('mobile drawer submenu labels must wrap inside their buttons');
+}
 if (!noDataRouteBranch) {
   failures.push('no-data route branch is missing');
 }
