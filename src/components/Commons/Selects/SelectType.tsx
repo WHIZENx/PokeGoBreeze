@@ -28,7 +28,7 @@ const SelectTypeComponent = <T extends object>(props: ISelectTypeComponent<T>) =
     props.setCurrentType('');
   };
   return (
-    <div className="tw-w-full tw-max-w-[300px]">
+    <div className="tw-w-full tw-max-w-compact">
       <h6 className="tw-text-center">
         <b>{props.title}</b>
       </h6>

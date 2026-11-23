@@ -1,5 +1,5 @@
 .pvp-container {
-  @apply tw-my-[15px] tw-mx-auto tw-mb-[5vh];
+  @apply tw-my-3.75 tw-mx-auto tw-mb-[5vh];
 }
 
 .pokemon-ranking-body hr {
@@ -7,7 +7,7 @@
 }
 
 .ranking-container {
-  @apply tw-isolate tw-max-h-[70vh] tw-overflow-y-auto;
+  @apply tw-isolate tw-max-h-overlay tw-overflow-y-auto;
 }
 
 .card-container {
@@ -17,7 +17,7 @@
 .ranking-header {
   color: var(--text-primary);
 
-  @apply tw-sticky tw-top-0 tw-p-[15px] tw-z-[4] tw-cursor-pointer;
+  @apply tw-sticky tw-top-0 tw-p-3.75 tw-z-4 tw-cursor-pointer;
 }
 
 .ranking-header .ranking-selected {
@@ -41,7 +41,7 @@
 }
 
 .ranking-score {
-  @apply tw-py-[5px] tw-px-2.5 tw-rounded-lg tw-font-bold;
+  @apply tw-py-1.25 tw-px-2.5 tw-rounded-lg tw-font-bold;
 }
 
 .ranking-container .accordion-item:first-of-type {
@@ -120,11 +120,11 @@
 }
 
 .type-rank-list {
-  @apply tw-max-h-[300px] tw-overflow-y-auto;
+  @apply tw-max-h-dropdown tw-overflow-y-auto;
 }
 
 .type-rank-item {
-  @apply tw-py-2 tw-px-2.5 tw-rounded-[5px] tw-my-[5px] tw-mx-2.5 tw-text-white;
+  @apply tw-py-2 tw-px-2.5 tw-rounded-control tw-my-1.25 tw-mx-2.5 tw-text-white;
 }
 
 .stats-container {
@@ -142,7 +142,7 @@
 }
 
 .battle-bar {
-  @apply tw-min-h-[150px] tw-py-2.5 tw-px-0;
+  @apply tw-min-h-panel tw-py-2.5 tw-px-0;
 }
 
 .battle-bar .battle-bar-container {
@@ -195,7 +195,7 @@
 }
 
 .fast-attack-content {
-  @apply tw-w-fit tw-p-2.5 tw-rounded-[5px];
+  @apply tw-w-fit tw-p-2.5 tw-rounded-control;
 }
 
 .wait-attack-container {
@@ -207,7 +207,7 @@
 }
 
 .swipe-attack-container {
-  @apply tw-w-fit tw-p-[9px] tw-rounded-[5px] tw-border tw-border-solid;
+  @apply tw-w-fit tw-p-[9px] tw-rounded-control tw-border tw-border-solid;
 }
 
 .charged-attack-container {
@@ -215,7 +215,7 @@
 }
 
 .charged-attack-content {
-  @apply tw-w-fit tw-p-2.5 tw-rounded-[5px];
+  @apply tw-w-fit tw-p-2.5 tw-rounded-control;
 }
 
 .winner-container,
@@ -228,7 +228,7 @@
 }
 
 .fit-timeline {
-  @apply tw-isolate tw-min-h-[150px] tw-py-2.5 tw-px-0;
+  @apply tw-isolate tw-min-h-panel tw-py-2.5 tw-px-0;
 }
 
 .fit-timeline .timeline-fit-container > div {
@@ -247,7 +247,7 @@
   display: flex !important;
   transform: translateX(-50%);
 
-  @apply -tw-top-px tw-left-1/2 tw-text-[10px] tw-w-max tw-text-center tw-gap-[5px] tw-font-bold;
+  @apply -tw-top-px tw-left-1/2 tw-text-micro tw-w-max tw-text-center tw-gap-1.25 tw-font-bold;
 }
 
 .fit-timeline .timeline-fit-container > .icon-buff-timeline {

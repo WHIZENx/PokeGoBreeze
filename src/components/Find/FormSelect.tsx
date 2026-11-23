@@ -468,13 +468,13 @@ const FormSelect = (props: IFormSelectComponent) => {
           <Skeleton
             variant="rounded"
             animation="wave"
-            className="!tw-h-[200px] !tw-w-[200px]"
+            className="!tw-h-form-preview !tw-w-form-preview"
             data-skeleton-surface="pokemon-image"
             data-testid="selected-pokemon-image-skeleton"
           />
         ) : (
           <img
-            className="tw-h-[200px] tw-w-[200px] tw-object-contain tw-p-2"
+            className="tw-h-form-preview tw-w-form-preview tw-object-contain tw-p-2"
             alt="Image Pokemon"
             src={displayedSelectedImage}
           />

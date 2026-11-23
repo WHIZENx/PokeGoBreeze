@@ -32,7 +32,7 @@ export const GenderSkeleton = () => (
               animation="wave"
               width={32}
               height={32}
-              className="!tw-absolute !tw-right-0 !tw-bottom-0 tw-z-[1]"
+              className="!tw-absolute !tw-right-0 !tw-bottom-0 tw-z-1"
             />
           </div>
           <Skeleton
@@ -114,7 +114,7 @@ const Gender = (props: IGenderComponent) => {
               onError={advanceDefaultSprite}
               src={defaultSprite}
             />
-            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />
+            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-1" />
           </div>
           <span className="caption">Default</span>
         </div>
@@ -129,7 +129,7 @@ const Gender = (props: IGenderComponent) => {
               onError={advanceShinySprite}
               src={shinySprite}
             />
-            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-[1]" />
+            <PokemonIconType pokemonType={props.pokemonType} size={32} className="!tw-right-0 !tw-bottom-0 tw-z-1" />
           </div>
           <span className="caption">Shiny</span>
         </div>

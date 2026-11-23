@@ -143,7 +143,7 @@ assert.match(
 );
 assert.match(
   appPage,
-  /path="\/pvp\/battle\/:cp\/replay" element=\{<Battle replayMode \/>\}/,
+  /path="\/pvp\/battle\/:cp\/replay" element=\{<Battle key=\{battleRouteKey\} replayMode \/>\}/,
   'Timeline replays must have a dedicated direct-navigation route.'
 );
 assert.match(

@@ -23,5 +23,5 @@ export class APIUrl {
   public static POKE_TRAINER_SPRITES_API_URL =
     'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Trainers/';
   public static POKE_SOUND_CRY_API_URL = 'https://raw.githubusercontent.com/Touched/pokedex-data/master/data/';
-  public static POKE_ASSETS_URL = `https://raw.githubusercontent.com/WHIZENx/pokemon-assets/master/`;
+  public static POKE_ASSETS_URL = 'https://raw.githubusercontent.com/WHIZENx/pokemon-assets-runtime/master/';
 }

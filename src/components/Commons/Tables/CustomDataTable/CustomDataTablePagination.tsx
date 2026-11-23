@@ -17,7 +17,7 @@ const CustomDataTablePagination = ({
 
   return (
     <TablePagination
-      className="rdt-mui-pagination tw-border-0 tw-bg-[var(--table-primary)] tw-text-[var(--text-primary)]"
+      className="rdt-mui-pagination tw-border-0 tw-bg-table-primary tw-text-foreground-primary"
       component="div"
       count={rowCount}
       page={Math.max(0, currentPage - 1)}

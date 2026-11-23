@@ -338,7 +338,7 @@ const Find = (props: IFindComponent) => {
           )}
         </div>
       ) : (
-        <div className="slide-container !tw-p-0 tw-flex tw-justify-center tw-relative !tw-w-full !tw-h-[600px]">
+        <div className="slide-container !tw-p-0 tw-flex tw-justify-center tw-relative !tw-w-full !tw-h-results-panel">
           <Skeleton variant="rectangular" animation="wave" className="tw-w-full !tw-h-full" />
           <LoadGroup isShow isVertical isHideAttr size={40} />
         </div>

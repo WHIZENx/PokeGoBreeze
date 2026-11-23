@@ -55,11 +55,11 @@ const CostValue = ({ value, isLoading }: { value: number; isLoading: boolean }) 
 );
 
 const CostItem = ({ label, pokemonId, cost, isLoading }: CostItemProps) => (
-  <div className="tw-rounded-lg tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-[var(--background-table-strip)] tw-p-3">
+  <div className="tw-rounded-lg tw-border tw-border-solid tw-border-divider tw-bg-table-strip tw-p-3">
     <span className="tw-block tw-text-body2 tw-font-semibold">{label}</span>
     <div className="tw-mt-2 tw-flex tw-flex-wrap tw-gap-2">
       <span
-        className="tw-inline-flex tw-min-h-8 tw-items-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-[var(--background-paper)] tw-px-2.5 tw-py-1 tw-text-caption"
+        className="tw-inline-flex tw-min-h-8 tw-items-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-border-divider tw-bg-surface-paper tw-px-2.5 tw-py-1 tw-text-caption"
         aria-label={isLoading ? undefined : `${cost.candy.toLocaleString()} Candy`}
       >
         {isLoading ? (
@@ -68,10 +68,10 @@ const CostItem = ({ label, pokemonId, cost, isLoading }: CostItemProps) => (
           <Candy id={pokemonId} className="tw-h-5 tw-w-5" />
         )}
         <CostValue value={cost.candy} isLoading={isLoading} />
-        <span className="tw-text-[var(--text-secondary)]">Candy</span>
+        <span className="tw-text-foreground-secondary">Candy</span>
       </span>
       <span
-        className="tw-inline-flex tw-min-h-8 tw-items-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-[var(--background-paper)] tw-px-2.5 tw-py-1 tw-text-caption"
+        className="tw-inline-flex tw-min-h-8 tw-items-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-border-divider tw-bg-surface-paper tw-px-2.5 tw-py-1 tw-text-caption"
         aria-label={isLoading ? undefined : `${cost.stardust.toLocaleString()} Stardust`}
       >
         {isLoading ? (
@@ -85,7 +85,7 @@ const CostItem = ({ label, pokemonId, cost, isLoading }: CostItemProps) => (
           />
         )}
         <CostValue value={cost.stardust} isLoading={isLoading} />
-        <span className="tw-text-[var(--text-secondary)]">Stardust</span>
+        <span className="tw-text-foreground-secondary">Stardust</span>
       </span>
     </div>
   </div>
@@ -128,7 +128,7 @@ const TrainingCosts = ({ pokemonId, thirdMove, purified, isLoading = false }: Tr
 
   return (
     <div
-      className="tw-mt-5 tw-border-0 tw-border-t tw-border-solid tw-border-[var(--divider)] tw-pt-4"
+      className="tw-mt-5 tw-border-0 tw-border-t tw-border-solid tw-border-divider tw-pt-4"
       data-testid="pokemon-training-costs"
       aria-busy={isLoading}
       aria-label={isLoading ? 'Loading training costs' : undefined}

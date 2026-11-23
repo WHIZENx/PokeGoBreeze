@@ -123,7 +123,7 @@ assert.match(weatherEffect, /<DualTypeQuickSelect/, 'weather type selection must
 assert.match(quickWeatherSelect, /aria-pressed=\{selected\}/, 'quick weather actions must expose their selected state');
 assert.match(weatherPage, /<WeatherOverview \/>/, 'Weather Boosts must include the all-weather overview');
 assert.match(weatherOverview, /getWeatherBoost\(\)/, 'all-weather overview must consume generated Game Master options');
-assert.match(selectType, /tw-w-full tw-max-w-\[300px\]/, 'type selectors must fit narrow cards and mobile viewports');
+assert.match(selectType, /tw-w-full tw-max-w-compact/, 'type selectors must fit narrow cards and mobile viewports');
 assert.match(
   raidBattle,
   /<div className="tw-relative tw-mt-2 tw-w-full">[\s\S]*?Select Boss Moveset/,
@@ -135,7 +135,7 @@ assert.match(
   'Raid Battle must stack Charged Moves below Fast Moves on mobile and use two columns on wider screens'
 );
 assert.equal(
-  [...raidBattle.matchAll(/<div className="tw-w-full tw-max-w-\[300px\]">[\s\S]*?<SelectMove/g)].length,
+  [...raidBattle.matchAll(/<div className="tw-w-full tw-max-w-compact">[\s\S]*?<SelectMove/g)].length,
   2,
   'both Raid Battle move selectors must retain the same responsive 300px width as the shared card selectors'
 );

@@ -95,7 +95,7 @@ const SelectCustomMove = (props: ISelectCustomMoveComponent) => {
             />
           </div>
           {showMove && (
-            <div className="result-type result-move tw-w-[300px]">
+            <div className="result-type result-move tw-w-selection-panel">
               <ul>
                 {resultMove && (
                   <Fragment>

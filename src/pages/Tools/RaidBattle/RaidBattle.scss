@@ -3,11 +3,11 @@
 }
 
 .top-raid-pokemon {
-  @apply tw-min-w-[250px] tw-inline-block tw-p-2.5;
+  @apply tw-min-w-data-table tw-inline-block tw-p-2.5;
 }
 
 .trainer-battle {
-  @apply tw-w-full tw-p-2.5 tw-mb-[15px];
+  @apply tw-w-full tw-p-2.5 tw-mb-3.75;
 }
 
 .pokemon-battle {
@@ -15,7 +15,7 @@
 }
 
 .pokemon-battle > span {
-  @apply tw-flex tw-w-[45px] tw-h-[45px] tw-p-[5px];
+  @apply tw-flex tw-w-[45px] tw-h-[45px] tw-p-1.25;
 }
 
 img.pokemon-sprite-battle {
@@ -60,7 +60,7 @@ img.pokemon-sprite-battle {
 }
 
 .count-pokemon {
-  @apply tw-rounded-[5px] tw-py-2 tw-px-[15px];
+  @apply tw-rounded-control tw-py-2 tw-px-3.75;
 }
 
 .click-none {
@@ -68,7 +68,7 @@ img.pokemon-sprite-battle {
 }
 
 .table-round-battle thead tr th {
-  @apply tw-text-[16px] tw-h-[35px] tw-py-[5px] tw-px-2.5;
+  @apply tw-text-small tw-h-battle-icon tw-py-1.25 tw-px-2.5;
 }
 
 .table-round-battle tbody tr td:nth-child(1) {
@@ -89,16 +89,16 @@ img.pokemon-sprite-battle {
 
 .ic-copy,
 .ic-remove {
-  @apply tw-py-[3px] tw-px-2 tw-rounded-full tw-cursor-pointer;
+  @apply tw-py-0.75 tw-px-2 tw-rounded-full tw-cursor-pointer;
 }
 
 .ic-group-small {
-  @apply tw-absolute tw-right-[5px];
+  @apply tw-absolute tw-right-1.25;
 }
 
 .ic-copy-small,
 .ic-remove-small {
-  @apply tw-py-[3px] tw-px-2 tw-rounded-full tw-cursor-pointer;
+  @apply tw-py-0.75 tw-px-2 tw-rounded-full tw-cursor-pointer;
 }
 
 .ic-copy:not(.click-none):hover,
@@ -112,7 +112,7 @@ img.pokemon-sprite-battle {
 }
 
 .text-group-small {
-  @apply tw-absolute tw-left-[5px] tw-font-bold;
+  @apply tw-absolute tw-left-1.25 tw-font-bold;
 }
 
 .slot-active {

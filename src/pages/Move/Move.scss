@@ -1,5 +1,5 @@
 .head-box {
-  @apply tw-h-15 tw-mt-4 tw-ml-[2%] tw-gap-[15px];
+  @apply tw-h-15 tw-mt-4 tw-ml-[2%] tw-gap-3.75;
 }
 
 h1.text-move {
@@ -59,7 +59,7 @@ h1.text-move {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
 
-  @apply tw-h-[35px] tw-border-none tw-font-bold tw-shadow-none tw-py-[5px] tw-px-2.5 tw-text-[1rem];
+  @apply tw-h-battle-icon tw-border-none tw-font-bold tw-shadow-none tw-py-1.25 tw-px-2.5 tw-text-[1rem];
 
   span {
     @apply tw-w-full tw-text-center tw-ml-5;
@@ -67,7 +67,7 @@ h1.text-move {
 }
 
 .table-bonus-cost {
-  @apply tw-inline-flex tw-h-full tw-w-1/2 tw-items-center tw-gap-[5px];
+  @apply tw-inline-flex tw-h-full tw-w-1/2 tw-items-center tw-gap-1.25;
 }
 
 .table-sub-bonus .accordion-body {

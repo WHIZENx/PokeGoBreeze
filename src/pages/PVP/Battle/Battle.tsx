@@ -2452,7 +2452,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
                 : `${sideLabel} Pokémon ${slot}`}
             </b>
             {pokemon.pokemonData && (
-              <span className="tw-block tw-break-words tw-text-xs tw-leading-small tw-text-[var(--text-secondary)]">
+              <span className="tw-block tw-break-words tw-text-xs tw-leading-small tw-text-foreground-secondary">
                 CP {Math.floor(toNumber(pokemon.pokemonData.currentStats?.CP))} ·{' '}
                 {splitAndCapitalize(pokemon.fMove?.name, '_', ' ')} ·{' '}
                 {splitAndCapitalize(pokemon.cMovePri?.name, '_', ' ')}
@@ -2463,7 +2463,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         {!isExpanded && pokemon.pokemonData && (
           <div className="tw-mt-2 tw-flex tw-items-center tw-gap-2">
             <div
-              className="tw-h-2 tw-min-w-0 tw-flex-1 tw-overflow-hidden tw-rounded-full tw-bg-[var(--divider)]"
+              className="tw-h-2 tw-min-w-0 tw-flex-1 tw-overflow-hidden tw-rounded-full tw-bg-divider"
               role="progressbar"
               aria-label={`${pokemon.pokemonData.name} HP`}
               aria-valuemin={0}
@@ -2475,7 +2475,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
                 style={{ width: `${Math.max(0, Math.min(100, hpRatio * 100))}%` }}
               />
             </div>
-            <span className="tw-w-16 tw-shrink-0 tw-text-right tw-text-caption tw-tabular-nums tw-text-[var(--text-secondary)]">
+            <span className="tw-w-16 tw-shrink-0 tw-text-right tw-text-caption tw-tabular-nums tw-text-foreground-secondary">
               {hp}/{maxHp}
             </span>
           </div>
@@ -2702,7 +2702,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
     return (
       <div
         className={combineClasses(
-          'tw-min-w-0 tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-[var(--background-paper)] tw-p-3',
+          'tw-min-w-0 tw-rounded tw-border tw-border-solid tw-border-divider tw-bg-surface-paper tw-p-3',
           isOpponent ? 'tw-text-right' : 'tw-text-left'
         )}
       >
@@ -2994,7 +2994,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
   const renderBattleControls = () =>
     pokemonCurr.pokemonData && pokemonObj.pokemonData ? (
       <div aria-label="Simulation controls" className="tw-order-3 tw-mt-2 md:tw-col-span-2">
-        <div className="tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-p-3">
+        <div className="tw-rounded tw-border tw-border-solid tw-border-divider tw-p-3">
           <div className="tw-grid tw-w-full tw-grid-cols-1 tw-gap-2 sm:tw-grid-cols-2">
             {renderStrategyButton('Player Strategy', 'playerStrategy', 1 + pokemonCurrBench.length)}
             {renderStrategyButton('Opponent Strategy', 'opponentStrategy', 1 + pokemonObjBench.length)}
@@ -3103,7 +3103,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
     >
       <div className="tw-container tw-mt-4 battle-body-container">
         {replayMode && decodedTimelineSeed && (
-          <div className="tw-mb-3 tw-flex tw-flex-wrap tw-items-center tw-justify-between tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-[var(--background-paper)] tw-p-3">
+          <div className="tw-mb-3 tw-flex tw-flex-wrap tw-items-center tw-justify-between tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-divider tw-bg-surface-paper tw-p-3">
             <div className="tw-flex tw-min-w-0 tw-items-center tw-gap-2">
               <OndemandVideoIcon color="primary" />
               <div className="tw-min-w-0">
