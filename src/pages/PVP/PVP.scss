@@ -44,19 +44,6 @@
   @apply tw-py-1.25 tw-px-2.5 tw-rounded-lg tw-font-bold;
 }
 
-.ranking-container .accordion-item:first-of-type {
-  border-top: none !important;
-}
-
-.ranking-container .accordion-item:last-of-type {
-  border-bottom: none !important;
-}
-
-.ranking-container .accordion-item:first-of-type,
-.ranking-container .accordion-item:last-of-type {
-  border-radius: 0 !important;
-}
-
 .ranking-body {
   @apply tw-py-5 tw-px-0;
 }
@@ -83,32 +70,6 @@
 
 .status-ranking {
   @apply tw-py-2.5;
-}
-
-.ranking-link-group button {
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
-}
-
-.ranking-link-group button.active {
-  @apply tw-font-bold;
-}
-
-.ranking-link-group button:not(:first-of-type, :last-of-type) {
-  border-left: 0.5px solid black;
-  border-right: 0.5px solid black;
-}
-
-.ranking-link-group button:first-of-type {
-  border-left: 1px solid black;
-  border-right: 0.5px solid black;
-}
-
-.ranking-link-group button:last-of-type {
-  border-left: 0.5px solid black;
-  border-right: 1px solid black;
 }
 
 .moves-title {
@@ -186,12 +147,12 @@
   @apply tw-flex;
 }
 
-.fast-attack-container {
+.timeline-attack-container {
   @apply tw-flex tw-items-center tw-h-20;
 }
 
-.fast-attack-content {
-  @apply tw-w-fit tw-p-2.5 tw-rounded-control;
+.timeline-attack-content {
+  @apply tw-flex tw-w-fit tw-flex-col tw-items-center tw-gap-1 tw-rounded-control tw-p-2.5 tw-text-center;
 }
 
 .wait-attack-container {
@@ -204,19 +165,6 @@
 
 .swipe-attack-container {
   @apply tw-w-fit tw-p-[9px] tw-rounded-control tw-border tw-border-solid;
-}
-
-.charged-attack-container {
-  @apply tw-flex tw-items-center tw-h-20;
-}
-
-.charged-attack-content {
-  @apply tw-w-fit tw-p-2.5 tw-rounded-control;
-}
-
-.winner-container,
-.loser-container {
-  @apply tw-p-2.5 tw-font-bold tw-w-full tw-text-center;
 }
 
 .dec-block {

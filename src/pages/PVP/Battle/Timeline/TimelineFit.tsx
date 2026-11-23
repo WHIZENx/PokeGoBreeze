@@ -184,7 +184,7 @@ const TimelineFit = (
                   value.isTap && (
                     <div
                       key={index}
-                      className="charge-attack tw-z-20 opacity-50"
+                      className="charge-attack tw-z-20"
                       style={{
                         width: value.size,
                         ...centeredMarkerStyle(index),
@@ -246,7 +246,6 @@ const TimelineFit = (
               {!value.type && (
                 <div
                   id={index.toString()}
-                  className="wait-charge-attack"
                   style={centeredMarkerStyle(index, {
                     width: value.size,
                     height: value.size,

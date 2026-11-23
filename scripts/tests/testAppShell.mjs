@@ -33,9 +33,7 @@ const hasVercelImmutableCache = (config) => {
 };
 
 const hasVercelPvpDetailFallback = (config) =>
-  config.rewrites?.some(
-    (rewrite) => rewrite.source === '/pvp/:cp/:serie/:pokemon' && rewrite.destination === '/'
-  );
+  config.rewrites?.some((rewrite) => rewrite.source === '/pvp/:cp/:serie/:pokemon' && rewrite.destination === '/');
 
 const hasVercelPokemonDetailFallback = (config) =>
   config.rewrites?.some((rewrite) => rewrite.source === '/pokemon/:id' && rewrite.destination === '/');
@@ -145,10 +143,45 @@ const checks = [
   ['Cloudflare has no cross-provider redirect', !cloudflareRedirects.includes('https://')],
 ];
 
+// Public shell metadata and image assets
+const webRoot = new URL('../../', import.meta.url);
+const manifest = JSON.parse(await readFile(new URL('public/manifest.json', webRoot), 'utf8'));
+
+const readPngSize = async (relativePath, imageBytes) => {
+  const image = imageBytes ?? (await readFile(new URL(relativePath, webRoot)));
+  const pngSignature = '89504e470d0a1a0a';
+  if (image.subarray(0, 8).toString('hex') !== pngSignature || image.subarray(12, 16).toString() !== 'IHDR') {
+    throw new Error(`${relativePath} is not a valid PNG.`);
+  }
+  return { width: image.readUInt32BE(16), height: image.readUInt32BE(20) };
+};
+
+const [openGraphImage, appIcon, appleTouchIcon] = await Promise.all([
+  readPngSize('public/og-image.png'),
+  readPngSize('public/app-icon.png', renderedHeaderIcon),
+  readPngSize('public/apple-touch-icon.png'),
+]);
+
+const manifestAppIcon = manifest.icons?.find((icon) => icon.src === 'app-icon.png');
+const seoChecks = [
+  ['Open Graph image is 1200x630', openGraphImage.width === 1200 && openGraphImage.height === 630],
+  [
+    'Open Graph metadata declares 1200x630',
+    indexHtml.includes('property="og:image:width" content="1200"') &&
+      indexHtml.includes('property="og:image:height" content="630"'),
+  ],
+  ['PWA icon is 512x512', appIcon.width === 512 && appIcon.height === 512],
+  ['manifest uses the square PWA icon', manifestAppIcon?.sizes === '512x512' && manifestAppIcon?.type === 'image/png'],
+  ['Apple touch icon is 180x180', appleTouchIcon.width === 180 && appleTouchIcon.height === 180],
+  ['HTML uses the dedicated Apple touch icon', indexHtml.includes('href="/apple-touch-icon.png"')],
+];
+
+checks.push(...seoChecks);
+
 const failures = checks.filter(([, passed]) => !passed).map(([name]) => name);
 if (failures.length) {
-  console.error(`Pre-hydration shell audit failed: ${failures.join(', ')}`);
+  console.error(`App shell and SEO assets regression failed: ${failures.join(', ')}`);
   process.exit(1);
 }
 
-console.log(`Pre-hydration shell audit passed (${checks.length} checks).`);
+console.log(`App shell and SEO assets regression passed (${checks.length} checks).`);

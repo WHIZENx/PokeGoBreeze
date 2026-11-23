@@ -93,8 +93,7 @@
 }
 
 @mixin hover-effect {
-  &:hover,
-  .ranking-container .accordion-button.collapsed:hover {
+  &:hover {
     @include theme-background(var(--custom-selected-hover));
   }
 }

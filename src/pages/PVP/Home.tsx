@@ -89,7 +89,7 @@ const PVPHome = () => {
   };
 
   return (
-    <div className="pvp-home-page tw-container tw-mt-4 tw-pb-4">
+    <div className="tw-container tw-mt-4 tw-pb-4">
       <header className="pokemon-detail-section tw-mb-4 tw-flex tw-flex-wrap tw-items-start tw-justify-between tw-gap-3">
         <div>
           <h1 className="tw-m-0">Pokémon GO PvP</h1>

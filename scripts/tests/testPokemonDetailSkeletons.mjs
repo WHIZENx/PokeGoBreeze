@@ -417,7 +417,7 @@ assert.match(statBar, /value=\{statsPercent\}/);
 assert.match(statBar, /className="pokemon-stat-progress"/);
 assert.match(statBar, /data-testid="pokemon-stat-progress"/);
 assert.doesNotMatch(statBar, /indeterminate/);
-assert.match(statBar, /tw-grid tw-w-full tw-min-w-0 tw-grid-cols-1 progress/);
+assert.match(statBar, /tw-grid tw-w-full tw-min-w-0 tw-grid-cols-1 pokemon-stat-bar/);
 assert.match(
   statBar,
   /box-text[^\n]+tw-col-start-1 tw-row-start-1[^\n]+tw-justify-between[^\n]+\n[\s\S]*Rank: \{rank\}/,
@@ -429,7 +429,7 @@ assert.match(
   /pokemon-stat-progress\.MuiLinearProgress-root[\s\S]*tw-col-start-1 tw-row-start-1 tw-h-full tw-w-full tw-rounded-md/
 );
 assert.match(statsStyles, /pokemon-stat-progress \.MuiLinearProgress-bar[\s\S]*tw-rounded-md tw-duration-300/);
-assert.match(statsStyles, /progress-loading[\s\S]*MuiLinearProgress-bar[\s\S]*tw-transition-none/);
+assert.match(statsStyles, /pokemon-stat-bar-loading[\s\S]*MuiLinearProgress-bar[\s\S]*tw-transition-none/);
 assert.doesNotMatch(statBar, /useEffect|useState/);
 assert.match(form, /<Info isLoading=\{!isCurrentPokemonLoaded\} \/>/);
 assert.match(info, /data-testid="pokemon-information"/);

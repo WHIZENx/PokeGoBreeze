@@ -514,10 +514,7 @@ const Counter = (props: ICounterComponent) => {
         <span className="sub-title">Best Pokémon Counter</span>
         <TableLoadingProgress loading={isUpdating} label="Loading Pokémon counters" />
       </div>
-      <div
-        className={combineClasses('tw-relative counter-table-content', isUpdating ? 'is-loading' : '')}
-        aria-busy={isUpdating}
-      >
+      <div className="tw-relative" aria-busy={isUpdating}>
         {isUpdating && isNotEmpty(counterList) && (
           <div
             className="tw-absolute tw-inset-0 tw-z-10 tw-cursor-wait"

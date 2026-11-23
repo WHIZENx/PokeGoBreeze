@@ -8,10 +8,7 @@
   --rdt-color-striped: transparent;
 
   .rdt_TableCol,
-  .rdt_TableCell {
-    @apply tw-justify-center tw-text-center;
-  }
-
+  .rdt_TableCell,
   .rdt_TableCol_Sortable,
   .rdt_TableCell > * {
     @apply tw-justify-center tw-text-center;
@@ -33,10 +30,6 @@
       @apply tw-px-1;
     }
   }
-}
-
-.table-counter {
-  @apply tw-w-full tw-h-full;
 }
 
 .group-pokemon-sprite {

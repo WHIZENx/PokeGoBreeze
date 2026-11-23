@@ -46,9 +46,9 @@ const StatBar = (props: IStatBarComponent) => {
       aria-disabled={isNavigationDisabled}
       aria-busy={isLoading}
       className={combineClasses(
-        'tw-grid tw-w-full tw-min-w-0 tw-grid-cols-1 progress',
-        isLoading && 'progress-loading',
-        !isNavigationDisabled && 'progress-hover'
+        'tw-grid tw-w-full tw-min-w-0 tw-grid-cols-1 pokemon-stat-bar',
+        isLoading && 'pokemon-stat-bar-loading',
+        !isNavigationDisabled && 'pokemon-stat-bar-hover'
       )}
       data-stat-tag={tag}
       data-stat-value={currentStats}

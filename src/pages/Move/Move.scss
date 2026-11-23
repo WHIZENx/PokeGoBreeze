@@ -38,38 +38,6 @@ h1.text-move {
   @apply tw-max-w-0 tw-overflow-x-auto;
 }
 
-.table-sub-bonus.accordion-item {
-  @apply tw-border-none;
-
-  tr td:nth-child(1) {
-    width: 25% !important;
-
-    @apply tw-align-middle;
-  }
-
-  tr td:nth-child(2),
-  tr td:nth-child(3) {
-    font-weight: lighter !important;
-
-    @apply tw-align-middle;
-  }
-}
-
-.table-sub-bonus .accordion-button {
-  border-top-left-radius: 0 !important;
-  border-top-right-radius: 0 !important;
-
-  @apply tw-h-battle-icon tw-border-none tw-font-bold tw-shadow-none tw-py-1.25 tw-px-2.5 tw-text-[1rem];
-
-  span {
-    @apply tw-w-full tw-text-center tw-ml-5;
-  }
-}
-
 .table-bonus-cost {
   @apply tw-inline-flex tw-h-full tw-w-1/2 tw-items-center tw-gap-1.25;
-}
-
-.table-sub-bonus .accordion-body {
-  padding: 0 !important;
 }

@@ -7,7 +7,10 @@ import { pokemonSearchOptionId } from '../../src/pages/Search/Pokemon/pokemon-se
 import { toolPokemonOptionId } from '../../src/components/Find/find-navigation.ts';
 import { getPokemonKeyboardIndex, getScrollTopToReveal } from '../../src/utils/pokemon-keyboard-navigation.ts';
 import { getViewportPrefetchThreshold, isNearScrollEnd, shouldPreventScrollChaining } from '../../src/utils/scroll.ts';
+import { buildPokedexCardImageCandidates, getPokedexCardRequestedImage } from '../../src/utils/pokedex-card-image.ts';
+import { hasPokemon256AssetFallback } from '../../src/utils/pokemon-asset-url.ts';
 
+// Query serialization and keyboard navigation
 const generations = [0, 1, 2];
 assert.equal(pokemonSearchOptionId(448), 'pokemon-card-448');
 assert.equal(toolPokemonOptionId('r1', 448), 'tool-pokemon-r1-448');
@@ -106,3 +109,108 @@ assert.match(customStyleSource, /\.result\.keyboard-navigation/);
 assert.match(customStyleSource, /\.card-pokemon:hover:not\(\.selected\)/);
 
 console.log('Pokédex query regression tests passed.');
+
+// Card image candidates and loading
+assert.deepEqual(
+  buildPokedexCardImageCandidates('go.png', 'profile.png', 'form.png', 'base.png'),
+  ['go.png', 'profile.png', 'form.png', 'base.png'],
+  'a Pokémon GO asset must remain the default Pokédex card image'
+);
+
+assert(hasPokemon256AssetFallback('/pm25.fGIGANTAMAX.icon'), 'GMAX default assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm25.fGIGANTAMAX.s.icon'), 'GMAX Shiny assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm150.fMEGA_X.icon'), 'Mega X default assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm150.fMEGA_X.s.icon'), 'Mega X Shiny assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm150.fMEGA_Y.icon'), 'Mega Y default assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm150.fMEGA_Y.s.icon'), 'Mega Y Shiny assets must be recognized');
+assert(hasPokemon256AssetFallback('/pm746.fSCHOOL.icon'), 'form assets must use the 256x256 fallback');
+assert(hasPokemon256AssetFallback('/pm771.icon'), 'ordinary Addressable Assets must use the 256x256 fallback');
+assert(hasPokemon256AssetFallback('/pm802.s.icon'), 'ordinary Shiny assets must use the 256x256 fallback');
+assert(hasPokemon256AssetFallback('/pm905.fTHERIAN.s.icon'), 'form Shiny assets must use the 256x256 fallback');
+assert(
+  !hasPokemon256AssetFallback('pokemon_icon_pm0025_00_pgo_movie2020'),
+  'legacy root assets must keep their original fallback behavior'
+);
+assert.deepEqual(
+  buildPokedexCardImageCandidates('normal-path.png', 'pokemon-256.png', 'profile.png'),
+  ['normal-path.png', 'pokemon-256.png', 'profile.png'],
+  'Addressable Asset cards must try the normal path before the 256x256 fallback'
+);
+
+const mewtwoMegaX = {
+  default: 'pm150.fMEGA_X.icon.png',
+  shiny: 'pm150.fMEGA_X.s.icon.png',
+};
+const mewtwoMegaY = {
+  default: 'pm150.fMEGA_Y.icon.png',
+  shiny: 'pm150.fMEGA_Y.s.icon.png',
+};
+assert.equal(
+  getPokedexCardRequestedImage(mewtwoMegaX, true),
+  mewtwoMegaX.shiny,
+  'Mewtwo Mega X must request its matching Shiny asset'
+);
+assert.equal(
+  getPokedexCardRequestedImage(mewtwoMegaY, false),
+  mewtwoMegaY.default,
+  'Mewtwo Mega Y must restore its matching default asset'
+);
+
+const pikachuGmax = {
+  default: 'pm25.fGIGANTAMAX.icon.png',
+  shiny: 'pm25.fGIGANTAMAX.s.icon.png',
+};
+assert.equal(
+  getPokedexCardRequestedImage(pikachuGmax, true),
+  pikachuGmax.shiny,
+  'the Shiny control must request the exact matching GMAX Shiny asset'
+);
+assert.equal(
+  getPokedexCardRequestedImage(pikachuGmax, false),
+  pikachuGmax.default,
+  'leaving the Shiny control must restore the exact default GMAX asset'
+);
+assert.equal(
+  getPokedexCardRequestedImage({ default: 'pm1.icon.png' }, true),
+  'pm1.icon.png',
+  'forms without a Shiny asset must retain their default image'
+);
+
+const cardSource = await readFile(new URL('../../src/components/Card/CardPokemonInfo.tsx', import.meta.url), 'utf8');
+assert.match(
+  cardSource,
+  /src=\{props\.image\.default\}/,
+  'the default image must remain mounted while a Shiny image is loading'
+);
+assert.match(
+  cardSource,
+  /loaded && visible \? 'tw-opacity-100' : 'tw-opacity-0'/,
+  'the Shiny image must remain transparent until it has loaded successfully'
+);
+assert.match(
+  cardSource,
+  /setNextPokemonImageFallback\(event\.currentTarget, \[src, \.\.\.fallbacks\]\)/,
+  'Shiny Addressable Asset failures must stay in the Shiny fallback sequence'
+);
+assert.doesNotMatch(
+  cardSource,
+  /key=\{requestedImage\}/,
+  'hovering Shiny must not unmount the already rendered default image'
+);
+assert.equal(
+  cardSource.match(/loading="lazy"[\s\S]{0,80}decoding="async"/g)?.length,
+  2,
+  'Pokédex default and optional Shiny artwork must decode lazily.'
+);
+assert.match(
+  pokedexSource,
+  /const POKEDEX_PAGE_SIZE = 40;[\s\S]*limit: POKEDEX_PAGE_SIZE/,
+  'Infinite Pokédex loading must add a bounded number of image-heavy cards per page.'
+);
+assert.deepEqual(
+  buildPokedexCardImageCandidates(undefined, 'profile.png', 'form.png', 'base.png'),
+  ['profile.png', 'form.png', 'base.png'],
+  'a form without a Pokémon GO asset must fall back to its Detail profile image'
+);
+
+console.log('Pokédex card image regression tests passed.');

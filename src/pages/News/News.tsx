@@ -367,7 +367,7 @@ const News = () => {
                       ),
                       value: value.id,
                       children: (
-                        <div className="sub-body">
+                        <div>
                           {value.desc && <p>{value.desc}</p>}
                           <div className="tw-flex tw-justify-center">
                             <h5>

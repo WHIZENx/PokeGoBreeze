@@ -1,31 +1,23 @@
-.progress {
+.pokemon-stat-bar {
   @apply tw-my-2.5 tw-mx-0;
 }
 
-.progress .pokemon-stat-progress.MuiLinearProgress-root {
+.pokemon-stat-bar .pokemon-stat-progress.MuiLinearProgress-root {
   @apply tw-col-start-1 tw-row-start-1 tw-h-full tw-w-full tw-rounded-md;
 }
 
-.progress .pokemon-stat-progress .MuiLinearProgress-bar {
+.pokemon-stat-bar .pokemon-stat-progress .MuiLinearProgress-bar {
   @apply tw-rounded-md tw-duration-300 tw-ease-in-out;
 }
 
-.progress-loading .pokemon-stat-progress .MuiLinearProgress-bar {
+.pokemon-stat-bar-loading .pokemon-stat-progress .MuiLinearProgress-bar {
   @apply tw-transition-none;
 }
 
-.progress-hover {
+.pokemon-stat-bar-hover {
   @apply tw-cursor-pointer;
 }
 
 .box-text span {
   @apply tw-p-0.75 tw-rounded-control tw-font-bold tw-bg-[#d3d3d3cc];
-}
-
-.rank-text {
-  @apply tw-items-center tw-h-7.5;
-
-  span {
-    @apply tw-mr-[1%];
-  }
 }
