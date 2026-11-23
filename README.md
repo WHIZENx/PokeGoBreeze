@@ -591,6 +591,22 @@ npm install -g vercel
 vercel --prod
 ```
 
+The Checkly Hobby account runs a browser smoke check on each public Web
+environment. Production runs every six hours. Develop and Stage run every
+twelve hours. These checks verify that the homepage and JavaScript bundle load,
+that the Web build uses the matching API, and that the public Pokédex renders
+data from that API.
+
+Vercel is the sole deployment trigger for these Web checks. It runs one
+Browser Check per deployment, using the production check for Production and
+the shared preview check for Develop and Stage. The preview check uses the
+deployment URL supplied by Vercel and verifies the API configured in that
+build. `PokeGoBreeze Data` has its own scheduled monitoring.
+Generated deployment URLs are checked through the Web response, JavaScript,
+and paired API. The scheduled checks verify browser rendering on the public
+aliases with API CORS access. Reliability failures block the Vercel deployment.
+Web Vitals are reported separately from the Reliability gate.
+
 #### Cloudflare Pages
 ```bash
 # Build the same static output used by the other hosting providers
