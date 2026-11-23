@@ -217,6 +217,10 @@ $dark-link: #6ea8fe;
   --text-caption: #{$v5f6368};
   --text-error: #600000;
   --text-success: #137333;
+  --text-charge-normal: var(--text-error);
+  --text-charge-nice: #963e14;
+  --text-charge-great: #795c00;
+  --text-charge-excellent: var(--text-success);
 
   // Divider color
   --divider: rgb(0 0 0 / 12%);
@@ -338,6 +342,10 @@ $dark-link: #6ea8fe;
   --text-caption: #{$ebebeb};
   --text-error: #ffc1ba;
   --text-success: #81c995;
+  --text-charge-normal: #ffe4df;
+  --text-charge-nice: #ffe5c7;
+  --text-charge-great: #ffe99b;
+  --text-charge-excellent: #c6f7cb;
 
   // Divider color
   --divider: rgb(255 255 255 / 12%);
