@@ -153,10 +153,11 @@ async function main() {
   const result = spawnSync(cmd, args, {
     stdio: 'inherit',
     env: process.env,
-    shell: true, // required on Windows so npm / vite resolve correctly
+    shell: process.platform === 'win32', // Resolve npm and Vite .cmd shims on Windows.
   });
 
-  process.exit(result.status ?? 0);
+  if (result.error) throw result.error;
+  process.exit(result.status ?? 1);
 }
 
 main().catch((err) => {
