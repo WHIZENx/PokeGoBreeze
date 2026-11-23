@@ -456,7 +456,10 @@ const FormComponent = (props: IFormInfoComponent) => {
           <h4 className="info-title">
             <b>Form varieties</b>
           </h4>
-          <div className="form-container tw-flex tw-h-[190px] tw-items-center" data-testid="form-varieties-content">
+          <div
+            className="form-container tw-flex tw-h-form-content tw-items-center"
+            data-testid="form-varieties-content"
+          >
             <ButtonGroupForm
               className="tw-min-h-selection-button"
               isFullWidth
@@ -490,7 +493,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             <b>Gender ratio</b>
           </h4>
           <div
-            className="tw-h-[190px]"
+            className="tw-h-form-content"
             data-testid="gender-ratio-content"
             data-gender-form-id={genderDisplay?.formId ?? ''}
             aria-busy={!isCurrentPokemonLoaded || !isGenderDisplayCurrentForm}

@@ -171,7 +171,7 @@ const columns = createDataRows<TableColumnModify<PokemonSheetData>>(
         className="tw-flex tw-min-w-0 tw-items-center tw-gap-2"
       >
         <span className="tw-relative tw-inline-flex tw-items-center">
-          <PokemonIconType pokemonType={row.pokemonType} size={25} className="!tw-bottom-0 !tw-right-0 tw-z-[1]">
+          <PokemonIconType pokemonType={row.pokemonType} size={25} className="!tw-bottom-0 !tw-right-0 tw-z-1">
             <PokemonTableIcon {...row.pokemon} />
           </PokemonIconType>
         </span>

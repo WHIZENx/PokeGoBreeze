@@ -932,7 +932,7 @@ const Evolution = (props: IEvolutionComponent) => {
           />
         </span>
         <span
-          className="tw-flex tw-h-[18px] tw-items-center tw-justify-center tw-gap-1.5 tw-whitespace-nowrap"
+          className="tw-flex tw-h-compact-label tw-items-center tw-justify-center tw-gap-1.5 tw-whitespace-nowrap"
           data-testid="evolution-status-tags"
         >
           {value.isBaby && <span className="caption tw-text-error">(Baby)</span>}
@@ -962,7 +962,7 @@ const Evolution = (props: IEvolutionComponent) => {
           {Array.from({ length: nodeCount }, (_, nodeIndex) => (
             <div
               key={nodeIndex}
-              className="tw-flex tw-h-[130px] tw-w-24 tw-flex-col tw-items-center"
+              className="tw-flex tw-h-evolution-node tw-w-24 tw-flex-col tw-items-center"
               data-testid="evolution-skeleton-node"
             >
               <Skeleton data-skeleton-surface="page" variant="rounded" animation="wave" width={96} height={96} />
@@ -997,7 +997,7 @@ const Evolution = (props: IEvolutionComponent) => {
             },
           }}
           title={
-            <div className="popover-info tw-max-h-[70vh] tw-overflow-y-auto">
+            <div className="popover-info tw-max-h-overlay tw-overflow-y-auto">
               <span className="info-evo">
                 <span className="tw-block caption" data-evolution-condition="candyCost" data-evolution-icon="candy">
                   - <img alt="Candy" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy required.

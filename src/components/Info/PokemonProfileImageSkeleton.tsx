@@ -10,7 +10,7 @@ const PokemonProfileImageSkeleton = ({
   <Skeleton
     variant="rounded"
     animation="wave"
-    className="!tw-h-[205px] !tw-w-[205px]"
+    className="!tw-h-pokemon-sprite-inner !tw-w-pokemon-sprite-inner"
     data-skeleton-surface="pokemon-image"
     data-testid={testId}
   />

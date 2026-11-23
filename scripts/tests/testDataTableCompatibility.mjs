@@ -17,6 +17,7 @@ const pagination = await readFile(
 const styles = await readFile(join(sourceRoot, 'assets/styles/custom.scss'), 'utf8');
 const counterStyles = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.scss'), 'utf8');
 const counter = await readFile(join(sourceRoot, 'components/Commons/Tables/Counter/Counter.tsx'), 'utf8');
+const moveTable = await readFile(join(sourceRoot, 'components/Commons/Tables/Move/MoveTable.tsx'), 'utf8');
 const moveTableStyles = await readFile(join(sourceRoot, 'components/Commons/Tables/Move/MoveTable.scss'), 'utf8');
 const pokemonStyles = await readFile(join(sourceRoot, 'pages/Pokemon/Pokemon.scss'), 'utf8');
 const calculatePoint = await readFile(join(sourceRoot, 'pages/Tools/CalculatePoint/CalculatePoint.tsx'), 'utf8');
@@ -55,7 +56,7 @@ assert.match(tableEmptyState, /No results found/);
 assert.match(tableEmptyState, /No data matches your current search or filters/);
 assert.match(
   tableEmptyState,
-  /tw-border-\[var\(--divider\)\][\s\S]*tw-bg-\[var\(--background-selected\)\][\s\S]*tw-text-\[var\(--text-primary\)\][\s\S]*tw-text-\[var\(--text-secondary\)\]/,
+  /tw-border-divider[\s\S]*tw-bg-surface-selected[\s\S]*tw-text-foreground-primary[\s\S]*tw-text-foreground-secondary/,
   'Filtered table empty states must use theme-aware design-system tokens.'
 );
 assert.match(
@@ -265,6 +266,21 @@ assert.doesNotMatch(
   /\.table-moves thead tr \+ tr th \{[\s\S]*tw-z-10/,
   'Best Moves column headers must not float above the Pokémon navigation bar.'
 );
+assert.equal(
+  moveTable.match(/tw-inline-flex tw-items-center tw-self-center tw-w-max/g)?.length,
+  3,
+  'Every move classification badge must center against the type icon and move name instead of using text-baseline alignment.'
+);
+assert.equal(
+  moveTable.match(/className="tw-flex tw-items-center"/g)?.length,
+  2,
+  'Both Best Moves links must center their type icon, move name, and classification badge as one row.'
+);
+assert.doesNotMatch(
+  moveTable,
+  /tw-align-text-bottom/,
+  'Move rows must not retain the baseline alignment that offsets icons or classification badges vertically.'
+);
 assert.match(
   pokemonStyles,
   /\.prev-next-block \{[\s\S]*z-index: 3 !important/,
@@ -277,7 +293,7 @@ assert.equal(
 );
 assert.match(
   calculatePointStyles,
-  /\.sticky-left \{[\s\S]*tw-sticky tw-left-0 tw-z-\[1\][\s\S]*\.sticky-table-left tbody tr td:nth-child\(1\) \{[\s\S]*tw-sticky tw-left-0 tw-z-\[1\]/,
+  /\.sticky-left \{[\s\S]*tw-sticky tw-left-0 tw-z-1[\s\S]*\.sticky-table-left tbody tr td:nth-child\(1\) \{[\s\S]*tw-sticky tw-left-0 tw-z-1/,
   'Breakpoint and Bulkpoint sticky columns must stay above data cells inside the isolated scroller.'
 );
 assert.match(

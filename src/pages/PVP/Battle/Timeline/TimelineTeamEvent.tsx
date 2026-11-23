@@ -63,7 +63,7 @@ const TimelineTeamEvent = ({ entry, index, team, timeline }: TimelineTeamEventPr
       />
       {fainted && (
         <CloseIcon
-          className="tw-absolute -tw-right-1 -tw-top-1 tw-rounded-full tw-bg-[var(--background-table-hover)] !tw-text-error"
+          className="tw-absolute -tw-right-1 -tw-top-1 tw-rounded-full tw-bg-table-hover !tw-text-error"
           sx={{ fontSize: 14 }}
         />
       )}
@@ -73,7 +73,7 @@ const TimelineTeamEvent = ({ entry, index, team, timeline }: TimelineTeamEventPr
   return (
     <span
       aria-label={label}
-      className="tw-relative tw-z-20 tw-inline-flex tw-items-center tw-gap-0.5 tw-rounded tw-bg-[var(--background-table-hover)] tw-px-1"
+      className="tw-relative tw-z-20 tw-inline-flex tw-items-center tw-gap-0.5 tw-rounded tw-bg-table-hover tw-px-1"
       data-timeline-event={isSwitch ? 'switch' : 'faint'}
       role="img"
     >

@@ -123,7 +123,7 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
         className="tw-inline-flex tw-items-center tw-gap-2"
       >
         <span className="tw-relative tw-inline-flex tw-items-center tw-justify-center">
-          <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-[1]">
+          <PokemonIconType pokemonType={row.pokemonType} size={24} className="!tw-bottom-0 !tw-right-0 tw-z-1">
             <PokemonTableIcon {...row} />
           </PokemonIconType>
         </span>
@@ -710,7 +710,7 @@ const Move = (props: IMovePage) => {
                 <td>Sound</td>
                 <td colSpan={2}>
                   {move?.sound ? (
-                    <audio className="tw-flex tw-w-full tw-h-[30px]" controls preload="none">
+                    <audio className="tw-flex tw-w-full tw-h-7.5" controls preload="none">
                       <source src={APIService.getSoundMove(move.sound)} type="audio/wav" />
                       Your browser does not support the audio element.
                     </audio>

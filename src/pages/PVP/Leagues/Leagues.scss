@@ -58,7 +58,7 @@ li.unique-type ul {
 .img-link {
   display: inline-block !important;
 
-  @apply tw-w-max tw-m-[5px];
+  @apply tw-w-max tw-m-1.25;
 }
 
 .league-body.accordion-body div.sub-body {
@@ -66,11 +66,11 @@ li.unique-type ul {
 }
 
 .combat-league {
-  @apply tw-inline-block tw-w-16 tw-relative tw-mr-[5px];
+  @apply tw-inline-block tw-w-16 tw-relative tw-mr-1.25;
 }
 
 .combat-league-info {
-  @apply tw-inline-block tw-w-24 tw-relative tw-mr-[5px];
+  @apply tw-inline-block tw-w-24 tw-relative tw-mr-1.25;
 }
 
 .combat-league img.main-combat-league {
@@ -84,13 +84,13 @@ li.unique-type ul {
 .combat-center-league {
   transform: translate(-50%, -40%);
 
-  @apply tw-absolute tw-top-[38%] tw-left-[49%];
+  @apply tw-absolute tw-top-[38%] tw-left-near-center;
 }
 
 .combat-center-league-info {
   transform: translate(-49%, -40%);
 
-  @apply tw-absolute tw-top-[45%] tw-left-[49%];
+  @apply tw-absolute tw-top-[45%] tw-left-near-center;
 }
 
 .combat-center-league-text {
@@ -112,7 +112,7 @@ li.unique-type ul {
 .combat-center-league-top {
   transform: translateX(-50%);
 
-  @apply tw-absolute tw-left-1/2 tw-text-white tw-text-[10px];
+  @apply tw-absolute tw-left-1/2 tw-text-white tw-text-micro;
 }
 
 .reward-info {

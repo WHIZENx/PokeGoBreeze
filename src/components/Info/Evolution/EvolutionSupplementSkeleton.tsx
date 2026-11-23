@@ -27,7 +27,7 @@ const EvolutionSupplementSkeleton = ({
       <div className="tw-flex tw-w-full tw-justify-center tw-gap-3 tw-overflow-x-auto tw-pb-2">
         {Array.from({ length: Math.max(1, count) }, (_, index) => (
           <div
-            className="tw-flex tw-w-[calc(100vw-3rem)] tw-max-w-[22rem] tw-flex-none tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-[var(--divider)] tw-p-3"
+            className="tw-flex tw-w-evolution-card-viewport tw-max-w-evolution-card tw-flex-none tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-divider tw-p-3"
             data-testid="evolution-supplement-skeleton-card"
             key={index}
           >

@@ -1,9 +1,9 @@
 .group-model {
-  @apply tw-p-[15px];
+  @apply tw-p-3.75;
 }
 
 .model {
-  @apply tw-p-2.5 tw-inline-block tw-min-w-[50%];
+  @apply tw-p-2.5 tw-inline-block tw-min-w-half;
 }
 
 .sub-group-model .gender {

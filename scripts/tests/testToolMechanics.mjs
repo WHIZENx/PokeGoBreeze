@@ -201,7 +201,7 @@ assert.doesNotMatch(pokemonFormSource, /isLoading=\{!props\.isLoadedForms \|\| !
 assert.match(counterSource, /if \(!hasValidCounterTarget\)[\s\S]*setShowFrame\(false\)/);
 assert.doesNotMatch(counterSource, /if \(!hasValidCounterTarget\)[\s\S]{0,200}setCounterList\(\[\]\)/);
 assert.match(counterSource, /toFloatWithPadding\(row\.dps, 2\).*DPS/s);
-assert.match(counterSource, /tw-text-\[var\(--text-secondary\)\]/);
+assert.match(counterSource, /tw-text-foreground-secondary/);
 assert.match(alertReleasedSource, /props\.releasedGO === false/);
 assert.doesNotMatch(alertReleasedSource, /useSearch/);
 assert.match(pokemonSource, /setReleasedAlert\(\{/);

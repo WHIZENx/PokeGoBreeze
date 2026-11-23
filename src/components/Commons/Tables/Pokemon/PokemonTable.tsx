@@ -109,23 +109,23 @@ const PokemonTable = (props: IPokemonTableComponent) => {
             <h5 className="tw-flex">Body</h5>
           </td>
           <td colSpan={2} className="!tw-p-0">
-            <div className="tw-grid tw-grid-cols-[minmax(max-content,1.1fr)_minmax(max-content,0.9fr)] min-[420px]:tw-grid-cols-[minmax(max-content,1.15fr)_minmax(max-content,0.85fr)]">
-              <div className="first-extra-col tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-0.5 tw-whitespace-nowrap !tw-px-0.5 min-[420px]:tw-gap-1 min-[420px]:!tw-px-1.5 sm:!tw-px-2.5">
-                <h6 className="max-[419px]:tw-text-body2">Weight:</h6>
+            <div className="tw-grid tw-grid-cols-[minmax(max-content,1.1fr)_minmax(max-content,0.9fr)] xs:tw-grid-cols-[minmax(max-content,1.15fr)_minmax(max-content,0.85fr)]">
+              <div className="first-extra-col tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-0.5 tw-whitespace-nowrap !tw-px-0.5 xs:tw-gap-1 xs:!tw-px-1.5 sm:!tw-px-2.5">
+                <h6 className="max-xs:tw-text-body2">Weight:</h6>
                 <div className="tw-min-w-0 tw-tabular-nums">
                   {reload(
-                    <h6 className="tw-whitespace-nowrap max-[419px]:tw-text-body2">
+                    <h6 className="tw-whitespace-nowrap max-xs:tw-text-body2">
                       {!isUndefined(props.weightKg) && formatBodyMeasurement(props.weightKg, 'kg')}
                     </h6>,
                     !isUndefined(props.weightKg)
                   )}
                 </div>
               </div>
-              <div className="tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-0.5 tw-whitespace-nowrap !tw-pl-0.5 !tw-pr-3 min-[420px]:tw-gap-1 min-[420px]:!tw-pl-1.5 min-[420px]:!tw-pr-3 sm:!tw-pl-2.5 sm:!tw-pr-4">
-                <h6 className="max-[419px]:tw-text-body2">Height:</h6>
+              <div className="tw-flex tw-h-full tw-min-w-0 tw-items-center tw-gap-0.5 tw-whitespace-nowrap !tw-pl-0.5 !tw-pr-3 xs:tw-gap-1 xs:!tw-pl-1.5 xs:!tw-pr-3 sm:!tw-pl-2.5 sm:!tw-pr-4">
+                <h6 className="max-xs:tw-text-body2">Height:</h6>
                 <div className="tw-min-w-0 tw-tabular-nums">
                   {reload(
-                    <h6 className="tw-whitespace-nowrap max-[419px]:tw-text-body2">
+                    <h6 className="tw-whitespace-nowrap max-xs:tw-text-body2">
                       {!isUndefined(props.heightM) && formatBodyMeasurement(props.heightM, 'm')}
                     </h6>,
                     !isUndefined(props.heightM)

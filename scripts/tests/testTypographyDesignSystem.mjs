@@ -5,6 +5,8 @@ import { readFile, readdir } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+await import('./testTailwindDesignSystem.mjs');
+
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const read = (path) => readFile(join(root, path), 'utf8');
 

@@ -87,7 +87,7 @@ const TypeMatchupMatrix = () => {
         <table className="tw-min-w-[980px] tw-w-full tw-border-collapse" aria-label="Pokémon GO type matchup matrix">
           <thead>
             <tr>
-              <th className="tw-sticky tw-left-0 tw-z-[1] tw-bg-custom-default tw-p-2 tw-text-left tw-text-caption">
+              <th className="tw-sticky tw-left-0 tw-z-1 tw-bg-custom-default tw-p-2 tw-text-left tw-text-caption">
                 ATK / DEF
               </th>
               {types.map((type) => (
@@ -100,7 +100,7 @@ const TypeMatchupMatrix = () => {
           <tbody>
             {entries.map(([attackType, defenses]) => (
               <tr key={attackType}>
-                <th className="tw-sticky tw-left-0 tw-z-[1] tw-bg-custom-default tw-p-2 tw-text-left">
+                <th className="tw-sticky tw-left-0 tw-z-1 tw-bg-custom-default tw-p-2 tw-text-left">
                   <span className="tw-flex tw-items-center tw-gap-2">
                     <IconType type={attackType} width={28} height={28} alt="" />
                     <span className="tw-text-caption">{capitalize(attackType)}</span>

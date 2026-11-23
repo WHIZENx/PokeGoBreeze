@@ -78,7 +78,7 @@ assert.match(evolution, /data-testid="evolution-skeleton-stage"/);
 assert.match(evolution, /data-skeleton-node-count=\{nodeCount\}/);
 assert.match(evolution, /Array\.from\(\{ length: nodeCount \}/);
 assert.match(evolution, /data-testid="evolution-skeleton-node"/);
-assert.match(evolution, /tw-h-\[130px\]/);
+assert.match(evolution, /tw-h-evolution-node/);
 assert.match(evolution, /const areEvolutionAssetsReady =/);
 assert.match(evolution, /const readyEvolutionAssetSetKeys = new Set<string>\(\)/);
 assert.match(evolution, /isRequestedPokemonInResolvedChain && readyEvolutionAssetSetKeys\.has\(evolutionAssetSetKey\)/);
@@ -139,7 +139,7 @@ assert.doesNotMatch(
 assert.match(evolution, /data-testid="evolution-current-marker"/);
 assert.match(evolution, /data-evolution-current-id=\{value\.id\}/);
 assert.match(evolution, /data-testid="evolution-status-tags"/);
-assert.match(evolution, /tw-flex tw-h-\[18px\] tw-items-center tw-justify-center tw-gap-1\.5/);
+assert.match(evolution, /tw-flex tw-h-compact-label tw-items-center tw-justify-center tw-gap-1\.5/);
 assert.match(
   evolution,
   /data-testid="evolution-status-tags"[\s\S]*value\.isBaby[\s\S]*data-testid="evolution-current-marker"/
@@ -308,7 +308,7 @@ assert.match(
   /data-testid="gender-ratio-content"[\s\S]*aria-busy=\{!isCurrentPokemonLoaded \|\| !isGenderDisplayCurrentForm\}/
 );
 assert.match(form, /data-gender-form-id=\{genderDisplay\?\.formId \?\? ''\}/);
-assert.match(form, /className="form-container tw-flex tw-h-\[190px\] tw-items-center"/);
+assert.match(form, /className="form-container tw-flex tw-h-form-content tw-items-center"/);
 assert.match(form, /<h4 className="info-title">\s*<b>Form varieties<\/b>\s*<\/h4>/);
 assert.match(form, /scrollToSelected=\{Boolean\(params\.id && searchParams\.has\(Params\.Form\)\)\}/);
 assert.match(buttonGroupForm, /querySelector<HTMLElement>\('\[aria-pressed="true"\]'\)/);
@@ -481,7 +481,7 @@ assert.doesNotMatch(
 );
 assert.match(
   pokemonTable,
-  /tw-grid-cols-\[minmax\(max-content,1\.1fr\)_minmax\(max-content,0\.9fr\)\][\s\S]*min-\[420px\]:tw-grid-cols-\[minmax\(max-content,1\.15fr\)_minmax\(max-content,0\.85fr\)\]/,
+  /tw-grid-cols-\[minmax\(max-content,1\.1fr\)_minmax\(max-content,0\.9fr\)\][\s\S]*xs:tw-grid-cols-\[minmax\(max-content,1\.15fr\)_minmax\(max-content,0\.85fr\)\]/,
   'Body measurements must remain in one row without shrinking either column below its content.'
 );
 assert.match(
@@ -490,7 +490,7 @@ assert.match(
   'The rightmost Height value must retain visible space from the table edge.'
 );
 assert.equal(
-  pokemonTable.match(/max-\[419px\]:tw-text-body2/g)?.length,
+  pokemonTable.match(/max-xs:tw-text-body2/g)?.length,
   4,
   'Body measurement labels and values must use the compact typography token on narrow screens.'
 );
@@ -534,8 +534,8 @@ assert.ok(
 assert.match(pokemonPage, /<PokemonDetailHero/);
 assert.match(
   pokemonDetailHero,
-  /tw-inline-flex tw-max-w-full tw-items-start tw-align-top[\s\S]*tw-w-pokemon-profile tw-shrink-0[\s\S]*tw-min-w-0 tw-align-top[\s\S]*<PokemonTable/,
-  'The centered Pokémon hero group must size to its content before metadata rows expand toward the section edge.'
+  /tw-contents sm:tw-inline-flex[\s\S]*tw-w-pokemon-profile tw-shrink-0[\s\S]*tw-inline-block tw-max-w-full tw-align-top sm:tw-min-w-0[\s\S]*<PokemonTable/,
+  'The Pokémon hero must restore separate mobile image and table flow before grouping them on larger screens.'
 );
 assert.doesNotMatch(pokemonPage, /data-testid="pokemon-cost-table"/);
 assert.match(pokemonPage, /testId="pokemon-assets-stable"/);
@@ -543,7 +543,7 @@ assert.match(
   pokemonDetailLayoutStyles,
   /\.pokemon-detail-section[\s\S]*tw-rounded-2xl[\s\S]*var\(--background-paper\)/
 );
-assert.match(pokemonDetailLayoutStyles, /\.pokemon-detail-table[\s\S]*@apply tw-h-\[217px\]/);
+assert.match(pokemonDetailLayoutStyles, /\.pokemon-detail-table[\s\S]*@apply tw-h-pokemon-profile/);
 assert.doesNotMatch(
   pokemonDetailLayoutStyles,
   /\.pokemon-detail-table\s*\{[^}]*max-width:\s*500px/,
