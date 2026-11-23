@@ -106,6 +106,9 @@ The versions below reflect the currently committed `package-lock.json`.
   - Vite splits major vendor libraries into stable chunks
   - JavaScript and CSS are minified for production
   - Fingerprinted assets use long-lived hosting cache headers
+  - Project Pokémon icons load from the public, generated
+    `WHIZENx/pokemon-assets-runtime` mirror; the private source repository and
+    its credentials are never exposed to the browser
 
 ### Deployment & DevOps
 - **Hosting**:
@@ -434,6 +437,10 @@ npm ci
    | `REACT_APP_EDGE_ID` | Edge Config mode or deployment | Edge Config ID (for example, `ecfg_xxx`) |
    | `REACT_APP_VERSION` | Optional | Overrides the version selected from config |
    | `MONGODB_URI` | Optional | Records deployment versions when running `deploy.sh` |
+
+   `REACT_APP_TOKEN_PRIVATE_REPO` is intentionally unsupported. Project-owned
+   browser assets are read from the public runtime mirror, while publishing
+   credentials remain scoped to the private source repository workflow.
 
    GitHub Actions deployment uses the `REACT_APP_EDGE_ID`,
    `REACT_APP_EDGE_READ_TOKEN`, `REACT_APP_EDGE_TOKEN`, and `VERCEL_TOKEN`

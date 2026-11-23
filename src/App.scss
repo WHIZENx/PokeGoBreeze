@@ -73,7 +73,7 @@ a {
 }
 
 img.pokemon-main-sprite {
-  @apply tw-w-full tw-h-[205px] tw-object-contain;
+  @apply tw-w-full tw-h-pokemon-sprite-inner tw-object-contain;
 }
 
 img.sprite-type {
@@ -144,7 +144,7 @@ ul {
 }
 
 .result {
-  @apply tw-absolute tw-z-20 tw-w-[300px] tw-max-h-[570px] tw-overflow-y-auto;
+  @apply tw-absolute tw-z-20 tw-w-selection-panel tw-max-h-[570px] tw-overflow-y-auto;
 }
 
 .result-type ul,
@@ -168,7 +168,7 @@ ul {
 .moveset-error-msg {
   transform: translate(-50%, -50%);
 
-  @apply tw-absolute tw-top-1/2 tw-left-1/2 tw-p-[15px] tw-rounded-lg tw-text-error;
+  @apply tw-absolute tw-top-1/2 tw-left-1/2 tw-p-3.75 tw-rounded-lg tw-text-error;
 }
 
 .disable-card-move {
@@ -182,7 +182,7 @@ ul {
   color: black !important;
   width: fit-content !important;
 
-  @apply tw-inline-block tw-text-[10px] tw-text-center;
+  @apply tw-inline-block tw-text-micro tw-text-center;
 }
 
 .type-border,
@@ -203,7 +203,7 @@ ul {
 .type-icon-small {
   text-shadow: 0 1px 2px #000000b3;
 
-  @apply tw-py-[5px] tw-px-2 tw-rounded-[5px] tw-text-white;
+  @apply tw-py-1.25 tw-px-2 tw-rounded-control tw-text-white;
 }
 
 .view-pokemon {
@@ -215,7 +215,7 @@ ul {
 }
 
 .poke-container {
-  @apply tw-mb-[15px] tw-overflow-hidden;
+  @apply tw-mb-3.75 tw-overflow-hidden;
 }
 
 .info-event-future {
@@ -246,7 +246,7 @@ ul {
 }
 
 .select-evo p {
-  @apply tw-m-0 tw-h-[18px];
+  @apply tw-m-0 tw-h-compact-label;
 }
 
 .select-evo:hover {
@@ -264,7 +264,7 @@ ul {
 }
 
 .info-evo span {
-  @apply tw-mb-[5px];
+  @apply tw-mb-1.25;
 }
 
 .info-evo span:last-child {
@@ -272,7 +272,7 @@ ul {
 }
 
 .img-form-gender-group {
-  @apply tw-align-top tw-inline-block tw-text-center tw-mr-[5%] tw-w-24 tw-h-[130px];
+  @apply tw-align-top tw-inline-block tw-text-center tw-mr-[5%] tw-w-24 tw-h-evolution-node;
 
   .img-gender-group {
     @apply tw-w-full tw-h-24 tw-min-w-24;
@@ -288,7 +288,7 @@ ul {
 }
 
 .card-input {
-  @apply tw-h-[86px] tw-w-full tw-max-w-[300px];
+  @apply tw-h-[86px] tw-w-full tw-max-w-compact;
 }
 
 .card-input:hover {
@@ -302,11 +302,11 @@ ul {
 .result-type {
   box-shadow: 0 4px 8px 0 #00000033;
 
-  @apply tw-absolute tw-z-20 tw-w-full tw-max-w-[300px] tw-max-h-[50%] tw-overflow-y-auto;
+  @apply tw-absolute tw-z-20 tw-w-full tw-max-w-compact tw-max-h-half tw-overflow-y-auto;
 }
 
 .type-title {
-  @apply tw-py-1 tw-px-[6px] tw-rounded-[5px];
+  @apply tw-py-1 tw-px-1.5 tw-rounded-control;
 }
 
 .weakness-title {

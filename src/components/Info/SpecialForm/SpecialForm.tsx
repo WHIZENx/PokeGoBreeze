@@ -204,7 +204,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     key={evo}
                     data-testid="mega-evolution-card"
                     data-mega-level-count={quest.megaLevels?.length ?? 0}
-                    className="li-evo !tw-mr-0 tw-flex tw-w-[calc(100vw-3rem)] tw-max-w-[22rem] tw-flex-none tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start"
+                    className="li-evo !tw-mr-0 tw-flex tw-w-evolution-card-viewport tw-max-w-evolution-card tw-flex-none tw-flex-col tw-gap-3 tw-rounded tw-border tw-border-solid tw-border-gray-500 tw-bg-table-primary tw-p-3 tw-text-start"
                   >
                     <div className="tw-flex tw-items-center tw-gap-3">
                       <SpecialFormPokemonImage id={props.id ?? 0} form={value} />

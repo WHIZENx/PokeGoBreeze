@@ -31,7 +31,7 @@ const PokemonDetailHero = ({
 }: PokemonDetailHeroProps) => (
   <section className="pokemon-detail-section pokemon-detail-hero-section tw-w-full tw-text-center tw-inline-block tw-align-middle tw-my-3">
     {notice}
-    <div className="tw-inline-flex tw-max-w-full tw-items-start tw-align-top">
+    <div className="tw-contents sm:tw-inline-flex sm:tw-max-w-full sm:tw-items-start sm:tw-align-top">
       <div className="tw-inline-flex tw-w-pokemon-profile tw-shrink-0 tw-flex-col tw-align-top">
         <div
           className={combineClasses(
@@ -61,7 +61,7 @@ const PokemonDetailHero = ({
           </div>
         )}
       </div>
-      <div className="tw-min-w-0 tw-align-top">
+      <div className="tw-inline-block tw-max-w-full tw-align-top sm:tw-min-w-0">
         <PokemonTable {...table} className="pokemon-detail-table" />
       </div>
     </div>

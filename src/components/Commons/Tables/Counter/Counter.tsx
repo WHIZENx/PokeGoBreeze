@@ -376,7 +376,7 @@ const Counter = (props: ICounterComponent) => {
           <span className="tw-whitespace-nowrap tw-font-bold">
             {toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 }))}
           </span>
-          <span className="tw-flex tw-min-w-0 tw-flex-col tw-items-center tw-whitespace-nowrap tw-text-xs tw-font-normal tw-text-[var(--text-secondary)] sm:tw-flex-row sm:tw-gap-1">
+          <span className="tw-flex tw-min-w-0 tw-flex-col tw-items-center tw-whitespace-nowrap tw-text-xs tw-font-normal tw-text-foreground-secondary sm:tw-flex-row sm:tw-gap-1">
             <span>{toFloatWithPadding(row.dps, 2)}</span>
             <span>DPS</span>
           </span>

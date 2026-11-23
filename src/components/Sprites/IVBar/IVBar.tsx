@@ -24,7 +24,7 @@ const IVBar = (props: IIVBarComponent) => {
 
   return (
     <div className={combineClasses('iv-container tw-mt-2', props.className)} style={props.style}>
-      <div className="tw-flex tw-justify-between !tw-w-[99%]">
+      <div className="tw-flex tw-justify-between !tw-w-almost-full">
         <b>{props.title}</b>
         <b>{props.iv}</b>
       </div>

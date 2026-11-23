@@ -1,5 +1,5 @@
 .table-counter-container {
-  @apply tw-h-[600px];
+  @apply tw-h-results-panel;
 
   --rdt-color-bg: transparent;
   --rdt-color-header-bg: var(--table-info);
@@ -44,7 +44,7 @@
 }
 
 .sub-header {
-  @apply tw-text-[16px] tw-relative tw-text-base tw-p-2.5;
+  @apply tw-text-small tw-relative tw-text-base tw-p-2.5;
 
   span.sub-title {
     @apply tw-font-bold;

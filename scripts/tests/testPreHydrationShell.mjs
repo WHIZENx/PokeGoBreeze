@@ -57,7 +57,7 @@ const checks = [
   ],
   [
     'mobile header matches React breakpoint',
-    indexHtml.includes('@media (width < 900px)') && responsiveAppBarSource.includes('min-[900px]:tw-hidden'),
+    indexHtml.includes('@media (width < 900px)') && responsiveAppBarSource.includes('md1:tw-hidden'),
   ],
   [
     'mobile header controls match MUI dimensions',

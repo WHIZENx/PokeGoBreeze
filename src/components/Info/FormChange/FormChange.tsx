@@ -171,7 +171,7 @@ const FromChange = (props: IFromChangeComponent) => {
                           </div>
                         )}
                         {hasCost && (
-                          <div className="tw-grid tw-grid-cols-1 tw-gap-2 min-[420px]:tw-grid-cols-2">
+                          <div className="tw-grid tw-grid-cols-1 tw-gap-2 xs:tw-grid-cols-2">
                             {Number(change.candyCost) > 0 && (
                               <div className="tw-flex tw-min-w-0 tw-items-center tw-gap-2 tw-rounded tw-bg-custom-default tw-p-2">
                                 <Candy id={pokemon.id} size={20} />
@@ -216,7 +216,7 @@ const FromChange = (props: IFromChangeComponent) => {
                           </div>
                         )}
                         {hasAdditionalDetails && (
-                          <div className="tw-flex tw-flex-col tw-gap-2 tw-border-0 tw-border-t tw-border-solid tw-border-gray-500 tw-pt-3 tw-text-xs tw-text-[var(--text-caption)]">
+                          <div className="tw-flex tw-flex-col tw-gap-2 tw-border-0 tw-border-t tw-border-solid tw-border-gray-500 tw-pt-3 tw-text-xs tw-text-foreground-caption">
                             {separate && <span>Separation: Free · Re-fusion costs apply</span>}
                             {!separate && !hasCost && !repeatChange && <span>Cost: Not listed</span>}
                             {repeatChange && <span>Previously unlocked form{hasCost ? '' : ' · No Energy'}</span>}

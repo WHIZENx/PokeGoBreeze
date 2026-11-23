@@ -12,7 +12,7 @@
 }
 
 .table-raid-cal thead tr th {
-  @apply tw-text-[16px] tw-h-[35px] tw-py-[5px] tw-px-2.5;
+  @apply tw-text-small tw-h-battle-icon tw-py-1.25 tw-px-2.5;
 }
 
 .table-raid-cal thead tr th:nth-child(1) {
@@ -30,11 +30,11 @@
 }
 
 .sticky-left {
-  @apply tw-sticky tw-left-0 tw-z-[1];
+  @apply tw-sticky tw-left-0 tw-z-1;
 }
 
 .sticky-table-left tbody tr td:nth-child(1) {
-  @apply tw-sticky tw-left-0 tw-z-[1];
+  @apply tw-sticky tw-left-0 tw-z-1;
 }
 
 .text-iv {

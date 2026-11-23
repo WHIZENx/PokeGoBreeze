@@ -7,7 +7,7 @@
   background-position-x: right;
   background-position-y: bottom;
 
-  @apply tw-bg-cover tw-bg-no-repeat tw-fixed tw-max-w-[900px] tw-max-h-[564px] tw-w-full tw-h-full tw-right-0 tw-bottom-0;
+  @apply tw-bg-cover tw-bg-no-repeat tw-fixed tw-max-w-error-artwork tw-max-h-[564px] tw-w-full tw-h-full tw-right-0 tw-bottom-0;
 }
 
 .error-desc {
@@ -25,5 +25,5 @@
 }
 
 .error-img img {
-  @apply tw-fixed tw-max-w-[900px] tw-w-full tw-right-0 tw-bottom-0;
+  @apply tw-fixed tw-max-w-error-artwork tw-w-full tw-right-0 tw-bottom-0;
 }
