@@ -41,12 +41,16 @@ try {
   const pending = new Map();
   socket.addEventListener('message', (event) => {
     const message = JSON.parse(event.data);
-    pending.get(message.id)?.(message);
+    if (!Number.isSafeInteger(message?.id)) return;
+    const request = pending.get(message.id);
+    if (!request) return;
+    pending.delete(message.id);
+    request.resolve(message);
   });
   const send = async (method, params, sessionId) => {
     const requestId = ++id;
     const message = await new Promise((resolve) => {
-      pending.set(requestId, resolve);
+      pending.set(requestId, { resolve });
       socket.send(JSON.stringify({ id: requestId, method, params, sessionId }));
     });
     assert.equal(message.error, undefined, JSON.stringify(message));
