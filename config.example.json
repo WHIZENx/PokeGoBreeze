@@ -80,8 +80,8 @@
   "transitionTime": "",
   "ultraBallIncChance": 0,
   "unownId": 0,
-  "version": "",
-  "version-dev": "",
-  "version-staging": "",
+  "version": "0.0.0-local",
+  "version-dev": "0.0.0-local",
+  "version-staging": "0.0.0-local",
   "weatherBallMoveId": 0
 }
