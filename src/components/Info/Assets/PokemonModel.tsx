@@ -44,7 +44,7 @@ const DEFAULT_ASSET_LOADING_SNAPSHOT: AssetLoadingSnapshot = {
 
 const CompactUnavailable = ({ icon, label, testId }: { icon: React.ReactNode; label: string; testId: string }) => (
   <div
-    className="tw-inline-flex tw-min-h-10 tw-w-fit tw-max-w-full tw-items-center tw-gap-2 tw-rounded-lg tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-transparent tw-px-3 tw-py-2 tw-text-[var(--text-secondary)]"
+    className="tw-inline-flex tw-min-h-10 tw-w-fit tw-max-w-full tw-items-center tw-gap-2 tw-rounded-lg tw-border tw-border-solid tw-border-divider tw-bg-transparent tw-px-3 tw-py-2 tw-text-foreground-secondary"
     data-testid={testId}
   >
     {icon}
@@ -293,7 +293,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         <h4 className="title-evo !tw-m-0 !tw-mb-4 tw-flex tw-flex-wrap tw-items-center tw-gap-2">
           <b>Pokémon cry</b>
           {props.isLoadedForms && hasAnyCry && (!hasOriginCries || !hasPokemonGoCries) && (
-            <span className="tw-inline-flex tw-min-h-7 tw-items-center tw-rounded-full tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-transparent tw-px-2 tw-py-1 tw-text-caption tw-font-normal tw-leading-none tw-text-[var(--text-secondary)]">
+            <span className="tw-inline-flex tw-min-h-7 tw-items-center tw-rounded-full tw-border tw-border-solid tw-border-divider tw-bg-transparent tw-px-2 tw-py-1 tw-text-caption tw-font-normal tw-leading-none tw-text-foreground-secondary">
               {!hasOriginCries ? 'Origin unavailable' : 'Pokémon GO unavailable'}
             </span>
           )}

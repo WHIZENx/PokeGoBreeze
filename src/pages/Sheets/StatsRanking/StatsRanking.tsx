@@ -89,7 +89,7 @@ const columnPokemon = createDataRows<TableColumnModify<IPokemonStatsRanking>>(
           <PokemonIconType
             pokemonType={row.pokemonType}
             size={24}
-            className="!tw-bottom-0 !tw-right-0 tw-z-[1] tw-pointer-events-none"
+            className="!tw-bottom-0 !tw-right-0 tw-z-1 tw-pointer-events-none"
           >
             <PokemonTableIcon {...row} className="tw-pointer-events-none" />
           </PokemonIconType>

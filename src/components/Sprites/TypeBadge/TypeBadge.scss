@@ -7,7 +7,7 @@
 }
 
 .text-type-border {
-  @apply tw-mt-[5px] tw-ml-[42px] tw-mb-px;
+  @apply tw-mt-1.25 tw-ml-[42px] tw-mb-px;
 }
 
 .type-icon-border {
@@ -29,7 +29,7 @@
 }
 
 .type-border {
-  @apply tw-ml-[35px] tw-w-max tw-p-2 tw-text-white tw-rounded-r-[10px];
+  @apply tw-ml-[35px] tw-w-max tw-p-2 tw-text-white tw-rounded-r-panel;
 }
 
 .type-border span {

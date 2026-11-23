@@ -1,5 +1,5 @@
 .text-not-encounter {
-  @apply tw-p-[10px] tw-rounded-[10px];
+  @apply tw-p-2.5 tw-rounded-panel;
 }
 
 .circle-ring {
@@ -9,12 +9,12 @@
 }
 
 .table-container {
-  @apply tw-min-w-[50%] tw-overflow-x-auto tw-py-0 tw-px-[15px];
+  @apply tw-min-w-half tw-overflow-x-auto tw-py-0 tw-px-3.75;
 }
 
 .table-catch-chance tbody td,
 .table-catch-chance thead th {
-  @apply tw-text-[1.8rem] tw-font-light tw-py-[10px] tw-px-[20px] tw-text-center tw-w-[25%];
+  @apply tw-text-[1.8rem] tw-font-light tw-py-2.5 tw-px-5 tw-text-center tw-w-[25%];
 }
 
 .table-catch-chance tbody td:not(.table-catch-chance tbody td:nth-child(1)) {

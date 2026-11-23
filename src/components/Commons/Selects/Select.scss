@@ -30,7 +30,7 @@
 }
 
 .result-move-select-default {
-  @apply tw-absolute tw-z-20 tw-w-[298px] tw-max-h-[300px] tw-overflow-y-auto;
+  @apply tw-absolute tw-z-20 tw-w-[298px] tw-max-h-dropdown tw-overflow-y-auto;
 }
 
 .select-down {
@@ -38,7 +38,7 @@
 }
 
 .frame-badge {
-  @apply tw-rounded-lg tw-cursor-pointer tw-p-2.5 tw-w-[62px] tw-h-[62px];
+  @apply tw-rounded-lg tw-cursor-pointer tw-p-2.5 tw-w-selection-tile tw-h-selection-tile;
 }
 
 .position-badge {

@@ -83,7 +83,7 @@ const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
                           <PokemonIconType
                             pokemonType={value.form.pokemonType}
                             size={24}
-                            className="!tw-bottom-1 tw-right-0 tw-z-[1]"
+                            className="!tw-bottom-1 tw-right-0 tw-z-1"
                           >
                             <PokemonTableIcon
                               num={value.defaultId}

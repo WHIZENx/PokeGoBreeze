@@ -44,7 +44,7 @@ assert.match(
 assert.match(pokemonSource, /<PokemonDetailHero/, 'Pokémon Details must use the shared Pokémon detail hero component');
 assert.match(
   pokemonDetailHero,
-  /pokemon-detail-section pokemon-detail-hero-section[\s\S]*tw-contents min-\[576px\]:tw-inline-flex[\s\S]*tw-w-pokemon-profile tw-shrink-0[\s\S]*tw-inline-block tw-max-w-full tw-align-top min-\[576px\]:tw-min-w-0[\s\S]*<PokemonTable/,
+  /pokemon-detail-section pokemon-detail-hero-section[\s\S]*tw-contents sm:tw-inline-flex[\s\S]*tw-w-pokemon-profile tw-shrink-0[\s\S]*tw-inline-block tw-max-w-full tw-align-top sm:tw-min-w-0[\s\S]*<PokemonTable/,
   'The shared hero must separate its mobile image and table while centering a content-sized group on larger screens'
 );
 assert.match(

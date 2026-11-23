@@ -55,7 +55,7 @@ assert.match(tableEmptyState, /No results found/);
 assert.match(tableEmptyState, /No data matches your current search or filters/);
 assert.match(
   tableEmptyState,
-  /tw-border-\[var\(--divider\)\][\s\S]*tw-bg-\[var\(--background-selected\)\][\s\S]*tw-text-\[var\(--text-primary\)\][\s\S]*tw-text-\[var\(--text-secondary\)\]/,
+  /tw-border-divider[\s\S]*tw-bg-surface-selected[\s\S]*tw-text-foreground-primary[\s\S]*tw-text-foreground-secondary/,
   'Filtered table empty states must use theme-aware design-system tokens.'
 );
 assert.match(
@@ -277,7 +277,7 @@ assert.equal(
 );
 assert.match(
   calculatePointStyles,
-  /\.sticky-left \{[\s\S]*tw-sticky tw-left-0 tw-z-\[1\][\s\S]*\.sticky-table-left tbody tr td:nth-child\(1\) \{[\s\S]*tw-sticky tw-left-0 tw-z-\[1\]/,
+  /\.sticky-left \{[\s\S]*tw-sticky tw-left-0 tw-z-1[\s\S]*\.sticky-table-left tbody tr td:nth-child\(1\) \{[\s\S]*tw-sticky tw-left-0 tw-z-1/,
   'Breakpoint and Bulkpoint sticky columns must stay above data cells inside the isolated scroller.'
 );
 assert.match(

@@ -107,7 +107,7 @@ const PVPHome = () => {
 
       <div className="tw-grid tw-grid-cols-1 tw-gap-4 xl:tw-grid-cols-2" data-testid="pvp-home-primary-sections">
         <section className="pokemon-detail-section !tw-overflow-hidden !tw-p-0">
-          <div className="tw-flex tw-flex-col tw-gap-3 tw-border-0 tw-border-b tw-border-solid tw-border-[var(--divider)] tw-p-4 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between sm:tw-p-5">
+          <div className="tw-flex tw-flex-col tw-gap-3 tw-border-0 tw-border-b tw-border-solid tw-border-divider tw-p-4 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between sm:tw-p-5">
             <h2 className="tw-m-0">Top Rank Pokémon Leagues</h2>
             <SelectMui
               SelectDisplayProps={{ id: 'pvp-rank-filter' }}
@@ -138,7 +138,7 @@ const PVPHome = () => {
         </section>
 
         <section className="pokemon-detail-section !tw-overflow-hidden !tw-p-0">
-          <div className="tw-flex tw-flex-col tw-gap-3 tw-border-0 tw-border-b tw-border-solid tw-border-[var(--divider)] tw-p-4 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between sm:tw-p-5">
+          <div className="tw-flex tw-flex-col tw-gap-3 tw-border-0 tw-border-b tw-border-solid tw-border-divider tw-p-4 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between sm:tw-p-5">
             <h2 className="tw-m-0">Top Teams Pokémon Leagues</h2>
             <SelectMui
               SelectDisplayProps={{ id: 'pvp-team-filter' }}
@@ -170,7 +170,7 @@ const PVPHome = () => {
       </div>
 
       <section className="pokemon-detail-section !tw-overflow-hidden !tw-p-0 tw-mt-4">
-        <div className="tw-flex tw-items-end tw-gap-2 tw-border-0 tw-border-b tw-border-solid tw-border-[var(--divider)] tw-p-4 sm:tw-p-5">
+        <div className="tw-flex tw-items-end tw-gap-2 tw-border-0 tw-border-b tw-border-solid tw-border-divider tw-p-4 sm:tw-p-5">
           <h2 className="tw-m-0">Battle League Simulator</h2>
           <span className="tw-mb-0.5 tw-text-caption !tw-text-error">(Beta Test)</span>
         </div>

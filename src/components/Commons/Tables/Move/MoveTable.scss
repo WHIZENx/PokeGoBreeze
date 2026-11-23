@@ -6,11 +6,11 @@
   table-layout: -webkit-fixed;
   table-layout: fixed;
 
-  @apply tw-w-full tw-min-w-[250px];
+  @apply tw-w-full tw-min-w-data-table;
 }
 
 .table-moves thead tr th {
-  @apply tw-sticky tw-top-0 tw-z-2 tw-h-[35px] tw-bg-table-head tw-px-2.5 tw-py-[5px] tw-text-[16px] tw-text-white;
+  @apply tw-sticky tw-top-0 tw-z-2 tw-h-battle-icon tw-bg-table-head tw-px-2.5 tw-py-1.25 tw-text-small tw-text-white;
 }
 
 .table-moves thead tr + tr th {

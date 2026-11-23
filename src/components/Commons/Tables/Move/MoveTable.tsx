@@ -546,7 +546,7 @@ const TableMove = (props: ITableMoveComponent) => {
                                       aria-label="Show Max Battle details"
                                       className="tooltips-info tw-inline-flex tw-h-6 tw-w-6 tw-items-center tw-justify-center tw-border-0 tw-bg-transparent tw-p-0 tw-text-white tw-opacity-90 hover:tw-opacity-100 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-white"
                                     >
-                                      <InfoOutlinedIcon className="!tw-text-[18px]" />
+                                      <InfoOutlinedIcon className="!tw-text-medium" />
                                     </button>
                                   </Tooltips>
                                 ) : null}

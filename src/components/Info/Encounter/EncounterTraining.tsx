@@ -18,13 +18,13 @@ interface CpTileProps {
 
 const cpTileClassName = (compact: boolean) =>
   combineClasses(
-    'tw-flex tw-min-w-0 tw-flex-col tw-items-center tw-justify-center tw-rounded-lg tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-[var(--background-table-strip)] tw-px-2 tw-text-center',
+    'tw-flex tw-min-w-0 tw-flex-col tw-items-center tw-justify-center tw-rounded-lg tw-border tw-border-solid tw-border-divider tw-bg-table-strip tw-px-2 tw-text-center',
     compact ? 'tw-min-h-16 tw-py-2' : 'tw-min-h-20 tw-py-3'
   );
 
 const CpTile = ({ label, level, value, compact = false, isLoading = false }: CpTileProps) => (
   <div className={cpTileClassName(compact)}>
-    <span className="tw-text-caption tw-text-[var(--text-secondary)]">{label}</span>
+    <span className="tw-text-caption tw-text-foreground-secondary">{label}</span>
     <strong className={combineClasses('tw-block tw-text-primary', compact ? 'tw-text-body2' : 'tw-text-body1')}>
       {isLoading ? (
         <span className="tw-relative tw-inline-block tw-w-16" aria-hidden="true">
@@ -35,7 +35,7 @@ const CpTile = ({ label, level, value, compact = false, isLoading = false }: CpT
         (value ?? '—')
       )}
     </strong>
-    <span className="tw-text-caption tw-text-[var(--text-secondary)]">Lv. {level}</span>
+    <span className="tw-text-caption tw-text-foreground-secondary">Lv. {level}</span>
   </div>
 );
 
@@ -51,7 +51,7 @@ const StatusPill = ({
   const state = value === undefined ? 'Unknown' : value ? 'Available' : 'Not available';
   return (
     <span
-      className="tw-inline-flex tw-min-h-8 tw-items-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-[var(--background-table-strip)] tw-px-2.5 tw-py-1 tw-text-caption"
+      className="tw-inline-flex tw-min-h-8 tw-items-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-border-divider tw-bg-table-strip tw-px-2.5 tw-py-1 tw-text-caption"
       aria-label={`${label}: ${state}`}
     >
       {isLoading ? (
@@ -67,7 +67,7 @@ const StatusPill = ({
         <span
           className={combineClasses(
             'tw-flex tw-h-4 tw-w-4 tw-items-center tw-justify-center tw-rounded-full tw-font-bold tw-text-white',
-            value === undefined ? 'tw-bg-[var(--text-secondary)]' : value ? 'tw-bg-success' : 'tw-bg-error'
+            value === undefined ? 'tw-bg-foreground-secondary' : value ? 'tw-bg-success' : 'tw-bg-error'
           )}
           aria-hidden="true"
         >
@@ -88,8 +88,8 @@ const RatePill = ({
   value: number | undefined;
   isLoading?: boolean;
 }) => (
-  <span className="tw-inline-flex tw-min-h-8 tw-items-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-border-[var(--divider)] tw-bg-[var(--background-table-strip)] tw-px-2.5 tw-py-1 tw-text-caption">
-    <span className="tw-text-[var(--text-secondary)]">{label}</span>
+  <span className="tw-inline-flex tw-min-h-8 tw-items-center tw-gap-1.5 tw-rounded-full tw-border tw-border-solid tw-border-divider tw-bg-table-strip tw-px-2.5 tw-py-1 tw-text-caption">
+    <span className="tw-text-foreground-secondary">{label}</span>
     <strong className="tw-relative tw-inline-block tw-w-10 tw-text-right">
       {isLoading ? (
         <>

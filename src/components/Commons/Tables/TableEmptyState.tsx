@@ -26,12 +26,12 @@ const TableEmptyState = ({
     data-testid={testId}
     role="status"
   >
-    <div className="tw-flex tw-w-full tw-max-w-2xl tw-flex-col tw-items-center tw-rounded tw-border tw-border-dashed tw-border-[var(--divider)] tw-bg-[var(--background-selected)] tw-px-6 tw-py-10 tw-text-center">
+    <div className="tw-flex tw-w-full tw-max-w-2xl tw-flex-col tw-items-center tw-rounded tw-border tw-border-dashed tw-border-divider tw-bg-surface-selected tw-px-6 tw-py-10 tw-text-center">
       <div className="tw-mb-4 tw-flex tw-h-20 tw-w-20 tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--table-info)] tw-text-primary">
         <SearchOffRoundedIcon className="!tw-text-[3.5rem]" aria-hidden="true" />
       </div>
-      <span className="tw-text-body1 tw-font-bold tw-text-[var(--text-primary)]">{title}</span>
-      <span className="tw-mt-2 tw-max-w-xl tw-text-body2 tw-text-[var(--text-secondary)]">{description}</span>
+      <span className="tw-text-body1 tw-font-bold tw-text-foreground-primary">{title}</span>
+      <span className="tw-mt-2 tw-max-w-xl tw-text-body2 tw-text-foreground-secondary">{description}</span>
     </div>
   </div>
 );

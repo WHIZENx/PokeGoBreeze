@@ -102,7 +102,7 @@ const TimelineFit = (
           <Fragment key={`${turn}-${index}`}>
             <span
               aria-hidden="true"
-              className="tw-pointer-events-none tw-absolute tw-z-30 tw-w-px -tw-translate-x-1/2 tw-bg-[var(--text-secondary)] tw-opacity-80"
+              className="tw-pointer-events-none tw-absolute tw-z-30 tw-w-px -tw-translate-x-1/2 tw-bg-foreground-secondary tw-opacity-80"
               data-timeline-event-divider={entry.type === AttackType.Switch ? 'switch' : 'faint'}
               style={{
                 left,
@@ -167,7 +167,7 @@ const TimelineFit = (
                 <div
                   key={`${group.start}-${group.end}`}
                   aria-label="Charged Attack pauses Fast Attack taps"
-                  className="tw-pointer-events-none !tw-absolute tw-top-1/2 tw-z-10 !tw-flex tw-h-1.5 -tw-translate-y-1/2 tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--text-secondary)] tw-opacity-80"
+                  className="tw-pointer-events-none !tw-absolute tw-top-1/2 tw-z-10 !tw-flex tw-h-1.5 -tw-translate-y-1/2 tw-items-center tw-justify-center tw-rounded-full tw-bg-foreground-secondary tw-opacity-80"
                   data-timeline-tap-pause="charged-attack"
                   style={{
                     left: startPositions[group.start],
@@ -175,7 +175,7 @@ const TimelineFit = (
                   }}
                   title="Charged Attack pause"
                 >
-                  <PauseRoundedIcon className="!tw-h-3 !tw-w-3 tw-rounded-full tw-bg-[var(--custom-table-background)] !tw-text-[var(--text-primary)]" />
+                  <PauseRoundedIcon className="!tw-h-3 !tw-w-3 tw-rounded-full tw-bg-table-custom !tw-text-foreground-primary" />
                 </div>
               ))}
             {showTap &&
@@ -235,7 +235,7 @@ const TimelineFit = (
                 <div
                   id={index.toString()}
                   aria-hidden="true"
-                  className="wait-attack !tw-h-1 !tw-w-1 tw-rounded-full tw-bg-[var(--text-secondary)] tw-opacity-30"
+                  className="wait-attack !tw-h-1 !tw-w-1 tw-rounded-full tw-bg-foreground-secondary tw-opacity-30"
                   data-timeline-wait-marker="true"
                   style={centeredMarkerStyle(index)}
                 />

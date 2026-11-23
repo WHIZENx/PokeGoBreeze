@@ -555,7 +555,7 @@ const RaidBattle = () => {
           </div>
           <div className="tw-justify-start tw-items-center tw-flex tw-absolute tw-h-full tw-w-full">
             <div className="line-dps tw-relative" style={{ width: `calc(${dps}% + 2px` }}>
-              <hr className="tw-w-full !tw-mt-[3px]" />
+              <hr className="tw-w-full !tw-mt-0.75" />
               <span className="line-left">
                 <b>|</b>
               </span>
@@ -788,7 +788,7 @@ const RaidBattle = () => {
                 <span
                   className={
                     showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow
-                      ? 'tw-text-[var(--text-primary)]'
+                      ? 'tw-text-foreground-primary'
                       : 'tw-text-lightgray'
                   }
                 >
@@ -1184,7 +1184,7 @@ const RaidBattle = () => {
             <h3 className="tw-text-center tw-underline">Select Boss Moveset</h3>
             <div className="tw-mt-2 tw-grid tw-grid-cols-1 tw-gap-3 md:tw-grid-cols-2">
               <div className="tw-flex tw-justify-center">
-                <div className="tw-w-full tw-max-w-[300px]">
+                <div className="tw-w-full tw-max-w-compact">
                   <h6 className="tw-text-center">
                     <b>Fast Moves</b>
                   </h6>
@@ -1204,7 +1204,7 @@ const RaidBattle = () => {
                 </div>
               </div>
               <div className="tw-flex tw-justify-center">
-                <div className="tw-w-full tw-max-w-[300px]">
+                <div className="tw-w-full tw-max-w-compact">
                   <h6 className="tw-text-center">
                     <b>Charged Moves</b>
                   </h6>
