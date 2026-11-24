@@ -521,6 +521,21 @@ class APIService {
     );
   }
 
+  createReplayLink(seed: string) {
+    return this.dataAxios.post<{ data: { id: string } }>(
+      `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/replay-links`,
+      { seed },
+      { timeout: 4_000 }
+    );
+  }
+
+  getReplayLink(id: string, signal: AbortSignal) {
+    return this.dataAxios.get<{ data: { seed: string; league: number } }>(
+      `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/replay-link`,
+      { params: { id }, signal }
+    );
+  }
+
   postTrainerBattleSimulator(payload: TrainerBattleSimulatorRequest, signal?: AbortSignal) {
     return this.dataAxios.post<TrainerBattleSimulatorApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/trainer-battle-simulator`,

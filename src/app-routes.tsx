@@ -54,7 +54,7 @@ export const appRoutes = [
   page(
     '/pokemon/:id',
     () => import('./pages/Pokemon/Pokemon'),
-    (Pokemon, { location, details }) => <Pokemon key={location.pathname} preparedDetail={details.pokemon} />
+    (Pokemon, { location, details }) => <Pokemon routeKey={location.pathname} preparedDetail={details.pokemon} />
   ),
   staticPage('/search-moves', () => import('./pages/Search/Moves/SearchMoves')),
   page(
@@ -91,6 +91,11 @@ export const appRoutes = [
   page('/pvp/battle', battle, (Battle, { location }) => <Battle key={location.pathname} />),
   page('/pvp/battle/:cp', battle, (Battle, { location }) => <Battle key={location.pathname} />),
   page('/pvp/battle/:cp/replay', battle, (Battle, { location }) => <Battle key={location.pathname} replayMode />),
+  page(
+    '/r/:id',
+    () => import('./pages/PVP/Battle/ShortReplay'),
+    (Replay, { location }) => <Replay key={location.pathname} />
+  ),
   page(
     '/pvp/:cp/:serie/:pokemon',
     () => import('./pages/PVP/Pokemon/Pokemon'),

@@ -7,7 +7,7 @@
 }
 
 .pokemon-stat-bar .pokemon-stat-progress .MuiLinearProgress-bar {
-  @apply tw-rounded-md tw-duration-300 tw-ease-in-out;
+  @apply tw-rounded-md tw-duration-300 tw-ease-in-out motion-reduce:tw-transition-none;
 }
 
 .pokemon-stat-bar-loading .pokemon-stat-progress .MuiLinearProgress-bar {

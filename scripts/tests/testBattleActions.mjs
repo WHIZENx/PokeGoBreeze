@@ -168,6 +168,17 @@ assert.match(
 );
 assert.match(
   battlePage,
+  /const shareTimeline = async \(\) => \{\s*const pending = getTimelineReplayUrl\(\);[\s\S]*replayUrl: await getTimelineReplayUrl\(\)/,
+  'The PNG reference and Share Timeline must use the same replay URL.'
+);
+assert.match(battlePage, /APIService\.createReplayLink\(seed\)[\s\S]*new URL\(`\/r\/\$\{data\.data\.id\}`/);
+assert.match(
+  battlePage,
+  /if \(signal\.aborted\) \{\s*return;\s*\}\s*setBattleReplay\(battle \? \{ battle, randomSeed \} : undefined\)/,
+  'The replay must use the teams, strategies, and random seed of the completed simulation.'
+);
+assert.match(
+  battlePage,
   /label="Reset Timeline"[\s\S]*resetTimeline\(\);[\s\S]*focusBattleTimeline\(\);/,
   'The playback reset must be clearly distinguished and return focus to the timeline.'
 );
@@ -508,6 +519,11 @@ assert.match(
   'Move type icons must be included in the exported battle events.'
 );
 assert.match(battleExport, /canvas\.toBlob[\s\S]*'image\/png'/, 'The battle report must be exported as a PNG.');
+assert.match(
+  battleExport,
+  /wrapReplayUrl\(context, replayUrl, canvasWidth - canvasPadding \* 2\)[\s\S]*canvas\.height = eventRowsEndY \+ replayFooterHeight \+ canvasPadding[\s\S]*drawText\(context, 'Replay URL', right, headingY,[\s\S]*replayLines\.forEach[\s\S]*align: 'right'/,
+  'The export must wrap the replay URL and reserve a right-aligned footer below the event rows.'
+);
 assert.match(
   battlePage,
   /playerTeamImageUrls: playerTeam\.map\(getBattleExportImageUrls\)[\s\S]*opponentTeamImageUrls: opponentTeam\.map\(getBattleExportImageUrls\)/,

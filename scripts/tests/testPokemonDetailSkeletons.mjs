@@ -401,15 +401,18 @@ assert.match(gender, /tw-flex-none" data-testid="gender-ratio-skeleton"/);
 assert.match(gender, /ratio-gender !tw-m-0 tw-whitespace-nowrap/);
 assert.match(form, /className="tw-min-h-selection-button"/);
 assert.match(form, /isLoading=\{!isCurrentPokemonLoaded\}/);
-assert.match(stats, /aria-busy=\{props\.isLoading\}/);
+assert.match(stats, /aria-busy=\{isLoading\}/);
 assert.match(stats, /Loading stats…/);
 assert.match(stats, /className="tw-h-4 tw-text-right/);
-assert.match(stats, /isLoading=\{props\.isLoading\}/);
+assert.match(stats, /isLoading=\{isLoading\}/);
 assert.doesNotMatch(stats, /pokemon-stat-skeleton/);
 assert.doesNotMatch(stats, /<Skeleton/);
-assert.match(stats, /const lastLoadedStats = useRef\(computedStats\)/);
-assert.match(stats, /props\.isLoading\s*\? lastLoadedStats\.current\s*: computedStats/);
-assert.doesNotMatch(stats, /useState/);
+assert.match(stats, /const lastLoadedStats = props\.statsSnapshotRef \?\? localStatsSnapshotRef/);
+assert.match(stats, /if \(!isLoading\) \{\s*lastLoadedStats\.current = computedStats/);
+assert.match(stats, /isLoading\s*\? \(lastLoadedStats\.current \?\? computedStats\)\s*: computedStats/);
+assert.match(stats, /requestAnimationFrame\(\(\) => \{\s*frame = requestAnimationFrame\(\(\) => setIsPrimed\(true\)\)/);
+assert.match(pokemonPage, /<PokemonDetails[\s\S]*key=\{routeKey\}[\s\S]*statsSnapshotRef=\{statsSnapshotRef\}/);
+assert.match(form, /const statsPokemon = useMemo\([\s\S]*isCurrentPokemonLoaded[\s\S]*<Stats[\s\S]*statsSnapshotRef=\{props.statsSnapshotRef\}[\s\S]*isLoading=\{!statsPokemon\}/);
 assert.match(statBar, /data-stat-loading=\{isLoading \|\| undefined\}/);
 assert.match(statBar, /aria-busy=\{isLoading\}/);
 assert.match(statBar, /variant=\{variant\}/);
@@ -520,7 +523,12 @@ assert.match(
 );
 assert.match(
   form,
-  /data-skeleton-surface="page"[\s\S]*variant="rectangular"[\s\S]*height=\{142\}[\s\S]*width=\{90\}/,
+  /loading=\{<FormOptionSkeletonRow \/>\}/,
+  'Form varieties must use the shared row of form skeletons.'
+);
+assert.match(
+  buttonGroupForm,
+  /data-skeleton-surface="page"[\s\S]*variant="rectangular"[\s\S]*tw-w-22\.5 tw-min-h-selection-button tw-shrink-0/,
   'Form varieties placeholders must use the same surface as Sound Pokémon without changing card dimensions.'
 );
 assert.match(
@@ -554,6 +562,22 @@ assert.match(
   /\.pokemon-detail-section[\s\S]*tw-rounded-2xl[\s\S]*var\(--background-paper\)/
 );
 assert.match(pokemonDetailLayoutStyles, /\.pokemon-detail-table[\s\S]*@apply tw-h-pokemon-profile/);
+assert.match(
+  pokemonDetailHero,
+  /const loadingLayout = table\.isLoadedForms \? undefined : retainedTableLayoutRef\.current;[\s\S]*retainedTableLayoutRef\.current = \{ width, labelWidth \};[\s\S]*loadingLayout=\{loadingLayout\}/,
+  'The metadata skeleton must retain the last measured table and label widths until the new data is ready.'
+);
+assert.match(pokemonTable, /width: loadingLayout\.width,[\s\S]*'--pokemon-table-loading-label-width':/);
+assert.match(
+  pokemonTableStyles,
+  /width: var\(--pokemon-table-loading-label-width, 25%\) !important/,
+  'The first column must use its measured width while the metadata skeleton is visible.'
+);
+assert.match(
+  pokemonTable,
+  /widthClass = '!tw-w-24'[\s\S]*className=\{combineClasses\('!tw-h-4 tw-max-w-full', widthClass\)\}/,
+  'Metadata placeholders must contribute width and height before table values arrive.'
+);
 assert.doesNotMatch(
   pokemonDetailLayoutStyles,
   /\.pokemon-detail-table\s*\{[^}]*max-width:\s*500px/,

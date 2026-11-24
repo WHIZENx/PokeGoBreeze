@@ -39,7 +39,7 @@ const forbiddenPatterns = [
   [/tw-max-w-\[300px\]/g, 'compact width literal'],
   [/tw-text-\[10px\]/g, 'micro font-size literal'],
   [
-    /tw-(?:w|h|min-w|min-h|max-w|max-h|left)-\[(?:99%|50%|200px|205px|217px|250px|300px|600px|900px|22rem|70vh|190px|150px|130px|62px|18px|13px|49%)\]/g,
+    /tw-(?:w|h|min-w|min-h|max-w|max-h|left)-\[(?:99%|50%|200px|205px|217px|250px|300px|350px|600px|900px|22rem|70vh|190px|150px|130px|62px|18px|13px|49%)\]/g,
     'shared dimension literal',
   ],
 ];
@@ -70,6 +70,7 @@ for (const token of [
   "secondary: 'var(--text-secondary)'",
   "control: '5px'",
   "panel: '10px'",
+  "const formWidth = '350px'",
   "'form-preview': '200px'",
   "'evolution-card': '22rem'",
   "'results-panel': '600px'",

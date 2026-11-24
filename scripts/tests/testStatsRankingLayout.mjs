@@ -49,14 +49,14 @@ assert.match(
 );
 assert.match(
   pokemonDetailHero,
-  /<PokemonTable \{\.\.\.table\} className="pokemon-detail-table" \/>/,
+  /<PokemonTable[\s\S]*className=\{combineClasses\('pokemon-detail-table', loadingLayout \? 'tw-table-fixed' : ''\)\}/,
   'The shared hero must own the only Pokémon metadata table sizing class'
 );
 assert.match(pokemonSource, /table=\{buildPokemonDetailHeroTable\(/);
 assert.match(statsRankingSource, /table=\{buildPokemonDetailHeroTable\(select,/);
 assert.match(
   pokemonSource,
-  /weightKg: searchingMainDetails\.weightKg,[\s\S]*heightM: searchingMainDetails\.heightM/,
+  /const currentDetails = searchingMainDetails\?\.id === currentPokemonId \? searchingMainDetails : undefined;[\s\S]*weightKg: currentDetails\.weightKg,[\s\S]*heightM: currentDetails\.heightM/,
   'Pokémon Details must pass generated body units without replacing them with PokéAPI measurements'
 );
 assert.doesNotMatch(

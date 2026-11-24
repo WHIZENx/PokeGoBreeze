@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
-import FormSelect from './FormSelect';
+import FormSelect, { PokemonSelectorDetails } from './FormSelect';
 
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
@@ -7,7 +7,6 @@ import { IFindComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
 import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
-import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
@@ -38,23 +37,32 @@ const Find = (props: IFindComponent) => {
   const instanceId = useId().replace(/:/g, '');
   const listboxId = `tool-pokemon-list-${instanceId}`;
 
-  const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
-
+  const pokemonNames = mappingPokemonName();
+  const isPokemonListLoading = pokemonNames.length === 0;
+  const pokemonList = useMemo(() => {
+    if (!props.pokemonFilter) {
+      return pokemonNames;
+    }
+    const eligibleIds = new Set(getFilteredPokemons(props.pokemonFilter).map((pokemon) => pokemon.num));
+    return pokemonNames.filter((pokemon) => eligibleIds.has(pokemon.id));
+  }, [getFilteredPokemons, pokemonNames, props.pokemonFilter]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const debouncedFilter = useMemo(() => debounce(setDebouncedSearchTerm, 150), []);
+  const pokemonListFilter = useMemo(
+    () =>
+      debouncedSearchTerm
+        ? pokemonList.filter(
+            (item) =>
+              isInclude(item.name, debouncedSearchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
+              isInclude(item.id, debouncedSearchTerm)
+          )
+        : pokemonList,
+    [pokemonList, debouncedSearchTerm]
+  );
   const [isKeyboardNavigating, setIsKeyboardNavigating] = useState(false);
 
   const resultRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const result = mappingPokemonName();
-    if (!props.pokemonFilter) {
-      setPokemonList(result);
-      return;
-    }
-    const eligibleIds = new Set(getFilteredPokemons(props.pokemonFilter).map((pokemon) => pokemon.num));
-    setPokemonList(result.filter((pokemon) => eligibleIds.has(pokemon.id)));
-  }, [getFilteredPokemons, mappingPokemonName, props.pokemonFilter]);
 
   useEffect(() => {
     if (!props.pokemonFilter || !isNotEmpty(pokemonList) || pokemonList.some((pokemon) => pokemon.id === id)) {
@@ -88,23 +96,10 @@ const Find = (props: IFindComponent) => {
     }
   }, [activePokemonId, pokemonListFilter, startIndex]);
 
-  const debouncedFilter = useRef(
-    debounce((list: IPokemonSearching[], term: string) => {
-      const results = list.filter(
-        (item) => isInclude(item.name, term, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, term)
-      );
-      setPokemonListFilter(results);
-    }, 150)
-  );
-
   useEffect(() => {
-    if (isNotEmpty(pokemonList)) {
-      debouncedFilter.current(pokemonList, searchTerm);
-    }
-    return () => {
-      debouncedFilter.current.cancel();
-    };
-  }, [pokemonList, searchTerm]);
+    debouncedFilter(searchTerm);
+    return () => debouncedFilter.cancel();
+  }, [debouncedFilter, searchTerm]);
 
   useEffect(() => {
     setStartIndex(0);
@@ -233,12 +228,11 @@ const Find = (props: IFindComponent) => {
   const searchPokemon = () => (
     <div
       className="col tw-flex tw-justify-center"
+      data-testid="tool-pokemon-list"
       style={{
         height:
-          Math.min(
-            eachCounter.current,
-            pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).length + 1
-          ) * cardHeight.current,
+          Math.min(eachCounter.current, isPokemonListLoading ? eachCounter.current : pokemonListFilter.length + 1) *
+          cardHeight.current,
         maxHeight: eachCounter.current * cardHeight.current,
       }}
     >
@@ -252,20 +246,31 @@ const Find = (props: IFindComponent) => {
           role: 'combobox',
           'aria-controls': listboxId,
           'aria-expanded': true,
-          'aria-activedescendant': toolPokemonOptionId(instanceId, activePokemonId),
+          'aria-activedescendant': isPokemonListLoading ? undefined : toolPokemonOptionId(instanceId, activePokemonId),
         }}
       />
       <div
         id={listboxId}
         role="listbox"
+        aria-busy={isPokemonListLoading}
         className={combineClasses('result tools', isKeyboardNavigating ? 'keyboard-navigation' : '')}
         ref={resultRef}
         onScroll={listenScrollEvent.bind(this)}
         onMouseMove={() => setIsKeyboardNavigating(false)}
         onWheel={() => setIsKeyboardNavigating(false)}
       >
-        <Fragment>
-          {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value) => (
+        {isPokemonListLoading ? (
+          <div data-testid="tool-pokemon-list-skeleton" aria-hidden="true">
+            {Array.from({ length: eachCounter.current }, (_, index) => (
+              <div className="tw-flex tw-items-center tw-gap-2 tw-p-2.5" key={index}>
+                <Skeleton variant="text" animation="wave" className="!tw-w-8" />
+                <Skeleton variant="rounded" animation="wave" className="!tw-h-9 !tw-w-9" />
+                <Skeleton variant="text" animation="wave" className="!tw-w-28" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value) => (
             <div
               className={combineClasses(
                 'tw-container card-pokemon tw-flex tw-items-center',
@@ -284,15 +289,23 @@ const Find = (props: IFindComponent) => {
               <PokemonTableIcon num={value.id} name={value.name} className="img-search" size={36} />
               {value.name}
             </div>
-          ))}
-        </Fragment>
+          ))
+        )}
       </div>
     </div>
   );
 
   const showPokemon = () => (
-    <div className="col tw-flex tw-justify-center tw-text-center">
-      <div>
+    <div
+      className="col tw-flex tw-justify-center tw-text-center max-sm:tw-min-w-0 max-sm:tw-basis-full"
+      data-testid="tool-pokemon-details"
+    >
+      <div className="tw-min-w-0 tw-max-w-full">
+        {isPokemonListLoading && (
+          <div aria-busy="true" data-testid="tool-pokemon-details-skeleton">
+            <PokemonSelectorDetails />
+          </div>
+        )}
         {isNotEmpty(pokemonList) && (
           <FormSelect
             isHide={props.isHide}
@@ -323,26 +336,19 @@ const Find = (props: IFindComponent) => {
       <h1 id="main" className="tw-text-center tw-mb-3">
         {getValueOrDefault(String, props.title, 'Pokémon GO Tools')}
       </h1>
-      {isNotEmpty(pokemonList) ? (
-        <div className="row search-container">
-          {props.isSwap ? (
-            <Fragment>
-              {showPokemon()}
-              {searchPokemon()}
-            </Fragment>
-          ) : (
-            <Fragment>
-              {searchPokemon()}
-              {showPokemon()}
-            </Fragment>
-          )}
-        </div>
-      ) : (
-        <div className="slide-container !tw-p-0 tw-flex tw-justify-center tw-relative !tw-w-full !tw-h-results-panel">
-          <Skeleton variant="rectangular" animation="wave" className="tw-w-full !tw-h-full" />
-          <LoadGroup isShow isVertical isHideAttr size={40} />
-        </div>
-      )}
+      <div className="row search-container">
+        {props.isSwap ? (
+          <Fragment>
+            {showPokemon()}
+            {searchPokemon()}
+          </Fragment>
+        ) : (
+          <Fragment>
+            {searchPokemon()}
+            {showPokemon()}
+          </Fragment>
+        )}
+      </div>
     </div>
   );
 };

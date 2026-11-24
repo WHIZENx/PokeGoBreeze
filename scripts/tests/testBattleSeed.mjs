@@ -7,6 +7,8 @@ import {
   decodeBattleTimelineSeed,
   encodeBattleSeed,
   encodeBattleTimelineSeed,
+  encodeLegacyBattleSeed,
+  encodeLegacyBattleTimelineSeed,
 } from '../../src/pages/PVP/Battle/utils/battle-seed.ts';
 
 const [battlePage, appPage] = await Promise.all([
@@ -69,16 +71,20 @@ const state = {
 };
 
 const seed = encodeBattleSeed(state);
-assert.match(seed, /^\d+$/, 'A battle seed must contain decimal digits only.');
+const legacySeed = encodeLegacyBattleSeed(state);
+assert.match(seed, /^b2\.[A-Za-z0-9_-]+$/, 'New battle seeds must be URL-safe.');
+assert.ok(seed.length < legacySeed.length / 3, 'A compact battle seed must be substantially shorter.');
 assert.deepEqual(
   decodeBattleSeed(seed),
   state,
-  'The numeric seed must restore every team, battle rule, and strategy field.'
+  'The compact seed must restore every team, battle rule, and strategy field.'
 );
+assert.deepEqual(decodeBattleSeed(legacySeed), state, 'Previously shared numeric battle links still work.');
 
-const corrupted = `${seed.slice(0, -1)}${seed.endsWith('0') ? '1' : '0'}`;
+const corrupted = `${legacySeed.slice(0, -1)}${legacySeed.endsWith('0') ? '1' : '0'}`;
 assert.equal(decodeBattleSeed(corrupted), undefined, 'A corrupted seed must fail its checksum.');
-assert.equal(decodeBattleSeed('not-a-number'), undefined, 'Non-numeric seeds must be rejected.');
+assert.equal(decodeBattleSeed(seed.slice(0, -12)), undefined, 'Incomplete compact battle seeds must be rejected.');
+assert.equal(decodeBattleSeed('not-a-seed'), undefined, 'Unknown seed formats must be rejected.');
 assert.equal(
   decodeBattleSeed('9'.repeat(16_001)),
   undefined,
@@ -95,11 +101,53 @@ const timelineState = {
   progress: 0.625,
 };
 const timelineSeed = encodeBattleTimelineSeed(timelineState);
-assert.match(timelineSeed, /^\d+$/, 'A timeline replay seed must contain decimal digits only.');
+const legacyTimelineSeed = encodeLegacyBattleTimelineSeed(timelineState);
+assert.match(timelineSeed, /^t2\.[A-Za-z0-9_-]+$/, 'New timeline replay seeds must be URL-safe.');
+assert.ok(
+  timelineSeed.length < legacyTimelineSeed.length / 4,
+  'A compressed replay seed must be substantially shorter.'
+);
+assert.deepEqual(
+  decodeBattleTimelineSeed(legacyTimelineSeed),
+  timelineState,
+  'Previously shared timeline links still work.'
+);
+assert.equal(decodeBattleTimelineSeed('t2.%'), undefined, 'Malformed compressed seeds must be rejected.');
+assert.equal(
+  decodeBattleTimelineSeed(timelineSeed.slice(0, -12)),
+  undefined,
+  'Incomplete compressed seeds must be rejected.'
+);
 assert.deepEqual(
   decodeBattleTimelineSeed(timelineSeed),
   timelineState,
   'A timeline seed must restore deterministic simulation, playback options, and playhead progress.'
+);
+assert.equal(decodeBattleSeed(timelineSeed), undefined, 'Simulator links must not accept a replay seed.');
+assert.equal(decodeBattleTimelineSeed(seed), undefined, 'Replay links must not accept a simulator seed.');
+const scriptedTimeline = {
+  ...timelineState,
+  battle: {
+    ...state,
+    playerStrategy: {
+      ...state.playerStrategy,
+      actions: Array.from({ length: 200 }, (_, turn) => ({
+        turn,
+        type: 'charged',
+        moveSlot: 1,
+        undercharge: turn % 101,
+      })),
+    },
+    opponentStrategy: {
+      ...state.opponentStrategy,
+      actions: Array.from({ length: 200 }, (_, turn) => ({ turn, type: 'shield', shield: true })),
+    },
+  },
+};
+assert.deepEqual(
+  decodeBattleTimelineSeed(encodeBattleTimelineSeed(scriptedTimeline)),
+  scriptedTimeline,
+  'Compact replay links must support the full number of scripted actions on both teams.'
 );
 assert.match(
   battlePage,
@@ -162,4 +210,6 @@ assert.match(
   'Shared seed links must start with the team accordions collapsed without changing normal page defaults.'
 );
 
-console.log(`Validated numeric battle seed round-trip for 3v2 teams (${seed.length} digits).`);
+console.log(
+  `Validated 3v2 seeds: battle ${legacySeed.length} → ${seed.length} characters, replay ${legacyTimelineSeed.length} → ${timelineSeed.length} characters.`
+);

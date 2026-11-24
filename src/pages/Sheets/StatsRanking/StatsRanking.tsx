@@ -43,7 +43,6 @@ import InputReleased from '../../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../../components/Commons/Forms/FormControlMui';
 import PokemonTableIcon from '../../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { formatPokemonDisplayName } from '../../../utils/pokemon-display-name';
-import { usePreloadedImage } from '../../../utils/hooks/usePreloadedImage';
 import PokemonDetailHero from '../../../components/Info/PokemonDetailHero';
 import { getPokemonClassificationLabels } from '../../../components/Info/ClassificationBadge';
 import StableHeightSection from '../../../components/Layout/StableHeightSection';
@@ -242,7 +241,6 @@ const StatsRanking = () => {
   const routeTarget = `${paramId}|${paramForm}|${paramFormType}|${paramStatsType}`;
   const selectedId = select?.num;
   const selectedBundle = selectedId && pokemonBundle?.id === selectedId ? pokemonBundle.data : undefined;
-  const selectedOfficialImage = selectedId ? APIService.getPokeOfficialArtwork(selectedId) : undefined;
   const selectedProfile =
     selectedId && selectedBundle
       ? buildPokemonDetailProfileImagePresentation({
@@ -256,15 +254,8 @@ const StatsRanking = () => {
           },
         })
       : undefined;
-  const selectedPreferredImage = selectedProfile?.preferredImage;
   const selectedImageCandidates = selectedProfile?.imageCandidates ?? [];
-  const { displayedUrl: selectedImage, isLoading: isSelectedImageLoading } = usePreloadedImage(
-    selectedImageCandidates,
-    APIService.getPokeSprite(),
-    [selectedPreferredImage, selectedProfile?.officialImage ?? selectedOfficialImage, selectedProfile?.hybridImage],
-    true
-  );
-  const showSelectedImageSkeleton = !selectedId || loading || !selectedBundle || isSelectedImageLoading;
+  const showSelectedImageSkeleton = !selectedId || loading || !selectedBundle;
   const profileModifier =
     select?.pokemonType === PokemonType.Shadow
       ? 'shadow'
@@ -518,7 +509,7 @@ const StatsRanking = () => {
   return (
     <div className="tw-pb-3 tw-relative poke-container tw-container tw-text-default">
       <PokemonDetailHero
-        imageSrc={selectedImage}
+        imageCandidates={selectedImageCandidates}
         isImageLoading={showSelectedImageSkeleton}
         imageTestId="stats-ranking-profile-image"
         imageSkeletonTestId="stats-ranking-profile-image-skeleton"

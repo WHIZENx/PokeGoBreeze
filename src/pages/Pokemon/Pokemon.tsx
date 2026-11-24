@@ -55,10 +55,12 @@ import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
+import { getPokemonNavigationImageSources } from './components/PokemonNavigationImage';
 import { Params, versionList } from '../../utils/constants';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
+import type { StatsSnapshot } from '../../components/Info/Stats/Stats';
 import { IPokemonPage } from '../models/page.model';
 import {
   combineClasses,
@@ -88,9 +90,10 @@ import useIcon from '../../composables/useIcon';
 import useRouter from '../../composables/useRouter';
 import usePokemon from '../../composables/usePokemon';
 import useSearch from '../../composables/useSearch';
-import { isImagePreloaded, usePreloadedImage } from '../../utils/hooks/usePreloadedImage';
+import { isImagePreloaded, preloadFirstAvailableImage } from '../../utils/hooks/usePreloadedImage';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import PokemonDetailHero from '../../components/Info/PokemonDetailHero';
+import type { PokemonTableLayout } from '../../components/Commons/Tables/Pokemon/PokemonTable';
 import { getPokemonClassificationLabels } from '../../components/Info/ClassificationBadge';
 import { buildPokemonDetailHeroTable } from '../../utils/pokemon-detail-hero';
 import StableHeightSection from '../../components/Layout/StableHeightSection';
@@ -139,7 +142,22 @@ const withPokemonGoAssetSprites = (sprites: IPokemonSprite | undefined, asset: P
   return result;
 };
 
-const Pokemon = (props: IPokemonPage & { preparedDetail?: PreparedDetail<PokemonBundle> }) => {
+type PokemonPageProps = IPokemonPage & { preparedDetail?: PreparedDetail<PokemonBundle> };
+
+const Pokemon = ({ routeKey, ...props }: PokemonPageProps & { routeKey?: string }) => {
+  const tableLayoutRef = useRef<PokemonTableLayout>();
+  const statsSnapshotRef = useRef<StatsSnapshot>();
+  return (
+    <PokemonDetails key={routeKey} tableLayoutRef={tableLayoutRef} statsSnapshotRef={statsSnapshotRef} {...props} />
+  );
+};
+
+const PokemonDetails = (
+  props: PokemonPageProps & {
+    tableLayoutRef: React.MutableRefObject<PokemonTableLayout | undefined>;
+    statsSnapshotRef: React.MutableRefObject<StatsSnapshot | undefined>;
+  }
+) => {
   const { routerAction } = useRouter();
   const dispatch = useDispatch();
   const { iconData } = useIcon();
@@ -162,11 +180,18 @@ const Pokemon = (props: IPokemonPage & { preparedDetail?: PreparedDetail<Pokemon
   const latestSearchParamsRef = useRef(searchParams);
   latestSearchParamsRef.current = searchParams;
 
+  const getPokemonIdByParam = useCallback(
+    () => (params.id ? resolvePokemonRouteId(params.id, getFilteredPokemons()) : toNumber(props.searchOption?.id)),
+    [params.id, props.searchOption?.id, getFilteredPokemons]
+  );
+
   const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
   const [data, setData] = useState<IPokemonSpecie>();
-  const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
+  const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>(() =>
+    getPokemonNavigation(getPokemonIdByParam())
+  );
   const navigationIdRef = useRef(0);
   const pokemonRequestIdRef = useRef(0);
 
@@ -190,11 +215,6 @@ const Pokemon = (props: IPokemonPage & { preparedDetail?: PreparedDetail<Pokemon
   const axiosSource = useRef(APIService.getCancelToken());
   const initialPreparedDetail = useRef(props.preparedDetail);
   const { showSnackbar } = useSnackbar();
-
-  const getPokemonIdByParam = useCallback(
-    () => (params.id ? resolvePokemonRouteId(params.id, getFilteredPokemons()) : toNumber(props.searchOption?.id)),
-    [params.id, props.searchOption?.id, getFilteredPokemons]
-  );
 
   const navigatePokemon = useCallback(
     (direction: -1 | 1, replace = false) => {
@@ -888,7 +908,23 @@ const Pokemon = (props: IPokemonPage & { preparedDetail?: PreparedDetail<Pokemon
     }
   }, [getFilteredPokemons, getPokemonIdByParam, getPokemonNavigation, params.id, props.searchOption?.id]);
 
+  useEffect(() => {
+    if (!params.id) {
+      return;
+    }
+    const { prev, current, next } = getPokemonNavigation(getPokemonIdByParam());
+    const previousNeighbor = prev && getPokemonNavigation(prev.id).prev;
+    const nextNeighbor = next && getPokemonNavigation(next.id).next;
+    // The current Pokémon becomes a neighbor after moving in either direction.
+    for (const neighbor of [current, previousNeighbor, nextNeighbor]) {
+      if (neighbor) {
+        void preloadFirstAvailableImage(getPokemonNavigationImageSources(neighbor.id));
+      }
+    }
+  }, [getPokemonIdByParam, getPokemonNavigation, params.id]);
+
   const currentPokemonId = dataStorePokemon?.current?.id;
+  const currentDetails = searchingMainDetails?.id === currentPokemonId ? searchingMainDetails : undefined;
   const isMainImageReady = Boolean(
     currentPokemonId && searchingMainForm?.form && searchingMainForm.defaultId === currentPokemonId
   );
@@ -918,26 +954,19 @@ const Pokemon = (props: IPokemonPage & { preparedDetail?: PreparedDetail<Pokemon
         },
       })
     : undefined;
-  const preferredMainImage = mainProfile?.preferredImage;
-  const isCanonicalDefaultMainForm = Boolean(isMainImageReady && searchingMainForm?.form?.id === currentPokemonId);
-  const cacheableOfficialMainImage =
-    (!isMainImageReady && !hasRequestedMainImageForm) || isCanonicalDefaultMainForm ? officialMainImage : undefined;
-  const mainImageCandidates =
-    currentPokemonId && !isRequestedMainImageFormPending ? (mainProfile?.imageCandidates ?? []) : [];
-  const { displayedUrl: mainImage, isLoading: isMainImageLoading } = usePreloadedImage(
-    mainImageCandidates,
-    APIService.getPokeSprite(),
-    [preferredMainImage, cacheableOfficialMainImage, mainProfile?.hybridImage],
-    true
-  );
   const cachedMainNavigationImage =
-    !isMainProfileReady && !hasRequestedMainImageForm && isImagePreloaded(officialMainImage)
+    !isMainProfileReady &&
+    !hasRequestedMainImageForm &&
+    !searchParams.get(Params.FormType) &&
+    isImagePreloaded(officialMainImage)
       ? officialMainImage
       : undefined;
-  const displayedMainImage = cachedMainNavigationImage ?? mainImage;
+  const mainImageCandidates = cachedMainNavigationImage
+    ? [cachedMainNavigationImage]
+    : (mainProfile?.imageCandidates ?? []);
   const showMainImageSkeleton = cachedMainNavigationImage
     ? false
-    : !currentPokemonId || !isMainProfileReady || isRequestedMainImageFormPending || isMainImageLoading;
+    : !currentPokemonId || !isMainProfileReady || isRequestedMainImageFormPending;
   const profileModifier =
     isMainImageReady && searchingMainForm?.form?.pokemonType === PokemonType.Shadow
       ? 'shadow'
@@ -990,6 +1019,7 @@ const Pokemon = (props: IPokemonPage & { preparedDetail?: PreparedDetail<Pokemon
         )}
       >
         <PokemonDetailHero
+          tableLayoutRef={props.tableLayoutRef}
           notice={
             <AlertReleased
               formName={releasedAlert?.formName}
@@ -998,28 +1028,29 @@ const Pokemon = (props: IPokemonPage & { preparedDetail?: PreparedDetail<Pokemon
               releasedGO={releasedAlert?.releasedGO}
             />
           }
-          imageSrc={displayedMainImage}
+          imageCandidates={mainImageCandidates}
           isImageLoading={showMainImageSkeleton}
           imageTestId="pokemon-profile-image"
           profileModifier={profileModifier}
           classificationLabels={classificationLabels}
           table={buildPokemonDetailHeroTable(
-            searchingMainDetails
+            currentDetails
               ? {
-                  num: searchingMainDetails.id || dataStorePokemon?.current?.id,
-                  fullName: searchingMainDetails.fullName || formName,
-                  pokemonType: searchingMainDetails.pokemonType,
-                  gen: searchingMainDetails.gen,
-                  region: searchingMainDetails.region,
-                  version: searchingMainDetails.version,
-                  weightKg: searchingMainDetails.weightKg,
-                  heightM: searchingMainDetails.heightM,
+                  num: currentDetails.id,
+                  fullName: currentDetails.fullName || formName,
+                  pokemonType: currentDetails.pokemonType,
+                  gen: currentDetails.gen,
+                  region: currentDetails.region,
+                  version: currentDetails.version,
+                  weightKg: currentDetails.weightKg,
+                  heightM: currentDetails.heightM,
                 }
               : undefined,
-            progress.isLoadedForms
+            progress.isLoadedForms && Boolean(currentDetails)
           )}
         />
         <FormComponent
+          statsSnapshotRef={props.statsSnapshotRef}
           formList={formList}
           pokeData={pokeData}
           genderRate={data?.genderRate}

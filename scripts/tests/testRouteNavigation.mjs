@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 
 const appSource = await readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8');
 const routesSource = await readFile(new URL('../../src/app-routes.tsx', import.meta.url), 'utf8');
+assert.match(routesSource, /page\(\s*'\/r\/:id',\s*\(\) => import\('\.\/pages\/PVP\/Battle\/ShortReplay'\)/);
 const detailRoutesSource = await readFile(
   new URL('../../src/services/detail-route.service.ts', import.meta.url),
   'utf8'
@@ -70,6 +71,11 @@ if (!appSource.includes('<Routes location={displayRoute.location}>') || appSourc
 if (!appSource.includes('startProgress();') || appSource.includes('<Skeleton')) {
   failures.push('initial navigation must use the shared progress bar');
 }
+assert.match(
+  appSource,
+  /useEffect\(\(\) => \{\s*if \(isBootstrapLoaded && previousPath !== undefined && pathname !== previousPath\) \{\s*startProgress\(\);\s*\}\s*\}, \[isBootstrapLoaded, pathname, previousPath\]\);/,
+  'The header progress bar must start only when the destination pathname differs from the visible pathname.'
+);
 for (const [path, endpoint] of [
   ['/pokemon/:id', 'getPokemonBundle'],
   ['/move/:id', 'moveDetailsUrl'],
@@ -89,7 +95,13 @@ if (
 ) {
   failures.push('cached processed data sections are dispatched to Redux repeatedly');
 }
-assert.match(routesSource, /<Pokemon key=\{location\.pathname\} preparedDetail=\{details\.pokemon\}/);
+assert.match(routesSource, /<Pokemon routeKey=\{location\.pathname\} preparedDetail=\{details\.pokemon\}/);
+assert.match(pokemonPageSource, /<PokemonDetails key=\{routeKey\} tableLayoutRef=\{tableLayoutRef\}/);
+assert.match(
+  pokemonPageSource,
+  /useState<OptionsPokemon>\(\(\) =>\s*getPokemonNavigation\(getPokemonIdByParam\(\)\)/,
+  'The remounted Pokémon detail page must render its navigation controls before effects run.'
+);
 assert.match(routesSource, /<Move key=\{location\.pathname\} preparedDetail=\{details\.move\}/);
 for (const battleElement of ['<Battle key={location.pathname} />', '<Battle key={location.pathname} replayMode />']) {
   if (!routesSource.includes(battleElement)) {
@@ -177,8 +189,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /function RouteReady[\s\S]*useLayoutEffect\(\(\) => \{[\s\S]*flushPendingNavigationScroll\(\);[\s\S]*completeProgress/,
-  'The committed destination route must flush the pending scroll reset.'
+  /function RouteReady[\s\S]*useLayoutEffect\(\(\) => \{[\s\S]*flushPendingNavigationScroll\(\);\s*finishStartupProgress\(\);\s*createProgressHelpers\(dispatch\)\.hideProgress\(\);/,
+  'The committed destination route must flush the pending scroll reset and hide header progress immediately.'
 );
 assert.match(tableLoadingProgress, /import \{ LinearProgress \} from '@mui\/material'/);
 assert.match(

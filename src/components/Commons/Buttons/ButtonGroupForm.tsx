@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useRef } from 'react';
+import { Skeleton } from '@mui/material';
 import { IButtonGroupFormComponent } from '../models/component.model';
 import { combineClasses, toNumber } from '../../../utils/extension';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
@@ -6,6 +7,20 @@ import { capitalize, splitAndCapitalize } from '../../../utils/utils';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import PokemonTableIcon from '../../Sprites/PokemonTableIcon/PokemonTableIcon';
 import ButtonMui from './ButtonMui';
+
+export const FormOptionSkeletonRow = () => (
+  <div aria-hidden="true" className="tw-flex tw-gap-2 tw-overflow-hidden">
+    {Array.from({ length: 12 }, (_, index) => (
+      <Skeleton
+        key={index}
+        data-skeleton-surface="page"
+        variant="rectangular"
+        animation="wave"
+        className="tw-w-22.5 tw-min-h-selection-button tw-shrink-0"
+      />
+    ))}
+  </div>
+);
 
 const ButtonGroupForm = (props: IButtonGroupFormComponent) => {
   const containerRef = useRef<HTMLDivElement>(null);

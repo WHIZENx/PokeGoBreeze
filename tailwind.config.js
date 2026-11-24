@@ -2,6 +2,8 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import plugin from 'tailwindcss/plugin';
 
+const formWidth = '350px';
+
 const utilities = {
   '.title-medium': {
     fontSize: '18px',
@@ -160,6 +162,7 @@ module.exports = {
         75: '300px',
       },
       width: {
+        form: formWidth,
         'pokemon-profile': '217px',
         'pokemon-sprite-inner': '205px',
         'form-preview': '200px',
@@ -172,7 +175,7 @@ module.exports = {
         'move-select': 'calc(100% - 50px)',
       },
       minWidth: {
-        form: '350px',
+        form: formWidth,
         content: '320px',
         half: '50%',
         'data-table': '250px',

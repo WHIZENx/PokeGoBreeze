@@ -155,6 +155,7 @@ interface OptionsBattle {
 
 interface BattleProps {
   replayMode?: boolean;
+  replaySeed?: string;
 }
 
 interface IBattleState {
@@ -272,7 +273,7 @@ const createBattleRandomSeed = () => {
   return values[0];
 };
 
-const Battle = ({ replayMode = false }: BattleProps) => {
+const Battle = ({ replayMode = false, replaySeed }: BattleProps) => {
   const { pokemonsData, combatsData, assetsData, optionsData } = useDataStore();
   const { findPokemonByPvpokeSpeciesId, findPokemonBySlug } = usePokemon();
   const { findAssetForm } = useAssets();
@@ -284,7 +285,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
   const navigateToTop = useNavigateToTop();
 
   const { showSnackbar } = useSnackbar();
-  const requestedSeed = searchParams.get('seed') ?? '';
+  const requestedSeed = replaySeed ?? searchParams.get('seed') ?? '';
   const decodedTimelineSeed = React.useMemo(
     () => (replayMode && requestedSeed ? decodeBattleTimelineSeed(requestedSeed) : undefined),
     [replayMode, requestedSeed]
@@ -351,7 +352,8 @@ const Battle = ({ replayMode = false }: BattleProps) => {
   const [activeTeamIndexes, setActiveTeamIndexes] = useState({ player: 0, opponent: 0 });
   const [timelineCursor, setTimelineCursor] = useState(-1);
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
-  const [battleRandomSeed, setBattleRandomSeed] = useState<number>();
+  const [battleReplay, setBattleReplay] = useState<Pick<BattleTimelineSeedState, 'battle' | 'randomSeed'>>();
+  const replayLinkRequest = useRef<{ seed: string; pending: Promise<string> }>();
   const restoredSeedRef = useRef('');
   const invalidSeedRef = useRef('');
   const replayStartedRef = useRef('');
@@ -501,46 +503,70 @@ const Battle = ({ replayMode = false }: BattleProps) => {
     }
   };
 
-  const shareTimeline = async () => {
-    const battle = buildBattleSeed();
-    if (!battle || battleRandomSeed === undefined || !isNotEmpty(pokemonCurr.timeline)) {
-      showSnackbar('Run the Battle Simulator before sharing its timeline.', 'warning');
-      return;
+  const getTimelineReplayUrl = () => {
+    if (!battleReplay || !isNotEmpty(pokemonCurr.timeline)) {
+      return undefined;
     }
-    stopTimeline();
     const width =
       timelineType === TimelineType.Normal
         ? Math.max(0, toNumber(timelineNormal.current?.clientWidth) - 2)
         : toNumber(timelineFit.current?.clientWidth);
     const progress = width > 0 ? Math.min(1, Math.max(0, getTranslation(playLine.current) / width)) : 0;
     const timelineState: BattleTimelineSeedState = {
-      battle,
-      randomSeed: battleRandomSeed,
+      ...battleReplay,
       showTap,
       timelineType,
       duration,
       volume,
       progress,
     };
-    const url = new URL(`/pvp/battle/${league}/replay`, window.location.origin);
-    url.searchParams.set('seed', encodeBattleTimelineSeed(timelineState));
+    const url = new URL(`/pvp/battle/${battleReplay.battle.league}/replay`, window.location.origin);
+    const seed = encodeBattleTimelineSeed(timelineState);
+    url.searchParams.set('seed', seed);
+    if (replayLinkRequest.current?.seed === seed) {
+      return replayLinkRequest.current.pending;
+    }
+    const pending = APIService.createReplayLink(seed)
+      .then(({ data }) => new URL(`/r/${data.data.id}`, window.location.origin).toString())
+      .catch(() => {
+        if (replayLinkRequest.current?.pending === pending) {
+          replayLinkRequest.current = undefined;
+        }
+        return url.toString();
+      });
+    replayLinkRequest.current = { seed, pending };
+    return pending;
+  };
+
+  const shareTimeline = async () => {
+    const pending = getTimelineReplayUrl();
+    if (!pending) {
+      showSnackbar('Run the Battle Simulator before sharing its timeline.', 'warning');
+      return;
+    }
+    stopTimeline();
     try {
       if (isMobile && navigator.share) {
         await navigator.share({
           title: 'PokéGO Breeze PvP Timeline Replay',
           text: 'Watch this shared Pokémon GO PvP battle timeline.',
-          url: url.toString(),
+          url: await pending,
         });
         showSnackbar('Timeline replay shared.', 'success');
         return;
       }
-      await navigator.clipboard.writeText(url.toString());
+      if (navigator.clipboard?.write && typeof ClipboardItem === 'function') {
+        const text = pending.then((url) => new Blob([url], { type: 'text/plain' }));
+        await navigator.clipboard.write([new ClipboardItem({ 'text/plain': text })]);
+      } else {
+        await navigator.clipboard.writeText(await pending);
+      }
       showSnackbar('Timeline replay link copied at the current playhead position.', 'success');
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         return;
       }
-      showSnackbar('Unable to copy the timeline replay link.', 'warning');
+      showSnackbar('Unable to share the replay link. Try Share Timeline again.', 'warning');
     }
   };
 
@@ -642,7 +668,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
     arrStore.current = [];
     resetTimeline();
     const randomSeed = requestedRandomSeed ?? createBattleRandomSeed();
-    setBattleRandomSeed(randomSeed);
+    const battle = buildBattleSeed();
     const signal = simulationRequest.start();
     showSpinner();
     try {
@@ -669,6 +695,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
       if (signal.aborted) {
         return;
       }
+      setBattleReplay(battle ? { battle, randomSeed } : undefined);
       setPokemonCurr(
         PokemonBattle.create({
           ...pokemonCurr,
@@ -712,6 +739,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
     arrBound.current = [];
     arrStore.current = [];
     resetTimeline();
+    setBattleReplay(undefined);
     setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, timeline: [] }));
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
   };
@@ -734,6 +762,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
       const opponentTeam = [pokemonObj, ...pokemonObjBench];
       await exportBattleReportImage({
         leagueName: getPokemonBattleLeagueName(league),
+        replayUrl: await getTimelineReplayUrl(),
         turnDurationSeconds: optionsData.combatOptions.turnDurationSeconds || 0.5,
         player: pokemonCurr,
         opponent: pokemonObj,

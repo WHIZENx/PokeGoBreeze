@@ -6,6 +6,7 @@ import { AttackType } from '../enums/attack-type.enum';
 
 interface BattleExportOptions {
   leagueName: string;
+  replayUrl?: string;
   turnDurationSeconds: number;
   player: IPokemonBattle;
   opponent: IPokemonBattle;
@@ -237,6 +238,22 @@ const drawText = (
   context.textAlign = options.align ?? 'left';
   context.textBaseline = 'alphabetic';
   context.fillText(text, x, y, options.maxWidth);
+};
+
+const wrapReplayUrl = (context: CanvasRenderingContext2D, url: string, maxWidth: number) => {
+  const lines: string[] = [];
+  let line = '';
+  for (const character of url) {
+    if (line && context.measureText(line + character).width > maxWidth) {
+      lines.push(line);
+      line = '';
+    }
+    line += character;
+  }
+  if (line) {
+    lines.push(line);
+  }
+  return lines;
 };
 
 const loadImage = async (urls: string[] | undefined) => {
@@ -704,6 +721,7 @@ const downloadCanvas = (canvas: HTMLCanvasElement, filename: string) =>
 
 export const exportBattleReportImage = async ({
   leagueName,
+  replayUrl,
   turnDurationSeconds,
   player,
   opponent,
@@ -733,18 +751,23 @@ export const exportBattleReportImage = async ({
   const eventsTitleY = timelineTitleY + 328;
   const eventsHeaderY = eventsTitleY + 24;
   const eventRowsStartY = eventsHeaderY + 54;
-  const canvasHeight = eventRowsStartY + Math.max(1, events.length) * eventRowHeight + canvasPadding;
+  const eventRowsEndY = eventRowsStartY + Math.max(1, events.length) * eventRowHeight;
   const canvas = document.createElement('canvas');
-  canvas.width = canvasWidth;
-  canvas.height = canvasHeight;
   const context = canvas.getContext('2d');
   if (!context) {
     throw new Error('Canvas is unavailable.');
   }
 
   const fontFamily = getComputedStyle(document.body).fontFamily || 'sans-serif';
+  const replayFont = `400 16px ${fontFamily}`;
+  const replayLineHeight = 22;
+  context.font = replayFont;
+  const replayLines = replayUrl ? wrapReplayUrl(context, replayUrl, canvasWidth - canvasPadding * 2) : [];
+  const replayFooterHeight = replayLines.length ? (replayLines.length + 1) * replayLineHeight : 0;
+  canvas.width = canvasWidth;
+  canvas.height = eventRowsEndY + replayFooterHeight + canvasPadding;
   context.fillStyle = colors.background;
-  context.fillRect(0, 0, canvasWidth, canvasHeight);
+  context.fillRect(0, 0, canvas.width, canvas.height);
   context.font = `400 20px ${fontFamily}`;
 
   const [playerImages, opponentImages, typeIcons, statusIcons] = await Promise.all([
@@ -976,6 +999,23 @@ export const exportBattleReportImage = async ({
       maxWidth: 250,
     });
   });
+
+  if (replayLines.length) {
+    const right = canvasWidth - canvasPadding;
+    const headingY = eventRowsEndY + 32;
+    drawText(context, 'Replay URL', right, headingY, {
+      color: colors.text,
+      font: `600 17px ${fontFamily}`,
+      align: 'right',
+    });
+    replayLines.forEach((line, index) => {
+      drawText(context, line, right, headingY + (index + 1) * replayLineHeight, {
+        color: colors.muted,
+        font: replayFont,
+        align: 'right',
+      });
+    });
+  }
 
   const playerName = formatName(player.pokemonData?.name).replaceAll(' ', '-').toLowerCase();
   const opponentName = formatName(opponent.pokemonData?.name).replaceAll(' ', '-').toLowerCase();
