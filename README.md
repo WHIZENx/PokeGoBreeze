@@ -416,7 +416,8 @@ npm ci
    cp .env.example .env
    ```
    In Windows PowerShell, use `Copy-Item` in place of `cp`. If PowerShell
-   blocks the npm PowerShell shim, use `npm.cmd` for the npm commands below.
+   blocks `npm.ps1`, run the same npm commands in Windows Command Prompt
+   (`cmd.exe`).
 
    The local config includes version labels for all three modes. Its other
    values are placeholders that let you start the app and browse API-backed
