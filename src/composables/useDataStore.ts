@@ -41,7 +41,7 @@ export const useDataStore = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const appliedProcessedSectionsRef = useRef(new Map<ProcessedDataSection, unknown>());
-  const { setProgress, completeProgress } = createProgressHelpers(dispatch);
+  const { setProgress } = createProgressHelpers(dispatch);
 
   /**
    * Update options in the store
@@ -203,7 +203,6 @@ export const useDataStore = () => {
     dispatch(TimestampActions.SetTimestampIcon.create(meta.source.icon ?? 0));
     dispatch(TimestampActions.SetTimestampSounds.create(meta.source.sounds));
     dispatch(TimestampActions.SetTimestampPVP.create(meta.source.pvp));
-    completeProgress();
     return true;
   };
 

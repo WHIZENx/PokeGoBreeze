@@ -94,7 +94,13 @@ if (
 ) {
   failures.push('cached processed data sections are dispatched to Redux repeatedly');
 }
-assert.match(routesSource, /<Pokemon key=\{location\.pathname\} preparedDetail=\{details\.pokemon\}/);
+assert.match(routesSource, /<Pokemon routeKey=\{location\.pathname\} preparedDetail=\{details\.pokemon\}/);
+assert.match(pokemonPageSource, /<PokemonDetails key=\{routeKey\} tableLayoutRef=\{tableLayoutRef\}/);
+assert.match(
+  pokemonPageSource,
+  /useState<OptionsPokemon>\(\(\) =>\s*getPokemonNavigation\(getPokemonIdByParam\(\)\)/,
+  'The remounted Pokémon detail page must render its navigation controls before effects run.'
+);
 assert.match(routesSource, /<Move key=\{location\.pathname\} preparedDetail=\{details\.move\}/);
 for (const battleElement of ['<Battle key={location.pathname} />', '<Battle key={location.pathname} replayMode />']) {
   if (!routesSource.includes(battleElement)) {
@@ -182,8 +188,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /function RouteReady[\s\S]*useLayoutEffect\(\(\) => \{[\s\S]*flushPendingNavigationScroll\(\);[\s\S]*completeProgress/,
-  'The committed destination route must flush the pending scroll reset.'
+  /function RouteReady[\s\S]*useLayoutEffect\(\(\) => \{[\s\S]*flushPendingNavigationScroll\(\);\s*finishStartupProgress\(\);\s*createProgressHelpers\(dispatch\)\.hideProgress\(\);/,
+  'The committed destination route must flush the pending scroll reset and hide header progress immediately.'
 );
 assert.match(tableLoadingProgress, /import \{ LinearProgress \} from '@mui\/material'/);
 assert.match(

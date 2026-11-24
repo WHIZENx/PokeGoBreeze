@@ -44,12 +44,8 @@ function RouteReady({ location, resetScroll }: { location: Location; resetScroll
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     }
     flushPendingNavigationScroll();
-    const { hideProgress, completeProgress } = createProgressHelpers(dispatch);
-    if (finishStartupProgress()) {
-      hideProgress();
-    } else {
-      completeProgress();
-    }
+    finishStartupProgress();
+    createProgressHelpers(dispatch).hideProgress();
   }, [dispatch, location, resetScroll]);
   return null;
 }

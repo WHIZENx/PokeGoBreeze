@@ -53,7 +53,7 @@ export const useSpinner = () => {
     dispatch(SetPercent.create(percent));
   };
 
-  const { startProgress, setProgress, completeProgress, hideProgress, errorProgress } = createProgressHelpers(dispatch);
+  const { startProgress, setProgress, hideProgress, errorProgress } = createProgressHelpers(dispatch);
 
   const spinnerBar = spinnerData.bar;
   const spinnerPercent = spinnerData.bar.percent;
@@ -71,7 +71,6 @@ export const useSpinner = () => {
     setPercent,
     startProgress,
     setProgress,
-    completeProgress,
     hideProgress,
     errorProgress,
     spinnerBar,

@@ -12,7 +12,7 @@
 }
 
 .table-desc tbody tr td:first-child {
-  width: 25% !important;
+  width: var(--pokemon-table-loading-label-width, 25%) !important;
   text-align: start !important;
 
   @apply tw-min-w-[110px] sm:tw-min-w-[180px];

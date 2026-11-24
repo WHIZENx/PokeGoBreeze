@@ -45,13 +45,18 @@ assert.match(
   'The shared detail hero must own the shared profile image skeleton.'
 );
 assert.match(
+  detailHero,
+  /const showImageSkeleton = isImageLoading \|\| Boolean\(source && loadedSource !== source\);[\s\S]*onLoad=\{\(event\) => markLoaded\(event.currentTarget\)\}/,
+  'The shared profile must retain its skeleton until the displayed image loads.'
+);
+assert.match(
   pokemonPage,
   /<PokemonDetailHero[\s\S]*isImageLoading=\{showMainImageSkeleton\}/,
   'Pokémon Details must pass its image readiness into the shared detail hero.'
 );
 assert.match(
   pokemonPage,
-  /const cachedMainNavigationImage =[\s\S]*isImagePreloaded\(officialMainImage\)[\s\S]*const displayedMainImage = cachedMainNavigationImage \?\? mainImage;[\s\S]*const showMainImageSkeleton = cachedMainNavigationImage[\s\S]*\? false[\s\S]*!currentPokemonId \|\| !isMainProfileReady \|\| isRequestedMainImageFormPending \|\| isMainImageLoading;/,
+  /const cachedMainNavigationImage =[\s\S]*isImagePreloaded\(officialMainImage\)[\s\S]*const mainImageCandidates =[\s\S]*\? \[cachedMainNavigationImage\][\s\S]*const showMainImageSkeleton = cachedMainNavigationImage[\s\S]*\? false[\s\S]*!currentPokemonId \|\| !isMainProfileReady \|\| isRequestedMainImageFormPending;/,
   'Pokémon Details must show a cached default artwork or keep its skeleton until the exact form profile is ready.'
 );
 assert.match(
@@ -61,8 +66,8 @@ assert.match(
 );
 assert.match(
   pokemonPage,
-  /isMainImageReady && searchingMainForm\?\.form\?\.id === currentPokemonId/,
-  'Only the canonical species form may reuse the generic official artwork cache.'
+  /!hasRequestedMainImageForm\s*&&\s*!searchParams\.get\(Params\.FormType\)\s*&&\s*isImagePreloaded\(officialMainImage\)/,
+  'The temporary official artwork may only be used when no alternate form or modifier was requested.'
 );
 assert.match(
   pokemonPage,
@@ -155,13 +160,14 @@ assert.match(
   /enforceCandidateOrder[\s\S]*candidateUrls\[0\][\s\S]*isImagePreloaded\(candidateUrls\[0\]\)/,
   'Strict profile loading must never let a cached lower-priority fallback bypass the first candidate.'
 );
-for (const profileConsumer of [pokemonPage, statsRanking, formSelect]) {
-  assert.match(
-    profileConsumer,
-    /usePreloadedImage\([\s\S]*?,\s*true\s*\)/,
-    'Every profile consumer must enforce the Pokémon Details candidate order.'
-  );
-}
+assert.match(formSelect, /usePreloadedImage\([\s\S]*?,\s*true\s*\)/);
+assert.match(
+  detailHero,
+  /useImageSourceSequence\(\[\.\.\.imageCandidates, APIService\.getPokeSprite\(\)\]\)[\s\S]*onError=\{advanceSource\}/,
+  'The shared hero must try the ordered candidates before displaying the generic placeholder.'
+);
+assert.match(pokemonPage, /imageCandidates=\{mainImageCandidates\}/);
+assert.match(statsRanking, /imageCandidates=\{selectedImageCandidates\}/);
 assert.match(
   imagePreloader,
   /const loadImageOnce =[\s\S]*image\.onload = \(\) => \{\s*markImageAsPreloaded\(url\);\s*resolve\(true\)/,
@@ -194,7 +200,7 @@ assert.doesNotMatch(
 );
 assert.match(
   statsRanking,
-  /const showSelectedImageSkeleton = !selectedId \|\| loading \|\| !selectedBundle \|\| isSelectedImageLoading;/,
+  /const showSelectedImageSkeleton = !selectedId \|\| loading \|\| !selectedBundle;/,
   'Stats Ranking must keep the profile skeleton visible until the selected bundle and a valid image are ready.'
 );
 assert.match(
@@ -204,7 +210,7 @@ assert.match(
 );
 assert.match(
   statsRanking,
-  /buildPokemonDetailProfileImagePresentation\([\s\S]*canonicalForms:[\s\S]*pokemonGoForms:[\s\S]*usePreloadedImage\([\s\S]*selectedImageCandidates,[\s\S]*APIService\.getPokeSprite\(\)/,
+  /buildPokemonDetailProfileImagePresentation\([\s\S]*canonicalForms:[\s\S]*pokemonGoForms:[\s\S]*const selectedImageCandidates = selectedProfile\?\.imageCandidates/,
   'Stats Ranking must prefer only exact canonical form artwork before GO and generic fallbacks.'
 );
 assert.doesNotMatch(

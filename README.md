@@ -113,6 +113,9 @@ The versions below reflect the currently committed `package-lock.json`.
 - **Navigation and data loading**:
   - Route-level lazy imports keep feature code out of the initial bundle
   - The current page remains visible while the next route and its required data load
+  - Pokémon Details renders its previous and next controls with the destination and preloads images for nearby navigation targets
+  - Pokémon Details and Stats Ranking use shared loading skeletons and keep the last rendered metadata table and label-column widths until the new data is ready
+  - Pokémon stat bars retain their previous values during loading and animate to the next values when ready
   - PvP Detail navigation prepares its page module and Pokémon response before switching views, avoiding an empty detail layout between rankings or matchup selections
   - API requests use debouncing, cancellation, stale-response guards, and request deduplication where applicable
   - Pages request and cache only their required processed-data sections
@@ -399,11 +402,11 @@ Displays the application error page for unmatched URLs. Runtime errors are handl
 - **Resilient navigation**: Keep the current page visible while the destination
   module and shared data load. Pokémon Details, Move Details, and Pokémon PvP
   Details also prepare their main API response before displaying the destination.
-  The header progress bar starts on pathname changes. Query changes within the
-  same page use its existing loading indicators. A direct entry shows the
-  static header until React can display the themed header. One progress
-  indicator stays visible through startup and uses the same dimensions,
-  colors, and motion as the MUI navigation bar.
+  The header progress bar starts on pathname changes and hides as soon as the
+  destination is displayed. Query changes within a page use its loading
+  indicators. A direct entry shows the static header until React can display
+  the themed header. One progress indicator stays visible through startup and
+  uses the same dimensions, colors, and motion as the MUI navigation bar.
 - **Supported browsers**: Follow the repository's declared Browserslist targets.
 
 ## Getting Started

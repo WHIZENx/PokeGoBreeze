@@ -7,13 +7,15 @@ interface PokemonNavigationImageProps {
   className: string;
 }
 
+export const getPokemonNavigationImageSources = (id: number) => [
+  APIService.getPokeOfficialArtwork(id),
+  APIService.getPokeFullSprite(id),
+  APIService.getPokeSprite(id),
+  APIService.getPokeSprite(),
+];
+
 const PokemonNavigationImage = ({ id, className }: PokemonNavigationImageProps) => {
-  const { source, advanceSource } = useImageSourceSequence([
-    APIService.getPokeOfficialArtwork(id),
-    APIService.getPokeFullSprite(id),
-    APIService.getPokeSprite(id),
-    APIService.getPokeSprite(),
-  ]);
+  const { source, advanceSource } = useImageSourceSequence(getPokemonNavigationImageSources(id));
 
   return (
     <img

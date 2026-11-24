@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../utils/calculate';
 import { checkRankAllAvailable, getDmgMultiplyBonus } from '../../../utils/utils';
 
@@ -33,13 +33,19 @@ class CurrentStats implements ICurrentStats {
   }
 }
 
-const Stats = (props: IStatsComponent) => {
+export interface StatsSnapshot {
+  availableRankGO: StatsRankPokemonGO;
+  currentStats: CurrentStats;
+  fallbackRanks: Record<'atk' | 'def' | 'sta' | 'prod', number | string>;
+}
+
+const Stats = (props: IStatsComponent & { statsSnapshotRef?: MutableRefObject<StatsSnapshot | undefined> }) => {
   const { statsData } = useStats();
   const isTheoretical = [props.statATK, props.statDEF, props.statSTA, props.statProd].some(
     (stat) => stat?.source === 'pokeapi-theoretical'
   );
 
-  const computedStats = useMemo(() => {
+  const computedStats = useMemo<StatsSnapshot>(() => {
     if (statsData?.attack && statsData?.defense && statsData?.stamina && statsData?.statProd) {
       const applyStatModifier = (stats: number, type: TypeAction) =>
         Math.round(stats * getDmgMultiplyBonus(props.pokemonType, type));
@@ -107,20 +113,36 @@ const Stats = (props: IStatsComponent) => {
     statsData,
     isTheoretical,
   ]);
-  const lastLoadedStats = useRef(computedStats);
+  const localStatsSnapshotRef = useRef<StatsSnapshot>();
+  const lastLoadedStats = props.statsSnapshotRef ?? localStatsSnapshotRef;
+  const [isPrimed, setIsPrimed] = useState(() => !lastLoadedStats.current);
+  const isLoading = Boolean(props.isLoading || !isPrimed);
 
   useEffect(() => {
-    if (!props.isLoading) {
+    if (isPrimed) {
+      return;
+    }
+    // A remounted bar needs a painted start value before CSS can transition it.
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => setIsPrimed(true));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [isPrimed]);
+
+  useEffect(() => {
+    if (!isLoading) {
       lastLoadedStats.current = computedStats;
     }
-  }, [computedStats, props.isLoading]);
+  }, [computedStats, isLoading, lastLoadedStats]);
 
-  const { availableRankGO, currentStats, fallbackRanks } = props.isLoading ? lastLoadedStats.current : computedStats;
+  const { availableRankGO, currentStats, fallbackRanks } = isLoading
+    ? (lastLoadedStats.current ?? computedStats)
+    : computedStats;
 
   return (
-    <div className="tw-mt-2 tw-text-black" data-testid="pokemon-stats-ranking" aria-busy={props.isLoading}>
+    <div className="tw-mt-2 tw-text-black" data-testid="pokemon-stats-ranking" aria-busy={isLoading}>
       <div className="tw-h-4 tw-text-right tw-text-extra-small tw-text-gray-700 dark:tw-text-gray-300">
-        {props.isLoading ? 'Loading stats…' : isTheoretical ? 'Theoretical Pokémon GO stats' : ''}
+        {isLoading ? 'Loading stats…' : isTheoretical ? 'Theoretical Pokémon GO stats' : ''}
       </div>
       <StatBar
         tag="ATK"
@@ -133,7 +155,7 @@ const Stats = (props: IStatsComponent) => {
         form={props.form}
         statType={TypeAction.Atk}
         isDisabled={props.isDisabled || isTheoretical}
-        isLoading={props.isLoading}
+        isLoading={isLoading}
         pokemonType={props.pokemonType}
         onStatSelect={props.onStatSelect}
       />
@@ -148,7 +170,7 @@ const Stats = (props: IStatsComponent) => {
         form={props.form}
         statType={TypeAction.Def}
         isDisabled={props.isDisabled || isTheoretical}
-        isLoading={props.isLoading}
+        isLoading={isLoading}
         pokemonType={props.pokemonType}
         onStatSelect={props.onStatSelect}
       />
@@ -163,7 +185,7 @@ const Stats = (props: IStatsComponent) => {
         form={props.form}
         statType={TypeAction.Sta}
         isDisabled={props.isDisabled || isTheoretical}
-        isLoading={props.isLoading}
+        isLoading={isLoading}
         pokemonType={props.pokemonType}
         onStatSelect={props.onStatSelect}
       />
@@ -179,7 +201,7 @@ const Stats = (props: IStatsComponent) => {
         form={props.form}
         statType={TypeAction.Prod}
         isDisabled={props.isDisabled || isTheoretical}
-        isLoading={props.isLoading}
+        isLoading={isLoading}
         pokemonType={props.pokemonType}
         onStatSelect={props.onStatSelect}
       />

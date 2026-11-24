@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type CSSProperties } from 'react';
 import { splitAndCapitalize } from '../../../../utils/utils';
 import { genRoman } from '../../../../utils/compute';
 import { IPokemonTableComponent } from '../../models/component.model';
@@ -13,18 +13,25 @@ const bodyMeasurementFormatter = new Intl.NumberFormat('en-US', {
 
 const formatBodyMeasurement = (value: number, unit: 'kg' | 'm') => `${bodyMeasurementFormatter.format(value)} ${unit}`;
 
-const PokemonTable = (props: IPokemonTableComponent) => {
-  const reload = (element: JSX.Element, hasValue = false) => {
-    if (props.isLoadedForms) {
+export interface PokemonTableLayout {
+  width: number;
+  labelWidth: number;
+}
+
+const PokemonTable = ({ loadingLayout, ...props }: IPokemonTableComponent & { loadingLayout?: PokemonTableLayout }) => {
+  const loadingStyle: (CSSProperties & { '--pokemon-table-loading-label-width': string }) | undefined = loadingLayout
+    ? {
+        width: loadingLayout.width,
+        '--pokemon-table-loading-label-width': `${loadingLayout.labelWidth}px`,
+      }
+    : undefined;
+
+  const reload = (element: JSX.Element, hasValue = false, widthClass = '!tw-w-24') => {
+    if (props.isLoadedForms || hasValue) {
       return element;
     }
-    if (hasValue) {
-      return <div className="tw-opacity-60 tw-animate-pulse">{element}</div>;
-    }
     return (
-      <div className="slide-container tw-w-full !tw-h-full !tw-m-0 !tw-p-0">
-        <Skeleton variant="rectangular" animation="wave" className="!tw-w-full !tw-h-full !tw-m-0 !tw-p-0" />
-      </div>
+      <Skeleton variant="rounded" animation="wave" className={combineClasses('!tw-h-4 tw-max-w-full', widthClass)} />
     );
   };
 
@@ -37,8 +44,10 @@ const PokemonTable = (props: IPokemonTableComponent) => {
   return (
     <table
       data-testid="pokemon-info-table"
+      aria-busy={!props.isLoadedForms}
       data-body-weight-kg={props.weightKg ?? ''}
       data-body-height-m={props.heightM ?? ''}
+      style={loadingStyle}
       className={combineClasses('table-info table-desc tw-w-full', props.className)}
     >
       <thead />
@@ -117,7 +126,8 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                     <h6 className="tw-whitespace-nowrap max-xs:tw-text-body2">
                       {!isUndefined(props.weightKg) && formatBodyMeasurement(props.weightKg, 'kg')}
                     </h6>,
-                    !isUndefined(props.weightKg)
+                    !isUndefined(props.weightKg),
+                    '!tw-w-12 max-xs:!tw-w-10 sm:!tw-w-14'
                   )}
                 </div>
               </div>
@@ -128,7 +138,8 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                     <h6 className="tw-whitespace-nowrap max-xs:tw-text-body2">
                       {!isUndefined(props.heightM) && formatBodyMeasurement(props.heightM, 'm')}
                     </h6>,
-                    !isUndefined(props.heightM)
+                    !isUndefined(props.heightM),
+                    '!tw-w-9 max-xs:!tw-w-8 sm:!tw-w-10'
                   )}
                 </div>
               </div>

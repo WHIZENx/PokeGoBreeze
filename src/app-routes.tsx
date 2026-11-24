@@ -54,7 +54,7 @@ export const appRoutes = [
   page(
     '/pokemon/:id',
     () => import('./pages/Pokemon/Pokemon'),
-    (Pokemon, { location, details }) => <Pokemon key={location.pathname} preparedDetail={details.pokemon} />
+    (Pokemon, { location, details }) => <Pokemon routeKey={location.pathname} preparedDetail={details.pokemon} />
   ),
   staticPage('/search-moves', () => import('./pages/Search/Moves/SearchMoves')),
   page(

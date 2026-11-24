@@ -165,9 +165,10 @@ const checks = [
   [
     'one startup progress bar remains until first route or failure',
     indexHtml.includes('#startup-progress ~ #root .app-navigation-progress') &&
-      appSource.includes('if (finishStartupProgress())') &&
+      /finishStartupProgress\(\);\s*createProgressHelpers\(dispatch\)\.hideProgress\(\);/.test(appSource) &&
       /errorProgress: \(error: ErrorModel\) => \{\s*finishStartupProgress\(\)/.test(progressSource),
   ],
+  ['header progress hides without reaching 100 percent', !/SetPercent\.create\(100\)/.test(progressSource)],
   [
     'delayed progress indicator uses MUI dimensions and animation timings',
     indexHtml.includes('class="seo-shell-progress"') &&

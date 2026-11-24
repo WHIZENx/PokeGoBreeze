@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
+import { IStatsAtk, IStatsDef, IStatsProd, IStatsSta } from '../../../core/models/stats.model';
 import { useDispatch } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Params } from '../../../utils/constants';
@@ -11,7 +11,7 @@ import {
 } from '../../../utils/utils';
 
 import Gender, { GenderSkeleton, getGenderSpriteCandidates } from '../Gender';
-import Stats from '../Stats/Stats';
+import Stats, { type StatsSnapshot } from '../Stats/Stats';
 import Raid from '../../Raid/Raid';
 import Counter from '../../Commons/Tables/Counter/Counter';
 import TableMove from '../../Commons/Tables/Move/MoveTable';
@@ -85,7 +85,9 @@ interface GenderDisplaySnapshot {
 const getGenderCardCount = (ratio: IPokemonGenderRatio | undefined) =>
   ratio && ratio.M !== 0 && ratio.F !== 0 ? 2 : 1;
 
-const FormComponent = (props: IFormInfoComponent) => {
+const FormComponent = (
+  props: IFormInfoComponent & { statsSnapshotRef: React.MutableRefObject<StatsSnapshot | undefined> }
+) => {
   const dispatch = useDispatch();
   const { routerAction } = useRouter();
   const { statsData } = useStats();
@@ -173,7 +175,6 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
   }, [currentEvolutionSupplement, isCurrentPokemonLoaded]);
 
-  const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
   const selectedGenderRatio =
     searchingMainForm?.defaultId === props.defaultId ? searchingMainDetails?.genderRatio : undefined;
   // A genderless fallback must keep its identity across the image-ready render.
@@ -280,21 +281,22 @@ const FormComponent = (props: IFormInfoComponent) => {
     ]
   );
 
-  useEffect(() => {
+  const statsPokemon = useMemo(() => {
     if (
+      isCurrentPokemonLoaded &&
       statsData?.attack?.ranking &&
       statsData?.defense?.ranking &&
       statsData?.stamina?.ranking &&
       statsData?.statProd?.ranking
     ) {
-      setStatsPokemon({
+      return {
         atk: filterFormList(statsData.attack.ranking),
         def: filterFormList(statsData.defense.ranking),
         sta: filterFormList(statsData.stamina.ranking),
         prod: filterFormList(statsData.statProd.ranking),
-      });
+      };
     }
-  }, [filterFormList, statsData]);
+  }, [filterFormList, isCurrentPokemonLoaded, statsData]);
 
   const findFormData = (name: string) => {
     let currentData = props.pokeData.find((item) => isEqual(name, item.name));
@@ -551,13 +553,9 @@ const FormComponent = (props: IFormInfoComponent) => {
         <h4 className="info-title">
           <b>Pokémon stats</b>
         </h4>
-        <StableHeightSection
-          animateHeight
-          isLoading={!isCurrentPokemonLoaded}
-          minHeight={190}
-          testId="pokemon-stats-section"
-        >
+        <StableHeightSection animateHeight isLoading={!statsPokemon} minHeight={190} testId="pokemon-stats-section">
           <Stats
+            statsSnapshotRef={props.statsSnapshotRef}
             pokemonType={searchingMainForm?.form?.pokemonType}
             statATK={statsPokemon?.atk}
             statDEF={statsPokemon?.def}
@@ -566,7 +564,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             id={props.defaultId}
             form={searchingMainDetails?.form}
             isDisabled={!statsData}
-            isLoading={!isCurrentPokemonLoaded}
+            isLoading={!statsPokemon}
           />
         </StableHeightSection>
       </section>
