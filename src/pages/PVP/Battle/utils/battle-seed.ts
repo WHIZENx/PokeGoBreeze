@@ -1,3 +1,4 @@
+import { deflateSync, inflateSync } from 'fflate';
 import type { PvpBattleStrategyRequest } from '../../../../services/models/tools-api.model';
 
 export interface BattleSeedPokemon {
@@ -77,8 +78,12 @@ type CompactSeed = [
 
 const seedVersion = 2;
 const supportedSeedVersions = [1, seedVersion];
-const timelineSeedVersion = 1;
-const maxSeedDigits = 16_000;
+const legacyTimelineSeedVersion = 1;
+const timelineSeedVersion = 2;
+const compactBattlePrefix = 'b2.';
+const compactTimelinePrefix = 't2.';
+const maxSeedPayloadBytes = 64_000;
+const maxSeedLength = 16_000;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
 
@@ -278,155 +283,177 @@ const isStrategy = (value: unknown): value is PvpBattleStrategyRequest => {
   );
 };
 
-export const encodeBattleSeed = (state: BattleSeedState) => {
-  const compact: CompactSeed = [
-    seedVersion,
-    state.league,
-    state.leagueId,
-    state.playerTeam.map(compactPokemon),
-    state.opponentTeam.map(compactPokemon),
-    state.playerStrategy,
-    state.opponentStrategy,
-  ];
+const packSeed = (version: number, compact: unknown) => {
   const payload = encoder.encode(JSON.stringify(compact));
   const envelope = new Uint8Array(payload.length + 5);
-  envelope[0] = seedVersion;
+  envelope[0] = version;
   new DataView(envelope.buffer).setUint32(1, checksum(payload));
   envelope.set(payload, 5);
-  return bytesToDecimal(envelope);
+  return envelope;
+};
+
+const unpackSeed = (envelope: Uint8Array): unknown => {
+  if (envelope.length <= 5) {
+    return undefined;
+  }
+  const expectedChecksum = new DataView(envelope.buffer, envelope.byteOffset, envelope.byteLength).getUint32(1);
+  const payload = envelope.subarray(5);
+  return checksum(payload) === expectedChecksum ? JSON.parse(decoder.decode(payload)) : undefined;
+};
+
+const encodeCompactSeed = (prefix: string, envelope: Uint8Array) => {
+  const compressed: Uint8Array = deflateSync(envelope);
+  const base64 = btoa(Array.from(compressed, (byte) => String.fromCharCode(byte)).join(''));
+  return prefix + base64.replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+};
+
+const decodeSeedEnvelope = (seed: string, prefix: string, version: number, legacyVersions: readonly number[]) => {
+  if (seed.length > maxSeedLength) {
+    return undefined;
+  }
+  if (/^\d+$/.test(seed)) {
+    const envelope = decimalToBytes(seed);
+    return legacyVersions.includes(envelope[0]) ? envelope : undefined;
+  }
+  if (!seed.startsWith(prefix)) {
+    return undefined;
+  }
+  const encoded = seed.slice(prefix.length);
+  if (!/^[A-Za-z0-9_-]+$/.test(encoded)) {
+    return undefined;
+  }
+  const binary = atob(encoded.replaceAll('-', '+').replaceAll('_', '/'));
+  const bytes = Uint8Array.from(Array.from(binary, (character) => character.charCodeAt(0)));
+  const envelope: Uint8Array = inflateSync(bytes, { out: new Uint8Array(maxSeedPayloadBytes + 1) });
+  return envelope.length <= maxSeedPayloadBytes && envelope[0] === version ? envelope : undefined;
+};
+
+const compactBattle = (state: BattleSeedState): CompactSeed => [
+  seedVersion,
+  state.league,
+  state.leagueId,
+  state.playerTeam.map(compactPokemon),
+  state.opponentTeam.map(compactPokemon),
+  state.playerStrategy,
+  state.opponentStrategy,
+];
+
+export const encodeBattleSeed = (state: BattleSeedState) =>
+  encodeCompactSeed(compactBattlePrefix, packSeed(seedVersion, compactBattle(state)));
+
+export const encodeLegacyBattleSeed = (state: BattleSeedState) =>
+  bytesToDecimal(packSeed(seedVersion, compactBattle(state)));
+
+const expandBattle = (compact: unknown, expectedVersion: number): BattleSeedState | undefined => {
+  if (!Array.isArray(compact) || (compact.length !== 7 && compact.length !== 11)) {
+    return undefined;
+  }
+  const version = compact[0];
+  if (!isInteger(version) || version !== expectedVersion || !supportedSeedVersions.includes(version)) {
+    return undefined;
+  }
+  const [league, leagueId, player, opponent, playerStrategy, opponentStrategy] =
+    version === 1
+      ? [compact[1], compact[2], compact[7], compact[8], compact[9], compact[10]]
+      : [compact[1], compact[2], compact[3], compact[4], compact[5], compact[6]];
+  if (
+    !isInteger(league) ||
+    ![500, 1500, 2500, 10_000].includes(league) ||
+    typeof leagueId !== 'string' ||
+    leagueId.length === 0 ||
+    leagueId.length > 100 ||
+    !Array.isArray(player) ||
+    !Array.isArray(opponent) ||
+    player.length < 1 ||
+    player.length > 3 ||
+    opponent.length < 1 ||
+    opponent.length > 3 ||
+    !isStrategy(playerStrategy) ||
+    !isStrategy(opponentStrategy)
+  ) {
+    return undefined;
+  }
+  const playerTeam = player.map(expandPokemon);
+  const opponentTeam = opponent.map(expandPokemon);
+  if (playerTeam.some((pokemon) => !pokemon) || opponentTeam.some((pokemon) => !pokemon)) {
+    return undefined;
+  }
+  return {
+    league,
+    leagueId,
+    playerTeam: playerTeam as BattleSeedPokemon[],
+    opponentTeam: opponentTeam as BattleSeedPokemon[],
+    playerStrategy,
+    opponentStrategy,
+  };
 };
 
 export const decodeBattleSeed = (seed: string): BattleSeedState | undefined => {
   try {
-    if (!/^\d+$/.test(seed) || seed.length === 0 || seed.length > maxSeedDigits) {
-      return undefined;
-    }
-    const envelope = decimalToBytes(seed);
-    if (envelope.length <= 5 || !supportedSeedVersions.includes(envelope[0])) {
-      return undefined;
-    }
-    const expectedChecksum = new DataView(envelope.buffer, envelope.byteOffset, envelope.byteLength).getUint32(1);
-    const payload = envelope.slice(5);
-    if (checksum(payload) !== expectedChecksum) {
-      return undefined;
-    }
-    const compact: unknown = JSON.parse(decoder.decode(payload));
-    if (!Array.isArray(compact) || (compact.length !== 7 && compact.length !== 11)) {
-      return undefined;
-    }
-    const version = compact[0];
-    if (!isInteger(version) || version !== envelope[0] || !supportedSeedVersions.includes(version)) {
-      return undefined;
-    }
-    const [league, leagueId, player, opponent, playerStrategy, opponentStrategy] =
-      version === 1
-        ? [compact[1], compact[2], compact[7], compact[8], compact[9], compact[10]]
-        : [compact[1], compact[2], compact[3], compact[4], compact[5], compact[6]];
-    if (
-      !isInteger(league) ||
-      ![500, 1500, 2500, 10_000].includes(league) ||
-      typeof leagueId !== 'string' ||
-      leagueId.length === 0 ||
-      leagueId.length > 100 ||
-      !Array.isArray(player) ||
-      !Array.isArray(opponent) ||
-      player.length < 1 ||
-      player.length > 3 ||
-      opponent.length < 1 ||
-      opponent.length > 3 ||
-      !isStrategy(playerStrategy) ||
-      !isStrategy(opponentStrategy)
-    ) {
-      return undefined;
-    }
-    const playerTeam = player.map(expandPokemon);
-    const opponentTeam = opponent.map(expandPokemon);
-    if (playerTeam.some((pokemon) => !pokemon) || opponentTeam.some((pokemon) => !pokemon)) {
-      return undefined;
-    }
-    return {
-      league,
-      leagueId,
-      playerTeam: playerTeam as BattleSeedPokemon[],
-      opponentTeam: opponentTeam as BattleSeedPokemon[],
-      playerStrategy,
-      opponentStrategy,
-    };
+    const envelope = decodeSeedEnvelope(seed, compactBattlePrefix, seedVersion, supportedSeedVersions);
+    return envelope ? expandBattle(unpackSeed(envelope), envelope[0]) : undefined;
   } catch {
     return undefined;
   }
 };
 
-export const encodeBattleTimelineSeed = (state: BattleTimelineSeedState) => {
-  const compact = [
-    timelineSeedVersion,
-    encodeBattleSeed(state.battle),
-    state.randomSeed,
-    state.showTap ? 1 : 0,
-    state.timelineType,
-    state.duration,
-    state.volume,
-    state.progress,
-  ];
-  const payload = encoder.encode(JSON.stringify(compact));
-  const envelope = new Uint8Array(payload.length + 5);
-  envelope[0] = timelineSeedVersion;
-  new DataView(envelope.buffer).setUint32(1, checksum(payload));
-  envelope.set(payload, 5);
-  return bytesToDecimal(envelope);
-};
+const compactTimeline = (state: BattleTimelineSeedState, version: number, battle: string | CompactSeed) => [
+  version,
+  battle,
+  state.randomSeed,
+  state.showTap ? 1 : 0,
+  state.timelineType,
+  state.duration,
+  state.volume,
+  state.progress,
+];
+
+export const encodeLegacyBattleTimelineSeed = (state: BattleTimelineSeedState) =>
+  bytesToDecimal(
+    packSeed(
+      legacyTimelineSeedVersion,
+      compactTimeline(state, legacyTimelineSeedVersion, encodeLegacyBattleSeed(state.battle))
+    )
+  );
+
+export const encodeBattleTimelineSeed = (state: BattleTimelineSeedState) =>
+  encodeCompactSeed(
+    compactTimelinePrefix,
+    packSeed(timelineSeedVersion, compactTimeline(state, timelineSeedVersion, compactBattle(state.battle)))
+  );
 
 export const decodeBattleTimelineSeed = (seed: string): BattleTimelineSeedState | undefined => {
   try {
-    if (!/^\d+$/.test(seed) || seed.length === 0 || seed.length > maxSeedDigits) {
+    const envelope = decodeSeedEnvelope(seed, compactTimelinePrefix, timelineSeedVersion, [legacyTimelineSeedVersion]);
+    if (!envelope) {
       return undefined;
     }
-    const envelope = decimalToBytes(seed);
-    if (envelope.length <= 5 || envelope[0] !== timelineSeedVersion) {
-      return undefined;
-    }
-    const expectedChecksum = new DataView(envelope.buffer, envelope.byteOffset, envelope.byteLength).getUint32(1);
-    const payload = envelope.slice(5);
-    if (checksum(payload) !== expectedChecksum) {
-      return undefined;
-    }
-    const compact: unknown = JSON.parse(decoder.decode(payload));
+    const compact = unpackSeed(envelope);
     if (!Array.isArray(compact) || compact.length !== 8) {
       return undefined;
     }
     const [version, battleSeed, randomSeed, showTap, timelineType, duration, volume, progress] = compact;
     if (
-      version !== timelineSeedVersion ||
-      typeof battleSeed !== 'string' ||
-      !Number.isInteger(randomSeed) ||
+      version !== envelope[0] ||
+      !isInteger(randomSeed) ||
       randomSeed < 0 ||
       randomSeed > 0xffffffff ||
       (showTap !== 0 && showTap !== 1) ||
       (timelineType !== 0 && timelineType !== 1) ||
       !isFiniteNumber(duration) ||
       ![0.5, 1, 2, 5, 10].includes(duration) ||
-      !isFiniteNumber(volume) ||
-      volume < 0 ||
-      volume > 1 ||
-      !isFiniteNumber(progress) ||
-      progress < 0 ||
-      progress > 1
+      !isNumberBetween(volume, 0, 1) ||
+      !isNumberBetween(progress, 0, 1)
     ) {
       return undefined;
     }
-    const battle = decodeBattleSeed(battleSeed);
-    if (!battle) {
-      return undefined;
-    }
-    return {
-      battle,
-      randomSeed,
-      showTap: showTap === 1,
-      timelineType,
-      duration,
-      volume,
-      progress,
-    };
+    const battle =
+      version === legacyTimelineSeedVersion
+        ? typeof battleSeed === 'string' && decodeBattleSeed(battleSeed)
+        : expandBattle(battleSeed, seedVersion);
+    return battle
+      ? { battle, randomSeed, showTap: showTap === 1, timelineType, duration, volume, progress }
+      : undefined;
   } catch {
     return undefined;
   }

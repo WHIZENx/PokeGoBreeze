@@ -211,6 +211,10 @@ const checks = [
   ['Vercel preview PvP detail fallback', hasVercelPvpDetailFallback(vercelPreviewConfig)],
   ['Vercel production Pokémon detail fallback', hasVercelPokemonDetailFallback(vercelConfig)],
   ['Vercel preview Pokémon detail fallback', hasVercelPokemonDetailFallback(vercelPreviewConfig)],
+  ...[vercelConfig, vercelPreviewConfig].map((config) => [
+    'Vercel short replay SPA fallback',
+    config.rewrites?.some((rewrite) => rewrite.source === '/r/:id' && rewrite.destination === '/'),
+  ]),
   [
     'Firebase asset cache',
     firebaseConfig.hosting.every((target) =>

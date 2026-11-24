@@ -109,6 +109,7 @@ if (interactive) {
   routes.splice(routes.indexOf('/game-master-updates') + 1, 0, '/game-master-updates/' + encodeURIComponent(patchSlug));
   routes.splice(routes.indexOf('/pvp/battle/1500'), 0, '/pvp/battle');
   routes.splice(routes.indexOf('/pvp/battle/1500') + 1, 0, '/pvp/battle/1500/replay?seed=' + seed);
+  routes.splice(routes.indexOf('/pvp/battle/1500') + 1, 0, '/r/invalid');
 
   const app = await readFile(new URL('../../src/app-routes.tsx', import.meta.url), 'utf8');
   const patterns = [...app.matchAll(/(?:staticPage|page)\(\s*'([^']+)'/g)].map(([, path]) => path);

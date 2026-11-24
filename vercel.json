@@ -23,6 +23,10 @@
     {
       "source": "/pvp/:cp/:serie/:pokemon",
       "destination": "/"
+    },
+    {
+      "source": "/r/:id",
+      "destination": "/"
     }
   ]
 }

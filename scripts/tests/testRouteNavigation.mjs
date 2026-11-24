@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 
 const appSource = await readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8');
 const routesSource = await readFile(new URL('../../src/app-routes.tsx', import.meta.url), 'utf8');
+assert.match(routesSource, /page\(\s*'\/r\/:id',\s*\(\) => import\('\.\/pages\/PVP\/Battle\/ShortReplay'\)/);
 const detailRoutesSource = await readFile(
   new URL('../../src/services/detail-route.service.ts', import.meta.url),
   'utf8'

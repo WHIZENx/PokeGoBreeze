@@ -49,7 +49,7 @@ export const getProcessedDataSectionsForRoute = (pathname: string): ProcessedDat
   if (pathname.startsWith('/pvp/teams/')) {
     return pvpDetails;
   }
-  if (pathname.startsWith('/pvp/battle')) {
+  if (pathname.startsWith('/pvp/battle') || pathname.startsWith('/r/')) {
     return ['pokemons', 'combats', 'assets', 'cpm'];
   }
   if (pathname.startsWith('/pvp/')) {

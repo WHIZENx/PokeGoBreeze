@@ -298,6 +298,7 @@ League team-performance data with top performers, team combinations, move sets, 
 
 #### **PVP Battle Simulator** (`/pvp/battle`, `/pvp/battle/:cp`, `/pvp/battle/:cp/replay`)
 Compares two Pokémon using selected league, IV, move, and shield settings, then presents the API simulation as an animated battle timeline. Replay routes restore a serialized battle for deterministic playback.
+Share Battle generates a compact setup link. Share Timeline and PNG reports use a short `/r/` replay URL when replay storage is available. Older links still work.
 
 #### **PVP Pokémon Analysis** (`/pvp/:cp/:serie/:pokemon`)
 League-specific Pokémon analysis with scores, recommended moves, calculated stats, and best matchup/counter lists.
