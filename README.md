@@ -116,6 +116,7 @@ The versions below reflect the currently committed `package-lock.json`.
   - Pokémon Details renders its previous and next controls with the destination and preloads images for nearby navigation targets
   - Pokémon Details and Stats Ranking use shared loading skeletons and keep the last rendered metadata table and label-column widths until the new data is ready
   - Pokémon stat bars retain their previous values during loading and animate to the next values when ready
+  - The shared Pokémon selector shows initial loading placeholders in the search list and details panels. The form row uses the same skeleton cards as Pokémon Details. The search list remains usable while a selected Pokémon's details load.
   - PvP Detail navigation prepares its page module and Pokémon response before switching views, avoiding an empty detail layout between rankings or matchup selections
   - API requests use debouncing, cancellation, stale-response guards, and request deduplication where applicable
   - Pages request and cache only their required processed-data sections

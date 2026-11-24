@@ -1,5 +1,5 @@
 import { getApiErrorMessage } from '../../services/api-error';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState, type ReactNode } from 'react';
 import './FormSelect.scss';
 import '../Info/PokemonDetailLayout.scss';
 import APIService from '../../services/api.service';
@@ -33,11 +33,11 @@ import { IFormSelectComponent } from '../models/component.model';
 import { PokemonType, TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
-import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
 import useSearch from '../../composables/useSearch';
 import usePokemon from '../../composables/usePokemon';
-import ButtonGroupForm from '../Commons/Buttons/ButtonGroupForm';
+import ButtonGroupForm, { FormOptionSkeletonRow } from '../Commons/Buttons/ButtonGroupForm';
+import { IButtonGroupFormComponent } from '../Commons/models/component.model';
 import { useSnackbar } from '../../contexts/snackbar.context';
 import {
   isImagePreloaded,
@@ -48,6 +48,84 @@ import {
 import { deduplicatePokemonFormSelections, pokemonGoFormIdentityKey } from '../../utils/pokemon-form-identity';
 import { isCanonicalSpeciesDefaultForm } from '../../utils/pokemon-detail-form';
 import { buildPokemonDetailProfileImagePresentation } from '../../utils/pokemon-detail-profile-images';
+
+interface PokemonSelectorDetailsProps {
+  previous?: ReactNode;
+  next?: ReactNode;
+  profile?: ReactNode;
+  types?: ReactNode;
+  name?: ReactNode;
+  profileModifier?: string;
+  isProfileLoading?: boolean;
+  profileSkeletonTestId?: string;
+  forms?: Pick<IButtonGroupFormComponent, 'isLoaded' | 'forms' | 'id' | 'defaultId' | 'changeForm'>;
+}
+
+export const PokemonSelectorDetails = ({
+  previous,
+  next,
+  profile,
+  types,
+  name,
+  profileModifier = '',
+  isProfileLoading = true,
+  profileSkeletonTestId = 'tool-pokemon-profile-skeleton',
+  forms,
+}: PokemonSelectorDetailsProps) => (
+  <div className="tw-mx-auto tw-w-form tw-max-w-full">
+    <div className="tw-flex tw-items-start tw-justify-center">
+      <div className="tw-h-16 tw-w-16 tw-min-w-0">{previous}</div>
+      <span
+        aria-busy={isProfileLoading}
+        className={combineClasses(
+          'tw-inline-flex tw-h-pokemon-profile tw-w-pokemon-profile tw-shrink-0 tw-items-center tw-justify-center pokemon-profile-aura',
+          profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
+        )}
+        data-profile-modifier={profileModifier}
+      >
+        {profile ?? (
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            className="!tw-h-form-preview !tw-w-form-preview"
+            data-skeleton-surface="pokemon-image"
+            data-testid={profileSkeletonTestId}
+          />
+        )}
+      </span>
+      <div className="tw-h-16 tw-w-16 tw-min-w-0">{next}</div>
+    </div>
+    <div className="tw-mt-2 tw-h-16">
+      {types ?? (
+        <div className="tw-mt-2" aria-hidden="true">
+          <div className="type-list tw-inline-flex tw-flex-wrap tw-items-center">
+            {[0, 1].map((index) => (
+              <div key={index}>
+                <Skeleton variant="circular" animation="wave" className="!tw-h-9 !tw-w-9" />
+                <span className="caption">
+                  <Skeleton variant="text" animation="wave" className="tw-mx-auto !tw-w-9" />
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+    <h4>
+      <b>{name ?? <Skeleton variant="text" animation="wave" className="tw-mx-auto !tw-w-40" />}</b>
+    </h4>
+    <ButtonGroupForm
+      className="tw-my-1 tw-w-full"
+      height={180}
+      isLoaded={forms?.isLoaded ?? false}
+      forms={forms?.forms ?? []}
+      id={forms?.id}
+      defaultId={forms?.defaultId}
+      changeForm={(form) => forms?.changeForm(form)}
+      loading={<FormOptionSkeletonRow />}
+    />
+  </div>
+);
 
 const pokemonGoAssetSprites = (asset: PokemonGoFormCatalogEntry['asset']) => {
   const sprites = new PokemonSprite();
@@ -421,93 +499,81 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   return (
     <Fragment>
-      <div className="tw-inline-block tw-w-16 tw-h-16">
-        {dataStorePokemon?.prev && (
-          <div className="tw-cursor-pointer" onClick={() => props.onSetPrev?.()}>
-            <div>
-              <img
-                height={64}
-                alt="Image Pokemon"
-                src={APIService.getPokeOfficialArtwork(dataStorePokemon.prev.id)}
-                onLoad={(event) => markImageAsPreloaded(event.currentTarget.currentSrc || event.currentTarget.src)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon.prev?.id);
-                }}
-              />
+      <PokemonSelectorDetails
+        previous={
+          dataStorePokemon?.prev && (
+            <div className="tw-cursor-pointer" onClick={() => props.onSetPrev?.()}>
+              <div>
+                <img
+                  height={64}
+                  alt="Image Pokemon"
+                  src={APIService.getPokeOfficialArtwork(dataStorePokemon.prev.id)}
+                  onLoad={(event) => markImageAsPreloaded(event.currentTarget.currentSrc || event.currentTarget.src)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon.prev?.id);
+                  }}
+                />
+              </div>
+              <span>
+                <b>
+                  <span className="text-navigator">{'<'}</span> <span>#{dataStorePokemon.prev.id}</span>
+                </b>
+              </span>
             </div>
-            <span>
-              <b>
-                <span className="text-navigator">{'<'}</span> <span>#{dataStorePokemon.prev.id}</span>
-              </b>
-            </span>
-          </div>
-        )}
-      </div>
-      <span
-        aria-busy={showSelectedImageSkeleton}
-        className={combineClasses(
-          'tw-inline-flex tw-h-[216px] tw-w-[216px] tw-shrink-0 tw-align-middle tw-items-center tw-justify-center pokemon-profile-aura',
-          profileModifier ? `pokemon-profile-aura--${profileModifier}` : ''
-        )}
-        data-profile-modifier={profileModifier}
-      >
-        {showSelectedImageSkeleton ? (
-          <Skeleton
-            variant="rounded"
-            animation="wave"
-            className="!tw-h-form-preview !tw-w-form-preview"
-            data-skeleton-surface="pokemon-image"
-            data-testid="selected-pokemon-image-skeleton"
-          />
-        ) : (
-          <img
-            className="tw-h-form-preview tw-w-form-preview tw-object-contain tw-p-2"
-            alt="Image Pokemon"
-            src={displayedSelectedImage}
-          />
-        )}
-      </span>
-      <div className="tw-inline-block tw-w-16 tw-h-16">
-        {dataStorePokemon?.next && (
-          <div className="tw-cursor-pointer" onClick={() => props.onSetNext?.()}>
-            <div>
-              <img
-                height={64}
-                alt="Image Pokemon"
-                src={APIService.getPokeOfficialArtwork(dataStorePokemon.next.id)}
-                onLoad={(event) => markImageAsPreloaded(event.currentTarget.currentSrc || event.currentTarget.src)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon.next?.id);
-                }}
-              />
+          )
+        }
+        next={
+          dataStorePokemon?.next && (
+            <div className="tw-cursor-pointer" onClick={() => props.onSetNext?.()}>
+              <div>
+                <img
+                  height={64}
+                  alt="Image Pokemon"
+                  src={APIService.getPokeOfficialArtwork(dataStorePokemon.next.id)}
+                  onLoad={(event) => markImageAsPreloaded(event.currentTarget.currentSrc || event.currentTarget.src)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon.next?.id);
+                  }}
+                />
+              </div>
+              <span>
+                <b>
+                  <span>#{dataStorePokemon.next.id}</span> <span className="text-navigator">{'>'}</span>
+                </b>
+              </span>
             </div>
-            <span>
-              <b>
-                <span>#{dataStorePokemon.next.id}</span> <span className="text-navigator">{'>'}</span>
-              </b>
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="tw-mt-2 tw-h-16">{currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}</div>
-      <h4>
-        <b>
-          {dataStorePokemon?.current?.id && <>{`#${dataStorePokemon.current.id} `}</>}
-          {currentForm ? splitAndCapitalize(convertSexName(currentForm.form.name), '-', ' ') : props.name}
-        </b>
-      </h4>
-      <ButtonGroupForm
-        className="tw-mx-auto tw-my-1"
-        width={350}
-        height={180}
-        isLoaded={toNumber(currentForm?.defaultId) > 0 && isNotEmpty(pokeData) && isNotEmpty(formList)}
-        forms={formList}
-        id={currentForm?.form.id}
-        defaultId={currentForm?.defaultId}
-        changeForm={changeForm}
-        loading={<LoadGroup isShow isVertical isHideAttr size={40} />}
+          )
+        }
+        profile={
+          showSelectedImageSkeleton ? undefined : (
+            <img
+              className="tw-h-form-preview tw-w-form-preview tw-object-contain tw-p-2"
+              alt="Image Pokemon"
+              src={displayedSelectedImage}
+            />
+          )
+        }
+        profileModifier={profileModifier}
+        isProfileLoading={showSelectedImageSkeleton}
+        profileSkeletonTestId="selected-pokemon-image-skeleton"
+        types={currentForm?.defaultId ? <TypeInfo arr={currentForm.form.types} /> : undefined}
+        name={
+          currentForm || props.name || dataStorePokemon?.current?.id ? (
+            <>
+              {dataStorePokemon?.current?.id && <>{`#${dataStorePokemon.current.id} `}</>}
+              {currentForm ? splitAndCapitalize(convertSexName(currentForm.form.name), '-', ' ') : props.name}
+            </>
+          ) : undefined
+        }
+        forms={{
+          isLoaded: toNumber(currentForm?.defaultId) > 0 && isNotEmpty(pokeData) && isNotEmpty(formList),
+          forms: formList,
+          id: currentForm?.form.id,
+          defaultId: currentForm?.defaultId,
+          changeForm,
+        }}
       />
       {!props.isHide && (
         <div className="tw-flex tw-justify-center tw-text-center">

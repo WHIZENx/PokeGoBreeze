@@ -62,14 +62,21 @@ assert.equal(shouldPreventScrollChaining({ scrollTop: 2000, clientHeight: 570, s
 assert.equal(shouldPreventScrollChaining({ scrollTop: 4430, clientHeight: 570, scrollHeight: 5000 }, 1), true);
 assert.equal(shouldPreventScrollChaining({ scrollTop: 0, clientHeight: 570, scrollHeight: 570 }, 1), true);
 
-const [pokedexSource, pokemonSearchSource, pokemonSelectSource, toolPokemonSearchSource, customStyleSource] =
-  await Promise.all([
-    readFile(new URL('../../src/pages/Pokedex/Pokedex.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/pages/Search/Pokemon/Search.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Commons/Selects/SelectCardPokemon.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/components/Find/Find.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../../src/assets/styles/custom.scss', import.meta.url), 'utf8'),
-  ]);
+const [
+  pokedexSource,
+  pokemonSearchSource,
+  pokemonSelectSource,
+  toolPokemonSearchSource,
+  customStyleSource,
+  formSelectSource,
+] = await Promise.all([
+  readFile(new URL('../../src/pages/Pokedex/Pokedex.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/pages/Search/Pokemon/Search.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Commons/Selects/SelectCardPokemon.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Find/Find.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/assets/styles/custom.scss', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/components/Find/FormSelect.tsx', import.meta.url), 'utf8'),
+]);
 assert.match(pokedexSource, /Pokémon types \(up to 2\)/);
 assert.match(pokedexSource, /<div className="head-types">Filters<\/div>/);
 assert.match(pokedexSource, /label="Exact match"/);
@@ -98,7 +105,22 @@ assert.match(pokemonSelectSource, /event\.key === 'ArrowUp' \|\| event\.key === 
 assert.match(toolPokemonSearchSource, /onKeyDown=\{handlePokemonKeyDown\}/);
 assert.match(toolPokemonSearchSource, /event\.key === 'Enter'/);
 assert.match(toolPokemonSearchSource, /event\.key !== 'ArrowUp' && event\.key !== 'ArrowDown'/);
-assert.match(toolPokemonSearchSource, /'aria-activedescendant': toolPokemonOptionId\(instanceId, activePokemonId\)/);
+assert.match(
+  toolPokemonSearchSource,
+  /'aria-activedescendant': isPokemonListLoading \? undefined : toolPokemonOptionId\(instanceId, activePokemonId\)/
+);
+assert.match(
+  toolPokemonSearchSource,
+  /role="listbox"[\s\S]*aria-busy=\{isPokemonListLoading\}[\s\S]*data-testid="tool-pokemon-list-skeleton"/
+);
+assert.match(
+  toolPokemonSearchSource,
+  /data-testid="tool-pokemon-details-skeleton"[^>]*>\s*<PokemonSelectorDetails \/>/,
+  'the initial loading state must use the same details frame as the populated selector'
+);
+assert.match(formSelectSource, /<PokemonSelectorDetails\s+previous=/);
+assert.match(formSelectSource, /loading=\{<FormOptionSkeletonRow \/>\}/, 'reserve a row of form cards while loading');
+assert.doesNotMatch(toolPokemonSearchSource, /tw-h-results-panel|<LoadGroup/);
 assert.doesNotMatch(
   toolPokemonSearchSource,
   /onMouseOver=\{\(\) => setActivePokemonId/,

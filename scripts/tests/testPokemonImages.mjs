@@ -81,7 +81,7 @@ assert.doesNotMatch(
 );
 assert.match(
   formSelect,
-  /showSelectedImageSkeleton\s*\?\s*\([\s\S]*data-testid="selected-pokemon-image-skeleton"/,
+  /showSelectedImageSkeleton\s*\?\s*undefined\s*:\s*\([\s\S]*profileSkeletonTestId="selected-pokemon-image-skeleton"/,
   'FormSelect must show its image skeleton only while the selected image actually loads.'
 );
 assert.match(

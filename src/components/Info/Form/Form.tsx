@@ -30,9 +30,8 @@ import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
 import { Action } from 'history';
 import { useSearch } from '../../../composables/useSearch';
-import ButtonGroupForm from '../../Commons/Buttons/ButtonGroupForm';
+import ButtonGroupForm, { FormOptionSkeletonRow } from '../../Commons/Buttons/ButtonGroupForm';
 import { IPokemonFormModify, IPokemonSprite } from '../../../core/models/API/form.model';
-import { Skeleton } from '@mui/material';
 import Fusion from '../FormChange/Fusion';
 import { PokemonMoves } from '../../../core/models/API/pokemon-bundle.model';
 import { IPokemonQueryRankMove } from '../../../utils/models/pokemon-top-move.model';
@@ -470,22 +469,7 @@ const FormComponent = (
               id={searchingMainForm?.form?.id}
               defaultId={props.defaultId}
               changeForm={changeForm}
-              loading={
-                <div className="slide-container !tw-p-0">
-                  <div className="slide-col !tw-flex !tw-flex-nowrap !tw-m-0 !tw-p-0 tw-gap-x-2">
-                    {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((index) => (
-                      <Skeleton
-                        key={index}
-                        data-skeleton-surface="page"
-                        variant="rectangular"
-                        animation="wave"
-                        height={142}
-                        width={90}
-                      />
-                    ))}
-                  </div>
-                </div>
-              }
+              loading={<FormOptionSkeletonRow />}
             />
           </div>
         </section>

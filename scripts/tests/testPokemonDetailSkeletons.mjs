@@ -523,7 +523,12 @@ assert.match(
 );
 assert.match(
   form,
-  /data-skeleton-surface="page"[\s\S]*variant="rectangular"[\s\S]*height=\{142\}[\s\S]*width=\{90\}/,
+  /loading=\{<FormOptionSkeletonRow \/>\}/,
+  'Form varieties must use the shared row of form skeletons.'
+);
+assert.match(
+  buttonGroupForm,
+  /data-skeleton-surface="page"[\s\S]*variant="rectangular"[\s\S]*tw-w-22\.5 tw-min-h-selection-button tw-shrink-0/,
   'Form varieties placeholders must use the same surface as Sound Pokémon without changing card dimensions.'
 );
 assert.match(
