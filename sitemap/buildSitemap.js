@@ -16,8 +16,10 @@ async function buildSitemaps() {
       fs.writeFileSync(path.join(publicPath, name), contents);
     }
     console.log(`[seo] Wrote ${Object.keys(files).length} sitemap files for ${manifest.routes.length} dynamic routes.`);
-  } catch (error) {
-    console.error('[seo] Sitemap build failed:', error.message);
+  } catch {
+    console.error(
+      '[seo] Sitemap build failed. Check /api/v1/seo-routes on REACT_APP_DATA_API_URL and public directory permissions.'
+    );
     process.exit(1);
   }
 }

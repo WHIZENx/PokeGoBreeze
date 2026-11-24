@@ -136,8 +136,8 @@ async function prerender() {
     console.log(
       `[seo] Prerendered ${routes.length} routes (${isProduction ? 'indexable production' : 'noindex deployment'}).`
     );
-  } catch (error) {
-    console.error('[seo] Prerender failed:', error.message);
+  } catch {
+    console.error('[seo] Prerender failed. Check /api/v1/seo-routes on REACT_APP_DATA_API_URL and the dist directory.');
     process.exit(1);
   }
 }

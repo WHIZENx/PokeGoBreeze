@@ -29,9 +29,9 @@ function loadLocalConfig() {
   }
   try {
     return JSON.parse(fs.readFileSync(localPath, 'utf8'));
-  } catch (e) {
+  } catch {
     // eslint-disable-next-line no-console
-    console.error('❌ Failed to parse config.json:', e.message);
+    console.error('❌ Could not read config.json as JSON. Check the file contents and permissions.');
     process.exit(1);
   }
 }
@@ -110,7 +110,7 @@ async function main() {
     }
 
     // eslint-disable-next-line no-console
-    console.log(`🔍 Fetching Edge Config (mode: ${mode})…`);
+    console.log('🔍 Fetching Edge Config…');
     try {
       data = await fetchEdgeConfig(edgeId, token);
     } catch (error) {
@@ -135,7 +135,7 @@ async function main() {
   env.VITE_CJS_IGNORE_WARNING = 'true';
 
   // eslint-disable-next-line no-console
-  console.log(`✅ REACT_APP_VERSION=${version}`);
+  console.log('✅ Web runtime configuration loaded.');
 
   // ── 5. Spawn the requested command ──────────────────────────────────────────
   const viteBuildMode = mode === 'production' ? 'production' : 'development';
