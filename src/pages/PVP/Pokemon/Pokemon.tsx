@@ -111,7 +111,7 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
             { signal: controller.signal }
           );
       const result = response.data.data;
-      if (requestController.current !== controller) {
+      if (controller.signal.aborted || requestController.current !== controller) {
         return;
       }
       if (!result?.data || !result.name) {
@@ -184,6 +184,7 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
     fetchPokemon();
     return () => {
       requestController.current?.abort();
+      requestController.current = undefined;
       hideSpinner();
     };
   }, [fetchPokemonInfo]);

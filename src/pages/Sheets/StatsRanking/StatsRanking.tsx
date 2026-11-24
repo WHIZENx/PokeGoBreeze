@@ -307,6 +307,9 @@ const StatsRanking = () => {
     setMovesLoading(true);
     APIService.getPokemonBundle(selectedId, { signal: controller.signal })
       .then(({ data }) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         const bundle = {
           moveRankings: data.data.moveRankings ?? [],
           pokemonGoForms: data.data.pokemonGo?.forms ?? [],
@@ -370,7 +373,7 @@ const StatsRanking = () => {
       { signal: controller.signal }
     )
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         if (locate) {
@@ -393,14 +396,14 @@ const StatsRanking = () => {
         }
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setRows([]);
           setTotalRows(0);
           showSnackbar(getApiErrorMessage(error, 'Unable to load Stats Ranking.'), 'error');
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setLoading(false);
         }
       });

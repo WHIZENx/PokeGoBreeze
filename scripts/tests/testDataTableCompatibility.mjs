@@ -211,7 +211,7 @@ assert.match(
   'Retained Counter rows must not accept stale interactions while their replacement is loading.'
 );
 const counterFailureReset =
-  /\.catch\(\(error\) => \{\s*if \(requestId === latestRequestRef\.current && !APIService\.isCancel\(error\)\) \{[^{}]*?setCounterList\(\[\]\);/;
+  /\.catch\(\(error\) => \{\s*if \(!controller\.signal\.aborted && requestId === latestRequestRef\.current && !APIService\.isCancel\(error\)\) \{[^{}]*?setCounterList\(\[\]\);/;
 assert.match(counter, counterFailureReset, 'Only an active request failure may clear stale Counter rows.');
 assert.doesNotMatch(
   counter.replace(counterFailureReset, ''),

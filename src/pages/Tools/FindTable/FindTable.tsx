@@ -198,7 +198,7 @@ const FindTable = () => {
     (error) => showSnackbar(getApiErrorMessage(error, 'Unable to calculate IVs.'), 'error'),
     (result) => {
       const name = splitAndCapitalize(searchingToolCurrentDetails?.fullName ?? '', '_', ' ');
-      showSnackbar(`No IV combination gives ${name} CP ${result.CP}.`, 'error');
+      showSnackbar(`No IV combination gives ${name} CP ${result.CP}.`, 'info');
     }
   );
   const cpTable = useFindTable<IPredictCPModel, IPredictCPCalculate>('level', (error) =>

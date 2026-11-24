@@ -307,7 +307,7 @@ const Move = (props: IMovePage) => {
       { signal: controller.signal }
     )
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         setMove(data.data.move);
@@ -320,7 +320,7 @@ const Move = (props: IMovePage) => {
         setTotalRows(data.meta.total);
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setMove(undefined);
           setTopListFilter([]);
           setTotalRows(0);
@@ -333,7 +333,7 @@ const Move = (props: IMovePage) => {
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setProgress(true);
         }
       });

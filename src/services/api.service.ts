@@ -462,14 +462,17 @@ class APIService {
     return this.getInternalQueryUrl('dps-tdo', params);
   }
 
-  postRaidBattle(payload: RaidBattleRequest) {
-    return this.dataAxios.post<RaidBattleApiResponse>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/raid-battle`, payload);
+  postRaidBattle(payload: RaidBattleRequest, signal?: AbortSignal) {
+    return this.dataAxios.post<RaidBattleApiResponse>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/raid-battle`, payload, {
+      signal,
+    });
   }
 
-  postCalculateStats(payload: CalculateStatsRequest) {
+  postCalculateStats(payload: CalculateStatsRequest, signal?: AbortSignal) {
     return this.dataAxios.post<CalculateStatsApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/calculate-stats`,
-      payload
+      payload,
+      { signal }
     );
   }
 
@@ -481,11 +484,12 @@ class APIService {
     );
   }
 
-  postDamageSimulator(payload: DamageSimulatorRequest) {
+  postDamageSimulator(payload: DamageSimulatorRequest, signal?: AbortSignal) {
     const request = () =>
       this.dataAxios.post<DamageSimulatorApiResponse>(
         `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/damage-simulator`,
-        payload
+        payload,
+        { signal }
       );
     if (payload.mode !== 'stats') {
       return request();
@@ -495,6 +499,12 @@ class APIService {
     if (cached) {
       return cached;
     }
+    if (signal) {
+      return request().then((response) => {
+        this.damageStatsCache.set(cacheKey, Promise.resolve(response));
+        return response;
+      });
+    }
     const pending = request().catch((error) => {
       this.damageStatsCache.delete(cacheKey);
       throw error;
@@ -503,17 +513,19 @@ class APIService {
     return pending;
   }
 
-  postPvpBattleSimulator(payload: PvpBattleSimulatorRequest) {
+  postPvpBattleSimulator(payload: PvpBattleSimulatorRequest, signal?: AbortSignal) {
     return this.dataAxios.post<PvpBattleSimulatorApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp-battle-simulator`,
-      payload
+      payload,
+      { signal }
     );
   }
 
-  postTrainerBattleSimulator(payload: TrainerBattleSimulatorRequest) {
+  postTrainerBattleSimulator(payload: TrainerBattleSimulatorRequest, signal?: AbortSignal) {
     return this.dataAxios.post<TrainerBattleSimulatorApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/trainer-battle-simulator`,
-      payload
+      payload,
+      { signal }
     );
   }
 

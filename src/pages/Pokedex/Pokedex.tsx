@@ -210,7 +210,7 @@ const Pokedex = (props: IStyleSheetData) => {
       { signal: controller.signal }
     )
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         if (!isPokedexApiResponse(data)) {
@@ -221,7 +221,7 @@ const Pokedex = (props: IStyleSheetData) => {
         setListOfPokemon((current) => (page === 1 ? rows : [...current, ...rows]));
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           dispatch(
             SpinnerActions.ShowSpinnerMsg.create({
               message: getApiErrorMessage(error, 'Unable to load the Pokédex.'),
@@ -231,7 +231,7 @@ const Pokedex = (props: IStyleSheetData) => {
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setIsLoading(false);
         }
       });

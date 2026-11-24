@@ -38,10 +38,14 @@ This repository contains the public React web client. Processed game data and ca
 - The web client validates the processed-data schema before accepting a dataset.
 - API failures use the shared error formatter. The Web displays the API's
   readable detail, distinguishes network and timeout failures, and ignores
-  canceled requests. Requests to the PokeGoBreeze API time out after 32 seconds
+  canceled requests. Tables and calculators abort superseded requests and
+  ignore their results. Cancellation is scoped to the result being updated,
+  so independent panels can use the same endpoint at the same time.
+  Requests to the PokeGoBreeze API time out after 32 seconds
   if the client is still waiting. User-triggered calculations show their outcome in
-  the relevant result section, alert, or snackbar. A calculation with no
-  matching result gets a clear message where that distinction matters.
+  the relevant result section, alert, or snackbar. Find IV, Calculate Stats,
+  and Battle League Search show an informational snackbar when a valid
+  calculation finishes without a match.
 - Pokémon Details, Stats Ranking, and Tools selectors use one shared profile-image fallback order: exact canonical form artwork first, then the exact Pokémon GO form asset and species-level fallbacks; GO-only forms never borrow the canonical species-default artwork.
 - Internal data-processing implementation and generated server data are not part of this public repository.
 

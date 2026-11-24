@@ -150,7 +150,8 @@ const CatchChance = () => {
       silverPinap: isSilverPinaps,
       shadow: isShadow,
     });
-    let active = true;
+    const controller = new AbortController();
+    const { signal } = controller;
     APIService.getFetchUrl<{
       data: {
         matrix: DynamicObj<DynamicObj<number>>;
@@ -158,9 +159,9 @@ const CatchChance = () => {
         ringChance: number;
         advanced: { result: number; throwType: ThrowType };
       };
-    }>(url)
+    }>(url, { signal })
       .then(({ data: response }) => {
-        if (!active) {
+        if (signal.aborted) {
           return;
         }
         const selectedBall = balls[ballType];
@@ -183,7 +184,7 @@ const CatchChance = () => {
         }
       })
       .catch((error: unknown) => {
-        if (active) {
+        if (!signal.aborted) {
           setCalculatedCp(0);
           setDataAdv(new DataAdvance());
           setData((current) => (current ? { ...current, result: undefined } : current));
@@ -191,7 +192,7 @@ const CatchChance = () => {
         }
       });
     return () => {
-      active = false;
+      controller.abort();
     };
   }, [
     form?.defaultId,

@@ -107,7 +107,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           { signal: controller.signal }
         )
       ).data;
-      if (requestController.current !== controller) {
+      if (controller.signal.aborted || requestController.current !== controller) {
         return;
       }
       if (!isNotEmpty(file)) {
@@ -187,6 +187,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     fetchPokemon();
     return () => {
       requestController.current?.abort();
+      requestController.current = undefined;
       hideSpinner();
     };
   }, [fetchPokemonRanking]);

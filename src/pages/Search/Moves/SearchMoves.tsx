@@ -152,7 +152,7 @@ const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
       { signal: controller.signal }
     )
       .then((result) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         setData(
@@ -164,13 +164,13 @@ const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
         setTotalRows(result.meta.total);
       })
       .catch((error) => {
-        if (requestId !== latestRequestRef.current || APIService.isCancel(error)) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current || APIService.isCancel(error)) {
           return;
         }
         showSnackbar(getApiErrorMessage(error, 'Unable to load moves.'), 'error');
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setIsLoading(false);
         }
       });

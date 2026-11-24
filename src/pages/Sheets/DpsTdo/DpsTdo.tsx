@@ -564,7 +564,7 @@ const DpsTdo = () => {
       { signal: controller.signal }
     )
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         setDpsTable(data.data);
@@ -572,7 +572,7 @@ const DpsTdo = () => {
         setHasDefenderResults(hasDefender);
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setDpsTable([]);
           setTotalRows(0);
           setHasDefenderResults(false);
@@ -580,7 +580,7 @@ const DpsTdo = () => {
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setIsShowSpinner(false);
         }
       });

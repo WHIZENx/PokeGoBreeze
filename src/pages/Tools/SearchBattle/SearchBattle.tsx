@@ -1,5 +1,6 @@
+import useLatestRequest from '../../../utils/hooks/useLatestRequest';
 import { getApiErrorMessage } from '../../../services/api-error';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
 import { Badge, Box } from '@mui/material';
@@ -67,12 +68,20 @@ const FindBattle = () => {
 
   const [evoChain, setEvoChain] = useState<BattleLeagueApiItem[][]>([]);
   const [bestInLeague, setBestInLeague] = useState<IBattleBaseStats[]>([]);
-  const requestController = useRef<AbortController>();
+  const searchRequest = useLatestRequest(hideSpinner);
+
+  useEffect(() => {
+    if (searchRequest.cancel()) {
+      hideSpinner();
+    }
+  }, [searchRequest, hideSpinner, searchingToolCurrentData?.form, searchCP, searchLevel, ATKIv, DEFIv, STAIv]);
 
   const { showSnackbar } = useSnackbar();
 
   const clearArrStats = useCallback(() => {
-    requestController.current?.abort();
+    if (searchRequest.cancel()) {
+      hideSpinner();
+    }
     setSearchCP('');
     setSearchLevel(undefined);
     setEvoChain([]);
@@ -80,7 +89,7 @@ const FindBattle = () => {
     setATKIv(0);
     setDEFIv(0);
     setSTAIv(0);
-  }, []);
+  }, [searchRequest, hideSpinner]);
 
   const onSearchStatsPoke = useCallback(
     async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -93,9 +102,7 @@ const FindBattle = () => {
       if (!pokemonId) {
         return showSnackbar('Please select a Pokémon before searching Battle League stats', 'error');
       }
-      requestController.current?.abort();
-      const controller = new AbortController();
-      requestController.current = controller;
+      const signal = searchRequest.start();
       showSpinner();
       try {
         const response = await APIService.postBattleLeagueSearch(
@@ -114,28 +121,30 @@ const FindBattle = () => {
               minCp: minCp(),
             },
           },
-          controller.signal
+          signal
         );
+        if (signal.aborted) {
+          return;
+        }
         const result = response.data.data;
         if (!result.possible) {
           setEvoChain([]);
           setBestInLeague([]);
-          showSnackbar(`${name} cannot reach CP ${result.stats.CP} with these IVs.`, 'error');
+          showSnackbar(`${name} cannot reach CP ${result.stats.CP} with these IVs.`, 'info');
           return;
         }
         setEvoChain(result.chains);
         setBestInLeague(result.bestInLeague);
         showSnackbar(`League stats found for ${name} at CP ${result.stats.CP}.`, 'success');
       } catch (error) {
-        if (APIService.isCancel(error)) {
+        if (signal.aborted || APIService.isCancel(error)) {
           return;
         }
         setEvoChain([]);
         setBestInLeague([]);
         showSnackbar(getApiErrorMessage(error, 'Unable to search Battle League stats.'), 'error');
       } finally {
-        if (requestController.current === controller) {
-          requestController.current = undefined;
+        if (searchRequest.finish(signal)) {
           hideSpinner();
         }
       }
@@ -151,14 +160,8 @@ const FindBattle = () => {
       showSnackbar,
       showSpinner,
       hideSpinner,
+      searchRequest,
     ]
-  );
-
-  useEffect(
-    () => () => {
-      requestController.current?.abort();
-    },
-    []
   );
 
   const getTextColorRatio = (value: number | undefined) => {

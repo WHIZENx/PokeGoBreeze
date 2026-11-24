@@ -431,7 +431,7 @@ const Counter = (props: ICounterComponent) => {
       { signal: controller.signal }
     )
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         const rows = data.data.map((row) => new CounterModel(row));
@@ -446,7 +446,7 @@ const Counter = (props: ICounterComponent) => {
         setShowFrame(false);
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           hasResolvedCountersRef.current = false;
           resolvedCounterRequestKeyRef.current = counterRequestKey;
           setCounterList([]);

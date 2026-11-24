@@ -156,7 +156,7 @@ const TeamPVP = (props: IStyleSheetData) => {
           APIService.getTeamFile('analysis', params.serie, cp),
           { signal: controller.signal }
         );
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         if (!file) {
@@ -223,7 +223,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         });
         setRankingData(file);
       } catch (e) {
-        if (requestId !== latestRequestRef.current || APIService.isCancel(e)) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current || APIService.isCancel(e)) {
           return;
         }
         if (getApiError(e).status === 404) {
@@ -235,7 +235,7 @@ const TeamPVP = (props: IStyleSheetData) => {
           });
         }
       } finally {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setIsLoading(false);
           hideSpinner();
         }

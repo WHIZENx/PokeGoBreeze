@@ -102,7 +102,7 @@ const SelectPoke = React.forwardRef<SelectPokeHandle, ISelectPokeComponent>((pro
         controller.signal
       );
 
-      if (topRankController.current !== controller) {
+      if (controller.signal.aborted || topRankController.current !== controller) {
         return;
       }
 
@@ -150,7 +150,7 @@ const SelectPoke = React.forwardRef<SelectPokeHandle, ISelectPokeComponent>((pro
         })
       );
     } catch (error) {
-      if (!APIService.isCancel(error)) {
+      if (!controller.signal.aborted && !APIService.isCancel(error)) {
         showSnackbar(getApiErrorMessage(error, 'Unable to load this Pokémon’s PvP rank.'), 'error');
       }
     } finally {

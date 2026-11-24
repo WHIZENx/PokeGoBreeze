@@ -1,6 +1,7 @@
+import useLatestRequest from '../../../utils/hooks/useLatestRequest';
 import { getApiErrorMessage } from '../../../services/api-error';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
-import React, { Fragment, useCallback, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { capitalize, getKeyWithData, isSpecialFormType, LevelRating } from '../../../utils/utils';
 
@@ -121,6 +122,7 @@ const Damage = () => {
 
   const { showSnackbar } = useSnackbar();
   const { showSpinner, hideSpinner } = useSpinner();
+  const damageRequest = useLatestRequest(hideSpinner);
   const isMaxMove = move?.typeMove === TypeMove.Max;
   const selectedMovePower = isMaxMove
     ? toNumber(getMaxMoveLevelValue(move, maxMoveLevel))
@@ -142,6 +144,9 @@ const Damage = () => {
   );
 
   const clearData = () => {
+    if (damageRequest.cancel()) {
+      hideSpinner();
+    }
     setResult(new PokemonDmgOption());
   };
 
@@ -168,6 +173,24 @@ const Damage = () => {
     }
   };
 
+  useEffect(() => {
+    if (damageRequest.cancel()) {
+      hideSpinner();
+    }
+  }, [
+    damageRequest,
+    hideSpinner,
+    move,
+    battleState,
+    selectedMovePower,
+    calculatedStatType,
+    calculatedStatTypeObj,
+    statLevel,
+    statLevelObj,
+    searchingToolCurrentData?.form,
+    searchingToolObjectData?.form,
+  ]);
+
   const onCalculateDamagePoke = useCallback(
     async (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -186,40 +209,47 @@ const Damage = () => {
         showSnackbar('Please select attacker and defender Pokémon!', 'error');
         return;
       }
+      const signal = damageRequest.start();
       showSpinner();
       try {
-        const response = await APIService.postDamageSimulator({
-          mode: 'damage',
-          attacker: {
-            base: attacker,
-            level: statLevel,
-            pokemonType: calculatedStatType,
-            types: searchingToolCurrentData?.form?.form?.types ?? [],
+        const response = await APIService.postDamageSimulator(
+          {
+            mode: 'damage',
+            attacker: {
+              base: attacker,
+              level: statLevel,
+              pokemonType: calculatedStatType,
+              types: searchingToolCurrentData?.form?.form?.types ?? [],
+            },
+            defender: {
+              base: defender,
+              level: statLevelObj,
+              pokemonType: calculatedStatTypeObj,
+              types: searchingToolObjectData?.form?.form?.types ?? [],
+            },
+            move: {
+              type: getValueOrDefault(String, move.type),
+              power: selectedMovePower,
+              charged: typeMove === TypeMove.Charged,
+              typeMove,
+            },
+            battle: {
+              isWb: battleState.isWeather,
+              isDodge: battleState.isDodge,
+              isTrainer: isMaxMove ? false : battleState.isTrainer,
+              friendshipLevel: enableFriend ? battleState.friendshipLevel : 0,
+              throwLevel: battleState.throwLevel,
+              isMega: searchingToolCurrentData?.form?.form?.pokemonType === PokemonType.Mega,
+            },
+            config: {
+              iv: maxIv(),
+            },
           },
-          defender: {
-            base: defender,
-            level: statLevelObj,
-            pokemonType: calculatedStatTypeObj,
-            types: searchingToolObjectData?.form?.form?.types ?? [],
-          },
-          move: {
-            type: getValueOrDefault(String, move.type),
-            power: selectedMovePower,
-            charged: typeMove === TypeMove.Charged,
-            typeMove,
-          },
-          battle: {
-            isWb: battleState.isWeather,
-            isDodge: battleState.isDodge,
-            isTrainer: isMaxMove ? false : battleState.isTrainer,
-            friendshipLevel: enableFriend ? battleState.friendshipLevel : 0,
-            throwLevel: battleState.throwLevel,
-            isMega: searchingToolCurrentData?.form?.form?.pokemonType === PokemonType.Mega,
-          },
-          config: {
-            iv: maxIv(),
-          },
-        });
+          signal
+        );
+        if (signal.aborted) {
+          return;
+        }
         const data = response.data.data;
         if (data.mode !== 'damage') {
           return;
@@ -241,10 +271,15 @@ const Damage = () => {
           })
         );
       } catch (error) {
-        clearData();
+        if (signal.aborted) {
+          return;
+        }
+        setResult(new PokemonDmgOption());
         showSnackbar(getApiErrorMessage(error, 'Unable to simulate damage.'), 'error');
       } finally {
-        hideSpinner();
+        if (damageRequest.finish(signal)) {
+          hideSpinner();
+        }
       }
     },
     [
@@ -263,6 +298,7 @@ const Damage = () => {
       showSnackbar,
       showSpinner,
       hideSpinner,
+      damageRequest,
     ]
   );
 

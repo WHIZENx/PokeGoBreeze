@@ -1,3 +1,4 @@
+import useLatestRequest from '../../../utils/hooks/useLatestRequest';
 import { getApiError, getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../PVP.scss';
@@ -276,6 +277,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
   const { findPokemonByPvpokeSpeciesId, findPokemonBySlug } = usePokemon();
   const { findAssetForm } = useAssets();
   const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
+  const simulationRequest = useLatestRequest(hideSpinner);
   const { isMobile } = useDevice();
   const params = useParams();
   const [searchParams] = useSearchParams();
@@ -641,25 +643,32 @@ const Battle = ({ replayMode = false }: BattleProps) => {
     resetTimeline();
     const randomSeed = requestedRandomSeed ?? createBattleRandomSeed();
     setBattleRandomSeed(randomSeed);
+    const signal = simulationRequest.start();
     showSpinner();
     try {
-      const response = await APIService.postPvpBattleSimulator({
-        pokemon: createBattleRequest(pokemonCurr),
-        opponent: createBattleRequest(pokemonObj),
-        team: playerTeam.map(createBattleRequest),
-        opponentTeam: opponentTeam.map(createBattleRequest),
-        config: {
-          battleDelay: battleDelay(),
-          defaultSize: defaultSize(),
-          defaultPlusSize: defaultPlusSize(),
-          defaultAmount: defaultAmount(),
-          minLevel: minLevel(),
-          randomSeed,
-          leagueId: selectedLeagueId,
-          playerStrategy: strategyForTeam(playerStrategy, playerTeam.length),
-          opponentStrategy: strategyForTeam(opponentStrategy, opponentTeam.length),
+      const response = await APIService.postPvpBattleSimulator(
+        {
+          pokemon: createBattleRequest(pokemonCurr),
+          opponent: createBattleRequest(pokemonObj),
+          team: playerTeam.map(createBattleRequest),
+          opponentTeam: opponentTeam.map(createBattleRequest),
+          config: {
+            battleDelay: battleDelay(),
+            defaultSize: defaultSize(),
+            defaultPlusSize: defaultPlusSize(),
+            defaultAmount: defaultAmount(),
+            minLevel: minLevel(),
+            randomSeed,
+            leagueId: selectedLeagueId,
+            playerStrategy: strategyForTeam(playerStrategy, playerTeam.length),
+            opponentStrategy: strategyForTeam(opponentStrategy, opponentTeam.length),
+          },
         },
-      });
+        signal
+      );
+      if (signal.aborted) {
+        return;
+      }
       setPokemonCurr(
         PokemonBattle.create({
           ...pokemonCurr,
@@ -685,13 +694,21 @@ const Battle = ({ replayMode = false }: BattleProps) => {
       }
       focusBattleTimeline();
     } catch (error) {
+      if (signal.aborted) {
+        return;
+      }
       showSnackbar(getApiErrorMessage(error, 'Unable to simulate this PvP battle.'), 'error');
     } finally {
-      hideSpinner();
+      if (simulationRequest.finish(signal)) {
+        hideSpinner();
+      }
     }
   };
 
   const clearBattleResult = () => {
+    if (simulationRequest.cancel()) {
+      hideSpinner();
+    }
     arrBound.current = [];
     arrStore.current = [];
     resetTimeline();
@@ -769,11 +786,15 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         restoredSeedRef.current = '';
         replayStartedRef.current = '';
         replayPositionRef.current = '';
+        simulationRequest.cancel();
         clearData();
         const { data: file } = await APIService.getFetchUrl<RankingsPVP[]>(
           APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall)),
           { signal }
         );
+        if (signal.aborted) {
+          return;
+        }
         if (!isNotEmpty(file)) {
           setIsFound(false);
           return;
@@ -832,7 +853,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         setData(result);
         hideSpinner();
       } catch (e) {
-        if (APIService.isCancel(e)) {
+        if (signal.aborted || APIService.isCancel(e)) {
           return;
         }
         if (getApiError(e).status === 404) {
@@ -845,7 +866,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         }
       }
     },
-    [findPokemonByPvpokeSpeciesId, findPokemonBySlug, replayMode]
+    [findPokemonByPvpokeSpeciesId, findPokemonBySlug, replayMode, simulationRequest]
   );
 
   useEffect(() => {

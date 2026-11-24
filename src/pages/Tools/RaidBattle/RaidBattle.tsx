@@ -1,3 +1,4 @@
+import useLatestRequest from '../../../utils/hooks/useLatestRequest';
 import { getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, useEffect, useState } from 'react';
 import SelectMove from '../../../components/Commons/Selects/SelectMove';
@@ -122,6 +123,7 @@ const RaidBattle = () => {
   const { getFilteredPokemons } = usePokemon();
   const { getAssetNameById } = useAssets();
   const { showSpinner, hideSpinner } = useSpinner();
+  const raidRequest = useLatestRequest(hideSpinner);
   const { retrieveMoves } = usePokemon();
   const { searchingToolCurrentData } = useSearch();
   const { optionsData } = useDataStore();
@@ -299,6 +301,9 @@ const RaidBattle = () => {
 
   const clearDataBoss = (isClear = true) => {
     if (isClear) {
+      if (raidRequest.cancel()) {
+        hideSpinner();
+      }
       setResult([]);
       setResultRaid(undefined);
       setResultRaidOutcome(undefined);
@@ -345,7 +350,7 @@ const RaidBattle = () => {
     }
   };
 
-  const calculateBossBattle = async (filter = used, hideWhenDone = true) => {
+  const calculateBossBattle = async (filter: typeof used, signal: AbortSignal) => {
     const sort =
       filter.sortBy === SortType.TDO
         ? 'tdo'
@@ -388,8 +393,12 @@ const RaidBattle = () => {
           bossBoost: options.isWeatherBoss,
           counterBoost: options.isWeatherCounter,
           timeAllow,
-        })
+        }),
+        { signal }
       );
+      if (signal.aborted) {
+        return;
+      }
       const summary = response.data.meta.raidSummary;
       if (!summary?.dps || !summary.tdo || !summary.hp || !summary.suggestedPlayers) {
         throw new Error('invalid_raid_summary');
@@ -414,10 +423,8 @@ const RaidBattle = () => {
       });
       setDisableSearch(true);
     } catch (error) {
-      showSnackbar(getApiErrorMessage(error, 'Unable to calculate the raid estimate.'), 'error');
-    } finally {
-      if (hideWhenDone) {
-        hideSpinner();
+      if (!signal.aborted) {
+        showSnackbar(getApiErrorMessage(error, 'Unable to calculate the raid estimate.'), 'error');
       }
     }
   };
@@ -487,20 +494,30 @@ const RaidBattle = () => {
       })),
     };
 
+    const signal = raidRequest.start();
     showSpinner();
     try {
       if (!resultBoss) {
-        clearDataBoss(false);
-        await calculateBossBattle(used, false);
+        await calculateBossBattle(used, signal);
       }
-      const response = await APIService.postRaidBattle(payload);
+      if (signal.aborted) {
+        return;
+      }
+      const response = await APIService.postRaidBattle(payload, signal);
+      if (signal.aborted) {
+        return;
+      }
       setResultRaid(response.data.data);
       setResultRaidOutcome(response.data.meta.outcome);
       showSnackbar('Raid battle calculated.', 'success');
     } catch (error) {
-      showSnackbar(getApiErrorMessage(error, 'Unable to simulate the raid battle.'), 'error');
+      if (!signal.aborted) {
+        showSnackbar(getApiErrorMessage(error, 'Unable to simulate the raid battle.'), 'error');
+      }
     } finally {
-      hideSpinner();
+      if (raidRequest.finish(signal)) {
+        hideSpinner();
+      }
     }
   };
 
@@ -527,9 +544,16 @@ const RaidBattle = () => {
   }, [options.enableTimeAllow, options.isReleased, options.isWeatherBoss, options.isWeatherCounter, timeAllow]);
 
   const handleCalculate = async (isClear = true, filter = used) => {
-    showSpinner();
     clearDataBoss(isClear);
-    await calculateBossBattle(filter);
+    const signal = raidRequest.start();
+    showSpinner();
+    try {
+      await calculateBossBattle(filter, signal);
+    } finally {
+      if (raidRequest.finish(signal)) {
+        hideSpinner();
+      }
+    }
   };
 
   const calculateHpBar = (bossHp: number, tdo: number, sumDps: number) => {

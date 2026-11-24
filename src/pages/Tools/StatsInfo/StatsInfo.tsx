@@ -185,19 +185,19 @@ const StatsInfo = () => {
       signal: controller.signal,
     })
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         setStatsBattle(data.data);
         setTotalRows(data.meta.total);
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           showSnackbar(getApiErrorMessage(error, 'Unable to load IV rankings.'), 'error');
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setIsLoading(false);
         }
       });

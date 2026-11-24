@@ -33,28 +33,32 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
       setCalculatedStats([]);
       return;
     }
-    let active = true;
-    APIService.postDamageSimulator({
-      mode: 'stats',
-      base: { atk: props.statATK, def: props.statDEF, sta: props.statSTA },
-      pokemonType: calculatedPokemonType,
-      iv: maxIv(),
-      pvp: props.pvp,
-      config: { minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
-    })
+    const controller = new AbortController();
+    const { signal } = controller;
+    APIService.postDamageSimulator(
+      {
+        mode: 'stats',
+        base: { atk: props.statATK, def: props.statDEF, sta: props.statSTA },
+        pokemonType: calculatedPokemonType,
+        iv: maxIv(),
+        pvp: props.pvp,
+        config: { minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
+      },
+      signal
+    )
       .then((response) => {
-        if (active && response.data.data.mode === 'stats') {
+        if (!signal.aborted && response.data.data.mode === 'stats') {
           setCalculatedStats(response.data.data.levels);
         }
       })
       .catch((error: unknown) => {
-        if (active) {
+        if (!signal.aborted) {
           setCalculatedStats([]);
           showSnackbar(getApiErrorMessage(error, 'Unable to calculate damage stats.'), 'error');
         }
       });
     return () => {
-      active = false;
+      controller.abort();
     };
   }, [props.statATK, props.statDEF, props.statSTA, props.pvp, calculatedPokemonType, showSnackbar]);
 

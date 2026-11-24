@@ -1,3 +1,4 @@
+import useLatestRequest from '../../utils/hooks/useLatestRequest';
 import { getApiError, getApiErrorMessage } from '../../services/api-error';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Box, Card, CardContent, Chip, LinearProgress, Tab, Tabs, Typography } from '@mui/material';
@@ -159,6 +160,14 @@ const TrainerLab = () => {
     setError('');
   };
 
+  const simulationRequest = useLatestRequest();
+
+  useEffect(() => {
+    if (simulationRequest.cancel()) {
+      setLoading(false);
+    }
+  }, [simulationRequest, preset?.id, team, teamBuilds, teamMoves, shields]);
+
   const simulate = async (simulationSeed = seed) => {
     if (!hasCompleteTeam) {
       setError(`Select ${3 - selectedTeam.length} more Pokemon to complete your team.`);
@@ -180,27 +189,37 @@ const TrainerLab = () => {
       setError('The selected Team Leader preset is not available. Try another league or reload the battle data.');
       return;
     }
+    const signal = simulationRequest.start();
     setLoading(true);
     setError('');
     try {
-      const response = await APIService.postTrainerBattleSimulator({
-        presetId: preset.id,
-        team: selectedTeam.map((pokemon, index) => {
-          const moves = teamMoves[index];
-          return {
-            pokemonId: String(pokemon.pokemonId ?? pokemon.fullName ?? ''),
-            form: pokemon.form,
-            level: teamBuilds[index].level,
-            iv: teamBuilds[index].iv,
-            fastMove: moves.fastMove,
-            chargedMoves: moves.chargedMoves.filter((move): move is string => !!move),
-          };
-        }),
-        shields,
-        seed: simulationSeed,
-      });
+      const response = await APIService.postTrainerBattleSimulator(
+        {
+          presetId: preset.id,
+          team: selectedTeam.map((pokemon, index) => {
+            const moves = teamMoves[index];
+            return {
+              pokemonId: String(pokemon.pokemonId ?? pokemon.fullName ?? ''),
+              form: pokemon.form,
+              level: teamBuilds[index].level,
+              iv: teamBuilds[index].iv,
+              fastMove: moves.fastMove,
+              chargedMoves: moves.chargedMoves.filter((move): move is string => !!move),
+            };
+          }),
+          shields,
+          seed: simulationSeed,
+        },
+        signal
+      );
+      if (signal.aborted) {
+        return;
+      }
       setResult(response.data.data);
     } catch (requestError) {
+      if (signal.aborted) {
+        return;
+      }
       const { code, pokemon } = getApiError(requestError);
       const pokemonName = pokemon ? displayPokemonName(pokemon) : 'The selected Pokémon';
       setError(
@@ -215,7 +234,9 @@ const TrainerLab = () => {
                 : getApiErrorMessage(requestError, 'Unable to simulate this Trainer Battle.')
       );
     } finally {
-      setLoading(false);
+      if (simulationRequest.finish(signal)) {
+        setLoading(false);
+      }
     }
   };
 

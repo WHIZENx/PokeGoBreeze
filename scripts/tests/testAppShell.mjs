@@ -2,7 +2,22 @@
 
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { createLatestRequest } from '../../src/utils/hooks/useLatestRequest.ts';
 import { getApiError, getApiErrorMessage } from '../../src/services/api-error.ts';
+
+const results = createLatestRequest();
+const independentResults = createLatestRequest();
+const firstSignal = results.start();
+const independentSignal = independentResults.start();
+const nextSignal = results.start();
+assert(firstSignal.aborted, 'Replacement cancels the older request for the same result');
+assert(!independentSignal.aborted, 'Other callers of the same endpoint remain independent');
+assert(!results.finish(firstSignal), 'A late result cannot clear the newer loading state');
+assert(results.finish(nextSignal));
+const abandonedSignal = results.start();
+assert(results.cancel());
+assert(abandonedSignal.aborted);
+assert(!results.finish(abandonedSignal));
 
 const requestError = (status, data) => ({ isAxiosError: true, response: { status, data } });
 const error = requestError(400, {

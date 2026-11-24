@@ -268,7 +268,7 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
       { signal: controller.signal }
     )
       .then(({ data: result }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         setData(result.data);
@@ -276,7 +276,7 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
         setCounts(result.meta.counts);
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setData([]);
           setTotal(0);
           setCounts(undefined);
@@ -284,7 +284,7 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setLoading(false);
         }
       });
