@@ -65,6 +65,10 @@ assert.equal(getApiErrorMessage(new Error('Private trace'), 'Unable to load PokÃ
 
 const indexHtml = await readFile(new URL('../../index.html', import.meta.url), 'utf8');
 const appSource = await readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8');
+const backdropSource = await readFile(
+  new URL('../../src/components/Commons/Backdrops/BackdropMui.tsx', import.meta.url),
+  'utf8'
+);
 const entrySource = await readFile(new URL('../../src/index.tsx', import.meta.url), 'utf8');
 const progressSource = await readFile(new URL('../../src/utils/helpers/progress-helpers.ts', import.meta.url), 'utf8');
 const prerenderSource = await readFile(new URL('../../sitemap/prerenderSeo.js', import.meta.url), 'utf8');
@@ -169,6 +173,10 @@ const checks = [
       /errorProgress: \(error: ErrorModel\) => \{\s*finishStartupProgress\(\)/.test(progressSource),
   ],
   ['header progress hides without reaching 100 percent', !/SetPercent\.create\(100\)/.test(progressSource)],
+  [
+    'closing loading backdrop allows interaction during its fade',
+    /!props\.open && 'tw-pointer-events-none'/.test(backdropSource),
+  ],
   [
     'delayed progress indicator uses MUI dimensions and animation timings',
     indexHtml.includes('class="seo-shell-progress"') &&
