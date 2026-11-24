@@ -1,5 +1,7 @@
 'use strict';
 
+const { readLocalEnv } = require('../scripts/local-env.cjs');
+
 const canonicalOrigin = 'https://poke-go-breeze.vercel.app';
 
 const staticRoutes = [
@@ -167,7 +169,10 @@ const staticRoutes = [
 }));
 
 const manifestUrl = () => {
-  const apiOrigin = (process.env.REACT_APP_DATA_API_URL || 'https://pokego-breeze-api.vercel.app').replace(/\/$/, '');
+  const apiOrigin = (readLocalEnv().REACT_APP_DATA_API_URL || 'https://pokego-breeze-api.vercel.app').replace(
+    /\/$/,
+    ''
+  );
   return `${apiOrigin}/api/v1/seo-routes`;
 };
 

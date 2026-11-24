@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { SpinnerState } from '../store/models/state.model';
 import { ShowSpinner, HideSpinner, ShowSpinnerMsg, SetBar, SetPercent } from '../store/actions/spinner.action';
@@ -17,16 +18,16 @@ export const useSpinner = () => {
   /**
    * Show spinner in the store
    */
-  const showSpinner = () => {
+  const showSpinner = useCallback(() => {
     dispatch(ShowSpinner.create());
-  };
+  }, [dispatch]);
 
   /**
    * Hide spinner in the store
    */
-  const hideSpinner = () => {
+  const hideSpinner = useCallback(() => {
     dispatch(HideSpinner.create());
-  };
+  }, [dispatch]);
 
   /**
    * Show spinner message in the store

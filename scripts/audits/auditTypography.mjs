@@ -110,8 +110,8 @@ if (interactive) {
   routes.splice(routes.indexOf('/pvp/battle/1500'), 0, '/pvp/battle');
   routes.splice(routes.indexOf('/pvp/battle/1500') + 1, 0, '/pvp/battle/1500/replay?seed=' + seed);
 
-  const app = await readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8');
-  const patterns = [...app.matchAll(/<Route\s+path="([^"]+)"/g)].map(([, path]) => path);
+  const app = await readFile(new URL('../../src/app-routes.tsx', import.meta.url), 'utf8');
+  const patterns = [...app.matchAll(/(?:staticPage|page)\(\s*'([^']+)'/g)].map(([, path]) => path);
   const uncovered = patterns.filter(
     (pattern) =>
       pattern !== '*' &&

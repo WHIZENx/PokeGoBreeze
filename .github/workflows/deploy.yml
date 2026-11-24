@@ -11,7 +11,6 @@ env:
   NODE_VERSION: '24.22.1'
   # App env vars (available to all jobs via global env)
   REACT_APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
-  APP_DEPLOYMENT_MODE: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'stage' && 'staging' || 'development' }}
   REACT_APP_EDGE_ID: ${{ secrets.REACT_APP_EDGE_ID }}
   REACT_APP_EDGE_READ_TOKEN: ${{ secrets.REACT_APP_EDGE_READ_TOKEN }}
   # Public API aliases are branch-specific. Keep this explicit so non-Vercel
@@ -48,8 +47,7 @@ jobs:
           chmod +x ./deploy.sh
           ./deploy.sh
         env:
-          VERCEL_TOKEN: ${{ secrets.REACT_APP_EDGE_TOKEN }}
-          VERCEL_EDGE_CONFIG_ID: ${{ secrets.REACT_APP_EDGE_ID }}
+          REACT_APP_EDGE_TOKEN: ${{ secrets.REACT_APP_EDGE_TOKEN }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Install Vercel CLI

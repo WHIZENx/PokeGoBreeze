@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { useEffect, useRef, useState } from 'react';
 
 import {
@@ -338,6 +340,7 @@ const defenderColumns = createDataRows<TableColumnModify<PokemonSheetData>>(
 );
 
 const DpsTdo = () => {
+  const { showSnackbar } = useSnackbar();
   useTitle({
     title: 'Pokémon GO Attacker Analysis - DPS & TDO Rankings | PokéGO Breeze',
     description:
@@ -561,7 +564,7 @@ const DpsTdo = () => {
       { signal: controller.signal }
     )
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         setDpsTable(data.data);
@@ -569,14 +572,15 @@ const DpsTdo = () => {
         setHasDefenderResults(hasDefender);
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setDpsTable([]);
           setTotalRows(0);
           setHasDefenderResults(false);
+          showSnackbar(getApiErrorMessage(error, 'Unable to load DPS and TDO results.'), 'error');
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setIsShowSpinner(false);
         }
       });
@@ -624,6 +628,7 @@ const DpsTdo = () => {
     defaultSorted,
     requestVersion,
     hasDefender,
+    showSnackbar,
   ]);
 
   useEffect(() => {

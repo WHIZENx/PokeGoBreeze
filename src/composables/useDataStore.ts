@@ -28,10 +28,7 @@ import { IPVPDataModel } from '../core/models/pvp.model';
 import { IStatsRank } from '../core/models/stats.model';
 import { StoreActions, StatsActions, TimestampActions } from '../store/actions';
 import { createProgressHelpers } from '../utils/helpers/progress-helpers';
-import ProcessedDataService, {
-  ProcessedDataSection,
-  UnsupportedProcessedDataSchemaError,
-} from '../services/processed-data.service';
+import ProcessedDataService, { ProcessedDataSection } from '../services/processed-data.service';
 import { setCpmData as configureCpmData } from '../services/cpm.service';
 
 /**
@@ -195,26 +192,19 @@ export const useDataStore = () => {
       return false;
     }
 
-    try {
-      const meta = await ProcessedDataService.getMeta();
-      setProgress(20);
-      await loadProcessedSections(['options', 'candy'], false);
-      setProgress(70);
-      dispatch(TimestampActions.SetSnapshotGeneratedAt.create(meta.generatedAt));
-      dispatch(TimestampActions.SetTimestampGameMaster.create(meta.source.gameMaster));
-      dispatch(TimestampActions.SetTimestampAssets.create(meta.source.assets));
-      dispatch(StoreActions.SetLogoPokeGO.create(meta.appIcon ?? ''));
-      dispatch(TimestampActions.SetTimestampIcon.create(meta.source.icon ?? 0));
-      dispatch(TimestampActions.SetTimestampSounds.create(meta.source.sounds));
-      dispatch(TimestampActions.SetTimestampPVP.create(meta.source.pvp));
-      completeProgress();
-      return true;
-    } catch (error) {
-      if (error instanceof UnsupportedProcessedDataSchemaError) {
-        throw error;
-      }
-      return false;
-    }
+    const meta = await ProcessedDataService.getMeta();
+    setProgress(20);
+    await loadProcessedSections(['options', 'candy'], false);
+    setProgress(70);
+    dispatch(TimestampActions.SetSnapshotGeneratedAt.create(meta.generatedAt));
+    dispatch(TimestampActions.SetTimestampGameMaster.create(meta.source.gameMaster));
+    dispatch(TimestampActions.SetTimestampAssets.create(meta.source.assets));
+    dispatch(StoreActions.SetLogoPokeGO.create(meta.appIcon ?? ''));
+    dispatch(TimestampActions.SetTimestampIcon.create(meta.source.icon ?? 0));
+    dispatch(TimestampActions.SetTimestampSounds.create(meta.source.sounds));
+    dispatch(TimestampActions.SetTimestampPVP.create(meta.source.pvp));
+    completeProgress();
+    return true;
   };
 
   const pokemonsData = dataStore.pokemons;

@@ -11,7 +11,7 @@ import {
 
 const [battlePage, appPage] = await Promise.all([
   readFile(new URL('../../src/pages/PVP/Battle/Battle.tsx', import.meta.url), 'utf8'),
-  readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8'),
+  readFile(new URL('../../src/app-routes.tsx', import.meta.url), 'utf8'),
 ]);
 
 const pokemon = (speciesId, id, overrides = {}) => ({
@@ -143,7 +143,7 @@ assert.match(
 );
 assert.match(
   appPage,
-  /path="\/pvp\/battle\/:cp\/replay" element=\{<Battle key=\{battleRouteKey\} replayMode \/>\}/,
+  /page\('\/pvp\/battle\/:cp\/replay', battle, \(Battle, \{ location \}\) => <Battle key=\{location\.pathname\} replayMode \/>\)/,
   'Timeline replays must have a dedicated direct-navigation route.'
 );
 assert.match(

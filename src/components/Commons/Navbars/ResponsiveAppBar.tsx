@@ -30,15 +30,8 @@ import { LinearProgress, ListSubheader } from '@mui/material';
 import useRouter from '../../../composables/useRouter';
 import DrawerSideBar from '../Drawers/DrawerSideBar';
 import { useTheme as useThemeMui } from '@mui/material/styles';
-import { useLocation } from 'react-router-dom';
 
 const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
-  try {
-    useLocation();
-  } catch (e) {
-    return;
-  }
-
   const theme = useThemeMui();
   const navigateToTop = useNavigateToTop();
   const router = useRouter();
@@ -236,8 +229,9 @@ const ResponsiveAppBar = (props: IResponsiveAppBarComponent) => {
         {navigateInfo}
       </Toolbar>
       {spinnerBarIsShow && (
-        <Box className="tw-w-full tw-absolute tw-z-7">
+        <Box className="app-navigation-progress tw-absolute tw-inset-x-0 tw-top-0 tw-z-7">
           <LinearProgress
+            aria-label="Loading"
             variant={spinnerPercent === 0 ? 'indeterminate' : VariantType.Determinate}
             value={spinnerPercent}
           />

@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import SelectBadge from '../../../components/Commons/Selects/SelectBadge';
@@ -80,6 +82,7 @@ const throws = createDataRows<ThrowThreshold>(
 const CATCH_CHANCE_EXCLUDED_POKEMON_TYPES = [PokemonType.Purified] as const;
 
 const CatchChance = () => {
+  const { showSnackbar } = useSnackbar();
   const { searchingToolCurrentDetails } = useSearch();
   const circleDistance = useRef(200);
 
@@ -147,7 +150,8 @@ const CatchChance = () => {
       silverPinap: isSilverPinaps,
       shadow: isShadow,
     });
-    let active = true;
+    const controller = new AbortController();
+    const { signal } = controller;
     APIService.getFetchUrl<{
       data: {
         matrix: DynamicObj<DynamicObj<number>>;
@@ -155,9 +159,9 @@ const CatchChance = () => {
         ringChance: number;
         advanced: { result: number; throwType: ThrowType };
       };
-    }>(url)
+    }>(url, { signal })
       .then(({ data: response }) => {
-        if (!active) {
+        if (signal.aborted) {
           return;
         }
         const selectedBall = balls[ballType];
@@ -179,13 +183,16 @@ const CatchChance = () => {
           );
         }
       })
-      .catch(() => {
-        if (active) {
+      .catch((error: unknown) => {
+        if (!signal.aborted) {
           setCalculatedCp(0);
+          setDataAdv(new DataAdvance());
+          setData((current) => (current ? { ...current, result: undefined } : current));
+          showSnackbar(getApiErrorMessage(error, 'Unable to calculate the catch chance.'), 'error');
         }
       });
     return () => {
-      active = false;
+      controller.abort();
     };
   }, [
     form?.defaultId,
@@ -193,6 +200,7 @@ const CatchChance = () => {
     form?.form.pokemonType,
     data?.baseCaptureRate,
     data?.shadowBaseCaptureRate,
+    showSnackbar,
     radius,
     medal,
     level,

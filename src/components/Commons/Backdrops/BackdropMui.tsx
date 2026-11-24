@@ -6,6 +6,7 @@ import { isNullOrUndefined } from '../../../utils/extension';
 const BackdropMui = (props: IBackdropMuiComponent) => {
   return (
     <Backdrop
+      slotProps={{ root: { 'aria-hidden': props.ariaHidden ?? true } }}
       className={isNullOrUndefined(props.isShowOnAbove) || props.isShowOnAbove ? '' : '!tw-absolute'}
       sx={{
         zIndex: (theme) =>

@@ -1,3 +1,5 @@
+import useLatestRequest from '../../../utils/hooks/useLatestRequest';
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, useMemo, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
@@ -75,6 +77,10 @@ const CalculatePoint = () => {
 
   const { showSnackbar } = useSnackbar();
 
+  const attackRequest = useLatestRequest();
+  const defenseRequest = useLatestRequest();
+  const bulkRequest = useLatestRequest();
+
   const clearData = (reset = true) => {
     clearDataAtk(reset);
     clearDataDef(reset);
@@ -82,6 +88,7 @@ const CalculatePoint = () => {
   };
 
   const clearDataAtk = (reset = true) => {
+    attackRequest.cancel();
     setResultBreakPointAtk(undefined);
     if (!reset) {
       setMove(undefined);
@@ -89,6 +96,7 @@ const CalculatePoint = () => {
   };
 
   const clearDataDef = (reset = true) => {
+    defenseRequest.cancel();
     setResultBreakPointDef(undefined);
     if (!reset) {
       setMoveDef(undefined);
@@ -96,6 +104,7 @@ const CalculatePoint = () => {
   };
 
   const clearDataBulk = (reset = true) => {
+    bulkRequest.cancel();
     setResultBulkPointDef(undefined);
     if (!reset) {
       setFMove(undefined);
@@ -136,6 +145,7 @@ const CalculatePoint = () => {
     toNumber(!isRaid && pvpDmg ? selectedMove?.pvpPower : selectedMove?.pvePower);
 
   const calculateBreakpointAtk = async () => {
+    const signal = attackRequest.start();
     setResultBreakPointAtk(undefined);
     try {
       const response = await APIService.getFetchUrl<{ data: BreakpointApiResult }>(
@@ -149,9 +159,10 @@ const CalculatePoint = () => {
           defenderPokemonType: pokemonType(true),
           ...moveParams(searchingToolObjectData?.form, searchingToolCurrentData?.form, move),
           ...commonParams(),
-        })
+        }),
+        { signal }
       );
-      if (response.data.data.mode !== 'attacker') {
+      if (signal.aborted || response.data.data.mode !== 'attacker') {
         return;
       }
       const dataList = response.data.data.data;
@@ -164,13 +175,18 @@ const CalculatePoint = () => {
         colorTone,
         target: response.data.data.target,
       });
-      showSnackbar('Calculate breakpoint attacker successfully!', 'success');
-    } catch {
-      showSnackbar('Breakpoint API is unavailable.', 'error');
+      showSnackbar('Attacker breakpoints calculated.', 'success');
+    } catch (error) {
+      if (!signal.aborted) {
+        showSnackbar(getApiErrorMessage(error, 'Unable to calculate the breakpoint or bulkpoint.'), 'error');
+      }
+    } finally {
+      attackRequest.finish(signal);
     }
   };
 
   const calculateBreakpointDef = async () => {
+    const signal = defenseRequest.start();
     setResultBreakPointDef(undefined);
     try {
       const response = await APIService.getFetchUrl<{ data: BreakpointApiResult }>(
@@ -185,9 +201,10 @@ const CalculatePoint = () => {
           defenderPokemonType: pokemonType(),
           ...moveParams(searchingToolCurrentData?.form, searchingToolObjectData?.form, moveDef),
           ...commonParams(),
-        })
+        }),
+        { signal }
       );
-      if (response.data.data.mode !== 'defender') {
+      if (signal.aborted || response.data.data.mode !== 'defender') {
         return;
       }
       const { dataDef, dataSta } = response.data.data;
@@ -202,9 +219,13 @@ const CalculatePoint = () => {
         colorToneSta,
         target: response.data.data.target,
       });
-      showSnackbar('Calculate breakpoint defender successfully!', 'success');
-    } catch {
-      showSnackbar('Breakpoint API is unavailable.', 'error');
+      showSnackbar('Defender breakpoints calculated.', 'success');
+    } catch (error) {
+      if (!signal.aborted) {
+        showSnackbar(getApiErrorMessage(error, 'Unable to calculate the breakpoint or bulkpoint.'), 'error');
+      }
+    } finally {
+      defenseRequest.finish(signal);
     }
   };
 
@@ -235,6 +256,7 @@ const CalculatePoint = () => {
   };
 
   const calculateBulkPointDef = async () => {
+    const signal = bulkRequest.start();
     setResultBulkPointDef(undefined);
     try {
       const response = await APIService.getFetchUrl<{ data: BreakpointApiResult }>(
@@ -253,9 +275,10 @@ const CalculatePoint = () => {
           ...moveParams(searchingToolCurrentData?.form, searchingToolObjectData?.form, fMove, 'fast'),
           ...moveParams(searchingToolCurrentData?.form, searchingToolObjectData?.form, cMove, 'charged'),
           ...commonParams(),
-        })
+        }),
+        { signal }
       );
-      if (response.data.data.mode !== 'bulk') {
+      if (signal.aborted || response.data.data.mode !== 'bulk') {
         return;
       }
       setResultBulkPointDef({
@@ -265,9 +288,13 @@ const CalculatePoint = () => {
         ivs: response.data.data.ivs,
         target: response.data.data.target,
       });
-      showSnackbar('Calculate bulkpoint defender successfully!', 'success');
-    } catch {
-      showSnackbar('Breakpoint API is unavailable.', 'error');
+      showSnackbar('Defender bulkpoints calculated.', 'success');
+    } catch (error) {
+      if (!signal.aborted) {
+        showSnackbar(getApiErrorMessage(error, 'Unable to calculate the breakpoint or bulkpoint.'), 'error');
+      }
+    } finally {
+      bulkRequest.finish(signal);
     }
   };
 
