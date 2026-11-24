@@ -15,47 +15,45 @@
 
 ## Overview
 
-PokeGoBreeze is a web application for Pokémon GO trainers who want to explore game data, compare Pokémon, analyze battles, and use gameplay calculators. The public web client consumes processed, versioned data from the PokeGoBreeze API so that data preparation and calculation logic stay consistent across pages.
+PokeGoBreeze helps Pokémon GO trainers explore game data, compare Pokémon, and
+plan battles. Its Web client uses the PokeGoBreeze API for versioned game data
+and shared calculations.
 
 **Key Highlights:**
 - 🎮 Pokédex with 1,000+ Pokémon, forms, assets, moves, and detailed statistics
-- ⚔️ Advanced PVP battle simulator with league rankings
-- 📊 Comprehensive damage, DPS/TDO, and stats calculators
-- 📰 Readable Game Master patch notes for webapp-relevant changes
+- ⚔️ PvP battle simulation and league rankings
+- 📊 Damage, DPS/TDO, and stats calculators
+- 📰 Game Master patch notes for changes relevant to the app
 - 🌟 Scheduled updates from Pokémon GO Game Master snapshots
-- 🎨 Beautiful, responsive UI with theme customization
-- ⚡ Fast performance with optimized loading and caching
-- 📱 Mobile-friendly responsive design
+- 🎨 Light and dark themes
+- ⚡ On-demand loading and caching
+- 📱 Responsive desktop and mobile layouts
 
 ## Architecture & Tech Stack
 
 ### Web/API Boundary
 
-This repository contains the public React web client. Processed game data and calculation-heavy operations are provided by a separate API service through versioned `/api/v1` endpoints.
+The React client uses the API’s `/api/v1` endpoints for processed game data
+and calculations.
 
 - The API publishes metadata and generated sections from one consistent Game Master snapshot.
-- Pages request only the sections and endpoint results they need instead of loading the complete dataset at startup.
+- Pages request only the data they need.
 - The web client validates the processed-data schema before accepting a dataset.
-- API failures use the shared error formatter. The Web displays the API's
-  readable detail, distinguishes network and timeout failures, and ignores
-  canceled requests. Tables and calculators abort superseded requests and
-  ignore their results. Cancellation is scoped to the result being updated,
-  so independent panels can use the same endpoint at the same time.
-  Requests to the PokeGoBreeze API time out after 32 seconds
-  if the client is still waiting. User-triggered calculations show their outcome in
-  the relevant result section, alert, or snackbar. Find IV, Calculate Stats,
-  and Battle League Search show an informational snackbar when a valid
-  calculation finishes without a match.
+- The client displays readable API errors, distinguishes network failures
+  from timeouts, and ignores canceled requests. Tables and calculators cancel
+  superseded requests independently. API requests time out after 32 seconds.
+  Results appear in the relevant section, alert, or snackbar. Find IV,
+  Calculate Stats, and Battle League Search show a message when a valid
+  calculation returns no matches.
 - Pokémon Details, Stats Ranking, and Tools selectors use one shared profile-image fallback order: exact canonical form artwork first, then the exact Pokémon GO form asset and species-level fallbacks; GO-only forms never borrow the canonical species-default artwork.
 - Internal data-processing implementation and generated server data are not part of this public repository.
 
-For local development in the workspace, the Web reads the root `.env`, then
-optional `modules/web/.env`, `modules/web/.env.local`, and the active Vite
-mode files. Process environment variables take precedence. The workspace defaults to `http://localhost:3001`.
-A standalone checkout can set `REACT_APP_DATA_API_URL` in its own `.env`
-to a compatible deployed or local API.
+In the workspace, Web reads the root `.env`, then its own `.env`,
+`.env.local`, and Vite mode files. Process variables take precedence. The
+workspace API defaults to `http://localhost:3001`. In a standalone checkout,
+set `REACT_APP_DATA_API_URL` in `.env` to a compatible API base URL.
 
-The versions below reflect the currently committed `package-lock.json`.
+Dependency versions come from `package-lock.json`.
 
 ### Frontend Framework
 - **Core**: React 18.3.1 with TypeScript 5.5.3
@@ -92,7 +90,7 @@ The versions below reflect the currently committed `package-lock.json`.
 
 ### Storage & Security
 - **Client Storage**: LocalForage 1.10.0 with IndexedDB (localStorage fallback)
-- **Data Persistence**: Redux Persist 6.0.0 caches public data and preferences without client-side encryption; `sensitiveData` is excluded
+- **Data Persistence**: Redux Persist 6.0.0 caches public data and preferences locally
 
 ### Development Tools
 - **Build System**: Vite 6 with custom configuration
@@ -124,25 +122,17 @@ The versions below reflect the currently committed `package-lock.json`.
   - Vite splits major vendor libraries into stable chunks
   - JavaScript and CSS are minified for production
   - Fingerprinted assets use long-lived hosting cache headers
-  - Project Pokémon icons load from the public, generated
-    `WHIZENx/pokemon-assets-runtime` mirror; the private source repository and
-    its credentials are never exposed to the browser
+  - Pokémon icons are available from the public
+    [asset mirror](https://github.com/WHIZENx/pokemon-assets-runtime).
 
 ### Deployment & DevOps
-- **Hosting**:
-  - Vercel deployments for production and branch environments
-  - Firebase Hosting deployments and pull-request previews
-- **Containerization**: Docker Compose development environment with hot reload
-- **CI/CD**:
-  - GitHub Actions for automated workflows
-  - A push to `develop`, `stage`, or `main` deploys that branch from this repository
-- **Analytics**:
-  - Vercel Analytics and Speed Insights run on `.vercel.app` hosts.
-  - Firebase Hosting and other hosts skip the Vercel-only script endpoints so SPA fallbacks do not execute HTML as JavaScript.
+
+- **Hosting** — Vercel and Firebase Hosting.
+- **Local development** — Docker Compose supports hot reload.
 
 ## Project Structure
 
-This tree shows the complete top-level `src` layout and selected feature subdirectories.
+This tree shows the main `src` directories and selected feature folders.
 
 ```text
 src/
@@ -244,22 +234,23 @@ src/
 ### 🏠 Home & Information
 
 #### **Pokédex** (`/`)
-Server-paginated Pokémon catalogue with name matching, release status, missing GO stats, type, generation, game version, and special-form filters. Each result links to its Pokémon detail page.
-The GO release dropdown defaults to All Pokémon and can show only Released in GO or Not released in GO; changing it resets pagination.
+Browse Pokémon by name, GO release status, missing GO stats, type, generation,
+game version, or form. Results link to Pokémon Details. The release filter
+defaults to All Pokémon and resets pagination when changed.
 Its form list and totals use the same canonical/GO identity mapping as Pokémon Details. GO stats and assets are assigned only to the canonical form that owns the matching GO identity; other PokéAPI forms remain visible as not released in GO.
 
 #### **Event Tickets** (`/news`)
-API-backed Game Master ticket and event entries with dates, descriptions,
-bonuses, rewards, and related assets when supplied by the generated snapshot.
-This is not a live proxy of the official Pokémon GO News feed.
+Browse ticket and event entries from the Game Master snapshot, including
+dates, rewards, and related assets when available.
 
 #### **Game Master Updates** (`/game-master-updates`, `/game-master-updates/:patchSlug`)
-Paginated patch notes for web-relevant Game Master changes. Entries can be searched and filtered by section and status, while detail routes show readable changes and links to supported Pokémon or moves.
+Search and filter Game Master patch notes by section or status. Each entry
+summarizes changes and links to related Pokémon or moves when available.
 
 ### 🔍 Search & Discovery
 
 #### **Search Pokémon** (`/search-pokemon`)
-Remote name/ID selector with incremental result loading, previous/next navigation, and the selected Pokémon's full detail view.
+Find Pokémon by name or ID, step through results, and open their details.
 
 #### **Search Moves** (`/search-moves`)
 Separate fast- and charged-move tables with name/ID and type filters. Results expose the available PVE/PVP values and link to move detail pages.
@@ -345,7 +336,8 @@ Set `CHROME_PATH` when Chrome is installed outside the default macOS path.
 Calculates CP, HP, battle stats, level, and power-up costs for a selected Pokémon and IV spread, including supported buddy, lucky, shadow, and purified states.
 
 #### **Raid Battle Tool** (`/raid-battle`)
-Select a raid boss, tier, moves, weather, and time limit to find counters, build trainer teams, run the raid simulation, and estimate the required player count.
+Choose a raid boss and battle settings to find counters, build teams,
+simulate the raid, and estimate how many players are needed.
 
 #### **Calculate Point** (`/calculate-point`)
 Calculates attack breakpoints, defense breakpoints, and bulkpoints across Pokémon levels and IVs for PVE or PVP battles.
@@ -432,10 +424,6 @@ npm ci
 
 3. **Set up configuration**
 
-   PokeGoBreeze checks `config.json` first, then Vercel Edge Config for runtime options.
-
-   **Option A — `config.json` (recommended for local dev, no Vercel account needed)**
-
    Copy the local config and environment examples:
    ```bash
    cp config.example.json config.json
@@ -445,71 +433,13 @@ npm ci
    blocks `npm.ps1`, run the same npm commands in Windows Command Prompt
    (`cmd.exe`).
 
-   The local config includes version labels for all three modes. Its other
-   values are placeholders that let you start the app and browse API-backed
-   data. Fill in the relevant runtime options for tools you are developing,
-   such as level bounds and step size, IV bounds, and default rows per page
-   for calculators and tables. The gitignored file takes precedence over
-   Vercel Edge Config. Set `REACT_APP_DATA_API_URL` in `.env` to a compatible
-   API and leave `REACT_APP_VERSION` empty to use the version from `config.json`.
+   The example config starts the app and supports browsing API-backed data.
+   Some tools need values for level limits, IV limits, or table page sizes.
+   Set `REACT_APP_DATA_API_URL` in `.env` to a compatible API base URL, such as
+   `https://pokego-breeze-api.vercel.app` for a standalone checkout. Leave
+   `REACT_APP_VERSION` empty to use the version from `config.json`.
 
-   **Option B — Vercel Edge Config**
-
-   Copy `.env.example` to `.env` and supply at minimum the Edge Config credentials:
-   ```bash
-   cp .env.example .env
-   ```
-
-   Use `Copy-Item .env.example .env` in Windows PowerShell.
-
-   Configuration variables:
-
-   | Variable | When required | Purpose |
-   |---|---|---|
-   | `REACT_APP_DEPLOYMENT_MODE` | Optional | `development` (default), `staging`, or `production` |
-   | `REACT_APP_DATA_API_URL` | Data-backed pages | Base URL of a compatible PokeGoBreeze API deployment |
-   | `REACT_APP_EDGE_TOKEN` | Local `deploy.sh` | Edge Config write token |
-   | `REACT_APP_EDGE_READ_TOKEN` | Edge Config mode | Edge Config read token when `config.json` is absent |
-   | `REACT_APP_EDGE_ID` | Edge Config mode or deployment | Edge Config ID (for example, `ecfg_xxx`) |
-   | `REACT_APP_VERSION` | Optional | Overrides the version selected from config |
-   | `MONGODB_URI` | Optional | Records deployment versions when running `deploy.sh` |
-
-   GitHub Actions deployment uses the `REACT_APP_EDGE_ID`,
-   `REACT_APP_EDGE_READ_TOKEN`, `REACT_APP_EDGE_TOKEN`, and `VERCEL_TOKEN`
-   secrets plus the `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` Actions variables.
-   Edge Config uses the dedicated read and write tokens. `VERCEL_TOKEN`
-   authenticates Vercel CLI commands for the project deployment.
-   `MONGODB_URI` is optional. Firebase branch deployments use `FIREBASE_TOKEN`,
-   while same-repository pull-request previews use
-   `FIREBASE_SERVICE_ACCOUNT_POKEGO_BREEZE`. Treat
-   [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) as the
-   authoritative credential list. Branches map to Vercel as follows:
-   `develop` → Preview develop, `stage` → Preview stage, and `main` →
-   Production. Firebase Hosting uses the same branch and API environment
-   mapping. The Vercel project is deployed by GitHub Actions rather than a
-   direct Vercel Git connection, so Preview deployments receive
-   `REACT_APP_DEPLOYMENT_MODE` and `REACT_APP_DATA_API_URL` explicitly as
-   build environment variables. This keeps the long-lived Preview aliases
-   isolated even when the generic Preview fallback targets the develop API:
-
-   | Branch | Firebase Hosting | Data API |
-   |---|---|---|
-   | `develop` | `pokego-breeze-develop.web.app` | `pokego-breeze-api-develop.vercel.app` |
-   | `stage` | `pokego-breeze-stage.web.app` | `pokego-breeze-api-stage.vercel.app` |
-   | `main` | `pokego-breeze.web.app` | `pokego-breeze-api.vercel.app` |
-
-   Vercel Development uses `development` and `http://localhost:3001` for
-   `vercel dev`. Generic Preview deployments use `development` and the develop
-   API; the workflow overrides those values with `staging` and the stage API
-   when deploying the `stage` branch. Production continues to use the
-   Production values configured in Vercel.
-
-   The deployment workflow validates that the selected API URL is embedded in
-   the Firebase build and verifies the hosted SPA route after deployment. SPA
-   documents revalidate immediately, while fingerprinted assets use immutable
-   caching. The workspace is not part of this deployment.
-
-   > See [`.env.example`](.env.example) for variable descriptions. Edge Config credentials stay in the startup process. The Web build exposes only the runtime variables used by the app.
+   See [`.env.example`](.env.example) for environment variable examples.
 
 ### Development
 
@@ -526,7 +456,8 @@ The development server includes:
 - 🎨 SCSS preprocessing
 - 🔧 Source maps for debugging
 
-Data-backed pages also require `REACT_APP_DATA_API_URL`. When developing through the workspace repository, run the web and API services together; when cloning only this repository, point the variable at a compatible API deployment.
+Data-backed pages need `REACT_APP_DATA_API_URL`. In the workspace, run Web
+and API together. A standalone Web checkout can use a compatible deployed API.
 
 **Other development commands**:
 ```bash
@@ -564,8 +495,8 @@ npm exec -- cross-env REACT_APP_DEPLOYMENT_MODE=production npm run deploy
 npm run build
 ```
 
-The npm `prebuild` lifecycle cleans `dist/` automatically before `npm run build`.
-For a runnable preview, use the configuration-loading build above.
+`npm run build` clears `dist/` first. Use the configuration-loading build
+for a runnable preview.
 
 **Preview production build locally**:
 ```bash
@@ -573,11 +504,26 @@ For a runnable preview, use the configuration-loading build above.
 npx vite preview
 ```
 
+If the API only allows `http://localhost:9000` for local requests, stop the
+dev server and start the preview on port 9000 with `--port 9000`.
+
 ### Docker Development
 
-**Development with Docker** (hot-reload on `localhost:9000`):
+#### Workspace checkout
+
+From the workspace root, with Web and API configured, start or stop both
+services with these commands.
+
 ```bash
-# Copy the Compose example and configure config.json or Edge Config first
+npm run docker:up
+npm run docker:down
+```
+
+#### Web-only checkout
+
+Use Docker Compose for hot reload on `http://localhost:9000`.
+```bash
+# Copy the Compose example and prepare local config
 cp docker-compose.example.yml docker-compose.yml
 cp config.example.json config.json
 cp .env.example .env  # set REACT_APP_DATA_API_URL and local values
@@ -590,77 +536,19 @@ On Windows, use Docker Desktop with Linux containers and replace the copy
 commands with `Copy-Item`. With the API also running, use its browser-accessible
 origin in `.env` because the Web client makes requests from the host browser.
 
-The committed example is supported for local development. Production releases
-use the Firebase and Vercel workflows below; the example Compose production
-service does not currently inject the build-time configuration required by
-`npm run deploy`.
+Stop the Web container with `docker compose down`.
 
 ### Deployment Options
 
-#### Firebase Hosting
-```bash
-# Install Firebase CLI
-npm install -g firebase-tools
-
-# Login to Firebase
-firebase login
-
-# Build and deploy only the production hosting target
-npm exec -- cross-env REACT_APP_DEPLOYMENT_MODE=production npm run deploy
-firebase deploy --project pokego-breeze --only hosting:pokego-breeze
-```
-
-#### Vercel
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Deploy to Vercel
-vercel --prod
-```
-
-The Checkly Hobby account runs a browser smoke check on each public Web
-environment. Production runs every six hours. Develop and Stage run every
-twelve hours. These checks verify that the homepage and JavaScript bundle load,
-that the Web build uses the matching API, and that the public Pokédex renders
-data from that API.
-
-Vercel is the sole deployment trigger for these Web checks. It runs one
-Browser Check per deployment, using the production check for Production and
-the shared preview check for Develop and Stage. The preview check uses the
-deployment URL supplied by Vercel and verifies the API configured in that
-build. `PokeGoBreeze Data` has its own scheduled monitoring.
-Generated deployment URLs are checked through the Web response, JavaScript,
-and paired API. The scheduled checks verify browser rendering on the public
-aliases with API CORS access. Reliability failures block the Vercel deployment.
-Web Vitals are reported separately from the Reliability gate.
-
-#### Cloudflare Pages
-```bash
-# Build the same static output used by the other hosting providers
-npm exec -- cross-env REACT_APP_DEPLOYMENT_MODE=production npm run deploy
-
-# Deploy dist/ with the committed _headers cache rules
-npx wrangler pages deploy dist --project-name pokego-breeze
-```
-
-Vercel remains the canonical SEO origin. Firebase Hosting is deployed by the
-committed workflow. Cloudflare Pages is an optional manual deployment target;
-the repository currently has no Cloudflare deployment workflow, so its hosted
-state may be unavailable or stale. When deployed, `public/_headers` supplies
-the static-asset cache policy and Cloudflare's SPA fallback handles routes
-because the build has no top-level `404.html`.
-
-Vercel serves existing prerendered SEO pages from the filesystem first, then
-falls back to the SPA shell for direct `/pokemon/:id` links that are absent
-from the released-only SEO manifest. This keeps unreleased forms with usable
-Pokémon GO mechanics directly accessible without indexing them as released.
+The public app is hosted on Vercel and Firebase Hosting. To host your own
+instance, follow [Production Build](#production-build) and serve the
+generated `dist/` directory. Use an API that accepts requests from your site.
 
 ### Common Project Scripts
 
 | Script | Description |
 |--------|-------------|
-| `npm start` | Start Vite dev server (loads `config.json` if present, otherwise fetches Vercel Edge Config) |
+| `npm start` | Start the Vite development server with runtime configuration |
 | `npm run develop` | Alias for `npm start` |
 | `npm run build` | Generate sitemap files, build the production bundle, and prerender SEO routes |
 | `npm run build:vite` | Build the production bundle only, without sitemap generation or SEO prerendering |
@@ -720,11 +608,8 @@ The production CSS/tooling target follows `browserslist` in `package.json`: brow
 
 **Web cannot start without configuration**
 
-Copy `config.example.json` to `config.json` in the Web directory for local
-development, or set
-`REACT_APP_EDGE_ID` and `REACT_APP_EDGE_READ_TOKEN` for Vercel Edge Config.
-Use the workspace or module `.env`. The startup log lists missing settings.
-If Edge Config cannot be loaded, check the ID, read token, and connection.
+Copy `config.example.json` to `config.json` in the Web directory. If the
+file already exists, check that it contains valid JSON.
 
 **Port already in use**:
 ```bash
@@ -753,7 +638,7 @@ with the appropriate path to clear the Vite cache or reinstall dependencies.
 
 ## Contributing
 
-Contributions are welcome and greatly appreciated! Whether you're fixing bugs, adding features, or improving documentation, your help makes PokeGoBreeze better for everyone.
+Contributions to the app, tests, and documentation are welcome.
 
 ### How to Contribute
 
@@ -863,11 +748,9 @@ When reporting issues, please include:
 
 ## Security
 
-- **Client Storage**: Public data and preferences are cached without encryption; sensitiveData is excluded from persistence
-- **Deployment Secrets**: CI and hosting credentials belong in GitHub/Vercel/Firebase secret stores, never in client configuration
-- **Operational Telemetry**: Vercel Analytics and Speed Insights contain no Pokémon GO account credentials
-- **HTTPS Only**: All production deployments use HTTPS
-- **Dependency Controls**: The committed lockfile, targeted overrides, and `npm audit` are used to control dependency risk
+- The Web client stores public data and preferences in the browser.
+- Keep credentials out of client configuration.
+- Public deployments use HTTPS.
 
 ## Acknowledgments
 
@@ -888,17 +771,17 @@ The API checks for new Game Master snapshots on a schedule. The web client recei
 Some previously loaded browser assets may remain cached, but data-backed pages and calculators require access to the PokeGoBreeze API.
 
 ### Is my data secure?
-Browser storage is not encrypted; do not place account credentials or other secrets in client-side configuration. Vercel-hosted production deployments also use Vercel Analytics and Speed Insights.
+The app caches public data and preferences in the browser without encryption.
 
 ### Can I suggest new features?
-Absolutely! Please open an issue on GitHub with your feature request.
+Open a GitHub issue to suggest a feature.
 
 ### How can I report a bug?
 Open an issue on GitHub with details about the bug, including steps to reproduce it.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+The project’s source code is available under the [MIT License](LICENSE).
 
 ### Third-Party Licenses
 This project uses several open-source libraries. See `package.json` for a complete list.
