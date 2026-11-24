@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { useEffect, useState } from 'react';
 import { OverAllStatsComponent } from '../models/component.model';
 import { toNumber, combineClasses, isEqual, getValueOrDefault } from '../../../utils/extension';
@@ -18,6 +20,7 @@ import StatsCalculationService from '../../../services/stats-calculation.service
 import APIService from '../../../services/api.service';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
+  const { showSnackbar } = useSnackbar();
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();
   const [isStatsLoading, setIsStatsLoading] = useState(false);
 
@@ -46,8 +49,8 @@ const OverAllStats = (props: OverAllStatsComponent) => {
           }
         })
         .catch((error) => {
-          if (APIService.isCancel(error)) {
-            return;
+          if (!controller.signal.aborted && !APIService.isCancel(error)) {
+            showSnackbar(getApiErrorMessage(error, 'Unable to load PvP stats.'), 'error');
           }
         })
         .finally(() => {
@@ -57,7 +60,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
         });
       return () => controller.abort();
     }
-  }, [props.data?.stats, props.data?.id, props.cp]);
+  }, [props.data?.stats, props.data?.id, props.cp, showSnackbar]);
 
   const renderTopStats = (data: IPokemonAllStats | undefined) => (
     <ul className="tw-mt-2">

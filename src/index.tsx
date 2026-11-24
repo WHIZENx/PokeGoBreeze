@@ -14,7 +14,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';
 
 import RouterSync from './utils/hooks/useRouterSync';
-import LoadingPersist from './components/Sprites/Loading/LoadingPersist';
 
 const { store, persistor } = configureStore();
 const supportsVercelTelemetry = window.location.hostname.endsWith('.vercel.app');
@@ -24,7 +23,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <>
     <Provider store={store}>
-      <PersistGate loading={<LoadingPersist />} persistor={persistor}>
+      <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter useTransitions={false}>
           <RouterSync />
           <Main />

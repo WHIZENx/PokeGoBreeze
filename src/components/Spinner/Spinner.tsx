@@ -9,7 +9,7 @@ const Spinner = () => {
   const { spinnerIsLoading, spinnerIsError, spinnerMessage } = useSpinner();
 
   return (
-    <BackdropMui open={spinnerIsLoading}>
+    <BackdropMui open={spinnerIsLoading} ariaHidden={!spinnerIsError}>
       <div className="tw-flex tw-flex-col tw-items-center tw-justify-center">
         <img className={spinnerIsError ? '' : 'loading'} width={64} height={64} alt="Pokémon Image" src={loading} />
         <span className="caption tw-text-center !tw-text-white text-shadow-black !tw-text-lg">
@@ -18,7 +18,13 @@ const Spinner = () => {
               <Fragment>
                 Oops
                 <br />
-                Something went wrong on our end.
+                {spinnerMessage ? (
+                  <span className="tw-text-error" role="alert">
+                    {spinnerMessage}
+                  </span>
+                ) : (
+                  'Something went wrong. Try again.'
+                )}
                 <p
                   className="reload-text"
                   onClick={() => {
@@ -28,9 +34,6 @@ const Spinner = () => {
                 >
                   Retry Again
                 </p>
-                {spinnerMessage && process.env.REACT_APP_DEPLOYMENT_MODE !== 'production' && (
-                  <p className="tw-text-error">{spinnerMessage}</p>
-                )}
               </Fragment>
             ) : (
               <Fragment>

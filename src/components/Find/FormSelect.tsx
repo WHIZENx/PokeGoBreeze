@@ -1,4 +1,5 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { getApiErrorMessage } from '../../services/api-error';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import './FormSelect.scss';
 import '../Info/PokemonDetailLayout.scss';
 import APIService from '../../services/api.service';
@@ -92,7 +93,6 @@ const FormSelect = (props: IFormSelectComponent) => {
   }>();
   const isBattleModifierForm = isSpecialFormType(currentForm?.form.pokemonType);
 
-  const axiosSource = useRef(APIService.getCancelToken());
   const { showSnackbar } = useSnackbar();
 
   const fetchMap = useCallback(
@@ -229,32 +229,21 @@ const FormSelect = (props: IFormSelectComponent) => {
   );
 
   const queryPokemon = useCallback(
-    (id: number) => {
-      APIService.cancel(axiosSource.current);
-      axiosSource.current = APIService.reNewCancelToken();
-      const cancelToken = axiosSource.current.token;
-
-      APIService.getPokemonBundle(id, { cancelToken })
+    (id: number, signal: AbortSignal) => {
+      APIService.getPokemonBundle(id, { signal })
         .then((res) => {
-          if (res.data.data) {
+          if (!signal.aborted && res.data.data) {
             const result = PokemonSpecie.create(res.data.data.species);
             fetchMap(result, res.data.data.varieties, res.data.data.pokemonGo?.forms);
           }
         })
         .catch((error: unknown) => {
-          if (APIService.isCancel(error)) {
-            return;
+          if (!signal.aborted && !APIService.isCancel(error)) {
+            showSnackbar(getApiErrorMessage(error, 'Unable to load this Pokémon.'), 'error');
           }
-          const status = (error as { response?: { status?: number } }).response?.status;
-          showSnackbar(
-            status === 404
-              ? `Pokémon ID or name: ${id} not found!`
-              : `Unable to display Pokémon data for ID: ${id}. Please try again.`,
-            'error'
-          );
         });
     },
-    [fetchMap]
+    [fetchMap, showSnackbar]
   );
 
   useEffect(() => {
@@ -269,11 +258,10 @@ const FormSelect = (props: IFormSelectComponent) => {
     const id = toNumber(props.id);
     if (id > 0 && toNumber(data?.id) !== id) {
       clearData();
-      queryPokemon(id);
+      const controller = new AbortController();
+      queryPokemon(id, controller.signal);
+      return () => controller.abort();
     }
-    return () => {
-      APIService.cancel(axiosSource.current);
-    };
   }, [props.id, data?.id, queryPokemon]);
 
   useEffect(() => {

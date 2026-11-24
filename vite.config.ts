@@ -3,10 +3,13 @@ import react from '@vitejs/plugin-react';
 import eslint from '@nabla/vite-plugin-eslint';
 import stylelint from 'vite-plugin-stylelint';
 import { resolve } from 'path';
+import { readWorkspaceEnv } from './scripts/local-env.cjs';
+
+const browserEnvKeys = ['REACT_APP_DATA_API_URL', 'REACT_APP_DEPLOYMENT_MODE', 'REACT_APP_VERSION'];
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = { ...readWorkspaceEnv(), ...loadEnv(mode, process.cwd(), '') };
   const isDev = mode === 'development';
 
   return {
@@ -38,8 +41,10 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       'process.env': JSON.stringify({
-        // All REACT_APP_* keys from .env — add new vars to .env only, they are picked up automatically
-        ...Object.fromEntries(Object.entries(env).filter(([k]) => k.startsWith('REACT_APP_'))),
+        // Only runtime values used by the browser may be embedded in the build.
+        ...Object.fromEntries(browserEnvKeys.map((key) => [key, env[key]])),
+        // Runtime config is serialized by the startup loader or config.sh.
+        REACT_APP_CONFIG: process.env.REACT_APP_CONFIG,
         // Build-time constants derived from Vite mode — not user-configurable via .env
         NODE_ENV: isDev ? 'development' : 'production',
         DEBUG: isDev,
@@ -208,6 +213,6 @@ export default defineConfig(({ mode }) => {
         'dompurify',
       ],
     },
-    envPrefix: 'REACT_APP_',
+    envPrefix: [],
   };
 });

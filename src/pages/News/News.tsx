@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../services/api-error';
 import React, { useEffect, useRef, useState } from 'react';
 
 import './News.scss';
@@ -63,7 +64,7 @@ const News = () => {
       })
       .catch((error) => {
         if (active && !APIService.isCancel(error)) {
-          setLoadError(`Unable to load News: ${error}`);
+          setLoadError(getApiErrorMessage(error, 'Unable to load News.'));
         }
       })
       .finally(() => {

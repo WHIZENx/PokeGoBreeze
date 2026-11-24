@@ -1,3 +1,5 @@
+import useLatestRequest from '../../utils/hooks/useLatestRequest';
+import { getApiError, getApiErrorMessage } from '../../services/api-error';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Box, Card, CardContent, Chip, LinearProgress, Tab, Tabs, Typography } from '@mui/material';
 import SportsMmaIcon from '@mui/icons-material/SportsMma';
@@ -158,6 +160,14 @@ const TrainerLab = () => {
     setError('');
   };
 
+  const simulationRequest = useLatestRequest();
+
+  useEffect(() => {
+    if (simulationRequest.cancel()) {
+      setLoading(false);
+    }
+  }, [simulationRequest, preset?.id, team, teamBuilds, teamMoves, shields]);
+
   const simulate = async (simulationSeed = seed) => {
     if (!hasCompleteTeam) {
       setError(`Select ${3 - selectedTeam.length} more Pokemon to complete your team.`);
@@ -179,45 +189,54 @@ const TrainerLab = () => {
       setError('The selected Team Leader preset is not available. Try another league or reload the battle data.');
       return;
     }
+    const signal = simulationRequest.start();
     setLoading(true);
     setError('');
     try {
-      const response = await APIService.postTrainerBattleSimulator({
-        presetId: preset.id,
-        team: selectedTeam.map((pokemon, index) => {
-          const moves = teamMoves[index];
-          return {
-            pokemonId: String(pokemon.pokemonId ?? pokemon.fullName ?? ''),
-            form: pokemon.form,
-            level: teamBuilds[index].level,
-            iv: teamBuilds[index].iv,
-            fastMove: moves.fastMove,
-            chargedMoves: moves.chargedMoves.filter((move): move is string => !!move),
-          };
-        }),
-        shields,
-        seed: simulationSeed,
-      });
+      const response = await APIService.postTrainerBattleSimulator(
+        {
+          presetId: preset.id,
+          team: selectedTeam.map((pokemon, index) => {
+            const moves = teamMoves[index];
+            return {
+              pokemonId: String(pokemon.pokemonId ?? pokemon.fullName ?? ''),
+              form: pokemon.form,
+              level: teamBuilds[index].level,
+              iv: teamBuilds[index].iv,
+              fastMove: moves.fastMove,
+              chargedMoves: moves.chargedMoves.filter((move): move is string => !!move),
+            };
+          }),
+          shields,
+          seed: simulationSeed,
+        },
+        signal
+      );
+      if (signal.aborted) {
+        return;
+      }
       setResult(response.data.data);
     } catch (requestError) {
-      const responseError = requestError as {
-        response?: { data?: { error?: string; code?: string; pokemon?: string } };
-      };
-      const code = responseError.response?.data?.code ?? responseError.response?.data?.error;
-      const pokemon = responseError.response?.data?.pokemon;
+      if (signal.aborted) {
+        return;
+      }
+      const { code, pokemon } = getApiError(requestError);
+      const pokemonName = pokemon ? displayPokemonName(pokemon) : 'The selected Pokémon';
       setError(
         code === 'duplicate_team_species'
           ? 'A Trainer Battle team cannot contain duplicate Pokémon species.'
           : code === 'pokemon_not_eligible'
-            ? `${displayPokemonName(pokemon ?? '')} cannot fit this league with the selected Level/IV build.`
+            ? `${pokemonName} cannot enter this league at the selected level and IVs.`
             : code === 'invalid_pokemon_level'
-              ? `${displayPokemonName(pokemon ?? '')} has a Level that is not available in Pokémon GO.`
+              ? `${pokemonName} has an unsupported level.`
               : code === 'moves_not_eligible'
-                ? `${displayPokemonName(pokemon ?? '')} cannot use the selected moves in this form.`
-                : 'The simulation could not be completed. Please adjust the team and try again.'
+                ? `${pokemonName} cannot use the selected moves in this form.`
+                : getApiErrorMessage(requestError, 'Unable to simulate this Trainer Battle.')
       );
     } finally {
-      setLoading(false);
+      if (simulationRequest.finish(signal)) {
+        setLoading(false);
+      }
     }
   };
 

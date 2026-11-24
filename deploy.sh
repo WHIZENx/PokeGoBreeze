@@ -14,20 +14,20 @@ if [ -f .env ]; then
 fi
 
 # ─── Resolve required variables ────────────────────────────────────────────────
-# CI injects VERCEL_EDGE_CONFIG_ID / VERCEL_TOKEN; local runs use REACT_APP_* from .env
-EDGE_ID="${VERCEL_EDGE_CONFIG_ID:-${REACT_APP_EDGE_ID:-}}"
-EDGE_TOKEN="${VERCEL_TOKEN:-${REACT_APP_EDGE_TOKEN:-}}"
-APP_DEPLOYMENT_MODE="${APP_DEPLOYMENT_MODE:-${REACT_APP_DEPLOYMENT_MODE:-development}}"
+# Edge Config uses the same variables in CI and local runs.
+EDGE_ID="${REACT_APP_EDGE_ID:-}"
+EDGE_TOKEN="${REACT_APP_EDGE_TOKEN:-}"
+deployment_mode="${REACT_APP_DEPLOYMENT_MODE:-development}"
 MONGODB_URI="${MONGODB_URI:-}"
 
-if [[ -z "$EDGE_ID" ]]; then  echo "❌ Missing required: VERCEL_EDGE_CONFIG_ID or REACT_APP_EDGE_ID"; exit 1; fi
-if [[ -z "$EDGE_TOKEN" ]]; then echo "❌ Missing required: VERCEL_TOKEN or REACT_APP_EDGE_TOKEN"; exit 1; fi
+if [[ -z "$EDGE_ID" ]]; then  echo "❌ Missing required: REACT_APP_EDGE_ID"; exit 1; fi
+if [[ -z "$EDGE_TOKEN" ]]; then echo "❌ Missing required: REACT_APP_EDGE_TOKEN"; exit 1; fi
 
 # ─── Build version string ──────────────────────────────────────────────────────
 # Format: <last digit of year>.<MMDD>.<HHmm>  e.g. 6.0512.2143
 VERSION_TS="$(date +'%Y' | grep -o '.$').$(date +'%m%d.%H%M')"
 
-case "$APP_DEPLOYMENT_MODE" in
+case "$deployment_mode" in
   production) VERSION="$VERSION_TS";           VERSION_VAR="version" ;;
   staging)    VERSION="$VERSION_TS-staging";   VERSION_VAR="version-staging" ;;
   *)          VERSION="$VERSION_TS-develop";   VERSION_VAR="version-dev" ;;

@@ -1,3 +1,5 @@
+import { UnsupportedProcessedDataSchemaError } from '../services/processed-data.service';
+import { getApiErrorMessage } from '../services/api-error';
 import { useSelector, useDispatch } from 'react-redux';
 import { TimestampState } from '../store/models/state.model';
 import {
@@ -65,12 +67,20 @@ export const useTimestamp = () => {
 
   const loadTimestamp = async () => {
     try {
-      if (!(await loadProcessedData())) {
-        errorProgress({ isError: true, message: 'Processed data API is unavailable.' });
+      if (await loadProcessedData()) {
+        return true;
       }
+      errorProgress({ isError: true, message: 'The Pokémon data service is missing from the Web configuration.' });
     } catch (e) {
-      errorProgress({ isError: true, message: e instanceof Error ? e.message : String(e) });
+      errorProgress({
+        isError: true,
+        message:
+          e instanceof UnsupportedProcessedDataSchemaError
+            ? 'This version of the app cannot read the server data. Refresh the app and try again.'
+            : getApiErrorMessage(e, 'Unable to load Pokémon data.'),
+      });
     }
+    return false;
   };
 
   const timestampPVP = timestamp.pvp;

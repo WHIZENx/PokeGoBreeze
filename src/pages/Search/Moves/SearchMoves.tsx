@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { useEffect, useRef, useState } from 'react';
 import { capitalize, createDataRows, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
@@ -102,6 +104,7 @@ const getMoveSortField = (columnId: string | number | undefined): MoveSortField 
 };
 
 const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
+  const { showSnackbar } = useSnackbar();
   const [data, setData] = useState<MoveTableRow[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
@@ -149,7 +152,7 @@ const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
       { signal: controller.signal }
     )
       .then((result) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         setData(
@@ -161,19 +164,19 @@ const useMoveResults = (category: TypeMove, type: SelectType, name: string) => {
         setTotalRows(result.meta.total);
       })
       .catch((error) => {
-        if (requestId !== latestRequestRef.current || APIService.isCancel(error)) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current || APIService.isCancel(error)) {
           return;
         }
-        // Keep the last successful result set visible when a refresh fails.
+        showSnackbar(getApiErrorMessage(error, 'Unable to load moves.'), 'error');
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setIsLoading(false);
         }
       });
 
     return () => controller.abort();
-  }, [category, type, debouncedName, page, sort, skipStalePageRequest]);
+  }, [category, type, debouncedName, page, sort, skipStalePageRequest, showSnackbar]);
 
   const changeSort = (columnId: string | number | undefined, order: 'asc' | 'desc') => {
     setSort({ field: getMoveSortField(columnId), order });

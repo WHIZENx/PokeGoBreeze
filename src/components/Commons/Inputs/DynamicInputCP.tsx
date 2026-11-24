@@ -42,20 +42,21 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
         maxIv: props.maxIv,
         minCp: props.minCp,
       });
-      let active = true;
-      APIService.getFetchUrl<{ data: IPredictCPCalculate }>(url)
+      const controller = new AbortController();
+      const { signal } = controller;
+      APIService.getFetchUrl<{ data: IPredictCPCalculate }>(url, { signal })
         .then(({ data }) => {
-          if (active) {
+          if (!signal.aborted) {
             setPreCpArr(data.data);
           }
         })
         .catch(() => {
-          if (active) {
+          if (!signal.aborted) {
             setPreCpArr(undefined);
           }
         });
       return () => {
-        active = false;
+        controller.abort();
       };
     }
     setPreCpArr(undefined);

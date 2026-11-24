@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 import {
   Alert,
   AlertColor,
@@ -72,9 +72,12 @@ export const SnackbarProvider: React.FC<ISnackbarProps> = (props: ISnackbarProps
   };
 
   // Method to show snackbar
-  const showSnackbar = (message: string, severity?: AlertColor, variant?: 'standard' | 'filled' | 'outlined') => {
-    setOption((option) => ({ ...option, message, severity, variant, open: true }));
-  };
+  const showSnackbar = useCallback(
+    (message: string, severity?: AlertColor, variant?: 'standard' | 'filled' | 'outlined') => {
+      setOption((option) => ({ ...option, message, severity, variant, open: true }));
+    },
+    []
+  );
 
   // Method to close snackbar
   const closeSnackbar = (message?: string) => {

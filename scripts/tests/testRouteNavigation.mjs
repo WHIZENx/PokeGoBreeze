@@ -4,6 +4,11 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const appSource = await readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8');
+const routesSource = await readFile(new URL('../../src/app-routes.tsx', import.meta.url), 'utf8');
+const detailRoutesSource = await readFile(
+  new URL('../../src/services/detail-route.service.ts', import.meta.url),
+  'utf8'
+);
 const indexSource = await readFile(new URL('../../src/index.tsx', import.meta.url), 'utf8');
 const linkToTopSource = await readFile(new URL('../../src/components/Link/LinkToTop.tsx', import.meta.url), 'utf8');
 const pokemonPageSource = await readFile(new URL('../../src/pages/Pokemon/Pokemon.tsx', import.meta.url), 'utf8');
@@ -27,10 +32,6 @@ const noDataRouteBranch = appSource.match(
 const routeDataLoadEffect = appSource.match(
   /useEffect\(\(\) => \{(?<body>[\s\S]*?loadProcessedSections\(routeDataSections\)[\s\S]*?)\n\s*\}, \[(?<dependencies>[^\]]+)\]\);/
 );
-const readyRouteEffect = appSource.match(
-  /if \(isBootstrapLoaded && loadedRouteDataKey === routeDataKey\) \{(?<body>[\s\S]*?)\n\s*\}/
-)?.groups?.body;
-
 const failures = [];
 const dataRoutes = [...processedDataRoutes.matchAll(/if \(([^{]*)\) \{\s*return \[([^\]]*)\];/g)];
 for (const route of ['/stats-table', '/damage-calculate', '/calculate-catch-chance']) {
@@ -56,8 +57,28 @@ if (!routeDataLoadEffect) {
 } else if (routeDataLoadEffect.groups.dependencies.includes('location')) {
   failures.push('route data reloads when only the location changes within the same data-backed route group');
 }
-if (!readyRouteEffect?.includes('setDisplayLocation(location);')) {
-  failures.push('data-backed routes do not commit the current location directly');
+if (
+  !/Promise\.all\(\[\s*page,\s*prepareRouteDetails\([\s\S]*?if \(!signal\.aborted\) \{\s*setDisplayRoute/.test(
+    appSource
+  )
+) {
+  failures.push('the visible route must wait for its module and navigation details and ignore abandoned navigation');
+}
+if (!appSource.includes('<Routes location={displayRoute.location}>') || appSource.includes('fallback={null}')) {
+  failures.push('cold route modules must not replace the visible page with an empty fallback');
+}
+if (!appSource.includes('startProgress();') || appSource.includes('<Skeleton')) {
+  failures.push('initial navigation must use the shared progress bar');
+}
+for (const [path, endpoint] of [
+  ['/pokemon/:id', 'getPokemonBundle'],
+  ['/move/:id', 'moveDetailsUrl'],
+  ['/pvp/:cp/:serie/:pokemon', 'getPvpPokemon'],
+]) {
+  const match = detailRoutesSource.indexOf(`matchPath('${path}'`);
+  if (match < 0 || !detailRoutesSource.slice(match).split('matchPath(').at(1)?.includes(endpoint)) {
+    failures.push(`${path} is missing destination data preparation`);
+  }
 }
 if (!useDataStoreSource.includes('appliedProcessedSectionsRef')) {
   failures.push('processed data sections are not tracked after hydration');
@@ -68,17 +89,10 @@ if (
 ) {
   failures.push('cached processed data sections are dispatched to Redux repeatedly');
 }
-if (!appSource.includes("displayLocation.pathname.startsWith('/pokemon/')")) {
-  failures.push('Pokémon Detail routes do not isolate local state by species pathname');
-}
-if (!appSource.includes('<Pokemon key={pokemonRouteKey} />')) {
-  failures.push('Pokémon Detail routes reuse async component state across species navigation');
-}
-if (!appSource.includes("displayLocation.pathname.startsWith('/pvp/battle')")) {
-  failures.push('PVP Battle routes do not isolate simulator state by pathname');
-}
-for (const battleElement of ['<Battle key={battleRouteKey} />', '<Battle key={battleRouteKey} replayMode />']) {
-  if (!appSource.includes(battleElement)) {
+assert.match(routesSource, /<Pokemon key=\{location\.pathname\} preparedDetail=\{details\.pokemon\}/);
+assert.match(routesSource, /<Move key=\{location\.pathname\} preparedDetail=\{details\.move\}/);
+for (const battleElement of ['<Battle key={location.pathname} />', '<Battle key={location.pathname} replayMode />']) {
+  if (!routesSource.includes(battleElement)) {
     failures.push(`PVP Battle route is missing its state-isolation key: ${battleElement}`);
   }
 }
@@ -163,7 +177,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /function RouteReady[\s\S]*useEffect\(\(\) => \{[\s\S]*flushPendingNavigationScroll\(\);[\s\S]*completeProgress/,
+  /function RouteReady[\s\S]*useLayoutEffect\(\(\) => \{[\s\S]*flushPendingNavigationScroll\(\);[\s\S]*completeProgress/,
   'The committed destination route must flush the pending scroll reset.'
 );
 assert.match(tableLoadingProgress, /import \{ LinearProgress \} from '@mui\/material'/);

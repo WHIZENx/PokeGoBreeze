@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 
 import '../../Tools/CalculateStats/CalculateStats.scss';
@@ -25,6 +27,7 @@ import { pokemonSearchOptionId } from './pokemon-search-navigation';
 import { getPokemonKeyboardIndex, getScrollTopToReveal } from '../../../utils/pokemon-keyboard-navigation';
 
 const Search = () => {
+  const { showSnackbar } = useSnackbar();
   useTitle({
     title: 'PokéGO Breeze - Pokémon Search',
     description:
@@ -93,7 +96,7 @@ const Search = () => {
         })
         .catch((error) => {
           if (requestId === latestSearchRequest.current && !APIService.isCancel(error)) {
-            // Keep the last successful result set visible when a refresh fails.
+            showSnackbar(getApiErrorMessage(error, 'Unable to search for Pokémon.'), 'error');
           }
         })
         .finally(() => {
@@ -107,7 +110,7 @@ const Search = () => {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [searchPage, searchQuery]);
+  }, [searchPage, searchQuery, showSnackbar]);
 
   const getInfoPoke = (id: number) => {
     setSearchOption({ id });

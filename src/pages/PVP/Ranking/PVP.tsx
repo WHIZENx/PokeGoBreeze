@@ -1,3 +1,4 @@
+import { getApiError, getApiErrorMessage } from '../../../services/api-error';
 import React, { useState, useEffect, Fragment, useRef, useCallback, useMemo } from 'react';
 import '../PVP.scss';
 
@@ -42,7 +43,6 @@ import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.
 import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import Error from '../../Error/Error';
-import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
@@ -107,7 +107,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           { signal: controller.signal }
         )
       ).data;
-      if (requestController.current !== controller) {
+      if (controller.signal.aborted || requestController.current !== controller) {
         return;
       }
       if (!isNotEmpty(file)) {
@@ -162,14 +162,14 @@ const RankingPVP = (props: IStyleSheetData) => {
       if (controller.signal.aborted || APIService.isCancel(e)) {
         return;
       }
-      if ((e as AxiosError)?.response?.status === 404) {
+      if (getApiError(e).status === 404) {
         setRankingData([]);
         setLoadedLeagueType(null);
         setIsFound(false);
       } else {
         showSpinnerMsg({
           isError: true,
-          message: (e as AxiosError).message,
+          message: getApiErrorMessage(e, 'Unable to load PvP rankings.'),
         });
       }
     } finally {
@@ -187,6 +187,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     fetchPokemon();
     return () => {
       requestController.current?.abort();
+      requestController.current = undefined;
       hideSpinner();
     };
   }, [fetchPokemonRanking]);
