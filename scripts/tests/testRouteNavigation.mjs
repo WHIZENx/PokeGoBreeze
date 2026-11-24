@@ -70,6 +70,11 @@ if (!appSource.includes('<Routes location={displayRoute.location}>') || appSourc
 if (!appSource.includes('startProgress();') || appSource.includes('<Skeleton')) {
   failures.push('initial navigation must use the shared progress bar');
 }
+assert.match(
+  appSource,
+  /useEffect\(\(\) => \{\s*if \(isBootstrapLoaded && previousPath !== undefined && pathname !== previousPath\) \{\s*startProgress\(\);\s*\}\s*\}, \[isBootstrapLoaded, pathname, previousPath\]\);/,
+  'The header progress bar must start only when the destination pathname differs from the visible pathname.'
+);
 for (const [path, endpoint] of [
   ['/pokemon/:id', 'getPokemonBundle'],
   ['/move/:id', 'moveDetailsUrl'],

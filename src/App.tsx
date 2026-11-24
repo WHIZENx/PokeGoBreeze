@@ -130,10 +130,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (isBootstrapLoaded) {
+    if (isBootstrapLoaded && previousPath !== undefined && pathname !== previousPath) {
       startProgress();
     }
-  }, [isBootstrapLoaded, location]);
+  }, [isBootstrapLoaded, pathname, previousPath]);
 
   useEffect(() => {
     if (!isBootstrapLoaded) {

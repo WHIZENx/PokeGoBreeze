@@ -399,10 +399,11 @@ Displays the application error page for unmatched URLs. Runtime errors are handl
 - **Resilient navigation**: Keep the current page visible while the destination
   module and shared data load. Pokémon Details, Move Details, and Pokémon PvP
   Details also prepare their main API response before displaying the destination.
-  Tables and tools use their existing loading indicators for requests after the
-  page opens. A direct entry shows the static header until React can display
-  the themed header. One progress indicator stays visible through startup
-  and uses the same dimensions, colors, and motion as the MUI navigation bar.
+  The header progress bar starts on pathname changes. Query changes within the
+  same page use its existing loading indicators. A direct entry shows the
+  static header until React can display the themed header. One progress
+  indicator stays visible through startup and uses the same dimensions,
+  colors, and motion as the MUI navigation bar.
 - **Supported browsers**: Follow the repository's declared Browserslist targets.
 
 ## Getting Started
