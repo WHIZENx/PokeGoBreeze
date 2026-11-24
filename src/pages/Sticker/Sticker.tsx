@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../services/api-error';
 import { CircularProgress, Skeleton, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -132,7 +133,7 @@ const Sticker = () => {
       .catch((error) => {
         if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setFailed(true);
-          showSnackbar(`Unable to load stickers: ${error}`, 'error');
+          showSnackbar(getApiErrorMessage(error, 'Unable to load stickers.'), 'error');
         }
       })
       .finally(() => {

@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../../services/api-error';
 // @refresh reset
 import { Checkbox } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -153,6 +155,7 @@ const customStyles: TableStyles = {
 };
 
 const Counter = (props: ICounterComponent) => {
+  const { showSnackbar } = useSnackbar();
   const { findAssetForm } = useAssets();
   const { optionsCounter, setCounterOptions } = useOptionStore();
   const initialSnapshotRef = useRef(latestCounterSnapshot);
@@ -444,9 +447,12 @@ const Counter = (props: ICounterComponent) => {
       })
       .catch((error) => {
         if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
-          hasResolvedCountersRef.current = true;
+          hasResolvedCountersRef.current = false;
           resolvedCounterRequestKeyRef.current = counterRequestKey;
+          setCounterList([]);
+          setTotalRows(0);
           setShowFrame(false);
+          showSnackbar(getApiErrorMessage(error, 'Unable to load Pokémon counters.'), 'error');
         }
       });
 
@@ -470,6 +476,7 @@ const Counter = (props: ICounterComponent) => {
     isCounterTargetPending,
     hasValidCounterTarget,
     counterRequestKey,
+    showSnackbar,
   ]);
 
   useEffect(() => {

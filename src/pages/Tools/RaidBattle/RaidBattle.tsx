@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, useEffect, useState } from 'react';
 import SelectMove from '../../../components/Commons/Selects/SelectMove';
 import Raid from '../../../components/Raid/Raid';
@@ -412,8 +413,8 @@ const RaidBattle = () => {
         playerConstraint: summary.suggestedPlayers.constraint,
       });
       setDisableSearch(true);
-    } catch {
-      showSnackbar('Raid Battle API is unavailable.', 'error');
+    } catch (error) {
+      showSnackbar(getApiErrorMessage(error, 'Unable to calculate the raid estimate.'), 'error');
     } finally {
       if (hideWhenDone) {
         hideSpinner();
@@ -495,9 +496,9 @@ const RaidBattle = () => {
       const response = await APIService.postRaidBattle(payload);
       setResultRaid(response.data.data);
       setResultRaidOutcome(response.data.meta.outcome);
-      showSnackbar('Raid estimate calculated successfully!', 'success');
-    } catch {
-      showSnackbar('Raid Battle simulation API is unavailable.', 'error');
+      showSnackbar('Raid battle calculated.', 'success');
+    } catch (error) {
+      showSnackbar(getApiErrorMessage(error, 'Unable to simulate the raid battle.'), 'error');
     } finally {
       hideSpinner();
     }

@@ -1,6 +1,52 @@
 #!/usr/bin/env node
 
+import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { getApiError, getApiErrorMessage } from '../../src/services/api-error.ts';
+
+const requestError = (status, data) => ({ isAxiosError: true, response: { status, data } });
+const error = requestError(400, {
+  code: 'pvp_cp_limit_failed',
+  detail: 'A Pokémon exceeds the CP limit for this league.',
+  error: 'Invalid request.',
+});
+assert.equal(getApiError(error).code, 'pvp_cp_limit_failed');
+assert.equal(
+  getApiErrorMessage(error, 'Unable to simulate battle.'),
+  'A Pokémon exceeds the CP limit for this league.'
+);
+assert.equal(
+  getApiErrorMessage(requestError(404, { error: 'Move not found.', code: 'move_not_found' }), ''),
+  'Move not found.'
+);
+assert.equal(
+  getApiErrorMessage(requestError(404, { error: 'move_not_found' }), ''),
+  'The requested data was not found.'
+);
+assert.equal(
+  getApiErrorMessage(requestError(502, '<html>Proxy error</html>'), ''),
+  'The service is temporarily unavailable. Try again shortly.'
+);
+assert.equal(
+  getApiErrorMessage({ isAxiosError: true, code: 'ERR_NETWORK' }, ''),
+  'Could not reach the service. Check your connection and try again.'
+);
+assert.equal(getApiErrorMessage({ isAxiosError: true, code: 'ECONNABORTED' }, ''), 'The request timed out. Try again.');
+assert.equal(
+  getApiErrorMessage(requestError(504, '<html>Proxy timeout</html>'), ''),
+  'The request timed out. Try again.'
+);
+assert.equal(
+  getApiErrorMessage(
+    requestError(504, {
+      code: 'upstream_timeout',
+      detail: 'The data source took too long to respond. Try again shortly.',
+    }),
+    ''
+  ),
+  'The data source took too long to respond. Try again shortly.'
+);
+assert.equal(getApiErrorMessage(new Error('Private trace'), 'Unable to load Pokémon.'), 'Unable to load Pokémon.');
 
 const indexHtml = await readFile(new URL('../../index.html', import.meta.url), 'utf8');
 const prerenderSource = await readFile(new URL('../../sitemap/prerenderSeo.js', import.meta.url), 'utf8');

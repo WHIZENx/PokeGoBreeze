@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from './services/api-error';
 import React, {
   createContext,
   lazy,
@@ -156,10 +157,14 @@ function App() {
     startProgress();
     setStateVersion(currentVersion || '');
     loadData(controller.signal)
-      .then(() => setIsBootstrapLoaded(true))
+      .then((loaded) => {
+        if (!controller.signal.aborted && loaded) {
+          setIsBootstrapLoaded(true);
+        }
+      })
       .catch((e: unknown) => {
         if ((e as DOMException)?.name !== 'AbortError') {
-          errorProgress({ message: `Load data error: ${e}`, isError: true });
+          errorProgress({ message: getApiErrorMessage(e, 'Unable to load the app data.'), isError: true });
         }
       });
     return () => controller.abort();
@@ -189,7 +194,7 @@ function App() {
       })
       .catch((e: unknown) => {
         if (requestId === routeDataRequestRef.current) {
-          errorProgress({ message: `Load page data error: ${e}`, isError: true });
+          errorProgress({ message: getApiErrorMessage(e, 'Unable to load the data for this page.'), isError: true });
         }
       });
   }, [isBootstrapLoaded, routeDataKey]);
@@ -223,7 +228,7 @@ function App() {
   }, []);
 
   const loadData = (signal: AbortSignal, delay = loadDataDelay()) => {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const resolveHandler = async () => {
         resolve(await loadTimestamp());
       };

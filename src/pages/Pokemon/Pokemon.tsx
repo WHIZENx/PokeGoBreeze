@@ -1,3 +1,4 @@
+import { getApiError, getApiErrorMessage } from '../../services/api-error';
 // @refresh reset
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -623,14 +624,8 @@ const Pokemon = (props: IPokemonPage) => {
             if (APIService.isCancel(error) || requestId !== pokemonRequestIdRef.current) {
               return;
             }
-            const status = (error as { response?: { status?: number } }).response?.status;
-            const notFound = status === 404;
-            showSnackbar(
-              notFound
-                ? `Pokémon ID or name: ${id} not found!`
-                : `Unable to display Pokémon data for ID: ${id}. Please try again.`,
-              'error'
-            );
+            const notFound = getApiError(error).status === 404;
+            showSnackbar(getApiErrorMessage(error, 'Unable to load this Pokémon.'), 'error');
             if (notFound && isDetailsRoute) {
               setIsFound(false);
             } else if (notFound) {

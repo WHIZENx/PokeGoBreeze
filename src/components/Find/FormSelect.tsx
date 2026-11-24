@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../services/api-error';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import './FormSelect.scss';
 import '../Info/PokemonDetailLayout.scss';
@@ -245,13 +246,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           if (APIService.isCancel(error)) {
             return;
           }
-          const status = (error as { response?: { status?: number } }).response?.status;
-          showSnackbar(
-            status === 404
-              ? `Pokémon ID or name: ${id} not found!`
-              : `Unable to display Pokémon data for ID: ${id}. Please try again.`,
-            'error'
-          );
+          showSnackbar(getApiErrorMessage(error, 'Unable to load this Pokémon.'), 'error');
         });
     },
     [fetchMap]

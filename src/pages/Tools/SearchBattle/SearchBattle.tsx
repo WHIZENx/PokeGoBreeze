@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
@@ -119,25 +120,19 @@ const FindBattle = () => {
         if (!result.possible) {
           setEvoChain([]);
           setBestInLeague([]);
-          showSnackbar(
-            `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} impossible found in ${name}`,
-            'error'
-          );
+          showSnackbar(`${name} cannot reach CP ${result.stats.CP} with these IVs.`, 'error');
           return;
         }
         setEvoChain(result.chains);
         setBestInLeague(result.bestInLeague);
-        showSnackbar(
-          `Search success at CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} found in ${name}`,
-          'success'
-        );
+        showSnackbar(`League stats found for ${name} at CP ${result.stats.CP}.`, 'success');
       } catch (error) {
         if (APIService.isCancel(error)) {
           return;
         }
         setEvoChain([]);
         setBestInLeague([]);
-        showSnackbar('Battle League API is unavailable.', 'error');
+        showSnackbar(getApiErrorMessage(error, 'Unable to search Battle League stats.'), 'error');
       } finally {
         if (requestController.current === controller) {
           requestController.current = undefined;

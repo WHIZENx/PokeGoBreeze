@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../../services/api-error';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { Fragment, useCallback, useMemo, useState } from 'react';
 
@@ -239,9 +240,9 @@ const Damage = () => {
             objLevel: statLevelObj,
           })
         );
-      } catch {
+      } catch (error) {
         clearData();
-        showSnackbar('Damage Simulator API is unavailable.', 'error');
+        showSnackbar(getApiErrorMessage(error, 'Unable to simulate damage.'), 'error');
       } finally {
         hideSpinner();
       }

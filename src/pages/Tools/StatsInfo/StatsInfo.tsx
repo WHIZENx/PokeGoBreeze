@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../../services/api-error';
 import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TableColumn } from 'react-data-table-component';
@@ -192,7 +193,7 @@ const StatsInfo = () => {
       })
       .catch((error) => {
         if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
-          showSnackbar('Unable to load server-calculated IV rankings.', 'error');
+          showSnackbar(getApiErrorMessage(error, 'Unable to load IV rankings.'), 'error');
         }
       })
       .finally(() => {

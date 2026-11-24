@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../services/api-error';
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -221,7 +222,12 @@ const Pokedex = (props: IStyleSheetData) => {
       })
       .catch((error) => {
         if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
-          dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: `Error loading Pokédex: ${error}`, isError: true }));
+          dispatch(
+            SpinnerActions.ShowSpinnerMsg.create({
+              message: getApiErrorMessage(error, 'Unable to load the Pokédex.'),
+              isError: true,
+            })
+          );
         }
       })
       .finally(() => {
@@ -256,7 +262,6 @@ const Pokedex = (props: IStyleSheetData) => {
           document.scrollingElement) as HTMLElement;
 
         if (!scrollingElement) {
-          dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: 'No scrolling found', isError: true }));
           return;
         }
 
@@ -267,8 +272,8 @@ const Pokedex = (props: IStyleSheetData) => {
         if (scrollTop + fullHeight >= scrollHeight - 300 && !isLoading && page < pages) {
           setPage((current) => current + 1);
         }
-      } catch (error) {
-        dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: `Error in scroll handler: ${error}`, isError: true }));
+      } catch {
+        dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: 'Unable to load more Pokémon.', isError: true }));
       }
     };
 

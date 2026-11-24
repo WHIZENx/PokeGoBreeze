@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../services/api-error';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
@@ -323,7 +324,7 @@ const Move = (props: IMovePage) => {
           setMove(undefined);
           setTopListFilter([]);
           setTotalRows(0);
-          showSnackbar(`Move ${key} not found or API unavailable`, 'error');
+          showSnackbar(getApiErrorMessage(error, 'Unable to load this move.'), 'error');
           setTitleProps({
             title: `#${key} - Not Found`,
             description: 'The requested move could not be found. Please check the move ID and try again.',

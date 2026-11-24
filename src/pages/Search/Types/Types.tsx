@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { useState, useEffect, useRef } from 'react';
 import APIService from '../../../services/api.service';
 import {
@@ -227,6 +229,7 @@ const typeSortField = (kind: TypeResultKind, columnId: string | number | undefin
 };
 
 const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean, enabled: boolean) => {
+  const { showSnackbar } = useSnackbar();
   const [data, setData] = useState<T[]>([]);
   const [total, setTotal] = useState(0);
   const [counts, setCounts] = useState<TypeCounts>();
@@ -276,6 +279,8 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
         if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setData([]);
           setTotal(0);
+          setCounts(undefined);
+          showSnackbar(getApiErrorMessage(error, 'Unable to load type results.'), 'error');
         }
       })
       .finally(() => {
@@ -284,7 +289,7 @@ const useTypeResult = <T,>(kind: TypeResultKind, type: string, released: boolean
         }
       });
     return () => controller.abort();
-  }, [enabled, kind, type, released, search, page, sort, skipStalePageRequest]);
+  }, [enabled, kind, type, released, search, page, sort, skipStalePageRequest, showSnackbar]);
 
   const onSort = (columnId: string | number | undefined, order: 'asc' | 'desc') => {
     setSort({ field: typeSortField(kind, columnId), order });

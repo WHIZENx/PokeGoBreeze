@@ -46,6 +46,7 @@ import type {
 class APIService {
   date: Date;
   axios: AxiosStatic;
+  private readonly dataAxios = axios.create({ timeout: 32_000 });
   cancelToken: CancelTokenSource;
   damageStatsCache = new Map<string, Promise<AxiosResponse<DamageSimulatorApiResponse>>>();
   publicGitHubRepos = ['pokeminers/pogo_assets', 'pvpoke/pvpoke'];
@@ -54,7 +55,6 @@ class APIService {
     this.date = new Date();
     this.axios = axios;
     this.cancelToken = axios.CancelToken.source();
-    // this.axios.defaults.timeout = 10000;
   }
 
   getCancelToken() {
@@ -102,7 +102,8 @@ class APIService {
 
   async getFetchUrl<T>(url: string | null | undefined, options?: AxiosRequestConfig<unknown>) {
     const fetchUrl = getValueOrDefault(String, url);
-    return await this.axios.get<T>(fetchUrl, this.withoutPublicGitHubAuthorization(fetchUrl, options));
+    const client = fetchUrl.startsWith(`${APIUrl.POKEGO_BREEZE_API_URL}/api/`) ? this.dataAxios : this.axios;
+    return await client.get<T>(fetchUrl, this.withoutPublicGitHubAuthorization(fetchUrl, options));
   }
 
   async getPokemonBundle(value: number, options?: AxiosRequestConfig<unknown>) {
@@ -462,18 +463,18 @@ class APIService {
   }
 
   postRaidBattle(payload: RaidBattleRequest) {
-    return this.axios.post<RaidBattleApiResponse>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/raid-battle`, payload);
+    return this.dataAxios.post<RaidBattleApiResponse>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/raid-battle`, payload);
   }
 
   postCalculateStats(payload: CalculateStatsRequest) {
-    return this.axios.post<CalculateStatsApiResponse>(
+    return this.dataAxios.post<CalculateStatsApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/calculate-stats`,
       payload
     );
   }
 
   postBattleLeagueSearch(payload: BattleLeagueSearchRequest, signal?: AbortSignal) {
-    return this.axios.post<BattleLeagueSearchApiResponse>(
+    return this.dataAxios.post<BattleLeagueSearchApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/battle-league-search`,
       payload,
       { signal }
@@ -482,7 +483,10 @@ class APIService {
 
   postDamageSimulator(payload: DamageSimulatorRequest) {
     const request = () =>
-      this.axios.post<DamageSimulatorApiResponse>(`${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/damage-simulator`, payload);
+      this.dataAxios.post<DamageSimulatorApiResponse>(
+        `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/damage-simulator`,
+        payload
+      );
     if (payload.mode !== 'stats') {
       return request();
     }
@@ -500,14 +504,14 @@ class APIService {
   }
 
   postPvpBattleSimulator(payload: PvpBattleSimulatorRequest) {
-    return this.axios.post<PvpBattleSimulatorApiResponse>(
+    return this.dataAxios.post<PvpBattleSimulatorApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/pvp-battle-simulator`,
       payload
     );
   }
 
   postTrainerBattleSimulator(payload: TrainerBattleSimulatorRequest) {
-    return this.axios.post<TrainerBattleSimulatorApiResponse>(
+    return this.dataAxios.post<TrainerBattleSimulatorApiResponse>(
       `${APIUrl.POKEGO_BREEZE_API_URL}/api/v1/trainer-battle-simulator`,
       payload
     );

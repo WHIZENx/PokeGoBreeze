@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import SelectBadge from '../../../components/Commons/Selects/SelectBadge';
@@ -80,6 +82,7 @@ const throws = createDataRows<ThrowThreshold>(
 const CATCH_CHANCE_EXCLUDED_POKEMON_TYPES = [PokemonType.Purified] as const;
 
 const CatchChance = () => {
+  const { showSnackbar } = useSnackbar();
   const { searchingToolCurrentDetails } = useSearch();
   const circleDistance = useRef(200);
 
@@ -179,9 +182,12 @@ const CatchChance = () => {
           );
         }
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (active) {
           setCalculatedCp(0);
+          setDataAdv(new DataAdvance());
+          setData((current) => (current ? { ...current, result: undefined } : current));
+          showSnackbar(getApiErrorMessage(error, 'Unable to calculate the catch chance.'), 'error');
         }
       });
     return () => {
@@ -193,6 +199,7 @@ const CatchChance = () => {
     form?.form.pokemonType,
     data?.baseCaptureRate,
     data?.shadowBaseCaptureRate,
+    showSnackbar,
     radius,
     medal,
     level,

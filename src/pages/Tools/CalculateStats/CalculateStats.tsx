@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, useCallback, useState } from 'react';
 
 import {
@@ -139,16 +140,9 @@ const Calculate = () => {
         setDataGreatLeague(undefined);
         setDataUltraLeague(undefined);
         setDataMasterLeague(undefined);
-        showSnackbar(
-          `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} impossible found in ${name}`,
-          'error'
-        );
+        showSnackbar(`${name} cannot reach CP ${result.stats.CP} with these IVs.`, 'error');
         return;
       }
-      showSnackbar(
-        `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} found in ${getKeyWithData(PokemonType, calculatedPokemonType)} ${name}`,
-        'success'
-      );
       setPokeStats(result.stats);
       setStatLevel(result.stats.level);
       setStatData(result.current);
@@ -157,7 +151,8 @@ const Calculate = () => {
       setDataGreatLeague(result.leagues.great);
       setDataUltraLeague(result.leagues.ultra);
       setDataMasterLeague(result.leagues.master);
-    } catch {
+      showSnackbar(`Stats calculated for ${name} at CP ${result.stats.CP}.`, 'success');
+    } catch (error) {
       setPokeStats(undefined);
       setStatData(undefined);
       setLevelResults([]);
@@ -165,7 +160,7 @@ const Calculate = () => {
       setDataGreatLeague(undefined);
       setDataUltraLeague(undefined);
       setDataMasterLeague(undefined);
-      showSnackbar('Calculate Stats API is unavailable', 'error');
+      showSnackbar(getApiErrorMessage(error, 'Unable to calculate Pokémon stats.'), 'error');
     } finally {
       hideSpinner();
     }

@@ -1,3 +1,4 @@
+import { getApiError, getApiErrorMessage } from '../../../services/api-error';
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -25,7 +26,6 @@ import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { getValueOrDefault } from '../../../utils/extension';
-import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
@@ -156,7 +156,8 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
       if (controller.signal.aborted) {
         return;
       }
-      if ((e as AxiosError)?.response?.status === 404) {
+      if (getApiError(e).status === 404) {
+        setIsFound(false);
         setRankingPoke(undefined);
         setLeague(undefined);
         setLoadedRequestKey('');
@@ -165,7 +166,7 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
       } else {
         showSpinnerMsg({
           isError: true,
-          message: (e as AxiosError).message,
+          message: getApiErrorMessage(e, 'Unable to load this PvP Pokémon.'),
         });
       }
     } finally {

@@ -1,3 +1,4 @@
+import { getApiError, getApiErrorMessage } from '../../services/api-error';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Box, Card, CardContent, Chip, LinearProgress, Tab, Tabs, Typography } from '@mui/material';
 import SportsMmaIcon from '@mui/icons-material/SportsMma';
@@ -200,21 +201,18 @@ const TrainerLab = () => {
       });
       setResult(response.data.data);
     } catch (requestError) {
-      const responseError = requestError as {
-        response?: { data?: { error?: string; code?: string; pokemon?: string } };
-      };
-      const code = responseError.response?.data?.code ?? responseError.response?.data?.error;
-      const pokemon = responseError.response?.data?.pokemon;
+      const { code, pokemon } = getApiError(requestError);
+      const pokemonName = pokemon ? displayPokemonName(pokemon) : 'The selected Pokémon';
       setError(
         code === 'duplicate_team_species'
           ? 'A Trainer Battle team cannot contain duplicate Pokémon species.'
           : code === 'pokemon_not_eligible'
-            ? `${displayPokemonName(pokemon ?? '')} cannot fit this league with the selected Level/IV build.`
+            ? `${pokemonName} cannot enter this league at the selected level and IVs.`
             : code === 'invalid_pokemon_level'
-              ? `${displayPokemonName(pokemon ?? '')} has a Level that is not available in Pokémon GO.`
+              ? `${pokemonName} has an unsupported level.`
               : code === 'moves_not_eligible'
-                ? `${displayPokemonName(pokemon ?? '')} cannot use the selected moves in this form.`
-                : 'The simulation could not be completed. Please adjust the team and try again.'
+                ? `${pokemonName} cannot use the selected moves in this form.`
+                : getApiErrorMessage(requestError, 'Unable to simulate this Trainer Battle.')
       );
     } finally {
       setLoading(false);

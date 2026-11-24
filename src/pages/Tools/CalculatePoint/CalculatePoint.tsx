@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, useMemo, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
@@ -164,9 +165,9 @@ const CalculatePoint = () => {
         colorTone,
         target: response.data.data.target,
       });
-      showSnackbar('Calculate breakpoint attacker successfully!', 'success');
-    } catch {
-      showSnackbar('Breakpoint API is unavailable.', 'error');
+      showSnackbar('Attacker breakpoints calculated.', 'success');
+    } catch (error) {
+      showSnackbar(getApiErrorMessage(error, 'Unable to calculate the breakpoint or bulkpoint.'), 'error');
     }
   };
 
@@ -202,9 +203,9 @@ const CalculatePoint = () => {
         colorToneSta,
         target: response.data.data.target,
       });
-      showSnackbar('Calculate breakpoint defender successfully!', 'success');
-    } catch {
-      showSnackbar('Breakpoint API is unavailable.', 'error');
+      showSnackbar('Defender breakpoints calculated.', 'success');
+    } catch (error) {
+      showSnackbar(getApiErrorMessage(error, 'Unable to calculate the breakpoint or bulkpoint.'), 'error');
     }
   };
 
@@ -265,9 +266,9 @@ const CalculatePoint = () => {
         ivs: response.data.data.ivs,
         target: response.data.data.target,
       });
-      showSnackbar('Calculate bulkpoint defender successfully!', 'success');
-    } catch {
-      showSnackbar('Breakpoint API is unavailable.', 'error');
+      showSnackbar('Defender bulkpoints calculated.', 'success');
+    } catch (error) {
+      showSnackbar(getApiErrorMessage(error, 'Unable to calculate the breakpoint or bulkpoint.'), 'error');
     }
   };
 

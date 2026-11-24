@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { useEffect, useRef, useState } from 'react';
 
 import {
@@ -338,6 +340,7 @@ const defenderColumns = createDataRows<TableColumnModify<PokemonSheetData>>(
 );
 
 const DpsTdo = () => {
+  const { showSnackbar } = useSnackbar();
   useTitle({
     title: 'Pokémon GO Attacker Analysis - DPS & TDO Rankings | PokéGO Breeze',
     description:
@@ -573,6 +576,7 @@ const DpsTdo = () => {
           setDpsTable([]);
           setTotalRows(0);
           setHasDefenderResults(false);
+          showSnackbar(getApiErrorMessage(error, 'Unable to load DPS and TDO results.'), 'error');
         }
       })
       .finally(() => {
@@ -624,6 +628,7 @@ const DpsTdo = () => {
     defaultSorted,
     requestVersion,
     hasDefender,
+    showSnackbar,
   ]);
 
   useEffect(() => {

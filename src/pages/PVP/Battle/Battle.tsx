@@ -1,3 +1,4 @@
+import { getApiError, getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../PVP.scss';
 
@@ -96,7 +97,6 @@ import type { ILeague } from '../../../core/models/league.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import Error from '../../Error/Error';
 import Tooltips from '../../../components/Commons/Tooltips/Tooltips';
-import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { getBattleHp, getRandomNumber, overlappingPosFromOffsets, pushOffsetById } from '../utils/battle.utils';
@@ -376,7 +376,7 @@ const Battle = ({ replayMode = false }: BattleProps) => {
       })
       .catch((error: unknown) => {
         if (!APIService.isCancel(error)) {
-          showSnackbar('Unable to load current cup rules.', 'error');
+          showSnackbar(getApiErrorMessage(error, 'Unable to load current cup rules.'), 'error');
         }
       });
     return () => controller.abort();
@@ -680,11 +680,12 @@ const Battle = ({ replayMode = false }: BattleProps) => {
       const warningMessages = [...new Set((response.data.meta.warnings ?? []).map((warning) => warning.message))];
       if (warningMessages.length) {
         showSnackbar(warningMessages.join(' '), 'warning');
+      } else {
+        showSnackbar('Battle simulated.', 'success');
       }
       focusBattleTimeline();
     } catch (error) {
-      const axiosError = error as AxiosError<{ error?: string }>;
-      showSnackbar(axiosError.response?.data?.error ?? axiosError.message, 'error');
+      showSnackbar(getApiErrorMessage(error, 'Unable to simulate this PvP battle.'), 'error');
     } finally {
       hideSpinner();
     }
@@ -834,12 +835,12 @@ const Battle = ({ replayMode = false }: BattleProps) => {
         if (APIService.isCancel(e)) {
           return;
         }
-        if ((e as AxiosError)?.status === 404) {
+        if (getApiError(e).status === 404) {
           setIsFound(false);
         } else {
           showSpinnerMsg({
             isError: true,
-            message: (e as AxiosError).message,
+            message: getApiErrorMessage(e, 'Unable to load PvP battle data.'),
           });
         }
       }

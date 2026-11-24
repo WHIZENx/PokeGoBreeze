@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../services/api-error';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -1046,9 +1047,7 @@ const GameMasterUpdates = () => {
       })
       .catch((reason: unknown) => {
         if (currentRequest === requestId.current && !APIService.isCancel(reason)) {
-          setError(
-            'Unable to load Game Master patch notes. The data service is temporarily unavailable. Please try again.'
-          );
+          setError(getApiErrorMessage(reason, 'Unable to load Game Master patch notes.'));
         }
       })
       .finally(() => {
