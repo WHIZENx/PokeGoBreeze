@@ -64,6 +64,9 @@ assert.equal(
 assert.equal(getApiErrorMessage(new Error('Private trace'), 'Unable to load Pokémon.'), 'Unable to load Pokémon.');
 
 const indexHtml = await readFile(new URL('../../index.html', import.meta.url), 'utf8');
+const appSource = await readFile(new URL('../../src/App.tsx', import.meta.url), 'utf8');
+const entrySource = await readFile(new URL('../../src/index.tsx', import.meta.url), 'utf8');
+const progressSource = await readFile(new URL('../../src/utils/helpers/progress-helpers.ts', import.meta.url), 'utf8');
 const prerenderSource = await readFile(new URL('../../sitemap/prerenderSeo.js', import.meta.url), 'utf8');
 const responsiveAppBarSource = await readFile(
   new URL('../../src/components/Commons/Navbars/ResponsiveAppBar.tsx', import.meta.url),
@@ -134,7 +137,7 @@ const checks = [
   ],
   [
     'header typography matches MUI',
-    indexHtml.includes("font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif") &&
+    indexHtml.includes("font-family: var(--font-family-sans, 'Roboto', 'Helvetica', 'Arial', sans-serif)") &&
       indexHtml.includes('font-size: 16px') &&
       indexHtml.includes('line-height: 24px') &&
       indexHtml.includes('letter-spacing: 0.00938em'),
@@ -151,27 +154,47 @@ const checks = [
       indexHtml.includes('linear-gradient(rgb(255 255 255 / 9%), rgb(255 255 255 / 9%))'),
   ],
   ['header icon preloaded', indexHtml.includes('rel="preload" as="image" href="/app-icon.png"')],
-  ['delayed progress indicator', indexHtml.includes('class="seo-shell-progress"') && indexHtml.includes('450ms')],
+  [
+    'persistent startup header and progress outside the React mount',
+    indexHtml.includes('<!--seo-shell-end-->\n    <div id="startup-progress"') &&
+      indexHtml.includes('<div id="root"></div>') &&
+      entrySource.includes('<PersistGate loading={null}') &&
+      /useLayoutEffect\(\(\) => \{\s*document\.getElementById\('seo-content'\)\?\.remove\(\)/.test(appSource) &&
+      indexHtml.includes('#seo-content ~ #root:empty'),
+  ],
+  [
+    'one startup progress bar remains until first route or failure',
+    indexHtml.includes('#startup-progress ~ #root .app-navigation-progress') &&
+      appSource.includes('if (finishStartupProgress())') &&
+      /errorProgress: \(error: ErrorModel\) => \{\s*finishStartupProgress\(\)/.test(progressSource),
+  ],
+  [
+    'delayed progress indicator uses MUI dimensions and animation timings',
+    indexHtml.includes('class="seo-shell-progress"') &&
+      indexHtml.includes('450ms') &&
+      indexHtml.includes('height: 4px') &&
+      indexHtml.includes('seo-shell-progress-first 2.1s') &&
+      indexHtml.includes('seo-shell-progress-second 2.1s'),
+  ],
   ['no blocking loading card', !indexHtml.includes('seo-shell-card') && !indexHtml.includes('seo-shell-spinner')],
   ['header icon matches React', renderedHeaderIcon.equals(headerIcon)],
   ['viewport-safe progress width', indexHtml.includes('.seo-shell-progress {') && indexHtml.includes('width: 100%')],
   [
     'progress indicator aligns with rendered header top',
-    indexHtml.includes('position: absolute') &&
-      indexHtml.includes('top: 0') &&
-      indexHtml.includes('<header class="seo-shell-bar">') &&
-      indexHtml.indexOf('class="seo-shell-progress"') < indexHtml.indexOf('</header>'),
+    indexHtml.includes('position: fixed') &&
+      indexHtml.includes('inset: 0 0 auto') &&
+      responsiveAppBarSource.includes('app-navigation-progress tw-absolute tw-inset-x-0 tw-top-0'),
   ],
   ['reduced-motion support', indexHtml.includes('@media (prefers-reduced-motion: reduce)')],
   [
     'replaceable shell markers',
     indexHtml.includes('<!--seo-shell-start-->') && indexHtml.includes('<!--seo-shell-end-->'),
   ],
-  ['route-specific shell renderer', prerenderSource.includes('renderLoadingShell(route.title.split')],
   [
-    'route-specific responsive header',
-    prerenderSource.includes('class="seo-shell-mobile-menu"') &&
-      prerenderSource.includes('class="seo-shell-theme-toggle"'),
+    'prerendered routes reuse the responsive shell and replace only its SEO copy',
+    prerenderSource.includes("replaceShellCopy(html, 'seo-shell-title'") &&
+      prerenderSource.includes("replaceShellCopy(html, 'seo-shell-description'") &&
+      !prerenderSource.includes('class="seo-shell-bar"'),
   ],
   ['Vercel production asset cache', hasVercelImmutableCache(vercelConfig)],
   ['Vercel preview asset cache', hasVercelImmutableCache(vercelPreviewConfig)],

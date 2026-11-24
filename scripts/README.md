@@ -14,7 +14,7 @@ Extend the suite for the affected behavior when adding a regression.
 | --- | --- |
 | `npm run test:pokedex` | Pokédex query serialization, search navigation, and card image candidates |
 | `npm run test:pokemon-images` | Image loading surfaces and fallback sequences across Detail, Ranking, and Tools |
-| `npm run test:route-navigation` | Route hydration, mobile navigation, and PvP navigation and loading states |
+| `npm run test:route-navigation` | Route and detail preloading, route hydration, mobile navigation, and PvP loading states |
 | `npm run test:app-shell` | API error messages, request cancellation, pre-hydration markup, hosting rewrites and caching, and public SEO assets |
 | `npm run test:design-system` | Tailwind tokens and utilities, responsive variants, and shared typography |
 

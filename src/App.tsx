@@ -1,49 +1,10 @@
 import { getApiErrorMessage } from './services/api-error';
-import React, {
-  createContext,
-  lazy,
-  Suspense,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { Route, Routes, useLocation, type Location } from 'react-router-dom';
+import { matchRoutes, Route, Routes, useLocation, useNavigationType, type Location } from 'react-router-dom';
 
 import './App.scss';
 
-const News = lazy(() => import('./pages/News/News'));
-const GameMasterUpdates = lazy(() => import('./pages/GameMasterUpdates/GameMasterUpdates'));
-const Pokedex = lazy(() => import('./pages/Pokedex/Pokedex'));
-const SearchPokemon = lazy(() => import('./pages/Search/Pokemon/Search'));
-const SearchMove = lazy(() => import('./pages/Search/Moves/SearchMoves'));
-const TypeEffect = lazy(() => import('./pages/TypeEffect/TypeEffect'));
-const Weather = lazy(() => import('./pages/Weather/Weather'));
-const Pokemon = lazy(() => import('./pages/Pokemon/Pokemon'));
-const FindTable = lazy(() => import('./pages/Tools/FindTable/FindTable'));
-const CalculateStats = lazy(() => import('./pages/Tools/CalculateStats/CalculateStats'));
-const Damage = lazy(() => import('./pages/Tools/BattleDamage/Damage'));
-const DpsTdo = lazy(() => import('./pages/Sheets/DpsTdo/DpsTdo'));
-const Move = lazy(() => import('./pages/Move/Move'));
-const Error = lazy(() => import('./pages/Error/Error'));
-const Leagues = lazy(() => import('./pages/PVP/Leagues/Leagues'));
-const SearchBattle = lazy(() => import('./pages/Tools/SearchBattle/SearchBattle'));
-const StatsInfo = lazy(() => import('./pages/Tools/StatsInfo/StatsInfo'));
-const Sticker = lazy(() => import('./pages/Sticker/Sticker'));
-const RaidBattle = lazy(() => import('./pages/Tools/RaidBattle/RaidBattle'));
-const CalculatePoint = lazy(() => import('./pages/Tools/CalculatePoint/CalculatePoint'));
-const RankingPVP = lazy(() => import('./pages/PVP/Ranking/PVP'));
-const PokemonPVP = lazy(() => import('./pages/PVP/Pokemon/Pokemon'));
-const PVPHome = lazy(() => import('./pages/PVP/Home'));
-const TeamPVP = lazy(() => import('./pages/PVP/Teams/PVP'));
-const Battle = lazy(() => import('./pages/PVP/Battle/Battle'));
-const CatchChance = lazy(() => import('./pages/Tools/CatchChance/CatchChance'));
-const SearchTypes = lazy(() => import('./pages/Search/Types/Types'));
-const StatsRanking = lazy(() => import('./pages/Sheets/StatsRanking/StatsRanking'));
-const TrainerLab = lazy(() => import('./pages/Trainer/TrainerLab'));
 import Spinner from './components/Spinner/Spinner';
 import { useLocalStorage } from 'usehooks-ts';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -51,7 +12,6 @@ import Box from '@mui/material/Box';
 import { getDesignThemes } from './utils/models/overrides/themes.model';
 import { TypeTheme } from './enums/type.enum';
 import { LocalStorageConfig } from './store/constants/local-storage';
-import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
@@ -62,27 +22,35 @@ import { loadDataDelay } from './utils/helpers/options-context.helpers';
 import useTimestamp from './composables/useTimestamp';
 import useSpinner from './composables/useSpinner';
 import useDevice from './composables/useDevice';
-import useRouter from './composables/useRouter';
 import ResponsiveAppBar from './components/Commons/Navbars/ResponsiveAppBar';
 import { SnackbarProvider } from './contexts/snackbar.context';
-import { createProgressHelpers } from './utils/helpers/progress-helpers';
+import { createProgressHelpers, finishStartupProgress } from './utils/helpers/progress-helpers';
 import { useDispatch } from 'react-redux';
 import useDataStore from './composables/useDataStore';
 import { getProcessedDataSectionsForRoute } from './utils/configs/processed-data-routes.config';
 import type { ProcessedDataSection } from './services/processed-data.service';
 import { flushPendingNavigationScroll } from './components/Link/LinkToTop';
-import { preparePvpDetailRoute, type PreparedPvpDetail } from './services/pvp-detail-route.service';
+import { prepareRouteDetails, resolvePokemonRouteId, type RouteDetails } from './services/detail-route.service';
+import { appRoutes, type RenderPage } from './app-routes';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
 });
 
-function RouteReady({ location }: { location: Location }) {
+function RouteReady({ location, resetScroll }: { location: Location; resetScroll: boolean }) {
   const dispatch = useDispatch();
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (resetScroll) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
     flushPendingNavigationScroll();
-    createProgressHelpers(dispatch).completeProgress();
-  }, [dispatch, location]);
+    const { hideProgress, completeProgress } = createProgressHelpers(dispatch);
+    if (finishStartupProgress()) {
+      hideProgress();
+    } else {
+      completeProgress();
+    }
+  }, [dispatch, location, resetScroll]);
   return null;
 }
 
@@ -90,10 +58,10 @@ function App() {
   const { loadTimestamp, timestampGameMaster } = useTimestamp();
   const { startProgress } = useSpinner();
   const { setDevice } = useDevice();
-  const { routerData, routerAction } = useRouter();
+  const navigationType = useNavigationType();
   const location = useLocation();
   const { pathname } = location;
-  const { loadProcessedSections } = useDataStore();
+  const { loadProcessedSections, pokemonsData } = useDataStore();
 
   const colorMode = useContext(ColorModeContext);
 
@@ -101,9 +69,13 @@ function App() {
   const [, setStateVersion] = useLocalStorage(LocalStorageConfig.Version, '');
   const [isBootstrapLoaded, setIsBootstrapLoaded] = useState(false);
   const [loadedRouteDataKey, setLoadedRouteDataKey] = useState<string | null>(null);
-  const [displayLocation, setDisplayLocation] = useState(location);
-  const [hasCommittedLocation, setHasCommittedLocation] = useState(false);
-  const [preparedPvpDetail, setPreparedPvpDetail] = useState<PreparedPvpDetail>();
+  const [displayRoute, setDisplayRoute] = useState<{
+    location: Location;
+    path: string;
+    render: RenderPage;
+    details: RouteDetails;
+    resetScroll: boolean;
+  }>();
   const routeDataRequestRef = useRef(0);
   const dispatch = useDispatch();
   const { errorProgress } = createProgressHelpers(dispatch);
@@ -111,10 +83,13 @@ function App() {
   const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
   const routeDataKey = useMemo(() => getProcessedDataSectionsForRoute(pathname).join('|'), [pathname]);
-  const pokemonRouteKey = displayLocation.pathname.startsWith('/pokemon/') ? displayLocation.pathname : undefined;
-  const battleRouteKey = displayLocation.pathname.startsWith('/pvp/battle') ? displayLocation.pathname : undefined;
+  const previousPath = displayRoute?.location.pathname;
 
   useOptionsObserver();
+
+  useLayoutEffect(() => {
+    document.getElementById('seo-content')?.remove();
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
@@ -126,22 +101,6 @@ function App() {
       });
     }, 400);
   }, []);
-
-  useEffect(() => {
-    if (routerData && routerAction === Action.Pop) {
-      const debounced = debounce(() => {
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'instant',
-        });
-      }, 1);
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
-    }
-  }, [routerData]);
 
   useEffect(() => {
     if (timestampGameMaster) {
@@ -200,28 +159,48 @@ function App() {
   }, [isBootstrapLoaded, routeDataKey]);
 
   useEffect(() => {
-    const controller = new AbortController();
-    if (isBootstrapLoaded && loadedRouteDataKey === routeDataKey) {
-      preparePvpDetailRoute(location, controller.signal)
-        .then((prepared) => {
-          if (!controller.signal.aborted) {
-            setPreparedPvpDetail(prepared);
-            setDisplayLocation(location);
-            setHasCommittedLocation(true);
-          }
-        })
-        .catch(() => {
-          if (!controller.signal.aborted) {
-            // Commit failed destinations so their existing error handling can
-            // display not-found or transport errors instead of trapping navigation.
-            setPreparedPvpDetail(undefined);
-            setDisplayLocation(location);
-            setHasCommittedLocation(true);
-          }
-        });
+    if (!isBootstrapLoaded || displayRoute?.location === location) {
+      return;
     }
+    const route = matchRoutes(appRoutes, pathname)?.at(-1)?.route;
+    if (!route) {
+      return;
+    }
+    const controller = new AbortController();
+    const { signal } = controller;
+    const page = route.load();
+    if (loadedRouteDataKey !== routeDataKey) {
+      // Start downloading the page while its shared sections are still loading.
+      void page.catch(() => {});
+      return;
+    }
+    Promise.all([
+      page,
+      prepareRouteDetails(location, previousPath, (key) => resolvePokemonRouteId(key, pokemonsData), signal),
+    ])
+      .then(([render, details]) => {
+        if (!signal.aborted) {
+          setDisplayRoute({ location, path: route.path, render, details, resetScroll: navigationType === 'POP' });
+        }
+      })
+      .catch((error: unknown) => {
+        if (!signal.aborted) {
+          controller.abort();
+          errorProgress({ isError: true, message: getApiErrorMessage(error, 'Unable to open this page. Try again.') });
+        }
+      });
     return () => controller.abort();
-  }, [isBootstrapLoaded, loadedRouteDataKey, location, routeDataKey]);
+  }, [
+    displayRoute?.location,
+    isBootstrapLoaded,
+    loadedRouteDataKey,
+    location,
+    navigationType,
+    pathname,
+    pokemonsData,
+    previousPath,
+    routeDataKey,
+  ]);
 
   useEffect(() => {
     setDevice();
@@ -257,53 +236,20 @@ function App() {
   return (
     <Box className="app-theme-root tw-min-h-full" sx={{ backgroundColor: 'background.default' }}>
       <ResponsiveAppBar toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
-      {isBootstrapLoaded && loadedRouteDataKey !== null && hasCommittedLocation && (
-        <Suspense fallback={null}>
-          <Routes location={displayLocation}>
-            <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/game-master-updates" element={<GameMasterUpdates />} />
-            <Route path="/game-master-updates/:patchSlug" element={<GameMasterUpdates />} />
-            <Route path="/type-effective" element={<TypeEffect />} />
-            <Route path="/weather-boosts" element={<Weather />} />
-            <Route path="/search-pokemon" element={<SearchPokemon />} />
-            <Route path="/pokemon/:id" element={<Pokemon key={pokemonRouteKey} />} />
-            <Route path="/search-moves" element={<SearchMove />} />
-            <Route path="/move/:id" element={<Move />} />
-            <Route path="/search-types" element={<SearchTypes styleSheet={styleSheet.current} />} />
-            <Route path="/find-cp-iv" element={<FindTable />} />
-            <Route path="/calculate-stats" element={<CalculateStats />} />
-            <Route path="/search-battle-stats" element={<SearchBattle />} />
-            <Route path="/stats-table" element={<StatsInfo />} />
-            <Route path="/damage-calculate" element={<Damage />} />
-            <Route path="/raid-battle" element={<RaidBattle />} />
-            <Route path="/calculate-point" element={<CalculatePoint />} />
-            <Route path="/calculate-catch-chance" element={<CatchChance />} />
-            <Route path="/dps-tdo-sheets" element={<DpsTdo />} />
-            <Route path="/stats-ranking" element={<StatsRanking />} />
-            <Route path="/pvp" element={<PVPHome />} />
-            <Route path="/pvp/rankings/:serie/:cp" element={<RankingPVP styleSheet={styleSheet.current} />} />
-            <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP styleSheet={styleSheet.current} />} />
-            <Route path="/pvp/battle" element={<Battle key={battleRouteKey} />} />
-            <Route path="/pvp/battle/:cp" element={<Battle key={battleRouteKey} />} />
-            <Route path="/pvp/battle/:cp/replay" element={<Battle key={battleRouteKey} replayMode />} />
+      {displayRoute && (
+        <>
+          <Routes location={displayRoute.location}>
             <Route
-              path="/pvp/:cp/:serie/:pokemon"
-              element={
-                <PokemonPVP
-                  key={displayLocation.pathname}
-                  styleSheet={styleSheet.current}
-                  preparedDetail={preparedPvpDetail}
-                />
-              }
+              path={displayRoute.path}
+              element={displayRoute.render({
+                location: displayRoute.location,
+                styleSheet: styleSheet.current,
+                details: displayRoute.details,
+              })}
             />
-            <Route path="/battle-leagues" element={<Leagues />} />
-            <Route path="/trainer" element={<TrainerLab />} />
-            <Route path="/stickers" element={<Sticker />} />
-            <Route path="*" element={<Error />} />
           </Routes>
-          <RouteReady location={displayLocation} />
-        </Suspense>
+          <RouteReady location={displayRoute.location} resetScroll={displayRoute.resetScroll} />
+        </>
       )}
       <Spinner />
     </Box>

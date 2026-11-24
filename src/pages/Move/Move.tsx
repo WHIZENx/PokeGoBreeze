@@ -1,4 +1,5 @@
-import { getApiErrorMessage } from '../../services/api-error';
+import { moveDetailsUrl, type MoveApiResponse, type PreparedDetail } from '../../services/detail-route.service';
+import { getApiError, getApiErrorMessage } from '../../services/api-error';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
@@ -25,7 +26,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { Checkbox, Skeleton } from '@mui/material';
+import { Alert, Checkbox, Skeleton } from '@mui/material';
 import {
   BuffType,
   ColumnType,
@@ -36,7 +37,7 @@ import {
   TypeMove,
 } from '../../enums/type.enum';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
-import { BonusEffectType, ICombat } from '../../core/models/combat.model';
+import { BonusEffectType } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
 import PokemonTableIcon from '../../components/Sprites/PokemonTableIcon/PokemonTableIcon';
 import { IMovePage } from '../models/page.model';
@@ -64,17 +65,7 @@ import CustomDataTable from '../../components/Commons/Tables/CustomDataTable/Cus
 import { IMenuItem } from '../../components/Commons/models/menu.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
-import {
-  battleStab,
-  combatStab,
-  combatShadowBonusAtk,
-  defaultDamageConst,
-  defaultDamageMultiply,
-  defaultPokemonDefObj,
-  defaultPokemonLevel,
-  getTypes,
-  maxIv,
-} from '../../utils/helpers/options-context.helpers';
+import { battleStab, combatStab, combatShadowBonusAtk, getTypes } from '../../utils/helpers/options-context.helpers';
 import InputReleased from '../../components/Commons/Inputs/InputReleased';
 import FormControlMui from '../../components/Commons/Forms/FormControlMui';
 import SelectMui from '../../components/Commons/Selects/SelectMui';
@@ -83,11 +74,6 @@ import { useSnackbar } from '../../contexts/snackbar.context';
 import { formatMaxMoveEffect, getMaxMoveVariantLabel } from '../../utils/max-move';
 import useDataStore from '../../composables/useDataStore';
 import { formatPokemonDisplayName } from '../../utils/pokemon-display-name';
-
-interface MoveApiResponse {
-  data: { move: ICombat; topPokemon: IPokemonTopMove[] };
-  meta: { total: number; resolvedType: string };
-}
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -174,20 +160,25 @@ const columns = createDataRows<TableColumnModify<IPokemonTopMove>>(
 
 const maxMoveColumns = columns.filter((column) => column.id !== ColumnType.DPS && column.id !== ColumnType.TDO);
 
-const Move = (props: IMovePage) => {
+const Move = (props: IMovePage & { preparedDetail?: PreparedDetail<MoveApiResponse> }) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const { optionsData } = useDataStore();
 
-  const [move, setMove] = useState<ICombat>();
+  const initialDetail = useRef(props.preparedDetail);
+  const prepared = props.preparedDetail?.data;
+  const requestedMoveType = searchParams.get(Params.MoveType)?.toLowerCase();
+  const previousRequestedType = useRef(requestedMoveType);
+  const [move, setMove] = useState(prepared?.data.move);
+  const [loadError, setLoadError] = useState<string>();
   const [releasedGO, setReleaseGO] = useState(true);
   const [isMatch, setIsMatch] = useState(false);
-  const [topListFilter, setTopListFilter] = useState<IPokemonTopMove[]>([]);
+  const [topListFilter, setTopListFilter] = useState<IPokemonTopMove[]>(prepared?.data.topPokemon ?? []);
   const [moveType, setMoveType] = useState<string | undefined>(
-    searchParams.get(Params.MoveType)?.toLowerCase() ?? undefined
+    prepared ? (prepared.data.move.isMultipleWithType ? prepared.meta.resolvedType : undefined) : requestedMoveType
   );
-  const [progress, setProgress] = useState(false);
-  const [totalRows, setTotalRows] = useState(0);
+  const [progress, setProgress] = useState(Boolean(prepared));
+  const [totalRows, setTotalRows] = useState(prepared?.meta.total ?? 0);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
@@ -263,6 +254,13 @@ const Move = (props: IMovePage) => {
   }, [searchTerm]);
 
   useEffect(() => {
+    if (previousRequestedType.current !== requestedMoveType) {
+      previousRequestedType.current = requestedMoveType;
+      setMoveType(requestedMoveType);
+    }
+  }, [requestedMoveType]);
+
+  useEffect(() => {
     setPage(1);
     setResetPaginationToggle((value) => !value);
   }, [params.id, props.id, moveType, releasedGO, isMatch, debouncedSearch]);
@@ -284,21 +282,41 @@ const Move = (props: IMovePage) => {
     if (!key) {
       return;
     }
+    const handleError = (error: unknown) => {
+      const message = getApiErrorMessage(error, 'Unable to load this move.');
+      setMove(undefined);
+      setTopListFilter([]);
+      setTotalRows(0);
+      setLoadError(message);
+      showSnackbar(message, 'error');
+      if (getApiError(error).status === 404) {
+        setTitleProps({
+          title: `#${key} - Not Found`,
+          description: 'The requested move could not be found. Please check the move ID and try again.',
+          keywords: ['Pokémon GO', 'move not found', 'error', 'PokéGO Breeze'],
+        });
+      }
+    };
+    const initial = initialDetail.current;
+    if (initial) {
+      initialDetail.current = undefined;
+      if (!initial.data) {
+        handleError(initial.error);
+        setProgress(true);
+      }
+      return;
+    }
     const requestId = ++latestRequestRef.current;
     const controller = new AbortController();
+    setLoadError(undefined);
     setProgress(false);
     APIService.getFetchUrl<MoveApiResponse>(
-      APIService.getMoveDetails({
+      moveDetailsUrl({
         key,
         type: moveType,
         released: releasedGO,
         match: isMatch,
         q: debouncedSearch,
-        iv: maxIv(),
-        level: defaultPokemonLevel(),
-        pokemonDefObj: defaultPokemonDefObj(),
-        damageMultiply: defaultDamageMultiply(),
-        damageConst: defaultDamageConst(),
         sort: sort.field,
         order: sort.order,
         page,
@@ -321,15 +339,7 @@ const Move = (props: IMovePage) => {
       })
       .catch((error) => {
         if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
-          setMove(undefined);
-          setTopListFilter([]);
-          setTotalRows(0);
-          showSnackbar(getApiErrorMessage(error, 'Unable to load this move.'), 'error');
-          setTitleProps({
-            title: `#${key} - Not Found`,
-            description: 'The requested move could not be found. Please check the move ID and try again.',
-            keywords: ['Pokémon GO', 'move not found', 'error', 'PokéGO Breeze'],
-          });
+          handleError(error);
         }
       })
       .finally(() => {
@@ -403,6 +413,14 @@ const Move = (props: IMovePage) => {
       <span className="caption">{splitAndCapitalize(itemName?.toString().replace('ITEM_', ''), '_', ' ')}</span>
     </div>
   );
+
+  if (loadError) {
+    return (
+      <Alert severity="error" className="tw-container tw-mt-4">
+        {loadError}
+      </Alert>
+    );
+  }
 
   return (
     <div className={combineClasses('tw-pb-3 poke-container', props.id ? '' : 'tw-container')}>

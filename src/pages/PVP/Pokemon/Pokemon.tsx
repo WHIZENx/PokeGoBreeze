@@ -33,18 +33,20 @@ import useSpinner from '../../../composables/useSpinner';
 import ToggleGroupMui from '../../../components/Commons/Buttons/ToggleGroupMui';
 import { IPVPInfo } from '../../../core/models/pvp.model';
 import { PvpPokemonApiResponse } from '../../../core/models/API/pvp-pokemon.model';
-import type { PreparedPvpDetail } from '../../../services/pvp-detail-route.service';
+import type { PreparedDetail } from '../../../services/detail-route.service';
+import Alert from '@mui/material/Alert';
 
-const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetail }) => {
+const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedDetail<PvpPokemonApiResponse> }) => {
   const navigate = useNavigate();
-  const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
+  const { showSpinner, hideSpinner } = useSpinner();
 
   const [searchParams] = useSearchParams();
 
   const params = useParams();
   const requestedType = (searchParams.get(Params.LeagueType) || 'overall').toLowerCase();
   const requestedKey = `${toNumber(params.cp)}:${params.serie}:${requestedType}:${params.pokemon}`.toLowerCase();
-  const preparedResult = props.preparedDetail?.requestKey === requestedKey ? props.preparedDetail.data : undefined;
+  const prepared = props.preparedDetail?.key === requestedKey ? props.preparedDetail : undefined;
+  const preparedResult = prepared?.data;
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking | undefined>(() =>
     preparedResult?.data && preparedResult.name ? new PokemonBattleRanking(preparedResult) : undefined
@@ -54,6 +56,7 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
   const [loadedLeagueType, setLoadedLeagueType] = useState<string | null>(preparedResult ? requestedType : null);
   const [isLoading, setIsLoading] = useState(!preparedResult);
   const [isFound, setIsFound] = useState(true);
+  const [loadError, setLoadError] = useState<string>();
   const requestController = useRef<AbortController>();
 
   const setPokemonPVPTitle = (isNotFound = false) => {
@@ -85,13 +88,14 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
   const fetchPokemonInfo = useCallback(async () => {
     // The current route stays mounted while App prepares a new destination.
     // Do not issue another request from the old page when its query changes.
-    if (props.preparedDetail && !preparedResult) {
+    if (props.preparedDetail && !prepared) {
       return;
     }
     requestController.current?.abort();
     const controller = new AbortController();
     requestController.current = controller;
-    if (!preparedResult) {
+    setLoadError(undefined);
+    if (!prepared) {
       setIsLoading(true);
       showSpinner();
     }
@@ -99,18 +103,17 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
       const cp = toNumber(params.cp);
       const overall = getValueOrDefault(String, getKeyWithData(ScoreType, ScoreType.Overall));
       const type = getValueOrDefault(String, searchParams.get(Params.LeagueType), overall).toLowerCase();
-      const response = preparedResult
-        ? { data: { data: preparedResult } }
-        : await APIService.getFetchUrl<{ data: PvpPokemonApiResponse }>(
-            APIService.getPvpPokemon({
-              series: params.serie,
-              cp,
-              type,
-              name: params.pokemon,
-            }),
+      if (prepared && !prepared.data) {
+        throw prepared.error;
+      }
+      const result =
+        prepared?.data ??
+        (
+          await APIService.getFetchUrl<{ data: PvpPokemonApiResponse }>(
+            APIService.getPvpPokemon({ series: params.serie, cp, type, name: params.pokemon }),
             { signal: controller.signal }
-          );
-      const result = response.data.data;
+          )
+        ).data.data;
       if (controller.signal.aborted || requestController.current !== controller) {
         return;
       }
@@ -164,10 +167,7 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
         setLoadedLeagueType(null);
         setTitleProps(setPokemonPVPTitle(true));
       } else {
-        showSpinnerMsg({
-          isError: true,
-          message: getApiErrorMessage(e, 'Unable to load this PvP Pokémon.'),
-        });
+        setLoadError(getApiErrorMessage(e, 'Unable to load this PvP Pokémon.'));
       }
     } finally {
       if (requestController.current === controller) {
@@ -175,7 +175,7 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
         hideSpinner();
       }
     }
-  }, [params.serie, params.pokemon, params.cp, searchParams, preparedResult, props.preparedDetail]);
+  }, [params.serie, params.pokemon, params.cp, searchParams, prepared, props.preparedDetail]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -213,6 +213,14 @@ const PokemonPVP = (props: IStyleSheetData & { preparedDetail?: PreparedPvpDetai
       </Fragment>
     );
   };
+
+  if (loadError) {
+    return (
+      <Alert severity="error" className="tw-container tw-mt-4">
+        {loadError}
+      </Alert>
+    );
+  }
 
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>

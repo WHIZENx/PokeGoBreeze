@@ -1,6 +1,9 @@
 import { getApiError, getApiErrorMessage } from '../../services/api-error';
+import Alert from '@mui/material/Alert';
+import { resolvePokemonRouteId, type PreparedDetail } from '../../services/detail-route.service';
+import type { PokemonBundle } from '../../core/models/API/pokemon-bundle.model';
 // @refresh reset
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Location, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -136,7 +139,7 @@ const withPokemonGoAssetSprites = (sprites: IPokemonSprite | undefined, asset: P
   return result;
 };
 
-const Pokemon = (props: IPokemonPage) => {
+const Pokemon = (props: IPokemonPage & { preparedDetail?: PreparedDetail<PokemonBundle> }) => {
   const { routerAction } = useRouter();
   const dispatch = useDispatch();
   const { iconData } = useIcon();
@@ -170,6 +173,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [formName, setFormName] = useState<string>();
   const [originSoundCry, setOriginSoundCry] = useState<IFormSoundCry[]>([]);
   const [isFound, setIsFound] = useState(true);
+  const [loadError, setLoadError] = useState<string>();
 
   const [costModifier, setCostModifier] = useState<ITypeCost>();
   const [evolutionChain, setEvolutionChain] = useState<PokemonInfoEvo>();
@@ -184,18 +188,13 @@ const Pokemon = (props: IPokemonPage) => {
   const [progress, setProgress] = useState(new PokemonProgress());
 
   const axiosSource = useRef(APIService.getCancelToken());
+  const initialPreparedDetail = useRef(props.preparedDetail);
   const { showSnackbar } = useSnackbar();
 
-  const getPokemonIdByParam = useCallback(() => {
-    let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
-    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(getFilteredPokemons())) {
-      const pokemon = getFindPokemon((p) =>
-        isEqual(p.pokemonId?.toString().replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
-      );
-      id = toNumber(pokemon?.num);
-    }
-    return id;
-  }, [params.id, props.searchOption?.id, getFilteredPokemons, getFindPokemon]);
+  const getPokemonIdByParam = useCallback(
+    () => (params.id ? resolvePokemonRouteId(params.id, getFilteredPokemons()) : toNumber(props.searchOption?.id)),
+    [params.id, props.searchOption?.id, getFilteredPokemons]
+  );
 
   const navigatePokemon = useCallback(
     (direction: -1 | 1, replace = false) => {
@@ -594,6 +593,48 @@ const Pokemon = (props: IPokemonPage) => {
       APIService.cancel(axiosSource.current);
       setIsFound(true);
 
+      setLoadError(undefined);
+
+      const applyBundle = (bundle: PokemonBundle) => {
+        fetchMap(
+          PokemonSpecie.create(bundle.species),
+          bundle.varieties,
+          bundle.evolutionChain,
+          bundle.moveRankings ?? [],
+          bundle.pokemonGo?.forms ?? [],
+          bundle.pokemonGo?.asset,
+          bundle.pokemonGo?.evolutionChains,
+          bundle.pokemonGo?.fusionOptions
+        );
+      };
+      const handleError = (error: unknown) => {
+        if (APIService.isCancel(error) || requestId !== pokemonRequestIdRef.current) {
+          return;
+        }
+        const notFound = getApiError(error).status === 404;
+        const message = getApiErrorMessage(error, 'Unable to load this Pokémon.');
+        showSnackbar(message, 'error');
+        if (notFound && isDetailsRoute) {
+          setIsFound(false);
+        } else if (notFound) {
+          navigateToTop('/error', {
+            replace: true,
+            state: { url: requestedPathname, id },
+          });
+        } else {
+          setLoadError(message);
+        }
+      };
+      const prepared = initialPreparedDetail.current;
+      if (prepared?.key === String(id)) {
+        if (prepared.data) {
+          applyBundle(prepared.data);
+        } else {
+          handleError(prepared.error);
+        }
+        return;
+      }
+
       let requestSource: ReturnType<typeof APIService.reNewCancelToken> | undefined;
       const requestTimer = window.setTimeout(() => {
         if (requestId !== pokemonRequestIdRef.current) {
@@ -604,37 +645,12 @@ const Pokemon = (props: IPokemonPage) => {
         axiosSource.current = requestSource;
 
         APIService.getPokemonBundle(id, { cancelToken: requestSource.token })
-          .then((res) => {
-            if (requestId !== pokemonRequestIdRef.current || !res.data.data) {
-              return;
+          .then(({ data: { data: bundle } }) => {
+            if (requestId === pokemonRequestIdRef.current && bundle) {
+              applyBundle(bundle);
             }
-            const result = PokemonSpecie.create(res.data.data.species);
-            fetchMap(
-              result,
-              res.data.data.varieties,
-              res.data.data.evolutionChain,
-              res.data.data.moveRankings ?? [],
-              res.data.data.pokemonGo?.forms ?? [],
-              res.data.data.pokemonGo?.asset,
-              res.data.data.pokemonGo?.evolutionChains,
-              res.data.data.pokemonGo?.fusionOptions
-            );
           })
-          .catch((error: unknown) => {
-            if (APIService.isCancel(error) || requestId !== pokemonRequestIdRef.current) {
-              return;
-            }
-            const notFound = getApiError(error).status === 404;
-            showSnackbar(getApiErrorMessage(error, 'Unable to load this Pokémon.'), 'error');
-            if (notFound && isDetailsRoute) {
-              setIsFound(false);
-            } else if (notFound) {
-              navigateToTop('/error', {
-                replace: true,
-                state: { url: requestedPathname, id },
-              });
-            }
-          });
+          .catch(handleError);
       }, pokemonNavigationRequestDelayMs);
 
       return () => {
@@ -698,17 +714,14 @@ const Pokemon = (props: IPokemonPage) => {
 
   useTitle(titleProps);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const pokemons = getFilteredPokemons();
     if (isNotEmpty(pokemons)) {
-      let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
-      if (id <= 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemons)) {
-        id = getPokemonIdByParam();
-        if (id <= 0) {
-          showSnackbar(`Pokémon ID or name: ${params.id} not found!`, 'error');
-          setIsFound(false);
-          return;
-        }
+      const id = getPokemonIdByParam();
+      if (id <= 0 && params.id) {
+        showSnackbar(`Pokémon ID or name: ${params.id} not found!`, 'error');
+        setIsFound(false);
+        return;
       }
       const dataId = toNumber(data?.id);
       if (id > 0) {
@@ -719,7 +732,7 @@ const Pokemon = (props: IPokemonPage) => {
         }
       }
     }
-  }, [params.id, props.searchOption?.id, getFilteredPokemons, data?.id, queryPokemon]);
+  }, [params.id, getPokemonIdByParam, getFilteredPokemons, data?.id, queryPokemon, showSnackbar]);
 
   useEffect(() => {
     if (!data) {
@@ -940,6 +953,14 @@ const Pokemon = (props: IPokemonPage) => {
     isLegendary: data?.isLegendary,
     isMythical: data?.isMythical,
   });
+
+  if (loadError) {
+    return (
+      <Alert severity="error" className="tw-container tw-mt-4">
+        {loadError}
+      </Alert>
+    );
+  }
 
   return (
     <Error isError={!isFound} isShowTitle={!isFound}>
