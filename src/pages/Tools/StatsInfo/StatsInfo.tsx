@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../../services/api-error';
 import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TableColumn } from 'react-data-table-component';
@@ -184,19 +185,19 @@ const StatsInfo = () => {
       signal: controller.signal,
     })
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         setStatsBattle(data.data);
         setTotalRows(data.meta.total);
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
-          showSnackbar('Unable to load server-calculated IV rankings.', 'error');
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+          showSnackbar(getApiErrorMessage(error, 'Unable to load IV rankings.'), 'error');
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setIsLoading(false);
         }
       });

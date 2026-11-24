@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../services/api-error';
 import { CircularProgress, Skeleton, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -116,7 +117,7 @@ const Sticker = () => {
       { signal: controller.signal }
     )
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         if (page === 1) {
@@ -130,13 +131,13 @@ const Sticker = () => {
         setPages(data.meta.pages);
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setFailed(true);
-          showSnackbar(`Unable to load stickers: ${error}`, 'error');
+          showSnackbar(getApiErrorMessage(error, 'Unable to load stickers.'), 'error');
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setLoading(false);
         }
       });

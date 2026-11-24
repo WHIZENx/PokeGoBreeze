@@ -162,8 +162,10 @@ try {
           const lightThemeSunDisplay = themeSunStyle.display;
           const lightThemeMoonDisplay = getComputedStyle(themeMoon).display;
           const brandStyle = getComputedStyle(brand);
+          const progressTrack = getComputedStyle(progress).backgroundColor;
           const barStyle = getComputedStyle(bar);
           document.documentElement.setAttribute('data-theme', 'dark');
+          const darkProgressTrack = getComputedStyle(progress).backgroundColor;
           const darkBarStyle = getComputedStyle(bar);
           const darkBarBackground = darkBarStyle.backgroundColor;
           const darkBarOverlay = darkBarStyle.backgroundImage;
@@ -178,6 +180,8 @@ try {
             progressRight: progressRect.right,
             progressHeight: progressRect.height,
             progressTop: progressRect.top,
+            progressTrack,
+            darkProgressTrack,
             barTop: barRect.top,
             toolbarLeft: toolbarRect.left,
             toolbarRight: toolbarRect.right,
@@ -226,7 +230,9 @@ try {
       layout.progressRight > viewport.width + 1 ||
       layout.toolbarLeft < -1 ||
       layout.toolbarRight > viewport.width + 1 ||
-      layout.progressHeight > 3 ||
+      layout.progressHeight !== 4 ||
+      layout.progressTrack !== 'rgb(160, 193, 228)' ||
+      layout.darkProgressTrack !== 'rgb(72, 101, 124)' ||
       Math.abs(layout.progressTop - layout.barTop) > 1 ||
       layout.hasBlockingCard ||
       layout.titleSize > 20 ||

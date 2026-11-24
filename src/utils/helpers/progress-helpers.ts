@@ -11,6 +11,12 @@ const cancelHide = () => {
   }
 };
 
+export const finishStartupProgress = () => {
+  const progress = document.getElementById('startup-progress');
+  progress?.remove();
+  return Boolean(progress);
+};
+
 export const createProgressHelpers = (dispatch: Dispatch) => ({
   startProgress: () => {
     cancelHide();
@@ -33,6 +39,7 @@ export const createProgressHelpers = (dispatch: Dispatch) => ({
     dispatch(SetBar.create(false));
   },
   errorProgress: (error: ErrorModel) => {
+    finishStartupProgress();
     cancelHide();
     dispatch(SetBar.create(false));
     dispatch(ShowSpinnerMsg.create(error));

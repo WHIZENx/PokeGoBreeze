@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { useEffect, useRef, useState } from 'react';
 import { Checkbox } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
@@ -195,6 +197,7 @@ const getSortField = (column: ColumnType) => {
 };
 
 const StatsRanking = () => {
+  const { showSnackbar } = useSnackbar();
   useTitle({
     title: 'PokéGO Breeze - Stats Ranking',
     description:
@@ -304,6 +307,9 @@ const StatsRanking = () => {
     setMovesLoading(true);
     APIService.getPokemonBundle(selectedId, { signal: controller.signal })
       .then(({ data }) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         const bundle = {
           moveRankings: data.data.moveRankings ?? [],
           pokemonGoForms: data.data.pokemonGo?.forms ?? [],
@@ -313,7 +319,8 @@ const StatsRanking = () => {
         setPokemonBundle({ id: selectedId, data: bundle });
       })
       .catch((error) => {
-        if (!APIService.isCancel(error)) {
+        if (!controller.signal.aborted && !APIService.isCancel(error)) {
+          showSnackbar(getApiErrorMessage(error, 'Unable to load Pokémon details for this ranking.'), 'error');
           setPokemonBundle({ id: selectedId, data: { moveRankings: [], pokemonGoForms: [], varieties: [] } });
         }
       })
@@ -323,7 +330,7 @@ const StatsRanking = () => {
         }
       });
     return () => controller.abort();
-  }, [selectedId]);
+  }, [selectedId, showSnackbar]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
@@ -366,7 +373,7 @@ const StatsRanking = () => {
       { signal: controller.signal }
     )
       .then(({ data }) => {
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         if (locate) {
@@ -389,13 +396,14 @@ const StatsRanking = () => {
         }
       })
       .catch((error) => {
-        if (requestId === latestRequestRef.current && !APIService.isCancel(error)) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current && !APIService.isCancel(error)) {
           setRows([]);
           setTotalRows(0);
+          showSnackbar(getApiErrorMessage(error, 'Unable to load Stats Ranking.'), 'error');
         }
       })
       .finally(() => {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setLoading(false);
         }
       });
@@ -413,6 +421,7 @@ const StatsRanking = () => {
     paramFormType,
     routeTarget,
     skipStalePageRequest,
+    showSnackbar,
   ]);
 
   useEffect(() => {

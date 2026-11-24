@@ -1,3 +1,4 @@
+import { getApiError, getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../PVP.scss';
 import { useParams } from 'react-router-dom';
@@ -43,7 +44,6 @@ import { LinkToTop } from '../../../components/Link/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import DataTableSortIcon from '../../../components/Commons/Tables/DataTableSortIcon';
 import Error from '../../Error/Error';
-import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
@@ -156,7 +156,7 @@ const TeamPVP = (props: IStyleSheetData) => {
           APIService.getTeamFile('analysis', params.serie, cp),
           { signal: controller.signal }
         );
-        if (requestId !== latestRequestRef.current) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current) {
           return;
         }
         if (!file) {
@@ -223,19 +223,19 @@ const TeamPVP = (props: IStyleSheetData) => {
         });
         setRankingData(file);
       } catch (e) {
-        if (requestId !== latestRequestRef.current || APIService.isCancel(e)) {
+        if (controller.signal.aborted || requestId !== latestRequestRef.current || APIService.isCancel(e)) {
           return;
         }
-        if ((e as AxiosError)?.status === 404) {
+        if (getApiError(e).status === 404) {
           setIsFound(false);
         } else {
           showSpinnerMsg({
             isError: true,
-            message: (e as AxiosError).message,
+            message: getApiErrorMessage(e, 'Unable to load PvP teams.'),
           });
         }
       } finally {
-        if (requestId === latestRequestRef.current) {
+        if (!controller.signal.aborted && requestId === latestRequestRef.current) {
           setIsLoading(false);
           hideSpinner();
         }

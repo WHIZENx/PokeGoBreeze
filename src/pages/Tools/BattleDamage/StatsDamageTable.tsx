@@ -1,3 +1,5 @@
+import { useSnackbar } from '../../../contexts/snackbar.context';
+import { getApiErrorMessage } from '../../../services/api-error';
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -15,6 +17,7 @@ import { maxIv, minLevel, maxLevel, maxPokemonLevel, stepLevel } from '../../../
 import type { DamageCalculatedStats } from '../../../services/models/tools-api.model';
 
 const StatsDamageTable = (props: IStatsDamageTableComponent) => {
+  const { showSnackbar } = useSnackbar();
   const [currStatLevel, setCurrStatLevel] = useState(1);
   const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
   const [calculatedStats, setCalculatedStats] = useState<DamageCalculatedStats[]>([]);
@@ -30,29 +33,34 @@ const StatsDamageTable = (props: IStatsDamageTableComponent) => {
       setCalculatedStats([]);
       return;
     }
-    let active = true;
-    APIService.postDamageSimulator({
-      mode: 'stats',
-      base: { atk: props.statATK, def: props.statDEF, sta: props.statSTA },
-      pokemonType: calculatedPokemonType,
-      iv: maxIv(),
-      pvp: props.pvp,
-      config: { minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
-    })
+    const controller = new AbortController();
+    const { signal } = controller;
+    APIService.postDamageSimulator(
+      {
+        mode: 'stats',
+        base: { atk: props.statATK, def: props.statDEF, sta: props.statSTA },
+        pokemonType: calculatedPokemonType,
+        iv: maxIv(),
+        pvp: props.pvp,
+        config: { minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
+      },
+      signal
+    )
       .then((response) => {
-        if (active && response.data.data.mode === 'stats') {
+        if (!signal.aborted && response.data.data.mode === 'stats') {
           setCalculatedStats(response.data.data.levels);
         }
       })
-      .catch(() => {
-        if (active) {
+      .catch((error: unknown) => {
+        if (!signal.aborted) {
           setCalculatedStats([]);
+          showSnackbar(getApiErrorMessage(error, 'Unable to calculate damage stats.'), 'error');
         }
       });
     return () => {
-      active = false;
+      controller.abort();
     };
-  }, [props.statATK, props.statDEF, props.statSTA, props.pvp, calculatedPokemonType]);
+  }, [props.statATK, props.statDEF, props.statSTA, props.pvp, calculatedPokemonType, showSnackbar]);
 
   const onHandleLevel = useCallback(
     (v: number) => {

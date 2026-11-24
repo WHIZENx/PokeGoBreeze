@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../../services/api-error';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
 import DoneIcon from '@mui/icons-material/Done';
@@ -164,7 +165,7 @@ const Leagues = () => {
       })
       .catch((error) => {
         if (active && !APIService.isCancel(error)) {
-          setLoadError(`Unable to load Battle Leagues: ${error}`);
+          setLoadError(getApiErrorMessage(error, 'Unable to load Battle Leagues.'));
         }
       })
       .finally(() => {

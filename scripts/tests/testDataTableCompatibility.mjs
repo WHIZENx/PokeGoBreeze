@@ -210,8 +210,11 @@ assert.match(
   /data-testid="counter-stale-interaction-guard"/,
   'Retained Counter rows must not accept stale interactions while their replacement is loading.'
 );
+const counterFailureReset =
+  /\.catch\(\(error\) => \{\s*if \(!controller\.signal\.aborted && requestId === latestRequestRef\.current && !APIService\.isCancel\(error\)\) \{[^{}]*?setCounterList\(\[\]\);/;
+assert.match(counter, counterFailureReset, 'Only an active request failure may clear stale Counter rows.');
 assert.doesNotMatch(
-  counter,
+  counter.replace(counterFailureReset, ''),
   /setCounterList\(\[\]\)|displayedCounterList/,
   'Counter refreshes must not blank the table while a replacement request is pending.'
 );
@@ -267,14 +270,19 @@ assert.doesNotMatch(
   'Best Moves column headers must not float above the Pokémon navigation bar.'
 );
 assert.equal(
-  moveTable.match(/tw-inline-flex tw-items-center tw-self-center tw-w-max/g)?.length,
+  moveTable.match(/<MoveTableLink move=\{value(?:\.fMove|\.cMove)?\} \/>/g)?.length,
   3,
-  'Every move classification badge must center against the type icon and move name instead of using text-baseline alignment.'
+  'Moves List and both Best Moves columns must use the same move link layout.'
 );
-assert.equal(
-  moveTable.match(/className="tw-flex tw-items-center"/g)?.length,
-  2,
-  'Both Best Moves links must center their type icon, move name, and classification badge as one row.'
+assert.match(
+  moveTable,
+  /<LinkToTop[^\n]*tw-max-w-full tw-flex-wrap tw-items-center/,
+  'The badge must align with the move when it fits and wrap within the cell when it does not.'
+);
+assert.match(
+  moveTable,
+  /type-icon-small ic tw-shrink-0 tw-whitespace-nowrap/,
+  'The classification badge must wrap as a single item.'
 );
 assert.doesNotMatch(
   moveTable,

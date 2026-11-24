@@ -15,8 +15,8 @@ if [ -f .env ]; then
 fi
 
 # ─── Resolve Edge Config key by deployment mode ────────────────────────────────
-APP_DEPLOYMENT_MODE="${APP_DEPLOYMENT_MODE:-${REACT_APP_DEPLOYMENT_MODE:-development}}"
-case "$APP_DEPLOYMENT_MODE" in
+deployment_mode="${REACT_APP_DEPLOYMENT_MODE:-development}"
+case "$deployment_mode" in
   production) VERSION_VAR="version" ;;
   staging)    VERSION_VAR="version-staging" ;;
   *)          VERSION_VAR="version-dev" ;;
@@ -27,13 +27,13 @@ if [ -f config.json ]; then
   echo "📁 Using config.json (Edge Config fetch skipped)"
   FETCHED_DATA=$(cat config.json)
 else
-  EDGE_ID="${VERCEL_EDGE_CONFIG_ID:-${REACT_APP_EDGE_ID:-}}"
-  EDGE_READ_TOKEN="${VERCEL_TOKEN:-${REACT_APP_EDGE_READ_TOKEN:-}}"
+  EDGE_ID="${REACT_APP_EDGE_ID:-}"
+  EDGE_READ_TOKEN="${REACT_APP_EDGE_READ_TOKEN:-}"
 
-  if [[ -z "$EDGE_ID" ]]; then     echo "❌ Missing: VERCEL_EDGE_CONFIG_ID or REACT_APP_EDGE_ID"; exit 1; fi
-  if [[ -z "$EDGE_READ_TOKEN" ]]; then echo "❌ Missing: VERCEL_TOKEN or REACT_APP_EDGE_READ_TOKEN"; exit 1; fi
+  if [[ -z "$EDGE_ID" ]]; then     echo "❌ Missing: REACT_APP_EDGE_ID"; exit 1; fi
+  if [[ -z "$EDGE_READ_TOKEN" ]]; then echo "❌ Missing: REACT_APP_EDGE_READ_TOKEN"; exit 1; fi
 
-  echo "🔍 Fetching Edge Config (mode: ${APP_DEPLOYMENT_MODE})…"
+  echo "🔍 Fetching Edge Config (mode: ${deployment_mode})…"
   FETCHED_DATA=$(curl -sf "https://edge-config.vercel.com/${EDGE_ID}/items" \
     -H "Authorization: Bearer $EDGE_READ_TOKEN")
 

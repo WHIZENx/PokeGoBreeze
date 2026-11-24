@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../../../services/api-error';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { createDataRows, HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
@@ -194,17 +195,17 @@ const FindTable = () => {
   const { showSnackbar } = useSnackbar();
   const ivTable = useFindTable<IPredictStatsModel, IPredictStatsCalculate>(
     'percent',
-    (error) => showSnackbar(`Unable to calculate IV: ${error}`, 'error'),
+    (error) => showSnackbar(getApiErrorMessage(error, 'Unable to calculate IVs.'), 'error'),
     (result) => {
       const name = splitAndCapitalize(searchingToolCurrentDetails?.fullName ?? '', '_', ' ');
-      showSnackbar(`At CP: ${result.CP} impossible found in ${name}`, 'error');
+      showSnackbar(`No IV combination gives ${name} CP ${result.CP}.`, 'info');
     }
   );
   const cpTable = useFindTable<IPredictCPModel, IPredictCPCalculate>('level', (error) =>
-    showSnackbar(`Unable to calculate CP: ${error}`, 'error')
+    showSnackbar(getApiErrorMessage(error, 'Unable to calculate CP.'), 'error')
   );
   const minMaxTable = useFindTable<IFindCP, { result: IFindCP[] }>('level', (error) =>
-    showSnackbar(`Unable to calculate CP: ${error}`, 'error')
+    showSnackbar(getApiErrorMessage(error, 'Unable to calculate CP.'), 'error')
   );
   const { data: preIvArr, summary: ivSummary } = ivTable;
   const { data: preCpArr, summary: cpSummary } = cpTable;

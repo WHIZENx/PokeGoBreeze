@@ -540,6 +540,7 @@ export interface IDialogMuiComponent {
 
 export interface IBackdropMuiComponent {
   open?: boolean;
+  ariaHidden?: boolean;
   children?: React.ReactNode;
   isShowOnAbove?: boolean;
   noneCircular?: boolean;

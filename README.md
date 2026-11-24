@@ -36,10 +36,24 @@ This repository contains the public React web client. Processed game data and ca
 - The API publishes metadata and generated sections from one consistent Game Master snapshot.
 - Pages request only the sections and endpoint results they need instead of loading the complete dataset at startup.
 - The web client validates the processed-data schema before accepting a dataset.
+- API failures use the shared error formatter. The Web displays the API's
+  readable detail, distinguishes network and timeout failures, and ignores
+  canceled requests. Tables and calculators abort superseded requests and
+  ignore their results. Cancellation is scoped to the result being updated,
+  so independent panels can use the same endpoint at the same time.
+  Requests to the PokeGoBreeze API time out after 32 seconds
+  if the client is still waiting. User-triggered calculations show their outcome in
+  the relevant result section, alert, or snackbar. Find IV, Calculate Stats,
+  and Battle League Search show an informational snackbar when a valid
+  calculation finishes without a match.
 - Pokémon Details, Stats Ranking, and Tools selectors use one shared profile-image fallback order: exact canonical form artwork first, then the exact Pokémon GO form asset and species-level fallbacks; GO-only forms never borrow the canonical species-default artwork.
 - Internal data-processing implementation and generated server data are not part of this public repository.
 
-For local development, set `REACT_APP_DATA_API_URL` to a compatible deployed API or to the API service running locally.
+For local development in the workspace, the Web reads the root `.env`, then
+optional `modules/web/.env`, `modules/web/.env.local`, and the active Vite
+mode files. Process environment variables take precedence. The workspace defaults to `http://localhost:3001`.
+A standalone checkout can set `REACT_APP_DATA_API_URL` in its own `.env`
+to a compatible deployed or local API.
 
 The versions below reflect the currently committed `package-lock.json`.
 
@@ -211,7 +225,8 @@ src/
 │   ├── helpers/
 │   ├── hooks/
 │   └── models/
-├── App.tsx                 # Lazy routes and application bootstrap
+├── App.tsx                 # Application bootstrap and route transitions
+├── app-routes.tsx          # Route patterns and page module loaders
 ├── App.scss
 ├── index.tsx               # React entry point
 ├── index.scss
@@ -381,7 +396,13 @@ Displays the application error page for unmatched URLs. Runtime errors are handl
 
 - **Data consistency**: Accept supported processed-data schemas and consume mutually dependent sections from one source snapshot.
 - **Focused loading**: Minimize initial payloads by fetching only the sections required by the current route.
-- **Resilient navigation**: Cancel stale work, recover from route errors, and preserve the current page during lazy transitions.
+- **Resilient navigation**: Keep the current page visible while the destination
+  module and shared data load. Pokémon Details, Move Details, and Pokémon PvP
+  Details also prepare their main API response before displaying the destination.
+  Tables and tools use their existing loading indicators for requests after the
+  page opens. A direct entry shows the static header until React can display
+  the themed header. One progress indicator stays visible through startup
+  and uses the same dimensions, colors, and motion as the MUI navigation bar.
 - **Supported browsers**: Follow the repository's declared Browserslist targets.
 
 ## Getting Started
@@ -406,7 +427,7 @@ npm ci
 
 3. **Set up configuration**
 
-   PokeGoBreeze loads its runtime config from one of two sources — use whichever fits your setup:
+   PokeGoBreeze checks `config.json` first, then Vercel Edge Config for runtime options.
 
    **Option A — `config.json` (recommended for local dev, no Vercel account needed)**
 
@@ -416,7 +437,8 @@ npm ci
    cp .env.example .env
    ```
    In Windows PowerShell, use `Copy-Item` in place of `cp`. If PowerShell
-   blocks the npm PowerShell shim, use `npm.cmd` for the npm commands below.
+   blocks `npm.ps1`, run the same npm commands in Windows Command Prompt
+   (`cmd.exe`).
 
    The local config includes version labels for all three modes. Its other
    values are placeholders that let you start the app and browse API-backed
@@ -450,6 +472,8 @@ npm ci
    GitHub Actions deployment uses the `REACT_APP_EDGE_ID`,
    `REACT_APP_EDGE_READ_TOKEN`, `REACT_APP_EDGE_TOKEN`, and `VERCEL_TOKEN`
    secrets plus the `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` Actions variables.
+   Edge Config uses the dedicated read and write tokens. `VERCEL_TOKEN`
+   authenticates Vercel CLI commands for the project deployment.
    `MONGODB_URI` is optional. Firebase branch deployments use `FIREBASE_TOKEN`,
    while same-repository pull-request previews use
    `FIREBASE_SERVICE_ACCOUNT_POKEGO_BREEZE`. Treat
@@ -480,7 +504,7 @@ npm ci
    documents revalidate immediately, while fingerprinted assets use immutable
    caching. The workspace is not part of this deployment.
 
-   > See [`.env.example`](.env.example) for all variables with descriptions and example values.
+   > See [`.env.example`](.env.example) for variable descriptions. Edge Config credentials stay in the startup process. The Web build exposes only the runtime variables used by the app.
 
 ### Development
 
@@ -536,8 +560,7 @@ npm run build
 ```
 
 The npm `prebuild` lifecycle cleans `dist/` automatically before `npm run build`.
-For a runnable preview, use the configuration-loading build above or supply
-the build-time `REACT_APP_CONFIG` and `REACT_APP_DATA_API_URL` separately.
+For a runnable preview, use the configuration-loading build above.
 
 **Preview production build locally**:
 ```bash
@@ -689,6 +712,14 @@ npm run audit:find-pagination
 The production CSS/tooling target follows `browserslist` in `package.json`: browsers with more than 0.2% usage, excluding dead browsers and Opera Mini. Vite emits ES2015-compatible JavaScript. Development targets the latest Chrome, Firefox, and Safari.
 
 ### Troubleshooting
+
+**Web cannot start without configuration**
+
+Copy `config.example.json` to `config.json` in the Web directory for local
+development, or set
+`REACT_APP_EDGE_ID` and `REACT_APP_EDGE_READ_TOKEN` for Vercel Edge Config.
+Use the workspace or module `.env`. The startup log lists missing settings.
+If Edge Config cannot be loaded, check the ID, read token, and connection.
 
 **Port already in use**:
 ```bash

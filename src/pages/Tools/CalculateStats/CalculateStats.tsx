@@ -1,4 +1,6 @@
-import React, { Fragment, useCallback, useState } from 'react';
+import useLatestRequest from '../../../utils/hooks/useLatestRequest';
+import { getApiErrorMessage } from '../../../services/api-error';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import {
   getPokemonFormWithNoneSpecialForm,
@@ -88,8 +90,29 @@ const Calculate = () => {
 
   const { showSnackbar } = useSnackbar();
   const { showSpinner, hideSpinner } = useSpinner();
+  const calculationRequest = useLatestRequest(hideSpinner);
+
+  useEffect(() => {
+    if (calculationRequest.cancel()) {
+      hideSpinner();
+    }
+  }, [
+    calculationRequest,
+    hideSpinner,
+    searchingToolCurrentDetails?.id,
+    selectedForm,
+    searchCP,
+    searchLevel,
+    calculatedPokemonType,
+    ATKIv,
+    DEFIv,
+    STAIv,
+  ]);
 
   const clearArrStats = () => {
+    if (calculationRequest.cancel()) {
+      hideSpinner();
+    }
     setSearchCP('');
     setSearchLevel(undefined);
     setPokeStats(undefined);
@@ -117,19 +140,26 @@ const Calculate = () => {
       showSnackbar('Please select a Pokémon before calculating stats', 'error');
       return;
     }
+    const signal = calculationRequest.start();
     showSpinner();
     try {
-      const response = await APIService.postCalculateStats({
-        id: pokemonId,
-        form: selectedForm
-          ? getPokemonFormWithNoneSpecialForm(selectedForm.form.formName, selectedForm.form.pokemonType)
-          : searchingToolCurrentDetails?.fullName,
-        cp: selectedCP,
-        level: searchLevel,
-        pokemonType: calculatedPokemonType,
-        iv: { atk: ATKIv, def: DEFIv, sta: STAIv },
-        config: { minCp: minCp(), minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
-      });
+      const response = await APIService.postCalculateStats(
+        {
+          id: pokemonId,
+          form: selectedForm
+            ? getPokemonFormWithNoneSpecialForm(selectedForm.form.formName, selectedForm.form.pokemonType)
+            : searchingToolCurrentDetails?.fullName,
+          cp: selectedCP,
+          level: searchLevel,
+          pokemonType: calculatedPokemonType,
+          iv: { atk: ATKIv, def: DEFIv, sta: STAIv },
+          config: { minCp: minCp(), minLevel: minLevel(), maxLevel: maxLevel(), step: stepLevel() },
+        },
+        signal
+      );
+      if (signal.aborted) {
+        return;
+      }
       const result = response.data.data;
       if (!result.possible) {
         setPokeStats(undefined);
@@ -139,16 +169,9 @@ const Calculate = () => {
         setDataGreatLeague(undefined);
         setDataUltraLeague(undefined);
         setDataMasterLeague(undefined);
-        showSnackbar(
-          `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} impossible found in ${name}`,
-          'error'
-        );
+        showSnackbar(`${name} cannot reach CP ${result.stats.CP} with these IVs.`, 'info');
         return;
       }
-      showSnackbar(
-        `At CP: ${result.stats.CP} and IV ${result.stats.IV.atkIV}/${result.stats.IV.defIV}/${result.stats.IV.staIV} found in ${getKeyWithData(PokemonType, calculatedPokemonType)} ${name}`,
-        'success'
-      );
       setPokeStats(result.stats);
       setStatLevel(result.stats.level);
       setStatData(result.current);
@@ -157,7 +180,11 @@ const Calculate = () => {
       setDataGreatLeague(result.leagues.great);
       setDataUltraLeague(result.leagues.ultra);
       setDataMasterLeague(result.leagues.master);
-    } catch {
+      showSnackbar(`Stats calculated for ${name} at CP ${result.stats.CP}.`, 'success');
+    } catch (error) {
+      if (signal.aborted) {
+        return;
+      }
       setPokeStats(undefined);
       setStatData(undefined);
       setLevelResults([]);
@@ -165,9 +192,11 @@ const Calculate = () => {
       setDataGreatLeague(undefined);
       setDataUltraLeague(undefined);
       setDataMasterLeague(undefined);
-      showSnackbar('Calculate Stats API is unavailable', 'error');
+      showSnackbar(getApiErrorMessage(error, 'Unable to calculate Pokémon stats.'), 'error');
     } finally {
-      hideSpinner();
+      if (calculationRequest.finish(signal)) {
+        hideSpinner();
+      }
     }
   }, [
     searchingToolCurrentDetails?.id,
@@ -182,6 +211,7 @@ const Calculate = () => {
     showSnackbar,
     showSpinner,
     hideSpinner,
+    calculationRequest,
   ]);
 
   const onCalculateStatsPoke = useCallback(
