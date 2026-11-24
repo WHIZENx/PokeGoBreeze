@@ -77,16 +77,18 @@ function fetchEdgeConfig(edgeId, token) {
         res.on('data', (chunk) => (raw += chunk));
         res.on('end', () => {
           if (res.statusCode !== 200) {
-            return reject(new Error(`Edge Config returned HTTP ${res.statusCode}: ${raw}`));
+            return reject(new Error(`Edge Config returned HTTP ${res.statusCode}.`));
           }
           try {
             resolve(JSON.parse(raw));
-          } catch (e) {
-            reject(e);
+          } catch {
+            reject(new Error('Edge Config returned invalid JSON.'));
           }
         });
       })
-      .on('error', reject);
+      .on('error', (error) => {
+        reject(new Error(`Could not connect to Edge Config (${error.code ?? 'network error'}).`));
+      });
   });
 }
 
@@ -109,20 +111,29 @@ async function main() {
     const edgeId = process.env.VERCEL_EDGE_CONFIG_ID || process.env.REACT_APP_EDGE_ID || '';
     const token = process.env.VERCEL_TOKEN || process.env.REACT_APP_EDGE_READ_TOKEN || '';
 
-    if (!edgeId) {
-      // eslint-disable-next-line no-console
-      console.error('❌ Missing: VERCEL_EDGE_CONFIG_ID or REACT_APP_EDGE_ID');
-      process.exit(1);
-    }
-    if (!token) {
-      // eslint-disable-next-line no-console
-      console.error('❌ Missing: VERCEL_TOKEN or REACT_APP_EDGE_READ_TOKEN');
-      process.exit(1);
+    const missing = [
+      edgeId ? null : 'REACT_APP_EDGE_ID (or VERCEL_EDGE_CONFIG_ID)',
+      token ? null : 'REACT_APP_EDGE_READ_TOKEN (or VERCEL_TOKEN)',
+    ].filter(Boolean);
+    if (missing.length) {
+      throw new Error(
+        [
+          'Web cannot start without config.json or Vercel Edge Config.',
+          'For local development, copy config.example.json to config.json in the Web directory (modules/web in the workspace).',
+          `To use Edge Config, set ${missing.join(' and ')} in the Web .env file or process environment.`,
+        ].join('\n')
+      );
     }
 
     // eslint-disable-next-line no-console
     console.log(`🔍 Fetching Edge Config (mode: ${mode})…`);
-    data = await fetchEdgeConfig(edgeId, token);
+    try {
+      data = await fetchEdgeConfig(edgeId, token);
+    } catch (error) {
+      throw new Error(
+        `Web cannot start. ${error.message}\nCheck the Edge Config ID, read token, and connection, or create config.json from config.example.json for local development.`
+      );
+    }
   }
 
   const version = !process.env.REACT_APP_VERSION ? data[versionKey] : process.env.REACT_APP_VERSION;

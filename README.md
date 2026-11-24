@@ -690,6 +690,13 @@ The production CSS/tooling target follows `browserslist` in `package.json`: brow
 
 ### Troubleshooting
 
+**Web cannot start without configuration**
+
+Copy `config.example.json` to `config.json` in the Web directory for local
+development, or set `REACT_APP_EDGE_ID` and `REACT_APP_EDGE_READ_TOKEN` in
+`.env` for Vercel Edge Config. The startup log lists missing settings.
+If Edge Config cannot be loaded, check the ID, read token, and connection.
+
 **Port already in use**:
 ```bash
 # Identify and kill the process using the Vite dev-server port (macOS/Linux)
